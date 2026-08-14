@@ -1,5 +1,5 @@
 export default defineNuxtConfig({
-  modules: ['selaras'],
+  modules: ['selaras', '@nuxt/content'],
   devtools: { enabled: true },
   compatibilityDate: 'latest',
 })
