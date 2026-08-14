@@ -1,4 +1,15 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * Tailwind's automatic content detection only scans the consuming app's own
+ * tree. Our component/theme sources live in a sibling package directory, so
+ * they'd otherwise never be scanned and their classes would be silently
+ * dropped from the generated CSS.
+ */
+@source "./components/**/*.vue";
+@source "./theme/**/*.ts";
+@source "./utils/**/*.ts";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
