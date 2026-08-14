@@ -1,4 +1,4 @@
-import { addComponentsDir, addVitePlugin, createResolver, defineNuxtModule, installModule } from '@nuxt/kit'
+import { addComponentsDir, addImportsDir, addVitePlugin, createResolver, defineNuxtModule, installModule } from '@nuxt/kit'
 import tailwindcss from '@tailwindcss/vite'
 
 export interface ModuleOptions {
@@ -30,5 +30,7 @@ export default defineNuxtModule<ModuleOptions>({
       prefix: options.prefix,
       pathPrefix: false,
     })
+
+    addImportsDir(resolver.resolve('./runtime/composables'))
   },
 })
