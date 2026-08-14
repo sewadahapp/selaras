@@ -1,19 +1,34 @@
-import { addPlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addComponentsDir, addVitePlugin, createResolver, defineNuxtModule, installModule } from '@nuxt/kit'
+import tailwindcss from '@tailwindcss/vite'
 
-// Module options TypeScript interface definition
-export interface ModuleOptions {}
+export interface ModuleOptions {
+  /**
+   * Prefix used for auto-imported components.
+   * @default 'S'
+   */
+  prefix?: string
+}
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'my-module',
-    configKey: 'myModule',
+    name: 'selaras',
+    configKey: 'selaras',
   },
-  // Default configuration options of the Nuxt module
-  defaults: {},
-  setup(_options, _nuxt) {
+  defaults: {
+    prefix: 'S',
+  },
+  async setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    // Do not add the extension since the `.ts` will be transpiled to `.mjs` after `npm run prepack`
-    addPlugin(resolver.resolve('./runtime/plugin'))
+    nuxt.options.css.push(resolver.resolve('./runtime/theme.css'))
+    addVitePlugin(tailwindcss())
+
+    await installModule('@nuxt/icon')
+
+    addComponentsDir({
+      path: resolver.resolve('./runtime/components'),
+      prefix: options.prefix,
+      pathPrefix: false,
+    })
   },
 })

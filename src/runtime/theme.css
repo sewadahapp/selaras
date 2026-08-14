@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* radius scale, generous by default */
+  --ui-radius-sm: 6px;
+  --ui-radius-md: 10px;
+  --ui-radius-lg: 16px;
+  --ui-radius-full: 9999px;
+
+  /* overlay elevation */
+  --ui-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --ui-shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
+  --ui-shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.16);
+}
+
+:root {
+  /* primitives */
+  --ui-color-gray-50: oklch(0.985 0.002 264);
+  --ui-color-gray-100: oklch(0.96 0.003 264);
+  --ui-color-gray-200: oklch(0.91 0.005 264);
+  --ui-color-gray-300: oklch(0.83 0.008 264);
+  --ui-color-gray-400: oklch(0.65 0.012 264);
+  --ui-color-gray-500: oklch(0.52 0.014 264);
+  --ui-color-gray-600: oklch(0.42 0.016 264);
+  --ui-color-gray-700: oklch(0.32 0.016 264);
+  --ui-color-gray-800: oklch(0.22 0.014 264);
+  --ui-color-gray-900: oklch(0.15 0.012 264);
+  --ui-color-gray-950: oklch(0.1 0.01 264);
+
+  --ui-color-primary-50: oklch(0.96 0.02 275);
+  --ui-color-primary-100: oklch(0.91 0.045 275);
+  --ui-color-primary-200: oklch(0.83 0.08 275);
+  --ui-color-primary-300: oklch(0.74 0.11 275);
+  --ui-color-primary-400: oklch(0.65 0.15 275);
+  --ui-color-primary-500: oklch(0.57 0.18 275);
+  --ui-color-primary-600: oklch(0.5 0.18 275);
+  --ui-color-primary-700: oklch(0.43 0.16 275);
+  --ui-color-primary-800: oklch(0.36 0.13 275);
+  --ui-color-primary-900: oklch(0.3 0.1 275);
+
+  --ui-color-danger-500: oklch(0.6 0.21 25);
+  --ui-color-danger-600: oklch(0.52 0.21 25);
+  --ui-color-success-500: oklch(0.65 0.16 150);
+  --ui-color-success-600: oklch(0.56 0.16 150);
+
+  /* semantic (light) */
+  --ui-bg: white;
+  --ui-bg-elevated: var(--ui-color-gray-50);
+  --ui-bg-inverted: var(--ui-color-gray-900);
+  --ui-border: var(--ui-color-gray-200);
+  --ui-border-muted: var(--ui-color-gray-100);
+  --ui-text: var(--ui-color-gray-900);
+  --ui-text-muted: var(--ui-color-gray-500);
+  --ui-text-inverted: white;
+
+  --ui-primary: var(--ui-color-primary-600);
+  --ui-primary-hover: var(--ui-color-primary-700);
+  --ui-primary-foreground: white;
+  --ui-primary-soft: var(--ui-color-primary-50);
+
+  --ui-danger: var(--ui-color-danger-500);
+  --ui-danger-hover: var(--ui-color-danger-600);
+  --ui-success: var(--ui-color-success-500);
+}
+
+.dark {
+  --ui-bg: var(--ui-color-gray-950);
+  --ui-bg-elevated: var(--ui-color-gray-900);
+  --ui-bg-inverted: white;
+  --ui-border: var(--ui-color-gray-800);
+  --ui-border-muted: var(--ui-color-gray-800);
+  --ui-text: var(--ui-color-gray-50);
+  --ui-text-muted: var(--ui-color-gray-400);
+  --ui-text-inverted: var(--ui-color-gray-900);
+
+  --ui-primary: var(--ui-color-primary-500);
+  --ui-primary-hover: var(--ui-color-primary-400);
+  --ui-primary-soft: color-mix(in oklch, var(--ui-color-primary-500) 16%, transparent);
+}
