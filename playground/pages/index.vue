@@ -2,6 +2,9 @@
 const activeTab = ref('one')
 const modalOpen = ref(false)
 const selectValue = ref('apple')
+const checkboxValue = ref(true)
+const radioValue = ref('one')
+const switchValue = ref(true)
 const { add: addToast } = useToast()
 
 function showToast() {
@@ -114,5 +117,18 @@ function showToast() {
         Tab two content
       </template>
     </STabs>
+
+    <div class="flex flex-wrap items-start gap-8">
+      <SCheckbox v-model="checkboxValue" label="Accept terms" />
+
+      <SRadioGroup
+        v-model="radioValue"
+        :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]"
+      />
+
+      <SSwitch v-model="switchValue" label="Notifications" />
+
+      <STextarea placeholder="Write something..." class="max-w-sm" />
+    </div>
   </div>
 </template>
