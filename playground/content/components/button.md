@@ -5,7 +5,8 @@ description: A clickable action element with color, variant and size options.
 
 ## Usage
 
-:demo-button-basic
+::component-example{name="button-basic"}
+::
 
 ### Variants
 
