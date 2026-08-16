@@ -5,9 +5,7 @@ description: A clickable action element with color, variant and size options.
 
 ## Usage
 
-::s-button
-Click me
-::
+:demo-button-basic
 
 ### Variants
 
