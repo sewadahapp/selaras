@@ -2,7 +2,7 @@
 import type { ModalSlots } from '../theme/modal'
 import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
-import { computed, useSlots } from 'vue'
+import { computed } from 'vue'
 import { modalTheme } from '../theme/modal'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
@@ -16,8 +16,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
-
-const slots = useSlots()
 
 const theme = useComponentTheme('modal', modalTheme)
 const ui = computed(() => theme.value())
@@ -34,13 +32,13 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
 
 <template>
   <DialogRoot :open="modelValue" @update:open="(value) => emit('update:modelValue', value)">
-    <DialogTrigger v-if="slots.default" as-child>
+    <DialogTrigger v-if="$slots.default" as-child>
       <slot />
     </DialogTrigger>
     <DialogPortal>
       <DialogOverlay v-bind="overlayProps" />
       <DialogContent v-bind="contentProps">
-        <div v-if="title || description || slots.header" v-bind="headerProps">
+        <div v-if="title || description || $slots.header" v-bind="headerProps">
           <div>
             <slot name="header">
               <DialogTitle v-if="title" v-bind="titleProps">
@@ -60,7 +58,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
         <div v-bind="bodyProps">
           <slot name="body" />
         </div>
-        <div v-if="slots.footer" v-bind="footerProps">
+        <div v-if="$slots.footer" v-bind="footerProps">
           <slot name="footer" />
         </div>
       </DialogContent>
