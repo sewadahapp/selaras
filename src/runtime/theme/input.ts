@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants'
 export const inputTheme = tv({
   slots: {
     root: 'relative inline-flex items-center w-full',
-    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] transition-colors focus:outline-2 focus:outline-offset-1 focus:outline-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
+    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
     leadingIcon: 'absolute left-2.5 shrink-0 text-[var(--ui-text-muted)]',
     trailingIcon: 'absolute right-2.5 shrink-0 text-[var(--ui-text-muted)]',
   },
@@ -14,7 +14,7 @@ export const inputTheme = tv({
       lg: { base: 'h-11 px-3.5 text-base', leadingIcon: 'size-5', trailingIcon: 'size-5' },
     },
     invalid: {
-      true: { base: 'ring-[var(--ui-danger)] focus:outline-[var(--ui-danger)]' },
+      true: { base: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)]' },
     },
     hasLeadingIcon: {
       true: {},
