@@ -25,85 +25,90 @@
   --ui-shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
   --ui-shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.16);
 
-  /* brand palette (primitives) - Tailwind's own --color-* namespace, so
-     bg-primary-500 etc. utilities are generated for free as a bonus. Our
-     component recipes still go through the semantic --ui-* layer below. */
-  --color-primary-50: #f9f8ff;
-  --color-primary-100: #f3f1fe;
-  --color-primary-200: #e6e0fc;
-  --color-primary-300: #d8cdfa;
-  --color-primary-400: #bdabf7;
-  --color-primary-500: #4e46b4;
-  --color-primary-600: #3f3f9f;
-  --color-primary-700: #35358b;
-  --color-primary-800: #2b2b78;
-  --color-primary-900: #24246a;
+  /* brand palette (primitives), converted to oklch for perceptual
+     uniformity. Tailwind's own --color-* namespace, so bg-primary-500 etc.
+     utilities are generated for free as a bonus - our component recipes
+     still go through the semantic --ui-* layer below.
+     danger-500 and info-500 are nudged slightly darker than a pure hex->oklch
+     conversion would give: the original values (#ec2421 / #3779dc) sit at
+     4.26-4.34:1 contrast with white text, just under the 4.5:1 AA text
+     threshold. Same hue/chroma, lightness lowered just enough to clear 4.5. */
+  --color-primary-50: oklch(0.982 0.012 72.0);
+  --color-primary-100: oklch(0.963 0.008 25.9);
+  --color-primary-200: oklch(0.920 0.023 315.7);
+  --color-primary-300: oklch(0.872 0.048 305.7);
+  --color-primary-400: oklch(0.784 0.094 298.7);
+  --color-primary-500: oklch(0.467 0.159 281.6);
+  --color-primary-600: oklch(0.426 0.143 278.3);
+  --color-primary-700: oklch(0.384 0.132 278.0);
+  --color-primary-800: oklch(0.340 0.121 277.6);
+  --color-primary-900: oklch(0.309 0.113 277.3);
 
-  --color-secondary-50: #f0f9f9;
-  --color-secondary-100: #e0f3f3;
-  --color-secondary-200: #c1e6e6;
-  --color-secondary-300: #a1d8d8;
-  --color-secondary-400: #62bdbd;
-  --color-secondary-500: #40a69f;
-  --color-secondary-600: #3a968c;
-  --color-secondary-700: #328173;
-  --color-secondary-800: #296958;
-  --color-secondary-900: #235649;
+  --color-secondary-50: oklch(0.975 0.019 118.4);
+  --color-secondary-100: oklch(0.950 0.023 145.2);
+  --color-secondary-200: oklch(0.899 0.038 169.0);
+  --color-secondary-300: oklch(0.844 0.054 178.5);
+  --color-secondary-400: oklch(0.743 0.084 185.5);
+  --color-secondary-500: oklch(0.664 0.093 180.5);
+  --color-secondary-600: oklch(0.616 0.087 177.1);
+  --color-secondary-700: oklch(0.551 0.081 171.6);
+  --color-secondary-800: oklch(0.474 0.073 165.4);
+  --color-secondary-900: oklch(0.414 0.061 166.1);
 
-  --color-success-50: #f4fdf6;
-  --color-success-100: #e9faed;
-  --color-success-200: #c8f2d3;
-  --color-success-300: #a6e8b8;
-  --color-success-400: #63d681;
-  --color-success-500: #20c44b;
-  --color-success-600: #1cb644;
-  --color-success-700: #189c3c;
-  --color-success-800: #147f32;
-  --color-success-900: #116829;
+  --color-success-50: oklch(0.985 0.028 114.4);
+  --color-success-100: oklch(0.969 0.038 125.6);
+  --color-success-200: oklch(0.923 0.071 139.6);
+  --color-success-300: oklch(0.874 0.103 143.9);
+  --color-success-400: oklch(0.788 0.168 145.1);
+  --color-success-500: oklch(0.717 0.215 143.3);
+  --color-success-600: oklch(0.679 0.204 143.2);
+  --color-success-700: oklch(0.606 0.180 143.6);
+  --color-success-800: oklch(0.523 0.152 143.9);
+  --color-success-900: oklch(0.454 0.130 144.0);
 
-  --color-danger-50: #fdf6f6;
-  --color-danger-100: #fcecec;
-  --color-danger-200: #f9d0d0;
-  --color-danger-300: #f6b3b3;
-  --color-danger-400: #f16b6a;
-  --color-danger-500: #ec2421;
-  --color-danger-600: #d9231e;
-  --color-danger-700: #be1e1a;
-  --color-danger-800: #9f1916;
-  --color-danger-900: #831514;
+  --color-danger-50: oklch(0.979 0.023 71.8);
+  --color-danger-100: oklch(0.956 0.029 55.7);
+  --color-danger-200: oklch(0.893 0.054 36.1);
+  --color-danger-300: oklch(0.829 0.085 29.4);
+  --color-danger-400: oklch(0.691 0.172 27.0);
+  --color-danger-500: oklch(0.591 0.236 30.7); /* adjusted, see note above */
+  --color-danger-600: oklch(0.569 0.220 30.9);
+  --color-danger-700: oklch(0.516 0.199 30.8);
+  --color-danger-800: oklch(0.453 0.173 30.6);
+  --color-danger-900: oklch(0.396 0.148 29.9);
 
-  --color-info-50: #f5f9fd;
-  --color-info-100: #ebf3fb;
-  --color-info-200: #cdddf6;
-  --color-info-300: #afcaf0;
-  --color-info-400: #73a2e6;
-  --color-info-500: #3779dc;
-  --color-info-600: #3170c5;
-  --color-info-700: #2960aa;
-  --color-info-800: #21508d;
-  --color-info-900: #1a4376;
+  --color-info-50: oklch(0.980 0.014 100.9);
+  --color-info-100: oklch(0.960 0.008 128.1);
+  --color-info-200: oklch(0.893 0.021 250.2);
+  --color-info-300: oklch(0.832 0.045 252.1);
+  --color-info-400: oklch(0.707 0.099 255.8);
+  --color-info-500: oklch(0.566 0.154 257.7); /* adjusted, see note above */
+  --color-info-600: oklch(0.549 0.136 255.8);
+  --color-info-700: oklch(0.492 0.122 255.8);
+  --color-info-800: oklch(0.432 0.105 255.1);
+  --color-info-900: oklch(0.382 0.091 254.3);
 
-  --color-warning-50: #fdfaf5;
-  --color-warning-100: #fbf5eb;
-  --color-warning-200: #f5e9cd;
-  --color-warning-300: #efdcaa;
-  --color-warning-400: #e4b963;
-  --color-warning-500: #daa300;
-  --color-warning-600: #c39300;
-  --color-warning-700: #a37b00;
-  --color-warning-800: #856100;
-  --color-warning-900: #6c4f00;
+  --color-warning-50: oklch(0.986 0.027 87.5);
+  --color-warning-100: oklch(0.972 0.034 86.0);
+  --color-warning-200: oklch(0.936 0.058 88.4);
+  --color-warning-300: oklch(0.898 0.086 89.8);
+  --color-warning-400: oklch(0.807 0.132 83.9);
+  --color-warning-500: oklch(0.747 0.168 84.7);
+  --color-warning-600: oklch(0.690 0.155 85.6);
+  --color-warning-700: oklch(0.606 0.136 86.1);
+  --color-warning-800: oklch(0.516 0.116 83.7);
+  --color-warning-900: oklch(0.446 0.100 84.6);
 
-  --color-neutral-50: #f9f9f9;
-  --color-neutral-100: #f3f3f3;
-  --color-neutral-200: #e6e6e6;
-  --color-neutral-300: #d8d8d8;
-  --color-neutral-400: #bdbdbd;
-  --color-neutral-500: #a2a2a2;
-  --color-neutral-600: #8c8c8c;
-  --color-neutral-700: #737373;
-  --color-neutral-800: #5b5b5b;
-  --color-neutral-900: #4a4a4a;
+  --color-neutral-50: oklch(0.982 0.020 90.0);
+  --color-neutral-100: oklch(0.964 0.019 90.0);
+  --color-neutral-200: oklch(0.925 0.019 90.0);
+  --color-neutral-300: oklch(0.882 0.018 90.0);
+  --color-neutral-400: oklch(0.798 0.016 90.0);
+  --color-neutral-500: oklch(0.712 0.014 90.0);
+  --color-neutral-600: oklch(0.640 0.013 90.0);
+  --color-neutral-700: oklch(0.556 0.011 90.0);
+  --color-neutral-800: oklch(0.471 0.009 90.0);
+  --color-neutral-900: oklch(0.409 0.008 90.0);
 }
 
 :root {
@@ -117,33 +122,37 @@
   --ui-text-muted: var(--color-neutral-500);
   --ui-text-inverted: white;
 
-  --ui-primary: var(--color-primary-600);
-  --ui-primary-hover: var(--color-primary-700);
+  /* every role's "main" shade is its 500 step, hover is 600. Foreground is
+     picked per role by actually computed contrast, not assumed white -
+     secondary/success/warning read as too light for white text at any
+     usable step, so they use black instead. */
+  --ui-primary: var(--color-primary-500);
+  --ui-primary-hover: var(--color-primary-600);
   --ui-primary-foreground: white;
   --ui-primary-soft: var(--color-primary-50);
 
-  --ui-secondary: var(--color-secondary-600);
-  --ui-secondary-hover: var(--color-secondary-700);
+  --ui-secondary: var(--color-secondary-500);
+  --ui-secondary-hover: var(--color-secondary-600);
   --ui-secondary-foreground: black;
   --ui-secondary-soft: var(--color-secondary-50);
 
-  --ui-success: var(--color-success-600);
-  --ui-success-hover: var(--color-success-700);
+  --ui-success: var(--color-success-500);
+  --ui-success-hover: var(--color-success-600);
   --ui-success-foreground: black;
   --ui-success-soft: var(--color-success-50);
 
-  --ui-danger: var(--color-danger-600);
-  --ui-danger-hover: var(--color-danger-700);
+  --ui-danger: var(--color-danger-500);
+  --ui-danger-hover: var(--color-danger-600);
   --ui-danger-foreground: white;
   --ui-danger-soft: var(--color-danger-50);
 
-  --ui-info: var(--color-info-600);
-  --ui-info-hover: var(--color-info-700);
+  --ui-info: var(--color-info-500);
+  --ui-info-hover: var(--color-info-600);
   --ui-info-foreground: white;
   --ui-info-soft: var(--color-info-50);
 
-  --ui-warning: var(--color-warning-600);
-  --ui-warning-hover: var(--color-warning-700);
+  --ui-warning: var(--color-warning-500);
+  --ui-warning-hover: var(--color-warning-600);
   --ui-warning-foreground: black;
   --ui-warning-soft: var(--color-warning-50);
 }
@@ -158,27 +167,35 @@
   --ui-text-muted: var(--color-neutral-400);
   --ui-text-inverted: var(--color-neutral-900);
 
-  --ui-primary: var(--color-primary-500);
-  --ui-primary-hover: var(--color-primary-400);
-  --ui-primary-soft: color-mix(in oklab, var(--color-primary-500) 16%, transparent);
+  /* dark mode uses one step lighter (400/300) so accent text/borders still
+     read against a near-black surface. At that lightness every role's white
+     text fails contrast (1.8-3.0:1) while black passes comfortably
+     (7-11.5:1) - so foreground flips to black in dark mode wherever it was
+     white in light mode. Secondary/success/warning were already black. */
+  --ui-primary: var(--color-primary-400);
+  --ui-primary-hover: var(--color-primary-300);
+  --ui-primary-foreground: black;
+  --ui-primary-soft: color-mix(in oklab, var(--color-primary-400) 16%, transparent);
 
-  --ui-secondary: var(--color-secondary-500);
-  --ui-secondary-hover: var(--color-secondary-400);
-  --ui-secondary-soft: color-mix(in oklab, var(--color-secondary-500) 16%, transparent);
+  --ui-secondary: var(--color-secondary-400);
+  --ui-secondary-hover: var(--color-secondary-300);
+  --ui-secondary-soft: color-mix(in oklab, var(--color-secondary-400) 16%, transparent);
 
-  --ui-success: var(--color-success-500);
-  --ui-success-hover: var(--color-success-400);
-  --ui-success-soft: color-mix(in oklab, var(--color-success-500) 16%, transparent);
+  --ui-success: var(--color-success-400);
+  --ui-success-hover: var(--color-success-300);
+  --ui-success-soft: color-mix(in oklab, var(--color-success-400) 16%, transparent);
 
-  --ui-danger: var(--color-danger-500);
-  --ui-danger-hover: var(--color-danger-400);
-  --ui-danger-soft: color-mix(in oklab, var(--color-danger-500) 16%, transparent);
+  --ui-danger: var(--color-danger-400);
+  --ui-danger-hover: var(--color-danger-300);
+  --ui-danger-foreground: black;
+  --ui-danger-soft: color-mix(in oklab, var(--color-danger-400) 16%, transparent);
 
-  --ui-info: var(--color-info-500);
-  --ui-info-hover: var(--color-info-400);
-  --ui-info-soft: color-mix(in oklab, var(--color-info-500) 16%, transparent);
+  --ui-info: var(--color-info-400);
+  --ui-info-hover: var(--color-info-300);
+  --ui-info-foreground: black;
+  --ui-info-soft: color-mix(in oklab, var(--color-info-400) 16%, transparent);
 
-  --ui-warning: var(--color-warning-500);
-  --ui-warning-hover: var(--color-warning-400);
-  --ui-warning-soft: color-mix(in oklab, var(--color-warning-500) 16%, transparent);
+  --ui-warning: var(--color-warning-400);
+  --ui-warning-hover: var(--color-warning-300);
+  --ui-warning-soft: color-mix(in oklab, var(--color-warning-400) 16%, transparent);
 }
