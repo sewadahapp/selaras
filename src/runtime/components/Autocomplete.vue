@@ -13,7 +13,6 @@ defineProps<{
   labelKey?: string
   modelValue?: string | string[]
   multiple?: boolean
-  searchable?: boolean
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
   displayMode?: 'comma' | 'chip'
   maxChips?: number
@@ -32,7 +31,8 @@ defineEmits<{
 <template>
   <ComboboxSelectBase
     v-bind="$props"
-    :creatable="false"
+    :creatable="true"
+    :searchable="true"
     @update:model-value="(value) => $emit('update:modelValue', value)"
   >
     <template v-for="(_, name) in $slots" #[name]="slotProps">
