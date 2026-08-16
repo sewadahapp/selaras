@@ -27,6 +27,32 @@ Outline
 Ghost
 ::
 
+### Colors
+
+::s-button{color="primary"}
+Primary
+::
+
+::s-button{color="secondary"}
+Secondary
+::
+
+::s-button{color="success"}
+Success
+::
+
+::s-button{color="danger"}
+Danger
+::
+
+::s-button{color="info"}
+Info
+::
+
+::s-button{color="warning"}
+Warning
+::
+
 ### Custom `:ui`
 
 Every slot can be overridden without fighting the defaults — the override is
@@ -40,7 +66,7 @@ tailwind-merge'd, so conflicting utilities resolve instead of both applying.
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `color` | `'primary' \| 'neutral' \| 'danger'` | `primary` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `solid` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `block` | `boolean` | `false` |

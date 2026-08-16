@@ -31,8 +31,20 @@ function showToast() {
       <SButton variant="ghost">
         Ghost
       </SButton>
+      <SButton color="secondary">
+        Secondary
+      </SButton>
+      <SButton color="success">
+        Success
+      </SButton>
       <SButton color="danger">
         Danger
+      </SButton>
+      <SButton color="info">
+        Info
+      </SButton>
+      <SButton color="warning">
+        Warning
       </SButton>
       <SButton disabled>
         Disabled
