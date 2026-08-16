@@ -8,6 +8,7 @@ const nav = [
   { label: 'Modal', slug: 'modal' },
   { label: 'Toast', slug: 'toast' },
   { label: 'Select', slug: 'select' },
+  { label: 'Autocomplete', slug: 'autocomplete' },
   { label: 'Checkbox', slug: 'checkbox' },
   { label: 'Radio Group', slug: 'radio-group' },
   { label: 'Switch', slug: 'switch' },

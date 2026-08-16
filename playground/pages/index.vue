@@ -10,6 +10,23 @@ const { add: addToast } = useToast()
 function showToast() {
   addToast({ title: 'Saved', description: 'Your changes have been saved.' })
 }
+
+const fruitItems = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+  { label: 'Cherry', value: 'cherry', disabled: true },
+  { label: 'Date', value: 'date' },
+  { label: 'Elderberry', value: 'elderberry' },
+]
+
+const multiCommaValue = ref(['apple', 'banana'])
+const multiChipValue = ref(['apple', 'banana', 'cherry', 'date', 'elderberry'])
+const searchableValue = ref('')
+const autocompleteValue = ref('')
+const autocompleteMultiValue = ref<string[]>([])
+
+const manyItems = Array.from({ length: 5000 }, (_, i) => ({ label: `Item ${i + 1}`, value: `item-${i + 1}` }))
+const virtualizedValue = ref('')
 </script>
 
 <template>
@@ -129,6 +146,59 @@ function showToast() {
       <SSwitch v-model="switchValue" label="Notifications" />
 
       <STextarea placeholder="Write something..." class="max-w-sm" />
+    </div>
+
+    <div class="flex flex-wrap items-start gap-4">
+      <SSelect
+        v-model="multiCommaValue"
+        multiple
+        class="w-48"
+        placeholder="Comma multi"
+        :items="fruitItems"
+      />
+
+      <SSelect
+        v-model="multiChipValue"
+        multiple
+        display-mode="chip"
+        :max-chips="2"
+        class="w-64"
+        placeholder="Chip multi"
+        :items="fruitItems"
+      />
+
+      <SSelect
+        v-model="searchableValue"
+        searchable
+        class="w-48"
+        placeholder="Searchable"
+        :items="fruitItems"
+      />
+
+      <SAutocomplete
+        v-model="autocompleteValue"
+        class="w-48"
+        placeholder="Type anything"
+        :items="fruitItems"
+      />
+
+      <SAutocomplete
+        v-model="autocompleteMultiValue"
+        multiple
+        display-mode="chip"
+        class="w-64"
+        placeholder="Multi + new tags"
+        :items="fruitItems"
+      />
+
+      <SSelect
+        v-model="virtualizedValue"
+        searchable
+        virtualize
+        class="w-48"
+        placeholder="5000 items"
+        :items="manyItems"
+      />
     </div>
   </div>
 </template>

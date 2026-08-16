@@ -1,0 +1,52 @@
+---
+title: Autocomplete
+description: A free-text input with suggestions - the typed value doesn't have to match an option, built on the same Combobox foundation as Select.
+---
+
+## Usage
+
+See it live on the [home page](/). Unlike [Select](/components/select), whatever
+the user types can become the value even if it doesn't match a suggestion -
+picking a suggestion is a shortcut, not a requirement.
+
+```vue
+<script setup lang="ts">
+const value = ref('')
+
+const fruitItems = [
+  { label: 'Apple', value: 'apple' },
+  { label: 'Banana', value: 'banana' },
+]
+</script>
+
+<template>
+  <SAutocomplete v-model="value" placeholder="Type anything" :items="fruitItems" />
+</template>
+```
+
+The input itself is always the trigger - typing works immediately, with no
+separate "open" step, since there's no equivalent of Select's
+`searchable: false` mode here.
+
+### Multiple, with new tags
+
+`multiple` renders selected values as removable chips (`displayMode="chip"`)
+and lets the user create entries that aren't in `items` by pressing Enter -
+each becomes its own chip.
+
+```vue-html
+<SAutocomplete v-model="tags" multiple display-mode="chip" :items="fruitItems" />
+```
+
+Everything else - `virtualize`, `loading`, grouped `items`, `valueKey`/`labelKey`,
+chip overflow with a "+N more" tooltip - works identically to
+[Select](/components/select#props), since both share the same underlying
+implementation and differ only in whether unmatched typed text is accepted.
+
+## Props
+
+Same as [Select](/components/select#props), minus `searchable` (always on).
+
+## Slots
+
+Same as [Select](/components/select#slots).
