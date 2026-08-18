@@ -13,6 +13,7 @@ const nav = [
   { label: 'Radio Group', slug: 'radio-group' },
   { label: 'Switch', slug: 'switch' },
   { label: 'Textarea', slug: 'textarea' },
+  { label: 'Form Field', slug: 'form-field' },
 ]
 </script>
 
@@ -39,7 +40,6 @@ const nav = [
         <slot />
       </main>
     </div>
-    <SToaster />
   </div>
 </template>
 
