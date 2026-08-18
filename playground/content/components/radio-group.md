@@ -5,7 +5,8 @@ description: An items-driven radio group built on Reka UI's RadioGroup primitive
 
 ## Usage
 
-See it live on the [home page](/).
+::component-example{name="radio-group-basic"}
+::
 
 ```vue
 <script setup lang="ts">

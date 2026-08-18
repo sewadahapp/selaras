@@ -5,7 +5,8 @@ description: A short hint shown on hover or focus, built on Reka UI's Tooltip pr
 
 ## Usage
 
-See it live on the [home page](/) (hover the "Hover me" button).
+::component-example{name="tooltip-basic"}
+::
 
 ```vue
 <template>

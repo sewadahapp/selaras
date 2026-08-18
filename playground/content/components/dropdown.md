@@ -5,7 +5,8 @@ description: A menu of grouped actions built on Reka UI's DropdownMenu primitive
 
 ## Usage
 
-See it live on the [home page](/).
+::component-example{name="dropdown-basic"}
+::
 
 ```vue
 <template>

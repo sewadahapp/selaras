@@ -6,7 +6,10 @@ description: A dialog overlay built on Reka UI's Dialog primitive.
 ## Usage
 
 Modal visibility is controlled with `v-model`, so it needs a ref from the
-page it's used on — see it live on the [home page](/).
+page it's used on.
+
+::component-example{name="modal-basic"}
+::
 
 ```vue
 <script setup lang="ts">

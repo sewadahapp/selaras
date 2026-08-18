@@ -5,7 +5,8 @@ description: An items-driven tab list built on Reka UI's Tabs primitive.
 
 ## Usage
 
-See it live on the [home page](/).
+::component-example{name="tabs-basic"}
+::
 
 ```vue
 <script setup lang="ts">

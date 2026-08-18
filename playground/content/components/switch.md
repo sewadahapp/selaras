@@ -5,7 +5,8 @@ description: A toggle switch with an optional label, built on Reka UI's Switch p
 
 ## Usage
 
-See it live on the [home page](/).
+::component-example{name="switch-basic"}
+::
 
 ```vue
 <script setup lang="ts">

@@ -5,9 +5,12 @@ description: A free-text input with suggestions - the typed value doesn't have t
 
 ## Usage
 
-See it live on the [home page](/). Unlike [Select](/components/select), whatever
-the user types can become the value even if it doesn't match a suggestion -
-picking a suggestion is a shortcut, not a requirement.
+Unlike [Select](/components/select), whatever the user types can become the
+value even if it doesn't match a suggestion - picking a suggestion is a
+shortcut, not a requirement.
+
+::component-example{name="autocomplete-basic"}
+::
 
 ```vue
 <script setup lang="ts">
@@ -33,6 +36,9 @@ separate "open" step, since there's no equivalent of Select's
 `multiple` renders selected values as removable chips (`displayMode="chip"`)
 and lets the user create entries that aren't in `items` by pressing Enter -
 each becomes its own chip.
+
+::component-example{name="autocomplete-multiple"}
+::
 
 ```vue-html
 <SAutocomplete v-model="tags" multiple display-mode="chip" :items="fruitItems" />
