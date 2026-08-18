@@ -24,11 +24,15 @@ const props = defineProps<{
   disabled?: boolean
   size?: SelectVariants['size']
   invalid?: boolean
+  searchTerm?: string
+  resetSearchTermOnBlur?: boolean
+  resetSearchTermOnSelect?: boolean
   ui?: UiProp<SelectSlots>
 }>()
 
 const emit = defineEmits<{
   'update:modelValue': [value: string | string[] | undefined]
+  'update:searchTerm': [value: string]
 }>()
 
 const forwarded = useForwardPropsEmits(props, emit)

@@ -18,7 +18,7 @@ import {
   ComboboxViewport,
   ComboboxVirtualizer,
 } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
 import { selectTheme } from '../theme/select'
@@ -44,14 +44,20 @@ const props = withDefaults(defineProps<{
   size?: SelectVariants['size']
   invalid?: boolean
   creatable?: boolean
+  searchTerm?: string
+  resetSearchTermOnBlur?: boolean
+  resetSearchTermOnSelect?: boolean
   ui?: UiProp<SelectSlots>
 }>(), {
   displayMode: 'comma',
   maxChips: 3,
+  resetSearchTermOnBlur: true,
+  resetSearchTermOnSelect: true,
 })
 
 const emit = defineEmits<{
   'update:modelValue': [value: string | string[] | undefined]
+  'update:searchTerm': [value: string]
 }>()
 
 const {
@@ -60,12 +66,20 @@ const {
   visibleOptions,
   overflowOptions,
   commaText,
+  resolveOption,
   toOption,
   removeValue,
   commitCreatableText,
 } = useComboboxSelect(props, emit, { creatable: props.creatable })
 
-const searchText = ref('')
+const internalSearchText = ref(props.searchTerm ?? '')
+const searchText = computed({
+  get: () => props.searchTerm ?? internalSearchText.value,
+  set: (value: string) => {
+    internalSearchText.value = value
+    emit('update:searchTerm', value)
+  },
+})
 
 function onSearchKeydown(event: KeyboardEvent) {
   if (event.key !== 'Enter')
@@ -79,14 +93,18 @@ function onSearchBlur() {
     searchText.value = ''
 }
 
-// Autocomplete's input is the trigger itself, so single-select mode needs the
-// input to visibly show the current value when not being actively edited -
-// multi-select instead clears after each commit and shows chips separately.
-if (props.creatable) {
-  watch(() => selectedOptions.value[0]?.label, (label) => {
-    if (!props.multiple)
-      searchText.value = label ?? ''
-  }, { immediate: true })
+// Reka resets the search input's text whenever an item is selected or the
+// popover closes (resetSearchTermOnSelect/resetSearchTermOnBlur) - but
+// without a displayValue, it falls back to echoing the raw selected VALUE
+// into the input, which is wrong for a plain filter field. Select's popover
+// search is pure filtering (the trigger shows the selection separately), so
+// it always resets to empty. Autocomplete's input IS the trigger, so
+// single-select should echo the selected label; multi-select clears after
+// each commit and shows chips separately instead.
+function displayValue(value: unknown) {
+  if (!props.creatable || props.multiple || !value || Array.isArray(value))
+    return ''
+  return resolveOption(value as string).label
 }
 
 const virtualizeConfig = computed(() => {
@@ -143,6 +161,8 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
     :disabled="disabled"
     :name="name ?? field?.name"
     :ignore-filter="!searchable"
+    :reset-search-term-on-blur="resetSearchTermOnBlur"
+    :reset-search-term-on-select="resetSearchTermOnSelect"
     @update:model-value="(value) => emit('update:modelValue', value as string | string[] | undefined)"
   >
     <ComboboxAnchor>
@@ -173,6 +193,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         </template>
         <ComboboxInput
           v-model="searchText"
+          :display-value="displayValue"
           :placeholder="placeholder"
           v-bind="searchInputProps"
           @keydown="onSearchKeydown"
@@ -231,6 +252,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <Icon name="lucide:search" class="size-4 text-[var(--ui-text-muted)]" />
           <ComboboxInput
             v-model="searchText"
+            :display-value="displayValue"
             placeholder="Search..."
             v-bind="searchInputProps"
             @keydown="onSearchKeydown"

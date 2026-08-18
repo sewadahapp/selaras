@@ -101,6 +101,22 @@ const items = [
 Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
 `aria-describedby` wired up automatically.
 
+### Search text
+
+The popover's search field is a pure filter, not a display of the current
+selection - it always resets to empty when you pick an option or close the
+popover. Bind `v-model:search-term` if you need to read or control the typed
+text yourself (e.g. to drive a remote search):
+
+```vue-html
+<SSelect v-model="fruit" v-model:search-term="query" searchable :items="fruitItems" />
+```
+
+`resetSearchTermOnBlur`/`resetSearchTermOnSelect` (both default `true`,
+forwarded from Reka UI's `ComboboxRoot`) control whether it resets at all -
+set either to `false` if you're driving the field yourself and don't want it
+cleared out from under you.
+
 ## Props
 
 | Prop | Type | Default |
@@ -112,6 +128,9 @@ Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
 | `modelValue` | `string \| string[]` | - |
 | `multiple` | `boolean` | `false` |
 | `searchable` | `boolean` | `false` |
+| `searchTerm` | `string` | - |
+| `resetSearchTermOnBlur` | `boolean` | `true` |
+| `resetSearchTermOnSelect` | `boolean` | `true` |
 | `virtualize` | `boolean \| { estimateSize?: number; overscan?: number }` | `false` |
 | `displayMode` | `'comma' \| 'chip'` | `'comma'` |
 | `maxChips` | `number` | `3` |

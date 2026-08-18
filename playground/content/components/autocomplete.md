@@ -49,6 +49,15 @@ chip overflow with a "+N more" tooltip - works identically to
 [Select](/components/select#props), since both share the same underlying
 implementation and differ only in whether unmatched typed text is accepted.
 
+### Search text
+
+Since the input here IS the trigger, its text doubles as both the filter and
+the display of the current value: single-select shows the picked option's
+label after you choose one, multi-select clears after each commit (the chips
+show the selection instead). Same `v-model:search-term` and
+`resetSearchTermOnBlur`/`resetSearchTermOnSelect` escape hatches as
+[Select](/components/select#search-text) apply here too.
+
 ## Props
 
 Same as [Select](/components/select#props), minus `searchable` (always on).
