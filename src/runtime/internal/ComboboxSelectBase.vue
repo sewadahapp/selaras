@@ -200,7 +200,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           @blur="onSearchBlur"
         />
         <STooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
-          <span v-bind="chipOverflowProps" @click.stop>+{{ overflowOptions.length }} more</span>
+          <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
         </STooltip>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
       </div>
@@ -229,7 +229,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             {{ commaText || placeholder }}
           </span>
           <STooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
-            <span v-bind="chipOverflowProps" @click.stop>+{{ overflowOptions.length }} more</span>
+            <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
           </STooltip>
           <span v-if="!selectedOptions.length && displayMode === 'chip'" v-bind="valueProps" data-placeholder="">
             {{ placeholder }}
