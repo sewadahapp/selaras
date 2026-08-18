@@ -5,7 +5,8 @@ description: A checkbox with an optional label, built on Reka UI's Checkbox prim
 
 ## Usage
 
-See it live on the [home page](/).
+::component-example{name="checkbox-basic"}
+::
 
 ```vue
 <script setup lang="ts">
