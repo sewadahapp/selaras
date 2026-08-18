@@ -1,4 +1,4 @@
-import { addComponentsDir, addImportsDir, addVitePlugin, createResolver, defineNuxtModule, installModule } from '@nuxt/kit'
+import { addComponentsDir, addImportsDir, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import tailwindcss from '@tailwindcss/vite'
 
 export interface ModuleOptions {
@@ -17,13 +17,14 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     prefix: 'S',
   },
-  async setup(options, nuxt) {
+  moduleDependencies: {
+    '@nuxt/icon': {},
+  },
+  setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
     nuxt.options.css.push(resolver.resolve('./runtime/theme.css'))
     addVitePlugin(tailwindcss())
-
-    await installModule('@nuxt/icon')
 
     addComponentsDir({
       path: resolver.resolve('./runtime/components'),
