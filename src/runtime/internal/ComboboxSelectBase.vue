@@ -224,7 +224,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
     </ComboboxAnchor>
 
     <ComboboxPortal>
-      <ComboboxContent v-bind="contentProps">
+      <ComboboxContent position="popper" :side-offset="4" v-bind="contentProps">
         <slot name="header" />
 
         <div v-if="searchable && !creatable" v-bind="searchWrapperProps">
