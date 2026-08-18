@@ -29,6 +29,9 @@ const fruitItems = [
 Clicking anywhere on the trigger opens it - not just an icon. When `searchable`
 is set, the filter input lives inside the popover, not in the trigger itself.
 
+::component-example{name="select-searchable"}
+::
+
 ```vue-html
 <SSelect v-model="fruit" searchable placeholder="Pick a fruit" :items="fruitItems" />
 ```
@@ -41,6 +44,9 @@ text, `chip` renders removable pills. Both modes truncate at `maxChips`
 (default 3) and show a "+N more" summary - hovering it reveals the rest in a
 tooltip.
 
+::component-example{name="select-multiple"}
+::
+
 ```vue-html
 <SSelect v-model="fruits" multiple display-mode="chip" :max-chips="2" :items="fruitItems" />
 ```
@@ -50,6 +56,9 @@ tooltip.
 For large option lists, `virtualize` renders only the visible rows (backed by
 `@tanstack/vue-virtual` via Reka UI's `ComboboxVirtualizer`). Pass `true` for
 defaults, or an object to tune `estimateSize`/`overscan`.
+
+::component-example{name="select-virtualize"}
+::
 
 ```vue-html
 <SSelect v-model="value" searchable virtualize :items="fiveThousandItems" />
@@ -63,6 +72,9 @@ limitation) - group headers won't render while virtualized.
 `items` doesn't have to be `{ label, value }` - point `labelKey`/`valueKey` at
 whatever fields your data already has:
 
+::component-example{name="select-custom-objects"}
+::
+
 ```vue-html
 <SSelect
   v-model="userId"
@@ -75,6 +87,9 @@ whatever fields your data already has:
 ### Grouped options
 
 Nest options under `{ label, items }` entries:
+
+::component-example{name="select-grouped"}
+::
 
 ```js
 const items = [
