@@ -30,6 +30,9 @@ export default defineNuxtModule<ModuleOptions>({
       path: resolver.resolve('./runtime/components'),
       prefix: options.prefix,
       pathPrefix: false,
+      // SColumn/SColumnGroup are plain .ts files (never render real DOM), not
+      // .vue SFCs - addComponentsDir only scans .vue by default.
+      extensions: ['vue', 'ts'],
     })
 
     addImportsDir(resolver.resolve('./runtime/composables'))
