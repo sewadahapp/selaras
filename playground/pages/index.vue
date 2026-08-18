@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 const activeTab = ref('one')
 const modalOpen = ref(false)
 const selectValue = ref('apple')
@@ -27,6 +27,11 @@ const autocompleteMultiValue = ref<string[]>([])
 
 const manyItems = Array.from({ length: 5000 }, (_, i) => ({ label: `Item ${i + 1}`, value: `item-${i + 1}` }))
 const virtualizedValue = ref('')
+
+const emailValue = ref('')
+const nameValue = ref('')
+const planValue = ref('')
+const termsValue = ref(false)
 </script>
 
 <template>
@@ -200,5 +205,27 @@ const virtualizedValue = ref('')
         :items="manyItems"
       />
     </div>
+
+    <div class="flex flex-wrap items-start gap-6">
+      <SFormField label="Email" name="email" hint="We'll never share this." class="w-56">
+        <SInput v-model="emailValue" type="email" placeholder="you@example.com" />
+      </SFormField>
+
+      <SFormField label="Name" required error="Name is required" class="w-56">
+        <SInput v-model="nameValue" placeholder="Jane Doe" />
+      </SFormField>
+
+      <SFormField label="Plan" name="plan" class="w-48">
+        <SSelect v-model="planValue" placeholder="Pick a plan" :items="fruitItems" />
+      </SFormField>
+
+      <SFormField error="You must accept the terms">
+        <SCheckbox v-model="termsValue" label="Accept terms" />
+      </SFormField>
+    </div>
   </div>
+</template> -->
+
+<template>
+  <div>hello world</div>
 </template>
