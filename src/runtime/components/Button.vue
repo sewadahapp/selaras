@@ -5,9 +5,11 @@ import type { UiProp } from '../utils/ui'
 import { Primitive } from 'reka-ui'
 import { computed } from 'vue'
 import { buttonTheme } from '../theme/button'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 type ButtonVariants = VariantProps<typeof buttonTheme>
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   as?: string
@@ -33,7 +35,7 @@ const ui = computed(() => theme.value({
   disabled: props.disabled,
 }))
 
-const rootProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
+const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>

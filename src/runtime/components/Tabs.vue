@@ -4,13 +4,15 @@ import type { UiProp } from '../utils/ui'
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { tabsTheme } from '../theme/tabs'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 export interface TabItem {
   label: string
   value?: string
   disabled?: boolean
 }
+
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   items: TabItem[]
@@ -25,7 +27,7 @@ defineEmits<{
 const theme = useComponentTheme('tabs', tabsTheme)
 const ui = computed(() => theme.value())
 
-const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))

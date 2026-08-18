@@ -5,13 +5,15 @@ import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { radioGroupTheme } from '../theme/radio-group'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 export interface RadioItem {
   label: string
   value: string
   disabled?: boolean
 }
+
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   id?: string
@@ -36,7 +38,7 @@ const describedBy = computed(() => field?.describedBy.value)
 const theme = useComponentTheme('radioGroup', radioGroupTheme)
 const ui = computed(() => theme.value({ invalid: radioGroupInvalid.value }))
 
-const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const itemWrapperProps = computed(() => resolveSlot(ui.value.itemWrapper, props.ui?.itemWrapper))
 const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
 const indicatorProps = computed(() => resolveSlot(ui.value.indicator, props.ui?.indicator))

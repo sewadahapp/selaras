@@ -2,6 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const selectTheme = tv({
   slots: {
+    root: 'w-full',
     trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
     value: 'flex-1 truncate text-left text-[var(--ui-text)] data-[placeholder]:text-[var(--ui-text-muted)]',
     chip: 'inline-flex items-center gap-1 rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg-elevated)] py-0.5 pl-2 pr-1 text-xs text-[var(--ui-text)]',

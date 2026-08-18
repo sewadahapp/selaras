@@ -4,7 +4,9 @@ import type { UiProp } from '../utils/ui'
 import { computed, useId } from 'vue'
 import { provideFormField } from '../composables/use-form-field'
 import { formFieldTheme } from '../theme/form-field'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   label?: string
@@ -39,7 +41,7 @@ provideFormField({
 const theme = useComponentTheme('formField', formFieldTheme)
 const ui = computed(() => theme.value())
 
-const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 const requiredProps = computed(() => resolveSlot(ui.value.required, props.ui?.required))
 const containerProps = computed(() => resolveSlot(ui.value.container, props.ui?.container))

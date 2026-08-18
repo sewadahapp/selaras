@@ -5,7 +5,9 @@ import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { checkboxTheme } from '../theme/checkbox'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   id?: string
@@ -30,7 +32,7 @@ const describedBy = computed(() => field?.describedBy.value)
 const theme = useComponentTheme('checkbox', checkboxTheme)
 const ui = computed(() => theme.value({ invalid: checkboxInvalid.value }))
 
-const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const boxProps = computed(() => resolveSlot(ui.value.box, props.ui?.box))
 const indicatorProps = computed(() => resolveSlot(ui.value.indicator, props.ui?.indicator))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))

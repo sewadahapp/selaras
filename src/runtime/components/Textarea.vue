@@ -5,9 +5,11 @@ import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { textareaTheme } from '../theme/textarea'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { useComponentTheme, useRootProps } from '../utils/ui'
 
 type TextareaVariants = VariantProps<typeof textareaTheme>
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   id?: string
@@ -40,7 +42,7 @@ const ui = computed(() => theme.value({
   invalid: textareaInvalid.value,
 }))
 
-const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
+const baseProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>

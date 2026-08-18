@@ -22,9 +22,11 @@ import { computed, ref } from 'vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
 import { selectTheme } from '../theme/select'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 type SelectVariants = VariantProps<typeof selectTheme>
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   id?: string
@@ -138,6 +140,7 @@ const describedBy = computed(() => field?.describedBy.value)
 const theme = useComponentTheme('select', selectTheme)
 const ui = computed(() => theme.value({ size: props.size ?? field?.size, invalid: selectInvalid.value }))
 
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const valueProps = computed(() => resolveSlot(ui.value.value, props.ui?.value))
 const chipProps = computed(() => resolveSlot(ui.value.chip, props.ui?.chip))
@@ -163,6 +166,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
     :ignore-filter="!searchable"
     :reset-search-term-on-blur="resetSearchTermOnBlur"
     :reset-search-term-on-select="resetSearchTermOnSelect"
+    v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as string | string[] | undefined)"
   >
     <ComboboxAnchor>

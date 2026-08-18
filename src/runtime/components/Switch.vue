@@ -5,7 +5,9 @@ import { SwitchRoot, SwitchThumb } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { switchTheme } from '../theme/switch'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+
+defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   id?: string
@@ -30,7 +32,7 @@ const describedBy = computed(() => field?.describedBy.value)
 const theme = useComponentTheme('switch', switchTheme)
 const ui = computed(() => theme.value({ invalid: switchInvalid.value }))
 
-const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const trackProps = computed(() => resolveSlot(ui.value.track, props.ui?.track))
 const thumbProps = computed(() => resolveSlot(ui.value.thumb, props.ui?.thumb))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))

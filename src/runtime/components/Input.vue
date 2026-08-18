@@ -5,9 +5,11 @@ import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { inputTheme } from '../theme/input'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 type InputVariants = VariantProps<typeof inputTheme>
+
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   id?: string
@@ -44,7 +46,7 @@ const ui = computed(() => theme.value({
   hasTrailingIcon: !!props.trailingIcon,
 }))
 
-const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
 </script>
 
