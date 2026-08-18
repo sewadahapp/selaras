@@ -42,9 +42,16 @@ is set, the filter input lives inside the popover, not in the trigger itself.
 selected values render in the trigger - `comma` (default) joins labels as
 text, `chip` renders removable pills. Both modes truncate at `maxChips`
 (default 3) and show a "+N more" summary - hovering it reveals the rest in a
-tooltip.
+tooltip, and clicking it still opens the popover like the rest of the trigger.
 
-::component-example{name="select-multiple"}
+::component-example{name="select-multiple-comma"}
+::
+
+```vue-html
+<SSelect v-model="fruits" multiple :max-chips="2" :items="fruitItems" />
+```
+
+::component-example{name="select-multiple-chip"}
 ::
 
 ```vue-html
