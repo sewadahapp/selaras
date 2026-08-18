@@ -27,7 +27,9 @@ const resolvedComponent = computed(() => {
 
 <template>
   <div v-if="resolvedComponent" class="not-prose flex flex-wrap items-center gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] p-6">
-    <component :is="resolvedComponent" />
+    <ClientOnly>
+      <component :is="resolvedComponent" />
+    </ClientOnly>
   </div>
   <div v-else class="text-sm text-[var(--ui-danger)]">
     Example "{{ name }}" not found
