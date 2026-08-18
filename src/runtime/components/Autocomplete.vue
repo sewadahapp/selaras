@@ -3,11 +3,14 @@ import type { VariantProps } from 'tailwind-variants'
 import type { SelectItems } from '../composables/use-combobox-select'
 import type { SelectSlots, selectTheme } from '../theme/select'
 import type { UiProp } from '../utils/ui'
+import { useForwardPropsEmits } from 'reka-ui'
 import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>
 
-defineProps<{
+const props = defineProps<{
+  id?: string
+  name?: string
   items: SelectItems
   valueKey?: string
   labelKey?: string
@@ -20,23 +23,21 @@ defineProps<{
   placeholder?: string
   disabled?: boolean
   size?: SelectVariants['size']
+  invalid?: boolean
   ui?: UiProp<SelectSlots>
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   'update:modelValue': [value: string | string[] | undefined]
 }>()
+
+const forwarded = useForwardPropsEmits(props, emit)
 </script>
 
 <template>
-  <ComboboxSelectBase
-    v-bind="$props"
-    :creatable="true"
-    :searchable="true"
-    @update:model-value="(value) => $emit('update:modelValue', value)"
-  >
-    <template v-for="(_, name) in $slots" #[name]="slotProps">
-      <slot :name="name" v-bind="slotProps ?? {}" />
+  <ComboboxSelectBase v-bind="forwarded" :creatable="true" :searchable="true">
+    <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
+      <slot :name="slotName" v-bind="slotProps ?? {}" />
     </template>
   </ComboboxSelectBase>
 </template>

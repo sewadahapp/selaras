@@ -20,11 +20,17 @@ const choice = ref('one')
 </template>
 ```
 
+Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | - |
+| `name` | `string` | - |
 | `items` | `{ label: string; value: string; disabled?: boolean }[]` | - |
 | `modelValue` | `string` | - |
 | `disabled` | `boolean` | `false` |
+| `invalid` | `boolean` | `false` |
 | `ui` | `Partial<Record<'root' \| 'itemWrapper' \| 'item' \| 'indicator' \| 'label', string \| object>>` | - |

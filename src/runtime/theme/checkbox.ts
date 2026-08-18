@@ -7,6 +7,11 @@ export const checkboxTheme = tv({
     indicator: 'flex items-center justify-center text-[var(--ui-primary-foreground)]',
     label: 'select-none text-sm text-[var(--ui-text)]',
   },
+  variants: {
+    invalid: {
+      true: { box: 'outline outline-2 outline-offset-1 outline-[var(--ui-danger)]' },
+    },
+  },
 })
 
 export type CheckboxSlots = keyof (typeof checkboxTheme)['slots']

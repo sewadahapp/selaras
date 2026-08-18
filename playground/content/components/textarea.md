@@ -8,10 +8,15 @@ description: A multi-line text input, matching Input's border interaction patter
 ::s-textarea{placeholder="Write something..."}
 ::
 
+Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | - |
+| `name` | `string` | - |
 | `modelValue` | `string` | - |
 | `placeholder` | `string` | - |
 | `rows` | `number` | `3` |

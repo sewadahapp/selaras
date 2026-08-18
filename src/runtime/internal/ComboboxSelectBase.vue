@@ -20,12 +20,15 @@ import {
 } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
+import { useFormField } from '../composables/use-form-field'
 import { selectTheme } from '../theme/select'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
 type SelectVariants = VariantProps<typeof selectTheme>
 
 const props = withDefaults(defineProps<{
+  id?: string
+  name?: string
   items: SelectItems
   valueKey?: string
   labelKey?: string
@@ -39,6 +42,7 @@ const props = withDefaults(defineProps<{
   placeholder?: string
   disabled?: boolean
   size?: SelectVariants['size']
+  invalid?: boolean
   creatable?: boolean
   ui?: UiProp<SelectSlots>
 }>(), {
@@ -107,8 +111,14 @@ function groupOptions(group: { items: SelectOption[] }) {
   return group.items.map(toOption)
 }
 
+const field = useFormField()
+
+const selectId = computed(() => props.id ?? field?.id)
+const selectInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
+const describedBy = computed(() => field?.describedBy.value)
+
 const theme = useComponentTheme('select', selectTheme)
-const ui = computed(() => theme.value({ size: props.size }))
+const ui = computed(() => theme.value({ size: props.size ?? field?.size, invalid: selectInvalid.value }))
 
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const valueProps = computed(() => resolveSlot(ui.value.value, props.ui?.value))
@@ -131,6 +141,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
     :model-value="modelValue"
     :multiple="multiple"
     :disabled="disabled"
+    :name="name ?? field?.name"
     :ignore-filter="!searchable"
     @update:model-value="(value) => emit('update:modelValue', value as string | string[] | undefined)"
   >
@@ -141,7 +152,13 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         Autocomplete (creatable=true): the input itself IS the trigger, so
         typing is always available without opening anything first.
       -->
-      <div v-if="creatable" v-bind="triggerProps">
+      <div
+        v-if="creatable"
+        :id="selectId"
+        :aria-invalid="selectInvalid || undefined"
+        :aria-describedby="describedBy"
+        v-bind="triggerProps"
+      >
         <template v-if="multiple && displayMode === 'chip'">
           <span
             v-for="option in visibleOptions"
@@ -167,7 +184,13 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
       </div>
 
-      <ComboboxTrigger v-else v-bind="triggerProps">
+      <ComboboxTrigger
+        v-else
+        :id="selectId"
+        :aria-invalid="selectInvalid || undefined"
+        :aria-describedby="describedBy"
+        v-bind="triggerProps"
+      >
         <template v-if="multiple">
           <template v-if="displayMode === 'chip'">
             <span

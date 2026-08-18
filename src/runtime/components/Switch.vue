@@ -3,13 +3,17 @@ import type { SwitchSlots } from '../theme/switch'
 import type { UiProp } from '../utils/ui'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 import { computed } from 'vue'
+import { useFormField } from '../composables/use-form-field'
 import { switchTheme } from '../theme/switch'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
 const props = defineProps<{
+  id?: string
+  name?: string
   modelValue?: boolean
   label?: string
   disabled?: boolean
+  invalid?: boolean
   ui?: UiProp<SwitchSlots>
 }>()
 
@@ -17,8 +21,14 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean]
 }>()
 
+const field = useFormField()
+
+const switchId = computed(() => props.id ?? field?.id)
+const switchInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
+const describedBy = computed(() => field?.describedBy.value)
+
 const theme = useComponentTheme('switch', switchTheme)
-const ui = computed(() => theme.value())
+const ui = computed(() => theme.value({ invalid: switchInvalid.value }))
 
 const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
 const trackProps = computed(() => resolveSlot(ui.value.track, props.ui?.track))
@@ -29,8 +39,12 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 <template>
   <label v-bind="rootProps">
     <SwitchRoot
+      :id="switchId"
       :model-value="modelValue"
+      :name="name ?? field?.name"
       :disabled="disabled"
+      :aria-invalid="switchInvalid || undefined"
+      :aria-describedby="describedBy"
       v-bind="trackProps"
       @update:model-value="(value) => emit('update:modelValue', value)"
     >

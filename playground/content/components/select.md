@@ -5,7 +5,10 @@ description: A select constrained to its options - single or multiple, optionall
 
 ## Usage
 
-See it live on the [home page](/). Values must come from `items` - for free text with suggestions, use [Autocomplete](/components/autocomplete) instead.
+::component-example{name="select-basic"}
+::
+
+Values must come from `items` - for free text with suggestions, use [Autocomplete](/components/autocomplete) instead.
 
 ```vue
 <script setup lang="ts">
@@ -80,10 +83,15 @@ const items = [
 ]
 ```
 
+Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | - |
+| `name` | `string` | - |
 | `items` | `(Option \| { label: string; items: Option[] })[]` | - |
 | `valueKey` / `labelKey` | `string` | `'value'` / `'label'` |
 | `modelValue` | `string \| string[]` | - |
@@ -96,6 +104,7 @@ const items = [
 | `placeholder` | `string` | - |
 | `disabled` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
+| `invalid` | `boolean` | `false` |
 | `ui` | `Partial<Record<SelectSlot, string \| object>>` | - |
 
 ## Slots

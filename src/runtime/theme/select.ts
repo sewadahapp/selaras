@@ -23,6 +23,9 @@ export const selectTheme = tv({
       md: { trigger: 'min-h-10' },
       lg: { trigger: 'min-h-11 text-base' },
     },
+    invalid: {
+      true: { trigger: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)]' },
+    },
   },
   defaultVariants: {
     size: 'md',

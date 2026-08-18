@@ -17,11 +17,17 @@ const notifications = ref(true)
 </template>
 ```
 
+Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | - |
+| `name` | `string` | - |
 | `modelValue` | `boolean` | - |
 | `label` | `string` | - |
 | `disabled` | `boolean` | `false` |
+| `invalid` | `boolean` | `false` |
 | `ui` | `Partial<Record<'root' \| 'track' \| 'thumb' \| 'label', string \| object>>` | - |

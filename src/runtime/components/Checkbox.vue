@@ -3,13 +3,17 @@ import type { CheckboxSlots } from '../theme/checkbox'
 import type { UiProp } from '../utils/ui'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { computed } from 'vue'
+import { useFormField } from '../composables/use-form-field'
 import { checkboxTheme } from '../theme/checkbox'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
 const props = defineProps<{
+  id?: string
+  name?: string
   modelValue?: boolean | 'indeterminate'
   label?: string
   disabled?: boolean
+  invalid?: boolean
   ui?: UiProp<CheckboxSlots>
 }>()
 
@@ -17,8 +21,14 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean | 'indeterminate']
 }>()
 
+const field = useFormField()
+
+const checkboxId = computed(() => props.id ?? field?.id)
+const checkboxInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
+const describedBy = computed(() => field?.describedBy.value)
+
 const theme = useComponentTheme('checkbox', checkboxTheme)
-const ui = computed(() => theme.value())
+const ui = computed(() => theme.value({ invalid: checkboxInvalid.value }))
 
 const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
 const boxProps = computed(() => resolveSlot(ui.value.box, props.ui?.box))
@@ -29,8 +39,12 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 <template>
   <label v-bind="rootProps">
     <CheckboxRoot
+      :id="checkboxId"
       :model-value="modelValue"
+      :name="name ?? field?.name"
       :disabled="disabled"
+      :aria-invalid="checkboxInvalid || undefined"
+      :aria-describedby="describedBy"
       v-bind="boxProps"
       @update:model-value="(value) => emit('update:modelValue', value)"
     >
