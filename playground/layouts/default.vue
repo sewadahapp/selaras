@@ -14,6 +14,7 @@ const nav = [
   { label: 'Switch', slug: 'switch' },
   { label: 'Textarea', slug: 'textarea' },
   { label: 'Form Field', slug: 'form-field' },
+  { label: 'Table', slug: 'table' },
 ]
 </script>
 
