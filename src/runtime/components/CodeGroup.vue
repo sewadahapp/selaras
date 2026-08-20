@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VNode } from 'vue'
-import { Comment, computed, Fragment, ref, Text, useSlots } from 'vue'
+import { cloneVNode, Comment, computed, Fragment, ref, Text, useSlots } from 'vue'
 
 const slots = useSlots()
 
@@ -36,7 +36,15 @@ const activeTab = ref('0')
 <template>
   <STabs v-model="activeTab" :items="tabItems">
     <template v-for="(child, index) in children" :key="index" #[String(index)]>
-      <component :is="() => child" />
+      <!--
+        cloneVNode is required, not optional: this vnode was captured from
+        CodeGroup's own default slot and is being re-inserted several levels
+        deeper (inside STabs/TabsContent/Presence) - rendering the raw,
+        already-positioned vnode object there directly causes a Vue
+        hydration-shape mismatch (Fragment vs text) the first time this
+        panel mounts. Cloning gives it a fresh identity for its new spot.
+      -->
+      <component :is="() => cloneVNode(child)" />
     </template>
   </STabs>
 </template>
