@@ -42,6 +42,7 @@
   "dependencies": {
     "@nuxt/icon": "^1.10.3",
     "@nuxt/kit": "^4.5.2",
+    "@nuxtjs/color-mode": "^4.0.1",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/vue-table": "^9.1.2",
     "reka-ui": "^2.2.0",

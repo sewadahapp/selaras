@@ -19,6 +19,10 @@ export default defineNuxtModule<ModuleOptions>({
   },
   moduleDependencies: {
     '@nuxt/icon': {},
+    // classSuffix: '' (the module's own default) produces bare `dark`/`light`
+    // classes on <html>, matching theme.css's own Tailwind v4 dark variant
+    // (`@custom-variant dark (&:where(.dark, .dark *))`) with no extra config.
+    '@nuxtjs/color-mode': {},
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
