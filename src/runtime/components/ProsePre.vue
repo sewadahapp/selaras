@@ -15,7 +15,13 @@ const props = defineProps<{
 
 const theme = useComponentTheme('prose', proseTheme)
 const ui = computed(() => theme.value())
-const rootProps = useRootProps(() => ui.value.preWrapper, () => undefined)
+
+// The fallthrough-class target is the <pre> itself, not the wrapper div -
+// @nuxtjs/mdc's code-block AST node passes a `class` attr (e.g. "shiki
+// shiki-themes github-light github-dark") that Shiki's own injected CSS
+// selectors (`pre.shiki code ...`) require landing on <pre> directly to
+// actually apply syntax-highlighting colors, not just on an ancestor.
+const preProps = useRootProps(() => ui.value.pre, () => undefined)
 
 const copied = ref(false)
 
@@ -31,7 +37,7 @@ async function copy() {
 </script>
 
 <template>
-  <div v-bind="rootProps">
+  <div v-bind="resolveSlot(ui.preWrapper, undefined)">
     <div v-if="filename || language || code" v-bind="resolveSlot(ui.preHeader, undefined)">
       <span v-if="filename" v-bind="resolveSlot(ui.preFilename, undefined)">{{ filename }}</span>
       <SBadge v-else-if="language" :label="language" size="sm" variant="outline" />
@@ -46,6 +52,6 @@ async function copy() {
         @click="copy"
       />
     </div>
-    <pre v-bind="resolveSlot(ui.pre, undefined)"><slot /></pre>
+    <pre v-bind="(preProps as any)"><slot /></pre>
   </div>
 </template>
