@@ -25,14 +25,6 @@ function isActive(link: ContentNavigationLink) {
   return route.path === link.path
 }
 
-function isAncestorActive(link: ContentNavigationLink): boolean {
-  if (!link.children?.length)
-    return false
-  return route.path === link.path
-    || route.path.startsWith(`${link.path}/`)
-    || link.children.some(child => isActive(child) || isAncestorActive(child))
-}
-
 const theme = useComponentTheme('contentNavigation', contentNavigationTheme)
 const ui = computed(() => theme.value())
 
@@ -55,7 +47,7 @@ const groupUi = computed(() => ({
       <SAccordion
         v-if="link.children?.length"
         :items="[{ value: link.path, label: link.title }]"
-        :default-value="isAncestorActive(link) ? [link.path] : []"
+        :default-value="[link.path]"
         :ui="groupUi"
       >
         <template #[link.path]>
