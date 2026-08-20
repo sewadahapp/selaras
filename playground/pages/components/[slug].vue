@@ -14,7 +14,7 @@ if (!page.value) {
       <SPageHeader :title="page?.title" :description="page?.description" />
       <ContentRenderer :value="page" class="docs-content flex flex-col gap-4 pt-6" />
     </SContainer>
-    <SPageAside v-if="page?.body?.toc?.links?.length">
+    <SPageAside v-if="page?.body?.toc?.links?.length" :ui="{ root: 'top-16 h-[calc(100vh-4rem)]' }">
       <SContentToc :links="page.body.toc.links" />
     </SPageAside>
   </div>

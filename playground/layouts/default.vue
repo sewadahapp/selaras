@@ -1,17 +1,22 @@
 <script setup lang="ts">
 const { data: navigation } = await useAsyncData('docs-navigation', () =>
   queryCollectionNavigation('docs').order('order', 'ASC'))
+
+const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
 </script>
 
 <template>
   <div class="min-h-screen bg-[var(--ui-bg)] text-[var(--ui-text)]">
+    <SHeader>
+      <NuxtLink to="/" class="font-semibold">
+        Selaras
+      </NuxtLink>
+      <template #right>
+        <SColorModeToggle />
+      </template>
+    </SHeader>
     <div class="mx-auto flex max-w-[90rem]">
-      <SPageAside>
-        <template #header>
-          <NuxtLink to="/" class="block font-semibold">
-            Selaras
-          </NuxtLink>
-        </template>
+      <SPageAside :ui="asideUi">
         <SContentNavigation :navigation="navigation ?? []" />
       </SPageAside>
       <main class="min-w-0 flex-1 p-8">
