@@ -1,6 +1,7 @@
 ---
 title: Select
 description: A select constrained to its options - single or multiple, optionally searchable and virtualized, built on Reka UI's Combobox primitive.
+order: 8
 ---
 
 ## Usage

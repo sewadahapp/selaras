@@ -1,6 +1,7 @@
 ---
 title: Autocomplete
 description: A free-text input with suggestions - the typed value doesn't have to match an option, built on the same Combobox foundation as Select.
+order: 9
 ---
 
 ## Usage

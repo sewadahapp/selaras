@@ -1,6 +1,7 @@
 ---
 title: Tooltip
 description: A short hint shown on hover or focus, built on Reka UI's Tooltip primitive.
+order: 3
 ---
 
 ## Usage

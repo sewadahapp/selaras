@@ -1,6 +1,7 @@
 ---
 title: Modal
 description: A dialog overlay built on Reka UI's Dialog primitive.
+order: 6
 ---
 
 ## Usage

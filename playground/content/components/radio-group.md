@@ -1,6 +1,7 @@
 ---
 title: RadioGroup
 description: An items-driven radio group built on Reka UI's RadioGroup primitive.
+order: 11
 ---
 
 ## Usage

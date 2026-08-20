@@ -1,6 +1,7 @@
 ---
 title: Input
 description: A text input with optional leading and trailing icons.
+order: 2
 ---
 
 ## Usage

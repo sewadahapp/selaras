@@ -1,6 +1,7 @@
 ---
 title: Textarea
 description: A multi-line text input, matching Input's border interaction pattern.
+order: 13
 ---
 
 ## Usage

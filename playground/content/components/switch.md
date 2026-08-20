@@ -1,6 +1,7 @@
 ---
 title: Switch
 description: A toggle switch with an optional label, built on Reka UI's Switch primitive.
+order: 12
 ---
 
 ## Usage

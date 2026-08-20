@@ -1,6 +1,7 @@
 ---
 title: Dropdown
 description: A menu of grouped actions built on Reka UI's DropdownMenu primitive.
+order: 5
 ---
 
 ## Usage

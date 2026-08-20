@@ -1,6 +1,7 @@
 ---
 title: Checkbox
 description: A checkbox with an optional label, built on Reka UI's Checkbox primitive.
+order: 10
 ---
 
 ## Usage
