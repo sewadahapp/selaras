@@ -5,7 +5,7 @@ const { data: navigation } = await useAsyncData('docs-navigation', () =>
 
 <template>
   <div class="min-h-screen bg-[var(--ui-bg)] text-[var(--ui-text)]">
-    <div class="mx-auto flex max-w-6xl">
+    <div class="mx-auto flex max-w-[90rem]">
       <SPageAside>
         <template #header>
           <NuxtLink to="/" class="block font-semibold">
