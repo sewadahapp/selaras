@@ -16,7 +16,7 @@ const rootProps = useRootProps(() => ui.value.a, () => undefined)
 </script>
 
 <template>
-  <NuxtLink :href="href" :target="target" v-bind="(rootProps as any)">
+  <NuxtLink :href="href" :target="target" v-bind="rootProps">
     <slot />
   </NuxtLink>
 </template>

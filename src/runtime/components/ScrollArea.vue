@@ -23,25 +23,25 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 
 <template>
   <ClientOnly>
-    <ScrollAreaRoot v-bind="(rootProps as any)">
-      <ScrollAreaViewport v-bind="(resolveSlot(ui.viewport, props.ui?.viewport) as any)">
+    <ScrollAreaRoot v-bind="rootProps">
+      <ScrollAreaViewport v-bind="resolveSlot(ui.viewport, props.ui?.viewport)">
         <slot />
       </ScrollAreaViewport>
       <ScrollAreaScrollbar
         v-if="orientation !== 'horizontal'"
         orientation="vertical"
-        v-bind="(resolveSlot(ui.scrollbar, props.ui?.scrollbar) as any)"
+        v-bind="resolveSlot(ui.scrollbar, props.ui?.scrollbar)"
       >
-        <ScrollAreaThumb v-bind="(resolveSlot(ui.thumb, props.ui?.thumb) as any)" />
+        <ScrollAreaThumb v-bind="resolveSlot(ui.thumb, props.ui?.thumb)" />
       </ScrollAreaScrollbar>
       <ScrollAreaScrollbar
         v-if="orientation !== 'vertical'"
         orientation="horizontal"
-        v-bind="(resolveSlot(ui.scrollbar, props.ui?.scrollbar) as any)"
+        v-bind="resolveSlot(ui.scrollbar, props.ui?.scrollbar)"
       >
-        <ScrollAreaThumb v-bind="(resolveSlot(ui.thumb, props.ui?.thumb) as any)" />
+        <ScrollAreaThumb v-bind="resolveSlot(ui.thumb, props.ui?.thumb)" />
       </ScrollAreaScrollbar>
-      <ScrollAreaCorner v-if="orientation === 'both'" v-bind="(resolveSlot(ui.corner, props.ui?.corner) as any)" />
+      <ScrollAreaCorner v-if="orientation === 'both'" v-bind="resolveSlot(ui.corner, props.ui?.corner)" />
     </ScrollAreaRoot>
 
     <!--
@@ -55,7 +55,7 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
       native-scrollbar div so SSR/no-JS content is still fully scrollable.
     -->
     <template #fallback>
-      <div v-bind="(rootProps as any)" :class="orientation === 'horizontal' ? 'overflow-x-auto' : 'overflow-y-auto'">
+      <div v-bind="rootProps" :class="orientation === 'horizontal' ? 'overflow-x-auto' : 'overflow-y-auto'">
         <slot />
       </div>
     </template>

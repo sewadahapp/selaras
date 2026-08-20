@@ -52,6 +52,6 @@ async function copy() {
         @click="copy"
       />
     </div>
-    <pre v-bind="(preProps as any)"><slot /></pre>
+    <pre v-bind="preProps"><slot /></pre>
   </div>
 </template>

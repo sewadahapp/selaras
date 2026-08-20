@@ -43,7 +43,7 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
       :default-value="(defaultValue as any)"
       :model-value="(modelValue as any)"
       :collapsible="type === 'single' ? collapsible : undefined"
-      v-bind="(rootProps as any)"
+      v-bind="rootProps"
       @update:model-value="(value) => $emit('update:modelValue', value as string | string[])"
     >
       <AccordionItem
@@ -51,15 +51,15 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
         :key="item.value"
         :value="item.value"
         :disabled="item.disabled"
-        v-bind="(resolveSlot(ui.item, props.ui?.item) as any)"
+        v-bind="resolveSlot(ui.item, props.ui?.item)"
       >
-        <AccordionHeader as="div" v-bind="(resolveSlot(ui.header, props.ui?.header) as any)">
-          <AccordionTrigger v-bind="(resolveSlot(ui.trigger, props.ui?.trigger) as any)">
+        <AccordionHeader as="div" v-bind="resolveSlot(ui.header, props.ui?.header)">
+          <AccordionTrigger v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
             <span v-bind="resolveSlot(ui.label, props.ui?.label)">{{ item.label }}</span>
             <Icon name="lucide:chevron-down" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
           </AccordionTrigger>
         </AccordionHeader>
-        <AccordionContent v-bind="(resolveSlot(ui.content, props.ui?.content) as any)">
+        <AccordionContent v-bind="resolveSlot(ui.content, props.ui?.content)">
           <slot :name="item.value" />
         </AccordionContent>
       </AccordionItem>
@@ -77,14 +77,14 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
       readable/navigable for SSR, no-JS, and crawlers) rather than nothing.
     -->
     <template #fallback>
-      <div v-bind="(rootProps as any)">
+      <div v-bind="rootProps">
         <div v-for="item in items" :key="item.value">
-          <div v-bind="(resolveSlot(ui.header, props.ui?.header) as any)">
-            <div v-bind="(resolveSlot(ui.trigger, props.ui?.trigger) as any)">
+          <div v-bind="resolveSlot(ui.header, props.ui?.header)">
+            <div v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
               <span v-bind="resolveSlot(ui.label, props.ui?.label)">{{ item.label }}</span>
             </div>
           </div>
-          <div v-bind="(resolveSlot(ui.content, props.ui?.content) as any)">
+          <div v-bind="resolveSlot(ui.content, props.ui?.content)">
             <slot :name="item.value" />
           </div>
         </div>

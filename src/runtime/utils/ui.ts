@@ -6,7 +6,20 @@ import { useAppConfig } from '#imports'
 export type UiSlotValue = string | ({ class?: string } & Record<string, unknown>)
 export type UiProp<Slots extends string = string> = Partial<Record<Slots, UiSlotValue>>
 
-type SlotFn = (opts?: { class?: unknown }) => string
+/**
+ * tailwind-variants' own generated slot-function type is a union of several
+ * variant-prop shapes (one per possible variant combination, more of them
+ * the fewer variants a theme declares), each intersected with its `ClassProp`
+ * union (`{class} | {className}`, never both). No single hand-written object
+ * type is structurally assignable to every branch of that union at once, so
+ * `resolveSlot`/`useRootProps` are generic over the slot fn's real type
+ * instead of pinning it to one - avoiding a wrong-in-every-direction manual
+ * approximation (and the `as any` it previously forced on every call site).
+ * `any` in this constraint's parameter position is what makes the match
+ * trivially succeed regardless of that union's shape; the cast just inside
+ * each function body does the same for the one call they each make.
+ */
+type AnySlotFn = (opts?: any) => string
 
 /**
  * Resolves a single slot's classes/attrs from a `:ui` override.
@@ -14,12 +27,13 @@ type SlotFn = (opts?: { class?: unknown }) => string
  * An object override's `class` is merged the same way, everything else is
  * applied as raw attrs/handlers via `mergeProps` (never tailwind-merged).
  */
-export function resolveSlot(slotFn: SlotFn, override?: UiSlotValue) {
+export function resolveSlot<T extends AnySlotFn>(slotFn: T, override?: UiSlotValue) {
+  const call = slotFn as AnySlotFn
   if (typeof override !== 'object' || override === null) {
-    return { class: slotFn({ class: override }) }
+    return { class: call({ class: override }) }
   }
   const { class: overrideClass, ...attrs } = override
-  return mergeProps({ class: slotFn({ class: overrideClass }) }, attrs)
+  return mergeProps({ class: call({ class: overrideClass }) }, attrs)
 }
 
 /**
@@ -60,7 +74,7 @@ export function withFallthroughClass(fallthroughClass: string | undefined, overr
  * component. Bind the result with a single `v-bind` (Vue's template compiler
  * rejects two bare v-bind spreads on the same element).
  */
-export function useRootProps(slotFn: () => SlotFn, override: () => UiSlotValue | undefined) {
+export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () => UiSlotValue | undefined) {
   const { fallthroughClass, attrsWithoutClass } = useRootFallthrough()
   return computed(() => mergeProps(
     attrsWithoutClass.value,
