@@ -1,7 +1,7 @@
 ---
 title: Prose
 description: A themed set of typography components for long-form content, decoupled from Nuxt Content.
-order: 24
+order: 70
 ---
 
 ## Usage
@@ -23,8 +23,8 @@ content in a self-anchor link when one is given - this page's own headings
 work exactly this way.
 
 `SProsePre` adds a themed header bar (filename or language, via
-[Badge](/components/badge)) and a copy-to-clipboard button (via
-[Button](/components/button)) around the code block - it doesn't do syntax
+[Badge](/components/elements/badge)) and a copy-to-clipboard button (via
+[Button](/components/elements/button)) around the code block - it doesn't do syntax
 highlighting itself, since that already happened upstream by the time any
 Prose component sees the content.
 

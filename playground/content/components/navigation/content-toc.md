@@ -1,7 +1,7 @@
 ---
 title: ContentToc
 description: A table of contents with scroll-spy active-heading highlighting.
-order: 23
+order: 43
 ---
 
 ## Usage
@@ -15,7 +15,7 @@ order: 23
 
 `links` matches `@nuxt/content`'s `page.body.toc.links` shape directly
 (`{ id, text, depth, children? }[]`) - pass it straight through, no adapter
-needed. As with [ContentNavigation](/components/content-navigation), there's
+needed. As with [ContentNavigation](/components/navigation/content-navigation), there's
 no hard dependency on `@nuxt/content` - build the array yourself if you don't
 use it.
 

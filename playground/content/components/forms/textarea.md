@@ -1,7 +1,7 @@
 ---
 title: Textarea
 description: A multi-line text input, matching Input's border interaction pattern.
-order: 13
+order: 21
 ---
 
 ## Usage
@@ -9,7 +9,7 @@ order: 13
 ::s-textarea{placeholder="Write something..."}
 ::
 
-Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
 `aria-describedby` wired up automatically.
 
 ## Props

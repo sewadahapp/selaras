@@ -1,7 +1,7 @@
 ---
 title: RadioGroup
 description: An items-driven radio group built on Reka UI's RadioGroup primitive.
-order: 11
+order: 25
 ---
 
 ## Usage
@@ -22,7 +22,7 @@ const choice = ref('one')
 </template>
 ```
 
-Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
 `aria-describedby` wired up automatically.
 
 ## Props

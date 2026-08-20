@@ -1,7 +1,7 @@
 ---
 title: Select
 description: A select constrained to its options - single or multiple, optionally searchable and virtualized, built on Reka UI's Combobox primitive.
-order: 8
+order: 22
 ---
 
 ## Usage
@@ -9,7 +9,7 @@ order: 8
 ::component-example{name="select-basic"}
 ::
 
-Values must come from `items` - for free text with suggestions, use [Autocomplete](/components/autocomplete) instead.
+Values must come from `items` - for free text with suggestions, use [Autocomplete](/components/forms/autocomplete) instead.
 
 ```vue
 <script setup lang="ts">
@@ -106,7 +106,7 @@ const items = [
 ]
 ```
 
-Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
 `aria-describedby` wired up automatically.
 
 ### Search text

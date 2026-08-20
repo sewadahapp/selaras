@@ -1,7 +1,7 @@
 ---
 title: CodeGroup
 description: Tabbed code blocks - e.g. npm/pnpm/yarn install commands.
-order: 25
+order: 71
 ---
 
 ## Usage
@@ -21,16 +21,16 @@ pnpm add selaras
 ```
 
 `SCodeGroup` reads its own default slot's children directly (works with any
-children, not just [Prose](/components/prose) ones) and renders each as a tab
-via [Tabs](/components/tabs) - the label comes from each child's `filename`
+children, not just [Prose](/components/typography/prose) ones) and renders each as a tab
+via [Tabs](/components/navigation/tabs) - the label comes from each child's `filename`
 prop, falling back to `language`. It doesn't wrap or re-render its
 children's content, so anything already working standalone (like
-[ProsePre](/components/prose)'s copy button) keeps working inside a group.
+[ProsePre](/components/typography/prose)'s copy button) keeps working inside a group.
 
 ### In markdown
 
 Once wired into `@nuxt/content` via a `CodeGroup.vue` adapter (same recipe as
-[Prose](/components/prose)), plain adjacent fenced code blocks under
+[Prose](/components/typography/prose)), plain adjacent fenced code blocks under
 `::code-group` become tabs automatically - the `[label]` after the language
 becomes each tab's title:
 

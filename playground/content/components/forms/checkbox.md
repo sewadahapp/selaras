@@ -1,7 +1,7 @@
 ---
 title: Checkbox
 description: A checkbox with an optional label, built on Reka UI's Checkbox primitive.
-order: 10
+order: 24
 ---
 
 ## Usage
@@ -19,7 +19,7 @@ const accepted = ref(true)
 </template>
 ```
 
-Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
 `aria-describedby` wired up automatically.
 
 ## Props

@@ -1,7 +1,7 @@
 ---
 title: Header
 description: A sticky top bar with left/right slots - logo on one side, actions like ColorModeToggle on the other.
-order: 26
+order: 63
 ---
 
 ## Usage
@@ -20,7 +20,7 @@ order: 26
 
 `SHeader` is `sticky top-0` by default, meant to sit above everything else on
 the page - this docs site's own top bar is exactly this component. If you
-also use [PageAside](/components/page-aside) below it (for nav or TOC), give
+also use [PageAside](/components/layout/page-aside) below it (for nav or TOC), give
 it a matching offset via its `ui` prop so it doesn't sit under the header:
 
 ```vue-html

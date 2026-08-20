@@ -1,7 +1,7 @@
 ---
 title: Switch
 description: A toggle switch with an optional label, built on Reka UI's Switch primitive.
-order: 12
+order: 26
 ---
 
 ## Usage
@@ -19,7 +19,7 @@ const notifications = ref(true)
 </template>
 ```
 
-Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
 `aria-describedby` wired up automatically.
 
 ## Props

@@ -1,7 +1,7 @@
 ---
 title: Table
 description: A table built on TanStack Table, with a declarative column API - sorting, row selection, pagination, and filtering out of the box.
-order: 15
+order: 30
 ---
 
 ## Usage

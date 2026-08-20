@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const navigation = [
   { title: 'Getting Started', path: '/' },
-  { title: 'Components', path: '/components', children: [
-    { title: 'Button', path: '/components/button' },
-    { title: 'Input', path: '/components/input' },
+  { title: 'Forms', path: '/components/forms', children: [
+    { title: 'Input', path: '/components/forms/input' },
+    { title: 'Select', path: '/components/forms/select' },
   ] },
 ]
 </script>

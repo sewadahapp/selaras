@@ -1,7 +1,7 @@
 ---
 title: ScrollArea
 description: A themed scrollable region, built on Reka UI's ScrollArea primitive.
-order: 19
+order: 65
 ---
 
 ## Usage
@@ -18,7 +18,7 @@ order: 19
 ```
 
 Give it a height via `class` (fallthrough) - `SScrollArea` fills whatever
-box it's placed in. [PageAside](/components/page-aside) uses this internally
+box it's placed in. [PageAside](/components/layout/page-aside) uses this internally
 for its scrollable body.
 
 ## Props

@@ -1,7 +1,7 @@
 ---
 title: Button
 description: A clickable action element with color, variant and size options.
-order: 1
+order: 10
 ---
 
 ## Usage

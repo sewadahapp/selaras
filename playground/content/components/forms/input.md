@@ -1,7 +1,7 @@
 ---
 title: Input
 description: A text input with optional leading and trailing icons.
-order: 2
+order: 20
 ---
 
 ## Usage
@@ -9,7 +9,7 @@ order: 2
 ::s-input{placeholder="Search..." icon="lucide:search"}
 ::
 
-Wrap it in [FormField](/components/form-field) to get `id`/`name`/`invalid` and
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
 `aria-describedby` wired up automatically - see that page for details.
 
 ## Props

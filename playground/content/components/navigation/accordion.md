@@ -1,7 +1,7 @@
 ---
 title: Accordion
 description: An items-driven collapsible list, built on Reka UI's Accordion primitive.
-order: 20
+order: 41
 ---
 
 ## Usage
@@ -19,7 +19,7 @@ order: 20
 
 Each item's content comes from a named slot matching its `value`. `type`
 defaults to `'multiple'` (independent items can each be open at once) -
-[ContentNavigation](/components/content-navigation) uses this internally for
+[ContentNavigation](/components/navigation/content-navigation) uses this internally for
 its collapsible nav groups.
 
 ## Props

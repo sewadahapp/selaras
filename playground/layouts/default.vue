@@ -1,6 +1,11 @@
 <script setup lang="ts">
-const { data: navigation } = await useAsyncData('docs-navigation', () =>
+const { data: rawNavigation } = await useAsyncData('docs-navigation', () =>
   queryCollectionNavigation('docs').order('order', 'ASC'))
+
+// queryCollectionNavigation wraps everything in one root node named after the
+// collection's own source folder ("components") - redundant here since this
+// whole sidebar is already scoped to components; unwrap to its real groups.
+const navigation = computed(() => rawNavigation.value?.[0]?.children ?? [])
 
 const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
 </script>
@@ -17,7 +22,7 @@ const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
     </SHeader>
     <div class="mx-auto flex max-w-[90rem]">
       <SPageAside :ui="asideUi">
-        <SContentNavigation :navigation="navigation ?? []" />
+        <SContentNavigation :navigation="navigation" />
       </SPageAside>
       <main class="min-w-0 flex-1 p-8">
         <slot />

@@ -1,7 +1,7 @@
 ---
 title: Tabs
 description: An items-driven tab list built on Reka UI's Tabs primitive.
-order: 4
+order: 40
 ---
 
 ## Usage

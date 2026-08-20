@@ -1,7 +1,7 @@
 ---
 title: Toast
 description: A stackable notification, triggered imperatively via useToast().
-order: 7
+order: 53
 ---
 
 ## Usage

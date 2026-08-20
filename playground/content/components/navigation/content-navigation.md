@@ -1,7 +1,7 @@
 ---
 title: ContentNavigation
 description: A nested, collapsible nav tree - feed it queryCollectionNavigation()'s result directly.
-order: 22
+order: 42
 ---
 
 ## Usage
@@ -21,7 +21,7 @@ don't use it.
 
 The current route's exact path is highlighted; a group is highlighted (and
 opens by default) when the current route falls inside its subtree. Groups
-with children render as an [Accordion](/components/accordion) item internally
+with children render as an [Accordion](/components/navigation/accordion) item internally
 (`type="multiple"`, so several sections can stay open at once) rather than a
 hand-rolled toggle.
 

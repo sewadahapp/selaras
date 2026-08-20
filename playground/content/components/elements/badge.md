@@ -1,7 +1,7 @@
 ---
 title: Badge
 description: A small themed pill for labels, tags, and status indicators.
-order: 16
+order: 11
 ---
 
 ## Usage

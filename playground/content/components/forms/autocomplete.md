@@ -1,12 +1,12 @@
 ---
 title: Autocomplete
 description: A free-text input with suggestions - the typed value doesn't have to match an option, built on the same Combobox foundation as Select.
-order: 9
+order: 23
 ---
 
 ## Usage
 
-Unlike [Select](/components/select), whatever the user types can become the
+Unlike [Select](/components/forms/select), whatever the user types can become the
 value even if it doesn't match a suggestion - picking a suggestion is a
 shortcut, not a requirement.
 
@@ -47,7 +47,7 @@ each becomes its own chip.
 
 Everything else - `virtualize`, `loading`, grouped `items`, `valueKey`/`labelKey`,
 chip overflow with a "+N more" tooltip - works identically to
-[Select](/components/select#props), since both share the same underlying
+[Select](/components/forms/select#props), since both share the same underlying
 implementation and differ only in whether unmatched typed text is accepted.
 
 ### Search text
@@ -57,12 +57,12 @@ the display of the current value: single-select shows the picked option's
 label after you choose one, multi-select clears after each commit (the chips
 show the selection instead). Same `v-model:search-term` and
 `resetSearchTermOnBlur`/`resetSearchTermOnSelect` escape hatches as
-[Select](/components/select#search-text) apply here too.
+[Select](/components/forms/select#search-text) apply here too.
 
 ## Props
 
-Same as [Select](/components/select#props), minus `searchable` (always on).
+Same as [Select](/components/forms/select#props), minus `searchable` (always on).
 
 ## Slots
 
-Same as [Select](/components/select#slots).
+Same as [Select](/components/forms/select#slots).

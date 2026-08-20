@@ -1,7 +1,7 @@
 ---
 title: ColorModeToggle
 description: A button that switches between light and dark mode.
-order: 27
+order: 64
 ---
 
 ## Usage
