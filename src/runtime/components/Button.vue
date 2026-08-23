@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
+import type { Component } from 'vue'
 import type { ButtonSlots } from '../theme/button'
 import type { UiProp } from '../utils/ui'
 import { Primitive } from 'reka-ui'
@@ -12,7 +13,8 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
-  as?: string
+  /** A tag name ('a', 'span', ...) or a component reference (e.g. NuxtLink, via resolveComponent) - Primitive renders whichever is given. */
+  as?: string | Component
   color?: ButtonVariants['color']
   variant?: ButtonVariants['variant']
   size?: ButtonVariants['size']

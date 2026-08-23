@@ -1,231 +1,162 @@
-<!-- <script setup lang="ts">
-const activeTab = ref('one')
-const modalOpen = ref(false)
-const selectValue = ref('apple')
-const checkboxValue = ref(true)
-const radioValue = ref('one')
-const switchValue = ref(true)
-const { add: addToast } = useToast()
+<script setup lang="ts">
+definePageMeta({ layout: 'landing' })
 
-function showToast() {
-  addToast({ title: 'Saved', description: 'Your changes have been saved.' })
-}
+// SButton's `as` accepts a real component reference, not a bare tag-name
+// string - resolveComponent is how a plain h()-based Primitive gets access
+// to a globally-registered one like NuxtLink for client-side navigation.
+const NuxtLinkComponent = resolveComponent('NuxtLink')
+
+const activeTab = ref('one')
+const selectValue = ref('apple')
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },
   { label: 'Banana', value: 'banana' },
   { label: 'Cherry', value: 'cherry', disabled: true },
-  { label: 'Date', value: 'date' },
-  { label: 'Elderberry', value: 'elderberry' },
 ]
 
-const multiCommaValue = ref(['apple', 'banana'])
-const multiChipValue = ref(['apple', 'banana', 'cherry', 'date', 'elderberry'])
-const searchableValue = ref('')
-const autocompleteValue = ref('')
-const autocompleteMultiValue = ref<string[]>([])
+const accordionItems = [
+  { value: 'tokens', label: 'Where do the colors come from?' },
+  { value: 'ui', label: 'How does theming work?' },
+]
 
-const manyItems = Array.from({ length: 5000 }, (_, i) => ({ label: `Item ${i + 1}`, value: `item-${i + 1}` }))
-const virtualizedValue = ref('')
-
-const emailValue = ref('')
-const nameValue = ref('')
-const planValue = ref('')
-const termsValue = ref(false)
+const values = [
+  {
+    title: 'Real tokens',
+    body: 'Every color traces back to Moon Design System’s published values, converted to OKLCH for a perceptually even 50–900 scale – not hand-picked hex codes.',
+  },
+  {
+    title: 'One :ui prop',
+    body: 'Every slot in every component takes the same override shape, merged with tailwind-merge. No prop-per-part sprawl to learn.',
+  },
+  {
+    title: 'CSS-only motion',
+    body: 'Transitions and animations ship as plain CSS. No animation runtime, no extra bytes just for a hover state.',
+  },
+  {
+    title: 'Nuxt-native',
+    body: 'Components and composables auto-import. Add the module, start typing <S.',
+  },
+]
 </script>
 
 <template>
-  <div class="flex flex-col gap-8">
-    <div>
-      <h1 class="text-2xl font-semibold text-[var(--ui-text)]">
-        Selaras
-      </h1>
-      <p class="mt-1 text-[var(--ui-text-muted)]">
-        A UI component library for Nuxt. Browse components in the sidebar, or try them below.
-      </p>
-    </div>
-
-    <div class="flex flex-wrap items-center gap-3">
-      <SButton>Solid</SButton>
-      <SButton variant="soft">
-        Soft
-      </SButton>
-      <SButton variant="outline">
-        Outline
-      </SButton>
-      <SButton variant="ghost">
-        Ghost
-      </SButton>
-      <SButton color="secondary">
-        Secondary
-      </SButton>
-      <SButton color="success">
-        Success
-      </SButton>
-      <SButton color="danger">
-        Danger
-      </SButton>
-      <SButton color="info">
-        Info
-      </SButton>
-      <SButton color="warning">
-        Warning
-      </SButton>
-      <SButton disabled>
-        Disabled
-      </SButton>
-      <SButton :ui="{ base: 'rounded-full' }">
-        Custom ui
-      </SButton>
-      <STooltip text="I'm a tooltip">
-        <SButton variant="outline">
-          Hover me
-        </SButton>
-      </STooltip>
-    </div>
-
-    <div class="flex flex-wrap items-center gap-3">
-      <SInput placeholder="Search..." icon="lucide:search" class="max-w-48" />
-
-      <SSelect
-        v-model="selectValue"
-        class="w-40"
-        placeholder="Pick a fruit"
-        :items="[{ label: 'Apple', value: 'apple' }, { label: 'Banana', value: 'banana' }, { label: 'Cherry', value: 'cherry', disabled: true }]"
-      />
-
-      <SDropdown
-        :items="[
-          [{ label: 'Edit', icon: 'lucide:pencil' }, { label: 'Duplicate', icon: 'lucide:copy' }],
-          [{ label: 'Delete', icon: 'lucide:trash-2' }],
-        ]"
-      >
-        <SButton variant="outline">
-          Open dropdown
-        </SButton>
-      </SDropdown>
-
-      <SButton variant="outline" @click="modalOpen = true">
-        Open modal
-      </SButton>
-      <SModal v-model="modalOpen" title="Delete item" description="This action cannot be undone.">
-        <template #body>
-          Are you sure you want to delete this item?
-        </template>
-        <template #footer>
-          <SButton variant="ghost" @click="modalOpen = false">
-            Cancel
+  <div>
+    <!-- Hero -->
+    <SContainer size="lg" class="flex flex-col gap-10 py-20 sm:py-28">
+      <div class="flex flex-col gap-6">
+        <p class="font-mono text-xs tracking-[0.2em] text-[var(--ui-text-muted)] uppercase">
+          Selaras — Indonesian for “in harmony”
+        </p>
+        <h1 class="font-mono text-4xl leading-[1.05] font-medium tracking-tight text-[var(--ui-text)] sm:text-6xl">
+          Design tokens,<br>in alignment.
+        </h1>
+        <p class="max-w-xl text-lg text-[var(--ui-text-muted)]">
+          A Vue component library themed with <code class="font-mono text-[var(--ui-text)]">tv()</code> and CSS variables – every color a real, measured token, every component styled through one shared <code class="font-mono text-[var(--ui-text)]">:ui</code> prop.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <SButton size="lg" :as="NuxtLinkComponent" to="/components/button">
+            Browse components
           </SButton>
-          <SButton color="danger" @click="modalOpen = false">
-            Delete
+          <SButton size="lg" variant="ghost" as="a" href="https://github.com/wypratama/selaras" target="_blank" rel="noopener">
+            View source
           </SButton>
-        </template>
-      </SModal>
+        </div>
+      </div>
 
-      <SButton variant="outline" @click="showToast">
-        Show toast
-      </SButton>
+      <div class="rounded-[var(--ui-radius-lg)] border border-[var(--ui-border)] bg-[var(--ui-bg-elevated)] p-4 sm:p-8">
+        <HarmonyStrip />
+      </div>
+    </SContainer>
+
+    <!-- Showcase -->
+    <div class="border-t border-[var(--ui-border)] bg-[var(--ui-bg-elevated)]">
+      <SContainer size="lg" class="flex flex-col gap-8 py-16">
+        <div class="flex flex-col gap-2">
+          <h2 class="font-mono text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+            Built from real components
+          </h2>
+          <p class="text-[var(--ui-text-muted)]">
+            Every example on this site renders the actual library – nothing here is a mockup.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-8 rounded-[var(--ui-radius-lg)] border border-[var(--ui-border)] bg-[var(--ui-bg)] p-8">
+          <div class="flex flex-wrap items-center gap-3">
+            <SButton>Solid</SButton>
+            <SButton variant="soft">
+              Soft
+            </SButton>
+            <SButton variant="outline">
+              Outline
+            </SButton>
+            <SButton color="secondary">
+              Secondary
+            </SButton>
+            <SButton color="danger">
+              Danger
+            </SButton>
+            <SSelect v-model="selectValue" class="w-40" :items="fruitItems" />
+          </div>
+
+          <STabs
+            v-model="activeTab"
+            class="w-full max-w-md"
+            :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]"
+          >
+            <template #one>
+              Tab one content.
+            </template>
+            <template #two>
+              Tab two content.
+            </template>
+          </STabs>
+
+          <SAccordion :items="accordionItems" class="max-w-xl" :default-value="['tokens']">
+            <template #tokens>
+              From Moon Design System's real published Figma variables, resolved and converted to OKLCH – see the <NuxtLink to="/components/button" class="underline">
+                theme docs
+              </NuxtLink>.
+            </template>
+            <template #ui>
+              Every component's every slot takes the same <code class="font-mono">:ui</code> override shape.
+            </template>
+          </SAccordion>
+        </div>
+      </SContainer>
     </div>
 
-    <STabs
-      v-model="activeTab"
-      class="w-full max-w-md"
-      :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]"
-    >
-      <template #one>
-        Tab one content
-      </template>
-      <template #two>
-        Tab two content
-      </template>
-    </STabs>
+    <!-- Value props -->
+    <SContainer size="lg" class="flex flex-col gap-8 py-16">
+      <h2 class="font-mono text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+        Why Selaras
+      </h2>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div
+          v-for="value in values"
+          :key="value.title"
+          class="flex flex-col gap-2 rounded-[var(--ui-radius-lg)] border border-[var(--ui-border)] p-6"
+        >
+          <h3 class="font-mono text-sm font-medium text-[var(--ui-text)]">
+            {{ value.title }}
+          </h3>
+          <p class="text-sm text-[var(--ui-text-muted)]">
+            {{ value.body }}
+          </p>
+        </div>
+      </div>
+    </SContainer>
 
-    <div class="flex flex-wrap items-start gap-8">
-      <SCheckbox v-model="checkboxValue" label="Accept terms" />
-
-      <SRadioGroup
-        v-model="radioValue"
-        :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]"
-      />
-
-      <SSwitch v-model="switchValue" label="Notifications" />
-
-      <STextarea placeholder="Write something..." class="max-w-sm" />
-    </div>
-
-    <div class="flex flex-wrap items-start gap-4">
-      <SSelect
-        v-model="multiCommaValue"
-        multiple
-        class="w-48"
-        placeholder="Comma multi"
-        :items="fruitItems"
-      />
-
-      <SSelect
-        v-model="multiChipValue"
-        multiple
-        display-mode="chip"
-        :max-chips="2"
-        class="w-64"
-        placeholder="Chip multi"
-        :items="fruitItems"
-      />
-
-      <SSelect
-        v-model="searchableValue"
-        searchable
-        class="w-48"
-        placeholder="Searchable"
-        :items="fruitItems"
-      />
-
-      <SAutocomplete
-        v-model="autocompleteValue"
-        class="w-48"
-        placeholder="Type anything"
-        :items="fruitItems"
-      />
-
-      <SAutocomplete
-        v-model="autocompleteMultiValue"
-        multiple
-        display-mode="chip"
-        class="w-64"
-        placeholder="Multi + new tags"
-        :items="fruitItems"
-      />
-
-      <SSelect
-        v-model="virtualizedValue"
-        searchable
-        virtualize
-        class="w-48"
-        placeholder="5000 items"
-        :items="manyItems"
-      />
-    </div>
-
-    <div class="flex flex-wrap items-start gap-6">
-      <SFormField label="Email" name="email" hint="We'll never share this." class="w-56">
-        <SInput v-model="emailValue" type="email" placeholder="you@example.com" />
-      </SFormField>
-
-      <SFormField label="Name" required error="Name is required" class="w-56">
-        <SInput v-model="nameValue" placeholder="Jane Doe" />
-      </SFormField>
-
-      <SFormField label="Plan" name="plan" class="w-48">
-        <SSelect v-model="planValue" placeholder="Pick a plan" :items="fruitItems" />
-      </SFormField>
-
-      <SFormField error="You must accept the terms">
-        <SCheckbox v-model="termsValue" label="Accept terms" />
-      </SFormField>
+    <!-- Closing CTA -->
+    <div class="border-t border-[var(--ui-border)]">
+      <SContainer size="lg" class="flex flex-col items-center gap-4 py-20 text-center">
+        <h2 class="font-mono text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+          Start with a component.
+        </h2>
+        <SButton size="lg" :as="NuxtLinkComponent" to="/components/button">
+          Browse components
+        </SButton>
+      </SContainer>
     </div>
   </div>
-</template> -->
-
-<template>
-  <div>hello world</div>
 </template>

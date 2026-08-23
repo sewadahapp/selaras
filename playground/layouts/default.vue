@@ -13,8 +13,8 @@ const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
 <template>
   <div class="min-h-screen bg-[var(--ui-bg)] text-[var(--ui-text)]">
     <SHeader>
-      <NuxtLink to="/" class="font-semibold">
-        Selaras
+      <NuxtLink to="/" class="font-mono font-semibold">
+        selaras
       </NuxtLink>
       <template #right>
         <SColorModeToggle />
