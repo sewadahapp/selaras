@@ -48,6 +48,7 @@ const props = withDefaults(defineProps<{
   clearable?: boolean
   dropdown?: boolean
   creatable?: boolean
+  forceSelection?: boolean
   searchTerm?: string
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
@@ -74,6 +75,7 @@ const {
   toOption,
   setValue,
   removeValue,
+  hasMatchingOption,
   commitCreatableText,
 } = useComboboxSelect(props, emit, { creatable: props.creatable })
 
@@ -90,14 +92,27 @@ const searchText = computed({
   },
 })
 
+// forceSelection wins over creatable's own free-text commit: if what's typed
+// doesn't match any option, revert instead of accepting it as a new value.
+function revertUnmatchedText(): boolean {
+  if (!props.forceSelection || !searchText.value || hasMatchingOption(searchText.value))
+    return false
+  searchText.value = ''
+  return true
+}
+
 function onSearchKeydown(event: KeyboardEvent) {
   if (event.key !== 'Enter')
+    return
+  if (revertUnmatchedText())
     return
   if (commitCreatableText(searchText.value))
     searchText.value = ''
 }
 
 function onSearchBlur() {
+  if (revertUnmatchedText())
+    return
   if (commitCreatableText(searchText.value))
     searchText.value = ''
 }
@@ -223,6 +238,14 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <STooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
           <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
         </STooltip>
+        <button
+          v-if="clearable && !disabled && selectedOptions.length"
+          type="button"
+          v-bind="clearProps"
+          @click.stop="clear"
+        >
+          <Icon name="lucide:x" class="size-3.5" />
+        </button>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
           <Icon name="lucide:chevron-down" class="size-4" />

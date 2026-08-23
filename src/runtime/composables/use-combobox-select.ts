@@ -138,6 +138,7 @@ export function useComboboxSelect(
     toOption,
     setValue,
     removeValue,
+    hasMatchingOption,
     commitCreatableText,
   }
 }

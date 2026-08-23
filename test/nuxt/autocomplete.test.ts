@@ -45,4 +45,39 @@ describe('autocomplete', () => {
 
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['apple'])
   })
+
+  it('clears the selection when clearable and something is picked', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: fruitItems, modelValue: 'apple', clearable: true },
+    })
+
+    await wrapper.find('button').trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([undefined])
+  })
+
+  it('commits unmatched typed text as a new value by default (no forceSelection)', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: fruitItems },
+    })
+
+    const input = wrapper.find('input')
+    await input.setValue('zzz')
+    await input.trigger('blur')
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['zzz'])
+  })
+
+  it('reverts unmatched typed text on blur instead of committing it when forceSelection is on', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: fruitItems, forceSelection: true },
+    })
+
+    const input = wrapper.find('input')
+    await input.setValue('zzz')
+    await input.trigger('blur')
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:searchTerm')?.at(-1)).toEqual([''])
+  })
 })
