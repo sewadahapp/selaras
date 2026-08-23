@@ -2,7 +2,7 @@
   "name": "selaras",
   "type": "module",
   "version": "1.0.0",
-  "description": "A Vue component library",
+  "description": "A UI component library for Nuxt",
   "license": "MIT",
   "repository": "wypratama/selaras",
   "exports": {

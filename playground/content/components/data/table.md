@@ -105,8 +105,8 @@ pass a `columns` prop instead of `<SColumn>` children - a plain
 `<SColumn>`'s `field` prop is typed as plain `string`, not `keyof TData` -
 this is a genuine Vue limitation (a parent's generic type parameter doesn't
 propagate into child components referenced in its template), not something
-unique to `STable` - any declarative-column-as-children table API in Vue
-has the identical gap. As a cheap safety net, `STable` warns in dev mode (not
+unique to `STable` - any declarative-column-as-children table API in Vue has
+the identical gap. As a cheap safety net, `STable` warns in dev mode (not
 production) if a column's `field` doesn't exist as a key on the first row of
 `data` - catching typos without any type-system gymnastics. For actual
 compile-time safety, use the `columns` escape hatch above instead.

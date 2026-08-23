@@ -8,7 +8,7 @@ const items = [
 <template>
   <SAccordion :items="items">
     <template #a>
-      A Vue component library themed with tv() and CSS variables.
+      A UI component library for Nuxt, themed with tv() and CSS variables.
     </template>
     <template #b>
       Yes, MIT licensed.

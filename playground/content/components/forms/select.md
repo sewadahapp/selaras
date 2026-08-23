@@ -189,9 +189,8 @@ One caveat: virtualizing a grouped `items` list flattens the groups (a Reka UI
 limitation) - group headers won't render while virtualized.
 
 This only windows what's already in `items` - it doesn't fetch more data as
-you scroll. There's no built-in lazy-loading equivalent to a comparable reference's own Lazy
-Virtual Scroll; page or fetch into `items` yourself if the full set can't live
-in memory.
+you scroll. There's no built-in lazy-loading of additional pages; fetch or
+page into `items` yourself if the full set can't live in memory.
 
 ### Search text
 
@@ -274,19 +273,3 @@ not something to configure here.
 | `empty` | - | Shown when `items` is empty |
 | `empty-filter` | - | Shown when a search yields no matches |
 | `header` / `footer` | - | Content above/below the option list |
-
-## Not offered
-
-A few things a comparable reference's Select supports don't have an equivalent here, by
-design rather than oversight:
-
-- **Editable** - typing a value that isn't in `items`. Select's values are
-  always constrained to `items`; use [Autocomplete](/components/forms/autocomplete)
-  for free text with suggestions.
-- **Filled variant** - every input in this library has one consistent visual
-  style; there's no `variant` prop to switch between outlined/filled.
-- **Float Label / Ifta Label** - label positioning is [FormField](/components/forms/form-field)'s
-  job, not the select's own.
-- **Focus-behavior props** (`autoOptionFocus`, `selectOnFocus`, `focusOnHover`) -
-  not surfaced; Reka UI's Combobox defaults are used as-is.
-- **Lazy Virtual Scroll** - see the note under [Virtualization](#virtualization).

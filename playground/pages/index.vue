@@ -41,7 +41,7 @@ const termsValue = ref(false)
         Selaras
       </h1>
       <p class="mt-1 text-[var(--ui-text-muted)]">
-        A Vue component library. Browse components in the sidebar, or try them below.
+        A UI component library for Nuxt. Browse components in the sidebar, or try them below.
       </p>
     </div>
 
