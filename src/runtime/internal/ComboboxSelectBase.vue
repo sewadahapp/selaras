@@ -45,6 +45,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   size?: SelectVariants['size']
   invalid?: boolean
+  clearable?: boolean
   creatable?: boolean
   searchTerm?: string
   resetSearchTermOnBlur?: boolean
@@ -70,9 +71,14 @@ const {
   commaText,
   resolveOption,
   toOption,
+  setValue,
   removeValue,
   commitCreatableText,
 } = useComboboxSelect(props, emit, { creatable: props.creatable })
+
+function clear() {
+  setValue(props.multiple ? [] : undefined)
+}
 
 const internalSearchText = ref(props.searchTerm ?? '')
 const searchText = computed({
@@ -147,6 +153,7 @@ const chipProps = computed(() => resolveSlot(ui.value.chip, props.ui?.chip))
 const chipRemoveProps = computed(() => resolveSlot(ui.value.chipRemove, props.ui?.chipRemove))
 const chipOverflowProps = computed(() => resolveSlot(ui.value.chipOverflow, props.ui?.chipOverflow))
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
+const clearProps = computed(() => resolveSlot(ui.value.clear, props.ui?.clear))
 const searchWrapperProps = computed(() => resolveSlot(ui.value.searchWrapper, props.ui?.searchWrapper))
 const searchInputProps = computed(() => resolveSlot(ui.value.searchInput, props.ui?.searchInput))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -243,6 +250,14 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <slot name="value" :selected="selectedOptions[0]">{{ selectedOptions[0]?.label || placeholder }}</slot>
         </span>
 
+        <button
+          v-if="clearable && !disabled && selectedOptions.length"
+          type="button"
+          v-bind="clearProps"
+          @click.stop="clear"
+        >
+          <Icon name="lucide:x" class="size-3.5" />
+        </button>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
         <Icon v-else name="lucide:chevron-down" class="size-4" v-bind="iconProps" />
       </ComboboxTrigger>
@@ -312,7 +327,9 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             <template v-for="(entry, index) in items" :key="index">
               <ComboboxGroup v-if="isOptionGroup(entry)">
                 <ComboboxLabel v-bind="groupProps">
-                  {{ entry.label }}
+                  <slot name="group" :group="entry">
+                    {{ entry.label }}
+                  </slot>
                 </ComboboxLabel>
                 <ComboboxItem
                   v-for="option in groupOptions(entry)"

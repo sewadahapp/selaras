@@ -9,6 +9,7 @@ export const selectTheme = tv({
     chipRemove: 'rounded-[var(--ui-radius-sm)] p-0.5 text-[var(--ui-text-muted)] hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)]',
     chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg-elevated)] px-2 py-0.5 text-xs text-[var(--ui-text-muted)]',
     icon: 'shrink-0 text-[var(--ui-text-muted)]',
+    clear: 'shrink-0 rounded-[var(--ui-radius-sm)] p-0.5 text-[var(--ui-text-muted)] hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)]',
     searchWrapper: 'flex items-center gap-2 border-b border-[var(--ui-border)] px-2',
     searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--ui-text)] outline-none placeholder:text-[var(--ui-text-muted)]',
     content: 'z-50 max-h-72 min-w-[var(--reka-combobox-trigger-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',

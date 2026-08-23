@@ -25,6 +25,7 @@ const props = defineProps<{
   disabled?: boolean
   size?: SelectVariants['size']
   invalid?: boolean
+  clearable?: boolean
   searchTerm?: string
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
