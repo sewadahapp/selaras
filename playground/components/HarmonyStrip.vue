@@ -61,7 +61,7 @@ onMounted(() => {
         />
       </div>
       <div class="w-full text-center">
-        <p class="truncate font-mono text-[0.65rem] tracking-wide text-[var(--ui-text-muted)] uppercase">
+        <p class="truncate text-[0.65rem] tracking-wide text-[var(--ui-text-muted)] uppercase">
           {{ role.key }}
         </p>
         <p class="hidden truncate font-mono text-[0.65rem] text-[var(--ui-text-muted)] opacity-0 transition-opacity group-hover:opacity-100 sm:block">

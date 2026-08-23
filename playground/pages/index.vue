@@ -45,17 +45,17 @@ const values = [
     <!-- Hero -->
     <SContainer size="lg" class="flex flex-col gap-10 py-20 sm:py-28">
       <div class="flex flex-col gap-6">
-        <p class="font-mono text-xs tracking-[0.2em] text-[var(--ui-text-muted)] uppercase">
+        <p class="text-xs tracking-[0.2em] text-[var(--ui-text-muted)] uppercase">
           Selaras — Indonesian for “in harmony”
         </p>
-        <h1 class="font-mono text-4xl leading-[1.05] font-medium tracking-tight text-[var(--ui-text)] sm:text-6xl">
+        <h1 class="text-4xl leading-[1.05] font-medium tracking-tight text-[var(--ui-text)] sm:text-6xl">
           Design tokens,<br>in alignment.
         </h1>
         <p class="max-w-xl text-lg text-[var(--ui-text-muted)]">
           A Vue component library themed with <code class="font-mono text-[var(--ui-text)]">tv()</code> and CSS variables – every color a real, measured token, every component styled through one shared <code class="font-mono text-[var(--ui-text)]">:ui</code> prop.
         </p>
         <div class="flex flex-wrap items-center gap-3">
-          <SButton size="lg" :as="NuxtLinkComponent" to="/components/button">
+          <SButton size="lg" :as="NuxtLinkComponent" to="/components/elements/button">
             Browse components
           </SButton>
           <SButton size="lg" variant="ghost" as="a" href="https://github.com/wypratama/selaras" target="_blank" rel="noopener">
@@ -73,7 +73,7 @@ const values = [
     <div class="border-t border-[var(--ui-border)] bg-[var(--ui-bg-elevated)]">
       <SContainer size="lg" class="flex flex-col gap-8 py-16">
         <div class="flex flex-col gap-2">
-          <h2 class="font-mono text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+          <h2 class="text-2xl font-medium tracking-tight text-[var(--ui-text)]">
             Built from real components
           </h2>
           <p class="text-[var(--ui-text-muted)]">
@@ -114,8 +114,8 @@ const values = [
 
           <SAccordion :items="accordionItems" class="max-w-xl" :default-value="['tokens']">
             <template #tokens>
-              From Moon Design System's real published Figma variables, resolved and converted to OKLCH – see the <NuxtLink to="/components/button" class="underline">
-                theme docs
+              From Moon Design System's real published Figma variables, resolved and converted to OKLCH – see the <NuxtLink to="/components/elements/button" class="underline">
+                component docs
               </NuxtLink>.
             </template>
             <template #ui>
@@ -128,7 +128,7 @@ const values = [
 
     <!-- Value props -->
     <SContainer size="lg" class="flex flex-col gap-8 py-16">
-      <h2 class="font-mono text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+      <h2 class="text-2xl font-medium tracking-tight text-[var(--ui-text)]">
         Why Selaras
       </h2>
       <div class="grid gap-6 sm:grid-cols-2">
@@ -137,7 +137,7 @@ const values = [
           :key="value.title"
           class="flex flex-col gap-2 rounded-[var(--ui-radius-lg)] border border-[var(--ui-border)] p-6"
         >
-          <h3 class="font-mono text-sm font-medium text-[var(--ui-text)]">
+          <h3 class="text-sm font-medium text-[var(--ui-text)]">
             {{ value.title }}
           </h3>
           <p class="text-sm text-[var(--ui-text-muted)]">
@@ -150,10 +150,10 @@ const values = [
     <!-- Closing CTA -->
     <div class="border-t border-[var(--ui-border)]">
       <SContainer size="lg" class="flex flex-col items-center gap-4 py-20 text-center">
-        <h2 class="font-mono text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+        <h2 class="text-2xl font-medium tracking-tight text-[var(--ui-text)]">
           Start with a component.
         </h2>
-        <SButton size="lg" :as="NuxtLinkComponent" to="/components/button">
+        <SButton size="lg" :as="NuxtLinkComponent" to="/components/elements/button">
           Browse components
         </SButton>
       </SContainer>
