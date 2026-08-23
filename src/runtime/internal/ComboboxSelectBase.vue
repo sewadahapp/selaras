@@ -46,6 +46,7 @@ const props = withDefaults(defineProps<{
   size?: SelectVariants['size']
   invalid?: boolean
   clearable?: boolean
+  dropdown?: boolean
   creatable?: boolean
   searchTerm?: string
   resetSearchTermOnBlur?: boolean
@@ -101,6 +102,14 @@ function onSearchBlur() {
     searchText.value = ''
 }
 
+// The dropdown button is a plain ComboboxTrigger (its own click already
+// toggles open/closed) - this only needs to also blank out whatever's typed,
+// so opening it always browses the full list rather than staying scoped to
+// the current filter.
+function onDropdownClick() {
+  searchText.value = ''
+}
+
 // Reka resets the search input's text whenever an item is selected or the
 // popover closes (resetSearchTermOnSelect/resetSearchTermOnBlur) - but
 // without a displayValue, it falls back to echoing the raw selected VALUE
@@ -154,6 +163,7 @@ const chipRemoveProps = computed(() => resolveSlot(ui.value.chipRemove, props.ui
 const chipOverflowProps = computed(() => resolveSlot(ui.value.chipOverflow, props.ui?.chipOverflow))
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const clearProps = computed(() => resolveSlot(ui.value.clear, props.ui?.clear))
+const dropdownProps = computed(() => resolveSlot(ui.value.dropdown, props.ui?.dropdown))
 const searchWrapperProps = computed(() => resolveSlot(ui.value.searchWrapper, props.ui?.searchWrapper))
 const searchInputProps = computed(() => resolveSlot(ui.value.searchInput, props.ui?.searchInput))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -214,6 +224,9 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
         </STooltip>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
+        <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
+          <Icon name="lucide:chevron-down" class="size-4" />
+        </ComboboxTrigger>
       </div>
 
       <ComboboxTrigger
