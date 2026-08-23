@@ -27,6 +27,12 @@ const fruitItems = [
 </template>
 ```
 
+Selected options always show a checkmark in the list, via Reka UI's
+`ComboboxItemIndicator` - this is on by default rather than an opt-in
+alternative to a highlighted row.
+
+### Filtering
+
 Clicking anywhere on the trigger opens it - not just an icon. When `searchable`
 is set, the filter input lives inside the popover, not in the trigger itself.
 
@@ -59,21 +65,64 @@ tooltip, and clicking it still opens the popover like the rest of the trigger.
 <SSelect v-model="fruits" multiple display-mode="chip" :max-chips="2" :items="fruitItems" />
 ```
 
-### Virtualization
+### Checkbox selection
 
-For large option lists, `virtualize` renders only the visible rows (backed by
-`@tanstack/vue-virtual` via Reka UI's `ComboboxVirtualizer`). Pass `true` for
-defaults, or an object to tune `estimateSize`/`overscan`.
+There's no separate "checkbox mode" prop - the `item` slot already gives you
+the option to render whatever you want per row, including a purely visual
+[Checkbox](/components/forms/checkbox) that mirrors the row's selected state:
 
-::component-example{name="select-virtualize"}
+::component-example{name="select-checkbox-selection"}
 ::
 
 ```vue-html
-<SSelect v-model="value" searchable virtualize :items="fiveThousandItems" />
+<SSelect v-model="fruits" multiple :items="fruitItems">
+  <template #item="{ item }">
+    <SCheckbox :model-value="fruits.includes(item.value)" class="pointer-events-none" tabindex="-1" />
+    {{ item.label }}
+  </template>
+</SSelect>
 ```
 
-One caveat: virtualizing a grouped `items` list flattens the groups (a Reka UI
-limitation) - group headers won't render while virtualized.
+The checkbox is decorative (`pointer-events-none`, `tabindex="-1"`) - clicking
+the row is still what drives selection, same as any other option.
+
+### Clear
+
+`clearable` adds a button that resets the selection - `undefined` for a single
+select, an empty array for `multiple`. It only renders once there's something
+to clear, and clicking it never opens the popover.
+
+::component-example{name="select-clear"}
+::
+
+```vue-html
+<SSelect v-model="fruit" clearable placeholder="Pick a fruit" :items="fruitItems" />
+```
+
+### Custom option rendering
+
+The `item` slot replaces an option's content in the list (and doubles as a
+chip's content in `displayMode="chip"`); the `value` slot replaces the
+trigger's own display for a single select. Together they let a select carry
+more than plain text end to end:
+
+::component-example{name="select-custom-option"}
+::
+
+```vue-html
+<SSelect v-model="status" :items="statusItems">
+  <template #item="{ item }">
+    <span class="size-2 rounded-full" :class="item.color" />
+    {{ item.label }}
+  </template>
+  <template #value="{ selected }">
+    <span v-if="selected" class="inline-flex items-center gap-2">
+      <span class="size-2 rounded-full" :class="selected.raw.color" />
+      {{ selected.label }}
+    </span>
+  </template>
+</SSelect>
+```
 
 ### Custom objects
 
@@ -106,8 +155,43 @@ const items = [
 ]
 ```
 
-Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
-`aria-describedby` wired up automatically.
+The group header is plain text by default, but the `group` slot can replace
+it entirely - it receives the whole `{ label, items }` entry:
+
+::component-example{name="select-group-custom-header"}
+::
+
+```vue-html
+<SSelect :items="items">
+  <template #group="{ group }">
+    <span class="flex items-center justify-between">
+      <span>{{ group.label }}</span>
+      <span class="text-[var(--ui-text-muted)]">{{ group.items.length }}</span>
+    </span>
+  </template>
+</SSelect>
+```
+
+### Virtualization
+
+For large option lists, `virtualize` renders only the visible rows (backed by
+`@tanstack/vue-virtual` via Reka UI's `ComboboxVirtualizer`). Pass `true` for
+defaults, or an object to tune `estimateSize`/`overscan`.
+
+::component-example{name="select-virtualize"}
+::
+
+```vue-html
+<SSelect v-model="value" searchable virtualize :items="fiveThousandItems" />
+```
+
+One caveat: virtualizing a grouped `items` list flattens the groups (a Reka UI
+limitation) - group headers won't render while virtualized.
+
+This only windows what's already in `items` - it doesn't fetch more data as
+you scroll. There's no built-in lazy-loading equivalent to a comparable reference's own Lazy
+Virtual Scroll; page or fetch into `items` yourself if the full set can't live
+in memory.
 
 ### Search text
 
@@ -124,6 +208,36 @@ text yourself (e.g. to drive a remote search):
 forwarded from Reka UI's `ComboboxRoot`) control whether it resets at all -
 set either to `false` if you're driving the field yourself and don't want it
 cleared out from under you.
+
+### Sizes
+
+`size` takes `sm` / `md` / `lg`, matching every other form control in this
+library - see the [Props](#props) table below.
+
+### States
+
+`loading` swaps the trailing chevron for a spinner (the trigger stays
+clickable - it doesn't disable the select), `disabled` prevents opening it
+entirely, and `invalid` switches the ring to `--ui-danger`. All three compose
+with everything above them on this page - see [Props](#props).
+
+### Forms integration
+
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically - `invalid` and `size` both fall
+back to FormField's own state when not set directly on the select.
+
+### Accessibility
+
+Select renders Reka UI's Combobox primitive, so the accessibility semantics
+come from there rather than being reimplemented here: the trigger/search
+input exposes `role="combobox"` with `aria-expanded`/`aria-controls`, each
+option is `role="option"`, and each group is `aria-labelledby` its header.
+Arrow keys move the highlighted option, <kbd>Enter</kbd> selects it,
+<kbd>Escape</kbd> closes the popover, and typing while closed (or while
+`searchable`) filters the list - all standard behavior for the
+[ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/),
+not something to configure here.
 
 ## Props
 
@@ -142,6 +256,7 @@ cleared out from under you.
 | `virtualize` | `boolean \| { estimateSize?: number; overscan?: number }` | `false` |
 | `displayMode` | `'comma' \| 'chip'` | `'comma'` |
 | `maxChips` | `number` | `3` |
+| `clearable` | `boolean` | `false` |
 | `loading` | `boolean` | `false` |
 | `placeholder` | `string` | - |
 | `disabled` | `boolean` | `false` |
@@ -155,6 +270,23 @@ cleared out from under you.
 | --- | --- | --- |
 | `item` | `{ item }` | Custom option rendering (also used for chips) |
 | `value` | `{ selected }` | Custom trigger display (single-select only) |
+| `group` | `{ group }` | Custom group header (replaces the plain label text) |
 | `empty` | - | Shown when `items` is empty |
 | `empty-filter` | - | Shown when a search yields no matches |
 | `header` / `footer` | - | Content above/below the option list |
+
+## Not offered
+
+A few things a comparable reference's Select supports don't have an equivalent here, by
+design rather than oversight:
+
+- **Editable** - typing a value that isn't in `items`. Select's values are
+  always constrained to `items`; use [Autocomplete](/components/forms/autocomplete)
+  for free text with suggestions.
+- **Filled variant** - every input in this library has one consistent visual
+  style; there's no `variant` prop to switch between outlined/filled.
+- **Float Label / Ifta Label** - label positioning is [FormField](/components/forms/form-field)'s
+  job, not the select's own.
+- **Focus-behavior props** (`autoOptionFocus`, `selectOnFocus`, `focusOnHover`) -
+  not surfaced; Reka UI's Combobox defaults are used as-is.
+- **Lazy Virtual Scroll** - see the note under [Virtualization](#virtualization).
