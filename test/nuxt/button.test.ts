@@ -21,4 +21,24 @@ describe('button', () => {
     expect(wrapper.element.tagName).toBe('A')
     expect(wrapper.attributes('href')).toBe('/components/button')
   })
+
+  it('shows the given icon in place of a spinner when not loading', async () => {
+    const wrapper = await mountSuspended(Button, { props: { icon: 'lucide:save' } })
+    const icon = wrapper.find('.iconify')
+    expect(icon.classes()).toContain('i-lucide:save')
+  })
+
+  it('replaces the leading icon with a spinner when loading, without disabling the button', async () => {
+    const wrapper = await mountSuspended(Button, { props: { icon: 'lucide:save', loading: true } })
+    const icons = wrapper.findAll('.iconify')
+    expect(icons).toHaveLength(1)
+    expect(icons[0]!.classes()).toContain('i-lucide:loader-2')
+    expect(icons[0]!.classes()).toContain('animate-spin')
+    expect(wrapper.attributes('disabled')).toBeUndefined()
+  })
+
+  it('adds the raised shadow independently of variant', async () => {
+    const wrapper = await mountSuspended(Button, { props: { raised: true, variant: 'ghost' } })
+    expect(wrapper.classes().some(c => c.includes('shadow-'))).toBe(true)
+  })
 })

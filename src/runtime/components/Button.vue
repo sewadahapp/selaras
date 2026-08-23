@@ -20,6 +20,10 @@ const props = withDefaults(defineProps<{
   size?: ButtonVariants['size']
   block?: boolean
   disabled?: boolean
+  /** Shows a spinner in the leading icon's place. Doesn't imply `disabled` - combine `:loading="x" :disabled="x"` if a busy button shouldn't be clickable. */
+  loading?: boolean
+  /** Adds `--ui-shadow-md` - independent of `variant`, so it composes with any of them. */
+  raised?: boolean
   icon?: string
   trailingIcon?: string
   ui?: UiProp<ButtonSlots>
@@ -35,6 +39,7 @@ const ui = computed(() => theme.value({
   size: props.size,
   block: props.block,
   disabled: props.disabled,
+  raised: props.raised,
 }))
 
 const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
@@ -42,7 +47,8 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 
 <template>
   <Primitive :as="as" :disabled="disabled" v-bind="rootProps">
-    <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <Icon v-if="loading" name="lucide:loader-2" class="animate-spin" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <Icon v-else-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <slot />
     <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
   </Primitive>

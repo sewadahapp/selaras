@@ -30,6 +30,9 @@ export const buttonTheme = tv({
     block: {
       true: { base: 'w-full' },
     },
+    raised: {
+      true: { base: 'shadow-[var(--ui-shadow-md)]' },
+    },
   },
   compoundVariants: [
     { color: 'primary', variant: 'solid', class: { base: 'bg-[var(--ui-primary)] text-[var(--ui-primary-foreground)] hover:bg-[var(--ui-primary-hover)]' } },
