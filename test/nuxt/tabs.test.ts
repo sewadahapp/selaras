@@ -15,6 +15,27 @@ describe('tabs', () => {
     expect(triggers[1]!.attributes('data-state')).toBe('inactive')
   })
 
+  it('activates the given defaultValue tab and lets clicking another one switch uncontrolled', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: {
+        items: [{ label: 'One', value: 'a' }, { label: 'Two', value: 'b' }],
+        defaultValue: 'a',
+      },
+      slots: { a: () => 'First panel content', b: () => 'Second panel content' },
+    })
+    await nextTick()
+
+    expect(wrapper.text()).toContain('First panel content')
+
+    const triggers = wrapper.findAll('[role="tab"]')
+    await triggers[1]!.trigger('mousedown')
+    await nextTick()
+
+    // uncontrolled (no modelValue bound) - TabsRoot tracks its own state
+    // from here on, so the click alone switches the visible panel.
+    expect(wrapper.text()).toContain('Second panel content')
+  })
+
   it('falls back to the item\'s index as its value when no value is given', async () => {
     const wrapper = await mountSuspended(Tabs, {
       props: { items: [{ label: 'One' }, { label: 'Two' }] },

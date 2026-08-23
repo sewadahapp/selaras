@@ -16,6 +16,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   items: TabItem[]
+  defaultValue?: string
   modelValue?: string
   ui?: UiProp<TabsSlots>
 }>()
@@ -39,6 +40,7 @@ function itemValue(item: TabItem, index: number) {
 
 <template>
   <TabsRoot
+    :default-value="defaultValue"
     :model-value="modelValue"
     v-bind="rootProps"
     @update:model-value="(value) => $emit('update:modelValue', value as string)"
