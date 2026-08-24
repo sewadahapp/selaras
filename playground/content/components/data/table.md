@@ -277,6 +277,10 @@ production) if a column's `field` doesn't exist as a key on the first row of
 `data` - catching typos without any type-system gymnastics. For actual
 compile-time safety, use the `columns` escape hatch above instead.
 
+The same limitation applies to the `expanded` slot's `row` prop - it's typed
+generically, so accessing a field specific to your data shape needs a local
+cast, e.g. `(row as Order).items`.
+
 ### Accessibility
 
 Sortable headers are keyboard-operable (<kbd>Enter</kbd>/<kbd>Space</kbd>

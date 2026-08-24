@@ -13,7 +13,7 @@ const orders = ref<Order[]>([
     <SColumn field="customer" header="Customer" />
     <SColumn field="total" header="Total" />
     <template #expanded="{ row }">
-      <strong>Items:</strong> {{ row.items.join(', ') }}
+      <strong>Items:</strong> {{ (row as Order).items.join(', ') }}
     </template>
   </STable>
 </template>
