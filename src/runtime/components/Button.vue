@@ -46,9 +46,10 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>
-  <Primitive :as="as" :disabled="disabled" v-bind="rootProps">
+  <Primitive :as="as" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
     <Icon v-if="loading" name="lucide:loader-2" class="animate-spin" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <Icon v-else-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <span v-if="loading" class="sr-only">Loading</span>
     <slot />
     <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
   </Primitive>

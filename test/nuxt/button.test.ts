@@ -41,4 +41,19 @@ describe('button', () => {
     const wrapper = await mountSuspended(Button, { props: { raised: true, variant: 'ghost' } })
     expect(wrapper.classes().some(c => c.includes('shadow-'))).toBe(true)
   })
+
+  it('sets aria-busy and an sr-only announcement while loading, neither when not', async () => {
+    const idle = await mountSuspended(Button, { slots: { default: () => 'Save' } })
+    expect(idle.attributes('aria-busy')).toBeUndefined()
+    expect(idle.find('.sr-only').exists()).toBe(false)
+
+    const busy = await mountSuspended(Button, { props: { loading: true }, slots: { default: () => 'Save' } })
+    expect(busy.attributes('aria-busy')).toBe('true')
+    expect(busy.find('.sr-only').text()).toBe('Loading')
+  })
+
+  it('adds an active (press) class alongside hover for every color/variant combination', async () => {
+    const wrapper = await mountSuspended(Button, { props: { color: 'danger', variant: 'outline' } })
+    expect(wrapper.classes().some(c => c.startsWith('active:'))).toBe(true)
+  })
 })

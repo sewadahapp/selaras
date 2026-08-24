@@ -35,40 +35,47 @@ export const buttonTheme = tv({
     },
   },
   compoundVariants: [
-    { color: 'primary', variant: 'solid', class: { base: 'bg-[var(--ui-primary)] text-[var(--ui-primary-foreground)] hover:bg-[var(--ui-primary-hover)]' } },
-    { color: 'primary', variant: 'soft', class: { base: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)]/70' } },
-    { color: 'primary', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-primary)] text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)]' } },
-    { color: 'primary', variant: 'ghost', class: { base: 'text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)]' } },
+    // :active (mouse-down) always goes one step further than :hover in the
+    // same direction - solid presses to the -active (700) token, soft/
+    // outline/ghost (which have no visible bg by default, or a pale -soft
+    // one on hover) press to a stronger tint of the role's own main color
+    // rather than a new token. Tailwind's default variant order puts
+    // active after hover, so :active wins when both apply (mouse down
+    // while hovering) - no extra specificity needed.
+    { color: 'primary', variant: 'solid', class: { base: 'bg-[var(--ui-primary)] text-[var(--ui-primary-foreground)] hover:bg-[var(--ui-primary-hover)] active:bg-[var(--ui-primary-active)]' } },
+    { color: 'primary', variant: 'soft', class: { base: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)]/70 active:bg-[var(--ui-primary)]/20' } },
+    { color: 'primary', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-primary)] text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)] active:bg-[var(--ui-primary)]/10' } },
+    { color: 'primary', variant: 'ghost', class: { base: 'text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)] active:bg-[var(--ui-primary)]/10' } },
 
-    { color: 'neutral', variant: 'solid', class: { base: 'bg-[var(--ui-bg-inverted)] text-[var(--ui-text-inverted)] hover:opacity-90' } },
-    { color: 'neutral', variant: 'soft', class: { base: 'bg-[var(--ui-bg-elevated)] text-[var(--ui-text)] hover:bg-[var(--ui-border)]' } },
-    { color: 'neutral', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-border)] text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)]' } },
-    { color: 'neutral', variant: 'ghost', class: { base: 'text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)]' } },
+    { color: 'neutral', variant: 'solid', class: { base: 'bg-[var(--ui-bg-inverted)] text-[var(--ui-text-inverted)] hover:opacity-90 active:opacity-80' } },
+    { color: 'neutral', variant: 'soft', class: { base: 'bg-[var(--ui-bg-elevated)] text-[var(--ui-text)] hover:bg-[var(--ui-border)] active:bg-[var(--ui-border-hover)]' } },
+    { color: 'neutral', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-border)] text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)] active:bg-[var(--ui-border)]' } },
+    { color: 'neutral', variant: 'ghost', class: { base: 'text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)] active:bg-[var(--ui-border)]' } },
 
-    { color: 'secondary', variant: 'solid', class: { base: 'bg-[var(--ui-secondary)] text-[var(--ui-secondary-foreground)] hover:bg-[var(--ui-secondary-hover)]' } },
-    { color: 'secondary', variant: 'soft', class: { base: 'bg-[var(--ui-secondary-soft)] text-[var(--ui-secondary)] hover:bg-[var(--ui-secondary-soft)]/70' } },
-    { color: 'secondary', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-secondary)] text-[var(--ui-secondary)] hover:bg-[var(--ui-secondary-soft)]' } },
-    { color: 'secondary', variant: 'ghost', class: { base: 'text-[var(--ui-secondary)] hover:bg-[var(--ui-secondary-soft)]' } },
+    { color: 'secondary', variant: 'solid', class: { base: 'bg-[var(--ui-secondary)] text-[var(--ui-secondary-foreground)] hover:bg-[var(--ui-secondary-hover)] active:bg-[var(--ui-secondary-active)]' } },
+    { color: 'secondary', variant: 'soft', class: { base: 'bg-[var(--ui-secondary-soft)] text-[var(--ui-secondary)] hover:bg-[var(--ui-secondary-soft)]/70 active:bg-[var(--ui-secondary)]/20' } },
+    { color: 'secondary', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-secondary)] text-[var(--ui-secondary)] hover:bg-[var(--ui-secondary-soft)] active:bg-[var(--ui-secondary)]/10' } },
+    { color: 'secondary', variant: 'ghost', class: { base: 'text-[var(--ui-secondary)] hover:bg-[var(--ui-secondary-soft)] active:bg-[var(--ui-secondary)]/10' } },
 
-    { color: 'success', variant: 'solid', class: { base: 'bg-[var(--ui-success)] text-[var(--ui-success-foreground)] hover:bg-[var(--ui-success-hover)]' } },
-    { color: 'success', variant: 'soft', class: { base: 'bg-[var(--ui-success-soft)] text-[var(--ui-success)] hover:bg-[var(--ui-success-soft)]/70' } },
-    { color: 'success', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-success)] text-[var(--ui-success)] hover:bg-[var(--ui-success-soft)]' } },
-    { color: 'success', variant: 'ghost', class: { base: 'text-[var(--ui-success)] hover:bg-[var(--ui-success-soft)]' } },
+    { color: 'success', variant: 'solid', class: { base: 'bg-[var(--ui-success)] text-[var(--ui-success-foreground)] hover:bg-[var(--ui-success-hover)] active:bg-[var(--ui-success-active)]' } },
+    { color: 'success', variant: 'soft', class: { base: 'bg-[var(--ui-success-soft)] text-[var(--ui-success)] hover:bg-[var(--ui-success-soft)]/70 active:bg-[var(--ui-success)]/20' } },
+    { color: 'success', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-success)] text-[var(--ui-success)] hover:bg-[var(--ui-success-soft)] active:bg-[var(--ui-success)]/10' } },
+    { color: 'success', variant: 'ghost', class: { base: 'text-[var(--ui-success)] hover:bg-[var(--ui-success-soft)] active:bg-[var(--ui-success)]/10' } },
 
-    { color: 'danger', variant: 'solid', class: { base: 'bg-[var(--ui-danger)] text-[var(--ui-danger-foreground)] hover:bg-[var(--ui-danger-hover)]' } },
-    { color: 'danger', variant: 'soft', class: { base: 'bg-[var(--ui-danger-soft)] text-[var(--ui-danger)] hover:bg-[var(--ui-danger-soft)]/70' } },
-    { color: 'danger', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-danger)] text-[var(--ui-danger)] hover:bg-[var(--ui-danger-soft)]' } },
-    { color: 'danger', variant: 'ghost', class: { base: 'text-[var(--ui-danger)] hover:bg-[var(--ui-danger-soft)]' } },
+    { color: 'danger', variant: 'solid', class: { base: 'bg-[var(--ui-danger)] text-[var(--ui-danger-foreground)] hover:bg-[var(--ui-danger-hover)] active:bg-[var(--ui-danger-active)]' } },
+    { color: 'danger', variant: 'soft', class: { base: 'bg-[var(--ui-danger-soft)] text-[var(--ui-danger)] hover:bg-[var(--ui-danger-soft)]/70 active:bg-[var(--ui-danger)]/20' } },
+    { color: 'danger', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-danger)] text-[var(--ui-danger)] hover:bg-[var(--ui-danger-soft)] active:bg-[var(--ui-danger)]/10' } },
+    { color: 'danger', variant: 'ghost', class: { base: 'text-[var(--ui-danger)] hover:bg-[var(--ui-danger-soft)] active:bg-[var(--ui-danger)]/10' } },
 
-    { color: 'info', variant: 'solid', class: { base: 'bg-[var(--ui-info)] text-[var(--ui-info-foreground)] hover:bg-[var(--ui-info-hover)]' } },
-    { color: 'info', variant: 'soft', class: { base: 'bg-[var(--ui-info-soft)] text-[var(--ui-info)] hover:bg-[var(--ui-info-soft)]/70' } },
-    { color: 'info', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-info)] text-[var(--ui-info)] hover:bg-[var(--ui-info-soft)]' } },
-    { color: 'info', variant: 'ghost', class: { base: 'text-[var(--ui-info)] hover:bg-[var(--ui-info-soft)]' } },
+    { color: 'info', variant: 'solid', class: { base: 'bg-[var(--ui-info)] text-[var(--ui-info-foreground)] hover:bg-[var(--ui-info-hover)] active:bg-[var(--ui-info-active)]' } },
+    { color: 'info', variant: 'soft', class: { base: 'bg-[var(--ui-info-soft)] text-[var(--ui-info)] hover:bg-[var(--ui-info-soft)]/70 active:bg-[var(--ui-info)]/20' } },
+    { color: 'info', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-info)] text-[var(--ui-info)] hover:bg-[var(--ui-info-soft)] active:bg-[var(--ui-info)]/10' } },
+    { color: 'info', variant: 'ghost', class: { base: 'text-[var(--ui-info)] hover:bg-[var(--ui-info-soft)] active:bg-[var(--ui-info)]/10' } },
 
-    { color: 'warning', variant: 'solid', class: { base: 'bg-[var(--ui-warning)] text-[var(--ui-warning-foreground)] hover:bg-[var(--ui-warning-hover)]' } },
-    { color: 'warning', variant: 'soft', class: { base: 'bg-[var(--ui-warning-soft)] text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)]/70' } },
-    { color: 'warning', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-warning)] text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)]' } },
-    { color: 'warning', variant: 'ghost', class: { base: 'text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)]' } },
+    { color: 'warning', variant: 'solid', class: { base: 'bg-[var(--ui-warning)] text-[var(--ui-warning-foreground)] hover:bg-[var(--ui-warning-hover)] active:bg-[var(--ui-warning-active)]' } },
+    { color: 'warning', variant: 'soft', class: { base: 'bg-[var(--ui-warning-soft)] text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)]/70 active:bg-[var(--ui-warning)]/20' } },
+    { color: 'warning', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-warning)] text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)] active:bg-[var(--ui-warning)]/10' } },
+    { color: 'warning', variant: 'ghost', class: { base: 'text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)] active:bg-[var(--ui-warning)]/10' } },
   ],
   defaultVariants: {
     color: 'primary',

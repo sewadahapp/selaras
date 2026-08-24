@@ -213,6 +213,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         :id="selectId"
         :aria-invalid="selectInvalid || undefined"
         :aria-describedby="describedBy"
+        :aria-busy="loading || undefined"
         v-bind="triggerProps"
       >
         <template v-if="multiple && displayMode === 'chip'">
@@ -247,6 +248,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <Icon name="lucide:x" class="size-3.5" />
         </button>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
+        <span v-if="loading" class="sr-only">Loading</span>
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
           <Icon name="lucide:chevron-down" class="size-4" />
         </ComboboxTrigger>
@@ -257,6 +259,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         :id="selectId"
         :aria-invalid="selectInvalid || undefined"
         :aria-describedby="describedBy"
+        :aria-busy="loading || undefined"
         v-bind="triggerProps"
       >
         <template v-if="multiple">
@@ -296,6 +299,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         </button>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
         <Icon v-else name="lucide:chevron-down" class="size-4" v-bind="iconProps" />
+        <span v-if="loading" class="sr-only">Loading</span>
       </ComboboxTrigger>
     </ComboboxAnchor>
 

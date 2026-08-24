@@ -56,6 +56,16 @@ describe('select', () => {
     expect(wrapper.findAll('button')).toHaveLength(1)
   })
 
+  it('sets aria-busy on the trigger while loading, with an sr-only announcement', async () => {
+    const idle = await mountSuspended(Select, { props: { items: fruitItems } })
+    expect(idle.find('button').attributes('aria-busy')).toBeUndefined()
+    expect(idle.find('.sr-only').exists()).toBe(false)
+
+    const busy = await mountSuspended(Select, { props: { items: fruitItems, loading: true } })
+    expect(busy.find('button').attributes('aria-busy')).toBe('true')
+    expect(busy.find('.sr-only').text()).toBe('Loading')
+  })
+
   it('renders custom group header content from the group slot, receiving the group entry', async () => {
     const items = [{ label: 'Fruits', items: fruitItems }]
     const wrapper = await mountSuspended(Select, {

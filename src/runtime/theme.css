@@ -128,34 +128,42 @@
      and dark mode - a single shared value instead of a lighter dark-mode
      step. Foreground is picked per role by actually computed contrast, not
      assumed white - secondary/success/warning read as too light for white
-     text at any usable step, so they use black instead. */
+     text at any usable step, so they use black instead. -active is 700,
+     for a solid button's :active (mouse-down) press state - one step
+     darker than -hover, same in both modes for the same reason. */
   --ui-primary: var(--color-primary-500);
   --ui-primary-hover: var(--color-primary-600);
+  --ui-primary-active: var(--color-primary-700);
   --ui-primary-foreground: white;
   --ui-primary-soft: var(--color-primary-50);
 
   --ui-secondary: var(--color-secondary-500);
   --ui-secondary-hover: var(--color-secondary-600);
+  --ui-secondary-active: var(--color-secondary-700);
   --ui-secondary-foreground: black;
   --ui-secondary-soft: var(--color-secondary-50);
 
   --ui-success: var(--color-success-500);
   --ui-success-hover: var(--color-success-600);
+  --ui-success-active: var(--color-success-700);
   --ui-success-foreground: black;
   --ui-success-soft: var(--color-success-50);
 
   --ui-danger: var(--color-danger-500);
   --ui-danger-hover: var(--color-danger-600);
+  --ui-danger-active: var(--color-danger-700);
   --ui-danger-foreground: white;
   --ui-danger-soft: var(--color-danger-50);
 
   --ui-info: var(--color-info-500);
   --ui-info-hover: var(--color-info-600);
+  --ui-info-active: var(--color-info-700);
   --ui-info-foreground: white;
   --ui-info-soft: var(--color-info-50);
 
   --ui-warning: var(--color-warning-500);
   --ui-warning-hover: var(--color-warning-600);
+  --ui-warning-active: var(--color-warning-700);
   --ui-warning-foreground: black;
   --ui-warning-soft: var(--color-warning-50);
 }
@@ -177,28 +185,34 @@
      over the dark surface instead of light mode's solid pale-50 swatch. */
   --ui-primary: var(--color-primary-500);
   --ui-primary-hover: var(--color-primary-600);
+  --ui-primary-active: var(--color-primary-700);
   --ui-primary-foreground: white;
   --ui-primary-soft: color-mix(in oklab, var(--color-primary-500) 16%, transparent);
 
   --ui-secondary: var(--color-secondary-500);
   --ui-secondary-hover: var(--color-secondary-600);
+  --ui-secondary-active: var(--color-secondary-700);
   --ui-secondary-soft: color-mix(in oklab, var(--color-secondary-500) 16%, transparent);
 
   --ui-success: var(--color-success-500);
   --ui-success-hover: var(--color-success-600);
+  --ui-success-active: var(--color-success-700);
   --ui-success-soft: color-mix(in oklab, var(--color-success-500) 16%, transparent);
 
   --ui-danger: var(--color-danger-500);
   --ui-danger-hover: var(--color-danger-600);
+  --ui-danger-active: var(--color-danger-700);
   --ui-danger-foreground: white;
   --ui-danger-soft: color-mix(in oklab, var(--color-danger-500) 16%, transparent);
 
   --ui-info: var(--color-info-500);
   --ui-info-hover: var(--color-info-600);
+  --ui-info-active: var(--color-info-700);
   --ui-info-foreground: white;
   --ui-info-soft: color-mix(in oklab, var(--color-info-500) 16%, transparent);
 
   --ui-warning: var(--color-warning-500);
   --ui-warning-hover: var(--color-warning-600);
+  --ui-warning-active: var(--color-warning-700);
   --ui-warning-soft: color-mix(in oklab, var(--color-warning-500) 16%, transparent);
 }
