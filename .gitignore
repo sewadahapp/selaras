@@ -46,6 +46,9 @@ coverage
 *.iml
 .idea
 
+# Claude Code
+.claude
+
 # OSX
 .DS_Store
 .AppleDouble
