@@ -30,6 +30,11 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    /** Sticks this column to the left/right edge during horizontal scroll. */
+    pinned: {
+      type: String as () => 'left' | 'right' | undefined,
+      default: undefined,
+    },
   },
   render() {
     return null

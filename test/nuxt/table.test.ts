@@ -1,7 +1,7 @@
 import type { DOMWrapper } from '@vue/test-utils'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { describe, expect, it, vi } from 'vitest'
+import { defineComponent, nextTick } from 'vue'
 import Table from '../../src/runtime/components/Table.vue'
 
 function findButton(wrapper: Awaited<ReturnType<typeof mountSuspended>>, text: string) {
@@ -53,6 +53,31 @@ describe('table', () => {
     await header.trigger('click')
     await nextTick()
     expect(rowText()).toEqual(['Charlie', 'Bob', 'Alice'])
+  })
+
+  it('sorts on Enter/Space and exposes aria-sort, so sortable headers work without a mouse', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name', enableSorting: true }],
+      },
+    })
+
+    const header = wrapper.find('th')
+    const rowText = () => wrapper.findAll('tbody tr').map(r => r.text())
+
+    expect(header.attributes('tabindex')).toBe('0')
+    expect(header.attributes('aria-sort')).toBe('none')
+
+    await header.trigger('keydown.enter')
+    await nextTick()
+    expect(rowText()).toEqual(['Alice', 'Bob', 'Charlie'])
+    expect(header.attributes('aria-sort')).toBe('ascending')
+
+    await header.trigger('keydown.space')
+    await nextTick()
+    expect(rowText()).toEqual(['Charlie', 'Bob', 'Alice'])
+    expect(header.attributes('aria-sort')).toBe('descending')
   })
 
   it('does not reorder rows from a header click when sorting is controlled by the parent', async () => {
@@ -107,5 +132,147 @@ describe('table', () => {
     expect(wrapper.findAll('tbody tr').map(r => r.text())).toEqual(['3', '4'])
     expect(findButton(wrapper, 'Next').attributes('disabled')).toBeDefined()
     expect(findButton(wrapper, 'Previous').attributes('disabled')).toBeUndefined()
+  })
+
+  it('shows a loading overlay with a spinner when loading, and nothing when not', async () => {
+    const idle = await mountSuspended(Table, {
+      props: { data: [{ name: 'Alice' }], columns: [{ accessorKey: 'name', header: 'Name' }] },
+    })
+    expect(idle.find('.iconify.i-lucide\\:loader-2').exists()).toBe(false)
+
+    const busy = await mountSuspended(Table, {
+      props: { data: [{ name: 'Alice' }], columns: [{ accessorKey: 'name', header: 'Name' }], loading: true },
+    })
+    expect(busy.find('.iconify.i-lucide\\:loader-2').exists()).toBe(true)
+  })
+
+  it('applies size, gridlines, and striped as real classes', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        size: 'lg',
+        gridlines: true,
+        striped: true,
+      },
+    })
+    expect(wrapper.find('th').classes().some(c => c.includes('text-base'))).toBe(true)
+    expect(wrapper.find('table').classes().includes('border')).toBe(true)
+    expect(wrapper.find('table').classes().some(c => c.includes('nth-child(even)'))).toBe(true)
+  })
+
+  it('applies defaultSorting as the initial uncontrolled sort, without needing v-model', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name', enableSorting: true }],
+        defaultSorting: [{ id: 'name', desc: false }],
+      },
+    })
+    expect(wrapper.findAll('tbody tr').map(r => r.text())).toEqual(['Alice', 'Bob', 'Charlie'])
+  })
+
+  it('expandable: renders an expand button per row, toggling the expanded slot content', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        expandable: true,
+      },
+      slots: { expanded: ({ row }: { row: { name: string } }) => `Detail for ${row.name}` },
+    })
+
+    expect(wrapper.text()).not.toContain('Detail for Alice')
+
+    const expandButtons = wrapper.findAll('button[aria-label="Expand row"]')
+    expect(expandButtons).toHaveLength(2)
+    await expandButtons[0]!.trigger('click')
+    await nextTick()
+
+    expect(wrapper.text()).toContain('Detail for Alice')
+    expect(wrapper.text()).not.toContain('Detail for Bob')
+    expect(wrapper.find('button[aria-label="Collapse row"]').exists()).toBe(true)
+  })
+
+  it('columnToggle: hides a column from every row when its checkbox is unchecked', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice', role: 'Admin' }],
+        columns: [
+          { accessorKey: 'name', header: 'Name' },
+          { accessorKey: 'role', header: 'Role' },
+        ],
+        columnToggle: true,
+      },
+    })
+
+    expect(wrapper.findAll('tbody tr td')).toHaveLength(2)
+
+    await findButton(wrapper, 'Columns').trigger('click')
+    await nextTick()
+    const roleCheckbox = wrapper.findAll('[role="checkbox"]')[1]!
+    await roleCheckbox.trigger('click')
+    await nextTick()
+
+    expect(wrapper.findAll('tbody tr td')).toHaveLength(1)
+    expect(wrapper.find('tbody tr td')!.text()).toBe('Alice')
+  })
+
+  it('pinned: marks a pinned column with data-pinned on both header and body cells', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice', email: 'alice@example.com' }],
+        columns: [
+          { id: 'name', accessorKey: 'name', header: 'Name', meta: { pinned: 'left' } },
+          { id: 'email', accessorKey: 'email', header: 'Email' },
+        ],
+      },
+    })
+
+    const [nameHeader, emailHeader] = wrapper.findAll('th')
+    expect(nameHeader!.attributes('data-pinned')).toBe('start')
+    expect(emailHeader!.attributes('data-pinned')).toBeUndefined()
+
+    const [nameCell] = wrapper.findAll('tbody td')
+    expect(nameCell!.attributes('data-pinned')).toBe('start')
+    expect(nameCell!.attributes('style')).toContain('left')
+  })
+
+  it('virtualize: does not render every row into the DOM for a large dataset', async () => {
+    const data = Array.from({ length: 500 }, (_, i) => ({ n: i }))
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data,
+        columns: [{ accessorKey: 'n', header: 'N' }],
+        virtualize: true,
+      },
+    })
+    // jsdom/happy-dom report 0 for layout-dependent sizes, but the point of
+    // this test is simply that virtualize doesn't dump all 500 rows into
+    // the DOM unconditionally - it goes through the windowed code path.
+    expect(wrapper.findAll('tbody tr').length).toBeLessThan(data.length)
+  })
+
+  it('exposes exportCsv (via a template ref, the real usage pattern), which downloads a CSV', async () => {
+    const clickSpy = vi.fn()
+    const originalCreateElement = document.createElement.bind(document)
+    vi.spyOn(document, 'createElement').mockImplementation((tag: string) => {
+      const el = originalCreateElement(tag)
+      if (tag === 'a')
+        el.click = clickSpy
+      return el
+    })
+    vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock')
+    vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {})
+
+    const Host = defineComponent({
+      components: { Table },
+      template: `<Table ref="tableRef" :data="[{ name: 'Alice' }]" :columns="[{ accessorKey: 'name', header: 'Name' }]" />`,
+    })
+    const wrapper = await mountSuspended(Host)
+    ;(wrapper.vm.$refs.tableRef as any).exportCsv('users.csv')
+
+    expect(clickSpy).toHaveBeenCalledOnce()
+    vi.restoreAllMocks()
   })
 })

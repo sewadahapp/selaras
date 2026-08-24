@@ -81,6 +81,7 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
           footer?: string
           sortable?: boolean
           filterable?: boolean
+          pinned?: 'left' | 'right'
         }
         const cellSlot = (vnode.children as any)?.default as
           | ((scope: { row: unknown, value: unknown }) => unknown)
@@ -95,6 +96,7 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
           sortFn: 'alphanumeric',
           enableColumnFilter: toBooleanProp(props.filterable, false),
           filterFn: 'includesString',
+          meta: { pinned: props.pinned },
           cell: cellSlot
             ? (context: any) => cellSlot({ row: context.row.original, value: context.getValue() })
             : (context: any) => context.getValue(),
@@ -104,4 +106,33 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
       return null
     })
     .filter((column): column is NonNullable<typeof column> => column !== null)
+}
+
+/**
+ * Reads each leaf column's own `meta.pinned` (set from <SColumn pinned="...">
+ * by convertChildrenToColumns above) into the { start, end } shape
+ * TanStack v9's columnPinningFeature wants as table-level state - "start"/
+ * "end" is its own (RTL-aware) naming; `pinned="left"|"right"` is the
+ * public <SColumn> API since that's the more familiar term (matching
+ * a comparable reference's own `alignFrozen`), mapped 1:1 assuming LTR. Declarative,
+ * one-way: pin arrangement comes from which columns you marked pinned in
+ * your template, not a separate piece of state to manage yourself.
+ */
+export function collectColumnPinning(columns: any[]): { start: string[], end: string[] } {
+  const start: string[] = []
+  const end: string[] = []
+
+  function visit(column: any) {
+    if (Array.isArray(column.columns)) {
+      column.columns.forEach(visit)
+      return
+    }
+    if (column.meta?.pinned === 'left')
+      start.push(column.id)
+    else if (column.meta?.pinned === 'right')
+      end.push(column.id)
+  }
+
+  columns.forEach(visit)
+  return { start, end }
 }

@@ -2,36 +2,56 @@
 import type { TableSlots } from '../theme/table'
 import type { UiProp } from '../utils/ui'
 import { FlexRender } from '@tanstack/vue-table'
-import { computed, h, useSlots, watchEffect } from 'vue'
+import { useVirtualizer } from '@tanstack/vue-virtual'
+import { computed, h, nextTick, onMounted, onUnmounted, ref, useSlots, watch, watchEffect } from 'vue'
 import { useTable } from '../composables/use-table'
 import { tableTheme } from '../theme/table'
-import { convertChildrenToColumns } from '../utils/table-columns'
+import { collectColumnPinning, convertChildrenToColumns } from '../utils/table-columns'
+import { exportTableToCsv } from '../utils/table-export'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Checkbox from './Checkbox.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   data: unknown[]
   columns?: any[]
   selectable?: boolean
   pageSize?: number
   loading?: boolean
   sorting?: any[]
+  defaultSorting?: any[]
   rowSelection?: Record<string, boolean>
   globalFilter?: string
   pageIndex?: number
+  size?: 'sm' | 'md' | 'lg'
+  gridlines?: boolean
+  striped?: boolean
+  expandable?: boolean
+  expanded?: any
+  columnVisibility?: Record<string, boolean>
+  columnToggle?: boolean
+  /** Enables vertical scroll with a sticky header, capped at this CSS height (e.g. '24rem'). */
+  scrollHeight?: string
+  virtualize?: boolean | { estimateSize?: number, overscan?: number }
   ui?: UiProp<TableSlots>
-}>()
+}>(), {
+  size: 'md',
+})
 
 const emit = defineEmits<{
   'update:sorting': [value: any[]]
   'update:rowSelection': [value: Record<string, boolean>]
   'update:globalFilter': [value: string]
   'update:pageIndex': [value: number]
+  'update:expanded': [value: any]
+  'update:columnVisibility': [value: Record<string, boolean>]
 }>()
 
 const slots = useSlots()
+
+const theme = useComponentTheme('table', tableTheme)
+const ui = computed(() => theme.value({ size: props.size, gridlines: props.gridlines, striped: props.striped, scrollable: !!props.scrollHeight }))
 
 const selectColumn = {
   id: '__select__',
@@ -48,12 +68,28 @@ const selectColumn = {
   enableColumnFilter: false,
 }
 
+const expandColumn = {
+  id: '__expand__',
+  header: '',
+  cell: ({ row }: any) => h('button', {
+    'type': 'button',
+    'class': ui.value.expandButton(),
+    'aria-label': row.getIsExpanded() ? 'Collapse row' : 'Expand row',
+    'onClick': () => row.toggleExpanded(),
+  }, [h(Icon, { 'name': 'lucide:chevron-right', 'class': ui.value.expandChevron(), 'data-expanded': row.getIsExpanded() || undefined })]),
+  enableSorting: false,
+  enableColumnFilter: false,
+}
+
 const columns = computed(() => {
   const base = props.columns ?? convertChildrenToColumns(slots.default?.())
-  return props.selectable ? [selectColumn, ...base] : base
+  const withExpand = props.expandable ? [expandColumn, ...base] : base
+  return props.selectable ? [selectColumn, ...withExpand] : withExpand
 })
 
-const { table, pageIndex } = useTable(props, emit, columns)
+const columnPinning = computed(() => collectColumnPinning(columns.value))
+
+const { table, pageIndex, columnVisibility } = useTable(props, emit, columns, columnPinning)
 
 if (import.meta.dev) {
   watchEffect(() => {
@@ -66,9 +102,6 @@ if (import.meta.dev) {
     }
   })
 }
-
-const theme = useComponentTheme('table', tableTheme)
-const ui = computed(() => theme.value())
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const wrapperProps = computed(() => resolveSlot(ui.value.wrapper, props.ui?.wrapper))
@@ -85,26 +118,149 @@ const filterInputProps = computed(() => resolveSlot(ui.value.filterInput, props.
 const paginationWrapperProps = computed(() => resolveSlot(ui.value.paginationWrapper, props.ui?.paginationWrapper))
 const paginationInfoProps = computed(() => resolveSlot(ui.value.paginationInfo, props.ui?.paginationInfo))
 const paginationButtonsProps = computed(() => resolveSlot(ui.value.paginationButtons, props.ui?.paginationButtons))
+const loadingOverlayProps = computed(() => resolveSlot(ui.value.loadingOverlay, props.ui?.loadingOverlay))
+const loadingIconProps = computed(() => resolveSlot(ui.value.loadingIcon, props.ui?.loadingIcon))
+const expandedRowProps = computed(() => resolveSlot(ui.value.expandedRow, props.ui?.expandedRow))
+const expandedCellProps = computed(() => resolveSlot(ui.value.expandedCell, props.ui?.expandedCell))
+const columnToggleProps = computed(() => resolveSlot(ui.value.columnToggle, props.ui?.columnToggle))
+const columnTogglePanelProps = computed(() => resolveSlot(ui.value.columnTogglePanel, props.ui?.columnTogglePanel))
+const columnToggleItemProps = computed(() => resolveSlot(ui.value.columnToggleItem, props.ui?.columnToggleItem))
 
 const hasFooter = computed(() =>
   table.getFooterGroups().some(group => group.headers.some(header => header.column.columnDef.footer)),
 )
+
+// --- column pinning: sticky offsets, measured from real rendered widths ---
+// (TanStack's own getStart()/getAfter() assume columnSizingFeature is
+// registered, which this table doesn't use - every column would otherwise
+// report the same generic default size regardless of its real rendered
+// width.) Recomputed on mount and whenever the column list or visibility
+// changes - not on every possible layout shift (e.g. a later font load),
+// a deliberate, documented scope cut for this pass.
+const headerRefs = new Map<string, HTMLElement>()
+function setHeaderRef(id: string, el: unknown) {
+  if (el)
+    headerRefs.set(id, el as HTMLElement)
+  else
+    headerRefs.delete(id)
+}
+
+const pinnedOffsets = ref<Record<string, number>>({})
+
+async function recomputePinnedOffsets() {
+  await nextTick()
+  const offsets: Record<string, number> = {}
+  let left = 0
+  for (const column of table.getStartVisibleLeafColumns()) {
+    offsets[column.id] = left
+    left += headerRefs.get(column.id)?.getBoundingClientRect().width ?? 0
+  }
+  let right = 0
+  for (const column of [...table.getEndVisibleLeafColumns()].reverse()) {
+    offsets[column.id] = right
+    right += headerRefs.get(column.id)?.getBoundingClientRect().width ?? 0
+  }
+  pinnedOffsets.value = offsets
+}
+
+onMounted(recomputePinnedOffsets)
+watch([columns, columnVisibility], recomputePinnedOffsets)
+
+function pinnedStyle(cell: { column: { id: string, getIsPinned: () => false | 'start' | 'end' } }) {
+  const side = cell.column.getIsPinned()
+  if (!side)
+    return undefined
+  const offset = pinnedOffsets.value[cell.column.id] ?? 0
+  return side === 'start' ? { left: `${offset}px` } : { right: `${offset}px` }
+}
+
+// --- virtualization: spacer-row technique - only the visible window of
+// <tr> elements actually renders, with a padding-height spacer row above
+// and below standing in for the rest. Avoids needing to know column
+// widths up front (unlike absolute-positioned-row virtualization), since
+// real rows still flow normally and drive the table's own column layout.
+const wrapperEl = ref<HTMLElement>()
+const virtualizeConfig = computed(() => {
+  if (!props.virtualize)
+    return null
+  const opts = props.virtualize === true ? {} : props.virtualize
+  return { estimateSize: opts.estimateSize ?? 40, overscan: opts.overscan ?? 8 }
+})
+
+// Always constructed (never conditionally, since virtualize can toggle
+// reactively) - its output is only ever read when virtualizeConfig is set.
+const rowVirtualizer = useVirtualizer(computed(() => ({
+  count: table.getRowModel().rows.length,
+  getScrollElement: () => wrapperEl.value ?? null,
+  estimateSize: () => virtualizeConfig.value?.estimateSize ?? 40,
+  overscan: virtualizeConfig.value?.overscan ?? 8,
+})))
+
+const virtualRows = computed(() => rowVirtualizer.value.getVirtualItems())
+const virtualPaddingTop = computed(() => virtualRows.value[0]?.start ?? 0)
+const virtualPaddingBottom = computed(() => {
+  if (!virtualRows.value.length)
+    return 0
+  const last = virtualRows.value[virtualRows.value.length - 1]!
+  return rowVirtualizer.value.getTotalSize() - (last.start + last.size)
+})
+const visibleRows = computed(() => {
+  const rows = table.getRowModel().rows
+  return virtualizeConfig.value ? virtualRows.value.map(v => rows[v.index]!) : rows
+})
+
+// --- column visibility toggle ---
+const showColumnTogglePanel = ref(false)
+const toggleableColumns = computed(() => table.getAllLeafColumns().filter(c => !c.id.startsWith('__')))
+
+function onDocumentClick(event: MouseEvent) {
+  if (!(event.target as HTMLElement).closest('[data-column-toggle]'))
+    showColumnTogglePanel.value = false
+}
+
+onMounted(() => document.addEventListener('click', onDocumentClick))
+onUnmounted(() => document.removeEventListener('click', onDocumentClick))
+
+defineExpose({
+  exportCsv: (filename?: string) => exportTableToCsv(table, filename),
+})
 </script>
 
 <template>
   <div v-bind="rootProps">
-    <div v-bind="wrapperProps">
+    <div v-if="columnToggle" class="mb-2 flex justify-end">
+      <div data-column-toggle v-bind="columnToggleProps">
+        <SButton variant="outline" size="sm" icon="lucide:columns-3" @click="showColumnTogglePanel = !showColumnTogglePanel">
+          Columns
+        </SButton>
+        <div v-if="showColumnTogglePanel" v-bind="columnTogglePanelProps">
+          <label v-for="column in toggleableColumns" :key="column.id" v-bind="columnToggleItemProps">
+            <SCheckbox :model-value="column.getIsVisible()" @update:model-value="column.toggleVisibility()" />
+            {{ typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id }}
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div ref="wrapperEl" v-bind="wrapperProps" :style="scrollHeight ? { maxHeight: scrollHeight } : undefined">
       <table v-bind="tableProps">
         <thead v-bind="theadProps">
           <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id" v-bind="trProps">
             <template v-for="header in headerGroup.headers" :key="header.id">
               <th
                 v-if="header.rowSpan !== 0"
+                :ref="(el) => setHeaderRef(header.column.id, el)"
                 :colspan="header.colSpan"
                 :rowspan="header.rowSpan"
                 v-bind="thProps"
                 :class="header.column.getCanSort() ? thSortableClass : undefined"
+                :data-pinned="header.column.getIsPinned() || undefined"
+                :style="pinnedStyle(header)"
+                :tabindex="header.column.getCanSort() ? 0 : undefined"
+                :aria-sort="header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : header.column.getCanSort() ? 'none' : undefined"
                 @click="header.column.getToggleSortingHandler()?.($event)"
+                @keydown.enter="header.column.getToggleSortingHandler()?.($event)"
+                @keydown.space.prevent="header.column.getToggleSortingHandler()?.($event)"
               >
                 <template v-if="!header.isPlaceholder || header.rowSpan > 1">
                   <FlexRender :header="header" />
@@ -135,10 +291,29 @@ const hasFooter = computed(() =>
         </thead>
 
         <tbody v-if="table.getRowModel().rows.length">
-          <tr v-for="row in table.getRowModel().rows" :key="row.id" v-bind="trProps">
-            <td v-for="cell in row.getAllCells()" :key="cell.id" v-bind="tdProps">
-              <FlexRender :cell="cell" />
-            </td>
+          <tr v-if="virtualizeConfig && virtualPaddingTop > 0">
+            <td :colspan="table.getVisibleLeafColumns().length" :style="{ height: `${virtualPaddingTop}px`, padding: 0, border: 0 }" />
+          </tr>
+          <template v-for="row in visibleRows" :key="row.id">
+            <tr v-bind="trProps">
+              <td
+                v-for="cell in row.getVisibleCells()"
+                :key="cell.id"
+                v-bind="tdProps"
+                :data-pinned="cell.column.getIsPinned() || undefined"
+                :style="pinnedStyle(cell)"
+              >
+                <FlexRender :cell="cell" />
+              </td>
+            </tr>
+            <tr v-if="row.getIsExpanded()" v-bind="expandedRowProps">
+              <td :colspan="row.getVisibleCells().length" v-bind="expandedCellProps">
+                <slot name="expanded" :row="row.original" />
+              </td>
+            </tr>
+          </template>
+          <tr v-if="virtualizeConfig && virtualPaddingBottom > 0">
+            <td :colspan="table.getVisibleLeafColumns().length" :style="{ height: `${virtualPaddingBottom}px`, padding: 0, border: 0 }" />
           </tr>
         </tbody>
 
@@ -156,6 +331,10 @@ const hasFooter = computed(() =>
           No data
         </slot>
       </div>
+    </div>
+
+    <div v-if="loading" v-bind="loadingOverlayProps">
+      <Icon name="lucide:loader-2" v-bind="loadingIconProps" />
     </div>
 
     <div v-if="table.getPageCount() > 1" v-bind="paginationWrapperProps">
