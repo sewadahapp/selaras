@@ -1,0 +1,28 @@
+/*
+ * Docs-site-only typography. Deliberately NOT in src/runtime/theme.css -
+ * that file ships to every consumer of the library, and this is a choice
+ * about how the *documentation* presents itself, not the component
+ * defaults. Unlayered custom properties beat Tailwind's own --font-sans/
+ * --font-mono (set inside @layer theme) regardless of stylesheet order, so
+ * this quietly overrides Preflight's system-font default everywhere.
+ */
+:root {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+/*
+ * Both playground layouts (default, landing) use a sticky h-16 (4rem)
+ * SHeader. Without this, tabbing to a link/button near the top of the
+ * content can land underneath it - the browser's default scroll-into-view
+ * for a newly-focused element has no awareness of the sticky header's
+ * height (WCAG 2.2 "Focus Not Obscured, Minimum"). scroll-mt-20 on prose
+ * headings (src/runtime/theme/prose.ts) already covers anchor-link
+ * scrolling; this covers keyboard-focus scrolling the same way, for
+ * every element, not just headings. Playground-only (not theme.css) since
+ * it's specific to this site's own header height, not a general default
+ * every consumer of the library should get.
+ */
+html {
+  scroll-padding-top: 4rem;
+}

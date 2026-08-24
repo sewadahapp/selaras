@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   modules: ['../src/module', '@nuxt/content', '@nuxt/fonts'],
-  css: ['~/assets/css/fonts.css'],
+  css: ['~/assets/css/global.css'],
   devtools: { enabled: true },
   compatibilityDate: 'latest',
   fonts: {

@@ -13,6 +13,28 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/*
+ * tw-animate-css's enter/exit utilities (animate-in, zoom-in-95, fade-in-0,
+ * ...) - used by Select/Dropdown/Modal/Toast/Tooltip's open/close
+ * transitions - have no built-in prefers-reduced-motion handling, and
+ * neither do this file's own hover/active transition-colors utilities.
+ * This is the standard "kill switch" for both: forcing every animation/
+ * transition to near-zero duration is a safe, complete fallback under
+ * reduced motion (an instant color or state change loses nothing
+ * functionally), rather than trying to selectively target only the
+ * "real" motion case by case.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @theme {
   /* radius scale, generous by default */
   --ui-radius-sm: 6px;

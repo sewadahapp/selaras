@@ -6,7 +6,10 @@ export const contentTocTheme = tv({
     title: 'font-medium text-[var(--ui-text)]',
     list: 'flex flex-col gap-1',
     item: 'flex flex-col',
-    link: 'block border-l-2 border-transparent py-0.5 pl-3 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
+    // A lighter touch than the main sidebar's - this is a secondary,
+    // supplementary "on this page" list, not primary navigation - but
+    // still meaningfully bigger than the original py-0.5.
+    link: 'block border-l-2 border-transparent py-1.5 pl-3 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
     content: 'ml-3 flex flex-col gap-1',
   },
   variants: {
