@@ -347,7 +347,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               :overscan="virtualizeConfig.overscan"
             >
               <ComboboxItem
-                :key="virtualItem.key"
+                :key="String(virtualItem.key)"
                 :value="option.value"
                 :disabled="option.disabled"
                 :style="{ position: 'absolute', top: 0, left: 0, right: 0, transform: `translateY(${virtualItem.start}px)`, height: `${virtualItem.size}px` }"
