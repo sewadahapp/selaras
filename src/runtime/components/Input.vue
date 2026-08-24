@@ -20,6 +20,7 @@ const props = withDefaults(defineProps<{
   size?: InputVariants['size']
   disabled?: boolean
   invalid?: boolean
+  clearable?: boolean
   icon?: string
   trailingIcon?: string
   ui?: UiProp<InputSlots>
@@ -27,7 +28,7 @@ const props = withDefaults(defineProps<{
   type: 'text',
 })
 
-defineEmits<{
+const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
@@ -37,13 +38,20 @@ const inputId = computed(() => props.id ?? field?.id)
 const inputInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 
+const hasValue = computed(() => props.modelValue !== undefined && props.modelValue !== '')
+const showClear = computed(() => !!props.clearable && !props.disabled && hasValue.value)
+
+function clear() {
+  emit('update:modelValue', '')
+}
+
 const theme = useComponentTheme('input', inputTheme)
 
 const ui = computed(() => theme.value({
   size: props.size ?? field?.size,
   invalid: inputInvalid.value,
   hasLeadingIcon: !!props.icon,
-  hasTrailingIcon: !!props.trailingIcon,
+  hasTrailingIcon: !!props.trailingIcon || showClear.value,
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -65,6 +73,15 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
       v-bind="baseProps"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
-    <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    <button
+      v-if="showClear"
+      type="button"
+      aria-label="Clear"
+      v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)"
+      @click="clear"
+    >
+      <Icon name="lucide:x" class="size-full" />
+    </button>
+    <Icon v-else-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
   </div>
 </template>
