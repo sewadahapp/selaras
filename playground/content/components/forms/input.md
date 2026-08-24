@@ -6,11 +6,69 @@ order: 20
 
 ## Usage
 
-::s-input{placeholder="Search..." icon="lucide:search"}
+::component-example{name="input-basic"}
 ::
 
-Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
-`aria-describedby` wired up automatically - see that page for details.
+```vue
+<script setup lang="ts">
+const value = ref('')
+</script>
+
+<template>
+  <SInput v-model="value" placeholder="Type something..." />
+</template>
+```
+
+Unlike a comparable reference's `fluid` prop, Input is full-width by default - constrain it
+with a class on the component itself (as the examples on this page do with
+`max-w-xs`), not a wrapping element.
+
+### Icons
+
+`icon` and `trailingIcon` add an icon before or after the text - the same
+props [Button](/components/elements/button#icons) uses for its own.
+
+::component-example{name="input-icons"}
+::
+
+```vue-html
+<SInput v-model="search" icon="lucide:search" placeholder="Search..." />
+<SInput v-model="amount" trailing-icon="lucide:dollar-sign" placeholder="0.00" />
+```
+
+### Clear
+
+`clearable` adds a button that empties the value, once there's something to
+clear - it takes over the trailing position from `trailingIcon` while active,
+the same way [Select's](/components/forms/select#clear) does.
+
+::component-example{name="input-clear"}
+::
+
+```vue-html
+<SInput v-model="value" clearable placeholder="Type something..." />
+```
+
+### Sizes and states
+
+`size` takes `sm` / `md` / `lg`, `disabled` prevents interaction and dims the
+input, and `invalid` switches the ring to `--ui-danger` - see the
+[Props](#props) table below.
+
+### Forms integration
+
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid`
+and `aria-describedby` wired up automatically, plus a `hint`/`error` message
+underneath - FormField is also where `size` and `invalid` fall back to when
+not set directly on the input.
+
+### Accessibility
+
+Input renders a plain native `<input>`, so browser and screen-reader support
+for typing, selection, and autofill all come for free. `aria-invalid` and
+`aria-describedby` are set automatically once `invalid` is true or the input
+is wrapped in [FormField](/components/forms/form-field) - nothing to
+configure by hand for the common case.
 
 ## Props
 
@@ -24,6 +82,7 @@ Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
+| `clearable` | `boolean` | `false` |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
 | `ui` | `Partial<Record<'root' \| 'base' \| 'leadingIcon' \| 'trailingIcon', string \| object>>` | - |
