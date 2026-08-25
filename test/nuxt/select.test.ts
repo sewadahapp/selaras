@@ -71,6 +71,20 @@ describe('select', () => {
     expect(removeButtons.every(b => b.attributes('tabindex') === '-1')).toBe(true)
   })
 
+  it('wraps chips in a flex-1 container so trailing content (overflow tooltip, chevron) sits at the trigger\'s far right edge', async () => {
+    // Regression: comma mode's value span has flex-1, which absorbs the
+    // remaining row width and pushes whatever comes after it (the +N more
+    // tooltip, the chevron) to the end. Chip mode had no equivalent - the
+    // individual chip spans aren't flex-1, so trailing content just sat
+    // immediately after the last chip instead of at the far right.
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
+    })
+    const chip = wrapper.find('[aria-label="Remove Apple"]').element.closest('span')!
+    const chipWrapper = chip.parentElement!
+    expect(chipWrapper.className).toContain('flex-1')
+  })
+
   it('clears a multiple selection down to an empty array', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, clearable: true },

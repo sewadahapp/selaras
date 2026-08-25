@@ -272,7 +272,13 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         tabindex="0"
       >
         <template v-if="multiple">
-          <template v-if="displayMode === 'chip'">
+          <!--
+            flex-1 here plays the same role valueProps' own flex-1 plays in
+            comma mode below - without something absorbing the remaining
+            width, the trailing tooltip/chevron just sit immediately after
+            the last chip instead of at the trigger's far right edge.
+          -->
+          <div v-if="displayMode === 'chip'" class="flex flex-1 flex-wrap items-center gap-1.5">
             <span
               v-for="option in visibleOptions"
               :key="option.value"
@@ -283,16 +289,16 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
                 <Icon name="lucide:x" class="size-3" />
               </button>
             </span>
-          </template>
+            <span v-if="!selectedOptions.length" v-bind="valueProps" data-placeholder="">
+              {{ placeholder }}
+            </span>
+          </div>
           <span v-else v-bind="valueProps" :data-placeholder="!selectedOptions.length || undefined">
             {{ commaText || placeholder }}
           </span>
           <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
             <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
           </Tooltip>
-          <span v-if="!selectedOptions.length && displayMode === 'chip'" v-bind="valueProps" data-placeholder="">
-            {{ placeholder }}
-          </span>
         </template>
         <span v-else v-bind="valueProps" :data-placeholder="!selectedOptions.length || undefined">
           <slot name="value" :selected="selectedOptions[0]">{{ selectedOptions[0]?.label || placeholder }}</slot>
