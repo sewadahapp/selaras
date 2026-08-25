@@ -70,10 +70,10 @@ Warning
 
 There's no separate `iconOnly` prop - pass `icon` with no default slot
 content and it shapes itself to a square automatically (matching its own
-`size`), rather than requiring an explicit flag you could forget to set (the
-way a comparable reference's own `iconOnly` prop does). Always add `aria-label` yourself when
-there's no visible text - it falls through to the root element like any
-other attr (see [Accessibility](#accessibility) below).
+`size`), rather than requiring an explicit flag you could forget to set.
+Always add `aria-label` yourself when there's no visible text - it falls
+through to the root element like any other attr (see
+[Accessibility](#accessibility) below).
 
 ::component-example{name="button-icon-only"}
 ::

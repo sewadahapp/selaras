@@ -19,9 +19,9 @@ const value = ref('')
 </template>
 ```
 
-Unlike a comparable reference's `fluid` prop, Input is full-width by default - constrain it
-with a class on the component itself (as the examples on this page do with
-`max-w-xs`), not a wrapping element.
+Input is full-width by default, rather than needing an opt-in flag to make
+it so - constrain it with a class on the component itself (as the examples
+on this page do with `max-w-xs`), not a wrapping element.
 
 ### Icons
 
