@@ -48,6 +48,11 @@ function clear() {
 
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 
+// One size step down from the input itself - a full-size dismiss icon reads
+// as too heavy next to the input's own text, especially at lg. sm has no
+// smaller step, so it stays sm.
+const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
+
 const theme = useComponentTheme('input', inputTheme)
 
 const ui = computed(() => theme.value({
@@ -78,7 +83,7 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
     >
     <Button
       v-if="showClear"
-      :size="effectiveSize"
+      :size="clearSize"
       variant="ghost"
       color="neutral"
       icon="lucide:x"
