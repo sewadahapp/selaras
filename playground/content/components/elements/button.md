@@ -55,8 +55,8 @@ Warning
 
 ### Icons
 
-`icon` and `trailingIcon` add an icon before or after the label - any name
-[Nuxt Icon](https://nuxt.dev/modules/icon) resolves works, not just `lucide:*`.
+`icon` and `trailingIcon` add an icon before or after the label - any
+registered icon name works, not just `lucide:*`.
 
 ::component-example{name="button-icons"}
 ::

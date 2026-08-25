@@ -1,6 +1,6 @@
 ---
 title: Icon
-description: A themed wrapper around Nuxt Icon - consistent sizing and semantic color, everywhere an icon shows up in your own markup.
+description: A themed icon wrapper - consistent sizing and semantic color, everywhere an icon shows up in your own markup.
 order: 12
 ---
 
@@ -22,8 +22,8 @@ this design system rather than a one-off `<Icon>` with hand-picked classes.
 <SIcon name="lucide:heart" color="danger" />
 ```
 
-`name` accepts anything [Nuxt Icon](https://nuxt.dev/modules/icon) resolves,
-not just the `lucide:*` set used throughout this library's own docs.
+`name` accepts any registered icon name, not just the `lucide:*` set used
+throughout this library's own docs.
 
 ### Sizes
 
