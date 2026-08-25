@@ -6,6 +6,7 @@ import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { inputTheme } from '../theme/input'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Button from './Button.vue'
 
 type InputVariants = VariantProps<typeof inputTheme>
 
@@ -45,10 +46,12 @@ function clear() {
   emit('update:modelValue', '')
 }
 
+const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
+
 const theme = useComponentTheme('input', inputTheme)
 
 const ui = computed(() => theme.value({
-  size: props.size ?? field?.size,
+  size: effectiveSize.value,
   invalid: inputInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
@@ -73,15 +76,16 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
       v-bind="baseProps"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
-    <button
+    <Button
       v-if="showClear"
-      type="button"
+      :size="effectiveSize"
+      variant="ghost"
+      color="neutral"
+      icon="lucide:x"
       aria-label="Clear"
       v-bind="resolveSlot(ui.clear, props.ui?.clear)"
       @click="clear"
-    >
-      <Icon name="lucide:x" class="size-3.5" />
-    </button>
+    />
     <Icon v-else-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
   </div>
 </template>

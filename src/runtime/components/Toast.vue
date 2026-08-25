@@ -6,6 +6,7 @@ import { computed } from 'vue'
 import { useToast } from '../composables/use-toast'
 import { toastTheme } from '../theme/toast'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
+import Button from './Button.vue'
 
 const props = defineProps<{
   ui?: UiProp<ToastSlots>
@@ -40,7 +41,7 @@ const closeProps = computed(() => resolveSlot(ui.value.close, props.ui?.close))
       </ToastDescription>
     </div>
     <ToastClose as-child>
-      <SButton size="sm" variant="ghost" color="neutral" icon="lucide:x" aria-label="Close" v-bind="closeProps" />
+      <Button size="sm" variant="ghost" color="neutral" icon="lucide:x" aria-label="Close" v-bind="closeProps" />
     </ToastClose>
   </ToastRoot>
   <ToastPortal>

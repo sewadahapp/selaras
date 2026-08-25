@@ -40,4 +40,21 @@ describe('input', () => {
     const wrapper = await mountSuspended(Input, { props: { clearable: true, disabled: true, modelValue: 'hello' } })
     expect(wrapper.find('button').exists()).toBe(false)
   })
+
+  it('renders the clear button as an actual <SButton>, with equal-width/height sizing for a true circle', async () => {
+    // Regression: this used to be a raw <button> with no inline-flex - an
+    // absolutely-positioned button with no explicit height inherits the
+    // surrounding line-height, inflating its height above its width, so
+    // rounded-full rendered an oval, not a circle. <SButton>'s own
+    // inline-flex/items-center/justify-center base fixes that, but only if
+    // this component actually renders through it rather than a bespoke tag.
+    const wrapper = await mountSuspended(Input, { props: { clearable: true, modelValue: 'hello', size: 'md' } })
+    const button = wrapper.find('button')
+    const classes = button.classes()
+    expect(classes).toContain('inline-flex')
+    expect(classes).toContain('items-center')
+    expect(classes).toContain('justify-center')
+    // The theme's own fixed override for size="md" - equal on both axes.
+    expect(classes).toContain('size-9')
+  })
 })

@@ -19,6 +19,8 @@ import {
   ComboboxVirtualizer,
 } from 'reka-ui'
 import { computed, ref } from 'vue'
+import Button from '../components/Button.vue'
+import Tooltip from '../components/Tooltip.vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
 import { selectTheme } from '../theme/select'
@@ -167,8 +169,10 @@ const selectId = computed(() => props.id ?? field?.id)
 const selectInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 
+const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
+
 const theme = useComponentTheme('select', selectTheme)
-const ui = computed(() => theme.value({ size: props.size ?? field?.size, invalid: selectInvalid.value }))
+const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: selectInvalid.value }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
@@ -236,18 +240,19 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           @keydown="onSearchKeydown"
           @blur="onSearchBlur"
         />
-        <STooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
+        <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
           <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
-        </STooltip>
-        <button
+        </Tooltip>
+        <Button
           v-if="clearable && !disabled && selectedOptions.length"
-          type="button"
+          :size="effectiveSize"
+          variant="ghost"
+          color="neutral"
+          icon="lucide:x"
           aria-label="Clear"
           v-bind="clearProps"
           @click.stop="clear"
-        >
-          <Icon name="lucide:x" class="size-3.5" />
-        </button>
+        />
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
         <span v-if="loading" class="sr-only">Loading</span>
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
@@ -279,9 +284,9 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <span v-else v-bind="valueProps" :data-placeholder="!selectedOptions.length || undefined">
             {{ commaText || placeholder }}
           </span>
-          <STooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
+          <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
             <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
-          </STooltip>
+          </Tooltip>
           <span v-if="!selectedOptions.length && displayMode === 'chip'" v-bind="valueProps" data-placeholder="">
             {{ placeholder }}
           </span>
@@ -290,15 +295,16 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <slot name="value" :selected="selectedOptions[0]">{{ selectedOptions[0]?.label || placeholder }}</slot>
         </span>
 
-        <button
+        <Button
           v-if="clearable && !disabled && selectedOptions.length"
-          type="button"
+          :size="effectiveSize"
+          variant="ghost"
+          color="neutral"
+          icon="lucide:x"
           aria-label="Clear"
           v-bind="clearProps"
           @click.stop="clear"
-        >
-          <Icon name="lucide:x" class="size-3.5" />
-        </button>
+        />
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
         <Icon v-else name="lucide:chevron-down" class="size-4" v-bind="iconProps" />
         <span v-if="loading" class="sr-only">Loading</span>

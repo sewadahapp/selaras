@@ -4,6 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { pageAsideTheme } from '../theme/page-aside'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import ScrollArea from './ScrollArea.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -22,10 +23,10 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
     <div v-if="$slots.header" v-bind="resolveSlot(ui.header, props.ui?.header)">
       <slot name="header" />
     </div>
-    <SScrollArea v-bind="resolveSlot(ui.scrollArea, props.ui?.scrollArea)">
+    <ScrollArea v-bind="resolveSlot(ui.scrollArea, props.ui?.scrollArea)">
       <div v-bind="resolveSlot(ui.body, props.ui?.body)">
         <slot />
       </div>
-    </SScrollArea>
+    </ScrollArea>
   </aside>
 </template>

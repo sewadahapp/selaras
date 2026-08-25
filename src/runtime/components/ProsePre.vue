@@ -2,6 +2,8 @@
 import { computed, ref } from 'vue'
 import { proseTheme } from '../theme/prose'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Badge from './Badge.vue'
+import Button from './Button.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -40,9 +42,9 @@ async function copy() {
   <div v-bind="resolveSlot(ui.preWrapper, undefined)">
     <div v-if="filename || language || code" v-bind="resolveSlot(ui.preHeader, undefined)">
       <span v-if="filename" v-bind="resolveSlot(ui.preFilename, undefined)">{{ filename }}</span>
-      <SBadge v-else-if="language" :label="language" size="sm" variant="outline" />
+      <Badge v-else-if="language" :label="language" size="sm" variant="outline" />
       <span v-else />
-      <SButton
+      <Button
         v-if="code"
         v-bind="resolveSlot(ui.preCopyButton, undefined)"
         size="sm"

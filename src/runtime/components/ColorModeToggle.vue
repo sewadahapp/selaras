@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useColorMode } from '#imports'
+import Button from './Button.vue'
 
 const colorMode = useColorMode()
 
@@ -12,7 +13,7 @@ function toggle() {
 </script>
 
 <template>
-  <SButton
+  <Button
     :icon="isDark ? 'lucide:moon' : 'lucide:sun'"
     variant="ghost"
     color="neutral"

@@ -9,7 +9,9 @@ import { tableTheme } from '../theme/table'
 import { collectColumnPinning, convertChildrenToColumns } from '../utils/table-columns'
 import { exportTableToCsv } from '../utils/table-export'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Button from './Button.vue'
 import Checkbox from './Checkbox.vue'
+import Input from './Input.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -230,12 +232,12 @@ defineExpose({
   <div v-bind="rootProps">
     <div v-if="columnToggle" class="mb-2 flex justify-end">
       <div data-column-toggle v-bind="columnToggleProps">
-        <SButton variant="outline" size="sm" icon="lucide:columns-3" @click="showColumnTogglePanel = !showColumnTogglePanel">
+        <Button variant="outline" size="sm" icon="lucide:columns-3" @click="showColumnTogglePanel = !showColumnTogglePanel">
           Columns
-        </SButton>
+        </Button>
         <div v-if="showColumnTogglePanel" v-bind="columnTogglePanelProps">
           <label v-for="column in toggleableColumns" :key="column.id" v-bind="columnToggleItemProps">
-            <SCheckbox :model-value="column.getIsVisible()" @update:model-value="column.toggleVisibility()" />
+            <Checkbox :model-value="column.getIsVisible()" @update:model-value="column.toggleVisibility()" />
             {{ typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id }}
           </label>
         </div>
@@ -275,7 +277,7 @@ defineExpose({
                     v-bind="sortIconProps"
                   />
                   <div v-if="header.column.getCanFilter()">
-                    <SInput
+                    <Input
                       size="sm"
                       :model-value="(header.column.getFilterValue() as string) ?? ''"
                       placeholder="Filter..."
@@ -342,12 +344,12 @@ defineExpose({
         Page {{ pageIndex + 1 }} of {{ table.getPageCount() }}
       </span>
       <div v-bind="paginationButtonsProps">
-        <SButton variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()">
+        <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()">
           Previous
-        </SButton>
-        <SButton variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()">
+        </Button>
+        <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()">
           Next
-        </SButton>
+        </Button>
       </div>
     </div>
   </div>

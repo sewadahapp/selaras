@@ -5,6 +5,7 @@ import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPor
 import { computed, useSlots, watchEffect } from 'vue'
 import { modalTheme } from '../theme/modal'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
+import Button from './Button.vue'
 
 const props = defineProps<{
   modelValue?: boolean
@@ -65,7 +66,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
             </slot>
           </div>
           <DialogClose as-child>
-            <SButton size="sm" variant="ghost" color="neutral" icon="lucide:x" aria-label="Close" v-bind="closeProps" />
+            <Button size="sm" variant="ghost" color="neutral" icon="lucide:x" aria-label="Close" v-bind="closeProps" />
           </DialogClose>
         </div>
         <div v-bind="bodyProps">

@@ -5,6 +5,7 @@ import { computed } from 'vue'
 import { useRoute } from '#imports'
 import { contentNavigationTheme } from '../theme/content-navigation'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Accordion from './Accordion.vue'
 
 export interface ContentNavigationLink {
   title: string
@@ -44,7 +45,7 @@ const groupUi = computed(() => ({
 <template>
   <ul v-bind="rootProps">
     <li v-for="link in navigation" :key="link.path" v-bind="resolveSlot(ui.item, props.ui?.item)">
-      <SAccordion
+      <Accordion
         v-if="link.children?.length"
         :items="[{ value: link.path, label: link.title }]"
         :default-value="[link.path]"
@@ -55,7 +56,7 @@ const groupUi = computed(() => ({
                keep it unprefixed even though the public component is SContentNavigation. -->
           <ContentNavigation :navigation="link.children!" :ui="props.ui" />
         </template>
-      </SAccordion>
+      </Accordion>
       <NuxtLink v-else :to="link.path" v-bind="resolveSlot(isActive(link) ? ui.linkActive : ui.link, props.ui?.link)">
         {{ link.title }}
       </NuxtLink>

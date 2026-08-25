@@ -11,7 +11,10 @@ export const selectTheme = tv({
     chipRemove: 'rounded-full p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
     chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg-elevated)] px-2 py-0.5 text-xs text-[var(--ui-text-muted)]',
     icon: 'shrink-0 text-[var(--ui-text-muted)]',
-    clear: 'shrink-0 rounded-full p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
+    // and touch target come from Button's own theme; only rounded-full
+    // (this dismiss-glyph family reads better circular) stays here.
+    clear: 'shrink-0 rounded-full',
     dropdown: 'shrink-0 rounded-[var(--ui-radius-sm)] p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
     searchWrapper: 'flex items-center gap-2 border-b border-[var(--ui-border)] px-2',
     searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--ui-text)] outline-none placeholder:text-[var(--ui-text-muted)]',
