@@ -1,12 +1,22 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { TooltipProvider } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import Select from '../../src/runtime/components/Select.vue'
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },
   { label: 'Banana', value: 'banana' },
 ]
+
+// The +N more overflow summary renders an STooltip, which now requires a
+// shared TooltipProvider ancestor (normally supplied once by SApp) - see
+// tooltip.test.ts for the equivalent, more detailed note.
+function withTooltipProvider(children: any) {
+  return defineComponent({
+    render: () => h(TooltipProvider, null, { default: () => children }),
+  })
+}
 
 describe('select', () => {
   // the trigger itself is a <button> (clicking anywhere on it opens the
@@ -71,18 +81,40 @@ describe('select', () => {
     expect(removeButtons.every(b => b.attributes('tabindex') === '-1')).toBe(true)
   })
 
-  it('wraps chips in a flex-1 container so trailing content (overflow tooltip, chevron) sits at the trigger\'s far right edge', async () => {
-    // Regression: comma mode's value span has flex-1, which absorbs the
-    // remaining row width and pushes whatever comes after it (the +N more
-    // tooltip, the chevron) to the end. Chip mode had no equivalent - the
-    // individual chip spans aren't flex-1, so trailing content just sat
-    // immediately after the last chip instead of at the far right.
-    const wrapper = await mountSuspended(Select, {
-      props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
-    })
+  it('keeps the +N more tooltip right next to the chips, in the same flex-1 container that pushes the chevron to the edge', async () => {
+    // The chevron still needs pushing to the trigger's far right edge (a
+    // flex-1 container achieves that), but +N more should sit immediately
+    // next to the visible chips rather than also being shoved all the way
+    // to the end - so both live inside that same flex-1 wrapper, not after it.
+    const wrapper = await mountSuspended(withTooltipProvider(
+      h(Select, { items: fruitItems, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip', maxChips: 2 }),
+    ))
     const chip = wrapper.find('[aria-label="Remove Apple"]').element.closest('span')!
-    const chipWrapper = chip.parentElement!
-    expect(chipWrapper.className).toContain('flex-1')
+    const wrapperEl = chip.parentElement!
+    expect(wrapperEl.className).toContain('flex-1')
+
+    const moreText = wrapper.findAll('span').find(el => el.text().includes('more'))!
+    expect(moreText.element.closest('span')?.parentElement).toBe(wrapperEl)
+  })
+
+  it('keeps the +N more tooltip right next to the comma-joined text, with the text itself no longer flex-1', async () => {
+    // Same fix as chip mode, but here the value span used to BE the flex-1
+    // element directly - now the wrapper is, and the span drops to
+    // flex-initial (still shrinks for its own truncation, just doesn't
+    // grow and push the tooltip away from it).
+    const wrapper = await mountSuspended(withTooltipProvider(
+      h(Select, { items: fruitItems, modelValue: ['apple', 'banana', 'cherry'], multiple: true, maxChips: 2 }),
+    ))
+    // data-placeholder is only present when empty - not the case here (3
+    // selected) - so find the value span by its known text content instead.
+    const valueSpan = wrapper.findAll('span').find(el => el.text().startsWith('Apple'))!
+    expect(valueSpan.classes()).not.toContain('flex-1')
+    expect(valueSpan.classes()).toContain('flex-initial')
+
+    const wrapperEl = valueSpan.element.parentElement!
+    expect(wrapperEl.className).toContain('flex-1')
+    const moreText = wrapper.findAll('span').find(el => el.text().includes('more'))!
+    expect(moreText.element.closest('span')?.parentElement).toBe(wrapperEl)
   })
 
   it('clears a multiple selection down to an empty array', async () => {

@@ -178,6 +178,21 @@ const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: sele
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const valueProps = computed(() => resolveSlot(ui.value.value, props.ui?.value))
+// The value slot's own flex-1 is right for the single-select case (it's
+// the only thing in the row besides the chevron), but wrong once it needs
+// to sit next to the +N more tooltip in comma mode: flex-1 would make the
+// span itself consume all the remaining row width, pushing the tooltip
+// after it instead of right next to the truncated text. flex-initial (not
+// flex-none) still allows it to shrink for its own text-overflow ellipsis;
+// min-w-0 is what actually lets that shrinking happen below content size.
+const commaValueProps = computed(() => {
+  const override = props.ui?.value
+  const overrideClass = typeof override === 'string' ? override : override?.class
+  return resolveSlot(ui.value.value, {
+    ...(typeof override === 'object' && override !== null ? override : {}),
+    class: [overrideClass, 'flex-initial min-w-0'].filter(Boolean).join(' '),
+  })
+})
 const chipProps = computed(() => resolveSlot(ui.value.chip, props.ui?.chip))
 const chipRemoveProps = computed(() => resolveSlot(ui.value.chipRemove, props.ui?.chipRemove))
 const chipOverflowProps = computed(() => resolveSlot(ui.value.chipOverflow, props.ui?.chipOverflow))
@@ -273,10 +288,11 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
       >
         <template v-if="multiple">
           <!--
-            flex-1 here plays the same role valueProps' own flex-1 plays in
-            comma mode below - without something absorbing the remaining
-            width, the trailing tooltip/chevron just sit immediately after
-            the last chip instead of at the trigger's far right edge.
+            Both branches wrap their content (chips, or the comma-joined
+            text) together with the +N more tooltip in one flex-1 container -
+            that's what pushes the chevron to the trigger's far right edge,
+            while the tooltip itself stays immediately next to the visible
+            content rather than getting shoved all the way to the end too.
           -->
           <div v-if="displayMode === 'chip'" class="flex flex-1 flex-wrap items-center gap-1.5">
             <span
@@ -292,13 +308,18 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             <span v-if="!selectedOptions.length" v-bind="valueProps" data-placeholder="">
               {{ placeholder }}
             </span>
+            <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
+              <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
+            </Tooltip>
           </div>
-          <span v-else v-bind="valueProps" :data-placeholder="!selectedOptions.length || undefined">
-            {{ commaText || placeholder }}
-          </span>
-          <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
-            <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
-          </Tooltip>
+          <div v-else class="flex flex-1 items-center gap-1.5">
+            <span v-bind="commaValueProps" :data-placeholder="!selectedOptions.length || undefined">
+              {{ commaText || placeholder }}
+            </span>
+            <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
+              <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
+            </Tooltip>
+          </div>
         </template>
         <span v-else v-bind="valueProps" :data-placeholder="!selectedOptions.length || undefined">
           <slot name="value" :selected="selectedOptions[0]">{{ selectedOptions[0]?.label || placeholder }}</slot>
