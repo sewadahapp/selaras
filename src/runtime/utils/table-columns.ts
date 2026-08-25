@@ -1,5 +1,5 @@
 import type { VNode } from 'vue'
-import { Comment, Fragment, Text } from 'vue'
+import { Comment, Fragment, h, Text } from 'vue'
 import Column from '../components/Column'
 import ColumnGroup from '../components/ColumnGroup'
 
@@ -97,8 +97,14 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
           enableColumnFilter: toBooleanProp(props.filterable, false),
           filterFn: 'includesString',
           meta: { pinned: props.pinned },
+          // A slot always returns an array of VNodes, even for a single
+          // child - TanStack's flexRender only recognizes a single VNode
+          // (isVNode check) or a component/string, so an array falls into
+          // its object branch and gets wrongly treated as a component
+          // (h(array, props)), rendering nothing. Wrapping in a Fragment
+          // gives flexRender one real VNode to render.
           cell: cellSlot
-            ? (context: any) => cellSlot({ row: context.row.original, value: context.getValue() })
+            ? (context: any) => h(Fragment, cellSlot({ row: context.row.original, value: context.getValue() }) as any)
             : (context: any) => context.getValue(),
         }
       }

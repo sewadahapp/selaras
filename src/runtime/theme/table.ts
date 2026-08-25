@@ -7,10 +7,10 @@ export const tableTheme = tv({
     table: 'w-full border-collapse',
     thead: 'bg-[var(--ui-bg-elevated)]',
     tr: 'border-b border-[var(--ui-border)] last:border-b-0',
-    th: 'text-left font-medium text-[var(--ui-text-muted)] whitespace-nowrap',
+    th: 'text-left font-medium text-[var(--ui-text-muted)] whitespace-nowrap data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--ui-bg-elevated)]',
     thSortable: 'cursor-pointer select-none hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--ui-primary)]',
     sortIcon: 'ml-1 inline-block size-3.5 align-text-bottom text-[var(--ui-text-muted)]',
-    td: 'text-[var(--ui-text)]',
+    td: 'text-[var(--ui-text)] data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--ui-bg)]',
     tfoot: 'bg-[var(--ui-bg-elevated)] font-medium',
     emptyState: 'px-3 py-8 text-center text-sm text-[var(--ui-text-muted)]',
     filterInput: 'mt-1',
@@ -45,9 +45,6 @@ export const tableTheme = tv({
     },
     scrollable: {
       true: { wrapper: 'overflow-y-auto', thead: 'sticky top-0 z-[1]' },
-    },
-    pinned: {
-      true: { th: 'sticky bg-[var(--ui-bg-elevated)]', td: 'sticky bg-[var(--ui-bg)]' },
     },
   },
   defaultVariants: {

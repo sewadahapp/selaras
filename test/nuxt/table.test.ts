@@ -1,7 +1,8 @@
 import type { DOMWrapper } from '@vue/test-utils'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
+import Column from '../../src/runtime/components/Column'
 import Table from '../../src/runtime/components/Table.vue'
 
 function findButton(wrapper: Awaited<ReturnType<typeof mountSuspended>>, text: string) {
@@ -236,6 +237,32 @@ describe('table', () => {
     const [nameCell] = wrapper.findAll('tbody td')
     expect(nameCell!.attributes('data-pinned')).toBe('start')
     expect(nameCell!.attributes('style')).toContain('left')
+
+    // The sticky positioning itself comes from a `data-[pinned]:sticky`
+    // class keyed off this same attribute - without it, `left`/`right` on a
+    // statically-positioned cell has no visual effect at all.
+    expect(nameHeader!.classes().join(' ')).toContain('sticky')
+    expect(nameCell!.classes().join(' ')).toContain('sticky')
+  })
+
+  it('renders a real <SColumn> default slot as real content, not an empty node', async () => {
+    // End-to-end regression for a real bug: a Vue slot always returns an
+    // array (even for one child), and TanStack's flexRender only recognizes
+    // a single VNode - passing the array straight through as `cell` got it
+    // silently swallowed instead of rendered (see convertChildrenToColumns'
+    // Fragment-wrapping fix).
+    const wrapper = await mountSuspended(Table, {
+      props: { data: [{ role: 'Admin' }] },
+      slots: {
+        default: () => h(Column, { field: 'role', header: 'Role' }, {
+          default: ({ value }: { value: unknown }) => h('strong', { class: 'custom-cell' }, String(value)),
+        }),
+      },
+    })
+
+    const custom = wrapper.find('.custom-cell')
+    expect(custom.exists()).toBe(true)
+    expect(custom.text()).toBe('Admin')
   })
 
   it('virtualize: does not render every row into the DOM for a large dataset', async () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { Comment, Fragment, h, Text } from 'vue'
+import { Comment, Fragment, h, isVNode, Text } from 'vue'
 import Column from '../src/runtime/components/Column'
 import ColumnGroup from '../src/runtime/components/ColumnGroup'
 import { convertChildrenToColumns } from '../src/runtime/utils/table-columns'
@@ -76,5 +76,20 @@ describe('convertChildrenToColumns', () => {
   it('defaults the cell renderer to the raw accessor value when no slot is given', () => {
     const [col] = convertChildrenToColumns([h(Column, { field: 'name' })])
     expect(col.cell({ getValue: () => 'Bob' })).toBe('Bob')
+  })
+
+  it('wraps a real slot render (always an array, even for one child) in a single VNode', () => {
+    // A Vue slot function always returns an array, never a bare VNode - a
+    // `cell` that returns that array as-is breaks TanStack's flexRender,
+    // which only recognizes a single VNode (or a component/string) and
+    // otherwise wrongly treats the array as a component definition,
+    // rendering nothing. Wrapping in a Fragment is what fixes that.
+    const cellSlot = vi.fn(({ value }: { value: unknown }) => [h('strong', {}, String(value))])
+    const [col] = convertChildrenToColumns([h(Column, { field: 'name' }, { default: cellSlot })])
+
+    const rendered = col.cell({ row: { original: { name: 'Alice' } }, getValue: () => 'Alice' })
+
+    expect(isVNode(rendered)).toBe(true)
+    expect(rendered.type).toBe(Fragment)
   })
 })

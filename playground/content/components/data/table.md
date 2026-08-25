@@ -151,20 +151,27 @@ columns are shown yourself (e.g. to persist the choice).
 ### Frozen columns
 
 Give a column `pinned="left"` or `pinned="right"` to keep it fixed at that
-edge during horizontal scroll - pair it with `scroll-height` (below) or a
-naturally wide table so there's something to scroll:
+edge during horizontal scroll - pair it with `scroll-height` (below) and
+enough columns (or a `ui.table` min-width override) that the table actually
+needs to scroll:
 
 ::component-example{name="table-pinned"}
 ::
 
 ```vue-html
-<STable :data="employees" scroll-height="16rem">
+<STable :data="employees" scroll-height="16rem" :ui="{ table: 'min-w-[960px]' }">
   <SColumn field="name" header="Name" pinned="left" />
   <SColumn field="department" header="Department" />
+  <SColumn field="role" header="Role" />
   <SColumn field="email" header="Email" />
   <SColumn field="phone" header="Phone" />
   <SColumn field="city" header="City" />
-  <SColumn field="actions" header="Actions" pinned="right" />
+  <SColumn field="startDate" header="Start date" />
+  <SColumn field="actions" header="Actions" sortable="false" pinned="right">
+    <template #default>
+      <SButton variant="outline" size="sm">Edit</SButton>
+    </template>
+  </SColumn>
 </STable>
 ```
 
