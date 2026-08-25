@@ -18,6 +18,11 @@ import {
   ComboboxTrigger,
   ComboboxViewport,
   ComboboxVirtualizer,
+  TagsInputInput,
+  TagsInputItem,
+  TagsInputItemDelete,
+  TagsInputItemText,
+  TagsInputRoot,
 } from 'reka-ui'
 import { computed, ref } from 'vue'
 import Button from '../components/Button.vue'
@@ -84,6 +89,85 @@ const {
 
 function clear() {
   setValue(props.multiple ? [] : undefined)
+}
+
+// Chip removal, for the plain (non-creatable) trigger only - the creatable
+// branch has a real <ComboboxInput>, so it can nest TagsInputRoot/
+// TagsInputInput directly and get this behavior from Reka for free (see the
+// template below). This branch's trigger is a real <button> with no input
+// inside it at all (nesting one would be invalid HTML), so there's no
+// TagsInputInput to attach to - this hand-rolls the same shape of state
+// machine TagsInputRoot's own onInputKeydown implements: a "virtually
+// selected" chip (never real DOM focus - that stays on the trigger button)
+// that ArrowLeft/Right moves between, and Backspace/Delete removes,
+// selecting the last chip on a first Backspace rather than removing
+// immediately (matching Reka's own two-step convention).
+const selectedChipValue = ref<string>()
+
+function onTriggerKeydown(event: KeyboardEvent) {
+  if (!props.multiple || props.displayMode !== 'chip')
+    return
+  const chips = visibleOptions.value
+  if (!chips.length)
+    return
+  const lastValue = chips.at(-1)!.value
+  switch (event.key) {
+    case 'Delete':
+    case 'Backspace': {
+      if (selectedChipValue.value !== undefined) {
+        const index = chips.findIndex(o => o.value === selectedChipValue.value)
+        const removedValue = selectedChipValue.value
+        const remaining = chips.filter(o => o.value !== removedValue)
+        selectedChipValue.value = remaining[Math.min(index, remaining.length - 1)]?.value
+        removeValue(removedValue)
+        event.preventDefault()
+      }
+      else if (event.key === 'Backspace') {
+        selectedChipValue.value = lastValue
+        event.preventDefault()
+      }
+      break
+    }
+    case 'Home':
+    case 'End':
+    case 'ArrowRight':
+    case 'ArrowLeft': {
+      const isNext = event.key === 'ArrowRight' || event.key === 'End'
+      if (event.key === 'Home') {
+        selectedChipValue.value = chips[0]!.value
+      }
+      else if (event.key === 'End') {
+        selectedChipValue.value = lastValue
+      }
+      else if (!selectedChipValue.value) {
+        // Only ArrowLeft (not ArrowRight) starts a selection from nothing -
+        // moving "back into" the chips, same as TagsInputRoot's own rule.
+        if (!isNext)
+          selectedChipValue.value = lastValue
+      }
+      else {
+        const index = chips.findIndex(o => o.value === selectedChipValue.value)
+        const nextIndex = index + (isNext ? 1 : -1)
+        // Moving right past the last chip deselects (focus "returns" to the
+        // trigger as a whole); there's nothing before the first chip to move
+        // left into, so it just stays put.
+        selectedChipValue.value = nextIndex >= chips.length ? undefined : chips[Math.max(0, nextIndex)]?.value
+      }
+      event.preventDefault()
+      break
+    }
+    case 'ArrowUp':
+    case 'ArrowDown': {
+      // Don't let the popover's own open/highlight-first-item behavior fire
+      // while a chip is selected - but let it through untouched otherwise.
+      if (selectedChipValue.value !== undefined)
+        event.preventDefault()
+      break
+    }
+    default: {
+      selectedChipValue.value = undefined
+    }
+  }
 }
 
 const internalSearchText = ref(props.searchTerm ?? '')
@@ -236,19 +320,50 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         :aria-busy="loading || undefined"
         v-bind="triggerProps"
       >
-        <template v-if="multiple && displayMode === 'chip'">
-          <span
+        <!--
+          TagsInputRoot doesn't own selection truth here - it only reads
+          visibleOptions to render chips and provides real per-chip keyboard
+          navigation (ArrowLeft/Right moves a virtual "selected" tag without
+          ever moving real DOM focus off the input; Backspace/Delete removes
+          it) via TagsInputInput's keydown handling. @remove-tag is the only
+          way its state flows back to us - removeValue is what actually
+          mutates the real modelValue.
+        -->
+        <TagsInputRoot
+          v-if="multiple && displayMode === 'chip'"
+          :model-value="visibleOptions.map((o) => o.value)"
+          delimiter=""
+          as-child
+          @remove-tag="removeValue"
+        >
+          <TagsInputItem
             v-for="option in visibleOptions"
             :key="option.value"
+            :value="option.value"
+            as="span"
             v-bind="chipProps"
           >
-            <slot name="item" :item="option.raw">{{ option.label }}</slot>
-            <button type="button" tabindex="-1" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
+            <TagsInputItemText as="span">
+              <slot name="item" :item="option.raw">
+                {{ option.label }}
+              </slot>
+            </TagsInputItemText>
+            <TagsInputItemDelete :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps">
               <Icon name="lucide:x" class="size-3" />
-            </button>
-          </span>
-        </template>
+            </TagsInputItemDelete>
+          </TagsInputItem>
+          <ComboboxInput v-model="searchText" as-child>
+            <TagsInputInput
+              :display-value="displayValue"
+              :placeholder="placeholder"
+              v-bind="searchInputProps"
+              @keydown="onSearchKeydown"
+              @blur="onSearchBlur"
+            />
+          </ComboboxInput>
+        </TagsInputRoot>
         <ComboboxInput
+          v-else
           v-model="searchText"
           :display-value="displayValue"
           :placeholder="placeholder"
@@ -285,6 +400,8 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         :aria-busy="loading || undefined"
         v-bind="triggerProps"
         tabindex="0"
+        @keydown="onTriggerKeydown"
+        @blur="selectedChipValue = undefined"
       >
         <template v-if="multiple">
           <!--
@@ -298,6 +415,8 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             <span
               v-for="option in visibleOptions"
               :key="option.value"
+              :data-state="option.value === selectedChipValue ? 'active' : 'inactive'"
+              :aria-current="option.value === selectedChipValue || undefined"
               v-bind="chipProps"
             >
               <slot name="item" :item="option.raw">{{ option.label }}</slot>

@@ -80,4 +80,27 @@ describe('autocomplete', () => {
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     expect(wrapper.emitted('update:searchTerm')?.at(-1)).toEqual([''])
   })
+
+  // Multiple+chip mode nests a real TagsInputRoot around the input itself
+  // (see ComboboxSelectBase.vue) - Reka owns the chip removal wiring here,
+  // unlike Select's plain-button trigger which has no input to attach to.
+  describe('chip mode (multiple, TagsInputRoot-driven)', () => {
+    it('renders a chip with an accessible delete button for each selected value', async () => {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
+      })
+      const removeButtons = wrapper.findAll('button').filter(b => b.attributes('aria-label')?.startsWith('Remove'))
+      expect(removeButtons.map(b => b.attributes('aria-label'))).toEqual(['Remove Apple', 'Remove Banana'])
+    })
+
+    it('removes a chip via its delete button and emits the remaining values', async () => {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
+      })
+      const removeButton = wrapper.findAll('button').find(b => b.attributes('aria-label') === 'Remove Apple')
+      await removeButton!.trigger('click')
+
+      expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['banana']])
+    })
+  })
 })

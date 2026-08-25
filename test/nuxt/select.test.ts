@@ -158,3 +158,79 @@ describe('select', () => {
     expect(document.body.textContent).toContain('Category: Fruits')
   })
 })
+
+describe('select chip roving focus (non-creatable trigger, hand-rolled equivalent of TagsInputRoot)', () => {
+  const items = [
+    { label: 'Apple', value: 'apple' },
+    { label: 'Banana', value: 'banana' },
+    { label: 'Cherry', value: 'cherry' },
+  ]
+
+  function activeChipLabel(wrapper: any) {
+    return wrapper.findAll('span').find((el: any) => el.attributes('data-state') === 'active')?.text()
+  }
+
+  it('selects the last chip on the first Backspace, then removes it on the second (two-step, matching TagsInputRoot)', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip' },
+    })
+    const trigger = wrapper.find('[aria-haspopup="listbox"]')
+
+    await trigger.trigger('keydown', { key: 'Backspace' })
+    expect(activeChipLabel(wrapper)).toBe('Cherry')
+
+    await trigger.trigger('keydown', { key: 'Backspace' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['apple', 'banana']])
+  })
+
+  it('moves the virtual selection with ArrowLeft/ArrowRight, deselecting once it moves past the last chip', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip' },
+    })
+    const trigger = wrapper.find('[aria-haspopup="listbox"]')
+
+    await trigger.trigger('keydown', { key: 'ArrowLeft' })
+    expect(activeChipLabel(wrapper)).toBe('Cherry')
+
+    await trigger.trigger('keydown', { key: 'ArrowLeft' })
+    expect(activeChipLabel(wrapper)).toBe('Banana')
+
+    await trigger.trigger('keydown', { key: 'ArrowRight' })
+    expect(activeChipLabel(wrapper)).toBe('Cherry')
+
+    await trigger.trigger('keydown', { key: 'ArrowRight' })
+    expect(activeChipLabel(wrapper)).toBeUndefined()
+  })
+
+  it('jumps to the first/last chip with Home/End', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip' },
+    })
+    const trigger = wrapper.find('[aria-haspopup="listbox"]')
+
+    await trigger.trigger('keydown', { key: 'Home' })
+    expect(activeChipLabel(wrapper)).toBe('Apple')
+
+    await trigger.trigger('keydown', { key: 'End' })
+    expect(activeChipLabel(wrapper)).toBe('Cherry')
+  })
+
+  it('clears the virtual selection on an unrelated keypress or on blur', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip' },
+    })
+    const trigger = wrapper.find('[aria-haspopup="listbox"]')
+
+    await trigger.trigger('keydown', { key: 'ArrowLeft' })
+    expect(activeChipLabel(wrapper)).toBe('Cherry')
+
+    await trigger.trigger('keydown', { key: 'a' })
+    expect(activeChipLabel(wrapper)).toBeUndefined()
+
+    await trigger.trigger('keydown', { key: 'ArrowLeft' })
+    expect(activeChipLabel(wrapper)).toBe('Cherry')
+
+    await trigger.trigger('blur')
+    expect(activeChipLabel(wrapper)).toBeUndefined()
+  })
+})
