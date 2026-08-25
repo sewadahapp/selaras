@@ -85,4 +85,4 @@ configure by hand for the common case.
 | `clearable` | `boolean` | `false` |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
-| `ui` | `Partial<Record<'root' \| 'base' \| 'leadingIcon' \| 'trailingIcon', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'base' \| 'leadingIcon' \| 'trailingIcon' \| 'clear', string \| object>>` | - |

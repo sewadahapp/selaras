@@ -4,7 +4,7 @@ import type { Component } from 'vue'
 import type { ButtonSlots } from '../theme/button'
 import type { UiProp } from '../utils/ui'
 import { Primitive } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 import { buttonTheme } from '../theme/button'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -31,6 +31,15 @@ const props = withDefaults(defineProps<{
   as: 'button',
 })
 
+const slots = useSlots()
+
+// No default slot content at all (just an icon, or just a loading spinner)
+// - shape it as a square instead of a text button's asymmetric horizontal
+// padding, matching a comparable reference's own icon-button behavior rather than
+// requiring a separate opt-in flag (a comparable reference's own iconOnly) a consumer could
+// forget to set.
+const iconOnly = computed(() => !slots.default)
+
 const theme = useComponentTheme('button', buttonTheme)
 
 const ui = computed(() => theme.value({
@@ -40,6 +49,7 @@ const ui = computed(() => theme.value({
   block: props.block,
   disabled: props.disabled,
   raised: props.raised,
+  square: iconOnly.value,
 }))
 
 const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)

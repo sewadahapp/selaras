@@ -33,8 +33,17 @@ export const buttonTheme = tv({
     raised: {
       true: { base: 'shadow-[var(--ui-shadow-md)]' },
     },
+    square: {
+      true: {},
+    },
   },
   compoundVariants: [
+    // Icon-only: swap the size's text-oriented horizontal padding for an
+    // equal-width square matching its own height.
+    { size: 'sm', square: true, class: { base: 'w-8 px-0' } },
+    { size: 'md', square: true, class: { base: 'w-10 px-0' } },
+    { size: 'lg', square: true, class: { base: 'w-11 px-0' } },
+
     // :active (mouse-down) always goes one step further than :hover in the
     // same direction - solid presses to the -active (700) token, soft/
     // outline/ghost (which have no visible bg by default, or a pale -soft

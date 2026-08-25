@@ -56,4 +56,14 @@ describe('button', () => {
     const wrapper = await mountSuspended(Button, { props: { color: 'danger', variant: 'outline' } })
     expect(wrapper.classes().some(c => c.startsWith('active:'))).toBe(true)
   })
+
+  it('shapes itself square when there is no default slot content (icon-only), matching size for width and height', async () => {
+    const iconOnly = await mountSuspended(Button, { props: { icon: 'lucide:x', size: 'sm' } })
+    expect(iconOnly.classes()).toContain('w-8')
+    expect(iconOnly.classes()).not.toContain('px-3')
+
+    const withLabel = await mountSuspended(Button, { props: { icon: 'lucide:save', size: 'sm' }, slots: { default: () => 'Save' } })
+    expect(withLabel.classes()).not.toContain('w-8')
+    expect(withLabel.classes()).toContain('px-3')
+  })
 })

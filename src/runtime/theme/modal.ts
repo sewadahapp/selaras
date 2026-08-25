@@ -8,8 +8,9 @@ export const modalTheme = tv({
     title: 'text-base font-semibold text-[var(--ui-text)]',
     description: 'mt-1 text-sm text-[var(--ui-text-muted)]',
     // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring and
-    // touch target now come from Button's own theme, not duplicated here.
-    close: 'shrink-0',
+    // touch target now come from Button's own theme; rounded-full overrides
+    // its default rounded-md just for this dismiss-glyph family (close/clear).
+    close: 'shrink-0 rounded-full',
     body: 'p-4 sm:px-6',
     footer: 'flex items-center justify-end gap-2 p-4 sm:px-6',
   },

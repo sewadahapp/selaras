@@ -68,16 +68,18 @@ Warning
 
 ### Icon only
 
-There's no separate `iconOnly` prop - pass `icon` with no default slot content,
-and size the button to a square via `:ui`. Always add `aria-label` yourself
-when there's no visible text - it falls through to the root element like any
+There's no separate `iconOnly` prop - pass `icon` with no default slot
+content and it shapes itself to a square automatically (matching its own
+`size`), rather than requiring an explicit flag you could forget to set (the
+way a comparable reference's own `iconOnly` prop does). Always add `aria-label` yourself when
+there's no visible text - it falls through to the root element like any
 other attr (see [Accessibility](#accessibility) below).
 
 ::component-example{name="button-icon-only"}
 ::
 
 ```vue-html
-<SButton icon="lucide:settings" variant="outline" aria-label="Settings" :ui="{ base: 'w-10 px-0' }" />
+<SButton icon="lucide:settings" variant="outline" aria-label="Settings" />
 ```
 
 ### Loading
@@ -152,7 +154,7 @@ on an icon-only button with a `relative`/`absolute` pair:
 
 ```vue-html
 <div class="relative inline-flex">
-  <SButton variant="outline" icon="lucide:bell" aria-label="Notifications" :ui="{ base: 'w-10 px-0' }" />
+  <SButton variant="outline" icon="lucide:bell" aria-label="Notifications" />
   <SBadge label="3" color="danger" size="sm" class="absolute -top-1.5 -right-1.5" />
 </div>
 ```

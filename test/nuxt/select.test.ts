@@ -38,6 +38,22 @@ describe('select', () => {
     expect(trigger!.attributes('aria-expanded')).toBe('false')
   })
 
+  it('gives the clear button an accessible label - an icon-only button otherwise has no name', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, modelValue: 'apple', clearable: true },
+    })
+    const [, clearButton] = wrapper.findAll('button')
+    expect(clearButton!.attributes('aria-label')).toBe('Clear')
+  })
+
+  it('gives each chip\'s remove button an accessible label naming that chip', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
+    })
+    const removeButtons = wrapper.findAll('button').filter(b => b.attributes('aria-label')?.startsWith('Remove'))
+    expect(removeButtons.map(b => b.attributes('aria-label'))).toEqual(['Remove Apple', 'Remove Banana'])
+  })
+
   it('clears a multiple selection down to an empty array', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, clearable: true },

@@ -223,7 +223,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             v-bind="chipProps"
           >
             <slot name="item" :item="option.raw">{{ option.label }}</slot>
-            <button type="button" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
+            <button type="button" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
               <Icon name="lucide:x" class="size-3" />
             </button>
           </span>
@@ -242,6 +242,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <button
           v-if="clearable && !disabled && selectedOptions.length"
           type="button"
+          aria-label="Clear"
           v-bind="clearProps"
           @click.stop="clear"
         >
@@ -270,7 +271,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               v-bind="chipProps"
             >
               <slot name="item" :item="option.raw">{{ option.label }}</slot>
-              <button type="button" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
+              <button type="button" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
                 <Icon name="lucide:x" class="size-3" />
               </button>
             </span>
@@ -292,6 +293,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <button
           v-if="clearable && !disabled && selectedOptions.length"
           type="button"
+          aria-label="Clear"
           v-bind="clearProps"
           @click.stop="clear"
         >

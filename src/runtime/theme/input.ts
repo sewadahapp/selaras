@@ -6,6 +6,11 @@ export const inputTheme = tv({
     base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
     leadingIcon: 'absolute left-2.5 shrink-0 text-[var(--ui-text-muted)]',
     trailingIcon: 'absolute right-2.5 shrink-0 text-[var(--ui-text-muted)]',
+    // A separate slot from trailingIcon (not reused) - that one is a
+    // decorative, non-interactive icon; this is a real dismiss button and
+    // needs its own padding/hover/focus-ring/rounded-full, which would be
+    // wrong on a purely decorative icon.
+    clear: 'absolute right-1.5 shrink-0 rounded-full p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
   },
   variants: {
     size: {

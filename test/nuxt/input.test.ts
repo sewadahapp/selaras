@@ -25,6 +25,11 @@ describe('input', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([''])
   })
 
+  it('gives the clear button an accessible label - an icon-only button otherwise has no name', async () => {
+    const wrapper = await mountSuspended(Input, { props: { clearable: true, modelValue: 'hello' } })
+    expect(wrapper.find('button').attributes('aria-label')).toBe('Clear')
+  })
+
   it('takes over the trailing slot from trailingIcon while there is a value to clear', async () => {
     const wrapper = await mountSuspended(Input, { props: { clearable: true, trailingIcon: 'lucide:mic', modelValue: 'hello' } })
     const icons = wrapper.findAll('.iconify').map(el => el.classes().find(c => c.startsWith('i-')))
