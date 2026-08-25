@@ -47,6 +47,21 @@
   --ui-shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
   --ui-shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.16);
 
+  /*
+   * Overlay stacking order. Every overlay used to share a flat z-50, which
+   * only worked by accident of portal-mount order - a Dropdown opened from
+   * inside an open Modal (e.g. a row-actions menu in a dialog) would render
+   * behind the modal instead of above it. This tier reflects real nesting:
+   * a Dropdown can open from inside a Modal; a Tooltip can be triggered from
+   * inside either; a Toast is a global notification that must stay visible
+   * above everything else regardless of what's open.
+   */
+  --ui-z-modal-overlay: 40;
+  --ui-z-modal: 50;
+  --ui-z-dropdown: 60;
+  --ui-z-tooltip: 70;
+  --ui-z-toast: 80;
+
   /* brand palette (primitives), converted to oklch for perceptual
      uniformity. Tailwind's own --color-* namespace, so bg-primary-500 etc.
      utilities are generated for free as a bonus - our component recipes

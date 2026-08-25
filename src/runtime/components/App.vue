@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ToastProvider } from 'reka-ui'
+import { ToastProvider, TooltipProvider } from 'reka-ui'
 </script>
 
 <template>
   <ToastProvider>
-    <slot />
+    <TooltipProvider>
+      <slot />
+    </TooltipProvider>
   </ToastProvider>
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TooltipSlots } from '../theme/tooltip'
 import type { UiProp } from '../utils/ui'
-import { TooltipArrow, TooltipContent, TooltipPortal, TooltipProvider, TooltipRoot, TooltipTrigger } from 'reka-ui'
+import { TooltipArrow, TooltipContent, TooltipPortal, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { tooltipTheme } from '../theme/tooltip'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -24,19 +24,17 @@ const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 </script>
 
 <template>
-  <TooltipProvider :delay-duration="delayDuration">
-    <TooltipRoot>
-      <TooltipTrigger as-child>
-        <slot />
-      </TooltipTrigger>
-      <TooltipPortal>
-        <TooltipContent :side="side" :side-offset="6" v-bind="contentProps">
-          <slot name="content">
-            {{ text }}
-          </slot>
-          <TooltipArrow v-bind="arrowProps" />
-        </TooltipContent>
-      </TooltipPortal>
-    </TooltipRoot>
-  </TooltipProvider>
+  <TooltipRoot :delay-duration="delayDuration">
+    <TooltipTrigger as-child>
+      <slot />
+    </TooltipTrigger>
+    <TooltipPortal>
+      <TooltipContent :side="side" :side-offset="6" v-bind="contentProps">
+        <slot name="content">
+          {{ text }}
+        </slot>
+        <TooltipArrow v-bind="arrowProps" />
+      </TooltipContent>
+    </TooltipPortal>
+  </TooltipRoot>
 </template>

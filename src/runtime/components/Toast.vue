@@ -39,8 +39,8 @@ const closeProps = computed(() => resolveSlot(ui.value.close, props.ui?.close))
         {{ toast.description }}
       </ToastDescription>
     </div>
-    <ToastClose v-bind="closeProps">
-      <Icon name="lucide:x" class="size-4" />
+    <ToastClose as-child>
+      <SButton size="sm" variant="ghost" color="neutral" icon="lucide:x" aria-label="Close" v-bind="closeProps" />
     </ToastClose>
   </ToastRoot>
   <ToastPortal>

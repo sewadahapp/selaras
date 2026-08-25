@@ -38,6 +38,26 @@ const open = ref(false)
 </template>
 ```
 
+Always pass `title` (or a `header` slot containing a heading) - without one,
+the dialog has no accessible name for screen readers, and dev mode warns
+about it.
+
+### Intercepting dismissal
+
+`SModal` doesn't override Reka UI's own defaults (Escape and an outside
+click both dismiss it), but exposes the underlying events so you can
+`preventDefault()` on them - e.g. to confirm before closing a dialog with
+unsaved changes:
+
+```vue-html
+<SModal
+  v-model="open"
+  title="Edit profile"
+  @escape-key-down="(e) => hasChanges && e.preventDefault()"
+  @pointer-down-outside="(e) => hasChanges && e.preventDefault()"
+/>
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -46,6 +66,14 @@ const open = ref(false)
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'title' \| 'description' \| 'close' \| 'body' \| 'footer', string \| object>>` | - |
+
+## Events
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | `boolean` | Open state changed |
+| `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
+| `pointerDownOutside` | `Event` | A pointer went down outside the dialog - `preventDefault()` to stop it from closing |
 
 ## Slots
 

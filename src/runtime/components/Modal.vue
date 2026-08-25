@@ -2,7 +2,7 @@
 import type { ModalSlots } from '../theme/modal'
 import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, useSlots, watchEffect } from 'vue'
 import { modalTheme } from '../theme/modal'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
@@ -15,7 +15,18 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+  'escapeKeyDown': [event: KeyboardEvent]
+  'pointerDownOutside': [event: Event]
 }>()
+
+const slots = useSlots()
+
+if (import.meta.dev) {
+  watchEffect(() => {
+    if (!props.title && !slots.header)
+      console.warn('[SModal] no accessible name - pass a `title` prop, or a `header` slot containing a heading, so screen readers can announce this dialog.')
+  })
+}
 
 const theme = useComponentTheme('modal', modalTheme)
 const ui = computed(() => theme.value())
@@ -37,7 +48,11 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
     </DialogTrigger>
     <DialogPortal>
       <DialogOverlay v-bind="overlayProps" />
-      <DialogContent v-bind="contentProps">
+      <DialogContent
+        v-bind="contentProps"
+        @escape-key-down="(event) => emit('escapeKeyDown', event)"
+        @pointer-down-outside="(event) => emit('pointerDownOutside', event)"
+      >
         <div v-if="title || description || $slots.header" v-bind="headerProps">
           <div>
             <slot name="header">
@@ -50,9 +65,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
             </slot>
           </div>
           <DialogClose as-child>
-            <button type="button" v-bind="closeProps">
-              <Icon name="lucide:x" class="size-4" />
-            </button>
+            <SButton size="sm" variant="ghost" color="neutral" icon="lucide:x" aria-label="Close" v-bind="closeProps" />
           </DialogClose>
         </div>
         <div v-bind="bodyProps">

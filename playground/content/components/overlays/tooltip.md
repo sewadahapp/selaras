@@ -19,6 +19,11 @@ order: 52
 </template>
 ```
 
+Requires `<SApp>` around your root `app.vue` (already done in this
+playground) - it establishes Reka UI's shared `TooltipProvider`, so quickly
+moving between adjacent tooltips skips the full delay the second time,
+instead of every tooltip waiting out `delayDuration` independently.
+
 ## Props
 
 | Prop | Type | Default |
