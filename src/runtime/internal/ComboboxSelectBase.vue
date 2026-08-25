@@ -5,6 +5,7 @@ import type { SelectSlots } from '../theme/select'
 import type { UiProp } from '../utils/ui'
 import {
   ComboboxAnchor,
+  ComboboxCancel,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxGroup,
@@ -227,7 +228,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             v-bind="chipProps"
           >
             <slot name="item" :item="option.raw">{{ option.label }}</slot>
-            <button type="button" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
+            <button type="button" tabindex="-1" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
               <Icon name="lucide:x" class="size-3" />
             </button>
           </span>
@@ -243,16 +244,17 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
           <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
         </Tooltip>
-        <Button
-          v-if="clearable && !disabled && selectedOptions.length"
-          :size="effectiveSize"
-          variant="ghost"
-          color="neutral"
-          icon="lucide:x"
-          aria-label="Clear"
-          v-bind="clearProps"
-          @click.stop="clear"
-        />
+        <ComboboxCancel v-if="clearable && !disabled && selectedOptions.length" as-child>
+          <Button
+            :size="effectiveSize"
+            variant="ghost"
+            color="neutral"
+            icon="lucide:x"
+            aria-label="Clear"
+            v-bind="clearProps"
+            @click.stop="clear"
+          />
+        </ComboboxCancel>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
         <span v-if="loading" class="sr-only">Loading</span>
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
@@ -267,6 +269,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         :aria-describedby="describedBy"
         :aria-busy="loading || undefined"
         v-bind="triggerProps"
+        tabindex="0"
       >
         <template v-if="multiple">
           <template v-if="displayMode === 'chip'">
@@ -276,7 +279,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               v-bind="chipProps"
             >
               <slot name="item" :item="option.raw">{{ option.label }}</slot>
-              <button type="button" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
+              <button type="button" tabindex="-1" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
                 <Icon name="lucide:x" class="size-3" />
               </button>
             </span>
@@ -295,16 +298,17 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <slot name="value" :selected="selectedOptions[0]">{{ selectedOptions[0]?.label || placeholder }}</slot>
         </span>
 
-        <Button
-          v-if="clearable && !disabled && selectedOptions.length"
-          :size="effectiveSize"
-          variant="ghost"
-          color="neutral"
-          icon="lucide:x"
-          aria-label="Clear"
-          v-bind="clearProps"
-          @click.stop="clear"
-        />
+        <ComboboxCancel v-if="clearable && !disabled && selectedOptions.length" as-child>
+          <Button
+            :size="effectiveSize"
+            variant="ghost"
+            color="neutral"
+            icon="lucide:x"
+            aria-label="Clear"
+            v-bind="clearProps"
+            @click.stop="clear"
+          />
+        </ComboboxCancel>
         <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
         <Icon v-else name="lucide:chevron-down" class="size-4" v-bind="iconProps" />
         <span v-if="loading" class="sr-only">Loading</span>

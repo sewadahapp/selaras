@@ -46,12 +46,29 @@ describe('select', () => {
     expect(clearButton!.attributes('aria-label')).toBe('Clear')
   })
 
+  it('keeps the trigger as the only Tab stop - the clear button opts out via tabindex=-1', async () => {
+    // Regression: ComboboxTrigger ships tabindex=-1 by design (Reka expects
+    // the consumer to override it - a comparable reference's own select component does the same).
+    // Without that override, the trigger was never reachable by Tab at all -
+    // this only became visible once the clear button became a real,
+    // naturally-tabbable button competing for the one stop that existed.
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, modelValue: 'apple', clearable: true },
+    })
+    const [trigger, clearButton] = wrapper.findAll('button')
+    expect(trigger!.attributes('tabindex')).toBe('0')
+    expect(clearButton!.attributes('tabindex')).toBe('-1')
+  })
+
   it('gives each chip\'s remove button an accessible label naming that chip', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
     })
     const removeButtons = wrapper.findAll('button').filter(b => b.attributes('aria-label')?.startsWith('Remove'))
     expect(removeButtons.map(b => b.attributes('aria-label'))).toEqual(['Remove Apple', 'Remove Banana'])
+    // Same tab-stop-competition issue as the clear button - each chip's
+    // remove button also opts out of Tab so the trigger stays reachable.
+    expect(removeButtons.every(b => b.attributes('tabindex') === '-1')).toBe(true)
   })
 
   it('clears a multiple selection down to an empty array', async () => {
