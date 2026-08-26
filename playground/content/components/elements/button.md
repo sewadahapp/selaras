@@ -29,28 +29,11 @@ Ghost
 
 ### Colors
 
-::s-button{color="primary"}
-Primary
-::
+Every color across every variant, so it's easy to compare both within a
+color (is soft/outline/ghost legible?) and across colors (do they stay
+distinguishable at a glance?).
 
-::s-button{color="secondary"}
-Secondary
-::
-
-::s-button{color="success"}
-Success
-::
-
-::s-button{color="danger"}
-Danger
-::
-
-::s-button{color="info"}
-Info
-::
-
-::s-button{color="warning"}
-Warning
+::component-example{name="button-colors"}
 ::
 
 ### Icons

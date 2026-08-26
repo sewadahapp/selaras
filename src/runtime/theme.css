@@ -66,76 +66,124 @@
      uniformity. Tailwind's own --color-* namespace, so bg-primary-500 etc.
      utilities are generated for free as a bonus - our component recipes
      still go through the semantic --ui-* layer below.
-     Anchored on Moon Design System's real published tokens (Piccolo/Hit/
-     Roshi/Dodoria/Whis/Krillin, resolved from moon-tokens' Figma variables
-     export) at step 500, with the 50-900 spread built from this palette's
-     own pre-existing lightness/chroma/hue-drift curve re-anchored to each
-     new 500. Neutral is anchored on Moon's Gohan/Beerus/Trunks grays. */
-  --color-primary-50: oklch(0.982 0.012 298.4);
-  --color-primary-100: oklch(0.964 0.022 298.7);
-  --color-primary-200: oklch(0.921 0.050 301.1);
-  --color-primary-300: oklch(0.874 0.083 301.9);
-  --color-primary-400: oklch(0.787 0.142 300.3);
-  --color-primary-500: oklch(0.475 0.221 286.5);
-  --color-primary-600: oklch(0.433 0.200 283.4);
-  --color-primary-700: oklch(0.391 0.183 283.2);
-  --color-primary-800: oklch(0.346 0.168 282.8);
-  --color-primary-900: oklch(0.314 0.157 282.5);
 
-  --color-secondary-50: oklch(0.983 0.017 173.2);
-  --color-secondary-100: oklch(0.965 0.033 173.0);
-  --color-secondary-200: oklch(0.930 0.065 172.7);
-  --color-secondary-300: oklch(0.892 0.094 172.3);
-  --color-secondary-400: oklch(0.822 0.145 171.6);
-  --color-secondary-500: oklch(0.767 0.157 165.0);
-  --color-secondary-600: oklch(0.712 0.147 161.5);
-  --color-secondary-700: oklch(0.636 0.134 155.7);
-  --color-secondary-800: oklch(0.548 0.119 149.1);
-  --color-secondary-900: oklch(0.478 0.099 150.3);
+     Every ramp shares one chroma-multiplier curve relative to its own 500
+     (peaks at 500, tapers toward both ends). Each color's 500 sits at the
+     brightest lightness that still clears 4.5:1 as text both directly on
+     white and on its own -soft background (100) - measured from real
+     rendered sRGB via the WCAG relative-luminance formula per hue, not
+     assumed from the raw oklch lightness number. WCAG weights green
+     (0.7152) far more than red (0.2126) or blue (0.0722), so green-family
+     hues need to sit darker than red/blue/purple ones to hit the same
+     contrast, which is why the ceiling varies (~0.46-0.54) instead of
+     landing on one shared number across colors. warning is the one
+     exception - see its own comment below for why. Neutral is unrelated
+     to this token system and anchored on Moon Design System's Gohan/
+     Beerus/Trunks grays. */
+  /* 100/300/500/700 given directly (#F8F7FD/#CBC7EF/#4E40C9/#3B2FA7 ->
+     oklch L 0.979/0.846/0.476/0.404, C 0.008/0.055/0.203/0.183, H
+     293.9/289.7/280.0/278.9); 50/200/400/600/800/900 interpolated/
+     extrapolated around them. Already clears 4.5:1 both on white (7.24)
+     and its own -soft background (5.37) - used as given. */
+  --color-primary-50: oklch(0.990 0.005 295);
+  --color-primary-100: oklch(0.9786 0.0080 293.91);
+  --color-primary-200: oklch(0.910 0.032 292);
+  --color-primary-300: oklch(0.8458 0.0554 289.74);
+  --color-primary-400: oklch(0.620 0.145 283);
+  --color-primary-500: oklch(0.4755 0.2026 279.99);
+  --color-primary-600: oklch(0.440 0.193 279.4);
+  --color-primary-700: oklch(0.4038 0.1827 278.85);
+  --color-primary-800: oklch(0.370 0.172 278.3);
+  --color-primary-900: oklch(0.320 0.153 277.7);
 
-  --color-success-50: oklch(0.983 0.010 151.8);
-  --color-success-100: oklch(0.965 0.020 152.1);
-  --color-success-200: oklch(0.914 0.048 152.3);
-  --color-success-300: oklch(0.859 0.074 151.8);
-  --color-success-400: oklch(0.763 0.127 149.1);
-  --color-success-500: oklch(0.683 0.164 145.8);
-  --color-success-600: oklch(0.647 0.156 145.7);
-  --color-success-700: oklch(0.577 0.137 146.1);
-  --color-success-800: oklch(0.498 0.116 146.5);
-  --color-success-900: oklch(0.432 0.099 146.7);
+  /* Slate-blue hue (220°), desaturated relative to the other ramps
+     (chroma capped at 0.065 vs 0.14-0.20 elsewhere) for a muted,
+     secondary feel. 500 anchored at this hue/chroma's own ceiling
+     (L=0.49, 6.17 vs white, 4.58 vs its own -soft). */
+  --color-secondary-50: oklch(0.940 0.0039 220);
+  --color-secondary-100: oklch(0.900 0.00715 220);
+  --color-secondary-200: oklch(0.820 0.0156 220);
+  --color-secondary-300: oklch(0.750 0.0247 220);
+  --color-secondary-400: oklch(0.620 0.04225 220);
+  --color-secondary-500: oklch(0.490 0.065 220);
+  --color-secondary-600: oklch(0.430 0.06045 220);
+  --color-secondary-700: oklch(0.370 0.05395 220);
+  --color-secondary-800: oklch(0.320 0.0468 220);
+  --color-secondary-900: oklch(0.270 0.0403 220);
 
-  --color-danger-50: oklch(0.978 0.007 15.4);
-  --color-danger-100: oklch(0.954 0.015 15.6);
-  --color-danger-200: oklch(0.887 0.040 16.2);
-  --color-danger-300: oklch(0.820 0.067 17.0);
-  --color-danger-400: oklch(0.674 0.143 20.9);
-  --color-danger-500: oklch(0.569 0.199 26.3);
-  --color-danger-600: oklch(0.548 0.185 26.5);
-  --color-danger-700: oklch(0.497 0.167 26.4);
-  --color-danger-800: oklch(0.436 0.146 26.2);
-  --color-danger-900: oklch(0.381 0.125 25.4);
+  /* Tailwind "green" scale, re-anchored (their 500 #22c55e -> oklch L
+     0.723, C 0.192, H 149.6, fails at 2.28 vs white). Ceiling: L=0.46,
+     C=0.192, H=149.58 (6.16 vs white, 4.61 vs its own -soft). 100 kept
+     close to their #dcfce7; the rest interpolated/extrapolated around
+     both anchors. */
+  --color-success-50: oklch(0.980 0.025 158);
+  --color-success-100: oklch(0.9624 0.0434 156.74);
+  --color-success-200: oklch(0.900 0.075 155);
+  --color-success-300: oklch(0.810 0.130 153);
+  --color-success-400: oklch(0.650 0.170 151);
+  --color-success-500: oklch(0.460 0.1920 149.58);
+  --color-success-600: oklch(0.400 0.178 149);
+  --color-success-700: oklch(0.340 0.158 148.5);
+  --color-success-800: oklch(0.290 0.137 148);
+  --color-success-900: oklch(0.240 0.117 147.5);
 
-  --color-info-50: oklch(0.977 0.010 258.5);
-  --color-info-100: oklch(0.955 0.021 258.6);
-  --color-info-200: oklch(0.879 0.058 269.9);
-  --color-info-300: oklch(0.809 0.091 267.5);
-  --color-info-400: oklch(0.668 0.167 268.2);
-  --color-info-500: oklch(0.509 0.248 269.2);
-  --color-info-600: oklch(0.493 0.220 267.5);
-  --color-info-700: oklch(0.442 0.197 267.5);
-  --color-info-800: oklch(0.388 0.169 266.8);
-  --color-info-900: oklch(0.343 0.146 266.1);
+  /* 100/500 given directly (#FCF2F2/#C62828 -> oklch L 0.969/0.539, C
+     0.011/0.194, H 17.3/26.7). Already clears 4.5:1 both on white (5.62)
+     and its own -soft background (5.12) - used as given; the rest
+     interpolated/extrapolated around both anchors. */
+  --color-danger-50: oklch(0.985 0.006 14);
+  --color-danger-100: oklch(0.9689 0.0108 17.34);
+  --color-danger-200: oklch(0.880 0.040 19);
+  --color-danger-300: oklch(0.790 0.080 21);
+  --color-danger-400: oklch(0.660 0.140 24);
+  --color-danger-500: oklch(0.5386 0.1937 26.72);
+  --color-danger-600: oklch(0.470 0.180 27.5);
+  --color-danger-700: oklch(0.410 0.160 28);
+  --color-danger-800: oklch(0.350 0.140 28.5);
+  --color-danger-900: oklch(0.300 0.120 29);
 
-  --color-warning-50: oklch(0.990 0.008 73.6);
-  --color-warning-100: oklch(0.980 0.016 73.6);
-  --color-warning-200: oklch(0.954 0.043 80.5);
-  --color-warning-300: oklch(0.927 0.074 82.6);
-  --color-warning-400: oklch(0.861 0.127 76.0);
-  --color-warning-500: oklch(0.818 0.167 77.1);
-  --color-warning-600: oklch(0.756 0.154 78.1);
-  --color-warning-700: oklch(0.664 0.135 78.6);
-  --color-warning-800: oklch(0.565 0.116 76.0);
-  --color-warning-900: oklch(0.488 0.100 77.0);
+  /* 100/500 given directly (#EBF5FE/#3194F6 -> oklch L 0.965/0.659, C
+     0.016/0.171, H 245.1/252.1). Their 500 fails (3.14 vs white, 2.84 vs
+     its own -soft) - re-anchored at this hue/chroma's own ceiling
+     (L=0.49, C=0.171, H=252.05: 6.23 vs white, 4.62 vs its own -soft).
+     100 and the hue/chroma trend kept; the rest interpolated/
+     extrapolated. */
+  --color-info-50: oklch(0.985 0.010 243);
+  --color-info-100: oklch(0.9653 0.0161 245.08);
+  --color-info-200: oklch(0.890 0.045 246);
+  --color-info-300: oklch(0.790 0.085 248);
+  --color-info-400: oklch(0.630 0.135 250);
+  --color-info-500: oklch(0.490 0.1711 252.05);
+  --color-info-600: oklch(0.430 0.159 252.8);
+  --color-info-700: oklch(0.370 0.140 253.5);
+  --color-info-800: oklch(0.320 0.121 254.2);
+  --color-info-900: oklch(0.270 0.103 255);
+
+  /* Tailwind "yellow" scale (their 500 #eab308 -> oklch L 0.795, C 0.162,
+     H 86.05 - fails at 1.92 vs white). At full chroma, no hue in the
+     yellow-to-orange range (checked 50-86deg) passes 4.5:1 as text on its
+     own -soft background above L~0.50 - it's that pairing which binds,
+     not the specific hue, and there is no "dark yellow" the way there's
+     a dark green or dark blue: a fully saturated hue in this range at
+     L~0.50 reads as brown/olive, not yellow. This ramp deliberately
+     relaxes that one pairing to the WCAG 3:1 UI-component/large-text bar
+     instead of the usual 4.5:1, trading some accessibility margin for a
+     brighter, more legibly "warning-colored" gold: 500 sits at L=0.590,
+     C=0.1617, H=86.05 (4.12 vs white, 3.72 vs its own -soft - both below
+     the 4.5:1 the other five colors clear, and deliberately so). 100
+     kept close to their #fef9c3, renormalized to the 500 hue since
+     Tailwind's own scale drifts hue across steps and this system holds
+     it constant per color. */
+  --color-warning-50: oklch(0.985 0.020 86.05);
+  --color-warning-100: oklch(0.9729 0.0693 86.05);
+  --color-warning-200: oklch(0.923 0.068 86.05);
+  --color-warning-300: oklch(0.850 0.100 86.05);
+  --color-warning-400: oklch(0.722 0.130 86.05);
+  --color-warning-500: oklch(0.590 0.1617 86.05);
+  --color-warning-600: oklch(0.515 0.150 86.05);
+  --color-warning-700: oklch(0.445 0.128 86.05);
+  --color-warning-800: oklch(0.380 0.108 86.05);
+  --color-warning-900: oklch(0.315 0.090 86.05);
 
   --color-neutral-50: oklch(0.976 0.002 266.0);
   --color-neutral-100: oklch(0.953 0.004 266.0);
@@ -161,48 +209,48 @@
   --ui-text-muted: var(--color-neutral-500);
   --ui-text-inverted: white;
 
-  /* every role's "main" shade is its 500 step, hover is 600, in BOTH light
+  /* every role's "main" shade is its 500 step, hover is 600, in both light
      and dark mode - a single shared value instead of a lighter dark-mode
-     step. Foreground is picked per role by actually computed contrast, not
-     assumed white - secondary/success/warning read as too light for white
-     text at any usable step, so they use black instead. -active is 700,
-     for a solid button's :active (mouse-down) press state - one step
-     darker than -hover, same in both modes for the same reason. */
+     step. Every 500 is picked so white text clears 4.5:1 against it (see
+     each ramp's own comment above for how). -active is 700, one step
+     darker than -hover, for a solid button's :active (mouse-down) press
+     state. -soft is 100, not 50 - 50 is barely distinguishable from a
+     white page at any color. */
   --ui-primary: var(--color-primary-500);
   --ui-primary-hover: var(--color-primary-600);
   --ui-primary-active: var(--color-primary-700);
   --ui-primary-foreground: white;
-  --ui-primary-soft: var(--color-primary-50);
+  --ui-primary-soft: var(--color-primary-100);
 
   --ui-secondary: var(--color-secondary-500);
   --ui-secondary-hover: var(--color-secondary-600);
   --ui-secondary-active: var(--color-secondary-700);
-  --ui-secondary-foreground: black;
-  --ui-secondary-soft: var(--color-secondary-50);
+  --ui-secondary-foreground: white;
+  --ui-secondary-soft: var(--color-secondary-100);
 
   --ui-success: var(--color-success-500);
   --ui-success-hover: var(--color-success-600);
   --ui-success-active: var(--color-success-700);
-  --ui-success-foreground: black;
-  --ui-success-soft: var(--color-success-50);
+  --ui-success-foreground: white;
+  --ui-success-soft: var(--color-success-100);
 
   --ui-danger: var(--color-danger-500);
   --ui-danger-hover: var(--color-danger-600);
   --ui-danger-active: var(--color-danger-700);
   --ui-danger-foreground: white;
-  --ui-danger-soft: var(--color-danger-50);
+  --ui-danger-soft: var(--color-danger-100);
 
   --ui-info: var(--color-info-500);
   --ui-info-hover: var(--color-info-600);
   --ui-info-active: var(--color-info-700);
   --ui-info-foreground: white;
-  --ui-info-soft: var(--color-info-50);
+  --ui-info-soft: var(--color-info-100);
 
   --ui-warning: var(--color-warning-500);
   --ui-warning-hover: var(--color-warning-600);
   --ui-warning-active: var(--color-warning-700);
-  --ui-warning-foreground: black;
-  --ui-warning-soft: var(--color-warning-50);
+  --ui-warning-foreground: white;
+  --ui-warning-soft: var(--color-warning-100);
 }
 
 .dark {
@@ -216,40 +264,41 @@
   --ui-text-muted: var(--color-neutral-400);
   --ui-text-inverted: var(--color-neutral-900);
 
-  /* dark mode now shares light mode's 500/600 main/hover step (and so its
-     foreground too) instead of stepping to a lighter 400/300 - only the
-     soft tint still needs its own dark-mode treatment: a translucent mix
-     over the dark surface instead of light mode's solid pale-50 swatch. */
+  /* dark mode shares light mode's 500/600 main/hover step (and so its
+     foreground too, inherited from :root - none of these redeclare
+     -foreground) instead of stepping to a lighter 400/300 - only the soft
+     tint needs its own dark-mode treatment: a translucent mix (24%) over
+     the dark surface instead of light mode's solid step-100 swatch. */
   --ui-primary: var(--color-primary-500);
   --ui-primary-hover: var(--color-primary-600);
   --ui-primary-active: var(--color-primary-700);
   --ui-primary-foreground: white;
-  --ui-primary-soft: color-mix(in oklab, var(--color-primary-500) 16%, transparent);
+  --ui-primary-soft: color-mix(in oklab, var(--color-primary-500) 24%, transparent);
 
   --ui-secondary: var(--color-secondary-500);
   --ui-secondary-hover: var(--color-secondary-600);
   --ui-secondary-active: var(--color-secondary-700);
-  --ui-secondary-soft: color-mix(in oklab, var(--color-secondary-500) 16%, transparent);
+  --ui-secondary-soft: color-mix(in oklab, var(--color-secondary-500) 24%, transparent);
 
   --ui-success: var(--color-success-500);
   --ui-success-hover: var(--color-success-600);
   --ui-success-active: var(--color-success-700);
-  --ui-success-soft: color-mix(in oklab, var(--color-success-500) 16%, transparent);
+  --ui-success-soft: color-mix(in oklab, var(--color-success-500) 24%, transparent);
 
   --ui-danger: var(--color-danger-500);
   --ui-danger-hover: var(--color-danger-600);
   --ui-danger-active: var(--color-danger-700);
   --ui-danger-foreground: white;
-  --ui-danger-soft: color-mix(in oklab, var(--color-danger-500) 16%, transparent);
+  --ui-danger-soft: color-mix(in oklab, var(--color-danger-500) 24%, transparent);
 
   --ui-info: var(--color-info-500);
   --ui-info-hover: var(--color-info-600);
   --ui-info-active: var(--color-info-700);
   --ui-info-foreground: white;
-  --ui-info-soft: color-mix(in oklab, var(--color-info-500) 16%, transparent);
+  --ui-info-soft: color-mix(in oklab, var(--color-info-500) 24%, transparent);
 
   --ui-warning: var(--color-warning-500);
   --ui-warning-hover: var(--color-warning-600);
   --ui-warning-active: var(--color-warning-700);
-  --ui-warning-soft: color-mix(in oklab, var(--color-warning-500) 16%, transparent);
+  --ui-warning-soft: color-mix(in oklab, var(--color-warning-500) 24%, transparent);
 }
