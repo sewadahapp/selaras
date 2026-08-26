@@ -282,8 +282,6 @@ const commaValueProps = computed(() => {
     class: [overrideClass, 'flex-initial min-w-0'].filter(Boolean).join(' '),
   })
 })
-const chipProps = computed(() => resolveSlot(ui.value.chip, props.ui?.chip))
-const chipRemoveProps = computed(() => resolveSlot(ui.value.chipRemove, props.ui?.chipRemove))
 const chipOverflowProps = computed(() => resolveSlot(ui.value.chipOverflow, props.ui?.chipOverflow))
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const clearProps = computed(() => resolveSlot(ui.value.clear, props.ui?.clear))
@@ -358,7 +356,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           >
             <Chip
               size="sm"
-              color="neutral"
+              color="primary"
               variant="soft"
               removable
               :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--ui-primary)]' }"
@@ -454,19 +452,27 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             content rather than getting shoved all the way to the end too.
           -->
           <div v-if="displayMode === 'chip'" class="flex flex-1 flex-wrap items-center gap-1.5">
-            <span
+            <Chip
               v-for="option in visibleOptions"
               :key="option.value"
+              size="sm"
+              color="primary"
+              variant="soft"
+              removable
               :data-state="option.value === selectedChipValue ? 'active' : 'inactive'"
               :aria-current="option.value === selectedChipValue || undefined"
-              v-bind="chipProps"
+              :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--ui-primary)]' }"
             >
-              <slot name="item" :item="option.raw">{{ option.label }}</slot>
-              <!-- role="button", not a real <button> - see the clear button above for why. -->
-              <span role="button" tabindex="-1" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
-                <Icon name="lucide:x" class="size-3" />
-              </span>
-            </span>
+              <slot name="item" :item="option.raw">
+                {{ option.label }}
+              </slot>
+              <!-- role="button", not a real <button> - this trigger already IS a <button> (ComboboxTrigger), see the clear button below for why. -->
+              <template #remove="{ class: removeClass }">
+                <span role="button" tabindex="-1" :class="removeClass" :aria-label="`Remove ${option.label}`" @click.stop="removeValue(option.value)">
+                  <Icon name="lucide:x" class="size-3" />
+                </span>
+              </template>
+            </Chip>
             <span v-if="!selectedOptions.length" v-bind="valueProps" data-placeholder="">
               {{ placeholder }}
             </span>

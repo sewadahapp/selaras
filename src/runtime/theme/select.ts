@@ -5,14 +5,10 @@ export const selectTheme = tv({
     root: 'w-full',
     trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
     value: 'flex-1 truncate text-left text-[var(--ui-text)] data-[placeholder]:text-[var(--ui-text-muted)]',
-    // data-[state=active] is TagsInputItem's "virtually selected" state -
-    // real DOM focus never lands on a chip (it stays on the input), so
-    // this ring is the only visible sign of which chip ArrowLeft/Right has
-    // highlighted, before Backspace/Delete removes it.
-    chip: 'inline-flex items-center gap-1 rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg-elevated)] py-0.5 pl-2 pr-1 text-xs text-[var(--ui-text)] data-[state=active]:ring-2 data-[state=active]:ring-[var(--ui-primary)]',
-    // rounded-full (not the library's usual rounded-sm) - a tiny dismiss
-    // glyph reads better circular, matching Modal/Toast's close button.
-    chipRemove: 'rounded-full p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    // Both chip display branches render a real Chip (see
+    // ComboboxSelectBase.vue) instead of hand-rolled markup, styled/
+    // colored via its own props and :ui override - only the "+N more"
+    // overflow indicator still needs a Select-owned slot.
     chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg-elevated)] px-2 py-0.5 text-xs text-[var(--ui-text-muted)]',
     icon: 'shrink-0 text-[var(--ui-text-muted)]',
     // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
