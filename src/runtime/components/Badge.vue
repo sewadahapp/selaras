@@ -4,7 +4,7 @@ import type { BadgeSlots } from '../theme/badge'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { badgeTheme } from '../theme/badge'
-import { useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 type BadgeVariants = VariantProps<typeof badgeTheme>
 
@@ -12,6 +12,8 @@ defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   label?: string
+  icon?: string
+  trailingIcon?: string
   color?: BadgeVariants['color']
   variant?: BadgeVariants['variant']
   size?: BadgeVariants['size']
@@ -31,6 +33,10 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 
 <template>
   <span v-bind="rootProps">
-    <slot>{{ label }}</slot>
+    <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <span v-bind="resolveSlot(ui.label, props.ui?.label)">
+      <slot>{{ label }}</slot>
+    </span>
+    <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
   </span>
 </template>

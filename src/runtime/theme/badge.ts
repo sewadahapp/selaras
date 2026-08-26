@@ -3,6 +3,9 @@ import { tv } from 'tailwind-variants'
 export const badgeTheme = tv({
   slots: {
     base: 'inline-flex items-center gap-1 font-medium rounded-[var(--ui-radius-sm)] whitespace-nowrap',
+    leadingIcon: 'shrink-0',
+    label: 'truncate',
+    trailingIcon: 'shrink-0',
   },
   variants: {
     color: {
@@ -20,9 +23,9 @@ export const badgeTheme = tv({
       outline: '',
     },
     size: {
-      sm: { base: 'h-5 px-1.5 text-xs' },
-      md: { base: 'h-6 px-2 text-xs' },
-      lg: { base: 'h-7 px-2.5 text-sm' },
+      sm: { base: 'h-5 px-1.5 text-xs', leadingIcon: 'size-3', trailingIcon: 'size-3' },
+      md: { base: 'h-6 px-2 text-xs', leadingIcon: 'size-3.5', trailingIcon: 'size-3.5' },
+      lg: { base: 'h-7 px-2.5 text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4' },
     },
   },
   compoundVariants: [

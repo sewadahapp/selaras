@@ -45,4 +45,22 @@ describe('badge', () => {
     expect(span.classes()).toContain('custom-class')
     expect(span.attributes('data-testid')).toBe('my-badge')
   })
+
+  it('renders a leading icon when given', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { label: 'New', icon: 'lucide:sparkles' } })
+    expect(wrapper.find('.iconify').classes()).toContain('i-lucide:sparkles')
+  })
+
+  it('renders a trailing icon when given', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { label: 'New', trailingIcon: 'lucide:chevron-right' } })
+    expect(wrapper.find('.iconify').classes()).toContain('i-lucide:chevron-right')
+  })
+
+  it('orders a leading and trailing icon around the label', async () => {
+    const wrapper = await mountSuspended(Badge, {
+      props: { label: 'New', icon: 'lucide:sparkles', trailingIcon: 'lucide:chevron-right' },
+    })
+    const icons = wrapper.findAll('.iconify').map(el => el.classes().find(c => c.startsWith('i-')))
+    expect(icons).toEqual(['i-lucide:sparkles', 'i-lucide:chevron-right'])
+  })
 })
