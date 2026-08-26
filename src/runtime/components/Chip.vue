@@ -51,17 +51,33 @@ const effectiveRemoveLabel = computed(() => props.removeLabel ?? (props.label ? 
     <span v-bind="resolveSlot(ui.label, props.ui?.label)">
       <slot>{{ label }}</slot>
     </span>
-    <button
+    <!--
+      Unlike remove-icon (swaps just the glyph), this replaces the whole
+      control - needed when a host context has its own interactive element
+      that must BE the remove control (e.g. Reka TagsInput's
+      TagsInputItemDelete, which renders its own <button> and can't be
+      nested inside ours without recreating the button-in-button
+      corruption already fixed once for Select's clear button). The
+      scoped `class` still carries this slot's resolved/overridden
+      classes so a replacement can opt into matching Chip's own look.
+    -->
+    <slot
       v-if="removable"
-      type="button"
-      :disabled="disabled"
-      :aria-label="effectiveRemoveLabel"
-      v-bind="resolveSlot(ui.remove, props.ui?.remove)"
-      @click.stop="emit('remove')"
+      name="remove"
+      :class="resolveSlot(ui.remove, props.ui?.remove).class"
+      :remove="() => emit('remove')"
     >
-      <slot name="remove-icon">
-        <Icon name="lucide:x" v-bind="resolveSlot(ui.removeIcon, props.ui?.removeIcon)" />
-      </slot>
-    </button>
+      <button
+        type="button"
+        :disabled="disabled"
+        :aria-label="effectiveRemoveLabel"
+        v-bind="resolveSlot(ui.remove, props.ui?.remove)"
+        @click.stop="emit('remove')"
+      >
+        <slot name="remove-icon">
+          <Icon name="lucide:x" v-bind="resolveSlot(ui.removeIcon, props.ui?.removeIcon)" />
+        </slot>
+      </button>
+    </slot>
   </span>
 </template>

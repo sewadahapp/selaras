@@ -25,6 +25,7 @@ import {
 } from 'reka-ui'
 import { computed, ref } from 'vue'
 import Button from '../components/Button.vue'
+import Chip from '../components/Chip.vue'
 import Tooltip from '../components/Tooltip.vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
@@ -340,21 +341,39 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           as-child
           @remove-tag="removeValue"
         >
+          <!--
+            as-child projects Chip itself as the tag element - TagsInputItem
+            still owns collection registration/arrow-key nav via whatever
+            it clones its props onto. TagsInputItemDelete keeps its own
+            <button> (safe here - this branch's own wrapper is a <div>,
+            not a button) by filling Chip's #remove slot instead of its
+            remove-icon slot, so Chip never renders a second, nested
+            interactive control for it to conflict with.
+          -->
           <TagsInputItem
             v-for="option in visibleOptions"
             :key="option.value"
             :value="option.value"
-            as="span"
-            v-bind="chipProps"
+            as-child
           >
-            <TagsInputItemText as="span">
-              <slot name="item" :item="option.raw">
-                {{ option.label }}
-              </slot>
-            </TagsInputItemText>
-            <TagsInputItemDelete :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps">
-              <Icon name="lucide:x" class="size-3" />
-            </TagsInputItemDelete>
+            <Chip
+              size="sm"
+              color="neutral"
+              variant="soft"
+              removable
+              :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--ui-primary)]' }"
+            >
+              <TagsInputItemText as="span">
+                <slot name="item" :item="option.raw">
+                  {{ option.label }}
+                </slot>
+              </TagsInputItemText>
+              <template #remove="{ class: removeClass }">
+                <TagsInputItemDelete :class="removeClass" :aria-label="`Remove ${option.label}`">
+                  <Icon name="lucide:x" class="size-3" />
+                </TagsInputItemDelete>
+              </template>
+            </Chip>
           </TagsInputItem>
           <ComboboxInput v-model="searchText" as-child>
             <TagsInputInput
