@@ -70,6 +70,15 @@ describe('badge', () => {
     expect(wrapper.find('.iconify').exists()).toBe(true)
   })
 
+  it('centers the icon horizontally in icon-only mode, not flush against one edge', async () => {
+    // Regression: the fixed equal width/height that makes icon-only circular
+    // gives the root slack an intrinsically-sized pill never has - without
+    // justify-center, flex's own default (flex-start) leaves the icon flush
+    // left instead of centered in the circle.
+    const wrapper = await mountSuspended(Badge, { props: { icon: 'lucide:sparkles' } })
+    expect(wrapper.classes()).toContain('justify-center')
+  })
+
   it('stays a pill (not a circle) when both an icon and a label are given', async () => {
     const wrapper = await mountSuspended(Badge, { props: { label: 'New', icon: 'lucide:sparkles' } })
     expect(wrapper.classes()).not.toContain('rounded-full')

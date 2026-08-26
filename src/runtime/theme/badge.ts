@@ -2,7 +2,11 @@ import { tv } from 'tailwind-variants'
 
 export const badgeTheme = tv({
   slots: {
-    base: 'inline-flex items-center gap-1 font-medium rounded-[var(--ui-radius-sm)] whitespace-nowrap',
+    // justify-center is a no-op for the normal multi-child pill (content
+    // already defines the width, no slack to distribute) but is required
+    // once iconOnly gives the root a fixed width wider than its one child -
+    // without it the icon sits flush left, all the slack pushed right.
+    base: 'inline-flex items-center justify-center gap-1 font-medium rounded-[var(--ui-radius-sm)] whitespace-nowrap',
     leadingIcon: 'shrink-0',
     label: 'truncate',
     trailingIcon: 'shrink-0',
