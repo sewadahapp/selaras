@@ -83,4 +83,17 @@ describe('chip', () => {
     expect(span.classes()).toContain('mt-4')
     expect(span.classes().length).toBeGreaterThan(1)
   })
+
+  it('is a fully rounded pill, not Badge\'s smaller radius - otherwise the two look identical', async () => {
+    const wrapper = await mountSuspended(Chip, { props: { label: 'Apple' } })
+    expect(wrapper.classes()).toContain('rounded-full')
+  })
+
+  it('centers the remove button on both axes, so it lines up with the label rather than inheriting ambient line-height', async () => {
+    const wrapper = await mountSuspended(Chip, { props: { label: 'Apple', removable: true } })
+    const classes = wrapper.find('button').classes()
+    expect(classes).toContain('inline-flex')
+    expect(classes).toContain('items-center')
+    expect(classes).toContain('justify-center')
+  })
 })

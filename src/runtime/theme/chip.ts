@@ -2,16 +2,24 @@ import { tv } from 'tailwind-variants'
 
 export const chipTheme = tv({
   slots: {
-    root: 'inline-flex items-center gap-1 rounded-[var(--ui-radius-sm)] font-medium whitespace-nowrap',
+    // rounded-full, not Badge's rounded-sm - Chip is the physical "tag
+    // object" (pick it up, dismiss it), Badge is a flat label; the fully
+    // rounded pill shape is what actually tells them apart at a glance,
+    // matching a convention several comparable references share (their "Tag") for the
+    // same removable-entity concept. Without it the two looked identical
+    // whenever removable was off.
+    root: 'inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap',
     leadingIcon: 'shrink-0',
     label: 'truncate',
-    // rounded-full (not the root's usual rounded-sm) - a tiny dismiss glyph
-    // reads better circular, matching Select's own internal chip remove
-    // button and Modal/Toast's close button. opacity (not a color/bg swap)
-    // for hover/disabled feedback, and outline-current for focus - both
-    // work unmodified across every color variant instead of needing a
-    // hover/focus override per color.
-    remove: 'shrink-0 rounded-full p-0.5 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-30 disabled:pointer-events-none',
+    // A pill this round reads cramped at Badge's own tighter heights, so
+    // Chip's size scale is a notch roomier - see the size variant below.
+    // inline-flex items-center justify-center centers the icon in both
+    // axes and keeps the button's own box vertically centered against the
+    // label's line box via the root's items-center, not just tall enough
+    // to look right by accident (the exact bug already fixed once for
+    // Input/Select's clear button - a plain <button> with no centering
+    // inherits ambient line-height on height only).
+    remove: 'inline-flex shrink-0 items-center justify-center rounded-full p-0.5 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-30 disabled:pointer-events-none',
     removeIcon: 'shrink-0',
   },
   variants: {
@@ -30,9 +38,9 @@ export const chipTheme = tv({
       outline: '',
     },
     size: {
-      sm: { root: 'h-5 px-1.5 text-xs', leadingIcon: 'size-3', removeIcon: 'size-3' },
-      md: { root: 'h-6 px-2 text-xs', leadingIcon: 'size-3.5', removeIcon: 'size-3.5' },
-      lg: { root: 'h-7 px-2.5 text-sm', leadingIcon: 'size-4', removeIcon: 'size-4' },
+      sm: { root: 'h-6 px-2 text-xs', leadingIcon: 'size-3', removeIcon: 'size-3' },
+      md: { root: 'h-7 px-2.5 text-sm', leadingIcon: 'size-3.5', removeIcon: 'size-3.5' },
+      lg: { root: 'h-8 px-3 text-sm', leadingIcon: 'size-4', removeIcon: 'size-4' },
     },
     disabled: {
       true: { root: 'opacity-50 pointer-events-none' },
