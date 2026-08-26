@@ -43,6 +43,8 @@ is a deliberately different shape for a deliberately different role.
 ```vue-html
 <SBadge icon="lucide:bell" color="primary" />
 <SBadge icon="lucide:check" color="success" size="lg" />
+<SBadge icon="lucide:bell" color="primary" variant="solid" />
+<SBadge icon="lucide:check" color="success" variant="solid" size="lg" />
 ```
 
 ### Status dot
