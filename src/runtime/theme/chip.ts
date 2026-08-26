@@ -15,7 +15,7 @@ export const chipTheme = tv({
     // to look right by accident (the exact bug already fixed once for
     // Input/Select's clear button - a plain <button> with no centering
     // inherits ambient line-height on height only).
-    remove: 'inline-flex shrink-0 items-center justify-center rounded-full p-0.5 opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-30 disabled:pointer-events-none',
+    remove: 'inline-flex shrink-0 items-center justify-center rounded-full p-0.5 opacity-70 transition-[opacity,background-color] hover:opacity-100 hover:bg-current/10 active:bg-current/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current disabled:opacity-30 disabled:pointer-events-none',
     removeIcon: 'shrink-0',
   },
   variants: {
@@ -44,8 +44,18 @@ export const chipTheme = tv({
     disabled: {
       true: { root: 'opacity-50 pointer-events-none' },
     },
+    // The remove button's own p-0.5 (plus its hover-circle inset) already
+    // adds visual weight on the right, so root's right padding trims down
+    // one step per size to compensate - left padding is untouched.
+    removable: {
+      true: {},
+    },
   },
   compoundVariants: [
+    { size: 'sm', removable: true, class: { root: 'pr-1' } },
+    { size: 'md', removable: true, class: { root: 'pr-1.5' } },
+    { size: 'lg', removable: true, class: { root: 'pr-2' } },
+
     { color: 'primary', variant: 'solid', class: { root: 'bg-[var(--ui-primary)] text-[var(--ui-primary-foreground)]' } },
     { color: 'primary', variant: 'soft', class: { root: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]' } },
     { color: 'primary', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-primary)] text-[var(--ui-primary)]' } },

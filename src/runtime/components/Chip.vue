@@ -37,6 +37,7 @@ const ui = computed(() => theme.value({
   size: props.size,
   disabled: props.disabled,
   rounded: props.rounded,
+  removable: props.removable,
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
