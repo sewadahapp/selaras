@@ -6,6 +6,11 @@ export const badgeTheme = tv({
     leadingIcon: 'shrink-0',
     label: 'truncate',
     trailingIcon: 'shrink-0',
+    // Always the color's solid background, regardless of `variant` - a
+    // pale "soft" dot barely reads as a status indicator at this size.
+    // Used both inline (next to a label) and standalone (dot-only, no
+    // padded base around it at all - see Badge.vue's dotOnly branch).
+    dot: 'shrink-0 rounded-full',
   },
   variants: {
     color: {
@@ -23,9 +28,17 @@ export const badgeTheme = tv({
       outline: '',
     },
     size: {
-      sm: { base: 'h-5 px-1.5 text-xs', leadingIcon: 'size-3', trailingIcon: 'size-3' },
-      md: { base: 'h-6 px-2 text-xs', leadingIcon: 'size-3.5', trailingIcon: 'size-3.5' },
-      lg: { base: 'h-7 px-2.5 text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4' },
+      sm: { base: 'h-4 px-1 text-xs', leadingIcon: 'size-2.5', trailingIcon: 'size-2.5', dot: 'size-1.5' },
+      md: { base: 'h-5 px-1.5 text-xs', leadingIcon: 'size-3', trailingIcon: 'size-3', dot: 'size-2' },
+      lg: { base: 'h-6 px-2 text-sm', leadingIcon: 'size-3.5', trailingIcon: 'size-3.5', dot: 'size-2.5' },
+    },
+    // No label - just an icon (or nothing but a dot, handled separately in
+    // Badge.vue) - reads better as a circle than a flat pill, doubling as
+    // an avatar-adjacent status/count indicator. Chip stays a pill even
+    // icon-only; that's a deliberately different shape convention for a
+    // deliberately different role.
+    iconOnly: {
+      true: { base: 'rounded-full px-0' },
     },
   },
   compoundVariants: [
@@ -56,6 +69,23 @@ export const badgeTheme = tv({
     { color: 'warning', variant: 'solid', class: { base: 'bg-[var(--ui-warning)] text-[var(--ui-warning-foreground)]' } },
     { color: 'warning', variant: 'soft', class: { base: 'bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]' } },
     { color: 'warning', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-warning)] text-[var(--ui-warning)]' } },
+
+    // The dot's own background always tracks the color's solid token,
+    // independent of `variant` - see the `dot` slot comment above.
+    { color: 'primary', class: { dot: 'bg-[var(--ui-primary)]' } },
+    { color: 'neutral', class: { dot: 'bg-[var(--ui-text-muted)]' } },
+    { color: 'secondary', class: { dot: 'bg-[var(--ui-secondary)]' } },
+    { color: 'success', class: { dot: 'bg-[var(--ui-success)]' } },
+    { color: 'danger', class: { dot: 'bg-[var(--ui-danger)]' } },
+    { color: 'info', class: { dot: 'bg-[var(--ui-info)]' } },
+    { color: 'warning', class: { dot: 'bg-[var(--ui-warning)]' } },
+
+    // iconOnly needs an equal width/height square-that-reads-as-a-circle -
+    // same trick Button's own square variant uses: swap the size's
+    // horizontal padding for a matching width instead.
+    { size: 'sm', iconOnly: true, class: { base: 'w-4' } },
+    { size: 'md', iconOnly: true, class: { base: 'w-5' } },
+    { size: 'lg', iconOnly: true, class: { base: 'w-6' } },
   ],
   defaultVariants: {
     color: 'neutral',

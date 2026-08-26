@@ -6,10 +6,11 @@ order: 11.5
 
 ## Usage
 
-Chip shares its color/variant/size system with [Badge](/components/elements/badge) - the
-difference is `removable`, which adds a dismiss button and a `remove` event.
-Chip doesn't track its own value; the parent decides what "remove" means
-(splice it out of an array, unset a filter, whatever fits).
+Chip shares its color/variant/size system - and its default shape - with
+[Badge](/components/elements/badge). The difference is `removable`, which
+adds a dismiss button and a `remove` event. Chip doesn't track its own
+value; the parent decides what "remove" means (splice it out of an array,
+unset a filter, whatever fits).
 
 ::component-example{name="chip-basic"}
 ::
@@ -49,6 +50,18 @@ Chip doesn't track its own value; the parent decides what "remove" means
 <SChip label="Starred" icon="lucide:star" color="warning" removable />
 ```
 
+### Rounded
+
+`rounded` swaps the default small radius for a fully rounded pill shape.
+
+::component-example{name="chip-rounded"}
+::
+
+```vue-html
+<SChip label="Primary" color="primary" rounded />
+<SChip label="Removable" removable rounded @remove="() => {}" />
+```
+
 ### Accessibility
 
 The remove button is icon-only, so it needs an accessible name from
@@ -69,6 +82,7 @@ control that has to live inside another interactive element.
 | `removable` | `boolean` | `false` |
 | `removeLabel` | `string` | - |
 | `disabled` | `boolean` | `false` |
+| `rounded` | `boolean` | `false` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
 | `variant` | `'solid' \| 'soft' \| 'outline'` | `'soft'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |

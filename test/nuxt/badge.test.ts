@@ -63,4 +63,43 @@ describe('badge', () => {
     const icons = wrapper.findAll('.iconify').map(el => el.classes().find(c => c.startsWith('i-')))
     expect(icons).toEqual(['i-lucide:sparkles', 'i-lucide:chevron-right'])
   })
+
+  it('becomes a circle when icon-only (no label) - unlike Chip, which stays a pill', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { icon: 'lucide:sparkles' } })
+    expect(wrapper.classes()).toContain('rounded-full')
+    expect(wrapper.find('.iconify').exists()).toBe(true)
+  })
+
+  it('stays a pill (not a circle) when both an icon and a label are given', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { label: 'New', icon: 'lucide:sparkles' } })
+    expect(wrapper.classes()).not.toContain('rounded-full')
+  })
+
+  it('renders a leading dot alongside the label when dot is set', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { label: 'Online', dot: true, color: 'success' } })
+    const dot = wrapper.find('span > span')
+    expect(dot.classes()).toContain('rounded-full')
+    expect(dot.classes()).toContain('bg-[var(--ui-success)]')
+    expect(wrapper.text()).toBe('Online')
+  })
+
+  it('collapses to just the bare dot when dot is set with no label', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { dot: true, color: 'success' } })
+    expect(wrapper.text()).toBe('')
+    expect(wrapper.classes()).toContain('rounded-full')
+    expect(wrapper.classes()).toContain('bg-[var(--ui-success)]')
+  })
+
+  it('always uses the solid color for the dot, regardless of variant', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { dot: true, color: 'success', variant: 'outline' } })
+    expect(wrapper.classes()).toContain('bg-[var(--ui-success)]')
+  })
+
+  it('forwards a plain aria-label onto the bare dot for accessibility', async () => {
+    const wrapper = await mountSuspended(Badge, {
+      props: { dot: true, color: 'success' },
+      attrs: { 'aria-label': 'Online' },
+    })
+    expect(wrapper.attributes('aria-label')).toBe('Online')
+  })
 })

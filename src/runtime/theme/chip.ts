@@ -2,17 +2,13 @@ import { tv } from 'tailwind-variants'
 
 export const chipTheme = tv({
   slots: {
-    // rounded-full, not Badge's rounded-sm - Chip is the physical "tag
-    // object" (pick it up, dismiss it), Badge is a flat label; the fully
-    // rounded pill shape is what actually tells them apart at a glance,
-    // matching a convention several comparable references share (their "Tag") for the
-    // same removable-entity concept. Without it the two looked identical
-    // whenever removable was off.
-    root: 'inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap',
+    // rounded-sm by default, same as Badge's own shape - `rounded` opts a
+    // specific chip into the fully-rounded pill look instead. Padding/
+    // height below is Badge's original scale, carried over here; Badge
+    // itself moved to a tighter one (see badge.ts).
+    root: 'inline-flex items-center gap-1 rounded-[var(--ui-radius-sm)] font-medium whitespace-nowrap',
     leadingIcon: 'shrink-0',
     label: 'truncate',
-    // A pill this round reads cramped at Badge's own tighter heights, so
-    // Chip's size scale is a notch roomier - see the size variant below.
     // inline-flex items-center justify-center centers the icon in both
     // axes and keeps the button's own box vertically centered against the
     // label's line box via the root's items-center, not just tall enough
@@ -38,9 +34,12 @@ export const chipTheme = tv({
       outline: '',
     },
     size: {
-      sm: { root: 'h-6 px-2 text-xs', leadingIcon: 'size-3', removeIcon: 'size-3' },
-      md: { root: 'h-7 px-2.5 text-sm', leadingIcon: 'size-3.5', removeIcon: 'size-3.5' },
-      lg: { root: 'h-8 px-3 text-sm', leadingIcon: 'size-4', removeIcon: 'size-4' },
+      sm: { root: 'h-5 px-1.5 text-xs', leadingIcon: 'size-3', removeIcon: 'size-3' },
+      md: { root: 'h-6 px-2 text-xs', leadingIcon: 'size-3.5', removeIcon: 'size-3.5' },
+      lg: { root: 'h-7 px-2.5 text-sm', leadingIcon: 'size-4', removeIcon: 'size-4' },
+    },
+    rounded: {
+      true: { root: 'rounded-full' },
     },
     disabled: {
       true: { root: 'opacity-50 pointer-events-none' },

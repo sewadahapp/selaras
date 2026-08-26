@@ -17,6 +17,8 @@ const props = defineProps<{
   /** Overrides the remove button's aria-label - it's icon-only, so it needs a name from somewhere. Defaults to "Remove {label}", or plain "Remove" without one. */
   removeLabel?: string
   disabled?: boolean
+  /** Fully-rounded pill shape instead of the default (Badge's own) small radius. */
+  rounded?: boolean
   color?: ChipVariants['color']
   variant?: ChipVariants['variant']
   size?: ChipVariants['size']
@@ -34,6 +36,7 @@ const ui = computed(() => theme.value({
   variant: props.variant,
   size: props.size,
   disabled: props.disabled,
+  rounded: props.rounded,
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)

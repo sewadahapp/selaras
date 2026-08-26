@@ -84,8 +84,13 @@ describe('chip', () => {
     expect(span.classes().length).toBeGreaterThan(1)
   })
 
-  it('is a fully rounded pill, not Badge\'s smaller radius - otherwise the two look identical', async () => {
+  it('defaults to Badge\'s own small radius, not a pill shape', async () => {
     const wrapper = await mountSuspended(Chip, { props: { label: 'Apple' } })
+    expect(wrapper.classes()).not.toContain('rounded-full')
+  })
+
+  it('becomes a fully rounded pill when rounded is set', async () => {
+    const wrapper = await mountSuspended(Chip, { props: { label: 'Apple', rounded: true } })
     expect(wrapper.classes()).toContain('rounded-full')
   })
 
