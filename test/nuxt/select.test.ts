@@ -20,20 +20,23 @@ function withTooltipProvider(children: any) {
 
 describe('select', () => {
   // the trigger itself is a <button> (clicking anywhere on it opens the
-  // popover), so the clear button is a second, nested <button> - present
-  // only when clearable is on and there's something to clear.
+  // popover); the clear control can't be a nested <button> - HTML doesn't
+  // allow a <button> inside another one (the browser's own parser would
+  // silently close the trigger early, corrupting SSR/hydration) - so it's
+  // a role="button" span instead, present only when clearable is on and
+  // there's something to clear.
   it('does not render a clear button when clearable is unset', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: 'apple' },
     })
-    expect(wrapper.findAll('button')).toHaveLength(1)
+    expect(wrapper.find('[role="button"]').exists()).toBe(false)
   })
 
   it('does not render a clear button when clearable but nothing is selected', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, clearable: true },
     })
-    expect(wrapper.findAll('button')).toHaveLength(1)
+    expect(wrapper.find('[role="button"]').exists()).toBe(false)
   })
 
   it('clears a single selection and emits undefined, without opening the popover', async () => {
@@ -41,19 +44,20 @@ describe('select', () => {
       props: { items: fruitItems, modelValue: 'apple', clearable: true },
     })
 
-    const [trigger, clearButton] = wrapper.findAll('button')
-    await clearButton!.trigger('click')
+    const trigger = wrapper.find('button')
+    const clearButton = wrapper.find('[role="button"]')
+    await clearButton.trigger('click')
 
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([undefined])
-    expect(trigger!.attributes('aria-expanded')).toBe('false')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
   })
 
-  it('gives the clear button an accessible label - an icon-only button otherwise has no name', async () => {
+  it('gives the clear button an accessible label - an icon-only control otherwise has no name', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: 'apple', clearable: true },
     })
-    const [, clearButton] = wrapper.findAll('button')
-    expect(clearButton!.attributes('aria-label')).toBe('Clear')
+    const clearButton = wrapper.find('[role="button"]')
+    expect(clearButton.attributes('aria-label')).toBe('Clear')
   })
 
   it('keeps the trigger as the only Tab stop - the clear button opts out via tabindex=-1', async () => {
@@ -61,23 +65,24 @@ describe('select', () => {
     // the consumer to override it - a comparable reference's own select component does the same).
     // Without that override, the trigger was never reachable by Tab at all -
     // this only became visible once the clear button became a real,
-    // naturally-tabbable button competing for the one stop that existed.
+    // naturally-tabbable control competing for the one stop that existed.
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: 'apple', clearable: true },
     })
-    const [trigger, clearButton] = wrapper.findAll('button')
-    expect(trigger!.attributes('tabindex')).toBe('0')
-    expect(clearButton!.attributes('tabindex')).toBe('-1')
+    const trigger = wrapper.find('button')
+    const clearButton = wrapper.find('[role="button"]')
+    expect(trigger.attributes('tabindex')).toBe('0')
+    expect(clearButton.attributes('tabindex')).toBe('-1')
   })
 
   it('gives each chip\'s remove button an accessible label naming that chip', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
     })
-    const removeButtons = wrapper.findAll('button').filter(b => b.attributes('aria-label')?.startsWith('Remove'))
+    const removeButtons = wrapper.findAll('[role="button"]').filter(b => b.attributes('aria-label')?.startsWith('Remove'))
     expect(removeButtons.map(b => b.attributes('aria-label'))).toEqual(['Remove Apple', 'Remove Banana'])
     // Same tab-stop-competition issue as the clear button - each chip's
-    // remove button also opts out of Tab so the trigger stays reachable.
+    // remove control also opts out of Tab so the trigger stays reachable.
     expect(removeButtons.every(b => b.attributes('tabindex') === '-1')).toBe(true)
   })
 
@@ -89,7 +94,7 @@ describe('select', () => {
     const wrapper = await mountSuspended(withTooltipProvider(
       h(Select, { items: fruitItems, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip', maxChips: 2 }),
     ))
-    const chip = wrapper.find('[aria-label="Remove Apple"]').element.closest('span')!
+    const chip = wrapper.find('[aria-label="Remove Apple"]').element.parentElement!
     const wrapperEl = chip.parentElement!
     expect(wrapperEl.className).toContain('flex-1')
 
@@ -122,8 +127,8 @@ describe('select', () => {
       props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, clearable: true },
     })
 
-    const [, clearButton] = wrapper.findAll('button')
-    await clearButton!.trigger('click')
+    const clearButton = wrapper.find('[role="button"]')
+    await clearButton.trigger('click')
 
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[]])
   })
@@ -132,7 +137,21 @@ describe('select', () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: 'apple', clearable: true, disabled: true },
     })
-    expect(wrapper.findAll('button')).toHaveLength(1)
+    expect(wrapper.find('[role="button"]').exists()).toBe(false)
+  })
+
+  it('never nests a real <button> inside the trigger <button> - invalid HTML that SSR/hydration silently corrupts', async () => {
+    // A client-only mount can't reproduce the actual corruption (that only
+    // happens when the browser's HTML parser processes server-rendered
+    // markup), but it can still catch a regression back to the invalid
+    // structure that causes it: this asserts the invariant directly rather
+    // than the symptom.
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip', clearable: true },
+    })
+    const trigger = wrapper.find('button').element
+    const nestedButtons = trigger.querySelectorAll('button')
+    expect(nestedButtons).toHaveLength(0)
   })
 
   it('sets aria-busy on the trigger while loading, with an sr-only announcement', async () => {
@@ -156,6 +175,43 @@ describe('select', () => {
     await nextTick()
 
     expect(document.body.textContent).toContain('Category: Fruits')
+  })
+})
+
+describe('select icon slots', () => {
+  it('replaces the clear icon via the clear-icon slot', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, modelValue: 'apple', clearable: true },
+      slots: { 'clear-icon': '<span class="my-clear-icon">x</span>' },
+    })
+    expect(wrapper.find('.my-clear-icon').exists()).toBe(true)
+    expect(wrapper.find('.iconify.i-lucide\\:x').exists()).toBe(false)
+  })
+
+  it('replaces the dropdown chevron via the dropdown-icon slot', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems },
+      slots: { 'dropdown-icon': '<span class="my-dropdown-icon">v</span>' },
+    })
+    expect(wrapper.find('.my-dropdown-icon').exists()).toBe(true)
+  })
+
+  it('replaces the loading spinner via the loading-icon slot', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, loading: true },
+      slots: { 'loading-icon': '<span class="my-loading-icon">...</span>' },
+    })
+    expect(wrapper.find('.my-loading-icon').exists()).toBe(true)
+  })
+
+  it('replaces the popover search icon via the filter-icon slot', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, searchable: true },
+      slots: { 'filter-icon': '<span class="my-filter-icon">?</span>' },
+    })
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+    expect(document.body.querySelector('.my-filter-icon')).toBeTruthy()
   })
 })
 

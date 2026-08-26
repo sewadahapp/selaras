@@ -81,6 +81,32 @@ describe('autocomplete', () => {
     expect(wrapper.emitted('update:searchTerm')?.at(-1)).toEqual([''])
   })
 
+  describe('icon slots', () => {
+    it('replaces the clear icon via the clear-icon slot', async () => {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: fruitItems, modelValue: 'apple', clearable: true },
+        slots: { 'clear-icon': '<span class="my-clear-icon">x</span>' },
+      })
+      expect(wrapper.find('.my-clear-icon').exists()).toBe(true)
+    })
+
+    it('replaces the dropdown chevron via the dropdown-icon slot', async () => {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: fruitItems, dropdown: true },
+        slots: { 'dropdown-icon': '<span class="my-dropdown-icon">v</span>' },
+      })
+      expect(wrapper.find('.my-dropdown-icon').exists()).toBe(true)
+    })
+
+    it('replaces the loading spinner via the loading-icon slot', async () => {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: fruitItems, loading: true },
+        slots: { 'loading-icon': '<span class="my-loading-icon">...</span>' },
+      })
+      expect(wrapper.find('.my-loading-icon').exists()).toBe(true)
+    })
+  })
+
   // Multiple+chip mode nests a real TagsInputRoot around the input itself
   // (see ComboboxSelectBase.vue) - Reka owns the chip removal wiring here,
   // unlike Select's plain-button trigger which has no input to attach to.

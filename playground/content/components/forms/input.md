@@ -86,3 +86,9 @@ configure by hand for the common case.
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
 | `ui` | `Partial<Record<'root' \| 'base' \| 'leadingIcon' \| 'trailingIcon' \| 'clear', string \| object>>` | - |
+
+## Slots
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `clear-icon` | - | Replaces the clear button's icon (default: `lucide:x`) |

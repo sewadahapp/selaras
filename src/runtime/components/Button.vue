@@ -58,7 +58,16 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 <template>
   <Primitive :as="as" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
     <Icon v-if="loading" name="lucide:loader-2" class="animate-spin" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
-    <Icon v-else-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <!--
+      A named slot (not just the `icon` prop) so a consumer building a
+      custom control on top of Button (Select's clear button, for one) can
+      swap the glyph entirely while still reusing Button's own size-driven
+      class via the scoped `class` - most callers never touch this and just
+      use `icon`, which the fallback below still handles unchanged.
+    -->
+    <slot v-else name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
+      <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    </slot>
     <span v-if="loading" class="sr-only">Loading</span>
     <slot />
     <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />

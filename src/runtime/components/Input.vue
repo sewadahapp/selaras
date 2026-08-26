@@ -86,11 +86,16 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
       :size="clearSize"
       variant="ghost"
       color="neutral"
-      icon="lucide:x"
       aria-label="Clear"
       v-bind="resolveSlot(ui.clear, props.ui?.clear)"
       @click="clear"
-    />
+    >
+      <template #icon="{ class: iconClass }">
+        <slot name="clear-icon">
+          <Icon name="lucide:x" :class="iconClass" />
+        </slot>
+      </template>
+    </Button>
     <Icon v-else-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
   </div>
 </template>

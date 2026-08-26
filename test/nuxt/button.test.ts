@@ -57,6 +57,26 @@ describe('button', () => {
     expect(wrapper.classes().some(c => c.startsWith('active:'))).toBe(true)
   })
 
+  it('lets the icon slot replace the icon prop\'s glyph entirely, still receiving the same size-driven class', async () => {
+    const wrapper = await mountSuspended(Button, {
+      props: { icon: 'lucide:save', size: 'lg' },
+      slots: { icon: '<template #default="{ class: klass }"><span class="my-icon" :class="klass">*</span></template>' },
+    })
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+    const custom = wrapper.find('.my-icon')
+    expect(custom.exists()).toBe(true)
+    expect(custom.classes()).toContain('size-5')
+  })
+
+  it('stays square (icon-only) when only the icon slot is used, with no default slot content', async () => {
+    const wrapper = await mountSuspended(Button, {
+      props: { size: 'sm' },
+      slots: { icon: '<span class="my-icon">*</span>' },
+    })
+    expect(wrapper.classes()).toContain('w-8')
+    expect(wrapper.classes()).not.toContain('px-3')
+  })
+
   it('shapes itself square when there is no default slot content (icon-only), matching size for width and height', async () => {
     const iconOnly = await mountSuspended(Button, { props: { icon: 'lucide:x', size: 'sm' } })
     expect(iconOnly.classes()).toContain('w-8')

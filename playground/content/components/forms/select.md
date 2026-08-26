@@ -273,3 +273,7 @@ not something to configure here.
 | `empty` | - | Shown when `items` is empty |
 | `empty-filter` | - | Shown when a search yields no matches |
 | `header` / `footer` | - | Content above/below the option list |
+| `clear-icon` | - | Replaces the clear button's icon (default: `lucide:x`) |
+| `dropdown-icon` | - | Replaces the trigger's chevron (default: `lucide:chevron-down`) |
+| `loading-icon` | - | Replaces the spinner shown while `loading` (default: `lucide:loader-2`) |
+| `filter-icon` | - | Replaces the popover search field's icon (default: `lucide:search`) |

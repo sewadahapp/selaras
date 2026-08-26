@@ -57,4 +57,13 @@ describe('input', () => {
     // The theme's own fixed override for size="md" - equal on both axes.
     expect(classes).toContain('size-9')
   })
+
+  it('replaces the clear icon via the clear-icon slot instead of the default lucide:x', async () => {
+    const wrapper = await mountSuspended(Input, {
+      props: { clearable: true, modelValue: 'hello' },
+      slots: { 'clear-icon': '<span class="my-custom-icon">×</span>' },
+    })
+    expect(wrapper.find('.my-custom-icon').exists()).toBe(true)
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+  })
 })

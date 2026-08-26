@@ -5,7 +5,6 @@ import type { SelectSlots } from '../theme/select'
 import type { UiProp } from '../utils/ui'
 import {
   ComboboxAnchor,
-  ComboboxCancel,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxGroup,
@@ -379,21 +378,40 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
           <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
         </Tooltip>
-        <ComboboxCancel v-if="clearable && !disabled && selectedOptions.length" as-child>
-          <Button
-            :size="clearSize"
-            variant="ghost"
-            color="neutral"
-            icon="lucide:x"
-            aria-label="Clear"
-            v-bind="clearProps"
-            @click.stop="clear"
-          />
-        </ComboboxCancel>
-        <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
+        <!--
+          A plain Button, not ComboboxCancel as-child - this trigger is a
+          <div>, so unlike the non-creatable branch below there's no real
+          HTML-nesting reason to avoid a real <button> here. Dropped anyway
+          to keep both branches' clear button identical; ComboboxCancel's
+          own click-driven modelValue/search reset isn't needed since our
+          own clear() (via setValue) already covers it, and ComboboxInput's
+          display-value re-syncs the visible text once modelValue changes.
+          tabindex="-1" replicates the one bit of its behavior this used.
+        -->
+        <Button
+          v-if="clearable && !disabled && selectedOptions.length"
+          :size="clearSize"
+          variant="ghost"
+          color="neutral"
+          tabindex="-1"
+          aria-label="Clear"
+          v-bind="clearProps"
+          @click.stop="clear"
+        >
+          <template #icon="{ class: iconClass }">
+            <slot name="clear-icon">
+              <Icon name="lucide:x" :class="iconClass" />
+            </slot>
+          </template>
+        </Button>
+        <slot v-if="loading" name="loading-icon">
+          <Icon name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
+        </slot>
         <span v-if="loading" class="sr-only">Loading</span>
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
-          <Icon name="lucide:chevron-down" class="size-4" />
+          <slot name="dropdown-icon">
+            <Icon name="lucide:chevron-down" class="size-4" />
+          </slot>
         </ComboboxTrigger>
       </div>
 
@@ -425,9 +443,10 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               v-bind="chipProps"
             >
               <slot name="item" :item="option.raw">{{ option.label }}</slot>
-              <button type="button" tabindex="-1" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
+              <!-- role="button", not a real <button> - see the clear button above for why. -->
+              <span role="button" tabindex="-1" :aria-label="`Remove ${option.label}`" v-bind="chipRemoveProps" @click.stop="removeValue(option.value)">
                 <Icon name="lucide:x" class="size-3" />
-              </button>
+              </span>
             </span>
             <span v-if="!selectedOptions.length" v-bind="valueProps" data-placeholder="">
               {{ placeholder }}
@@ -449,19 +468,46 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <slot name="value" :selected="selectedOptions[0]">{{ selectedOptions[0]?.label || placeholder }}</slot>
         </span>
 
-        <ComboboxCancel v-if="clearable && !disabled && selectedOptions.length" as-child>
-          <Button
-            :size="clearSize"
-            variant="ghost"
-            color="neutral"
-            icon="lucide:x"
-            aria-label="Clear"
-            v-bind="clearProps"
-            @click.stop="clear"
-          />
-        </ComboboxCancel>
-        <Icon v-if="loading" name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
-        <Icon v-else name="lucide:chevron-down" class="size-4" v-bind="iconProps" />
+        <!--
+          as="span", not a real <button> - this trigger already IS a
+          <button> (ComboboxTrigger defaults as="button"), and HTML doesn't
+          allow nesting one inside another: the browser's own HTML parser
+          silently closes the outer button as soon as it hits the inner
+          one, which during SSR corrupts the whole trigger - everything
+          from this point on ends up as a sibling *outside* it once
+          hydration parses the server markup. role="button" replaces the
+          semantics a real <button> would have carried; tabindex="-1" was
+          already set here regardless, so nothing about keyboard
+          reachability changes.
+        -->
+        <Button
+          v-if="clearable && !disabled && selectedOptions.length"
+          as="span"
+          role="button"
+          :size="clearSize"
+          variant="ghost"
+          color="neutral"
+          tabindex="-1"
+          aria-label="Clear"
+          v-bind="clearProps"
+          @click.stop="clear"
+        >
+          <template #icon="{ class: iconClass }">
+            <slot name="clear-icon">
+              <Icon name="lucide:x" :class="iconClass" />
+            </slot>
+          </template>
+        </Button>
+        <template v-if="loading">
+          <slot name="loading-icon">
+            <Icon name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
+          </slot>
+        </template>
+        <template v-else>
+          <slot name="dropdown-icon">
+            <Icon name="lucide:chevron-down" class="size-4" v-bind="iconProps" />
+          </slot>
+        </template>
         <span v-if="loading" class="sr-only">Loading</span>
       </ComboboxTrigger>
     </ComboboxAnchor>
@@ -471,7 +517,9 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <slot name="header" />
 
         <div v-if="searchable && !creatable" v-bind="searchWrapperProps">
-          <Icon name="lucide:search" class="size-4 text-[var(--ui-text-muted)]" />
+          <slot name="filter-icon">
+            <Icon name="lucide:search" class="size-4 text-[var(--ui-text-muted)]" />
+          </slot>
           <ComboboxInput
             v-model="searchText"
             :display-value="displayValue"

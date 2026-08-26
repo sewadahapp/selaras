@@ -147,4 +147,6 @@ on), plus these Autocomplete-only additions:
 
 ## Slots
 
-Same as [Select](/components/forms/select#slots).
+Same as [Select](/components/forms/select#slots), minus `filter-icon` - that
+one only renders in Select's separate popover search field, and
+Autocomplete's own input already doubles as the trigger.
