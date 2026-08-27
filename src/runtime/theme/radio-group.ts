@@ -14,11 +14,11 @@ export const radioGroupTheme = tv({
     // at rest and switched to the primary color by the checked-state
     // variant below - an explicit var per state rather than currentColor,
     // since this slot's own text color isn't otherwise tied to
-    // checked/unchecked here. Uses --ui-text-muted rather than the
-    // lighter --ui-border for the gray fill - the border color reads as
-    // basically invisible at any reasonable opacity since it's already
-    // very close to the page background, whereas a mid-gray text color
-    // stays visible even at a fairly low opacity. scale(0)/scale(1) use
+    // checked/unchecked here. Uses --ui-border-hover for the gray fill -
+    // lighter than a plain mid-gray text color would give, while still
+    // clearing the plain --ui-border token, which reads as basically
+    // invisible at any reasonable opacity since it's already very close
+    // to the page background. scale(0)/scale(1) use
     // Tailwind's arbitrary-value [transform:] syntax, not the named
     // scale-0/scale-100 utilities - those silently failed to generate any
     // CSS in this project's Tailwind v4 setup even though other before:
@@ -40,8 +40,12 @@ export const radioGroupTheme = tv({
     // completely invisible halo on the real page, and
     // document.elementsFromPoint() at the halo's own pixels confirmed an
     // ancestor's background was winning the paint order despite being
-    // nested outside the button in the DOM.
-    item: 'relative isolate flex size-4.5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-inset-[9px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-text-muted)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]',
+    // nested outside the button in the DOM. ring-[1.5px] rather than the
+    // plain ring-1 (1px) utility - a full 1px stroke on an 18px circle
+    // rendered visibly jagged at normal (non-zoomed) browser scale; the
+    // fractional width needs the arbitrary-value form since Tailwind's
+    // named ring scale only has integer steps.
+    item: 'relative isolate flex size-4.5 shrink-0 items-center justify-center rounded-full ring-[1.5px] ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-inset-[9px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-border-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]',
     // force-mount (see RadioGroup.vue) keeps this in the DOM for every
     // item regardless of checked state, so switching the selection scales
     // the old dot out and the new one in instead of an abrupt pop -
@@ -50,7 +54,7 @@ export const radioGroupTheme = tv({
     // detects them via computed animation-name), not plain CSS
     // transitions, so a transition-only version without force-mount would
     // just vanish instantly.
-    indicator: 'size-2 rounded-full bg-[var(--ui-primary)] [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
+    indicator: 'size-2.5 rounded-full bg-[var(--ui-primary)] [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
     label: 'select-none text-sm text-[var(--ui-text)]',
   },
   variants: {
