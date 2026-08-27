@@ -81,8 +81,14 @@ export const radioGroupTheme = tv({
         item: 'mt-0.5',
       },
     },
+    // Recolors the existing ring rather than adding a second outline
+    // outside it (an earlier version did that, which read as a double
+    // ring) - matches how Input/Select handle their own invalid ring.
+    // data-[state=checked] needs its own danger override too, since it'd
+    // otherwise win the ring color back whenever an already-invalid group
+    // has something selected.
     invalid: {
-      true: { item: 'outline outline-2 outline-offset-1 outline-[var(--ui-danger)]' },
+      true: { item: 'ring-[var(--ui-danger)] data-[state=checked]:ring-[var(--ui-danger)]' },
     },
   },
   defaultVariants: {
