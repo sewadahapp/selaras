@@ -4,10 +4,8 @@ import type { UiProp } from '../utils/ui'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
-import { useIcons } from '../composables/use-icons'
 import { checkboxTheme } from '../theme/checkbox'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
-import Icon from './Icon.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -31,7 +29,6 @@ const checkboxId = computed(() => props.id ?? field?.id)
 const checkboxInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 
-const icons = useIcons()
 const theme = useComponentTheme('checkbox', checkboxTheme)
 const ui = computed(() => theme.value({ invalid: checkboxInvalid.value }))
 
@@ -39,6 +36,14 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const boxProps = computed(() => resolveSlot(ui.value.box, props.ui?.box))
 const indicatorProps = computed(() => resolveSlot(ui.value.indicator, props.ui?.indicator))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
+const checkIconProps = computed(() => resolveSlot(ui.value.checkIcon, props.ui?.checkIcon))
+const indeterminateIconProps = computed(() => resolveSlot(ui.value.indeterminateIcon, props.ui?.indeterminateIcon))
+
+// force-mount (see RadioGroup's own indicator dot for the same reasoning)
+// keeps both paths in the DOM at all times so their stroke-dashoffset
+// transitions can actually animate in and out, instead of the glyph just
+// popping in/out with Presence's default (non-animated) show/hide.
+const glyphState = computed(() => props.modelValue === 'indeterminate' ? 'indeterminate' : props.modelValue ? 'checked' : 'unchecked')
 </script>
 
 <template>
@@ -53,9 +58,11 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
       v-bind="boxProps"
       @update:model-value="(value) => emit('update:modelValue', value)"
     >
-      <CheckboxIndicator v-bind="indicatorProps">
-        <Icon v-if="modelValue === 'indeterminate'" :name="icons.indeterminate" class="size-3.5" />
-        <Icon v-else :name="icons.check" class="size-3.5" />
+      <CheckboxIndicator force-mount v-bind="indicatorProps">
+        <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 13l4 4L19 7" :data-state="glyphState" v-bind="checkIconProps" />
+          <path d="M5 12h14" :data-state="glyphState" v-bind="indeterminateIconProps" />
+        </svg>
       </CheckboxIndicator>
     </CheckboxRoot>
     <span v-if="label || $slots.default" v-bind="labelProps">
