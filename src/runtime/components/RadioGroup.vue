@@ -99,10 +99,11 @@ const descriptionProps = computed(() => resolveSlot(ui.value.description, props.
         :checked="modelValue === item.value"
         :disabled="Boolean(disabled || item.disabled)"
       >
-        <span>
+        <span v-if="item.description">
           <span v-bind="labelProps">{{ item.label }}</span>
-          <span v-if="item.description" v-bind="descriptionProps">{{ item.description }}</span>
+          <span v-bind="descriptionProps">{{ item.description }}</span>
         </span>
+        <span v-else v-bind="labelProps">{{ item.label }}</span>
       </slot>
     </label>
   </RadioGroupRoot>
