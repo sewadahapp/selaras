@@ -11,6 +11,7 @@ import { exportTableToCsv } from '../utils/table-export'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Checkbox from './Checkbox.vue'
+import Icon from './Icon.vue'
 import Input from './Input.vue'
 
 defineOptions({ inheritAttrs: false })
