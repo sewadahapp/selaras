@@ -4,6 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { FlexRender } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { computed, h, nextTick, onMounted, onUnmounted, ref, useSlots, watch, watchEffect } from 'vue'
+import { useIcons } from '../composables/use-icons'
 import { useTable } from '../composables/use-table'
 import { tableTheme } from '../theme/table'
 import { collectColumnPinning, convertChildrenToColumns } from '../utils/table-columns'
@@ -53,6 +54,7 @@ const emit = defineEmits<{
 
 const slots = useSlots()
 
+const icons = useIcons()
 const theme = useComponentTheme('table', tableTheme)
 const ui = computed(() => theme.value({ size: props.size, gridlines: props.gridlines, striped: props.striped, scrollable: !!props.scrollHeight }))
 
@@ -79,7 +81,7 @@ const expandColumn = {
     'class': ui.value.expandButton(),
     'aria-label': row.getIsExpanded() ? 'Collapse row' : 'Expand row',
     'onClick': () => row.toggleExpanded(),
-  }, [h(Icon, { 'name': 'lucide:chevron-right', 'class': ui.value.expandChevron(), 'data-expanded': row.getIsExpanded() || undefined })]),
+  }, [h(Icon, { 'name': icons.value.chevronRight, 'class': ui.value.expandChevron(), 'data-expanded': row.getIsExpanded() || undefined })]),
   enableSorting: false,
   enableColumnFilter: false,
 }
@@ -233,7 +235,7 @@ defineExpose({
   <div v-bind="rootProps">
     <div v-if="columnToggle" class="mb-2 flex justify-end">
       <div data-column-toggle v-bind="columnToggleProps">
-        <Button variant="outline" size="sm" icon="lucide:columns-3" @click="showColumnTogglePanel = !showColumnTogglePanel">
+        <Button variant="outline" size="sm" :icon="icons.columns" @click="showColumnTogglePanel = !showColumnTogglePanel">
           Columns
         </Button>
         <div v-if="showColumnTogglePanel" v-bind="columnTogglePanelProps">
@@ -269,12 +271,12 @@ defineExpose({
                   <FlexRender :header="header" />
                   <Icon
                     v-if="header.column.getIsSorted() === 'asc'"
-                    name="lucide:arrow-up"
+                    :name="icons.sortAscending"
                     v-bind="sortIconProps"
                   />
                   <Icon
                     v-else-if="header.column.getIsSorted() === 'desc'"
-                    name="lucide:arrow-down"
+                    :name="icons.sortDescending"
                     v-bind="sortIconProps"
                   />
                   <div v-if="header.column.getCanFilter()">
@@ -337,7 +339,7 @@ defineExpose({
     </div>
 
     <div v-if="loading" v-bind="loadingOverlayProps">
-      <Icon name="lucide:loader-2" v-bind="loadingIconProps" />
+      <Icon :name="icons.loading" v-bind="loadingIconProps" />
     </div>
 
     <div v-if="table.getPageCount() > 1" v-bind="paginationWrapperProps">

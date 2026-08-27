@@ -139,12 +139,12 @@ describe('table', () => {
     const idle = await mountSuspended(Table, {
       props: { data: [{ name: 'Alice' }], columns: [{ accessorKey: 'name', header: 'Name' }] },
     })
-    expect(idle.find('.iconify.i-lucide\\:loader-2').exists()).toBe(false)
+    expect(idle.find('.iconify.i-ph\\:spinner').exists()).toBe(false)
 
     const busy = await mountSuspended(Table, {
       props: { data: [{ name: 'Alice' }], columns: [{ accessorKey: 'name', header: 'Name' }], loading: true },
     })
-    expect(busy.find('.iconify.i-lucide\\:loader-2').exists()).toBe(true)
+    expect(busy.find('.iconify.i-ph\\:spinner').exists()).toBe(true)
   })
 
   it('applies size, gridlines, and striped as real classes', async () => {

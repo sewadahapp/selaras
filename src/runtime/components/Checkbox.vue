@@ -4,6 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
+import { useIcons } from '../composables/use-icons'
 import { checkboxTheme } from '../theme/checkbox'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -30,6 +31,7 @@ const checkboxId = computed(() => props.id ?? field?.id)
 const checkboxInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 
+const icons = useIcons()
 const theme = useComponentTheme('checkbox', checkboxTheme)
 const ui = computed(() => theme.value({ invalid: checkboxInvalid.value }))
 
@@ -52,8 +54,8 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
       @update:model-value="(value) => emit('update:modelValue', value)"
     >
       <CheckboxIndicator v-bind="indicatorProps">
-        <Icon v-if="modelValue === 'indeterminate'" name="lucide:minus" class="size-3.5" />
-        <Icon v-else name="lucide:check" class="size-3.5" />
+        <Icon v-if="modelValue === 'indeterminate'" :name="icons.indeterminate" class="size-3.5" />
+        <Icon v-else :name="icons.check" class="size-3.5" />
       </CheckboxIndicator>
     </CheckboxRoot>
     <span v-if="label || $slots.default" v-bind="labelProps">

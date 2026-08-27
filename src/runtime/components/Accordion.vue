@@ -3,6 +3,7 @@ import type { AccordionSlots } from '../theme/accordion'
 import type { UiProp } from '../utils/ui'
 import { AccordionContent, AccordionHeader, AccordionItem, AccordionRoot, AccordionTrigger } from 'reka-ui'
 import { computed } from 'vue'
+import { useIcons } from '../composables/use-icons'
 import { accordionTheme } from '../theme/accordion'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -31,6 +32,7 @@ defineEmits<{
   'update:modelValue': [value: string | string[]]
 }>()
 
+const icons = useIcons()
 const theme = useComponentTheme('accordion', accordionTheme)
 const ui = computed(() => theme.value())
 
@@ -57,7 +59,7 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
         <AccordionHeader as="div" v-bind="resolveSlot(ui.header, props.ui?.header)">
           <AccordionTrigger v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
             <span v-bind="resolveSlot(ui.label, props.ui?.label)">{{ item.label }}</span>
-            <Icon name="lucide:chevron-down" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
+            <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
           </AccordionTrigger>
         </AccordionHeader>
         <AccordionContent v-bind="resolveSlot(ui.content, props.ui?.content)">

@@ -4,6 +4,7 @@ import type { InputSlots } from '../theme/input'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
+import { useIcons } from '../composables/use-icons'
 import { inputTheme } from '../theme/input'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -54,6 +55,7 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 // smaller step, so it stays sm.
 const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
+const icons = useIcons()
 const theme = useComponentTheme('input', inputTheme)
 
 const ui = computed(() => theme.value({
@@ -93,7 +95,7 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
     >
       <template #icon="{ class: iconClass }">
         <slot name="clear-icon">
-          <Icon name="lucide:x" :class="iconClass" />
+          <Icon :name="icons.close" :class="iconClass" />
         </slot>
       </template>
     </Button>

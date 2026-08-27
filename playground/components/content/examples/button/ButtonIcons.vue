@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-wrap items-center gap-3">
-    <SButton icon="lucide:download">
+    <SButton icon="ph:download">
       Download
     </SButton>
-    <SButton trailing-icon="lucide:arrow-right">
+    <SButton trailing-icon="ph:arrow-right">
       Continue
     </SButton>
   </div>

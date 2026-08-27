@@ -32,7 +32,7 @@ describe('button', () => {
     const wrapper = await mountSuspended(Button, { props: { icon: 'lucide:save', loading: true } })
     const icons = wrapper.findAll('.iconify')
     expect(icons).toHaveLength(1)
-    expect(icons[0]!.classes()).toContain('i-lucide:loader-2')
+    expect(icons[0]!.classes()).toContain('i-ph:spinner')
     expect(icons[0]!.classes()).toContain('animate-spin')
     expect(wrapper.attributes('disabled')).toBeUndefined()
   })

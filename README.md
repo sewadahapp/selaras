@@ -48,7 +48,7 @@ npx nuxt module add selaras
 That's it! Every component is now auto-imported and ready to use:
 
 ```vue-html
-<SButton color="primary" icon="lucide:sparkles">
+<SButton color="primary" icon="ph:sparkle">
   Get started
 </SButton>
 ```

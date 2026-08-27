@@ -5,6 +5,7 @@ import type { ButtonSlots } from '../theme/button'
 import type { UiProp } from '../utils/ui'
 import { Primitive } from 'reka-ui'
 import { computed, useSlots } from 'vue'
+import { useIcons } from '../composables/use-icons'
 import { buttonTheme } from '../theme/button'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -41,6 +42,7 @@ const slots = useSlots()
 // forget to set.
 const iconOnly = computed(() => !slots.default)
 
+const icons = useIcons()
 const theme = useComponentTheme('button', buttonTheme)
 
 const ui = computed(() => theme.value({
@@ -57,7 +59,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 
 <template>
   <Primitive :as="as" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
-    <Icon v-if="loading" name="lucide:loader-2" class="animate-spin" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <Icon v-if="loading" :name="icons.loading" class="animate-spin" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <!--
       A named slot (not just the `icon` prop) so a consumer building a
       custom control on top of Button (Select's clear button, for one) can

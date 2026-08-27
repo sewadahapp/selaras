@@ -39,14 +39,14 @@ distinguishable at a glance?).
 ### Icons
 
 `icon` and `trailingIcon` add an icon before or after the label - any
-registered icon name works, not just `lucide:*`.
+registered icon name works, not just `ph:*`.
 
 ::component-example{name="button-icons"}
 ::
 
 ```vue-html
-<SButton icon="lucide:download">Download</SButton>
-<SButton trailing-icon="lucide:arrow-right">Continue</SButton>
+<SButton icon="ph:download">Download</SButton>
+<SButton trailing-icon="ph:arrow-right">Continue</SButton>
 ```
 
 ### Icon only
@@ -62,7 +62,7 @@ through to the root element like any other attr (see
 ::
 
 ```vue-html
-<SButton icon="lucide:settings" variant="outline" aria-label="Settings" />
+<SButton icon="ph:gear" variant="outline" aria-label="Settings" />
 ```
 
 ### Loading
@@ -77,7 +77,7 @@ for their own `loading` prop.
 ::
 
 ```vue-html
-<SButton icon="lucide:save" :loading="saving" :disabled="saving" @click="save">
+<SButton icon="ph:floppy-disk" :loading="saving" :disabled="saving" @click="save">
   {{ saving ? 'Saving...' : 'Save' }}
 </SButton>
 ```
@@ -92,7 +92,7 @@ external link, or a resolved `NuxtLink` reference for client-side navigation
 ::
 
 ```vue-html
-<SButton as="a" href="https://github.com" target="_blank" rel="noopener" trailing-icon="lucide:external-link">
+<SButton as="a" href="https://github.com" target="_blank" rel="noopener" trailing-icon="ph:arrow-square-out">
   Open a link
 </SButton>
 ```
@@ -137,7 +137,7 @@ on an icon-only button with a `relative`/`absolute` pair:
 
 ```vue-html
 <div class="relative inline-flex">
-  <SButton variant="outline" icon="lucide:bell" aria-label="Notifications" />
+  <SButton variant="outline" icon="ph:bell" aria-label="Notifications" />
   <SBadge label="3" color="danger" size="sm" class="absolute -top-1.5 -right-1.5" />
 </div>
 ```

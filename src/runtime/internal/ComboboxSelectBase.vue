@@ -30,6 +30,7 @@ import Icon from '../components/Icon.vue'
 import Tooltip from '../components/Tooltip.vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
+import { useIcons } from '../composables/use-icons'
 import { selectTheme } from '../theme/select'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -262,6 +263,7 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 // especially at lg; sm has no smaller step so it stays sm).
 const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
+const icons = useIcons()
 const theme = useComponentTheme('select', selectTheme)
 const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: selectInvalid.value }))
 
@@ -369,7 +371,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               </TagsInputItemText>
               <template #remove="{ class: removeClass }">
                 <TagsInputItemDelete :class="removeClass" :aria-label="`Remove ${option.label}`">
-                  <Icon name="lucide:x" class="size-3" />
+                  <Icon :name="icons.close" class="size-3" />
                 </TagsInputItemDelete>
               </template>
             </Chip>
@@ -418,17 +420,17 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         >
           <template #icon="{ class: iconClass }">
             <slot name="clear-icon">
-              <Icon name="lucide:x" :class="iconClass" />
+              <Icon :name="icons.close" :class="iconClass" />
             </slot>
           </template>
         </Button>
         <slot v-if="loading" name="loading-icon">
-          <Icon name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
+          <Icon :name="icons.loading" class="size-4 animate-spin" v-bind="iconProps" />
         </slot>
         <span v-if="loading" class="sr-only">Loading</span>
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
           <slot name="dropdown-icon">
-            <Icon name="lucide:chevron-down" class="size-4" />
+            <Icon :name="icons.chevronDown" class="size-4" />
           </slot>
         </ComboboxTrigger>
       </div>
@@ -470,7 +472,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               <!-- role="button", not a real <button> - this trigger already IS a <button> (ComboboxTrigger), see the clear button below for why. -->
               <template #remove="{ class: removeClass }">
                 <span role="button" tabindex="-1" :class="removeClass" :aria-label="`Remove ${option.label}`" @click.stop="removeValue(option.value)">
-                  <Icon name="lucide:x" class="size-3" />
+                  <Icon :name="icons.close" class="size-3" />
                 </span>
               </template>
             </Chip>
@@ -520,18 +522,18 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         >
           <template #icon="{ class: iconClass }">
             <slot name="clear-icon">
-              <Icon name="lucide:x" :class="iconClass" />
+              <Icon :name="icons.close" :class="iconClass" />
             </slot>
           </template>
         </Button>
         <template v-if="loading">
           <slot name="loading-icon">
-            <Icon name="lucide:loader-2" class="size-4 animate-spin" v-bind="iconProps" />
+            <Icon :name="icons.loading" class="size-4 animate-spin" v-bind="iconProps" />
           </slot>
         </template>
         <template v-else>
           <slot name="dropdown-icon">
-            <Icon name="lucide:chevron-down" class="size-4" v-bind="iconProps" />
+            <Icon :name="icons.chevronDown" class="size-4" v-bind="iconProps" />
           </slot>
         </template>
         <span v-if="loading" class="sr-only">Loading</span>
@@ -544,7 +546,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
 
         <div v-if="searchable && !creatable" v-bind="searchWrapperProps">
           <slot name="filter-icon">
-            <Icon name="lucide:search" class="size-4 text-[var(--ui-text-muted)]" />
+            <Icon :name="icons.search" class="size-4 text-[var(--ui-text-muted)]" />
           </slot>
           <ComboboxInput
             v-model="searchText"
@@ -594,7 +596,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
                   {{ option.label }}
                 </slot>
                 <ComboboxItemIndicator v-bind="itemIndicatorProps">
-                  <Icon name="lucide:check" class="size-4" />
+                  <Icon :name="icons.check" class="size-4" />
                 </ComboboxItemIndicator>
               </ComboboxItem>
             </ComboboxVirtualizer>
@@ -619,7 +621,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
                     {{ option.label }}
                   </slot>
                   <ComboboxItemIndicator v-bind="itemIndicatorProps">
-                    <Icon name="lucide:check" class="size-4" />
+                    <Icon :name="icons.check" class="size-4" />
                   </ComboboxItemIndicator>
                 </ComboboxItem>
               </ComboboxGroup>
@@ -633,7 +635,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
                   {{ toOption(entry).label }}
                 </slot>
                 <ComboboxItemIndicator v-bind="itemIndicatorProps">
-                  <Icon name="lucide:check" class="size-4" />
+                  <Icon :name="icons.check" class="size-4" />
                 </ComboboxItemIndicator>
               </ComboboxItem>
             </template>

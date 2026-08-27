@@ -46,8 +46,8 @@ unset a filter, whatever fits).
 ::
 
 ```vue-html
-<SChip label="Verified" icon="lucide:check" color="success" />
-<SChip label="Starred" icon="lucide:star" color="warning" removable />
+<SChip label="Verified" icon="ph:check" color="success" />
+<SChip label="Starred" icon="ph:star" color="warning" removable />
 ```
 
 ### Rounded
@@ -93,7 +93,7 @@ control that has to live inside another interactive element.
 | Slot | Description |
 | --- | --- |
 | default | Custom content, overrides `label` |
-| remove-icon | Replaces the remove button's icon (default: `lucide:x`) |
+| remove-icon | Replaces the remove button's icon (default: `ph:x`) |
 
 ## Emits
 

@@ -11,7 +11,7 @@ type IconVariants = VariantProps<typeof iconTheme>
 defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
-  /** Any name Nuxt Icon resolves, e.g. `lucide:star`. */
+  /** Any name Nuxt Icon resolves, e.g. `ph:star` (or any other registered set, like `lucide:star`). */
   name: string
   color?: IconVariants['color']
   ui?: UiProp<IconSlots>

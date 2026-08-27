@@ -17,13 +17,13 @@ convenience prop for semantic color.
 ::
 
 ```vue-html
-<SIcon name="lucide:star" class="size-4" />
-<SIcon name="lucide:star" class="size-5" />
-<SIcon name="lucide:star" class="size-6" />
-<SIcon name="lucide:heart" color="danger" />
+<SIcon name="ph:star" class="size-4" />
+<SIcon name="ph:star" class="size-5" />
+<SIcon name="ph:star" class="size-6" />
+<SIcon name="ph:heart" color="danger" />
 ```
 
-`name` accepts any registered icon name, not just the `lucide:*` set used
+`name` accepts any registered icon name, not just the `ph:*` set used
 throughout this library's own docs.
 
 ### Sizes
@@ -44,12 +44,35 @@ usage in this library already relies on (an input's leading icon takes
 the seven semantic role names to force a specific color instead:
 
 ```vue-html
-<SIcon name="lucide:check-circle" color="success" />
+<SIcon name="ph:check-circle" color="success" />
 ```
 
 A plain `class="text-[var(--ui-danger)]"` still overrides `color` if you need
 something the preset roles don't cover - both flow through the same
 tailwind-merge, so whichever `text-*` class you add wins.
+
+### Overriding the default icon set
+
+Every internal icon (a button's loading spinner, a chip's remove glyph, a
+select's dropdown chevron, ...) is [Phosphor](https://phosphoricons.com) by
+default, resolved from one semantic-purpose registry rather than hardcoded
+per component - `close`, `check`, `chevronDown`, `loading`, and so on.
+Override any of them globally in `app.config.ts`:
+
+```ts
+export default defineAppConfig({
+  icons: {
+    close: 'lucide:x',
+    loading: 'lucide:loader-2',
+  },
+})
+```
+
+Only the keys you set are overridden; everything else keeps its Phosphor
+default. This changes every component that uses that key at once - setting
+`close` reskins the dismiss icon on `Modal`, `Toast`, `Input`'s clear
+button, and `Chip`'s remove button all together, rather than needing a
+separate override for each.
 
 ## Props
 

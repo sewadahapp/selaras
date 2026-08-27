@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useIcons } from '../composables/use-icons'
 import { proseTheme } from '../theme/prose'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Badge from './Badge.vue'
@@ -15,6 +16,7 @@ const props = defineProps<{
   meta?: string
 }>()
 
+const icons = useIcons()
 const theme = useComponentTheme('prose', proseTheme)
 const ui = computed(() => theme.value())
 
@@ -50,7 +52,7 @@ async function copy() {
         size="sm"
         variant="ghost"
         color="neutral"
-        :icon="copied ? 'lucide:check' : 'lucide:copy'"
+        :icon="copied ? icons.check : icons.copy"
         @click="copy"
       />
     </div>

@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-wrap items-center gap-4">
-    <SIcon name="lucide:star" class="size-4" />
-    <SIcon name="lucide:star" class="size-5" />
-    <SIcon name="lucide:star" class="size-6" />
-    <SIcon name="lucide:heart" color="danger" />
-    <SIcon name="lucide:check-circle" color="success" />
-    <SIcon name="lucide:info" color="info" />
+    <SIcon name="ph:star" class="size-4" />
+    <SIcon name="ph:star" class="size-5" />
+    <SIcon name="ph:star" class="size-6" />
+    <SIcon name="ph:heart" color="danger" />
+    <SIcon name="ph:check-circle" color="success" />
+    <SIcon name="ph:info" color="info" />
   </div>
 </template>

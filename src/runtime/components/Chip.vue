@@ -3,6 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { ChipSlots } from '../theme/chip'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
+import { useIcons } from '../composables/use-icons'
 import { chipTheme } from '../theme/chip'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -30,6 +31,7 @@ const emit = defineEmits<{
   remove: []
 }>()
 
+const icons = useIcons()
 const theme = useComponentTheme('chip', chipTheme)
 
 const ui = computed(() => theme.value({
@@ -76,7 +78,7 @@ const effectiveRemoveLabel = computed(() => props.removeLabel ?? (props.label ? 
         @click.stop="emit('remove')"
       >
         <slot name="remove-icon">
-          <Icon name="lucide:x" v-bind="resolveSlot(ui.removeIcon, props.ui?.removeIcon)" />
+          <Icon :name="icons.close" v-bind="resolveSlot(ui.removeIcon, props.ui?.removeIcon)" />
         </slot>
       </button>
     </slot>

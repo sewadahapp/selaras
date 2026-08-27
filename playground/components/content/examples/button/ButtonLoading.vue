@@ -10,7 +10,7 @@ function save() {
 </script>
 
 <template>
-  <SButton icon="lucide:save" :loading="saving" :disabled="saving" @click="save">
+  <SButton icon="ph:floppy-disk" :loading="saving" :disabled="saving" @click="save">
     {{ saving ? 'Saving...' : 'Save' }}
   </SButton>
 </template>
