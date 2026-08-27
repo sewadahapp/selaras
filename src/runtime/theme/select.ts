@@ -8,8 +8,14 @@ export const selectTheme = tv({
     // Both chip display branches render a real Chip (see
     // ComboboxSelectBase.vue) instead of hand-rolled markup, styled/
     // colored via its own props and :ui override - only the "+N more"
-    // overflow indicator still needs a Select-owned slot.
-    chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg-elevated)] px-2 py-0.5 text-xs text-[var(--ui-text-muted)]',
+    // overflow indicator still needs a Select-owned slot. bg-primary-soft
+    // (not bg-elevated) - elevated is the same token the trigger itself
+    // switches to on hover, so it used to vanish on hover exactly like
+    // the chips did before they moved to Chip's own primary/soft. Text
+    // matches the chips' own primary too, not text-muted - muted-on-
+    // primary-soft measures 4.46:1, just under AA; primary-on-primary-
+    // soft (the same pairing Chip's own soft variant uses) clears 6.5:1.
+    chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--ui-primary-soft)] px-2 py-0.5 text-xs text-[var(--ui-primary)]',
     icon: 'shrink-0 text-[var(--ui-text-muted)]',
     // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
     // and touch target come from Button's own theme; only rounded-full
