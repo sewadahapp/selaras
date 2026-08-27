@@ -6,12 +6,13 @@ import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { radioGroupTheme } from '../theme/radio-group'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 
 export interface RadioItem {
   label: string
   value: string
   disabled?: boolean
+  description?: string
 }
 
 type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
@@ -61,10 +62,19 @@ const ui = computed(() => theme.value({
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
-const itemWrapperProps = computed(() => resolveSlot(ui.value.itemWrapper, props.ui?.itemWrapper))
-const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
+// A description pushes the label onto a second line, so its item top-aligns
+// with the label's first line instead of centering against the whole
+// two-line block - applied per item (not a static theme variant) since
+// items within the same group can freely mix having a description or not.
+function itemWrapperPropsFor(item: RadioItem) {
+  return resolveSlot(ui.value.itemWrapper, withFallthroughClass(item.description ? 'items-start' : undefined, props.ui?.itemWrapper))
+}
+function itemPropsFor(item: RadioItem) {
+  return resolveSlot(ui.value.item, withFallthroughClass(item.description ? 'mt-0.5' : undefined, props.ui?.item))
+}
 const indicatorProps = computed(() => resolveSlot(ui.value.indicator, props.ui?.indicator))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
+const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
 </script>
 
 <template>
@@ -79,8 +89,8 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as string)"
   >
-    <label v-for="item in normalizedItems" :key="item.value" v-bind="itemWrapperProps">
-      <RadioGroupItem :value="item.value" :disabled="item.disabled" v-bind="itemProps">
+    <label v-for="item in normalizedItems" :key="item.value" v-bind="itemWrapperPropsFor(item)">
+      <RadioGroupItem :value="item.value" :disabled="item.disabled" v-bind="itemPropsFor(item)">
         <RadioGroupIndicator force-mount v-bind="indicatorProps" />
       </RadioGroupItem>
       <slot
@@ -89,7 +99,10 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
         :checked="modelValue === item.value"
         :disabled="Boolean(disabled || item.disabled)"
       >
-        <span v-bind="labelProps">{{ item.label }}</span>
+        <span>
+          <span v-bind="labelProps">{{ item.label }}</span>
+          <span v-if="item.description" v-bind="descriptionProps">{{ item.description }}</span>
+        </span>
       </slot>
     </label>
   </RadioGroupRoot>

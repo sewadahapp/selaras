@@ -59,12 +59,13 @@ export const radioGroupTheme = tv({
     // just vanish instantly.
     indicator: 'rounded-full bg-[var(--ui-primary)] [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
     label: 'select-none text-[var(--ui-text)]',
+    description: 'block select-none text-[var(--ui-text-muted)]',
   },
   variants: {
     size: {
-      sm: { item: 'size-3.5 before:-inset-[7px]', indicator: 'size-2', label: 'text-xs' },
-      md: { item: 'size-4.5 before:-inset-[9px]', indicator: 'size-2.5', label: 'text-sm' },
-      lg: { item: 'size-5.5 before:-inset-[11px]', indicator: 'size-3', label: 'text-base' },
+      sm: { item: 'size-3.5 before:-inset-[7px]', indicator: 'size-2', label: 'text-xs', description: 'text-xs' },
+      md: { item: 'size-4.5 before:-inset-[9px]', indicator: 'size-2.5', label: 'text-sm', description: 'text-xs' },
+      lg: { item: 'size-5.5 before:-inset-[11px]', indicator: 'size-3', label: 'text-base', description: 'text-sm' },
     },
     orientation: {
       vertical: { root: 'flex-col gap-2' },
