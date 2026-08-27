@@ -26,8 +26,12 @@ export const switchTheme = tv({
     label: 'select-none text-sm text-[var(--ui-text)]',
   },
   variants: {
+    // ring rather than an offset outline - the track has no border of its
+    // own to recolor (unlike Radio/Checkbox's ring-inset), but an offset
+    // outline left a visible gap between it and the pill, unlike every
+    // other invalid state in this library, which sits flush.
     invalid: {
-      true: { track: 'outline outline-2 outline-offset-1 outline-[var(--ui-danger)]' },
+      true: { track: 'ring-2 ring-[var(--ui-danger)]' },
     },
   },
 })
