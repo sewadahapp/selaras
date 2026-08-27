@@ -27,8 +27,21 @@ export const radioGroupTheme = tv({
     // ring/dot rather than covering them; the existing focus-visible:
     // outline stays alongside it rather than being replaced, since the
     // halo alone is a weaker focus indicator than what every other form
-    // control in this library already uses.
-    item: 'relative flex size-4.5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-inset-[9px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-text-muted)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)] focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]',
+    // control in this library already uses. `isolate` is load-bearing
+    // here, not decorative - without it, `relative` alone doesn't give
+    // the item its own stacking context, so the -z-10 pseudo escapes all
+    // the way up to the page's root stacking context instead of staying
+    // scoped to this element. Any ancestor between the item and <body>
+    // that has an opaque background but no stacking context of its own
+    // (true of every plain Tailwind utility div, including this library's
+    // own page layout wrapper) then paints *after* that root-level
+    // negative-z layer and fully covers it - found by comparing a real
+    // page render against an isolated one: identical computed styles,
+    // completely invisible halo on the real page, and
+    // document.elementsFromPoint() at the halo's own pixels confirmed an
+    // ancestor's background was winning the paint order despite being
+    // nested outside the button in the DOM.
+    item: 'relative isolate flex size-4.5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-inset-[9px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-text-muted)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)] focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]',
     indicator: 'size-2 rounded-full bg-[var(--ui-primary)]',
     label: 'select-none text-sm text-[var(--ui-text)]',
   },
