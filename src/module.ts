@@ -1,4 +1,4 @@
-import { addComponentsDir, addImportsDir, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addComponentsDir, addImportsDir, addPlugin, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import tailwindcss from '@tailwindcss/vite'
 
 export interface ModuleOptions {
@@ -57,5 +57,12 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addImportsDir(resolver.resolve('./runtime/composables'))
+
+    // Registers v-ripple globally (directives/ripple.ts) - a real Nuxt
+    // plugin rather than a component-scoped registration, since a
+    // directive has to be installed on the Vue app itself
+    // (nuxtApp.vueApp.directive(...)) to be usable as v-ripple anywhere,
+    // components included.
+    addPlugin(resolver.resolve('./runtime/plugins/ripple'))
   },
 })

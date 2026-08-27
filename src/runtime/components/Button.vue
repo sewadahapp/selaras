@@ -58,7 +58,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>
-  <Primitive :as="as" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
+  <Primitive v-ripple :as="as" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
     <Icon v-if="loading" :name="icons.loading" class="animate-spin" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <!--
       A named slot (not just the `icon` prop) so a consumer building a

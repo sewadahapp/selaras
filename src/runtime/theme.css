@@ -13,6 +13,16 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Grow-and-fade motion for the v-ripple directive (directives/ripple.ts) -
+   one shared definition; each ripple span sets its own size/position/color
+   inline and just points its `animation` at this by name. */
+@keyframes selaras-ripple {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
 /*
  * tw-animate-css's enter/exit utilities (animate-in, zoom-in-95, fade-in-0,
  * ...) - used by Select/Dropdown/Modal/Toast/Tooltip's open/close
