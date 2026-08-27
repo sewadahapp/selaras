@@ -5,6 +5,7 @@ import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { inputTheme } from '../theme/input'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -56,6 +57,7 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
 const icons = useIcons()
+const messages = useMessages()
 const theme = useComponentTheme('input', inputTheme)
 
 const ui = computed(() => theme.value({
@@ -89,7 +91,7 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
       :size="clearSize"
       variant="ghost"
       color="neutral"
-      aria-label="Clear"
+      :aria-label="messages.clear"
       v-bind="resolveSlot(ui.clear, props.ui?.clear)"
       @click="clear"
     >

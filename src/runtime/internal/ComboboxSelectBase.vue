@@ -31,6 +31,7 @@ import Tooltip from '../components/Tooltip.vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -264,6 +265,7 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
 const icons = useIcons()
+const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
 const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: selectInvalid.value }))
 
@@ -370,7 +372,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
                 </slot>
               </TagsInputItemText>
               <template #remove="{ class: removeClass }">
-                <TagsInputItemDelete :class="removeClass" :aria-label="`Remove ${option.label}`">
+                <TagsInputItemDelete :class="removeClass" :aria-label="messages.removeItem(option.label)">
                   <Icon :name="icons.close" class="size-3" />
                 </TagsInputItemDelete>
               </template>
@@ -396,7 +398,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           @blur="onSearchBlur"
         />
         <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
-          <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
+          <span v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
         </Tooltip>
         <!--
           A plain Button, not ComboboxCancel as-child - this trigger is a
@@ -414,7 +416,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           variant="ghost"
           color="neutral"
           tabindex="-1"
-          aria-label="Clear"
+          :aria-label="messages.clear"
           v-bind="clearProps"
           @click.stop="clear"
         >
@@ -427,7 +429,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <slot v-if="loading" name="loading-icon">
           <Icon :name="icons.loading" class="size-4 animate-spin" v-bind="iconProps" />
         </slot>
-        <span v-if="loading" class="sr-only">Loading</span>
+        <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
           <slot name="dropdown-icon">
             <Icon :name="icons.chevronDown" class="size-4" />
@@ -471,7 +473,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               </slot>
               <!-- role="button", not a real <button> - this trigger already IS a <button> (ComboboxTrigger), see the clear button below for why. -->
               <template #remove="{ class: removeClass }">
-                <span role="button" tabindex="-1" :class="removeClass" :aria-label="`Remove ${option.label}`" @click.stop="removeValue(option.value)">
+                <span role="button" tabindex="-1" :class="removeClass" :aria-label="messages.removeItem(option.label)" @click.stop="removeValue(option.value)">
                   <Icon :name="icons.close" class="size-3" />
                 </span>
               </template>
@@ -480,7 +482,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               {{ placeholder }}
             </span>
             <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
-              <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
+              <span v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
             </Tooltip>
           </div>
           <div v-else class="flex flex-1 items-center gap-1.5">
@@ -488,7 +490,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
               {{ commaText || placeholder }}
             </span>
             <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
-              <span v-bind="chipOverflowProps">+{{ overflowOptions.length }} more</span>
+              <span v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
             </Tooltip>
           </div>
         </template>
@@ -516,7 +518,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           variant="ghost"
           color="neutral"
           tabindex="-1"
-          aria-label="Clear"
+          :aria-label="messages.clear"
           v-bind="clearProps"
           @click.stop="clear"
         >
@@ -536,7 +538,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
             <Icon :name="icons.chevronDown" class="size-4" v-bind="iconProps" />
           </slot>
         </template>
-        <span v-if="loading" class="sr-only">Loading</span>
+        <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
       </ComboboxTrigger>
     </ComboboxAnchor>
 
@@ -551,7 +553,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           <ComboboxInput
             v-model="searchText"
             :display-value="displayValue"
-            placeholder="Search..."
+            :placeholder="messages.search"
             v-bind="searchInputProps"
             @keydown="onSearchKeydown"
             @blur="onSearchBlur"
@@ -560,13 +562,13 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
 
         <div v-if="flatOptions.length === 0" v-bind="emptyProps">
           <slot name="empty">
-            No options
+            {{ messages.noOptions }}
           </slot>
         </div>
         <ComboboxViewport v-else v-bind="viewportProps">
           <ComboboxEmpty v-bind="emptyProps">
             <slot name="empty-filter">
-              No results found
+              {{ messages.noResultsFound }}
             </slot>
           </ComboboxEmpty>
 

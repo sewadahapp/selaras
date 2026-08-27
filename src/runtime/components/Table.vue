@@ -5,6 +5,7 @@ import { FlexRender } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
 import { computed, h, nextTick, onMounted, onUnmounted, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { useTable } from '../composables/use-table'
 import { tableTheme } from '../theme/table'
 import { collectColumnPinning, convertChildrenToColumns } from '../utils/table-columns'
@@ -55,6 +56,7 @@ const emit = defineEmits<{
 const slots = useSlots()
 
 const icons = useIcons()
+const messages = useMessages()
 const theme = useComponentTheme('table', tableTheme)
 const ui = computed(() => theme.value({ size: props.size, gridlines: props.gridlines, striped: props.striped, scrollable: !!props.scrollHeight }))
 
@@ -79,7 +81,7 @@ const expandColumn = {
   cell: ({ row }: any) => h('button', {
     'type': 'button',
     'class': ui.value.expandButton(),
-    'aria-label': row.getIsExpanded() ? 'Collapse row' : 'Expand row',
+    'aria-label': row.getIsExpanded() ? messages.value.collapseRow : messages.value.expandRow,
     'onClick': () => row.toggleExpanded(),
   }, [h(Icon, { 'name': icons.value.chevronRight, 'class': ui.value.expandChevron(), 'data-expanded': row.getIsExpanded() || undefined })]),
   enableSorting: false,
@@ -236,7 +238,7 @@ defineExpose({
     <div v-if="columnToggle" class="mb-2 flex justify-end">
       <div data-column-toggle v-bind="columnToggleProps">
         <Button variant="outline" size="sm" :icon="icons.columns" @click="showColumnTogglePanel = !showColumnTogglePanel">
-          Columns
+          {{ messages.columns }}
         </Button>
         <div v-if="showColumnTogglePanel" v-bind="columnTogglePanelProps">
           <label v-for="column in toggleableColumns" :key="column.id" v-bind="columnToggleItemProps">
@@ -283,7 +285,7 @@ defineExpose({
                     <Input
                       size="sm"
                       :model-value="(header.column.getFilterValue() as string) ?? ''"
-                      placeholder="Filter..."
+                      :placeholder="messages.filterPlaceholder"
                       v-bind="filterInputProps"
                       @click.stop
                       @update:model-value="(value) => header.column.setFilterValue(value)"
@@ -333,7 +335,7 @@ defineExpose({
 
       <div v-if="!table.getRowModel().rows.length" v-bind="emptyStateProps">
         <slot name="empty">
-          No data
+          {{ messages.noData }}
         </slot>
       </div>
     </div>
@@ -344,14 +346,14 @@ defineExpose({
 
     <div v-if="table.getPageCount() > 1" v-bind="paginationWrapperProps">
       <span v-bind="paginationInfoProps">
-        Page {{ pageIndex + 1 }} of {{ table.getPageCount() }}
+        {{ messages.paginationInfo(pageIndex + 1, table.getPageCount()) }}
       </span>
       <div v-bind="paginationButtonsProps">
         <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()">
-          Previous
+          {{ messages.previous }}
         </Button>
         <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()">
-          Next
+          {{ messages.next }}
         </Button>
       </div>
     </div>

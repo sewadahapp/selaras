@@ -6,6 +6,7 @@ import type { UiProp } from '../utils/ui'
 import { Primitive } from 'reka-ui'
 import { computed, useSlots } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { useRippleEnabled } from '../composables/use-ripple'
 import { vRipple } from '../directives/ripple'
 import { buttonTheme } from '../theme/button'
@@ -45,6 +46,7 @@ const slots = useSlots()
 const iconOnly = computed(() => !slots.default)
 
 const icons = useIcons()
+const messages = useMessages()
 const rippleEnabled = useRippleEnabled()
 const theme = useComponentTheme('button', buttonTheme)
 
@@ -73,7 +75,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
     <slot v-else name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
       <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     </slot>
-    <span v-if="loading" class="sr-only">Loading</span>
+    <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
     <slot />
     <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
   </Primitive>

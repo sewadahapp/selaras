@@ -4,6 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
 import { computed, useSlots, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { modalTheme } from '../theme/modal'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Button from './Button.vue'
@@ -31,6 +32,7 @@ if (import.meta.dev) {
 }
 
 const icons = useIcons()
+const messages = useMessages()
 const theme = useComponentTheme('modal', modalTheme)
 const ui = computed(() => theme.value())
 
@@ -68,7 +70,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
             </slot>
           </div>
           <DialogClose as-child>
-            <Button size="sm" variant="ghost" color="neutral" :icon="icons.close" aria-label="Close" v-bind="closeProps" />
+            <Button size="sm" variant="ghost" color="neutral" :icon="icons.close" :aria-label="messages.close" v-bind="closeProps" />
           </DialogClose>
         </div>
         <div v-bind="bodyProps">

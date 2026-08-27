@@ -4,6 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { ToastClose, ToastDescription, ToastPortal, ToastRoot, ToastTitle, ToastViewport } from 'reka-ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { useToast } from '../composables/use-toast'
 import { toastTheme } from '../theme/toast'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -16,6 +17,7 @@ const props = defineProps<{
 const { toasts, remove } = useToast()
 
 const icons = useIcons()
+const messages = useMessages()
 const theme = useComponentTheme('toast', toastTheme)
 const ui = computed(() => theme.value())
 
@@ -43,7 +45,7 @@ const closeProps = computed(() => resolveSlot(ui.value.close, props.ui?.close))
       </ToastDescription>
     </div>
     <ToastClose as-child>
-      <Button size="sm" variant="ghost" color="neutral" :icon="icons.close" aria-label="Close" v-bind="closeProps" />
+      <Button size="sm" variant="ghost" color="neutral" :icon="icons.close" :aria-label="messages.close" v-bind="closeProps" />
     </ToastClose>
   </ToastRoot>
   <ToastPortal>

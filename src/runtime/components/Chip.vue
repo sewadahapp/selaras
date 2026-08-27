@@ -4,6 +4,7 @@ import type { ChipSlots } from '../theme/chip'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { chipTheme } from '../theme/chip'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -32,6 +33,7 @@ const emit = defineEmits<{
 }>()
 
 const icons = useIcons()
+const messages = useMessages()
 const theme = useComponentTheme('chip', chipTheme)
 
 const ui = computed(() => theme.value({
@@ -45,7 +47,7 @@ const ui = computed(() => theme.value({
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 
-const effectiveRemoveLabel = computed(() => props.removeLabel ?? (props.label ? `Remove ${props.label}` : 'Remove'))
+const effectiveRemoveLabel = computed(() => props.removeLabel ?? messages.value.removeItem(props.label))
 </script>
 
 <template>

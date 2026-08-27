@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { VNode } from 'vue'
 import { cloneVNode, Comment, computed, Fragment, ref, Text, useSlots } from 'vue'
+import { useMessages } from '../composables/use-messages'
 import Tabs from './Tabs.vue'
 
 const slots = useSlots()
+const messages = useMessages()
 
 function flatten(vnodes: VNode[]): VNode[] {
   const result: VNode[] = []
@@ -23,7 +25,7 @@ const children = computed(() => flatten(slots.default?.() ?? []))
 
 function labelFor(child: VNode, index: number) {
   const props = (child.props ?? {}) as { filename?: string, language?: string }
-  return props.filename || props.language || `Tab ${index + 1}`
+  return props.filename || props.language || messages.value.codeTabFallback(index + 1)
 }
 
 const tabItems = computed(() => children.value.map((child, index) => ({
