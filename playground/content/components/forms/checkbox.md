@@ -66,4 +66,4 @@ not something to configure here.
 | `label` | `string` | - |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
-| `ui` | `Partial<Record<'root' \| 'box' \| 'indicator' \| 'label', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'box' \| 'indicator' \| 'checkIcon' \| 'indeterminateIcon' \| 'label', string \| object>>` | - |
