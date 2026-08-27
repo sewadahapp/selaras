@@ -24,10 +24,10 @@ export const radioGroupTheme = tv({
     // CSS in this project's Tailwind v4 setup even though other before:
     // utilities on the same element worked fine; not worth chasing why,
     // arbitrary values sidestep it reliably. -z-10 keeps it behind the
-    // ring/dot rather than covering them; the existing focus-visible:
-    // outline stays alongside it rather than being replaced, since the
-    // halo alone is a weaker focus indicator than what every other form
-    // control in this library already uses. `isolate` is load-bearing
+    // ring/dot rather than covering them; keyboard focus relies on the
+    // halo alone (no separate focus-visible:outline box) since the halo
+    // itself already grows on focus-visible and a second, crisper outline
+    // on top of it read as redundant. `isolate` is load-bearing
     // here, not decorative - without it, `relative` alone doesn't give
     // the item its own stacking context, so the -z-10 pseudo escapes all
     // the way up to the page's root stacking context instead of staying
@@ -41,7 +41,7 @@ export const radioGroupTheme = tv({
     // document.elementsFromPoint() at the halo's own pixels confirmed an
     // ancestor's background was winning the paint order despite being
     // nested outside the button in the DOM.
-    item: 'relative isolate flex size-4.5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-inset-[9px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-text-muted)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)] focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]',
+    item: 'relative isolate flex size-4.5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-inset-[9px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-text-muted)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]',
     indicator: 'size-2 rounded-full bg-[var(--ui-primary)]',
     label: 'select-none text-sm text-[var(--ui-text)]',
   },
