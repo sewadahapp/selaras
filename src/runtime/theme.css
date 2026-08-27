@@ -84,9 +84,19 @@
      oklch L 0.979/0.846/0.476/0.404, C 0.008/0.055/0.203/0.183, H
      293.9/289.7/280.0/278.9); 50/200/400/600/800/900 interpolated/
      extrapolated around them. Already clears 4.5:1 both on white (7.24)
-     and its own -soft background (5.37) - used as given. */
+     and its own -soft background (5.37) - used as given.
+     100's own chroma (0.008) was a big outlier though - every other
+     ramp's 100 keeps ~6-23% of its 500's chroma, this kept under 4%,
+     reading as barely-tinted-white rather than a visible pale primary
+     (most noticeable as Chip's -soft background, e.g. Select/
+     Autocomplete's tag chips). Bumped to ~11% (matching this system's
+     usual 100-step chroma-multiplier), hue held at its own given
+     293.91 - not renormalized to 500's 279.99, since primary's ramp
+     deliberately drifts hue step to step (unlike the single-hue ramps
+     built later) and that's this reference's own character, not
+     something this pass touches. */
   --color-primary-50: oklch(0.990 0.005 295);
-  --color-primary-100: oklch(0.9786 0.0080 293.91);
+  --color-primary-100: oklch(0.965 0.022 293.91);
   --color-primary-200: oklch(0.910 0.032 292);
   --color-primary-300: oklch(0.8458 0.0554 289.74);
   --color-primary-400: oklch(0.620 0.145 283);
