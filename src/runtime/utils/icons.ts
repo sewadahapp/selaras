@@ -4,6 +4,9 @@ export interface IconRegistry {
   indeterminate: string
   chevronDown: string
   chevronRight: string
+  chevronLeft: string
+  chevronsLeft: string
+  chevronsRight: string
   loading: string
   search: string
   sortAscending: string
@@ -25,6 +28,9 @@ export const defaultIcons: IconRegistry = {
   indeterminate: 'ph:minus',
   chevronDown: 'ph:caret-down',
   chevronRight: 'ph:caret-right',
+  chevronLeft: 'ph:caret-left',
+  chevronsLeft: 'ph:caret-double-left',
+  chevronsRight: 'ph:caret-double-right',
   loading: 'ph:spinner',
   search: 'ph:magnifying-glass',
   sortAscending: 'ph:arrow-up',

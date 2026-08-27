@@ -8,6 +8,9 @@ export interface MessageRegistry {
   filterPlaceholder: string
   previous: string
   next: string
+  first: string
+  last: string
+  pagination: string
   noOptions: string
   noResultsFound: string
   noData: string
@@ -37,6 +40,9 @@ export const defaultMessages: MessageRegistry = {
   filterPlaceholder: 'Filter...',
   previous: 'Previous',
   next: 'Next',
+  first: 'First',
+  last: 'Last',
+  pagination: 'Pagination',
   noOptions: 'No options',
   noResultsFound: 'No results found',
   noData: 'No data',
