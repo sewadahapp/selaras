@@ -123,10 +123,9 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 // The rail: one continuous zigzag "wire" SVG path connecting every heading
 // (root instance only - nested recursive calls just render their own <ul>,
 // see the template), applied as a CSS mask rather than painted directly -
-// see the theme's own comments on railTrack/railSegments for why. Ported
-// from the reference's own geometry (github.com/BayBreezy/docd's
-// DocsTocRail.vue/DocsZigZagRail.vue) rather than re-derived, since the
-// curve constants below were already tuned there.
+// see the theme's own comments on railTrack/railSegments for why. The
+// curve geometry below (width/indent/curve-span constants) matches a
+// design reference rather than being derived from scratch.
 const RAIL_WIDTH = 20
 const RAIL_X_OUTER = 1
 const RAIL_X_INNER_MAX = RAIL_WIDTH - 1
