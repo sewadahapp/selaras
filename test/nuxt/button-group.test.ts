@@ -19,7 +19,7 @@ describe('buttonGroup', () => {
   })
 
   it('wires the corner-squaring and overlap classes onto the root, targeting non-first/non-last children', async () => {
-    // Tailwind's arbitrary-variant classes (e.g. `[&>*:not(:first-child)]:rounded-l-none`)
+    // Tailwind's arbitrary-variant classes (e.g. `[&>*:not(:first-child)]:rounded-s-none`)
     // live on the root element as CSS selectors, not distributed onto each
     // child - Tailwind itself isn't compiled in this test environment, so
     // this only verifies the theme wiring, not the resulting visual layout.
@@ -27,7 +27,7 @@ describe('buttonGroup', () => {
       slots: { default: () => [h(Button, {}, () => 'One'), h(Button, {}, () => 'Two')] },
     })
     const rootClasses = wrapper.classes().join(' ')
-    expect(rootClasses).toContain(':not(:first-child)]:rounded-l-none')
-    expect(rootClasses).toContain(':not(:last-child)]:rounded-r-none')
+    expect(rootClasses).toContain(':not(:first-child)]:rounded-s-none')
+    expect(rootClasses).toContain(':not(:last-child)]:rounded-e-none')
   })
 })

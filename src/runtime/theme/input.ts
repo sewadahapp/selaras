@@ -4,8 +4,8 @@ export const inputTheme = tv({
   slots: {
     root: 'relative inline-flex items-center w-full',
     base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
-    leadingIcon: 'absolute left-2.5 shrink-0 text-[var(--ui-text-muted)]',
-    trailingIcon: 'absolute right-2.5 shrink-0 text-[var(--ui-text-muted)]',
+    leadingIcon: 'absolute start-2.5 shrink-0 text-[var(--ui-text-muted)]',
+    trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--ui-text-muted)]',
     // A separate slot from trailingIcon (not reused) - that one is a
     // decorative, non-interactive icon; this is a real dismiss button.
     // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
@@ -16,7 +16,7 @@ export const inputTheme = tv({
     // once centered still touches both edges with zero margin) - explicit
     // top-1/2 -translate-y-1/2 centering, not the root's items-center,
     // since position:absolute drops it out of that flex flow.
-    clear: 'absolute right-1 top-1/2 -translate-y-1/2 shrink-0 rounded-full',
+    clear: 'absolute end-1 top-1/2 -translate-y-1/2 shrink-0 rounded-full',
   },
   variants: {
     size: {
@@ -35,12 +35,12 @@ export const inputTheme = tv({
     },
   },
   compoundVariants: [
-    { size: 'sm', hasLeadingIcon: true, class: { base: 'pl-8' } },
-    { size: 'md', hasLeadingIcon: true, class: { base: 'pl-9' } },
-    { size: 'lg', hasLeadingIcon: true, class: { base: 'pl-10' } },
-    { size: 'sm', hasTrailingIcon: true, class: { base: 'pr-8' } },
-    { size: 'md', hasTrailingIcon: true, class: { base: 'pr-9' } },
-    { size: 'lg', hasTrailingIcon: true, class: { base: 'pr-10' } },
+    { size: 'sm', hasLeadingIcon: true, class: { base: 'ps-8' } },
+    { size: 'md', hasLeadingIcon: true, class: { base: 'ps-9' } },
+    { size: 'lg', hasLeadingIcon: true, class: { base: 'ps-10' } },
+    { size: 'sm', hasTrailingIcon: true, class: { base: 'pe-8' } },
+    { size: 'md', hasTrailingIcon: true, class: { base: 'pe-9' } },
+    { size: 'lg', hasTrailingIcon: true, class: { base: 'pe-10' } },
   ],
   defaultVariants: {
     size: 'md',

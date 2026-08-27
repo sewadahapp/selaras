@@ -45,16 +45,18 @@ export const chipTheme = tv({
       true: { root: 'opacity-50 pointer-events-none' },
     },
     // The remove button's own p-0.5 (plus its hover-circle inset) already
-    // adds visual weight on the right, so root's right padding trims down
-    // one step per size to compensate - left padding is untouched.
+    // adds visual weight on its own side, so root's end padding (the side
+    // the remove button actually renders on, in either direction - it's
+    // the last flex child) trims down one step per size to compensate -
+    // start padding is untouched.
     removable: {
       true: {},
     },
   },
   compoundVariants: [
-    { size: 'sm', removable: true, class: { root: 'pr-1' } },
-    { size: 'md', removable: true, class: { root: 'pr-1.5' } },
-    { size: 'lg', removable: true, class: { root: 'pr-2' } },
+    { size: 'sm', removable: true, class: { root: 'pe-1' } },
+    { size: 'md', removable: true, class: { root: 'pe-1.5' } },
+    { size: 'lg', removable: true, class: { root: 'pe-2' } },
 
     { color: 'primary', variant: 'solid', class: { root: 'bg-[var(--ui-primary)] text-[var(--ui-primary-foreground)]' } },
     { color: 'primary', variant: 'soft', class: { root: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]' } },

@@ -16,7 +16,7 @@ export const contentTocTheme = tv({
     // still meaningfully bigger than the original py-0.5. No left
     // border/padding for the indicator anymore - the rail owns that job.
     link: 'block py-1.5 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
-    content: 'ml-3 flex flex-col gap-1',
+    content: 'ms-3 flex flex-col gap-1',
     // The rail is a single continuous "wire" connecting every heading
     // (not just the active one), drawn as an SVG path and applied as a
     // CSS mask - see ContentToc.vue's buildDepthPath/buildMaskUrl. Two
