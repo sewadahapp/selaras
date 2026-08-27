@@ -48,7 +48,6 @@ const ui = computed(() => theme.value({
   variant: props.variant,
   size: props.size,
   block: props.block,
-  disabled: props.disabled,
   raised: props.raised,
   square: iconOnly.value,
 }))
