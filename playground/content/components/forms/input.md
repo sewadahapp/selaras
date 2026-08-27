@@ -52,8 +52,16 @@ the same way [Select's](/components/forms/select#clear) does.
 ### Sizes and states
 
 `size` takes `sm` / `md` / `lg`, `disabled` prevents interaction and dims the
-input, and `invalid` switches the ring to `--ui-danger` - see the
-[Props](#props) table below.
+input, and `invalid` switches the ring to `--ui-danger`:
+
+::component-example{name="input-invalid"}
+::
+
+```vue-html
+<SInput v-model="email" invalid placeholder="you@example.com" />
+```
+
+See the [Props](#props) table below.
 
 ### Forms integration
 
