@@ -20,7 +20,14 @@ export const tableTheme = tv({
     loadingOverlay: 'absolute inset-0 z-10 flex items-center justify-center bg-[var(--ui-bg)]/60',
     loadingIcon: 'size-6 animate-spin text-[var(--ui-primary)]',
     expandButton: 'flex size-5 shrink-0 items-center justify-center text-[var(--ui-text-muted)]',
-    expandChevron: 'size-4 transition-transform data-[expanded]:rotate-90',
+    // Points toward the reading-start direction while collapsed - 0deg
+    // (right) under LTR, 180deg (left) under RTL - then always rotates to
+    // an absolute 90deg once expanded, which already points down under
+    // either direction, so that state needs no separate RTL variant of
+    // its own. The rtl:data-[expanded] compound pins that absolute value
+    // for the one case where both conditions hold at once, rather than
+    // leaving the outcome to rely on Tailwind's variant cascade order.
+    expandChevron: 'size-4 transition-transform rtl:rotate-180 data-[expanded]:rotate-90 rtl:data-[expanded]:rotate-90',
     expandedRow: 'border-b border-[var(--ui-border)] last:border-b-0',
     expandedCell: 'bg-[var(--ui-bg-elevated)] px-3 py-3 text-[var(--ui-text)]',
     columnToggle: 'relative',

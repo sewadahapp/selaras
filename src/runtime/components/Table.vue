@@ -178,7 +178,7 @@ function pinnedStyle(cell: { column: { id: string, getIsPinned: () => false | 's
   if (!side)
     return undefined
   const offset = pinnedOffsets.value[cell.column.id] ?? 0
-  return side === 'start' ? { left: `${offset}px` } : { right: `${offset}px` }
+  return side === 'start' ? { insetInlineStart: `${offset}px` } : { insetInlineEnd: `${offset}px` }
 }
 
 // --- virtualization: spacer-row technique - only the visible window of

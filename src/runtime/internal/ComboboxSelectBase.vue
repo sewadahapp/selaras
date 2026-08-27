@@ -22,6 +22,7 @@ import {
   TagsInputItemDelete,
   TagsInputItemText,
   TagsInputRoot,
+  useDirection,
 } from 'reka-ui'
 import { computed, ref } from 'vue'
 import Button from '../components/Button.vue'
@@ -106,6 +107,7 @@ function clear() {
 // selecting the last chip on a first Backspace rather than removing
 // immediately (matching Reka's own two-step convention).
 const selectedChipValue = ref<string>()
+const dir = useDirection()
 
 function onTriggerKeydown(event: KeyboardEvent) {
   if (!props.multiple || props.displayMode !== 'chip')
@@ -135,7 +137,11 @@ function onTriggerKeydown(event: KeyboardEvent) {
     case 'End':
     case 'ArrowRight':
     case 'ArrowLeft': {
-      const isNext = event.key === 'ArrowRight' || event.key === 'End'
+      // The "forward" arrow key is ArrowRight under LTR and ArrowLeft under
+      // RTL - it should move toward the end of the chip list either way,
+      // matching TagsInputRoot's own direction-aware convention.
+      const isForwardKey = dir.value === 'rtl' ? event.key === 'ArrowLeft' : event.key === 'ArrowRight'
+      const isNext = isForwardKey || event.key === 'End'
       if (event.key === 'Home') {
         selectedChipValue.value = chips[0]!.value
       }
@@ -143,7 +149,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
         selectedChipValue.value = lastValue
       }
       else if (!selectedChipValue.value) {
-        // Only ArrowLeft (not ArrowRight) starts a selection from nothing -
+        // Only the "backward" arrow key starts a selection from nothing -
         // moving "back into" the chips, same as TagsInputRoot's own rule.
         if (!isNext)
           selectedChipValue.value = lastValue

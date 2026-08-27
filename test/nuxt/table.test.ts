@@ -236,11 +236,11 @@ describe('table', () => {
 
     const [nameCell] = wrapper.findAll('tbody td')
     expect(nameCell!.attributes('data-pinned')).toBe('start')
-    expect(nameCell!.attributes('style')).toContain('left')
+    expect(nameCell!.attributes('style')).toContain('inset-inline-start')
 
     // The sticky positioning itself comes from a `data-[pinned]:sticky`
-    // class keyed off this same attribute - without it, `left`/`right` on a
-    // statically-positioned cell has no visual effect at all.
+    // class keyed off this same attribute - without it, the inset-inline-*
+    // offset on a statically-positioned cell has no visual effect at all.
     expect(nameHeader!.classes().join(' ')).toContain('sticky')
     expect(nameCell!.classes().join(' ')).toContain('sticky')
   })

@@ -4,11 +4,11 @@ export const contentTocTheme = tv({
   slots: {
     root: 'flex flex-col gap-2 text-sm',
     title: 'font-medium text-[var(--ui-text)]',
-    // relative + left padding reserves room for the rail (an absolutely
+    // relative + start padding reserves room for the rail (an absolutely
     // positioned box, sized/placed entirely by ContentToc.vue's JS
     // measurement - this only wraps the <ul>, not the title, matching the
     // reference's own layout).
-    railWrap: 'relative pl-7',
+    railWrap: 'relative ps-7',
     list: 'flex flex-col gap-1',
     item: 'flex flex-col',
     // A lighter touch than the main sidebar's - this is a secondary,
@@ -19,9 +19,12 @@ export const contentTocTheme = tv({
     content: 'ms-3 flex flex-col gap-1',
     // The rail is a single continuous "wire" connecting every heading
     // (not just the active one), drawn as an SVG path and applied as a
-    // CSS mask - see ContentToc.vue's buildDepthPath/buildMaskUrl. Two
-    // masked divs share that same path shape:
-    railContainer: 'absolute left-0 top-0',
+    // CSS mask - see ContentToc.vue's buildDepthPath/buildMaskUrl. The
+    // path itself is always built in a fixed left-to-right coordinate
+    // space, so under RTL the container mirrors horizontally via a
+    // transform rather than the path math being rebuilt per direction.
+    // Two masked divs share that same path shape:
+    railContainer: 'absolute start-0 top-0 rtl:-scale-x-100',
     // - a faint always-visible track (the full path, every heading).
     railTrack: 'absolute inset-0 bg-[var(--ui-text-muted)]/25',
     // - a primary-colored overlay, masked identically, whose own child
