@@ -25,49 +25,95 @@ const props = withDefaults(defineProps<{
   /** Internal: set by recursive self-calls, omit when using this component directly. */
   isNested?: boolean
   /** Internal: set by recursive self-calls, omit when using this component directly. */
-  activeId?: string
+  activeIds?: Set<string>
   ui?: UiProp<ContentTocSlots>
 }>(), {
   isNested: false,
 })
 
 const isRoot = !props.isNested
-const localActiveId = ref<string>()
-const activeId = computed(() => props.isNested ? props.activeId : localActiveId.value)
+const localActiveIds = ref<Set<string>>(new Set())
+const activeIds = computed(() => props.isNested ? (props.activeIds ?? new Set<string>()) : localActiveIds.value)
 
 function flattenIds(links: TocLink[]): string[] {
   return links.flatMap(link => [link.id, ...(link.children ? flattenIds(link.children) : [])])
 }
 
-let observer: IntersectionObserver | undefined
+// A heading is "active" while any part of its content range (from its own
+// position down to the next heading's, or to the end of the document for
+// the last one) overlaps a band near the top of the viewport - not just
+// while the heading ELEMENT itself sits in a fixed trigger zone. Two
+// things fall out of that for free: short adjacent sections can be active
+// together (their ranges both overlap the band at once), and the very
+// last section's range always extends to the end of the document, so it's
+// guaranteed to eventually become active however short its own content is
+// - the previous element-only IntersectionObserver version had no range
+// past the last heading, so a short final section's heading could scroll
+// out of the trigger zone with nothing left to replace it, and the
+// indicator would go dark for the rest of the page.
+const TRIGGER_BAND_RATIO = 0.25
+
+let tocIds: string[] = []
+let tocElements: HTMLElement[] = []
+let ticking = false
+
+function updateActiveIds() {
+  if (!tocElements.length)
+    return
+  const viewTop = window.scrollY
+  const docBottom = document.documentElement.scrollHeight
+  // The trigger band is normally just the top slice of the viewport - but
+  // once scrolled as far as the page allows, there's no more "later"
+  // scroll position left to bring a lower-sitting last heading into that
+  // slice, so the band opens up to the true bottom of the document
+  // instead. Without this, a last section whose own heading happens to
+  // sit in the lower part of the final viewport frame (not unlikely - it
+  // depends on exactly how much content is left below it) could still
+  // never activate, just from a smaller margin than before.
+  const atMaxScroll = viewTop + window.innerHeight >= docBottom - 1
+  const viewBottom = atMaxScroll ? docBottom : viewTop + window.innerHeight * TRIGGER_BAND_RATIO
+
+  const active = new Set<string>()
+  for (let i = 0; i < tocElements.length; i++) {
+    const top = tocElements[i]!.getBoundingClientRect().top + window.scrollY
+    const bottom = i + 1 < tocElements.length
+      ? tocElements[i + 1]!.getBoundingClientRect().top + window.scrollY
+      : docBottom
+    if (bottom > viewTop && top < viewBottom)
+      active.add(tocIds[i]!)
+  }
+  localActiveIds.value = active
+}
+
+function onScrollOrResize() {
+  if (ticking)
+    return
+  ticking = true
+  requestAnimationFrame(() => {
+    updateActiveIds()
+    ticking = false
+  })
+}
 
 onMounted(() => {
   if (!isRoot)
     return
-  const ids = flattenIds(props.links)
-  const elements = ids
+  tocIds = flattenIds(props.links)
+  tocElements = tocIds
     .map(id => document.getElementById(id))
     .filter((el): el is HTMLElement => el !== null)
-  if (!elements.length)
+  if (!tocElements.length)
     return
 
-  const visible = new Set<string>()
-  observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting)
-        visible.add(entry.target.id)
-      else
-        visible.delete(entry.target.id)
-    }
-    const firstVisible = ids.find(id => visible.has(id))
-    if (firstVisible)
-      localActiveId.value = firstVisible
-  }, { rootMargin: '0px 0px -80% 0px' })
-
-  elements.forEach(el => observer!.observe(el))
+  updateActiveIds()
+  window.addEventListener('scroll', onScrollOrResize, { passive: true })
+  window.addEventListener('resize', onScrollOrResize)
 })
 
-onUnmounted(() => observer?.disconnect())
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScrollOrResize)
+  window.removeEventListener('resize', onScrollOrResize)
+})
 
 const theme = useComponentTheme('contentToc', contentTocTheme)
 const ui = computed(() => theme.value())
@@ -215,7 +261,7 @@ const railMaskStyle = computed(() => {
 })
 
 if (isRoot) {
-  watch(activeId, () => nextTick(measureRail))
+  watch(activeIds, () => nextTick(measureRail))
   onMounted(() => {
     nextTick(measureRail)
     railResizeObserver = new ResizeObserver(() => measureRail())
@@ -226,7 +272,7 @@ if (isRoot) {
 }
 
 function linkProps(link: TocLink) {
-  const active = activeId.value === link.id
+  const active = activeIds.value.has(link.id)
   return {
     ...resolveSlot(theme.value({ active }).link, props.ui?.link),
     'data-toc-link': 'true',
@@ -267,7 +313,7 @@ function linkProps(link: TocLink) {
           <div v-if="link.children?.length" v-bind="resolveSlot(ui.content, props.ui?.content)">
             <!-- Vue's SFC self-recursion resolves by this file's own bare name -
                  keep it unprefixed even though the public component is SContentToc. -->
-            <ContentToc :links="link.children" is-nested :active-id="activeId" :ui="props.ui" />
+            <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui" />
           </div>
         </li>
       </ul>
@@ -277,7 +323,7 @@ function linkProps(link: TocLink) {
       <li v-for="link in links" :key="link.id" v-bind="resolveSlot(ui.item, props.ui?.item)">
         <a :href="`#${link.id}`" v-bind="linkProps(link)">{{ link.text }}</a>
         <div v-if="link.children?.length" v-bind="resolveSlot(ui.content, props.ui?.content)">
-          <ContentToc :links="link.children" is-nested :active-id="activeId" :ui="props.ui" />
+          <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui" />
         </div>
       </li>
     </ul>
