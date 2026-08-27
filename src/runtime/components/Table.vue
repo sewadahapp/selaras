@@ -252,7 +252,7 @@ defineExpose({
             <template v-for="header in headerGroup.headers" :key="header.id">
               <th
                 v-if="header.rowSpan !== 0"
-                :ref="(el) => setHeaderRef(header.column.id, el)"
+                :ref="(el: unknown) => setHeaderRef(header.column.id, el)"
                 :colspan="header.colSpan"
                 :rowspan="header.rowSpan"
                 v-bind="thProps"
