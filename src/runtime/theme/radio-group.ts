@@ -42,7 +42,15 @@ export const radioGroupTheme = tv({
     // ancestor's background was winning the paint order despite being
     // nested outside the button in the DOM.
     item: 'relative isolate flex size-4.5 shrink-0 items-center justify-center rounded-full ring-1 ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-inset-[9px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-text-muted)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]',
-    indicator: 'size-2 rounded-full bg-[var(--ui-primary)]',
+    // force-mount (see RadioGroup.vue) keeps this in the DOM for every
+    // item regardless of checked state, so switching the selection scales
+    // the old dot out and the new one in instead of an abrupt pop -
+    // needed because this project's Presence-driven show/hide only
+    // coordinates exit animations for real @keyframes animations (it
+    // detects them via computed animation-name), not plain CSS
+    // transitions, so a transition-only version without force-mount would
+    // just vanish instantly.
+    indicator: 'size-2 rounded-full bg-[var(--ui-primary)] [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
     label: 'select-none text-sm text-[var(--ui-text)]',
   },
   variants: {

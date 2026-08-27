@@ -58,7 +58,7 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
   >
     <label v-for="item in items" :key="item.value" v-bind="itemWrapperProps">
       <RadioGroupItem :value="item.value" :disabled="item.disabled" v-bind="itemProps">
-        <RadioGroupIndicator v-bind="indicatorProps" />
+        <RadioGroupIndicator force-mount v-bind="indicatorProps" />
       </RadioGroupItem>
       <span v-bind="labelProps">{{ item.label }}</span>
     </label>
