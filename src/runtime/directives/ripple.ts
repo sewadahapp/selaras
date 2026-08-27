@@ -1,20 +1,26 @@
 import type { Directive } from 'vue'
 
-// Not globally registered (no app.directive() plugin) - a component that
-// wants it does `import { vRipple } from '../directives/ripple'` and uses
-// `v-ripple` directly in its own template. Vue (3.3+) auto-registers any
-// `<script setup>` import matching the vXxx naming convention as a local
-// directive under that name, no explicit directive registration needed.
-// Confirmed (not just assumed) this is the right call over the two
-// alternatives: a global app.directive() plugin works too, but stays
-// resolvable/tree-shakeable only per-consumer with a real import, matching
-// how Icon.vue is already imported explicitly everywhere rather than
-// relying on Nuxt's auto-registered global <Icon>; addImportsDir alone
-// (no explicit import) does NOT work - a directive used only in a
-// template, with no matching identifier anywhere in the script block,
-// gives Nuxt's import-scanner nothing to detect, so nothing gets injected
-// and the directive is left fully unresolved ("Failed to resolve
-// directive: ripple", reproduced directly before settling on this).
+// Not globally registered (no app.directive() plugin). Two other ways to
+// get v-ripple resolved instead, both confirmed working end to end (not
+// just assumed), and not mutually exclusive:
+//
+// - Auto-import, zero explicit import anywhere: module.ts registers this
+//   via addImports' meta.vueDirective flag, which wires into Nuxt 4's
+//   built-in vueDirectivesAddon (unimport) - enabled by default whenever
+//   imports.autoImport isn't explicitly false. Plain addImportsDir alone
+//   does NOT do this on its own - it has no per-import meta option, so a
+//   v-ripple used only in a template, with no matching identifier
+//   anywhere in the script block, gave Nuxt's import-scanner nothing to
+//   detect ("Failed to resolve directive: ripple", reproduced directly
+//   before finding addImports' meta option).
+// - Explicit `import { vRipple } from '../directives/ripple'` (or, for an
+//   external consumer, `from 'selaras/directives'`) still works too, and
+//   stays useful outside a Nuxt app entirely, or one with autoImport
+//   disabled - Vue (3.3+) auto-registers any `<script setup>` import
+//   matching the vXxx naming convention as a local directive under that
+//   name, no explicit directive registration needed on top of the import
+//   itself. Icon.vue in this codebase is imported explicitly the same
+//   way, rather than relying on Nuxt's own auto-registered global <Icon>.
 
 export interface RippleOptions {
   /** Fill color for the ripple. @default 'currentColor' */

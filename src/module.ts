@@ -1,4 +1,4 @@
-import { addComponentsDir, addImportsDir, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addComponentsDir, addImports, addImportsDir, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import tailwindcss from '@tailwindcss/vite'
 
 export interface ModuleOptions {
@@ -57,5 +57,25 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addImportsDir(resolver.resolve('./runtime/composables'))
+
+    // Registers vRipple as an auto-importable directive - plain
+    // addImportsDir doesn't mark an import as a directive (confirmed: a
+    // v-ripple used only in a template, with no matching identifier
+    // anywhere in the script block, gave Nuxt's import-scanner nothing to
+    // detect, so nothing got injected and the directive stayed fully
+    // unresolved). addImports' own meta.vueDirective flag is what wires
+    // into Nuxt 4's built-in vueDirectivesAddon (unimport, enabled by
+    // default whenever imports.autoImport isn't explicitly false) -
+    // verified end to end (real spawn, correct auto-containment, no
+    // console warnings) with a bare v-ripple and zero explicit import
+    // anywhere. Consumers can still `import { vRipple } from
+    // 'selaras/directives'` explicitly too (see its own barrel file) -
+    // the two aren't mutually exclusive, and the explicit path stays
+    // useful for a non-Nuxt Vue app, or one with autoImport disabled.
+    addImports({
+      name: 'vRipple',
+      from: resolver.resolve('./runtime/directives/ripple'),
+      meta: { vueDirective: true },
+    })
   },
 })
