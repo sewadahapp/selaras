@@ -97,8 +97,15 @@ one, e.g. a plan a consumer picked before it was discontinued:
 />
 ```
 
-`disabled` on the group itself disables every item at once, and `invalid`
-switches every item's ring to `--ui-danger` - see [Props](#props).
+`disabled` on the group itself disables every item at once instead of just
+one, and `invalid` switches every item's ring to `--ui-danger`:
+
+```vue-html
+<SRadioGroup v-model="frozen" disabled :items="['one', 'two', 'three']" />
+<SRadioGroup v-model="invalidChoice" invalid :items="['one', 'two', 'three']" />
+```
+
+See [Props](#props).
 
 ### Sizes
 

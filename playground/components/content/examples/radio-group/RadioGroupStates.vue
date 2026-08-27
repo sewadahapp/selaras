@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const shipping = ref('standard')
 const plan = ref('legacy')
+const frozen = ref('one')
+const invalidChoice = ref<string>()
 </script>
 
 <template>
@@ -21,5 +23,7 @@ const plan = ref('legacy')
         { label: 'Pro', value: 'pro' },
       ]"
     />
+    <SRadioGroup v-model="frozen" disabled :items="['one', 'two', 'three']" />
+    <SRadioGroup v-model="invalidChoice" invalid :items="['one', 'two', 'three']" />
   </div>
 </template>
