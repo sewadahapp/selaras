@@ -47,25 +47,46 @@ arrow-key navigation follows the same axis (left/right instead of up/down):
 <SRadioGroup v-model="shipping" orientation="horizontal" :items="['standard', 'express', 'overnight']" />
 ```
 
+### Description
+
+A `description` on an item renders as a second, muted line under its
+label - the item top-aligns with the label's first line instead of
+centering against the whole two-line block whenever it's present:
+
+::component-example{name="radio-group-description"}
+::
+
+```vue-html
+<SRadioGroup
+  v-model="plan"
+  :items="[
+    { label: 'Free', value: 'free', description: 'Basic features, community support.' },
+    { label: 'Pro', value: 'pro', description: 'Everything in Free, plus priority support.' },
+  ]"
+/>
+```
+
+For anything beyond plain text - a price, a badge, custom markup - replace
+the whole label block with the `label` slot instead; see [Slots](#slots).
+
 ### Card style
 
 `variant="card"` wraps each option in its own bordered box instead of a
-plain inline row, highlighting whichever one is selected. Pair it with the
-`label` slot for a description, price, or any other content alongside the
-option:
+plain inline row, highlighting whichever one is selected. Works the same
+with or without `description`:
 
 ::component-example{name="radio-group-card"}
 ::
 
 ```vue-html
-<SRadioGroup v-model="plan" variant="card" :items="[{ label: 'Free', value: 'free' }, { label: 'Pro', value: 'pro' }]">
-  <template #label="{ item }">
-    <div>
-      <p class="font-medium">{{ item.label }}</p>
-      <p class="text-sm text-[var(--ui-text-muted)]">A short description</p>
-    </div>
-  </template>
-</SRadioGroup>
+<SRadioGroup
+  v-model="plan"
+  variant="card"
+  :items="[
+    { label: 'Free', value: 'free', description: 'Basic features, community support.' },
+    { label: 'Pro', value: 'pro', description: 'Everything in Free, plus priority support.' },
+  ]"
+/>
 ```
 
 ### States
@@ -146,17 +167,17 @@ not something to configure here.
 | --- | --- | --- |
 | `id` | `string` | - |
 | `name` | `string` | - |
-| `items` | `(string \| { label: string; value: string; disabled?: boolean })[]` | - |
+| `items` | `(string \| { label: string; value: string; disabled?: boolean; description?: string })[]` | - |
 | `modelValue` | `string` | - |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `orientation` | `'vertical' \| 'horizontal'` | `vertical` |
 | `variant` | `'default' \| 'card'` | `default` |
-| `ui` | `Partial<Record<'root' \| 'itemWrapper' \| 'item' \| 'indicator' \| 'label', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'itemWrapper' \| 'item' \| 'indicator' \| 'label' \| 'description', string \| object>>` | - |
 
 ## Slots
 
 | Slot | Props | Description |
 | --- | --- | --- |
-| `label` | `{ item, checked, disabled }` | Replaces an item's plain label text - useful for a description, price, or other rich content (default: the item's `label`) |
+| `label` | `{ item, checked, disabled }` | Replaces an item's whole label block (its label text and, if set, `description`) - useful for a price, badge, or other rich content (default: the item's `label`/`description`) |

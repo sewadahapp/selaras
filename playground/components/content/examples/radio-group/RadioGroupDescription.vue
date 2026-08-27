@@ -5,7 +5,6 @@ const plan = ref('pro')
 <template>
   <SRadioGroup
     v-model="plan"
-    variant="card"
     :items="[
       { label: 'Free', value: 'free', description: 'Basic features, community support.' },
       { label: 'Pro', value: 'pro', description: 'Everything in Free, plus priority support.' },
