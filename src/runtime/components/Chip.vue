@@ -5,6 +5,7 @@ import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { chipTheme } from '../theme/chip'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Icon from './Icon.vue'
 
 type ChipVariants = VariantProps<typeof chipTheme>
 

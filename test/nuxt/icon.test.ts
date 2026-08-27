@@ -3,15 +3,17 @@ import { describe, expect, it } from 'vitest'
 import Icon from '../../src/runtime/components/Icon.vue'
 
 describe('icon', () => {
-  it('renders the named icon at the default md size', async () => {
+  it('renders the named icon', async () => {
     const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star' } })
-    const el = wrapper.find('.iconify')
-    expect(el.classes()).toContain('i-lucide:star')
-    expect(el.classes()).toContain('size-5')
+    expect(wrapper.find('.iconify').classes()).toContain('i-lucide:star')
   })
 
-  it('applies a size variant', async () => {
-    const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star', size: 'lg' } })
+  // No size prop by design - every internal consumer (Badge, Button, Chip,
+  // Input, ...) needs its own precise size that doesn't map onto a shared
+  // enum, so sizing is just whatever class a caller passes, merged in like
+  // any other fallthrough class (see Badge's equivalent test).
+  it('has no built-in size - a passed-in class applies directly', async () => {
+    const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star' }, attrs: { class: 'size-6' } })
     expect(wrapper.find('.iconify').classes()).toContain('size-6')
   })
 
@@ -24,5 +26,15 @@ describe('icon', () => {
   it('applies a semantic color when given', async () => {
     const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star', color: 'danger' } })
     expect(wrapper.find('.iconify').classes()).toContain('text-[var(--ui-danger)]')
+  })
+
+  it('lets a passed-in class override the color prop, same tailwind-merge as everywhere else', async () => {
+    const wrapper = await mountSuspended(Icon, {
+      props: { name: 'lucide:star', color: 'danger' },
+      attrs: { class: 'text-[var(--ui-success)]' },
+    })
+    const classes = wrapper.find('.iconify').classes()
+    expect(classes).toContain('text-[var(--ui-success)]')
+    expect(classes).not.toContain('text-[var(--ui-danger)]')
   })
 })

@@ -7,6 +7,7 @@ import { Primitive } from 'reka-ui'
 import { computed, useSlots } from 'vue'
 import { buttonTheme } from '../theme/button'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Icon from './Icon.vue'
 
 type ButtonVariants = VariantProps<typeof buttonTheme>
 

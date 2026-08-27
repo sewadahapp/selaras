@@ -5,6 +5,7 @@ import { AccordionContent, AccordionHeader, AccordionItem, AccordionRoot, Accord
 import { computed } from 'vue'
 import { accordionTheme } from '../theme/accordion'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Icon from './Icon.vue'
 
 export interface AccordionItemDef {
   value: string

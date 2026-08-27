@@ -7,6 +7,7 @@ import { useFormField } from '../composables/use-form-field'
 import { inputTheme } from '../theme/input'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
+import Icon from './Icon.vue'
 
 type InputVariants = VariantProps<typeof inputTheme>
 

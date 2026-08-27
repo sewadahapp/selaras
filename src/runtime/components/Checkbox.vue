@@ -6,6 +6,7 @@ import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { checkboxTheme } from '../theme/checkbox'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Icon from './Icon.vue'
 
 defineOptions({ inheritAttrs: false })
 

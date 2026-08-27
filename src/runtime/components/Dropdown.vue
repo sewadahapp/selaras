@@ -5,6 +5,7 @@ import { DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenu
 import { computed } from 'vue'
 import { dropdownTheme } from '../theme/dropdown'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
+import Icon from './Icon.vue'
 
 export interface DropdownItem {
   label: string

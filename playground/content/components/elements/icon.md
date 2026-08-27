@@ -1,24 +1,25 @@
 ---
 title: Icon
-description: A themed icon wrapper - consistent sizing and semantic color, everywhere an icon shows up in your own markup.
+description: A thin wrapper around Nuxt Icon - one shared component, everywhere an icon shows up in this library or your own markup.
 order: 12
 ---
 
 ## Usage
 
 Every icon-accepting prop across this library (`Button`'s `icon`, `Input`'s
-`icon`, `Select`'s slots, ...) already renders an icon internally and manages
-its own sizing - `SIcon` isn't involved there. It's for icons you place
-yourself, in your own templates, that should still look like they belong to
-this design system rather than a one-off `<Icon>` with hand-picked classes.
+`icon`, `Select`'s slots, ...) already renders through `SIcon` internally -
+each one just supplies its own precise size class (`size-3.5`, `size-4.5`,
+...) via `class`, the same way you would. `SIcon` doesn't have an opinion on
+size at all; it's a bare pass-through to Nuxt Icon plus one optional
+convenience prop for semantic color.
 
 ::component-example{name="icon-basic"}
 ::
 
 ```vue-html
-<SIcon name="lucide:star" size="sm" />
-<SIcon name="lucide:star" size="md" />
-<SIcon name="lucide:star" size="lg" />
+<SIcon name="lucide:star" class="size-4" />
+<SIcon name="lucide:star" class="size-5" />
+<SIcon name="lucide:star" class="size-6" />
 <SIcon name="lucide:heart" color="danger" />
 ```
 
@@ -27,9 +28,12 @@ throughout this library's own docs.
 
 ### Sizes
 
-`size` takes `sm` / `md` / `lg`, mapped to `size-4` / `size-5` / `size-6` -
-the same scale [Button](/components/elements/button#props) and
-[Input](/components/forms/input) use for their own icon slots.
+There's no `size` prop - pass whatever Tailwind size class you need via
+`class` directly, same as any other icon usage. This library's own
+components each pick their own scale internally (Badge's icons run
+`size-2.5`/`size-3`/`size-3.5`, Button's `size-4`/`size-4.5`/`size-5`, and so
+on) - none of those map cleanly onto one shared enum, so `SIcon` doesn't try
+to impose one.
 
 ### Color
 
@@ -43,11 +47,14 @@ the seven semantic role names to force a specific color instead:
 <SIcon name="lucide:check-circle" color="success" />
 ```
 
+A plain `class="text-[var(--ui-danger)]"` still overrides `color` if you need
+something the preset roles don't cover - both flow through the same
+tailwind-merge, so whichever `text-*` class you add wins.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
 | `name` | `string` | - |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | - |
 | `ui` | `Partial<Record<'base', string \| object>>` | - |

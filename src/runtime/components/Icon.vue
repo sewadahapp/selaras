@@ -13,13 +13,12 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<{
   /** Any name Nuxt Icon resolves, e.g. `lucide:star`. */
   name: string
-  size?: IconVariants['size']
   color?: IconVariants['color']
   ui?: UiProp<IconSlots>
 }>()
 
 const theme = useComponentTheme('icon', iconTheme)
-const ui = computed(() => theme.value({ size: props.size, color: props.color }))
+const ui = computed(() => theme.value({ color: props.color }))
 
 const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>

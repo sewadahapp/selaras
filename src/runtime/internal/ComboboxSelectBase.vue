@@ -26,6 +26,7 @@ import {
 import { computed, ref } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
+import Icon from '../components/Icon.vue'
 import Tooltip from '../components/Tooltip.vue'
 import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'

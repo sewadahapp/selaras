@@ -5,6 +5,7 @@ import type { UiProp } from '../utils/ui'
 import { computed, useSlots } from 'vue'
 import { badgeTheme } from '../theme/badge'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import Icon from './Icon.vue'
 
 type BadgeVariants = VariantProps<typeof badgeTheme>
 

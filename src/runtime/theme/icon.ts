@@ -5,14 +5,15 @@ export const iconTheme = tv({
     base: 'shrink-0',
   },
   variants: {
-    size: {
-      sm: { base: 'size-4' },
-      md: { base: 'size-5' },
-      lg: { base: 'size-6' },
-    },
     // No default - an unset color inherits currentColor from wherever the
     // icon is placed, which is what every internal usage elsewhere in this
     // library already relies on (e.g. Input's --ui-text-muted icon slots).
+    // No size variant (deliberately) - every internal consumer needs its
+    // own precise size (size-2.5/3/3.5/4/4.5/5/6 depending on component and
+    // slot), none of which map cleanly onto a shared sm/md/lg scale. Pass
+    // whatever size class you need via `class` instead, same as any other
+    // icon usage - a raw `class="text-*"` still overrides `color` too,
+    // since both just flow through the same tailwind-merge below.
     color: {
       primary: { base: 'text-[var(--ui-primary)]' },
       neutral: { base: 'text-[var(--ui-text)]' },
@@ -22,9 +23,6 @@ export const iconTheme = tv({
       info: { base: 'text-[var(--ui-info)]' },
       warning: { base: 'text-[var(--ui-warning)]' },
     },
-  },
-  defaultVariants: {
-    size: 'md',
   },
 })
 
