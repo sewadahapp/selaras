@@ -9,6 +9,10 @@
     ".": {
       "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
+    },
+    "./directives": {
+      "types": "./dist/runtime/directives/index.d.ts",
+      "import": "./dist/runtime/directives/index.js"
     }
   },
   "main": "./dist/module.mjs",
@@ -16,6 +20,9 @@
     "*": {
       ".": [
         "./dist/types.d.mts"
+      ],
+      "directives": [
+        "./dist/runtime/directives/index.d.ts"
       ]
     }
   },
