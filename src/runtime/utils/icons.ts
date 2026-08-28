@@ -16,6 +16,8 @@ export interface IconRegistry {
   lightMode: string
   darkMode: string
   calendar: string
+  plus: string
+  minus: string
 }
 
 // Phosphor by default. One registry keyed by semantic purpose, not by
@@ -41,4 +43,6 @@ export const defaultIcons: IconRegistry = {
   lightMode: 'ph:sun',
   darkMode: 'ph:moon',
   calendar: 'ph:calendar',
+  plus: 'ph:plus',
+  minus: 'ph:minus',
 }
