@@ -458,8 +458,9 @@ const timeSectionProps = computed(() => resolveSlot(ui.value.timeSection, props.
 // The button-mode trigger's own look - Input-style ring/bg/hover, but using
 // Button's native :focus-visible (already in buttonTheme's own base) rather
 // than the field slot's :focus-within, since this is a single focusable
-// element, not a box of several. variant="ghost" color="neutral" supplies
-// just text/hover-bg on top, so this override composes rather than fights it.
+// element, not a box of several. variant="text" color="neutral" contributes
+// no bg of its own, so this override's bg/ring/hover classes are the only
+// ones in play rather than fighting a second, competing background.
 const buttonTriggerUi = computed(() => ({
   base: [
     'w-full justify-start rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)]',
@@ -555,7 +556,7 @@ const rangeCellTriggerUi = {
         <div class="ms-auto flex shrink-0 items-center gap-1">
           <Button
             v-if="clearable && hasValue"
-            variant="ghost"
+            variant="text"
             color="neutral"
             :size="iconButtonSize"
             :icon="icons.close"
@@ -563,7 +564,7 @@ const rangeCellTriggerUi = {
             @click="clear"
           />
           <DateRangePickerTrigger as-child>
-            <Button variant="ghost" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.dateRangePicker" />
+            <Button variant="text" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.dateRangePicker" />
           </DateRangePickerTrigger>
         </div>
       </div>
@@ -571,7 +572,7 @@ const rangeCellTriggerUi = {
       <div v-else class="relative inline-block w-full">
         <DateRangePickerTrigger as-child>
           <Button
-            variant="ghost"
+            variant="text"
             color="neutral"
             :size="effectiveSize"
             :trailing-icon="clearable && hasValue ? undefined : icons.calendar"
@@ -584,7 +585,7 @@ const rangeCellTriggerUi = {
         </DateRangePickerTrigger>
         <Button
           v-if="clearable && hasValue"
-          variant="ghost"
+          variant="text"
           color="neutral"
           :size="iconButtonSize"
           :icon="icons.close"
@@ -668,7 +669,7 @@ const rangeCellTriggerUi = {
         <div class="ms-auto flex shrink-0 items-center gap-1">
           <Button
             v-if="clearable && hasValue"
-            variant="ghost"
+            variant="text"
             color="neutral"
             :size="iconButtonSize"
             :icon="icons.close"
@@ -676,7 +677,7 @@ const rangeCellTriggerUi = {
             @click="clear"
           />
           <PopoverTrigger as-child>
-            <Button variant="ghost" color="neutral" :size="iconButtonSize" :icon="icons.clock" :aria-label="messages.timePicker" />
+            <Button variant="text" color="neutral" :size="iconButtonSize" :icon="icons.clock" :aria-label="messages.timePicker" />
           </PopoverTrigger>
         </div>
       </div>
@@ -684,7 +685,7 @@ const rangeCellTriggerUi = {
       <div v-else class="relative inline-block w-full">
         <PopoverTrigger as-child>
           <Button
-            variant="ghost"
+            variant="text"
             color="neutral"
             :size="effectiveSize"
             :trailing-icon="clearable && hasValue ? undefined : icons.clock"
@@ -697,7 +698,7 @@ const rangeCellTriggerUi = {
         </PopoverTrigger>
         <Button
           v-if="clearable && hasValue"
-          variant="ghost"
+          variant="text"
           color="neutral"
           :size="iconButtonSize"
           :icon="icons.close"
@@ -776,7 +777,7 @@ const rangeCellTriggerUi = {
         <div class="ms-auto flex shrink-0 items-center gap-1">
           <Button
             v-if="clearable && hasValue"
-            variant="ghost"
+            variant="text"
             color="neutral"
             :size="iconButtonSize"
             :icon="icons.close"
@@ -784,7 +785,7 @@ const rangeCellTriggerUi = {
             @click="clear"
           />
           <DatePickerTrigger as-child>
-            <Button variant="ghost" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.datePicker" />
+            <Button variant="text" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.datePicker" />
           </DatePickerTrigger>
         </div>
       </div>
@@ -792,7 +793,7 @@ const rangeCellTriggerUi = {
       <div v-else class="relative inline-block w-full">
         <DatePickerTrigger as-child>
           <Button
-            variant="ghost"
+            variant="text"
             color="neutral"
             :size="effectiveSize"
             :trailing-icon="clearable && hasValue ? undefined : icons.calendar"
@@ -805,7 +806,7 @@ const rangeCellTriggerUi = {
         </DatePickerTrigger>
         <Button
           v-if="clearable && hasValue"
-          variant="ghost"
+          variant="text"
           color="neutral"
           :size="iconButtonSize"
           :icon="icons.close"
@@ -888,6 +889,7 @@ const rangeCellTriggerUi = {
                       :variant="selected ? 'solid' : 'ghost'"
                       :color="selected ? 'primary' : 'neutral'"
                       size="sm"
+                      square
                       :disabled="dayDisabled"
                       :ui="cellTriggerUi"
                     >

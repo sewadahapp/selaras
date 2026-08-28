@@ -21,6 +21,7 @@ export const buttonTheme = tv({
       soft: '',
       outline: '',
       ghost: '',
+      text: '',
     },
     size: {
       sm: { base: 'h-8 px-3 text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4' },
@@ -85,6 +86,19 @@ export const buttonTheme = tv({
     { color: 'warning', variant: 'soft', class: { base: 'bg-[var(--ui-warning-soft)] text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)]/70 active:bg-[var(--ui-warning)]/20' } },
     { color: 'warning', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-warning)] text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)] active:bg-[var(--ui-warning)]/10' } },
     { color: 'warning', variant: 'ghost', class: { base: 'text-[var(--ui-warning)] hover:bg-[var(--ui-warning-soft)] active:bg-[var(--ui-warning)]/10' } },
+
+    // `text`: for an icon button sitting tight against another control's own
+    // border (a field's clear button, a stepper) - `ghost`'s hover background
+    // fill would visually compete with that adjacent border, so this variant
+    // never paints a background at any state and only shifts the text/icon
+    // color on hover.
+    { color: 'primary', variant: 'text', class: { base: 'text-[var(--ui-primary)] hover:text-[var(--ui-primary-hover)]' } },
+    { color: 'neutral', variant: 'text', class: { base: 'text-[var(--ui-text-muted)] hover:text-[var(--ui-text)]' } },
+    { color: 'secondary', variant: 'text', class: { base: 'text-[var(--ui-secondary)] hover:text-[var(--ui-secondary-hover)]' } },
+    { color: 'success', variant: 'text', class: { base: 'text-[var(--ui-success)] hover:text-[var(--ui-success-hover)]' } },
+    { color: 'danger', variant: 'text', class: { base: 'text-[var(--ui-danger)] hover:text-[var(--ui-danger-hover)]' } },
+    { color: 'info', variant: 'text', class: { base: 'text-[var(--ui-info)] hover:text-[var(--ui-info-hover)]' } },
+    { color: 'warning', variant: 'text', class: { base: 'text-[var(--ui-warning)] hover:text-[var(--ui-warning-hover)]' } },
   ],
   defaultVariants: {
     color: 'primary',

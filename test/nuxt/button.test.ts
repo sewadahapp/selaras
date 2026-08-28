@@ -86,4 +86,22 @@ describe('button', () => {
     expect(withLabel.classes()).not.toContain('w-8')
     expect(withLabel.classes()).toContain('px-3')
   })
+
+  it('lets `square` force the equal-width shape onto text/number content, overriding the icon-only auto-detection', async () => {
+    const wrapper = await mountSuspended(Button, { props: { size: 'sm', square: true }, slots: { default: () => '31' } })
+    expect(wrapper.classes()).toContain('w-8')
+    expect(wrapper.classes()).not.toContain('px-3')
+  })
+
+  it('lets `square` block the auto-detected shape on an icon-only button too', async () => {
+    const wrapper = await mountSuspended(Button, { props: { icon: 'lucide:x', size: 'sm', square: false } })
+    expect(wrapper.classes()).not.toContain('w-8')
+    expect(wrapper.classes()).toContain('px-3')
+  })
+
+  it('the `text` variant never adds a background class, only a hover text-color shift', async () => {
+    const wrapper = await mountSuspended(Button, { props: { variant: 'text', color: 'neutral' }, slots: { default: () => 'Clear' } })
+    expect(wrapper.classes().some(c => c.includes('bg-'))).toBe(false)
+    expect(wrapper.classes()).toContain('hover:text-[var(--ui-text)]')
+  })
 })

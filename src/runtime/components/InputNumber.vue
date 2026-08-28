@@ -146,7 +146,7 @@ const stepButtonUi = { base: 'shrink-0' }
   <div v-bind="rootProps">
     <Button
       v-if="orientation === 'horizontal'"
-      variant="ghost"
+      variant="text"
       color="neutral"
       :size="buttonSize"
       :icon="icons.minus"
@@ -174,7 +174,7 @@ const stepButtonUi = { base: 'shrink-0' }
     >
     <Button
       v-if="orientation === 'horizontal'"
-      variant="ghost"
+      variant="text"
       color="neutral"
       :size="buttonSize"
       :icon="icons.plus"

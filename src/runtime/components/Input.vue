@@ -89,7 +89,7 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
     <Button
       v-if="showClear"
       :size="clearSize"
-      variant="ghost"
+      variant="text"
       color="neutral"
       :aria-label="messages.clear"
       v-bind="resolveSlot(ui.clear, props.ui?.clear)"

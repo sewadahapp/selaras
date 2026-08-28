@@ -32,7 +32,7 @@ export const inputNumberTheme = tv({
     // own size scale has no step small enough for two of these to stack
     // inside one field's own height, and fighting its fixed sm classes with
     // overrides is more fragile than a plain, purpose-built button here.
-    stepperButton: 'flex h-3.5 w-5 items-center justify-center rounded-[var(--ui-radius-sm)] text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)] disabled:opacity-50 disabled:pointer-events-none',
+    stepperButton: 'flex h-3.5 w-5 items-center justify-center rounded-[var(--ui-radius-sm)] text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] disabled:opacity-50 disabled:pointer-events-none',
   },
   variants: {
     size: {

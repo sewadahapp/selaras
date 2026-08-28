@@ -109,6 +109,7 @@ const mirroredIconUi = { leadingIcon: 'rtl:-scale-x-100' }
               :variant="item.value === currentPage ? 'solid' : 'ghost'"
               :color="item.value === currentPage ? 'primary' : 'neutral'"
               :size="size"
+              square
             >
               {{ item.value }}
             </Button>

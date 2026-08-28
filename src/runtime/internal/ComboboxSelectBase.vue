@@ -419,7 +419,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         <Button
           v-if="clearable && !disabled && selectedOptions.length"
           :size="clearSize"
-          variant="ghost"
+          variant="text"
           color="neutral"
           tabindex="-1"
           :aria-label="messages.clear"
@@ -521,7 +521,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
           as="span"
           role="button"
           :size="clearSize"
-          variant="ghost"
+          variant="text"
           color="neutral"
           tabindex="-1"
           :aria-label="messages.clear"

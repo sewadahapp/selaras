@@ -18,6 +18,9 @@ const colors = ['primary', 'secondary', 'success', 'danger', 'info', 'warning', 
       <SButton :color="color" variant="ghost">
         Ghost
       </SButton>
+      <SButton :color="color" variant="text">
+        Text
+      </SButton>
     </div>
   </div>
 </template>

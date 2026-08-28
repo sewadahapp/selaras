@@ -31,18 +31,28 @@ const props = withDefaults(defineProps<{
   raised?: boolean
   icon?: string
   trailingIcon?: string
+  /** Forces (or blocks) the equal-width/height "icon button" shape - overrides the auto-detected default below either direction. Needed for a button whose content is short *text* rather than an icon (a calendar day, a page number) - `iconOnly` below only looks at whether there's a default slot at all, not how wide its content happens to be, so a grid of these would otherwise size to each cell's own digit count instead of forming a uniform grid. */
+  square?: boolean
   ui?: UiProp<ButtonSlots>
 }>(), {
   as: 'button',
+  // A bare `square?: boolean` prop with no default here resolves an absent
+  // prop to `false` (Vue's own Boolean-prop casting), not `undefined` - that
+  // would make `props.square ?? iconOnly.value` below always see `false`
+  // and never fall through to the auto-detected default. An explicit
+  // `undefined` default disables that casting, so omitting the prop stays
+  // genuinely undefined.
+  square: undefined,
 })
 
 const slots = useSlots()
 
 // No default slot content at all (just an icon, or just a loading spinner)
 // - shape it as a square instead of a text button's asymmetric horizontal
-// padding, matching a comparable reference's own icon-button behavior rather than
-// requiring a separate opt-in flag (a comparable reference's own iconOnly) a consumer could
-// forget to set.
+// padding, so a consumer doesn't have to remember to opt into that shape
+// for the common "icon-only" case. The `square` prop above overrides this
+// auto-detection when the content isn't an icon but is still short/fixed-
+// width enough to want the same equal-width/height treatment.
 const iconOnly = computed(() => !slots.default)
 
 const icons = useIcons()
@@ -56,7 +66,7 @@ const ui = computed(() => theme.value({
   size: props.size,
   block: props.block,
   raised: props.raised,
-  square: iconOnly.value,
+  square: props.square ?? iconOnly.value,
 }))
 
 const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)

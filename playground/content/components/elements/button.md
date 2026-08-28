@@ -27,6 +27,10 @@ Outline
 Ghost
 ::
 
+::s-button{variant="text"}
+Text
+::
+
 ### Colors
 
 Every color across every variant, so it's easy to compare both within a
@@ -63,6 +67,36 @@ through to the root element like any other attr (see
 
 ```vue-html
 <SButton icon="ph:gear" variant="outline" aria-label="Settings" />
+```
+
+### Square
+
+Icon-only buttons already shape themselves to a square automatically (see
+above) - `square` is for when the content isn't an icon but should still get
+that same equal-width/height treatment, like a page number or a calendar day.
+Without it, each button sizes to its own text width and a row of them (a
+pagination bar, a calendar grid) won't line up:
+
+::component-example{name="button-square"}
+::
+
+```vue-html
+<SButton square>1</SButton>
+<SButton square>31</SButton>
+```
+
+### Text
+
+`text` never paints a background, at any state - only the label/icon color
+shifts on hover. Meant for an action button that sits tight against another
+control's own border, like a field's clear button - `ghost`'s hover-fill
+would otherwise visually compete with that border right at the seam:
+
+::component-example{name="button-text"}
+::
+
+```vue-html
+<SButton icon="ph:x" variant="text" aria-label="Clear" />
 ```
 
 ### Loading
@@ -190,7 +224,7 @@ shown above.
 | --- | --- | --- |
 | `as` | `string \| Component` | `'button'` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
-| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'` | `solid` |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'text'` | `solid` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `block` | `boolean` | `false` |
 | `raised` | `boolean` | `false` |
@@ -198,6 +232,7 @@ shown above.
 | `loading` | `boolean` | `false` |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
+| `square` | `boolean` | - |
 | `ui` | `Partial<Record<'base' \| 'leadingIcon' \| 'trailingIcon', string \| object>>` | - |
 
 ## ButtonGroup props
