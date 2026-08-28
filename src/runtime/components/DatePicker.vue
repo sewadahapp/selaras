@@ -783,7 +783,7 @@ const rangeCellTriggerUi = {
               :max="23"
               :format-options="twoDigitFormat"
               size="sm"
-              class="w-16"
+              class="w-28"
               @update:model-value="setHour"
             />
             <span v-if="granularity === 'minute'" class="text-[var(--ui-text-muted)]">:</span>
@@ -797,7 +797,7 @@ const rangeCellTriggerUi = {
                 :step="minuteStep"
                 :format-options="twoDigitFormat"
                 size="sm"
-                class="w-16"
+                class="w-28"
                 @update:model-value="setMinute"
               />
             </template>
