@@ -7,9 +7,18 @@ export const inputNumberTheme = tv({
     // (decrement button, input, increment button) rather than being the
     // input itself, so the focus ring keys off :focus-within, and the
     // disabled look off :has(:disabled) instead of a bare `disabled` prop.
+    // Scoped to `has-[input:disabled]` specifically, not a bare
+    // `has-[:disabled]` - the two step buttons independently become
+    // `:disabled` whenever they hit their own min/max boundary (e.g. a
+    // fresh 0-23 hour field starts at its own minimum), which is normal,
+    // expected state, not "the whole control is disabled." A bare
+    // `has-[:disabled]` matched that too and killed pointer-events for the
+    // entire root - including the input and the OTHER, non-boundary button
+    // - the moment either step button reached its own boundary; only the
+    // real `disabled` prop (bound solely to the <input>) should trigger this.
     // `relative` is unused in the default horizontal layout but required by
     // `stepper` below once orientation="vertical" positions against it.
-    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[:disabled]:opacity-50 has-[:disabled]:pointer-events-none',
+    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[input:disabled]:opacity-50 has-[input:disabled]:pointer-events-none',
     // Borderless/transparent - root already carries the visual box, this is
     // just the editable text. Centered + tabular-nums so digits don't shift
     // width as the value changes - orientation="vertical" overrides the

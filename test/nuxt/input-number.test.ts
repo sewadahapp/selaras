@@ -42,6 +42,23 @@ describe('inputNumber', () => {
     expect(buttons(wrapper).decrement.attributes('disabled')).toBeDefined()
   })
 
+  it('the root only kills pointer-events when the input itself is disabled, not when a step button hits its own boundary', async () => {
+    // Regression: has-[:disabled] (bare, unscoped) matches EITHER step
+    // button being disabled at its own min/max boundary - completely
+    // normal, expected state, not "the whole control is disabled" - and
+    // was killing pointer-events for the entire root (input included) the
+    // moment a fresh 0-boundary field rendered. Only has-[input:disabled],
+    // scoped to the real <input> (which only carries `disabled` from the
+    // component's own `disabled` prop), is correct. A real browser's :has()
+    // engine is what actually proves this, not jsdom - see the DatePicker
+    // time-section bug this regression test guards against.
+    const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 0, min: 0, max: 10 } })
+    expect(buttons(wrapper).decrement.attributes('disabled')).toBeDefined()
+    const rootClass = wrapper.find('div').classes().join(' ')
+    expect(rootClass).toContain('has-[input:disabled]:pointer-events-none')
+    expect(rootClass).not.toContain('has-[:disabled]:pointer-events-none')
+  })
+
   it('commits a typed value on blur, clamped to min/max', async () => {
     const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, min: 0, max: 10 } })
     const input = wrapper.find('input')
