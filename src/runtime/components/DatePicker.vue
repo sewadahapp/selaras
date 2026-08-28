@@ -202,8 +202,15 @@ const cellTriggerUi = {
 // Range-mode day cells butt up against each other (see date-picker.ts's own
 // `range` cell-padding variant), so this is w-full + squared off by default,
 // only rounding the actual start/end anchors - that's what makes a run of
-// highlighted days between them read as one connected bar instead of
-// separate dots.
+// highlighted/selected days between them read as one connected bar instead
+// of separate dots. The template checks both `highlighted` (Reka's live
+// hover-preview before the range is complete) and `selected` (true for
+// every day strictly between start/end once BOTH are set) - confirmed by
+// reading RangeCalendarRoot's own source that `highlightedRange` is
+// deliberately nulled out the moment a range is committed (start & end
+// both set), so it alone only covers the in-progress state; without also
+// checking `selected`, a finished range's connecting bar disappears the
+// instant you finish picking it.
 const rangeCellTriggerUi = {
   base: 'relative w-full rounded-none data-[selection-start]:rounded-s-full data-[selection-end]:rounded-e-full data-[today]:font-semibold data-[today]:after:absolute data-[today]:after:bottom-1 data-[today]:after:left-1/2 data-[today]:after:size-1 data-[today]:after:-translate-x-1/2 data-[today]:after:rounded-full data-[today]:after:bg-[var(--ui-primary)] data-[outside-view]:opacity-40 data-[unavailable]:opacity-40 data-[unavailable]:line-through',
 }
@@ -317,14 +324,14 @@ const rangeCellTriggerUi = {
               <DateRangePickerGridRow v-for="(week, weekIndex) in month.rows" :key="weekIndex">
                 <DateRangePickerCell v-for="date in week" :key="date.toString()" :date="date" v-bind="cellProps">
                   <DateRangePickerCellTrigger
-                    v-slot="{ dayValue, selectionStart, selectionEnd, highlighted, disabled: dayDisabled }"
+                    v-slot="{ dayValue, selectionStart, selectionEnd, highlighted, selected, disabled: dayDisabled }"
                     :day="date"
                     :month="month.value"
                     as-child
                   >
                     <Button
-                      :variant="selectionStart || selectionEnd ? 'solid' : highlighted ? 'soft' : 'ghost'"
-                      :color="selectionStart || selectionEnd || highlighted ? 'primary' : 'neutral'"
+                      :variant="selectionStart || selectionEnd ? 'solid' : (highlighted || selected) ? 'soft' : 'ghost'"
+                      :color="selectionStart || selectionEnd || highlighted || selected ? 'primary' : 'neutral'"
                       size="sm"
                       :disabled="dayDisabled"
                       :ui="rangeCellTriggerUi"

@@ -179,6 +179,28 @@ describe('datePicker', () => {
     expect(document.body.querySelectorAll('td button').length).toBe(0)
   })
 
+  it('range mode keeps the connecting fill on the days between start and end once the range is fully committed', async () => {
+    // Reka's own highlightedRange is deliberately null once both start and
+    // end are set (it's a live hover-preview mechanism, not a persistent
+    // "day is in range" flag) - regression test for the day this was found
+    // to leave already-picked ranges with no connecting bar at all.
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        range: true,
+        modelValue: { start: new CalendarDate(2024, 1, 10), end: new CalendarDate(2024, 1, 20) },
+      },
+    })
+    await openRangeCalendar(wrapper)
+
+    const middleDay = dayButton('15')
+    expect(middleDay.className).toContain('bg-[var(--ui-primary-soft)]')
+
+    const start = dayButton('10')
+    const end = dayButton('20')
+    expect(start.className).toContain('bg-[var(--ui-primary)]')
+    expect(end.className).toContain('bg-[var(--ui-primary)]')
+  })
+
   it('range mode disables days outside a minValue/maxValue range', async () => {
     wrapper = await mountSuspended(DatePicker, {
       props: {
