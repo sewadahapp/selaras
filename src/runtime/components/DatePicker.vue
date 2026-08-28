@@ -4,7 +4,7 @@ import type { DateRange, SegmentPart } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import type { DatePickerSlots } from '../theme/date-picker'
 import type { UiProp } from '../utils/ui'
-import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, toCalendarDateTime, today } from '@internationalized/date'
+import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, Time, toCalendarDateTime, today } from '@internationalized/date'
 import {
   DatePickerAnchor,
   DatePickerCalendar,
@@ -42,15 +42,22 @@ import {
   DateRangePickerPrev,
   DateRangePickerRoot,
   DateRangePickerTrigger,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverPortal,
+  PopoverRoot,
+  PopoverTrigger,
+  TimeFieldInput,
+  TimeFieldRoot,
 } from 'reka-ui'
 import { computed, ref, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
+import TimeStepper from '../internal/TimeStepper.vue'
 import { datePickerTheme } from '../theme/date-picker'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
-import InputNumber from './InputNumber.vue'
 
 type DatePickerVariants = VariantProps<typeof datePickerTheme>
 
@@ -59,10 +66,12 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<{
   id?: string
   name?: string
-  /** A single DateValue, or Reka's own `{ start?, end? }` DateRange shape when `range` is set - Vue props can't express a type that depends on a sibling prop's value, so this stays a plain union documented here rather than enforced by the type checker. */
-  modelValue?: DateValue | DateRange
+  /** A single DateValue, Reka's own `{ start?, end? }` DateRange shape when `range` is set, or a bare date-less Time when `timeOnly` is set - Vue props can't express a type that depends on a sibling prop's value, so this stays a plain union documented here rather than enforced by the type checker. */
+  modelValue?: DateValue | DateRange | Time
   /** Switches to picking a start+end pair instead of one date - a real fork in which Reka primitive family renders (RangeCalendar/DateRangePicker vs Calendar/DatePicker), not just a different modelValue shape. */
   range?: boolean
+  /** Drops the date entirely - just a time-of-day picker. modelValue becomes a bare `Time` (no date component at all, not a DateValue). A third top-level mode alongside `range`; every date-grid-specific prop below (minValue/maxValue/isDateUnavailable/isDateDisabled/numberOfMonths/pagedNavigation/weekStartsOn/weekdayFormat/fixedWeeks/view) is simply inert here. `granularity` still applies ('hour'/'minute' only - defaults to 'minute' for a dedicated time picker). */
+  timeOnly?: boolean
   minValue?: DateValue
   maxValue?: DateValue
   isDateUnavailable?: (date: DateValue) => boolean
@@ -109,7 +118,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: DateValue | DateRange | undefined]
+  'update:modelValue': [value: DateValue | DateRange | Time | undefined]
   'update:view': [view: 'date' | 'month' | 'year']
 }>()
 
@@ -302,66 +311,74 @@ function goToNextDecade() {
 // placeholder is always time-capable once isTimeGranularity is true (see
 // its own seeding above) - the 'hour' in ... guard is only here to satisfy
 // placeholder's own broader DateValue type, not a reachable undefined case.
-const placeholderHour = computed(() => ('hour' in placeholder.value ? placeholder.value.hour : undefined))
-const placeholderMinute = computed(() => ('minute' in placeholder.value ? placeholder.value.minute : undefined))
-const twoDigitFormat = { minimumIntegerDigits: 2 }
+const placeholderHour = computed(() => ('hour' in placeholder.value ? placeholder.value.hour : 0))
+const placeholderMinute = computed(() => ('minute' in placeholder.value ? placeholder.value.minute : 0))
 
-// Same resolution the typed segmented field already applies internally
-// (via Reka's own hourCycle handling) - deriving it here too, rather than
-// always defaulting the click stepper to 24-hour, keeps both surfaces
-// showing the same thing for the same value instead of "14" next to
-// "2:00 PM". h11/h12 are the two 12-hour cycles Intl can resolve to
-// (midnight as 0 or 12 respectively), h23/h24 the two 24-hour ones -
-// confirmed via direct check: en-US resolves h12, de-DE/ja-JP resolve h23.
-const resolvedIs12Hour = computed(() => {
-  if (props.hourCycle === 12)
-    return true
-  if (props.hourCycle === 24)
-    return false
-  const resolved = new Intl.DateTimeFormat(props.locale ?? 'en-US', { hour: 'numeric' }).resolvedOptions().hourCycle
-  return resolved === 'h11' || resolved === 'h12'
-})
-const isPM = computed(() => (placeholderHour.value ?? 0) >= 12)
-function to12Hour(hour24: number) {
-  const hour = hour24 % 12
-  return hour === 0 ? 12 : hour
-}
-function from12Hour(hour12: number, pm: boolean) {
-  const hour = hour12 % 12
-  return pm ? hour + 12 : hour
-}
-// What the stepper itself shows/accepts - 1-12 in 12-hour mode, 0-23
-// otherwise. The internal placeholder/modelValue always stays 24-hour
-// (0-23) regardless - only the display and stepper's own min/max flip.
-const displayHour = computed(() => (placeholderHour.value === undefined ? undefined : (resolvedIs12Hour.value ? to12Hour(placeholderHour.value) : placeholderHour.value)))
-
-// Adjusting the time always commits a value (creating one from
-// placeholder's current day if none is set yet) - symmetric with how
-// clicking a day already commits using whatever time placeholder holds, so
-// either axis can be the first thing a consumer touches.
-function setHour(hour: number | undefined) {
-  if (hour === undefined)
-    return
-  const hour24 = resolvedIs12Hour.value ? from12Hour(hour, isPM.value) : hour
+// TimeStepper (internal/TimeStepper.vue) owns the 12-hour display/AM-PM
+// conversion entirely - it only ever hands back a plain 24-hour number, so
+// these just need to write that straight into placeholder. Adjusting the
+// time always commits a value (creating one from placeholder's current day
+// if none is set yet) - symmetric with how clicking a day already commits
+// using whatever time placeholder holds, so either axis can be the first
+// thing a consumer touches.
+function setHour(hour24: number) {
   const value = ensureTimeCapable(placeholder.value).set({ hour: hour24 })
   placeholder.value = value
   emit('update:modelValue', normalizeForGranularity(value))
 }
-// Flips AM/PM by ±12 hours - the displayed 1-12 number stays exactly the
-// same (7:00 AM -> 7:00 PM), only the stored 24-hour value changes.
-function toggleMeridiem() {
-  const current = ensureTimeCapable(placeholder.value)
-  const value = current.set({ hour: isPM.value ? current.hour - 12 : current.hour + 12 })
-  placeholder.value = value
-  emit('update:modelValue', normalizeForGranularity(value))
-}
-function setMinute(minute: number | undefined) {
-  if (minute === undefined)
-    return
+function setMinute(minute: number) {
   const value = ensureTimeCapable(placeholder.value).set({ minute })
   placeholder.value = value
   emit('update:modelValue', normalizeForGranularity(value))
 }
+
+// Time-only mode - a third top-level branch (see the template), not a
+// variant of the day-grid branches above. modelValue is a bare, date-less
+// Time - none of the placeholder-as-DateValue/ensureTimeCapable machinery
+// above applies here, Time has no coarser date fields to upgrade from.
+// Only 'hour' narrows to hour-only here; every other value (including the
+// 'day' the granularity prop otherwise defaults to) shows hour+minute,
+// which reads better as a dedicated time picker's own default than a bare
+// hour would.
+const timeOnlyGranularity = computed(() => (props.granularity === 'hour' ? 'hour' : 'minute'))
+const timeOnlyValue = computed(() => (props.timeOnly ? (props.modelValue as Time | undefined) : undefined))
+const timePlaceholder = ref<Time>(timeOnlyValue.value ?? (() => {
+  const now = new Date()
+  return new Time(now.getHours(), now.getMinutes())
+})())
+// No Root primitive manages this popover at all (see the template) - its
+// open state is entirely local, closed only via the Done button below or
+// Popover's own outside-click/Escape handling, same reasoning as the
+// date-time-granularity branch: adjusting hour vs minute are still two
+// independent things with no single click that means "done."
+const timeIsOpen = ref(false)
+
+function normalizeTimeOnly(value: Time) {
+  return timeOnlyGranularity.value === 'hour' ? value.set({ minute: 0, second: 0, millisecond: 0 }) : value.set({ second: 0, millisecond: 0 })
+}
+function setTimeOnlyHour(hour24: number) {
+  const value = timePlaceholder.value.set({ hour: hour24 })
+  timePlaceholder.value = value
+  emit('update:modelValue', normalizeTimeOnly(value))
+}
+function setTimeOnlyMinute(minute: number) {
+  const value = timePlaceholder.value.set({ minute })
+  timePlaceholder.value = value
+  emit('update:modelValue', normalizeTimeOnly(value))
+}
+
+const timeOnlyFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? (timeOnlyGranularity.value === 'hour' ? { hour: 'numeric' } : { timeStyle: 'short' })))
+// Time has no .toDate() - no date component to anchor a timezone
+// conversion to - so it's combined with an arbitrary reference date to get
+// something DateFormatter/.toDate() can format, reading back out only the
+// time portion via the format options above. The documented way to format
+// a bare Time.
+const formattedTimeValue = computed(() => {
+  if (!timeOnlyValue.value)
+    return ''
+  const asDateTime = toCalendarDateTime(today(getLocalTimeZone()), timeOnlyValue.value)
+  return timeOnlyFormatter.value.format(asDateTime.toDate(getLocalTimeZone()))
+})
 
 // Reka's own field-segment granularity only spans 'day'|'hour'|'minute'|
 // 'second' (confirmed by reading its type) - there's no primitive-level
@@ -627,6 +644,103 @@ const rangeCellTriggerUi = {
     </DateRangePickerContent>
   </DateRangePickerRoot>
 
+  <PopoverRoot v-else-if="timeOnly" v-model:open="timeIsOpen">
+    <PopoverAnchor as-child>
+      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
+        <TimeFieldRoot
+          :id="datePickerId"
+          v-slot="{ segments }"
+          v-model:placeholder="timePlaceholder"
+          :model-value="timeOnlyValue"
+          :name="name ?? field?.name"
+          :locale="locale"
+          :hour-cycle="hourCycle"
+          :granularity="timeOnlyGranularity"
+          :disabled="disabled"
+          @update:model-value="(value) => emit('update:modelValue', value ? normalizeTimeOnly(value as Time) : undefined)"
+        >
+          <template v-for="segment in segments" :key="segment.part">
+            <TimeFieldInput as="span" :part="segment.part" v-bind="segmentProps">
+              {{ segment.value }}
+            </TimeFieldInput>
+          </template>
+        </TimeFieldRoot>
+        <div class="ms-auto flex shrink-0 items-center gap-1">
+          <Button
+            v-if="clearable && hasValue"
+            variant="ghost"
+            color="neutral"
+            :size="iconButtonSize"
+            :icon="icons.close"
+            :aria-label="messages.clear"
+            @click="clear"
+          />
+          <PopoverTrigger as-child>
+            <Button variant="ghost" color="neutral" :size="iconButtonSize" :icon="icons.clock" :aria-label="messages.timePicker" />
+          </PopoverTrigger>
+        </div>
+      </div>
+
+      <div v-else class="relative inline-block w-full">
+        <PopoverTrigger as-child>
+          <Button
+            variant="ghost"
+            color="neutral"
+            :size="effectiveSize"
+            :trailing-icon="clearable && hasValue ? undefined : icons.clock"
+            :aria-invalid="datePickerInvalid || undefined"
+            :aria-describedby="describedBy"
+            :ui="buttonTriggerUi"
+          >
+            {{ hasValue ? formattedTimeValue : messages.pickTime }}
+          </Button>
+        </PopoverTrigger>
+        <Button
+          v-if="clearable && hasValue"
+          variant="ghost"
+          color="neutral"
+          :size="iconButtonSize"
+          :icon="icons.close"
+          :aria-label="messages.clear"
+          class="absolute end-1 top-1/2 -translate-y-1/2"
+          @click.stop="clear"
+        />
+      </div>
+    </PopoverAnchor>
+
+    <PopoverPortal>
+      <PopoverContent :side-offset="6" align="start" v-bind="contentProps">
+        <div v-bind="timeSectionProps">
+          <label :for="hourInputId" class="sr-only">{{ messages.hour }}</label>
+          <label v-if="timeOnlyGranularity === 'minute'" :for="minuteInputId" class="sr-only">{{ messages.minute }}</label>
+          <TimeStepper
+            :hour="timePlaceholder.hour"
+            :minute="timePlaceholder.minute"
+            :granularity="timeOnlyGranularity"
+            :hour-cycle="hourCycle"
+            :minute-step="minuteStep"
+            :locale="locale"
+            :hour-id="hourInputId"
+            :minute-id="minuteInputId"
+            @update:hour="setTimeOnlyHour"
+            @update:minute="setTimeOnlyMinute"
+          />
+        </div>
+        <Button
+          v-if="closeOnSelect"
+          variant="solid"
+          color="primary"
+          size="sm"
+          block
+          class="mt-2"
+          @click="timeIsOpen = false"
+        >
+          {{ messages.done }}
+        </Button>
+      </PopoverContent>
+    </PopoverPortal>
+  </PopoverRoot>
+
   <DatePickerRoot
     v-else
     :id="datePickerId"
@@ -817,42 +931,19 @@ const rangeCellTriggerUi = {
         <template v-if="internalView === 'date' && isTimeGranularity">
           <div v-bind="timeSectionProps">
             <label :for="hourInputId" class="sr-only">{{ messages.hour }}</label>
-            <InputNumber
-              :id="hourInputId"
-              :model-value="displayHour"
-              :min="resolvedIs12Hour ? 1 : 0"
-              :max="resolvedIs12Hour ? 12 : 23"
-              wrap
-              :format-options="twoDigitFormat"
-              size="sm"
-              class="w-28"
-              @update:model-value="setHour"
+            <label v-if="granularity === 'minute'" :for="minuteInputId" class="sr-only">{{ messages.minute }}</label>
+            <TimeStepper
+              :hour="placeholderHour"
+              :minute="placeholderMinute"
+              :granularity="granularity === 'minute' ? 'minute' : 'hour'"
+              :hour-cycle="hourCycle"
+              :minute-step="minuteStep"
+              :locale="locale"
+              :hour-id="hourInputId"
+              :minute-id="minuteInputId"
+              @update:hour="setHour"
+              @update:minute="setMinute"
             />
-            <span v-if="granularity === 'minute'" class="text-[var(--ui-text-muted)]">:</span>
-            <template v-if="granularity === 'minute'">
-              <label :for="minuteInputId" class="sr-only">{{ messages.minute }}</label>
-              <InputNumber
-                :id="minuteInputId"
-                :model-value="placeholderMinute"
-                :min="0"
-                :max="59"
-                :step="minuteStep"
-                wrap
-                :format-options="twoDigitFormat"
-                size="sm"
-                class="w-28"
-                @update:model-value="setMinute"
-              />
-            </template>
-            <Button
-              v-if="resolvedIs12Hour"
-              variant="outline"
-              color="neutral"
-              size="sm"
-              @click="toggleMeridiem"
-            >
-              {{ isPM ? messages.pm : messages.am }}
-            </Button>
           </div>
           <Button
             v-if="closeOnSelect"

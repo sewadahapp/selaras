@@ -1,5 +1,5 @@
 import type { DOMWrapper } from '@vue/test-utils'
-import { CalendarDate, CalendarDateTime } from '@internationalized/date'
+import { CalendarDate, CalendarDateTime, Time } from '@internationalized/date'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
 import DatePicker from '../../src/runtime/components/DatePicker.vue'
@@ -27,6 +27,11 @@ function dayButton(text: string) {
 
 async function openRangeCalendar(w: Awaited<ReturnType<typeof mountSuspended>>) {
   await w.find('button[aria-label="Date range picker"]').trigger('click')
+  await new Promise(resolve => setTimeout(resolve, 50))
+}
+
+async function openTimePicker(w: Awaited<ReturnType<typeof mountSuspended>>) {
+  await w.find('button[aria-label="Time picker"]').trigger('click')
   await new Promise(resolve => setTimeout(resolve, 50))
 }
 
@@ -567,5 +572,94 @@ describe('datePicker', () => {
 
     const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
     expect(value.minute).toBe(15)
+  })
+
+  it('timeOnly field mode renders only hour and minute segments - no day/month/year', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, modelValue: new Time(14, 30) } })
+    const labels = wrapper.findAll('[role="spinbutton"]').map((w: DOMWrapper<Element>) => w.attributes('aria-label')?.trim().replace(',', ''))
+    expect(labels).toEqual(expect.arrayContaining(['hour', 'minute']))
+    expect(labels).not.toEqual(expect.arrayContaining(['day', 'month', 'year']))
+  })
+
+  it('timeOnly button mode shows the formatted time, or the placeholder message when empty', async () => {
+    const empty = await mountSuspended(DatePicker, { props: { timeOnly: true, triggerMode: 'button' } })
+    expect(empty.text()).toContain('Pick a time')
+    empty.unmount()
+
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, triggerMode: 'button', modelValue: new Time(14, 30) } })
+    expect(wrapper.text()).toContain('2:30')
+  })
+
+  it('timeOnly opens a popover with only the time steppers - no day grid', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, modelValue: new Time(14, 30) } })
+    await openTimePicker(wrapper)
+
+    expect(document.body.querySelectorAll('td button').length).toBe(0)
+    const inputs = Array.from(document.body.querySelectorAll('input')) as HTMLInputElement[]
+    expect(inputs).toHaveLength(2)
+    // The popover auto-focuses the hour input on open, so it shows its raw
+    // editing value ("2") rather than the blurred, zero-padded display.
+    expect(inputs[0]!.value).toBe('2')
+    expect(inputs[1]!.value).toBe('30')
+  })
+
+  it('timeOnly granularity=hour shows only an hour stepper', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, granularity: 'hour', modelValue: new Time(14, 30) } })
+    await openTimePicker(wrapper)
+
+    const inputs = Array.from(document.body.querySelectorAll('input')) as HTMLInputElement[]
+    expect(inputs).toHaveLength(1)
+  })
+
+  it('timeOnly adjusting the minute stepper commits a plain Time value without closing the popover', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, modelValue: new Time(14, 30) } })
+    await openTimePicker(wrapper)
+
+    const minuteIncrement = document.body.querySelectorAll('button[aria-label="Increment"]')[1]
+    await clickAndWait(minuteIncrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as Time
+    expect(value).toBeInstanceOf(Time)
+    expect(value.hour).toBe(14)
+    expect(value.minute).toBe(35)
+    expect(document.body.querySelector('button[aria-label="Increment"]')).toBeTruthy()
+  })
+
+  it('timeOnly adjusting the time before any value is set commits a Time seeded from the current time', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true } })
+    await openTimePicker(wrapper)
+
+    const hourIncrement = document.body.querySelector('button[aria-label="Increment"]')
+    await clickAndWait(hourIncrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as Time
+    expect(value).toBeInstanceOf(Time)
+  })
+
+  it('timeOnly the Done button closes the popover', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, modelValue: new Time(14, 30) } })
+    await openTimePicker(wrapper)
+    expect(document.body.querySelector('input')).toBeTruthy()
+
+    const doneButton = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'Done')
+    await clickAndWait(doneButton as HTMLElement)
+
+    expect(document.body.querySelector('input')).toBeFalsy()
+  })
+
+  it('timeOnly closeOnSelect=false hides the Done button', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, closeOnSelect: false, modelValue: new Time(14, 30) } })
+    await openTimePicker(wrapper)
+
+    const doneButton = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'Done')
+    expect(doneButton).toBeUndefined()
+  })
+
+  it('timeOnly clearable clears the value', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, clearable: true, modelValue: new Time(14, 30) } })
+    const clearButton = wrapper.find('button[aria-label="Clear"]')
+    expect(clearButton.exists()).toBe(true)
+    await clearButton.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([undefined])
   })
 })

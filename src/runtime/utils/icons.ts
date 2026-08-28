@@ -17,6 +17,7 @@ export interface IconRegistry {
   lightMode: string
   darkMode: string
   calendar: string
+  clock: string
   plus: string
   minus: string
 }
@@ -45,6 +46,7 @@ export const defaultIcons: IconRegistry = {
   lightMode: 'ph:sun',
   darkMode: 'ph:moon',
   calendar: 'ph:calendar',
+  clock: 'ph:clock',
   plus: 'ph:plus',
   minus: 'ph:minus',
 }

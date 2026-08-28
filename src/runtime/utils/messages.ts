@@ -13,6 +13,8 @@ export interface MessageRegistry {
   pagination: string
   datePicker: string
   dateRangePicker: string
+  timePicker: string
+  pickTime: string
   previousMonth: string
   nextMonth: string
   previousYear: string
@@ -63,6 +65,8 @@ export const defaultMessages: MessageRegistry = {
   pagination: 'Pagination',
   datePicker: 'Date picker',
   dateRangePicker: 'Date range picker',
+  timePicker: 'Time picker',
+  pickTime: 'Pick a time',
   previousMonth: 'Previous month',
   nextMonth: 'Next month',
   previousYear: 'Previous year',

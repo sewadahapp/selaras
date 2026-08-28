@@ -211,6 +211,36 @@ regardless of locale:
 <SDatePicker v-model="value" granularity="minute" hour-cycle="24" />
 ```
 
+### Time only
+
+`time-only` drops the date entirely - `modelValue` becomes a bare
+`Time` (from `@internationalized/date`, no date component at all, not a
+`DateValue`). Everything date-grid-specific (`min-value`/`max-value`,
+`view`, `number-of-months`, and so on) simply doesn't apply - the popover
+is just the hour/minute steppers, the same ones `granularity="hour"`/
+`"minute"` already use:
+
+::component-example{name="date-picker-time-only"}
+::
+
+```vue
+<script setup lang="ts">
+import type { Time } from '@internationalized/date'
+
+const value = ref<Time>()
+</script>
+
+<template>
+  <SDatePicker v-model="value" time-only />
+</template>
+```
+
+`granularity`, `hour-cycle`, `minute-step`, `trigger-mode`, `clearable`,
+and `close-on-select` all carry over unchanged from the date-time case
+above - `granularity` defaults to `'minute'` here (a bare hour is a less
+useful default for a *dedicated* time picker than as an add-on to a date).
+Single-date mode only - `range` and `time-only` aren't combinable.
+
 ### Sizes
 
 `size` takes `sm` / `md` / `lg`, scaling the field, segments, and calendar-
@@ -261,8 +291,9 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | --- | --- | --- |
 | `id` | `string` | - |
 | `name` | `string` | - |
-| `modelValue` | `DateValue \| DateRange` (`DateRange` when `range` is set) | - |
+| `modelValue` | `DateValue \| DateRange \| Time` (`DateRange` when `range` is set, `Time` when `timeOnly` is set) | - |
 | `range` | `boolean` | `false` |
+| `timeOnly` | `boolean` | `false` |
 | `minValue` | `DateValue` | - |
 | `maxValue` | `DateValue` | - |
 | `isDateUnavailable` | `(date: DateValue) => boolean` | - |
