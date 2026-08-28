@@ -11,6 +11,9 @@ export interface MessageRegistry {
   first: string
   last: string
   pagination: string
+  datePicker: string
+  previousMonth: string
+  nextMonth: string
   noOptions: string
   noResultsFound: string
   noData: string
@@ -43,6 +46,9 @@ export const defaultMessages: MessageRegistry = {
   first: 'First',
   last: 'Last',
   pagination: 'Pagination',
+  datePicker: 'Date picker',
+  previousMonth: 'Previous month',
+  nextMonth: 'Next month',
   noOptions: 'No options',
   noResultsFound: 'No results found',
   noData: 'No data',
