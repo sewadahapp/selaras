@@ -14,6 +14,7 @@ export interface MessageRegistry {
   datePicker: string
   previousMonth: string
   nextMonth: string
+  pickDate: string
   noOptions: string
   noResultsFound: string
   noData: string
@@ -49,6 +50,7 @@ export const defaultMessages: MessageRegistry = {
   datePicker: 'Date picker',
   previousMonth: 'Previous month',
   nextMonth: 'Next month',
+  pickDate: 'Pick a date',
   noOptions: 'No options',
   noResultsFound: 'No results found',
   noData: 'No data',

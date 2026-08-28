@@ -115,4 +115,36 @@ describe('datePicker', () => {
 
     expect(document.body.querySelectorAll('td button').length).toBe(0)
   })
+
+  it('button mode shows the placeholder message when empty and the formatted date once set', async () => {
+    const empty = await mountSuspended(DatePicker, { props: { triggerMode: 'button' } })
+    expect(empty.text()).toContain('Pick a date')
+    empty.unmount()
+
+    wrapper = await mountSuspended(DatePicker, { props: { triggerMode: 'button', modelValue: new CalendarDate(2024, 6, 15) } })
+    expect(wrapper.text()).toContain('Jun 15, 2024')
+  })
+
+  it('button mode respects a custom format', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        triggerMode: 'button',
+        modelValue: new CalendarDate(2024, 6, 15),
+        format: { year: 'numeric', month: '2-digit', day: '2-digit' },
+      },
+    })
+    expect(wrapper.text()).toContain('06/15/2024')
+  })
+
+  it('button mode still opens the calendar and updates the value on day click', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { triggerMode: 'button', modelValue: new CalendarDate(2024, 1, 15) } })
+    await wrapper.find('button').trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    dayButton('10').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDate
+    expect(value.toString()).toBe('2024-01-10')
+  })
 })

@@ -60,6 +60,23 @@ consumer decides what happens next):
 <SDatePicker v-model="date" :is-date-unavailable="(d) => isWeekend(d)" />
 ```
 
+### Button trigger
+
+`trigger-mode="button"` replaces the typeable segments with a single button
+showing the formatted date (or a placeholder message when empty) - a
+plainer "click to open" trigger for when the segmented field's inline
+typing isn't needed. `format` (an `Intl.DateTimeFormatOptions` object -
+the same shape every other JS date-formatting API already uses, default
+`{ dateStyle: 'medium' }`) controls how that button's text reads:
+
+::component-example{name="date-picker-button-mode"}
+::
+
+```vue-html
+<SDatePicker v-model="date" trigger-mode="button" />
+<SDatePicker v-model="date" trigger-mode="button" :format="{ year: 'numeric', month: '2-digit', day: '2-digit' }" />
+```
+
 ### Sizes
 
 `size` takes `sm` / `md` / `lg`, scaling the field, segments, and calendar-
@@ -122,6 +139,8 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `weekdayFormat` | `'narrow' \| 'short' \| 'long'` | `narrow` |
 | `fixedWeeks` | `boolean` | `false` |
 | `closeOnSelect` | `boolean` | `true` |
+| `triggerMode` | `'field' \| 'button'` | `field` |
+| `format` | `Intl.DateTimeFormatOptions` | `{ dateStyle: 'medium' }` |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `clearable` | `boolean` | `false` |

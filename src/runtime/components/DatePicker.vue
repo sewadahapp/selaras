@@ -3,6 +3,7 @@ import type { DateValue } from '@internationalized/date'
 import type { VariantProps } from 'tailwind-variants'
 import type { DatePickerSlots } from '../theme/date-picker'
 import type { UiProp } from '../utils/ui'
+import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
 import {
   DatePickerAnchor,
   DatePickerCalendar,
@@ -51,6 +52,10 @@ const props = withDefaults(defineProps<{
   fixedWeeks?: boolean
   /** Closes the popover once a date is picked - unlike Reka's own DatePickerRoot, this defaults true since a single-date picker (no range/multiple selection) has nothing left to do once a date is chosen. */
   closeOnSelect?: boolean
+  /** 'field' (default) is the typeable day/month/year segmented input; 'button' is a single button showing the formatted date, matching a plainer "click to open" trigger. */
+  triggerMode?: 'field' | 'button'
+  /** Only meaningful in triggerMode "button" - the segmented field's own per-segment display is already locale-shaped by Reka's own DateFieldInput. Default: `{ dateStyle: 'medium' }`. */
+  format?: Intl.DateTimeFormatOptions
   disabled?: boolean
   invalid?: boolean
   clearable?: boolean
@@ -58,6 +63,7 @@ const props = withDefaults(defineProps<{
   ui?: UiProp<DatePickerSlots>
 }>(), {
   closeOnSelect: true,
+  triggerMode: 'field',
 })
 
 const emit = defineEmits<{
@@ -75,6 +81,9 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 // oversized crammed next to the date segments.
 const iconButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
+const dateFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? { dateStyle: 'medium' }))
+const formattedValue = computed(() => props.modelValue ? dateFormatter.value.format(props.modelValue.toDate(getLocalTimeZone())) : '')
+
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('datePicker', datePickerTheme)
@@ -90,6 +99,21 @@ const gridProps = computed(() => resolveSlot(ui.value.grid, props.ui?.grid))
 const gridHeadProps = computed(() => resolveSlot(ui.value.gridHead, props.ui?.gridHead))
 const headCellProps = computed(() => resolveSlot(ui.value.headCell, props.ui?.headCell))
 const cellProps = computed(() => resolveSlot(ui.value.cell, props.ui?.cell))
+
+// The button-mode trigger's own look - Input-style ring/bg/hover, but using
+// Button's native :focus-visible (already in buttonTheme's own base) rather
+// than the field slot's :focus-within, since this is a single focusable
+// element, not a box of several. variant="ghost" color="neutral" supplies
+// just text/hover-bg on top, so this override composes rather than fights it.
+const buttonTriggerUi = computed(() => ({
+  base: [
+    'w-full justify-start rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)]',
+    datePickerInvalid.value ? 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)]' : undefined,
+    // Room for the clear button, which sits absolutely positioned on top of
+    // this same end edge - without it, a long formatted date can run under it.
+    props.clearable && props.modelValue ? 'pe-8' : undefined,
+  ].filter(Boolean).join(' '),
+}))
 
 // These four are plain :ui overrides on a nested Button, not independent
 // theme slots - Button already owns variant/size/hover/focus, matching how
@@ -124,7 +148,7 @@ const cellTriggerUi = {
     @update:model-value="(value) => emit('update:modelValue', value)"
   >
     <DatePickerAnchor as-child>
-      <div :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
+      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
         <DatePickerField v-slot="{ segments }">
           <template v-for="segment in segments" :key="segment.part">
             <DatePickerInput as="span" :part="segment.part" v-bind="segmentProps">
@@ -144,6 +168,32 @@ const cellTriggerUi = {
         <DatePickerTrigger as-child>
           <Button variant="ghost" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.datePicker" />
         </DatePickerTrigger>
+      </div>
+
+      <div v-else class="relative inline-block w-full">
+        <DatePickerTrigger as-child>
+          <Button
+            variant="ghost"
+            color="neutral"
+            :size="effectiveSize"
+            :icon="icons.calendar"
+            :aria-invalid="datePickerInvalid || undefined"
+            :aria-describedby="describedBy"
+            :ui="buttonTriggerUi"
+          >
+            {{ modelValue ? formattedValue : messages.pickDate }}
+          </Button>
+        </DatePickerTrigger>
+        <Button
+          v-if="clearable && modelValue"
+          variant="ghost"
+          color="neutral"
+          :size="iconButtonSize"
+          :icon="icons.close"
+          :aria-label="messages.clear"
+          class="absolute end-1 top-1/2 -translate-y-1/2"
+          @click.stop="emit('update:modelValue', undefined)"
+        />
       </div>
     </DatePickerAnchor>
 
