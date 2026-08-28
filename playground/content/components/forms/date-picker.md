@@ -91,6 +91,17 @@ end in place while re-picking the other), `maximum-days` (caps how far
 apart start/end can be), and `is-date-highlightable` are all range-only
 passthroughs to the underlying primitive.
 
+`trigger-mode="button"` combines with `range` too - the button's text uses
+`DateFormatter.formatRange()` (e.g. "Jun 15 – Jun 20, 2024") instead of a
+single formatted date:
+
+::component-example{name="date-picker-range-button-mode"}
+::
+
+```vue-html
+<SDatePicker v-model="range" range trigger-mode="button" />
+```
+
 ### Button trigger
 
 `trigger-mode="button"` replaces the typeable segments with a single button
