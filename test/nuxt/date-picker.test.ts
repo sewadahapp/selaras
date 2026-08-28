@@ -1,5 +1,5 @@
 import type { DOMWrapper } from '@vue/test-utils'
-import { CalendarDate } from '@internationalized/date'
+import { CalendarDate, CalendarDateTime } from '@internationalized/date'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
 import DatePicker from '../../src/runtime/components/DatePicker.vue'
@@ -397,5 +397,120 @@ describe('datePicker', () => {
       props: { granularity: 'month', triggerMode: 'button', modelValue: new CalendarDate(2024, 6, 15) },
     })
     expect(wrapper.text()).toContain('June 2024')
+  })
+
+  it('day granularity (default) shows no time section', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+    expect(document.body.querySelector('input')).toBeFalsy()
+  })
+
+  it('granularity=minute shows hour and minute steppers alongside the day grid', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'minute', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+    const inputs = Array.from(document.body.querySelectorAll('input')) as HTMLInputElement[]
+    expect(inputs).toHaveLength(2)
+    expect(inputs[0]!.value).toBe('14')
+    expect(inputs[1]!.value).toBe('30')
+  })
+
+  it('granularity=hour shows only an hour stepper', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    const inputs = Array.from(document.body.querySelectorAll('input')) as HTMLInputElement[]
+    expect(inputs).toHaveLength(1)
+    expect(inputs[0]!.value).toBe('14')
+  })
+
+  it('granularity=minute field-mode segments include hour and minute alongside day/month/year', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'minute', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    const labels = wrapper.findAll('[role="spinbutton"]').map((w: DOMWrapper<Element>) => w.attributes('aria-label')?.trim().replace(',', ''))
+    expect(labels).toEqual(expect.arrayContaining(['day', 'month', 'year', 'hour', 'minute']))
+  })
+
+  it('clicking a day preserves an already-set time', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'minute', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    await clickAndWait(dayButton('20'))
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.day).toBe(20)
+    expect(value.hour).toBe(14)
+    expect(value.minute).toBe(30)
+  })
+
+  it('adjusting the hour stepper commits a value without closing the popover', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'minute', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    const hourIncrement = document.body.querySelectorAll('button[aria-label="Increment"]')[0]
+    await clickAndWait(hourIncrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.hour).toBe(15)
+    expect(value.day).toBe(15)
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+  })
+
+  it('adjusting the time before any day is picked commits a value seeded from today', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { granularity: 'hour' } })
+    await openCalendar(wrapper)
+
+    const hourIncrement = document.body.querySelector('button[aria-label="Increment"]')
+    await clickAndWait(hourIncrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value).toBeTruthy()
+    expect('hour' in value).toBe(true)
+  })
+
+  it('the Done button closes the popover', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'minute', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+
+    const doneButton = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'Done')
+    await clickAndWait(doneButton as HTMLElement)
+
+    expect(document.body.querySelectorAll('td button').length).toBe(0)
+  })
+
+  it('closeOnSelect=false hides the Done button', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'minute', closeOnSelect: false, modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    const doneButton = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'Done')
+    expect(doneButton).toBeUndefined()
+  })
+
+  it('minuteStep controls the minute stepper click increment', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'minute', minuteStep: 15, modelValue: new CalendarDateTime(2024, 6, 15, 14, 0) },
+    })
+    await openCalendar(wrapper)
+
+    const minuteIncrement = document.body.querySelectorAll('button[aria-label="Increment"]')[1]
+    await clickAndWait(minuteIncrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.minute).toBe(15)
   })
 })

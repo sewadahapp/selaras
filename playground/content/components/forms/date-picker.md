@@ -164,6 +164,42 @@ The heading can still drill *up* (e.g. a month-granularity picker jumping
 to year view to reach a distant year quickly) - only the terminal, "picking
 this is the answer" direction changes. Single-date mode only.
 
+### Date-time selection
+
+`granularity="hour"`/`"minute"` add a time-of-day section below the day
+grid instead of replacing it - picking a day and setting a time are two
+independent things, so the day grid stays fully usable. `modelValue`
+becomes a time-capable `CalendarDateTime` (still just a `DateValue`, same
+prop type as always). Since there's no single action that means "done"
+here, `close-on-select` no longer closes the popover on a day click while
+a time granularity is set - a **Done** button appears instead (hidden
+entirely if you pass `close-on-select="false"`, since that already means
+"never auto-close"):
+
+::component-example{name="date-picker-date-time"}
+::
+
+```vue
+<script setup lang="ts">
+import type { DateValue } from '@internationalized/date'
+
+const value = ref<DateValue>()
+</script>
+
+<template>
+  <SDatePicker v-model="value" granularity="minute" />
+</template>
+```
+
+`granularity="hour"` shows only the hour stepper; `"minute"` adds a second
+one next to it. Both are built from
+[InputNumber](/components/forms/input-number) - type a value directly or
+use its ±buttons/arrow keys. `minute-step` (default `5`) only affects the
+minute stepper's click/arrow-key increment; typing still commits any exact
+minute. Picking a day preserves whatever time is already set, and
+adjusting the time commits a value using today's date if none has been
+picked yet - either can be touched first. Single-date mode only.
+
 ### Sizes
 
 `size` takes `sm` / `md` / `lg`, scaling the field, segments, and calendar-
@@ -230,7 +266,8 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `closeOnSelect` | `boolean` | `true` |
 | `triggerMode` | `'field' \| 'button'` | `field` |
 | `view` | `'date' \| 'month' \| 'year'` (single-date mode only) | `date` |
-| `granularity` | `'day' \| 'month' \| 'year'` (single-date mode only) | `day` |
+| `granularity` | `'year' \| 'month' \| 'day' \| 'hour' \| 'minute'` (single-date mode only) | `day` |
+| `minuteStep` | `number` (hour/minute granularity only) | `5` |
 | `format` | `Intl.DateTimeFormatOptions` | `{ dateStyle: 'medium' }` |
 | `allowNonContiguousRanges` | `boolean` (range only) | `false` |
 | `fixedDate` | `'start' \| 'end'` (range only) | - |
@@ -239,7 +276,7 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `invalid` | `boolean` | `false` |
 | `clearable` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'content' \| 'header' \| 'heading' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'content' \| 'header' \| 'heading' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'timeSection', string \| object>>` | - |
 
 ## Emits
 

@@ -22,6 +22,9 @@ export interface MessageRegistry {
   pickDate: string
   chooseMonth: string
   chooseYear: string
+  hour: string
+  minute: string
+  done: string
   increment: string
   decrement: string
   noOptions: string
@@ -67,6 +70,9 @@ export const defaultMessages: MessageRegistry = {
   pickDate: 'Pick a date',
   chooseMonth: 'Choose month',
   chooseYear: 'Choose year',
+  hour: 'Hour',
+  minute: 'Minute',
+  done: 'Done',
   increment: 'Increment',
   decrement: 'Decrement',
   noOptions: 'No options',

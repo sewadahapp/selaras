@@ -4,7 +4,7 @@ import type { DateRange, SegmentPart } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import type { DatePickerSlots } from '../theme/date-picker'
 import type { UiProp } from '../utils/ui'
-import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, today } from '@internationalized/date'
+import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, toCalendarDateTime, today } from '@internationalized/date'
 import {
   DatePickerAnchor,
   DatePickerCalendar,
@@ -43,13 +43,14 @@ import {
   DateRangePickerRoot,
   DateRangePickerTrigger,
 } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { datePickerTheme } from '../theme/date-picker'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
+import InputNumber from './InputNumber.vue'
 
 type DatePickerVariants = VariantProps<typeof datePickerTheme>
 
@@ -81,8 +82,10 @@ const props = withDefaults(defineProps<{
   triggerMode?: 'field' | 'button'
   /** Which grid the popover shows - 'date' (default), or drill up to 'month'/'year' by clicking the heading. Single-date mode only; range mode's heading stays static. */
   view?: 'date' | 'month' | 'year'
-  /** The value's own precision - 'day' (default) keeps picking a full date. 'month'/'year' make picking a month/year the terminal action (day fixed to 1, and month too for 'year') instead of a waypoint to the day grid - the day grid never renders in that case. Single-date mode only. */
-  granularity?: 'day' | 'month' | 'year'
+  /** The value's own precision - 'day' (default) keeps picking a full date. 'month'/'year' make picking a month/year the terminal action (day fixed to 1, and month too for 'year') instead of a waypoint to the day grid - the day grid never renders in that case. 'hour'/'minute' add a time-of-day section below the day grid instead (value becomes a time-capable CalendarDateTime, still just a plain DateValue). Single-date mode only. */
+  granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute'
+  /** hour/minute granularity only - the minute stepper's ±click/arrow-key increment (default 5); typing still commits any exact minute. */
+  minuteStep?: number
   /** Only meaningful in triggerMode "button" - the segmented field's own per-segment display is already locale-shaped by Reka's own DateFieldInput. Default: `{ dateStyle: 'medium' }`. */
   format?: Intl.DateTimeFormatOptions
   /** Range mode only - lets the two ends of a range land in different, non-adjacent selections. */
@@ -100,6 +103,7 @@ const props = withDefaults(defineProps<{
   closeOnSelect: true,
   triggerMode: 'field',
   granularity: 'day',
+  minuteStep: 5,
 })
 
 const emit = defineEmits<{
@@ -110,6 +114,12 @@ const emit = defineEmits<{
 const field = useFormField()
 
 const datePickerId = computed(() => props.id ?? field?.id)
+// Hour/minute granularity only - neither SInputNumber nor SInput forward a
+// bare aria-label to their inner <input> (it lands on their outer wrapping
+// box instead), so these pair with real sr-only <label for> elements
+// instead, the same id-based mechanism FormField's own label already uses.
+const hourInputId = useId()
+const minuteInputId = useId()
 const datePickerInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
@@ -142,10 +152,15 @@ function clear() {
 }
 
 // Month/year view drill-down - single-date mode only (see the plan's scope
-// note: range mode's heading/prev/next stay Reka's own static ones). When
-// granularity isn't 'day', the day grid never renders - 'date' is simply
-// unreachable, so the deepest/default view becomes the granularity itself.
-const defaultView = computed(() => (props.granularity !== 'day' ? props.granularity : 'date'))
+// note: range mode's heading/prev/next stay Reka's own static ones). Only
+// month/year granularity ever skip the day grid entirely (it's genuinely
+// unreachable there); hour/minute granularity still needs a day picked
+// alongside the time, so 'date' stays the default/deepest view for those.
+const defaultView = computed(() => {
+  if (props.granularity === 'month' || props.granularity === 'year')
+    return props.granularity
+  return 'date'
+})
 const internalView = ref<'date' | 'month' | 'year'>(props.view ?? defaultView.value)
 watch(() => props.view, (value) => {
   if (value !== undefined)
@@ -162,12 +177,23 @@ function drillUp() {
     setView('year')
 }
 
-// The date library has no month-only/year-only value type, so a
+const isTimeGranularity = computed(() => props.granularity === 'hour' || props.granularity === 'minute')
+// Reka's own segment rendering only shows hour/minute segments when the
+// value/placeholder's own runtime type is time-capable ('hour' in date) -
+// confirmed by reading DateFieldRoot's source, a granularity prop alone
+// does nothing on a plain CalendarDate. This upgrades a value up to
+// CalendarDateTime wherever the picker needs one to be time-capable.
+function ensureTimeCapable(value: DateValue) {
+  return 'hour' in value ? value : toCalendarDateTime(value)
+}
+
+// The date library has no month-only/year-only/hour-only value type, so a
 // granularity-limited value stays a full DateValue with the parts below its
-// own precision fixed to 1 - applied on every path a value can change
-// (typed segments below, or a terminal grid click), so two "month values"
-// that took different entry paths never end up with different, meaningless
-// day components and silently fail a consumer's own equality/compare check.
+// own precision fixed to a stable value - applied on every path a value can
+// change (typed segments below, a terminal grid click, or a time stepper),
+// so e.g. two "month values" that took different entry paths never end up
+// with different, meaningless day components and silently fail a
+// consumer's own equality/compare check.
 function normalizeForGranularity(value: DateValue | undefined) {
   if (!value)
     return value
@@ -175,6 +201,10 @@ function normalizeForGranularity(value: DateValue | undefined) {
     return value.set({ month: 1, day: 1 })
   if (props.granularity === 'month')
     return value.set({ day: 1 })
+  if (isTimeGranularity.value) {
+    const timeCapable = ensureTimeCapable(value)
+    return timeCapable.set(props.granularity === 'hour' ? { minute: 0, second: 0, millisecond: 0 } : { second: 0, millisecond: 0 })
+  }
   return value
 }
 
@@ -182,7 +212,13 @@ function normalizeForGranularity(value: DateValue | undefined) {
 // mechanism for programmatically controlling which month the day grid shows
 // (confirmed by reading DateFieldRoot's source). Selecting a month/year cell
 // jumps this, which Reka's own DatePickerCalendar then renders against.
-const placeholder = ref<DateValue>(singleModelValue.value ?? today(getLocalTimeZone()))
+// Seeded as time-capable up front for hour/minute granularity, so Reka's
+// segment rendering picks up hour/minute segments from the very first
+// render rather than only after a value is set.
+const placeholder = ref<DateValue>((() => {
+  const seed = singleModelValue.value ?? today(getLocalTimeZone())
+  return isTimeGranularity.value ? ensureTimeCapable(seed) : seed
+})())
 // Bound via v-model:open, purely so the view resets to 'date' whenever the
 // popover closes - reopening into a stale month/year grid would be confusing.
 const isOpen = ref(false)
@@ -261,6 +297,32 @@ function goToNextDecade() {
   placeholder.value = placeholder.value.add({ years: 12 })
 }
 
+// placeholder is always time-capable once isTimeGranularity is true (see
+// its own seeding above) - the 'hour' in ... guard is only here to satisfy
+// placeholder's own broader DateValue type, not a reachable undefined case.
+const placeholderHour = computed(() => ('hour' in placeholder.value ? placeholder.value.hour : undefined))
+const placeholderMinute = computed(() => ('minute' in placeholder.value ? placeholder.value.minute : undefined))
+const twoDigitFormat = { minimumIntegerDigits: 2 }
+
+// Adjusting the time always commits a value (creating one from
+// placeholder's current day if none is set yet) - symmetric with how
+// clicking a day already commits using whatever time placeholder holds, so
+// either axis can be the first thing a consumer touches.
+function setHour(hour: number | undefined) {
+  if (hour === undefined)
+    return
+  const value = ensureTimeCapable(placeholder.value).set({ hour })
+  placeholder.value = value
+  emit('update:modelValue', normalizeForGranularity(value))
+}
+function setMinute(minute: number | undefined) {
+  if (minute === undefined)
+    return
+  const value = ensureTimeCapable(placeholder.value).set({ minute })
+  placeholder.value = value
+  emit('update:modelValue', normalizeForGranularity(value))
+}
+
 // Reka's own field-segment granularity only spans 'day'|'hour'|'minute'|
 // 'second' (confirmed by reading its type) - there's no primitive-level
 // "month+year only" segment set to ask for, so the rendered list is
@@ -269,7 +331,10 @@ function goToNextDecade() {
 // an edge or double up next to a dropped segment, without assuming any
 // fixed day/month/year ordering (that varies by locale).
 function visibleSegments(segments: { part: SegmentPart, value: string }[]) {
-  if (props.granularity === 'day')
+  // Only month/year granularity ever hides segments (day is genuinely
+  // meaningless there) - hour/minute granularity adds segments on top of a
+  // still-fully-meaningful day/month/year, nothing to filter.
+  if (props.granularity === 'day' || isTimeGranularity.value)
     return segments
   const keptParts: SegmentPart[] = props.granularity === 'year' ? ['year'] : ['month', 'year']
   const result: typeof segments = []
@@ -292,6 +357,10 @@ const defaultFormat = computed<Intl.DateTimeFormatOptions>(() => {
     return { year: 'numeric' }
   if (props.granularity === 'month')
     return { month: 'long', year: 'numeric' }
+  if (props.granularity === 'hour')
+    return { dateStyle: 'medium', hour: 'numeric' }
+  if (props.granularity === 'minute')
+    return { dateStyle: 'medium', timeStyle: 'short' }
   return { dateStyle: 'medium' }
 })
 const dateFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? defaultFormat.value))
@@ -327,6 +396,7 @@ const gridHeadProps = computed(() => resolveSlot(ui.value.gridHead, props.ui?.gr
 const headCellProps = computed(() => resolveSlot(ui.value.headCell, props.ui?.headCell))
 const cellProps = computed(() => resolveSlot(ui.value.cell, props.ui?.cell))
 const viewGridProps = computed(() => resolveSlot(ui.value.viewGrid, props.ui?.viewGrid))
+const timeSectionProps = computed(() => resolveSlot(ui.value.timeSection, props.ui?.timeSection))
 
 // The button-mode trigger's own look - Input-style ring/bg/hover, but using
 // Button's native :focus-visible (already in buttonTheme's own base) rather
@@ -534,7 +604,7 @@ const rangeCellTriggerUi = {
     :week-starts-on="weekStartsOn"
     :weekday-format="weekdayFormat"
     :fixed-weeks="fixedWeeks"
-    :close-on-select="closeOnSelect"
+    :close-on-select="isTimeGranularity ? false : closeOnSelect"
     :disabled="disabled"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', normalizeForGranularity(value as DateValue | undefined))"
@@ -702,6 +772,48 @@ const rangeCellTriggerUi = {
             {{ yearItem.label }}
           </Button>
         </div>
+
+        <template v-if="internalView === 'date' && isTimeGranularity">
+          <div v-bind="timeSectionProps">
+            <label :for="hourInputId" class="sr-only">{{ messages.hour }}</label>
+            <InputNumber
+              :id="hourInputId"
+              :model-value="placeholderHour"
+              :min="0"
+              :max="23"
+              :format-options="twoDigitFormat"
+              size="sm"
+              class="w-16"
+              @update:model-value="setHour"
+            />
+            <span v-if="granularity === 'minute'" class="text-[var(--ui-text-muted)]">:</span>
+            <template v-if="granularity === 'minute'">
+              <label :for="minuteInputId" class="sr-only">{{ messages.minute }}</label>
+              <InputNumber
+                :id="minuteInputId"
+                :model-value="placeholderMinute"
+                :min="0"
+                :max="59"
+                :step="minuteStep"
+                :format-options="twoDigitFormat"
+                size="sm"
+                class="w-16"
+                @update:model-value="setMinute"
+              />
+            </template>
+          </div>
+          <Button
+            v-if="closeOnSelect"
+            variant="solid"
+            color="primary"
+            size="sm"
+            block
+            class="mt-2"
+            @click="isOpen = false"
+          >
+            {{ messages.done }}
+          </Button>
+        </template>
       </DatePickerCalendar>
     </DatePickerContent>
   </DatePickerRoot>
