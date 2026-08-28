@@ -119,6 +119,24 @@ the same shape every other JS date-formatting API already uses, default
 <SDatePicker v-model="date" trigger-mode="button" :format="{ year: 'numeric', month: '2-digit', day: '2-digit' }" />
 ```
 
+### Month/year view
+
+Click the calendar heading to drill down from the day grid to a month grid,
+then a year grid - picking a month or year jumps the day grid straight
+there instead of paging one month at a time. `view` sets which grid opens
+initially (`'date'` by default); passing `'year'` starts a birthdate-style
+picker straight at the year grid:
+
+::component-example{name="date-picker-month-year-view"}
+::
+
+```vue-html
+<SDatePicker v-model="date" view="year" />
+```
+
+Single-date mode only - `range`'s own heading and navigation are
+unaffected by `view`.
+
 ### Sizes
 
 `size` takes `sm` / `md` / `lg`, scaling the field, segments, and calendar-
@@ -184,6 +202,7 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `fixedWeeks` | `boolean` | `false` |
 | `closeOnSelect` | `boolean` | `true` |
 | `triggerMode` | `'field' \| 'button'` | `field` |
+| `view` | `'date' \| 'month' \| 'year'` (single-date mode only) | `date` |
 | `format` | `Intl.DateTimeFormatOptions` | `{ dateStyle: 'medium' }` |
 | `allowNonContiguousRanges` | `boolean` (range only) | `false` |
 | `fixedDate` | `'start' \| 'end'` (range only) | - |
@@ -199,3 +218,4 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | Emit | Payload | Description |
 | --- | --- | --- |
 | `update:modelValue` | `DateValue \| DateRange \| undefined` | Fires when a day is picked, typed into the field's segments, or cleared |
+| `update:view` | `'date' \| 'month' \| 'year'` | Fires when the heading or a month/year cell drills the popover to a different view |

@@ -33,6 +33,10 @@ export const datePickerTheme = tv({
     // plain :ui override string, same as Pagination's page buttons - no
     // separate theme slot for it, since Button already owns variant/size).
     cell: 'p-0.5 text-center',
+    // Month/year drill-down grids (view mode) - a fixed 3-column layout for
+    // both the 12-month and 12-year grids, reusing the same Button
+    // composition pattern as day cells.
+    viewGrid: 'grid grid-cols-3 gap-1',
   },
   variants: {
     size: {

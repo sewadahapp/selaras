@@ -4,7 +4,7 @@ import type { DateRange } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import type { DatePickerSlots } from '../theme/date-picker'
 import type { UiProp } from '../utils/ui'
-import { DateFormatter, getLocalTimeZone } from '@internationalized/date'
+import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, today } from '@internationalized/date'
 import {
   DatePickerAnchor,
   DatePickerCalendar,
@@ -43,7 +43,7 @@ import {
   DateRangePickerRoot,
   DateRangePickerTrigger,
 } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -79,6 +79,8 @@ const props = withDefaults(defineProps<{
   closeOnSelect?: boolean
   /** 'field' (default) is the typeable day/month/year segmented input; 'button' is a single button showing the formatted date, matching a plainer "click to open" trigger. */
   triggerMode?: 'field' | 'button'
+  /** Which grid the popover shows - 'date' (default), or drill up to 'month'/'year' by clicking the heading. Single-date mode only; range mode's heading stays static. */
+  view?: 'date' | 'month' | 'year'
   /** Only meaningful in triggerMode "button" - the segmented field's own per-segment display is already locale-shaped by Reka's own DateFieldInput. Default: `{ dateStyle: 'medium' }`. */
   format?: Intl.DateTimeFormatOptions
   /** Range mode only - lets the two ends of a range land in different, non-adjacent selections. */
@@ -99,6 +101,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [value: DateValue | DateRange | undefined]
+  'update:view': [view: 'date' | 'month' | 'year']
 }>()
 
 const field = useFormField()
@@ -135,6 +138,94 @@ function clear() {
   emit('update:modelValue', props.range ? { start: undefined, end: undefined } : undefined)
 }
 
+// Month/year view drill-down - single-date mode only (see the plan's scope
+// note: range mode's heading/prev/next stay Reka's own static ones).
+const internalView = ref<'date' | 'month' | 'year'>(props.view ?? 'date')
+watch(() => props.view, (value) => {
+  if (value !== undefined)
+    internalView.value = value
+})
+function setView(value: 'date' | 'month' | 'year') {
+  internalView.value = value
+  emit('update:view', value)
+}
+function drillUp() {
+  if (internalView.value === 'date')
+    setView('month')
+  else if (internalView.value === 'month')
+    setView('year')
+}
+
+// Bound via v-model:placeholder on DatePickerRoot - Reka's own documented
+// mechanism for programmatically controlling which month the day grid shows
+// (confirmed by reading DateFieldRoot's source). Selecting a month/year cell
+// jumps this, which Reka's own DatePickerCalendar then renders against.
+const placeholder = ref<DateValue>(singleModelValue.value ?? today(getLocalTimeZone()))
+// Bound via v-model:open, purely so the view resets to 'date' whenever the
+// popover closes - reopening into a stale month/year grid would be confusing.
+const isOpen = ref(false)
+watch(isOpen, (open) => {
+  if (!open)
+    setView('date')
+})
+
+const monthFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', { month: 'short' }))
+const monthGridItems = computed(() => Array.from({ length: 12 }, (_, i) => {
+  const value = placeholder.value.set({ month: i + 1, day: 1 })
+  return { value, label: monthFormatter.value.format(value.toDate(getLocalTimeZone())) }
+}))
+
+// A stable, page-aligned 12-year window (not "centered" on the current year)
+// so paging by decade always lands on the same boundaries regardless of
+// which year within a window you started from.
+const yearWindowStart = computed(() => Math.floor(placeholder.value.year / 12) * 12)
+const yearGridItems = computed(() => Array.from({ length: 12 }, (_, i) => ({
+  value: yearWindowStart.value + i,
+  label: String(yearWindowStart.value + i),
+})))
+const decadeHeadingText = computed(() => `${yearWindowStart.value} – ${yearWindowStart.value + 11}`)
+
+function isMonthDisabled(date: DateValue) {
+  if (!props.minValue && !props.maxValue)
+    return false
+  if (props.maxValue && startOfMonth(date).compare(props.maxValue) > 0)
+    return true
+  if (props.minValue && endOfMonth(date).compare(props.minValue) < 0)
+    return true
+  return false
+}
+function isYearDisabled(year: number) {
+  if (!props.minValue && !props.maxValue)
+    return false
+  const value = placeholder.value.set({ year })
+  if (props.maxValue && startOfYear(value).compare(props.maxValue) > 0)
+    return true
+  if (props.minValue && endOfYear(value).compare(props.minValue) < 0)
+    return true
+  return false
+}
+
+function selectMonth(date: DateValue) {
+  placeholder.value = date
+  setView('date')
+}
+function selectYear(year: number) {
+  placeholder.value = placeholder.value.set({ year })
+  setView('month')
+}
+function goToPreviousYear() {
+  placeholder.value = placeholder.value.subtract({ years: 1 })
+}
+function goToNextYear() {
+  placeholder.value = placeholder.value.add({ years: 1 })
+}
+function goToPreviousDecade() {
+  placeholder.value = placeholder.value.subtract({ years: 12 })
+}
+function goToNextDecade() {
+  placeholder.value = placeholder.value.add({ years: 12 })
+}
+
 const dateFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? { dateStyle: 'medium' }))
 const formattedValue = computed(() => {
   if (props.range) {
@@ -167,6 +258,7 @@ const gridProps = computed(() => resolveSlot(ui.value.grid, props.ui?.grid))
 const gridHeadProps = computed(() => resolveSlot(ui.value.gridHead, props.ui?.gridHead))
 const headCellProps = computed(() => resolveSlot(ui.value.headCell, props.ui?.headCell))
 const cellProps = computed(() => resolveSlot(ui.value.cell, props.ui?.cell))
+const viewGridProps = computed(() => resolveSlot(ui.value.viewGrid, props.ui?.viewGrid))
 
 // The button-mode trigger's own look - Input-style ring/bg/hover, but using
 // Button's native :focus-visible (already in buttonTheme's own base) rather
@@ -351,6 +443,8 @@ const rangeCellTriggerUi = {
   <DatePickerRoot
     v-else
     :id="datePickerId"
+    v-model:placeholder="placeholder"
+    v-model:open="isOpen"
     :name="name ?? field?.name"
     :model-value="singleModelValue"
     :min-value="minValue"
@@ -423,16 +517,52 @@ const rangeCellTriggerUi = {
     <DatePickerContent :side-offset="6" align="start" v-bind="contentProps">
       <DatePickerCalendar v-slot="{ grid, weekDays }">
         <DatePickerHeader v-bind="headerProps">
-          <DatePickerPrev as-child>
+          <DatePickerPrev v-if="internalView === 'date'" as-child>
             <Button variant="ghost" color="neutral" size="sm" :icon="icons.chevronLeft" :aria-label="messages.previousMonth" :ui="navButtonUi" />
           </DatePickerPrev>
-          <DatePickerHeading v-bind="headingProps" />
-          <DatePickerNext as-child>
+          <Button
+            v-else
+            variant="ghost"
+            color="neutral"
+            size="sm"
+            :icon="icons.chevronLeft"
+            :aria-label="internalView === 'month' ? messages.previousYear : messages.previousDecade"
+            :ui="navButtonUi"
+            @click="internalView === 'month' ? goToPreviousYear() : goToPreviousDecade()"
+          />
+
+          <DatePickerHeading v-if="internalView === 'date'" v-slot="{ headingValue }">
+            <button type="button" v-bind="headingProps" :aria-label="messages.chooseMonth" @click="drillUp">
+              {{ headingValue }}
+            </button>
+          </DatePickerHeading>
+          <button
+            v-else
+            type="button"
+            dir="ltr"
+            v-bind="headingProps"
+            :aria-label="internalView === 'month' ? messages.chooseYear : undefined"
+            @click="drillUp"
+          >
+            {{ internalView === 'month' ? placeholder.year : decadeHeadingText }}
+          </button>
+
+          <DatePickerNext v-if="internalView === 'date'" as-child>
             <Button variant="ghost" color="neutral" size="sm" :icon="icons.chevronRight" :aria-label="messages.nextMonth" :ui="navButtonUi" />
           </DatePickerNext>
+          <Button
+            v-else
+            variant="ghost"
+            color="neutral"
+            size="sm"
+            :icon="icons.chevronRight"
+            :aria-label="internalView === 'month' ? messages.nextYear : messages.nextDecade"
+            :ui="navButtonUi"
+            @click="internalView === 'month' ? goToNextYear() : goToNextDecade()"
+          />
         </DatePickerHeader>
 
-        <div v-bind="gridsProps">
+        <div v-if="internalView === 'date'" v-bind="gridsProps">
           <DatePickerGrid v-for="month in grid" :key="month.value.toString()" v-bind="gridProps">
             <DatePickerGridHead v-bind="gridHeadProps">
               <DatePickerGridRow>
@@ -464,6 +594,34 @@ const rangeCellTriggerUi = {
               </DatePickerGridRow>
             </DatePickerGridBody>
           </DatePickerGrid>
+        </div>
+
+        <div v-else-if="internalView === 'month'" v-bind="viewGridProps">
+          <Button
+            v-for="monthItem in monthGridItems"
+            :key="monthItem.value.month"
+            :variant="monthItem.value.month === placeholder.month ? 'solid' : 'ghost'"
+            :color="monthItem.value.month === placeholder.month ? 'primary' : 'neutral'"
+            size="sm"
+            :disabled="isMonthDisabled(monthItem.value)"
+            @click="selectMonth(monthItem.value)"
+          >
+            {{ monthItem.label }}
+          </Button>
+        </div>
+
+        <div v-else v-bind="viewGridProps">
+          <Button
+            v-for="yearItem in yearGridItems"
+            :key="yearItem.value"
+            :variant="yearItem.value === placeholder.year ? 'solid' : 'ghost'"
+            :color="yearItem.value === placeholder.year ? 'primary' : 'neutral'"
+            size="sm"
+            :disabled="isYearDisabled(yearItem.value)"
+            @click="selectYear(yearItem.value)"
+          >
+            {{ yearItem.label }}
+          </Button>
         </div>
       </DatePickerCalendar>
     </DatePickerContent>

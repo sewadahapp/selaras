@@ -15,7 +15,13 @@ export interface MessageRegistry {
   dateRangePicker: string
   previousMonth: string
   nextMonth: string
+  previousYear: string
+  nextYear: string
+  previousDecade: string
+  nextDecade: string
   pickDate: string
+  chooseMonth: string
+  chooseYear: string
   noOptions: string
   noResultsFound: string
   noData: string
@@ -52,7 +58,13 @@ export const defaultMessages: MessageRegistry = {
   dateRangePicker: 'Date range picker',
   previousMonth: 'Previous month',
   nextMonth: 'Next month',
+  previousYear: 'Previous year',
+  nextYear: 'Next year',
+  previousDecade: 'Previous decade',
+  nextDecade: 'Next decade',
   pickDate: 'Pick a date',
+  chooseMonth: 'Choose month',
+  chooseYear: 'Choose year',
   noOptions: 'No options',
   noResultsFound: 'No results found',
   noData: 'No data',

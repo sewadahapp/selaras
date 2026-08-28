@@ -29,6 +29,15 @@ async function openRangeCalendar(w: Awaited<ReturnType<typeof mountSuspended>>) 
   await new Promise(resolve => setTimeout(resolve, 50))
 }
 
+function viewGridButton(text: string) {
+  return Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === text) as HTMLButtonElement | undefined
+}
+
+async function clickAndWait(el: HTMLElement) {
+  el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+  await new Promise(resolve => setTimeout(resolve, 50))
+}
+
 describe('datePicker', () => {
   it('renders a day-number button for every day in the placeholder month', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
@@ -240,5 +249,85 @@ describe('datePicker', () => {
     })
     expect(wrapper.text()).toContain('Jun 15')
     expect(wrapper.text()).toContain('20, 2024')
+  })
+
+  it('clicking the heading drills into a 12-button month view', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose month"]')!)
+
+    expect(document.body.querySelectorAll('td button').length).toBe(0)
+    expect(viewGridButton('Jun')).toBeTruthy()
+    expect(viewGridButton('Dec')).toBeTruthy()
+  })
+
+  it('clicking a month returns to date view on that month', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose month"]')!)
+
+    await clickAndWait(viewGridButton('Dec')!)
+
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+    expect(document.body.querySelector('button[aria-label="Choose month"]')?.textContent).toContain('December')
+  })
+
+  it('clicking the heading twice reaches a 12-button year view containing the current year', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose month"]')!)
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose year"]')!)
+
+    expect(document.body.querySelectorAll('td button').length).toBe(0)
+    expect(viewGridButton('2024')).toBeTruthy()
+  })
+
+  it('clicking a year returns to month view on that year', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose month"]')!)
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose year"]')!)
+
+    const otherYear = viewGridButton('2030') ?? viewGridButton('2018')
+    await clickAndWait(otherYear!)
+
+    expect(viewGridButton('Jun')).toBeTruthy()
+    expect(document.body.querySelector('button[aria-label="Choose year"]')?.textContent?.trim()).toBe(otherYear!.textContent!.trim())
+  })
+
+  it('minValue/maxValue disable out-of-range months and years in view mode', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        modelValue: new CalendarDate(2024, 6, 15),
+        minValue: new CalendarDate(2024, 3, 1),
+        maxValue: new CalendarDate(2024, 9, 30),
+      },
+    })
+    await openCalendar(wrapper)
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose month"]')!)
+
+    expect(viewGridButton('Jan')?.hasAttribute('disabled')).toBe(true)
+    expect(viewGridButton('Jun')?.hasAttribute('disabled')).toBe(false)
+  })
+
+  it('resets to date view after the popover closes and reopens', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose month"]')!)
+    expect(viewGridButton('Jun')).toBeTruthy()
+
+    await openCalendar(wrapper) // toggles closed
+    await openCalendar(wrapper) // reopen
+
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+  })
+
+  it('range mode heading stays non-interactive (no drill-down)', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { range: true, modelValue: { start: new CalendarDate(2024, 1, 10), end: new CalendarDate(2024, 1, 20) } } })
+    await openRangeCalendar(wrapper)
+
+    expect(document.body.querySelector('button[aria-label="Choose month"]')).toBeFalsy()
   })
 })
