@@ -113,6 +113,12 @@ const buttonTriggerUi = computed(() => ({
     // this same end edge - without it, a long formatted date can run under it.
     props.clearable && props.modelValue ? 'pe-8' : undefined,
   ].filter(Boolean).join(' '),
+  // base is justify-start (text left-aligned, not centered) so the button
+  // reads naturally for a short date string - without its own auto margin,
+  // the trailing icon would just sit right after that short text instead of
+  // pinned to the button's own far edge, the same "select control" look the
+  // field-mode trigger group also needs (see the ms-auto wrapper above).
+  trailingIcon: 'ms-auto',
 }))
 
 // These four are plain :ui overrides on a nested Button, not independent
@@ -156,18 +162,20 @@ const cellTriggerUi = {
             </DatePickerInput>
           </template>
         </DatePickerField>
-        <Button
-          v-if="clearable && modelValue"
-          variant="ghost"
-          color="neutral"
-          :size="iconButtonSize"
-          :icon="icons.close"
-          :aria-label="messages.clear"
-          @click="emit('update:modelValue', undefined)"
-        />
-        <DatePickerTrigger as-child>
-          <Button variant="ghost" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.datePicker" />
-        </DatePickerTrigger>
+        <div class="ms-auto flex shrink-0 items-center gap-1">
+          <Button
+            v-if="clearable && modelValue"
+            variant="ghost"
+            color="neutral"
+            :size="iconButtonSize"
+            :icon="icons.close"
+            :aria-label="messages.clear"
+            @click="emit('update:modelValue', undefined)"
+          />
+          <DatePickerTrigger as-child>
+            <Button variant="ghost" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.datePicker" />
+          </DatePickerTrigger>
+        </div>
       </div>
 
       <div v-else class="relative inline-block w-full">
@@ -176,7 +184,7 @@ const cellTriggerUi = {
             variant="ghost"
             color="neutral"
             :size="effectiveSize"
-            :icon="icons.calendar"
+            :trailing-icon="clearable && modelValue ? undefined : icons.calendar"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
             :ui="buttonTriggerUi"
