@@ -701,4 +701,43 @@ describe('datePicker', () => {
     await clearButton.trigger('click')
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([undefined])
   })
+
+  it('the day slot replaces a cell\'s content, scoped with its date/dayValue/selected/disabled', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { modelValue: new CalendarDate(2024, 1, 15) },
+      slots: { day: '<template #day="{ dayValue }">[{{ dayValue }}]</template>' },
+    })
+    await openCalendar(wrapper)
+
+    expect(dayButton('[10]')).toBeTruthy()
+    expect(dayButton('10')).toBeFalsy()
+  })
+
+  it('falls back to the plain day number when the day slot is unset', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
+    await openCalendar(wrapper)
+
+    expect(dayButton('10')).toBeTruthy()
+  })
+
+  it('the clear-icon slot replaces the clear button\'s default icon', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { clearable: true, modelValue: new CalendarDate(2024, 1, 15) },
+      slots: { 'clear-icon': '<span class="my-clear-icon">x</span>' },
+    })
+
+    const clearButton = wrapper.find('button[aria-label="Clear"]')
+    expect(clearButton.find('.my-clear-icon').exists()).toBe(true)
+    expect(clearButton.find('.iconify').exists()).toBe(false)
+  })
+
+  it('the footer slot renders custom content below the calendar', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { modelValue: new CalendarDate(2024, 1, 15) },
+      slots: { footer: '<div class="my-footer">Custom footer</div>' },
+    })
+    await openCalendar(wrapper)
+
+    expect(document.body.querySelector('.my-footer')?.textContent).toBe('Custom footer')
+  })
 })

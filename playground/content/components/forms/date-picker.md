@@ -269,6 +269,27 @@ the whole control:
 <SDatePicker v-model="date" disabled />
 ```
 
+### Custom day content
+
+The `day` slot replaces a day cell's content (in both single-date and range
+grids) - the cell itself, including its selection/keyboard behavior, is
+untouched. Scoped with `date`, `dayValue`, `selected`, `disabled`, and (range
+mode only) `selectionStart`/`selectionEnd`/`highlighted`:
+
+::component-example{name="date-picker-custom-day"}
+::
+
+```vue-html
+<SDatePicker v-model="date">
+  <template #day="{ date: cellDate, dayValue }">
+    <span class="relative flex flex-col items-center">
+      {{ dayValue }}
+      <span v-if="hasEvent(cellDate)" class="absolute -bottom-1.5 size-1 rounded-full bg-[var(--ui-primary)]" />
+    </span>
+  </template>
+</SDatePicker>
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/
@@ -321,6 +342,15 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `clearable` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'content' \| 'header' \| 'heading' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'timeSection', string \| object>>` | - |
+
+## Slots
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `day` | `{ date, dayValue, selected, disabled }` (range mode adds `selectionStart`, `selectionEnd`, `highlighted`) | Custom content inside a day-cell button (single-date and range grids) |
+| `clear-icon` | - | Replaces the clear button's icon (default: `ph:x`) |
+| `trigger-icon` | - | Replaces the field-mode trigger button's icon (default: `ph:calendar`/`ph:clock`) - button-mode's own trigger isn't covered, see [Button trigger](#button-trigger) |
+| `footer` | - | Content appended below the calendar/time content, above the Done button |
 
 ## Emits
 

@@ -58,6 +58,7 @@ import TimeStepper from '../internal/TimeStepper.vue'
 import { datePickerTheme } from '../theme/date-picker'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
+import Icon from './Icon.vue'
 
 type DatePickerVariants = VariantProps<typeof datePickerTheme>
 
@@ -559,12 +560,23 @@ const rangeCellTriggerUi = {
             variant="text"
             color="neutral"
             :size="iconButtonSize"
-            :icon="icons.close"
             :aria-label="messages.clear"
             @click="clear"
-          />
+          >
+            <template #icon="{ class: iconClass }">
+              <slot name="clear-icon">
+                <Icon :name="icons.close" :class="iconClass" />
+              </slot>
+            </template>
+          </Button>
           <DateRangePickerTrigger as-child>
-            <Button variant="text" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.dateRangePicker" />
+            <Button variant="text" color="neutral" :size="iconButtonSize" :aria-label="messages.dateRangePicker">
+              <template #icon="{ class: iconClass }">
+                <slot name="trigger-icon">
+                  <Icon :name="icons.calendar" :class="iconClass" />
+                </slot>
+              </template>
+            </Button>
           </DateRangePickerTrigger>
         </div>
       </div>
@@ -588,11 +600,16 @@ const rangeCellTriggerUi = {
           variant="text"
           color="neutral"
           :size="iconButtonSize"
-          :icon="icons.close"
           :aria-label="messages.clear"
           class="absolute end-1 top-1/2 -translate-y-1/2"
           @click.stop="clear"
-        />
+        >
+          <template #icon="{ class: iconClass }">
+            <slot name="clear-icon">
+              <Icon :name="icons.close" :class="iconClass" />
+            </slot>
+          </template>
+        </Button>
       </div>
     </DateRangePickerAnchor>
 
@@ -633,7 +650,18 @@ const rangeCellTriggerUi = {
                       :disabled="dayDisabled"
                       :ui="rangeCellTriggerUi"
                     >
-                      {{ dayValue }}
+                      <slot
+                        name="day"
+                        :date="date"
+                        :day-value="dayValue"
+                        :selected="selected"
+                        :disabled="dayDisabled"
+                        :selection-start="selectionStart"
+                        :selection-end="selectionEnd"
+                        :highlighted="highlighted"
+                      >
+                        {{ dayValue }}
+                      </slot>
                     </Button>
                   </DateRangePickerCellTrigger>
                 </DateRangePickerCell>
@@ -641,6 +669,7 @@ const rangeCellTriggerUi = {
             </DateRangePickerGridBody>
           </DateRangePickerGrid>
         </div>
+        <slot name="footer" />
       </DateRangePickerCalendar>
     </DateRangePickerContent>
   </DateRangePickerRoot>
@@ -672,12 +701,23 @@ const rangeCellTriggerUi = {
             variant="text"
             color="neutral"
             :size="iconButtonSize"
-            :icon="icons.close"
             :aria-label="messages.clear"
             @click="clear"
-          />
+          >
+            <template #icon="{ class: iconClass }">
+              <slot name="clear-icon">
+                <Icon :name="icons.close" :class="iconClass" />
+              </slot>
+            </template>
+          </Button>
           <PopoverTrigger as-child>
-            <Button variant="text" color="neutral" :size="iconButtonSize" :icon="icons.clock" :aria-label="messages.timePicker" />
+            <Button variant="text" color="neutral" :size="iconButtonSize" :aria-label="messages.timePicker">
+              <template #icon="{ class: iconClass }">
+                <slot name="trigger-icon">
+                  <Icon :name="icons.clock" :class="iconClass" />
+                </slot>
+              </template>
+            </Button>
           </PopoverTrigger>
         </div>
       </div>
@@ -701,11 +741,16 @@ const rangeCellTriggerUi = {
           variant="text"
           color="neutral"
           :size="iconButtonSize"
-          :icon="icons.close"
           :aria-label="messages.clear"
           class="absolute end-1 top-1/2 -translate-y-1/2"
           @click.stop="clear"
-        />
+        >
+          <template #icon="{ class: iconClass }">
+            <slot name="clear-icon">
+              <Icon :name="icons.close" :class="iconClass" />
+            </slot>
+          </template>
+        </Button>
       </div>
     </PopoverAnchor>
 
@@ -727,6 +772,7 @@ const rangeCellTriggerUi = {
             @update:minute="setTimeOnlyMinute"
           />
         </div>
+        <slot name="footer" />
         <Button
           v-if="closeOnSelect"
           variant="solid"
@@ -780,12 +826,23 @@ const rangeCellTriggerUi = {
             variant="text"
             color="neutral"
             :size="iconButtonSize"
-            :icon="icons.close"
             :aria-label="messages.clear"
             @click="clear"
-          />
+          >
+            <template #icon="{ class: iconClass }">
+              <slot name="clear-icon">
+                <Icon :name="icons.close" :class="iconClass" />
+              </slot>
+            </template>
+          </Button>
           <DatePickerTrigger as-child>
-            <Button variant="text" color="neutral" :size="iconButtonSize" :icon="icons.calendar" :aria-label="messages.datePicker" />
+            <Button variant="text" color="neutral" :size="iconButtonSize" :aria-label="messages.datePicker">
+              <template #icon="{ class: iconClass }">
+                <slot name="trigger-icon">
+                  <Icon :name="icons.calendar" :class="iconClass" />
+                </slot>
+              </template>
+            </Button>
           </DatePickerTrigger>
         </div>
       </div>
@@ -809,11 +866,16 @@ const rangeCellTriggerUi = {
           variant="text"
           color="neutral"
           :size="iconButtonSize"
-          :icon="icons.close"
           :aria-label="messages.clear"
           class="absolute end-1 top-1/2 -translate-y-1/2"
           @click.stop="clear"
-        />
+        >
+          <template #icon="{ class: iconClass }">
+            <slot name="clear-icon">
+              <Icon :name="icons.close" :class="iconClass" />
+            </slot>
+          </template>
+        </Button>
       </div>
     </DatePickerAnchor>
 
@@ -893,7 +955,9 @@ const rangeCellTriggerUi = {
                       :disabled="dayDisabled"
                       :ui="cellTriggerUi"
                     >
-                      {{ dayValue }}
+                      <slot name="day" :date="date" :day-value="dayValue" :selected="selected" :disabled="dayDisabled">
+                        {{ dayValue }}
+                      </slot>
                     </Button>
                   </DatePickerCellTrigger>
                 </DatePickerCell>
@@ -959,6 +1023,7 @@ const rangeCellTriggerUi = {
             {{ messages.done }}
           </Button>
         </template>
+        <slot name="footer" />
       </DatePickerCalendar>
     </DatePickerContent>
   </DatePickerRoot>
