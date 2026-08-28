@@ -72,10 +72,12 @@ correct `colspan`/`rowspan` - nest as deeply as needed:
 
 ### Pagination
 
-`page-size` (default `10`) controls how many rows render per page. Prev/next
-controls appear automatically once there's more than one page, and bind to
-`v-model:page-index` if you need to read or control the current page
-yourself. Pagination is disabled automatically when `virtualize` is set - see
+Pagination is opt-in: every row renders on one page until you set
+`page-size`. Once set, a [Pagination](/components/navigation/pagination)
+control (page numbers, Prev/Next, scaling with `size`) appears automatically
+once there's more than one page, and binds to `v-model:page-index` if you
+need to read or control the current page yourself. `virtualize` is the
+better fit for windowing a large dataset instead - see
 [Virtual scroll](#virtual-scroll) below.
 
 ### Presort
@@ -294,9 +296,10 @@ Sortable headers are keyboard-operable (<kbd>Enter</kbd>/<kbd>Space</kbd>
 toggle the sort, same as a click) and expose `aria-sort` reflecting the
 current state. The row-expansion toggle is a real `<button>` with an
 `aria-label` of "Expand row"/"Collapse row" that updates with its state.
-Column-visibility checkboxes and pagination controls are standard
-`SCheckbox`/`SButton` elements, so they inherit those components' own
-accessibility behavior rather than reimplementing it here.
+Column-visibility checkboxes are standard `SCheckbox` elements, and
+pagination is a nested [SPagination](/components/navigation/pagination), so
+both inherit those components' own accessibility behavior rather than
+reimplementing it here.
 
 ## Props
 
@@ -307,7 +310,7 @@ accessibility behavior rather than reimplementing it here.
 | `data` | `unknown[]` | - |
 | `columns` | `ColumnDef[]` | - |
 | `selectable` | `boolean` | `false` |
-| `pageSize` | `number` | `10` |
+| `pageSize` | `number` | - (no pagination until set) |
 | `loading` | `boolean` | `false` |
 | `sorting` | `SortingState` | - |
 | `defaultSorting` | `SortingState` | - |

@@ -15,6 +15,7 @@ import Button from './Button.vue'
 import Checkbox from './Checkbox.vue'
 import Icon from './Icon.vue'
 import Input from './Input.vue'
+import Pagination from './Pagination.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -96,7 +97,7 @@ const columns = computed(() => {
 
 const columnPinning = computed(() => collectColumnPinning(columns.value))
 
-const { table, pageIndex, columnVisibility } = useTable(props, emit, columns, columnPinning)
+const { table, pageIndex, columnVisibility, effectivePageSize } = useTable(props, emit, columns, columnPinning)
 
 if (import.meta.dev) {
   watchEffect(() => {
@@ -349,12 +350,13 @@ defineExpose({
         {{ messages.paginationInfo(pageIndex + 1, table.getPageCount()) }}
       </span>
       <div v-bind="paginationButtonsProps">
-        <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()">
-          {{ messages.previous }}
-        </Button>
-        <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()">
-          {{ messages.next }}
-        </Button>
+        <Pagination
+          :page="pageIndex + 1"
+          :total="table.getFilteredRowModel().rows.length"
+          :items-per-page="effectivePageSize"
+          :size="size"
+          @update:page="(value) => table.setPageIndex(value - 1)"
+        />
       </div>
     </div>
   </div>

@@ -124,15 +124,15 @@ describe('table', () => {
     })
 
     expect(wrapper.findAll('tbody tr')).toHaveLength(2)
-    expect(findButton(wrapper, 'Previous').attributes('disabled')).toBeDefined()
-    expect(findButton(wrapper, 'Next').attributes('disabled')).toBeUndefined()
+    expect(wrapper.find('button[aria-label="Previous"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.find('button[aria-label="Next"]').attributes('disabled')).toBeUndefined()
 
-    await findButton(wrapper, 'Next').trigger('click')
+    await wrapper.find('button[aria-label="Next"]').trigger('click')
     await nextTick()
 
     expect(wrapper.findAll('tbody tr').map(r => r.text())).toEqual(['3', '4'])
-    expect(findButton(wrapper, 'Next').attributes('disabled')).toBeDefined()
-    expect(findButton(wrapper, 'Previous').attributes('disabled')).toBeUndefined()
+    expect(wrapper.find('button[aria-label="Next"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.find('button[aria-label="Previous"]').attributes('disabled')).toBeUndefined()
   })
 
   it('shows a loading overlay with a spinner when loading, and nothing when not', async () => {
@@ -301,5 +301,49 @@ describe('table', () => {
 
     expect(clickSpy).toHaveBeenCalledOnce()
     vi.restoreAllMocks()
+  })
+
+  it('hides the pagination area entirely when all data fits on one page', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        pageSize: 10,
+      },
+    })
+    expect(wrapper.find('[data-type="page"]').exists()).toBe(false)
+  })
+
+  it('renders a page-number button per page once data overflows one page', async () => {
+    const data = Array.from({ length: 25 }, (_, i) => ({ name: `User ${i}` }))
+    const wrapper = await mountSuspended(Table, {
+      props: { data, columns: [{ accessorKey: 'name', header: 'Name' }], pageSize: 10 },
+    })
+    // 25 rows at 10/page = 3 pages - small enough that SPagination's default
+    // sibling range shows every page number with no ellipsis.
+    expect(wrapper.findAll('[data-type="page"]')).toHaveLength(3)
+  })
+
+  it('emits update:pageIndex (0-indexed) when a page-number button is clicked', async () => {
+    const data = Array.from({ length: 25 }, (_, i) => ({ name: `User ${i}` }))
+    const wrapper = await mountSuspended(Table, {
+      props: { data, columns: [{ accessorKey: 'name', header: 'Name' }], pageSize: 10 },
+    })
+    const pageButtons = wrapper.findAll('[data-type="page"]')
+    await pageButtons[2]!.trigger('click')
+    expect(wrapper.emitted('update:pageIndex')?.at(-1)).toEqual([2])
+  })
+
+  it('disables Prev on the first page and Next on the last page', async () => {
+    const data = Array.from({ length: 25 }, (_, i) => ({ name: `User ${i}` }))
+    const columns = [{ accessorKey: 'name', header: 'Name' }]
+
+    const firstPage = await mountSuspended(Table, { props: { data, columns, pageSize: 10, pageIndex: 0 } })
+    expect(firstPage.find('button[aria-label="Previous"]').attributes('disabled')).toBeDefined()
+    expect(firstPage.find('button[aria-label="Next"]').attributes('disabled')).toBeUndefined()
+
+    const lastPage = await mountSuspended(Table, { props: { data, columns, pageSize: 10, pageIndex: 2 } })
+    expect(lastPage.find('button[aria-label="Previous"]').attributes('disabled')).toBeUndefined()
+    expect(lastPage.find('button[aria-label="Next"]').attributes('disabled')).toBeDefined()
   })
 })

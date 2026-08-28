@@ -113,11 +113,11 @@ export function useTable(props: UseTableProps, emit: UseTableEmit, columns: Comp
     },
   })
 
-  // Virtualization replaces pagination as the strategy for a large dataset -
-  // without this, the paginated row model still slices to the default page
-  // size first, and virtualization ends up windowing that tiny page instead
-  // of the real dataset.
-  const effectivePageSize = computed(() => props.virtualize ? props.data.length : (props.pageSize ?? 10))
+  // Pagination is opt-in, not a silent default - without an explicit
+  // pageSize, every row renders on one page (same as virtualize, which
+  // replaces pagination as the strategy for a large dataset instead of
+  // letting the paginated row model window it to a default page size).
+  const effectivePageSize = computed(() => (props.virtualize || props.pageSize === undefined) ? Math.max(props.data.length, 1) : props.pageSize)
 
   const internalExpanded = ref<any>({})
   const expanded = computed({
@@ -176,5 +176,5 @@ export function useTable(props: UseTableProps, emit: UseTableEmit, columns: Comp
     },
   } as any)
 
-  return { table, sorting, rowSelection, globalFilter, pageIndex, expanded, columnVisibility }
+  return { table, sorting, rowSelection, globalFilter, pageIndex, expanded, columnVisibility, effectivePageSize }
 }
