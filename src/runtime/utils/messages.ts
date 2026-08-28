@@ -12,6 +12,7 @@ export interface MessageRegistry {
   last: string
   pagination: string
   datePicker: string
+  dateRangePicker: string
   previousMonth: string
   nextMonth: string
   pickDate: string
@@ -48,6 +49,7 @@ export const defaultMessages: MessageRegistry = {
   last: 'Last',
   pagination: 'Pagination',
   datePicker: 'Date picker',
+  dateRangePicker: 'Date range picker',
   previousMonth: 'Previous month',
   nextMonth: 'Next month',
   pickDate: 'Pick a date',

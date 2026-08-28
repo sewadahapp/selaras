@@ -12,12 +12,19 @@ export const datePickerTheme = tv({
     // value changes; the segment itself is the contenteditable element
     // Reka renders, so focus state is real :focus, not a data-attribute.
     segment: 'rounded-[var(--ui-radius-sm)] px-0.5 text-[var(--ui-text)] tabular-nums outline-none focus:bg-[var(--ui-primary)]/15 data-[reka-date-field-segment=literal]:px-0 data-[reka-date-field-segment=literal]:text-[var(--ui-text-muted)]',
+    // Between the two segment groups in range mode - a plain en dash, not an
+    // arrow glyph, so there's nothing directional to mirror under RTL.
+    separator: 'px-0.5 text-[var(--ui-text-muted)]',
     // Copied from theme/dropdown.ts's `content` - the more complete of this
     // library's two floating-panel precedents (directional slide-in, not
     // just fade/zoom).
     content: 'z-[var(--ui-z-dropdown)] rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2',
     header: 'mb-2 flex items-center justify-between gap-2',
     heading: 'text-sm font-medium text-[var(--ui-text)]',
+    // Wraps one <table> per visible month (numberOfMonths>1, e.g. range
+    // mode's default of 2) - without it, multiple month tables just stack
+    // vertically (block-level default), not side by side.
+    grids: 'flex flex-col gap-4 sm:flex-row',
     grid: 'w-full border-collapse',
     gridHead: '',
     headCell: 'size-8 text-xs font-medium text-[var(--ui-text-muted)]',
@@ -35,6 +42,13 @@ export const datePickerTheme = tv({
     },
     invalid: {
       true: { field: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)]' },
+    },
+    // Range mode's day cells butt up against each other with no horizontal
+    // gap, so a highlighted run of days reads as one continuous connected
+    // bar instead of separate dashes - single-date mode keeps its own
+    // centered p-0.5 spacing untouched.
+    range: {
+      true: { cell: 'p-0 py-0.5' },
     },
   },
   defaultVariants: {

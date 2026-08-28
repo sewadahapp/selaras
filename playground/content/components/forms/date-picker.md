@@ -60,6 +60,37 @@ consumer decides what happens next):
 <SDatePicker v-model="date" :is-date-unavailable="(d) => isWeekend(d)" />
 ```
 
+### Range selection
+
+`range` switches to picking a start and end date together - `v-model`
+becomes `{ start?: DateValue, end?: DateValue }` instead of a single
+`DateValue`. Click a first day to set the start (the popover stays open -
+the selection isn't finished yet), then a second day to complete the range
+and close it. Defaults to showing two months side by side
+(`number-of-months="2"`) rather than one, since that's what makes picking a
+multi-week range comfortable - pass `:number-of-months="1"` to page through
+a single month instead:
+
+::component-example{name="date-picker-range"}
+::
+
+```vue
+<script setup lang="ts">
+import type { DateRange } from 'reka-ui'
+
+const range = ref<DateRange>()
+</script>
+
+<template>
+  <SDatePicker v-model="range" range />
+</template>
+```
+
+`allow-non-contiguous-ranges`, `fixed-date` (`'start' | 'end'`, locks one
+end in place while re-picking the other), `maximum-days` (caps how far
+apart start/end can be), and `is-date-highlightable` are all range-only
+passthroughs to the underlying primitive.
+
 ### Button trigger
 
 `trigger-mode="button"` replaces the typeable segments with a single button
@@ -127,13 +158,15 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | --- | --- | --- |
 | `id` | `string` | - |
 | `name` | `string` | - |
-| `modelValue` | `DateValue` | - |
+| `modelValue` | `DateValue \| DateRange` (`DateRange` when `range` is set) | - |
+| `range` | `boolean` | `false` |
 | `minValue` | `DateValue` | - |
 | `maxValue` | `DateValue` | - |
 | `isDateUnavailable` | `(date: DateValue) => boolean` | - |
 | `isDateDisabled` | `(date: DateValue) => boolean` | - |
+| `isDateHighlightable` | `(date: DateValue) => boolean` (range only) | - |
 | `locale` | `string` | - |
-| `numberOfMonths` | `number` | `1` |
+| `numberOfMonths` | `number` | `1`, or `2` when `range` is set |
 | `pagedNavigation` | `boolean` | `false` |
 | `weekStartsOn` | `0 \| 1 \| 2 \| 3 \| 4 \| 5 \| 6` | - |
 | `weekdayFormat` | `'narrow' \| 'short' \| 'long'` | `narrow` |
@@ -141,6 +174,9 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `closeOnSelect` | `boolean` | `true` |
 | `triggerMode` | `'field' \| 'button'` | `field` |
 | `format` | `Intl.DateTimeFormatOptions` | `{ dateStyle: 'medium' }` |
+| `allowNonContiguousRanges` | `boolean` (range only) | `false` |
+| `fixedDate` | `'start' \| 'end'` (range only) | - |
+| `maximumDays` | `number` (range only) | - |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `clearable` | `boolean` | `false` |
@@ -151,4 +187,4 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 
 | Emit | Payload | Description |
 | --- | --- | --- |
-| `update:modelValue` | `DateValue \| undefined` | Fires when a day is picked, typed into the field's segments, or cleared |
+| `update:modelValue` | `DateValue \| DateRange \| undefined` | Fires when a day is picked, typed into the field's segments, or cleared |

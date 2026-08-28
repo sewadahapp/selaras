@@ -24,6 +24,11 @@ function dayButton(text: string) {
   return Array.from(document.body.querySelectorAll('td button')).find(b => b.textContent?.trim() === text) as HTMLButtonElement
 }
 
+async function openRangeCalendar(w: Awaited<ReturnType<typeof mountSuspended>>) {
+  await w.find('button[aria-label="Date range picker"]').trigger('click')
+  await new Promise(resolve => setTimeout(resolve, 50))
+}
+
 describe('datePicker', () => {
   it('renders a day-number button for every day in the placeholder month', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
@@ -146,5 +151,72 @@ describe('datePicker', () => {
 
     const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDate
     expect(value.toString()).toBe('2024-01-10')
+  })
+
+  it('range mode renders two segment groups separated by a dash', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { range: true } })
+    expect(wrapper.text()).toContain('–')
+  })
+
+  it('range mode: first click sets only the start and keeps the popover open, second click completes the range and closes it', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { range: true, defaultPlaceholder: new CalendarDate(2024, 1, 1) } as any })
+    await openRangeCalendar(wrapper)
+
+    dayButton('10').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    let emitted = wrapper.emitted('update:modelValue')
+    expect(emitted?.at(-1)?.[0]).toMatchObject({ start: expect.anything(), end: undefined })
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+
+    dayButton('20').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    emitted = wrapper.emitted('update:modelValue')
+    const range = emitted?.at(-1)?.[0] as { start: CalendarDate, end: CalendarDate }
+    expect(range.start.toString()).toBe('2024-01-10')
+    expect(range.end.toString()).toBe('2024-01-20')
+    expect(document.body.querySelectorAll('td button').length).toBe(0)
+  })
+
+  it('range mode disables days outside a minValue/maxValue range', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        range: true,
+        modelValue: { start: new CalendarDate(2024, 1, 15), end: new CalendarDate(2024, 1, 15) },
+        minValue: new CalendarDate(2024, 1, 10),
+        maxValue: new CalendarDate(2024, 1, 20),
+      },
+    })
+    await openRangeCalendar(wrapper)
+
+    expect(dayButton('5').hasAttribute('disabled')).toBe(true)
+    expect(dayButton('15').hasAttribute('disabled')).toBe(false)
+  })
+
+  it('range mode clearable clears both ends', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        range: true,
+        clearable: true,
+        modelValue: { start: new CalendarDate(2024, 1, 10), end: new CalendarDate(2024, 1, 20) },
+      },
+    })
+    const clearButton = wrapper.find('button[aria-label="Clear"]')
+    expect(clearButton.exists()).toBe(true)
+    await clearButton.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([{ start: undefined, end: undefined }])
+  })
+
+  it('range mode button trigger shows a formatted range', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        range: true,
+        triggerMode: 'button',
+        modelValue: { start: new CalendarDate(2024, 6, 15), end: new CalendarDate(2024, 6, 20) },
+      },
+    })
+    expect(wrapper.text()).toContain('Jun 15')
+    expect(wrapper.text()).toContain('20, 2024')
   })
 })
