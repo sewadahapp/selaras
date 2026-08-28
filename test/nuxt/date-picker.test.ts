@@ -405,7 +405,7 @@ describe('datePicker', () => {
     expect(document.body.querySelector('input')).toBeFalsy()
   })
 
-  it('granularity=minute shows hour and minute steppers alongside the day grid', async () => {
+  it('granularity=minute shows hour and minute steppers alongside the day grid, in the locale\'s own hour cycle (12-hour for en-US)', async () => {
     wrapper = await mountSuspended(DatePicker, {
       props: { granularity: 'minute', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
     })
@@ -414,11 +414,12 @@ describe('datePicker', () => {
     expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
     const inputs = Array.from(document.body.querySelectorAll('input')) as HTMLInputElement[]
     expect(inputs).toHaveLength(2)
-    expect(inputs[0]!.value).toBe('14')
+    // 14:30 in en-US's default 12-hour cycle displays as "02" (2 PM), not "14".
+    expect(inputs[0]!.value).toBe('02')
     expect(inputs[1]!.value).toBe('30')
   })
 
-  it('granularity=hour shows only an hour stepper', async () => {
+  it('granularity=hour shows only an hour stepper, plus an AM/PM toggle under the default 12-hour locale', async () => {
     wrapper = await mountSuspended(DatePicker, {
       props: { granularity: 'hour', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
     })
@@ -426,7 +427,61 @@ describe('datePicker', () => {
 
     const inputs = Array.from(document.body.querySelectorAll('input')) as HTMLInputElement[]
     expect(inputs).toHaveLength(1)
-    expect(inputs[0]!.value).toBe('14')
+    expect(inputs[0]!.value).toBe('02')
+    const meridiemButton = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'PM')
+    expect(meridiemButton).toBeTruthy()
+  })
+
+  it('hourCycle="24" forces the stepper to 0-23 with no AM/PM toggle, even under a 12-hour locale', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', hourCycle: 24, modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    const input = document.body.querySelector('input') as HTMLInputElement
+    expect(input.value).toBe('14')
+    const meridiemButton = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'PM' || b.textContent?.trim() === 'AM')
+    expect(meridiemButton).toBeFalsy()
+  })
+
+  it('hourCycle="12" forces a 12-hour stepper even under a 24-hour locale', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', hourCycle: 12, locale: 'de-DE', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    const input = document.body.querySelector('input') as HTMLInputElement
+    expect(input.value).toBe('02')
+  })
+
+  it('toggling AM/PM changes the emitted hour by exactly 12 without changing the displayed hour', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', modelValue: new CalendarDateTime(2024, 6, 15, 14, 30) },
+    })
+    await openCalendar(wrapper)
+
+    const meridiemButton = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'PM')
+    await clickAndWait(meridiemButton as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.hour).toBe(2)
+    expect(document.body.querySelector('input')?.getAttribute('value')).not.toBe('14')
+  })
+
+  it('the hour stepper wraps past its boundary instead of getting stuck (12-hour clock: 12 -> 1)', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', modelValue: new CalendarDateTime(2024, 6, 15, 0, 0) },
+    })
+    await openCalendar(wrapper)
+
+    const input = document.body.querySelector('input') as HTMLInputElement
+    expect(input.value).toBe('12') // midnight displays as 12 AM
+
+    const increment = document.body.querySelector('button[aria-label="Increment"]')
+    await clickAndWait(increment as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.hour).toBe(1) // wrapped past 12 to 1 AM, not stuck
   })
 
   it('granularity=minute field-mode segments include hour and minute alongside day/month/year', async () => {

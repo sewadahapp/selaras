@@ -200,6 +200,17 @@ minute. Picking a day preserves whatever time is already set, and
 adjusting the time commits a value using today's date if none has been
 picked yet - either can be touched first. Single-date mode only.
 
+The hour stepper follows the same hour cycle as the typed field itself -
+both default to whatever `locale` resolves to (12-hour with an AM/PM
+toggle for `en-US`, 24-hour for most others), so the two surfaces always
+agree instead of one showing "14" and the other "2:00 PM" for the same
+moment. Pass `hour-cycle="12"` or `hour-cycle="24"` to force one
+regardless of locale:
+
+```vue-html
+<SDatePicker v-model="value" granularity="minute" hour-cycle="24" />
+```
+
 ### Sizes
 
 `size` takes `sm` / `md` / `lg`, scaling the field, segments, and calendar-
@@ -268,6 +279,7 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `view` | `'date' \| 'month' \| 'year'` (single-date mode only) | `date` |
 | `granularity` | `'year' \| 'month' \| 'day' \| 'hour' \| 'minute'` (single-date mode only) | `day` |
 | `minuteStep` | `number` (hour/minute granularity only) | `5` |
+| `hourCycle` | `12 \| 24` (hour/minute granularity only) | locale default |
 | `format` | `Intl.DateTimeFormatOptions` | `{ dateStyle: 'medium' }` |
 | `allowNonContiguousRanges` | `boolean` (range only) | `false` |
 | `fixedDate` | `'start' \| 'end'` (range only) | - |

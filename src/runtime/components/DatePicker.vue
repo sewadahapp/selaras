@@ -86,6 +86,8 @@ const props = withDefaults(defineProps<{
   granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute'
   /** hour/minute granularity only - the minute stepper's ±click/arrow-key increment (default 5); typing still commits any exact minute. */
   minuteStep?: number
+  /** hour/minute granularity only - forces the hour stepper (and the typed field's own hour/dayPeriod segments) to 12-hour or 24-hour. Defaults to whatever `locale` itself resolves to (e.g. 12-hour for en-US, 24-hour for de-DE) - passed straight through to the underlying primitive, which already drives the typed field's own hour cycle. */
+  hourCycle?: 12 | 24
   /** Only meaningful in triggerMode "button" - the segmented field's own per-segment display is already locale-shaped by Reka's own DateFieldInput. Default: `{ dateStyle: 'medium' }`. */
   format?: Intl.DateTimeFormatOptions
   /** Range mode only - lets the two ends of a range land in different, non-adjacent selections. */
@@ -304,6 +306,35 @@ const placeholderHour = computed(() => ('hour' in placeholder.value ? placeholde
 const placeholderMinute = computed(() => ('minute' in placeholder.value ? placeholder.value.minute : undefined))
 const twoDigitFormat = { minimumIntegerDigits: 2 }
 
+// Same resolution the typed segmented field already applies internally
+// (via Reka's own hourCycle handling) - deriving it here too, rather than
+// always defaulting the click stepper to 24-hour, keeps both surfaces
+// showing the same thing for the same value instead of "14" next to
+// "2:00 PM". h11/h12 are the two 12-hour cycles Intl can resolve to
+// (midnight as 0 or 12 respectively), h23/h24 the two 24-hour ones -
+// confirmed via direct check: en-US resolves h12, de-DE/ja-JP resolve h23.
+const resolvedIs12Hour = computed(() => {
+  if (props.hourCycle === 12)
+    return true
+  if (props.hourCycle === 24)
+    return false
+  const resolved = new Intl.DateTimeFormat(props.locale ?? 'en-US', { hour: 'numeric' }).resolvedOptions().hourCycle
+  return resolved === 'h11' || resolved === 'h12'
+})
+const isPM = computed(() => (placeholderHour.value ?? 0) >= 12)
+function to12Hour(hour24: number) {
+  const hour = hour24 % 12
+  return hour === 0 ? 12 : hour
+}
+function from12Hour(hour12: number, pm: boolean) {
+  const hour = hour12 % 12
+  return pm ? hour + 12 : hour
+}
+// What the stepper itself shows/accepts - 1-12 in 12-hour mode, 0-23
+// otherwise. The internal placeholder/modelValue always stays 24-hour
+// (0-23) regardless - only the display and stepper's own min/max flip.
+const displayHour = computed(() => (placeholderHour.value === undefined ? undefined : (resolvedIs12Hour.value ? to12Hour(placeholderHour.value) : placeholderHour.value)))
+
 // Adjusting the time always commits a value (creating one from
 // placeholder's current day if none is set yet) - symmetric with how
 // clicking a day already commits using whatever time placeholder holds, so
@@ -311,7 +342,16 @@ const twoDigitFormat = { minimumIntegerDigits: 2 }
 function setHour(hour: number | undefined) {
   if (hour === undefined)
     return
-  const value = ensureTimeCapable(placeholder.value).set({ hour })
+  const hour24 = resolvedIs12Hour.value ? from12Hour(hour, isPM.value) : hour
+  const value = ensureTimeCapable(placeholder.value).set({ hour: hour24 })
+  placeholder.value = value
+  emit('update:modelValue', normalizeForGranularity(value))
+}
+// Flips AM/PM by ±12 hours - the displayed 1-12 number stays exactly the
+// same (7:00 AM -> 7:00 PM), only the stored 24-hour value changes.
+function toggleMeridiem() {
+  const current = ensureTimeCapable(placeholder.value)
+  const value = current.set({ hour: isPM.value ? current.hour - 12 : current.hour + 12 })
   placeholder.value = value
   emit('update:modelValue', normalizeForGranularity(value))
 }
@@ -599,6 +639,7 @@ const rangeCellTriggerUi = {
     :is-date-unavailable="isDateUnavailable"
     :is-date-disabled="isDateDisabled"
     :locale="locale"
+    :hour-cycle="hourCycle"
     :number-of-months="effectiveNumberOfMonths"
     :paged-navigation="pagedNavigation"
     :week-starts-on="weekStartsOn"
@@ -778,9 +819,10 @@ const rangeCellTriggerUi = {
             <label :for="hourInputId" class="sr-only">{{ messages.hour }}</label>
             <InputNumber
               :id="hourInputId"
-              :model-value="placeholderHour"
-              :min="0"
-              :max="23"
+              :model-value="displayHour"
+              :min="resolvedIs12Hour ? 1 : 0"
+              :max="resolvedIs12Hour ? 12 : 23"
+              wrap
               :format-options="twoDigitFormat"
               size="sm"
               class="w-28"
@@ -795,12 +837,22 @@ const rangeCellTriggerUi = {
                 :min="0"
                 :max="59"
                 :step="minuteStep"
+                wrap
                 :format-options="twoDigitFormat"
                 size="sm"
                 class="w-28"
                 @update:model-value="setMinute"
               />
             </template>
+            <Button
+              v-if="resolvedIs12Hour"
+              variant="outline"
+              color="neutral"
+              size="sm"
+              @click="toggleMeridiem"
+            >
+              {{ isPM ? messages.pm : messages.am }}
+            </Button>
           </div>
           <Button
             v-if="closeOnSelect"

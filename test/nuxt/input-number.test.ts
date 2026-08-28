@@ -42,6 +42,31 @@ describe('inputNumber', () => {
     expect(buttons(wrapper).decrement.attributes('disabled')).toBeDefined()
   })
 
+  it('wrap cycles past the boundary instead of clamping, and never disables either button', async () => {
+    const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 12, min: 1, max: 12, wrap: true } })
+    const { decrement, increment } = buttons(wrapper)
+
+    await increment.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([1])
+    expect(increment.attributes('disabled')).toBeUndefined()
+
+    await wrapper.setProps({ modelValue: 1 })
+    await decrement.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([12])
+    expect(decrement.attributes('disabled')).toBeUndefined()
+  })
+
+  it('wrap also applies to a typed out-of-range value on blur', async () => {
+    const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, min: 0, max: 59, wrap: true } })
+    const input = wrapper.find('input')
+
+    await input.trigger('focus')
+    await input.setValue('65')
+    await input.trigger('blur')
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([5])
+  })
+
   it('the root only kills pointer-events when the input itself is disabled, not when a step button hits its own boundary', async () => {
     // Regression: has-[:disabled] (bare, unscoped) matches EITHER step
     // button being disabled at its own min/max boundary - completely

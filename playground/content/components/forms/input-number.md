@@ -38,6 +38,18 @@ changes the value (default `1`):
 <SInputNumber v-model="value" :min="0" :max="10" :step="2" />
 ```
 
+`wrap` changes what happens at the boundary - instead of clamping and
+disabling the button there, stepping past `max` cycles to `min` (and past
+`min` cycles to `max`), the same way an hour-of-day or a compass heading
+wraps around rather than getting stuck:
+
+::component-example{name="input-number-wrap"}
+::
+
+```vue-html
+<SInputNumber v-model="hour" :min="1" :max="12" wrap />
+```
+
 ### Format options
 
 `format-options` is a plain `Intl.NumberFormatOptions` object - the same
@@ -95,6 +107,7 @@ Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/
 | `min` | `number` | - |
 | `max` | `number` | - |
 | `step` | `number` | `1` |
+| `wrap` | `boolean` | `false` |
 | `placeholder` | `string` | - |
 | `formatOptions` | `Intl.NumberFormatOptions` | - |
 | `locale` | `string` | - |

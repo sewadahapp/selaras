@@ -22,6 +22,8 @@ const props = withDefaults(defineProps<{
   min?: number
   max?: number
   step?: number
+  /** When both `min` and `max` are set, stepping (click, arrow keys, or typing an out-of-range value) cycles past the boundary instead of clamping to it - e.g. an hour-of-day stepper going 12 -> 1, not getting stuck at 12. Default false (clamp), matching a plain bounded quantity. */
+  wrap?: boolean
   placeholder?: string
   /** Passed straight to `Intl.NumberFormat` for the read-only (blurred) display - e.g. `{ minimumIntegerDigits: 2 }` to zero-pad. Not applied while editing, so typing never fights reformatted text. */
   formatOptions?: Intl.NumberFormatOptions
@@ -68,6 +70,10 @@ const displayValue = computed(() => {
 })
 
 function clamp(value: number) {
+  if (props.wrap && props.min !== undefined && props.max !== undefined) {
+    const size = props.max - props.min + 1
+    return props.min + (((value - props.min) % size) + size) % size
+  }
   let result = value
   if (props.min !== undefined)
     result = Math.max(props.min, result)
@@ -117,8 +123,8 @@ function stepBy(delta: number) {
     editingValue.value = String(clamp(base + delta))
 }
 
-const canDecrement = computed(() => !props.disabled && (props.min === undefined || props.modelValue === undefined || props.modelValue > props.min))
-const canIncrement = computed(() => !props.disabled && (props.max === undefined || props.modelValue === undefined || props.modelValue < props.max))
+const canDecrement = computed(() => !props.disabled && (props.wrap || props.min === undefined || props.modelValue === undefined || props.modelValue > props.min))
+const canIncrement = computed(() => !props.disabled && (props.wrap || props.max === undefined || props.modelValue === undefined || props.modelValue < props.max))
 
 const icons = useIcons()
 const messages = useMessages()

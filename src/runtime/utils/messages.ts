@@ -24,6 +24,8 @@ export interface MessageRegistry {
   chooseYear: string
   hour: string
   minute: string
+  am: string
+  pm: string
   done: string
   increment: string
   decrement: string
@@ -72,6 +74,8 @@ export const defaultMessages: MessageRegistry = {
   chooseYear: 'Choose year',
   hour: 'Hour',
   minute: 'Minute',
+  am: 'AM',
+  pm: 'PM',
   done: 'Done',
   increment: 'Increment',
   decrement: 'Decrement',
