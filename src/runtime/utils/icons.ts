@@ -2,6 +2,7 @@ export interface IconRegistry {
   close: string
   check: string
   indeterminate: string
+  chevronUp: string
   chevronDown: string
   chevronRight: string
   chevronLeft: string
@@ -29,6 +30,7 @@ export const defaultIcons: IconRegistry = {
   close: 'ph:x',
   check: 'ph:check',
   indeterminate: 'ph:minus',
+  chevronUp: 'ph:caret-up',
   chevronDown: 'ph:caret-down',
   chevronRight: 'ph:caret-right',
   chevronLeft: 'ph:caret-left',

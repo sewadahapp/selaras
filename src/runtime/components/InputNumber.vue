@@ -9,6 +9,7 @@ import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
+import Icon from './Icon.vue'
 
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
 
@@ -28,9 +29,12 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   invalid?: boolean
   size?: InputNumberVariants['size']
+  /** 'horizontal' (default) flanks the input with two full-height buttons; 'vertical' replaces them with a single compact up/down pair pinned to the end edge. */
+  orientation?: InputNumberVariants['orientation']
   ui?: UiProp<InputNumberSlots>
 }>(), {
   step: 1,
+  orientation: 'horizontal',
 })
 
 const emit = defineEmits<{
@@ -119,10 +123,12 @@ const canIncrement = computed(() => !props.disabled && (props.max === undefined 
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('inputNumber', inputNumberTheme)
-const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: inputInvalid.value }))
+const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: inputInvalid.value, orientation: props.orientation }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
+const stepperProps = computed(() => resolveSlot(ui.value.stepper, props.ui?.stepper))
+const stepperButtonProps = computed(() => resolveSlot(ui.value.stepperButton, props.ui?.stepperButton))
 
 // Plain :ui overrides on nested Buttons, not independent theme slots -
 // Button already owns variant/size/hover/focus (see DatePicker.vue's
@@ -133,6 +139,7 @@ const stepButtonUi = { base: 'shrink-0' }
 <template>
   <div v-bind="rootProps">
     <Button
+      v-if="orientation === 'horizontal'"
       variant="ghost"
       color="neutral"
       :size="buttonSize"
@@ -160,6 +167,7 @@ const stepButtonUi = { base: 'shrink-0' }
       @keydown="keydown"
     >
     <Button
+      v-if="orientation === 'horizontal'"
       variant="ghost"
       color="neutral"
       :size="buttonSize"
@@ -170,5 +178,28 @@ const stepButtonUi = { base: 'shrink-0' }
       tabindex="-1"
       @click="stepBy(step)"
     />
+
+    <div v-else v-bind="stepperProps">
+      <button
+        type="button"
+        v-bind="stepperButtonProps"
+        :aria-label="messages.increment"
+        :disabled="!canIncrement"
+        tabindex="-1"
+        @click="stepBy(step)"
+      >
+        <Icon :name="icons.chevronUp" class="size-3" />
+      </button>
+      <button
+        type="button"
+        v-bind="stepperButtonProps"
+        :aria-label="messages.decrement"
+        :disabled="!canDecrement"
+        tabindex="-1"
+        @click="stepBy(-step)"
+      >
+        <Icon :name="icons.chevronDown" class="size-3" />
+      </button>
+    </div>
   </div>
 </template>

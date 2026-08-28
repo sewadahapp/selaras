@@ -101,6 +101,20 @@ describe('inputNumber', () => {
     expect(increment.attributes('aria-label')).toBe('Increment')
   })
 
+  it('orientation="vertical" renders a single compact up/down pair instead of two full-height buttons', async () => {
+    const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, orientation: 'vertical' } })
+    const all = wrapper.findAll('button')
+    expect(all).toHaveLength(2)
+
+    // Order in the DOM is increment-then-decrement (stacked up/down), unlike
+    // horizontal's decrement-then-increment (flanking left/right).
+    expect(all[0]!.attributes('aria-label')).toBe('Increment')
+    expect(all[1]!.attributes('aria-label')).toBe('Decrement')
+
+    await all[0]!.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([6])
+  })
+
   it('wires id/aria-describedby/aria-invalid through FormField', async () => {
     const wrapper = await mountSuspended(FormField, {
       props: { label: 'Quantity', error: 'Required' },

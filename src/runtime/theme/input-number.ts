@@ -7,11 +7,23 @@ export const inputNumberTheme = tv({
     // (decrement button, input, increment button) rather than being the
     // input itself, so the focus ring keys off :focus-within, and the
     // disabled look off :has(:disabled) instead of a bare `disabled` prop.
-    root: 'inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[:disabled]:opacity-50 has-[:disabled]:pointer-events-none',
+    // `relative` is unused in the default horizontal layout but required by
+    // `stepper` below once orientation="vertical" positions against it.
+    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[:disabled]:opacity-50 has-[:disabled]:pointer-events-none',
     // Borderless/transparent - root already carries the visual box, this is
     // just the editable text. Centered + tabular-nums so digits don't shift
-    // width as the value changes.
+    // width as the value changes - orientation="vertical" overrides the
+    // centering below, since the stepper only occupies the end edge there.
     input: 'w-full min-w-0 flex-1 border-0 bg-transparent text-center tabular-nums text-[var(--ui-text)] outline-none placeholder:text-[var(--ui-text-muted)] disabled:cursor-not-allowed',
+    // orientation="vertical" only - a compact up/down pair pinned to the
+    // end edge, replacing the two full-height flanking buttons.
+    stepper: 'absolute end-1 inset-y-1 flex flex-col justify-center gap-px',
+    // Each vertical stepper button - not a <SButton> composition (see
+    // DatePicker.vue's drill-down heading for the same precedent): Button's
+    // own size scale has no step small enough for two of these to stack
+    // inside one field's own height, and fighting its fixed sm classes with
+    // overrides is more fragile than a plain, purpose-built button here.
+    stepperButton: 'flex h-3.5 w-5 items-center justify-center rounded-[var(--ui-radius-sm)] text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)] disabled:opacity-50 disabled:pointer-events-none',
   },
   variants: {
     size: {
@@ -21,6 +33,10 @@ export const inputNumberTheme = tv({
     },
     invalid: {
       true: { root: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)]' },
+    },
+    orientation: {
+      horizontal: {},
+      vertical: { input: 'text-start ps-1.5 pe-7' },
     },
   },
   defaultVariants: {

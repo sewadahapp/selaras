@@ -52,6 +52,19 @@ plain number, so the two never fight each other:
 <SInputNumber v-model="value" :format-options="{ minimumIntegerDigits: 2 }" />
 ```
 
+### Orientation
+
+`orientation="vertical"` replaces the two full-height flanking buttons with
+a single compact up/down pair pinned to the field's end edge - useful when
+horizontal space is tight:
+
+::component-example{name="input-number-orientation"}
+::
+
+```vue-html
+<SInputNumber v-model="value" orientation="vertical" />
+```
+
 ### Sizes and states
 
 `size` takes `sm` / `md` / `lg`, `disabled` prevents interaction and dims
@@ -88,7 +101,8 @@ Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `ui` | `Partial<Record<'root' \| 'input', string \| object>>` | - |
+| `orientation` | `'horizontal' \| 'vertical'` | `horizontal` |
+| `ui` | `Partial<Record<'root' \| 'input' \| 'stepper' \| 'stepperButton', string \| object>>` | - |
 
 ## Emits
 
