@@ -137,6 +137,33 @@ picker straight at the year grid:
 Single-date mode only - `range`'s own heading and navigation are
 unaffected by `view`.
 
+### Month/year granularity
+
+`view` only changes which grid the popover *starts* on - picking a month
+there still drills down to a day. `granularity` is different: it changes
+what the *value itself* represents. Set it to `'month'` or `'year'` for a
+picker whose value stops at that precision - the day grid never renders,
+and picking a month or year is the final action, closing the popover
+(subject to `closeOnSelect`) instead of drilling further:
+
+::component-example{name="date-picker-month-granularity"}
+::
+
+```vue-html
+<SDatePicker v-model="month" granularity="month" />
+<SDatePicker v-model="year" granularity="year" />
+```
+
+The underlying date library has no month-only or year-only value type, so
+`modelValue` stays the same `DateValue` either way - `granularity="month"`
+fixes the day to `1`, and `granularity="year"` fixes both month and day to
+`1`. Segmented field mode only shows the segments that matter
+(month+year, or just year), and the button-mode/formatted text defaults
+adjust too (`"June 2024"` / `"2024"`) - both still overridable via `format`.
+The heading can still drill *up* (e.g. a month-granularity picker jumping
+to year view to reach a distant year quickly) - only the terminal, "picking
+this is the answer" direction changes. Single-date mode only.
+
 ### Sizes
 
 `size` takes `sm` / `md` / `lg`, scaling the field, segments, and calendar-
@@ -203,6 +230,7 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `closeOnSelect` | `boolean` | `true` |
 | `triggerMode` | `'field' \| 'button'` | `field` |
 | `view` | `'date' \| 'month' \| 'year'` (single-date mode only) | `date` |
+| `granularity` | `'day' \| 'month' \| 'year'` (single-date mode only) | `day` |
 | `format` | `Intl.DateTimeFormatOptions` | `{ dateStyle: 'medium' }` |
 | `allowNonContiguousRanges` | `boolean` (range only) | `false` |
 | `fixedDate` | `'start' \| 'end'` (range only) | - |

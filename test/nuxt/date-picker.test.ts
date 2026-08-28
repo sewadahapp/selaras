@@ -1,3 +1,4 @@
+import type { DOMWrapper } from '@vue/test-utils'
 import { CalendarDate } from '@internationalized/date'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -329,5 +330,72 @@ describe('datePicker', () => {
     await openRangeCalendar(wrapper)
 
     expect(document.body.querySelector('button[aria-label="Choose month"]')).toBeFalsy()
+  })
+
+  it('granularity=month opens straight to the month grid - the day grid never renders', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { granularity: 'month', modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+
+    expect(document.body.querySelectorAll('td button').length).toBe(0)
+    expect(viewGridButton('Jun')).toBeTruthy()
+  })
+
+  it('granularity=month: selecting a month is terminal - it closes the popover and emits a day=1 value', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { granularity: 'month', modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+
+    await clickAndWait(viewGridButton('Dec')!)
+
+    expect(document.body.querySelectorAll('button').length).toBe(0)
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDate
+    expect(value.toString()).toBe('2024-12-01')
+  })
+
+  it('granularity=year opens straight to the year grid', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { granularity: 'year', modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+
+    expect(document.body.querySelectorAll('td button').length).toBe(0)
+    expect(viewGridButton('2024')).toBeTruthy()
+  })
+
+  it('granularity=year: selecting a year is terminal - it closes the popover and emits a month=1/day=1 value', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { granularity: 'year', modelValue: new CalendarDate(2024, 6, 15) } })
+    await openCalendar(wrapper)
+
+    const otherYear = viewGridButton('2030') ?? viewGridButton('2018')
+    await clickAndWait(otherYear!)
+
+    expect(document.body.querySelectorAll('button').length).toBe(0)
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDate
+    expect(value.month).toBe(1)
+    expect(value.day).toBe(1)
+  })
+
+  it('granularity=month field-mode segments show only month and year, with no stray/doubled separator', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { granularity: 'month', modelValue: new CalendarDate(2024, 6, 15) } })
+
+    const labels = wrapper.findAll('[role="spinbutton"]').map((w: DOMWrapper<Element>) => w.attributes('aria-label')?.trim().replace(',', ''))
+    expect(labels).toEqual(['month', 'year'])
+
+    const segmentText = wrapper.findAll('[data-reka-date-field-segment]').map((w: DOMWrapper<Element>) => w.text()).join('')
+    expect(segmentText).toBe('6/2024')
+  })
+
+  it('granularity=year field-mode segments show only year, with no leftover separator', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { granularity: 'year', modelValue: new CalendarDate(2024, 6, 15) } })
+
+    const labels = wrapper.findAll('[role="spinbutton"]').map((w: DOMWrapper<Element>) => w.attributes('aria-label')?.trim().replace(',', ''))
+    expect(labels).toEqual(['year'])
+
+    const segmentText = wrapper.findAll('[data-reka-date-field-segment]').map((w: DOMWrapper<Element>) => w.text()).join('')
+    expect(segmentText).toBe('2024')
+  })
+
+  it('granularity=month formats the button-mode trigger as month + year', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'month', triggerMode: 'button', modelValue: new CalendarDate(2024, 6, 15) },
+    })
+    expect(wrapper.text()).toContain('June 2024')
   })
 })

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import type { DateRange } from 'reka-ui'
+import type { DateRange, SegmentPart } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import type { DatePickerSlots } from '../theme/date-picker'
 import type { UiProp } from '../utils/ui'
@@ -81,6 +81,8 @@ const props = withDefaults(defineProps<{
   triggerMode?: 'field' | 'button'
   /** Which grid the popover shows - 'date' (default), or drill up to 'month'/'year' by clicking the heading. Single-date mode only; range mode's heading stays static. */
   view?: 'date' | 'month' | 'year'
+  /** The value's own precision - 'day' (default) keeps picking a full date. 'month'/'year' make picking a month/year the terminal action (day fixed to 1, and month too for 'year') instead of a waypoint to the day grid - the day grid never renders in that case. Single-date mode only. */
+  granularity?: 'day' | 'month' | 'year'
   /** Only meaningful in triggerMode "button" - the segmented field's own per-segment display is already locale-shaped by Reka's own DateFieldInput. Default: `{ dateStyle: 'medium' }`. */
   format?: Intl.DateTimeFormatOptions
   /** Range mode only - lets the two ends of a range land in different, non-adjacent selections. */
@@ -97,6 +99,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   closeOnSelect: true,
   triggerMode: 'field',
+  granularity: 'day',
 })
 
 const emit = defineEmits<{
@@ -139,8 +142,11 @@ function clear() {
 }
 
 // Month/year view drill-down - single-date mode only (see the plan's scope
-// note: range mode's heading/prev/next stay Reka's own static ones).
-const internalView = ref<'date' | 'month' | 'year'>(props.view ?? 'date')
+// note: range mode's heading/prev/next stay Reka's own static ones). When
+// granularity isn't 'day', the day grid never renders - 'date' is simply
+// unreachable, so the deepest/default view becomes the granularity itself.
+const defaultView = computed(() => (props.granularity !== 'day' ? props.granularity : 'date'))
+const internalView = ref<'date' | 'month' | 'year'>(props.view ?? defaultView.value)
 watch(() => props.view, (value) => {
   if (value !== undefined)
     internalView.value = value
@@ -156,6 +162,22 @@ function drillUp() {
     setView('year')
 }
 
+// The date library has no month-only/year-only value type, so a
+// granularity-limited value stays a full DateValue with the parts below its
+// own precision fixed to 1 - applied on every path a value can change
+// (typed segments below, or a terminal grid click), so two "month values"
+// that took different entry paths never end up with different, meaningless
+// day components and silently fail a consumer's own equality/compare check.
+function normalizeForGranularity(value: DateValue | undefined) {
+  if (!value)
+    return value
+  if (props.granularity === 'year')
+    return value.set({ month: 1, day: 1 })
+  if (props.granularity === 'month')
+    return value.set({ day: 1 })
+  return value
+}
+
 // Bound via v-model:placeholder on DatePickerRoot - Reka's own documented
 // mechanism for programmatically controlling which month the day grid shows
 // (confirmed by reading DateFieldRoot's source). Selecting a month/year cell
@@ -166,7 +188,7 @@ const placeholder = ref<DateValue>(singleModelValue.value ?? today(getLocalTimeZ
 const isOpen = ref(false)
 watch(isOpen, (open) => {
   if (!open)
-    setView('date')
+    setView(defaultView.value)
 })
 
 const monthFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', { month: 'short' }))
@@ -207,10 +229,23 @@ function isYearDisabled(year: number) {
 
 function selectMonth(date: DateValue) {
   placeholder.value = date
+  if (props.granularity === 'month') {
+    emit('update:modelValue', normalizeForGranularity(date))
+    if (props.closeOnSelect)
+      isOpen.value = false
+    return
+  }
   setView('date')
 }
 function selectYear(year: number) {
-  placeholder.value = placeholder.value.set({ year })
+  const value = placeholder.value.set({ year })
+  placeholder.value = value
+  if (props.granularity === 'year') {
+    emit('update:modelValue', normalizeForGranularity(value))
+    if (props.closeOnSelect)
+      isOpen.value = false
+    return
+  }
   setView('month')
 }
 function goToPreviousYear() {
@@ -226,7 +261,40 @@ function goToNextDecade() {
   placeholder.value = placeholder.value.add({ years: 12 })
 }
 
-const dateFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? { dateStyle: 'medium' }))
+// Reka's own field-segment granularity only spans 'day'|'hour'|'minute'|
+// 'second' (confirmed by reading its type) - there's no primitive-level
+// "month+year only" segment set to ask for, so the rendered list is
+// filtered here instead. A literal separator is only kept when it sits
+// between two *kept* segments - dropping one that would otherwise dangle at
+// an edge or double up next to a dropped segment, without assuming any
+// fixed day/month/year ordering (that varies by locale).
+function visibleSegments(segments: { part: SegmentPart, value: string }[]) {
+  if (props.granularity === 'day')
+    return segments
+  const keptParts: SegmentPart[] = props.granularity === 'year' ? ['year'] : ['month', 'year']
+  const result: typeof segments = []
+  for (const segment of segments) {
+    if (segment.part === 'literal') {
+      if (result.length && result[result.length - 1].part !== 'literal')
+        result.push(segment)
+    }
+    else if (keptParts.includes(segment.part)) {
+      result.push(segment)
+    }
+  }
+  while (result.length && result[result.length - 1].part === 'literal')
+    result.pop()
+  return result
+}
+
+const defaultFormat = computed<Intl.DateTimeFormatOptions>(() => {
+  if (props.granularity === 'year')
+    return { year: 'numeric' }
+  if (props.granularity === 'month')
+    return { month: 'long', year: 'numeric' }
+  return { dateStyle: 'medium' }
+})
+const dateFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? defaultFormat.value))
 const formattedValue = computed(() => {
   if (props.range) {
     const range = props.modelValue as DateRange | undefined
@@ -288,6 +356,15 @@ const buttonTriggerUi = computed(() => ({
 // under RTL - same simple transform Pagination's Prev/Next use, no compound
 // rotate state needed here either.
 const navButtonUi = { leadingIcon: 'rtl:-scale-x-100' }
+// The drill-down heading itself is a plain <button>, not a Button
+// composition (see cellTriggerUi's own comment for why these stay inline
+// overrides rather than theme slots) - range mode's own DateRangePickerHeading
+// stays a non-interactive <span>, so this affordance can't live in the
+// shared `heading` theme slot without misleadingly hover-highlighting text
+// that isn't clickable there. Disabled at year view (the top of the drill-up
+// chain, where a click is a no-op) rather than left clickable-looking with
+// nothing to do.
+const headingButtonUi = 'rounded-[var(--ui-radius-sm)] px-1.5 py-0.5 transition-colors hover:bg-[var(--ui-bg-elevated)] disabled:hover:bg-transparent disabled:cursor-default'
 const cellTriggerUi = {
   base: 'relative data-[today]:font-semibold data-[today]:after:absolute data-[today]:after:bottom-1 data-[today]:after:left-1/2 data-[today]:after:size-1 data-[today]:after:-translate-x-1/2 data-[today]:after:rounded-full data-[today]:after:bg-[var(--ui-primary)] data-[outside-view]:opacity-40 data-[unavailable]:opacity-40 data-[unavailable]:line-through',
 }
@@ -460,12 +537,12 @@ const rangeCellTriggerUi = {
     :close-on-select="closeOnSelect"
     :disabled="disabled"
     v-bind="rootProps"
-    @update:model-value="(value) => emit('update:modelValue', value)"
+    @update:model-value="(value) => emit('update:modelValue', normalizeForGranularity(value as DateValue | undefined))"
   >
     <DatePickerAnchor as-child>
       <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
         <DatePickerField v-slot="{ segments }">
-          <template v-for="segment in segments" :key="segment.part">
+          <template v-for="(segment, index) in visibleSegments(segments)" :key="`${segment.part}-${index}`">
             <DatePickerInput as="span" :part="segment.part" v-bind="segmentProps">
               {{ segment.value }}
             </DatePickerInput>
@@ -532,7 +609,7 @@ const rangeCellTriggerUi = {
           />
 
           <DatePickerHeading v-if="internalView === 'date'" v-slot="{ headingValue }">
-            <button type="button" v-bind="headingProps" :aria-label="messages.chooseMonth" @click="drillUp">
+            <button type="button" :class="headingButtonUi" v-bind="headingProps" :aria-label="messages.chooseMonth" @click="drillUp">
               {{ headingValue }}
             </button>
           </DatePickerHeading>
@@ -540,7 +617,9 @@ const rangeCellTriggerUi = {
             v-else
             type="button"
             dir="ltr"
+            :class="headingButtonUi"
             v-bind="headingProps"
+            :disabled="internalView === 'year'"
             :aria-label="internalView === 'month' ? messages.chooseYear : undefined"
             @click="drillUp"
           >
