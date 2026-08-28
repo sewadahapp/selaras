@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
   hourId?: string
   minuteId?: string
 }>(), {
-  minuteStep: 5,
+  minuteStep: 1,
 })
 
 const emit = defineEmits<{
@@ -60,10 +60,24 @@ function from12Hour(hour12: number, pm: boolean) {
 // otherwise. `hour` (the prop) always stays 24-hour regardless.
 const displayHour = computed(() => (resolvedIs12Hour.value ? to12Hour(props.hour) : props.hour))
 
+// On a real clock, the hour and the AM/PM half of the day aren't
+// independent - advancing past 12 crosses into the other half (11 PM -> 12
+// AM), and stepping back does the same in reverse (12 AM -> 11 PM).
+// Without this, wrap-around clamps the *displayed* 1-12 number in
+// isolation, leaving AM/PM stuck - clicking the hour stepper could never
+// actually reach a time like 12:10 AM from 11:xx PM, only the AM/PM button
+// itself could cross that boundary. These are the only two adjacent-value
+// transitions where a single ±1 step crosses it either direction.
 function setHour(value: number | undefined) {
   if (value === undefined)
     return
-  emit('update:hour', resolvedIs12Hour.value ? from12Hour(value, isPM.value) : value)
+  if (!resolvedIs12Hour.value) {
+    emit('update:hour', value)
+    return
+  }
+  const crossesBoundary = (displayHour.value === 11 && value === 12) || (displayHour.value === 12 && value === 11)
+  const pm = crossesBoundary ? !isPM.value : isPM.value
+  emit('update:hour', from12Hour(value, pm))
 }
 function setMinute(value: number | undefined) {
   if (value === undefined)

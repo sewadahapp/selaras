@@ -561,6 +561,45 @@ describe('datePicker', () => {
     expect(doneButton).toBeUndefined()
   })
 
+  it('incrementing the hour past 11 PM crosses into 12 AM (midnight), not stuck in the same meridiem', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', modelValue: new CalendarDateTime(2024, 6, 15, 23, 0) },
+    })
+    await openCalendar(wrapper)
+
+    const hourIncrement = document.body.querySelector('button[aria-label="Increment"]')
+    await clickAndWait(hourIncrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.hour).toBe(0)
+  })
+
+  it('decrementing the hour past 12 AM crosses back into 11 PM the previous half', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', modelValue: new CalendarDateTime(2024, 6, 15, 0, 0) },
+    })
+    await openCalendar(wrapper)
+
+    const hourDecrement = document.body.querySelector('button[aria-label="Decrement"]')
+    await clickAndWait(hourDecrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.hour).toBe(23)
+  })
+
+  it('incrementing the hour from 12 AM to 1 AM stays in the same half (no meridiem flip)', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { granularity: 'hour', modelValue: new CalendarDateTime(2024, 6, 15, 0, 0) },
+    })
+    await openCalendar(wrapper)
+
+    const hourIncrement = document.body.querySelector('button[aria-label="Increment"]')
+    await clickAndWait(hourIncrement as HTMLElement)
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as CalendarDateTime
+    expect(value.hour).toBe(1)
+  })
+
   it('minuteStep controls the minute stepper click increment', async () => {
     wrapper = await mountSuspended(DatePicker, {
       props: { granularity: 'minute', minuteStep: 15, modelValue: new CalendarDateTime(2024, 6, 15, 14, 0) },
@@ -621,7 +660,7 @@ describe('datePicker', () => {
     const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as Time
     expect(value).toBeInstanceOf(Time)
     expect(value.hour).toBe(14)
-    expect(value.minute).toBe(35)
+    expect(value.minute).toBe(31)
     expect(document.body.querySelector('button[aria-label="Increment"]')).toBeTruthy()
   })
 

@@ -194,9 +194,10 @@ const value = ref<DateValue>()
 `granularity="hour"` shows only the hour stepper; `"minute"` adds a second
 one next to it. Both are built from
 [InputNumber](/components/forms/input-number) - type a value directly or
-use its ±buttons/arrow keys. `minute-step` (default `5`) only affects the
+use its ±buttons/arrow keys. `minute-step` (default `1`) only affects the
 minute stepper's click/arrow-key increment; typing still commits any exact
-minute. Picking a day preserves whatever time is already set, and
+minute - pass `5`/`15`/etc for a coarser "pick an appointment time" step.
+Picking a day preserves whatever time is already set, and
 adjusting the time commits a value using today's date if none has been
 picked yet - either can be touched first. Single-date mode only.
 
@@ -309,7 +310,7 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `triggerMode` | `'field' \| 'button'` | `field` |
 | `view` | `'date' \| 'month' \| 'year'` (single-date mode only) | `date` |
 | `granularity` | `'year' \| 'month' \| 'day' \| 'hour' \| 'minute'` (single-date mode only) | `day` |
-| `minuteStep` | `number` (hour/minute granularity only) | `5` |
+| `minuteStep` | `number` (hour/minute granularity only) | `1` |
 | `hourCycle` | `12 \| 24` (hour/minute granularity only) | locale default |
 | `format` | `Intl.DateTimeFormatOptions` | `{ dateStyle: 'medium' }` |
 | `allowNonContiguousRanges` | `boolean` (range only) | `false` |

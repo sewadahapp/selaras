@@ -93,7 +93,7 @@ const props = withDefaults(defineProps<{
   view?: 'date' | 'month' | 'year'
   /** The value's own precision - 'day' (default) keeps picking a full date. 'month'/'year' make picking a month/year the terminal action (day fixed to 1, and month too for 'year') instead of a waypoint to the day grid - the day grid never renders in that case. 'hour'/'minute' add a time-of-day section below the day grid instead (value becomes a time-capable CalendarDateTime, still just a plain DateValue). Single-date mode only. */
   granularity?: 'year' | 'month' | 'day' | 'hour' | 'minute'
-  /** hour/minute granularity only - the minute stepper's ±click/arrow-key increment (default 5); typing still commits any exact minute. */
+  /** hour/minute granularity only - the minute stepper's ±click/arrow-key increment (default 1); typing still commits any exact minute. Pass 5/15/etc for a coarser "pick an appointment time" step. */
   minuteStep?: number
   /** hour/minute granularity only - forces the hour stepper (and the typed field's own hour/dayPeriod segments) to 12-hour or 24-hour. Defaults to whatever `locale` itself resolves to (e.g. 12-hour for en-US, 24-hour for de-DE) - passed straight through to the underlying primitive, which already drives the typed field's own hour cycle. */
   hourCycle?: 12 | 24
@@ -114,7 +114,7 @@ const props = withDefaults(defineProps<{
   closeOnSelect: true,
   triggerMode: 'field',
   granularity: 'day',
-  minuteStep: 5,
+  minuteStep: 1,
 })
 
 const emit = defineEmits<{
