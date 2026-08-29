@@ -37,4 +37,37 @@ describe('checkbox', () => {
     const wrapper = await mountSuspended(Checkbox, { props: { invalid: true } })
     expect(wrapper.find('button').attributes('aria-invalid')).toBe('true')
   })
+
+  it('scales the box per size', async () => {
+    const sm = await mountSuspended(Checkbox, { props: { size: 'sm' } })
+    const lg = await mountSuspended(Checkbox, { props: { size: 'lg' } })
+    expect(sm.find('button').classes()).toContain('size-3.5')
+    expect(lg.find('button').classes()).toContain('size-5.5')
+  })
+
+  it('applies the color prop to the checked-state box classes', async () => {
+    const wrapper = await mountSuspended(Checkbox, { props: { color: 'danger' } })
+    const classes = wrapper.find('button').classes().join(' ')
+    expect(classes).toContain('data-[state=checked]:bg-[var(--ui-danger)]')
+  })
+
+  it('renders description as a second, muted line under the label', async () => {
+    const wrapper = await mountSuspended(Checkbox, {
+      props: { label: 'Accept terms', description: 'Read the fine print.' },
+    })
+    expect(wrapper.text()).toContain('Accept terms')
+    expect(wrapper.text()).toContain('Read the fine print.')
+  })
+
+  it('forwards required onto the underlying control', async () => {
+    const wrapper = await mountSuspended(Checkbox, { props: { required: true } })
+    expect(wrapper.find('button').attributes('aria-required')).toBe('true')
+  })
+
+  it('wraps in a bordered box that highlights when checked, with variant="card"', async () => {
+    const wrapper = await mountSuspended(Checkbox, { props: { variant: 'card', modelValue: true } })
+    const classes = wrapper.find('label').classes().join(' ')
+    expect(classes).toContain('border')
+    expect(classes).toContain('has-[[data-state=checked]]:border-[var(--ui-primary)]')
+  })
 })
