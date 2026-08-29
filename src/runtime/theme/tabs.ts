@@ -19,7 +19,11 @@ export const tabsTheme = tv({
     // theme/select.ts's own `content` slot already uses for
     // --reka-combobox-trigger-width. The transition is the only thing
     // actually driving the slide - JS never animates it directly.
-    indicator: 'absolute translate-x-[var(--reka-tabs-indicator-position)] w-[var(--reka-tabs-indicator-size)] transition-[transform,width] duration-200 ease-out',
+    // `translate-x-*` compiles to the standalone CSS `translate` property
+    // (not `transform`) in this version of Tailwind, so the transition
+    // list has to say `translate`, not `transform` - watching the wrong
+    // property meant this never animated at all, just snapped instantly.
+    indicator: 'absolute translate-x-[var(--reka-tabs-indicator-position)] w-[var(--reka-tabs-indicator-size)] transition-[translate,width] duration-200 ease-out',
     content: 'pt-4 focus-visible:outline-none data-[state=active]:animate-in data-[state=active]:fade-in-0',
   },
   variants: {
