@@ -92,6 +92,11 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
     </slot>
     <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
     <slot />
-    <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    <!-- Same reasoning as the leading `icon` slot above - a named slot so a
+      consumer can swap the trailing glyph entirely (DatePicker's button-mode
+      trigger, for one), while `trailingIcon` alone still covers the common case. -->
+    <slot name="trailing-icon" :class="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon).class">
+      <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    </slot>
   </Primitive>
 </template>

@@ -114,4 +114,15 @@ describe('button', () => {
     ghostWrapper.element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
     expect(ghostWrapper.element.querySelector('span[aria-hidden="true"]')).not.toBeNull()
   })
+
+  it('lets the trailing-icon slot replace the trailing glyph entirely, still receiving the same size-driven class', async () => {
+    const wrapper = await mountSuspended(Button, {
+      props: { trailingIcon: 'lucide:arrow-right', size: 'lg' },
+      slots: { 'trailing-icon': '<template #default="{ class: klass }"><span class="my-trailing-icon" :class="klass">*</span></template>' },
+    })
+    expect(wrapper.findAll('.iconify')).toHaveLength(0)
+    const custom = wrapper.find('.my-trailing-icon')
+    expect(custom.exists()).toBe(true)
+    expect(custom.classes()).toContain('size-5')
+  })
 })
