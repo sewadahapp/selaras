@@ -57,6 +57,10 @@ interface UseTableProps {
   pageIndex?: number
   expanded?: any
   columnVisibility?: Record<string, boolean>
+  manualSorting?: boolean
+  manualFiltering?: boolean
+  manualPagination?: boolean
+  pageCount?: number
 }
 
 interface UseTableEmit {
@@ -145,6 +149,23 @@ export function useTable(props: UseTableProps, emit: UseTableEmit, columns: Comp
     // real hierarchical subRows - this table's own expansion is manual
     // (detail content via the `expanded` slot), not a subRow tree.
     getRowCanExpand: () => true,
+    // Opts out of the local sorted/filtered/paginated row models - state
+    // still lives here (sorting/globalFilter/pageIndex above, still
+    // emitting their own update:* events the normal way), only the row
+    // model itself defers to whatever `data` already is. Captured once at
+    // setup, not wrapped in `computed()` - a table's manual/local mode
+    // isn't realistically expected to flip reactively mid-session (it's
+    // established once, alongside how `data` itself is sourced), and
+    // wrapping `manualPagination` specifically in a reactive computed was
+    // found to corrupt @tanstack/vue-table's own internal page-index
+    // auto-reset tracking (Previous/Next silently stopped changing pages,
+    // even though the resolved boolean value was identical either way) -
+    // a real bug in this exact adapter version, not a misuse on our part.
+    // Kept all three plain for consistency rather than reactive-except-one.
+    manualSorting: !!props.manualSorting,
+    manualFiltering: !!props.manualFiltering,
+    manualPagination: !!props.manualPagination,
+    pageCount: props.manualPagination ? (props.pageCount ?? -1) : undefined,
     state: computed(() => ({
       sorting: sorting.value,
       rowSelection: rowSelection.value,

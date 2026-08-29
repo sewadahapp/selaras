@@ -3,14 +3,14 @@ import type { TableSlots } from '../theme/table'
 import type { UiProp } from '../utils/ui'
 import { FlexRender } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
-import { computed, h, nextTick, onMounted, onUnmounted, ref, useSlots, watch, watchEffect } from 'vue'
+import { computed, getCurrentInstance, h, nextTick, onMounted, onUnmounted, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { useTable } from '../composables/use-table'
 import { tableTheme } from '../theme/table'
 import { collectColumnPinning, convertChildrenToColumns } from '../utils/table-columns'
 import { exportTableToCsv } from '../utils/table-export'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 import Button from './Button.vue'
 import Checkbox from './Checkbox.vue'
 import Icon from './Icon.vue'
@@ -40,6 +40,16 @@ const props = withDefaults(defineProps<{
   /** Enables vertical scroll with a sticky header, capped at this CSS height (e.g. '24rem'). */
   scrollHeight?: string
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
+  /** Opts out of the local sorted/filtered/paginated row models - set when `data` is already sorted/filtered/paginated server-side, so this table doesn't redundantly (and incorrectly) reprocess an already-server-processed slice. `sorting`/`globalFilter`/`pageIndex` still drive the UI and still emit their `update:*` events the same way - only the *local row model* is skipped, not the state itself. */
+  manualSorting?: boolean
+  manualFiltering?: boolean
+  manualPagination?: boolean
+  /** Required alongside `manualPagination` - the real total page count, since it can no longer be derived from `data.length` once pagination is server-driven. */
+  pageCount?: number
+  /** Adds a class to a body row based on its own data - e.g. highlighting a flagged row. Called per row, not per render, so keep it cheap. */
+  rowClass?: (row: unknown) => string | undefined
+  /** Same as `rowClass`, for inline styles. */
+  rowStyle?: (row: unknown) => Record<string, string> | undefined
   ui?: UiProp<TableSlots>
 }>(), {
   size: 'md',
@@ -52,6 +62,8 @@ const emit = defineEmits<{
   'update:pageIndex': [value: number]
   'update:expanded': [value: any]
   'update:columnVisibility': [value: Record<string, boolean>]
+  'rowClick': [row: unknown, event: MouseEvent]
+  'rowContextmenu': [row: unknown, event: MouseEvent]
 }>()
 
 const slots = useSlots()
@@ -116,6 +128,37 @@ const wrapperProps = computed(() => resolveSlot(ui.value.wrapper, props.ui?.wrap
 const tableProps = computed(() => resolveSlot(ui.value.table, props.ui?.table))
 const theadProps = computed(() => resolveSlot(ui.value.thead, props.ui?.thead))
 const trProps = computed(() => resolveSlot(ui.value.tr, props.ui?.tr))
+
+// cursor-pointer only when a consumer actually listens for row-click - a
+// real affordance that the row is clickable, not a decoration every table
+// gets regardless of whether clicking does anything. useAttrs()/$attrs
+// doesn't work for this - Vue excludes a listener from $attrs entirely
+// once its event is declared via defineEmits (it's treated as
+// "recognized", not fallthrough), so `attrs.onRowClick` is always
+// undefined here. vnode.props is the raw, pre-filtered props/attrs bag
+// and does still include it - read fresh inside the render (not cached in
+// a computed, since vnode replacement isn't itself a tracked reactive
+// dependency) so it reflects whichever vnode this specific render pass has.
+const instance = getCurrentInstance()
+function isRowClickable() {
+  return !!(instance?.vnode.props as Record<string, unknown> | null)?.onRowClick
+}
+function bodyRowProps(rowOriginal: unknown) {
+  const extraClass = [
+    isRowClickable() ? 'cursor-pointer' : undefined,
+    props.rowClass?.(rowOriginal),
+  ].filter(Boolean).join(' ') || undefined
+  const base = resolveSlot(ui.value.tr, withFallthroughClass(extraClass, props.ui?.tr))
+  const rowStyle = props.rowStyle?.(rowOriginal)
+  return rowStyle ? { ...base, style: { ...(base as { style?: Record<string, string> }).style, ...rowStyle } } : base
+}
+function onRowClick(rowOriginal: unknown, event: MouseEvent) {
+  emit('rowClick', rowOriginal, event)
+}
+function onRowContextmenu(rowOriginal: unknown, event: MouseEvent) {
+  emit('rowContextmenu', rowOriginal, event)
+}
+
 const thProps = computed(() => resolveSlot(ui.value.th, props.ui?.th))
 const thSortableClass = computed(() => ui.value.thSortable())
 const sortIconProps = computed(() => resolveSlot(ui.value.sortIcon, props.ui?.sortIcon))
@@ -136,6 +179,18 @@ const columnToggleItemProps = computed(() => resolveSlot(ui.value.columnToggleIt
 
 const hasFooter = computed(() =>
   table.getFooterGroups().some(group => group.headers.some(header => header.column.columnDef.footer)),
+)
+
+// The nested <Pagination> computes its own page count from total/itemsPerPage
+// - it has no way to read TanStack's own getPageCount() directly. Normally
+// that's fine (getFilteredRowModel().rows.length IS the real total), but
+// once manualPagination is set, `data` only ever holds the current page's
+// rows - passing that as `total` would make Pagination think there's just
+// one page. `pageCount * effectivePageSize` reproduces the real page count
+// through Pagination's own Math.ceil(total / itemsPerPage) math exactly
+// (no rounding drift), without needing a real row-count total at all.
+const paginationTotal = computed(() =>
+  props.manualPagination ? table.getPageCount() * effectivePageSize.value : table.getFilteredRowModel().rows.length,
 )
 
 // --- column pinning: sticky offsets, measured from real rendered widths ---
@@ -303,7 +358,11 @@ defineExpose({
             <td :colspan="table.getVisibleLeafColumns().length" :style="{ height: `${virtualPaddingTop}px`, padding: 0, border: 0 }" />
           </tr>
           <template v-for="row in visibleRows" :key="row.id">
-            <tr v-bind="trProps">
+            <tr
+              v-bind="bodyRowProps(row.original)"
+              @click="onRowClick(row.original, $event)"
+              @contextmenu="onRowContextmenu(row.original, $event)"
+            >
               <td
                 v-for="cell in row.getVisibleCells()"
                 :key="cell.id"
@@ -352,7 +411,7 @@ defineExpose({
       <div v-bind="paginationButtonsProps">
         <Pagination
           :page="pageIndex + 1"
-          :total="table.getFilteredRowModel().rows.length"
+          :total="paginationTotal"
           :items-per-page="effectivePageSize"
           :size="size"
           @update:page="(value) => table.setPageIndex(value - 1)"

@@ -43,9 +43,13 @@ const globalFilter = ref('')
 
 Every column is sortable by default (click a header, or focus it and press
 <kbd>Enter</kbd>/<kbd>Space</kbd>, to cycle ascending/descending/none) - set
-`sortable="false"` on a column to opt out. `filterable` adds a per-column text
-filter input to that column's header. `selectable` adds a leading checkbox
-column wired to `v-model:row-selection`.
+`sortable="false"` on a column to opt out. Shift-click a second sortable
+header to add it as a secondary sort without clearing the first (a third
+click on the same header clears its own sort instead of cycling back to
+ascending) - both come from TanStack Table's own defaults, not something
+`STable` implements itself. `filterable` adds a per-column text filter
+input to that column's header. `selectable` adds a leading checkbox column
+wired to `v-model:row-selection`.
 
 `STable` doesn't render a global search input itself - wire one up yourself
 and bind it to `v-model:global-filter`, same compositional approach as the
@@ -152,6 +156,41 @@ for the detail content, receiving `{ row }` (the row's original data object):
 
 Expansion state is uncontrolled by default; bind `v-model:expanded` if you
 need to read or drive it yourself (e.g. to expand a row programmatically).
+
+### Row click
+
+`@row-click`/`@row-contextmenu` fire with the row's original data object
+and the native event - useful for navigating to a detail page, for
+instance. A row only gets a pointer cursor when `@row-click` actually has
+a listener attached, so a plain, non-interactive table isn't misleadingly
+styled as clickable:
+
+::component-example{name="table-row-click"}
+::
+
+```vue-html
+<STable :data="users" @row-click="(row) => router.push(`/users/${row.id}`)">
+  <SColumn field="name" header="Name" />
+  <SColumn field="email" header="Email" />
+  <SColumn field="role" header="Role" />
+</STable>
+```
+
+### Per-row styling
+
+`row-class`/`row-style` are called with each row's own data, letting you
+style a row conditionally - highlighting an overdue order, say:
+
+::component-example{name="table-row-styling"}
+::
+
+```vue-html
+<STable :data="orders" :row-class="(row) => row.overdue ? 'bg-[var(--ui-danger-soft)]' : undefined">
+  <SColumn field="id" header="Order" />
+  <SColumn field="customer" header="Customer" />
+  <SColumn field="total" header="Total" />
+</STable>
+```
 
 ### Column visibility toggle
 
@@ -287,6 +326,48 @@ const tableRef = ref()
 </template>
 ```
 
+### Server-side / manual mode
+
+By default, `STable` sorts/filters/paginates `data` itself, locally, every
+time. Set `manual-sorting`/`manual-filtering`/`manual-pagination` when
+`data` is already sorted/filtered/paginated server-side instead - each one
+opts that specific concern out of the local row model, so `STable` doesn't
+redundantly (and incorrectly) reprocess a slice the server already
+handled. `sorting`/`global-filter`/`page-index` still drive the UI and
+still emit their own `update:*` events the normal way; only the local row
+model backing them changes. `manual-pagination` also needs `page-count` -
+the real total page count, since it can no longer be derived from
+`data.length` once pagination is server-driven:
+
+```vue-html
+<script setup lang="ts">
+const sorting = ref([])
+const pageIndex = ref(0)
+const pageCount = ref(1)
+const rows = ref([])
+
+watch([sorting, pageIndex], async () => {
+  const result = await fetchUsers({ sorting: sorting.value, page: pageIndex.value })
+  rows.value = result.rows
+  pageCount.value = result.pageCount
+}, { immediate: true })
+</script>
+
+<template>
+  <STable
+    v-model:sorting="sorting"
+    v-model:page-index="pageIndex"
+    :data="rows"
+    :page-count="pageCount"
+    manual-sorting
+    manual-pagination
+  >
+    <SColumn field="name" header="Name" />
+    <SColumn field="email" header="Email" />
+  </STable>
+</template>
+```
+
 ### Escape hatch: raw column defs
 
 For full TanStack type inference (or features `<SColumn>` doesn't expose),
@@ -348,7 +429,20 @@ reimplementing it here.
 | `columnToggle` | `boolean` | `false` |
 | `scrollHeight` | `string` | - |
 | `virtualize` | `boolean \| { estimateSize?: number; overscan?: number }` | `false` |
+| `manualSorting` | `boolean` | `false` |
+| `manualFiltering` | `boolean` | `false` |
+| `manualPagination` | `boolean` | `false` |
+| `pageCount` | `number` | - (required with `manualPagination`) |
+| `rowClass` | `(row: unknown) => string \| undefined` | - |
+| `rowStyle` | `(row: unknown) => Record<string, string> \| undefined` | - |
 | `ui` | `Partial<Record<TableSlot, string \| object>>` | - |
+
+## Emits
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `rowClick` | `(row, event: MouseEvent)` | Fired when a body row is clicked |
+| `rowContextmenu` | `(row, event: MouseEvent)` | Fired when a body row is right-clicked |
 
 ### SColumn
 

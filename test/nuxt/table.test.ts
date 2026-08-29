@@ -372,4 +372,126 @@ describe('table', () => {
     expect(lastPage.find('button[aria-label="Previous"]').attributes('disabled')).toBeUndefined()
     expect(lastPage.find('button[aria-label="Next"]').attributes('disabled')).toBeDefined()
   })
+
+  it('emits rowClick with the row\'s original data when a body row is clicked', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+      },
+      attrs: { onRowClick: () => {} },
+    })
+
+    await wrapper.findAll('tbody tr')[1]!.trigger('click')
+
+    expect(wrapper.emitted('rowClick')?.[0]?.[0]).toEqual({ name: 'Bob' })
+  })
+
+  it('emits rowContextmenu when a body row is right-clicked', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+      },
+    })
+
+    await wrapper.find('tbody tr').trigger('contextmenu')
+
+    expect(wrapper.emitted('rowContextmenu')?.[0]?.[0]).toEqual({ name: 'Alice' })
+  })
+
+  it('only shows a pointer cursor on rows when a row-click listener is actually attached', async () => {
+    const withoutListener = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+      },
+    })
+    expect(withoutListener.find('tbody tr').classes()).not.toContain('cursor-pointer')
+
+    const withListener = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+      },
+      attrs: { onRowClick: () => {} },
+    })
+    expect(withListener.find('tbody tr').classes()).toContain('cursor-pointer')
+  })
+
+  it('applies rowClass/rowStyle per row, driven by that row\'s own data', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice', overdue: true }, { name: 'Bob', overdue: false }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        rowClass: (row: any) => row.overdue ? 'flagged' : undefined,
+        rowStyle: (row: any) => row.overdue ? { color: 'red' } : undefined,
+      },
+    })
+
+    const rows = wrapper.findAll('tbody tr')
+    expect(rows[0]!.classes()).toContain('flagged')
+    expect(rows[0]!.attributes('style')).toContain('color: red')
+    expect(rows[1]!.classes()).not.toContain('flagged')
+    expect(rows[1]!.attributes('style')).toBeUndefined()
+  })
+
+  it('does not locally re-sort data when manualSorting is set - the consumer owns the actual order', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name', enableSorting: true }],
+        manualSorting: true,
+      },
+    })
+
+    await wrapper.find('th').trigger('click')
+    await nextTick()
+
+    // sorting state still changes (and is emitted)...
+    expect(wrapper.emitted('update:sorting')?.[0]?.[0]).toHaveLength(1)
+    // ...but the actual row order is untouched, since manualSorting opts
+    // out of the local sorted row model - re-sorting is now the caller's job.
+    expect(wrapper.findAll('tbody tr').map(r => r.text())).toEqual(['Charlie', 'Alice', 'Bob'])
+  })
+
+  it('uses pageCount instead of deriving it from data.length when manualPagination is set, and Prev/Next still navigate normally', async () => {
+    // Only 2 rows in `data` (as if this were one already-server-paginated
+    // page), but pageCount says there are really 5 pages total - if this
+    // table incorrectly fell back to deriving page count from data.length,
+    // it would think there's only 1 page and hide pagination entirely.
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        manualPagination: true,
+        pageCount: 5,
+        pageIndex: 1,
+      },
+    })
+
+    expect(wrapper.findAll('[data-type="page"]')).toHaveLength(5)
+
+    const nextButton = wrapper.find('button[aria-label="Next"]')
+    expect(nextButton.attributes('disabled')).toBeUndefined()
+    await nextButton.trigger('click')
+    await nextTick()
+
+    expect(wrapper.emitted('update:pageIndex')?.at(-1)).toEqual([2])
+  })
+
+  it('does not locally re-filter data when manualFiltering is set - the consumer owns the actual filtering', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }, { name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        globalFilter: 'zzz-no-match',
+        manualFiltering: true,
+      },
+    })
+
+    // a real (non-manual) global filter of 'zzz-no-match' would leave zero
+    // rows - manualFiltering means `data` is trusted as already filtered.
+    expect(wrapper.findAll('tbody tr')).toHaveLength(2)
+  })
 })
