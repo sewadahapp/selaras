@@ -35,4 +35,49 @@ describe('switch', () => {
     const wrapper = await mountSuspended(Switch, { props: { modelValue: true } })
     expect(wrapper.find('button').attributes('data-state')).toBe('checked')
   })
+
+  it('scales track height per size', async () => {
+    const sm = await mountSuspended(Switch, { props: { size: 'sm' } })
+    const lg = await mountSuspended(Switch, { props: { size: 'lg' } })
+    expect(sm.find('button').classes()).toContain('h-3.5')
+    expect(lg.find('button').classes()).toContain('h-5.5')
+  })
+
+  it('applies the color prop to the checked-state track/thumb classes', async () => {
+    const wrapper = await mountSuspended(Switch, { props: { color: 'danger' } })
+    const classes = wrapper.find('button').classes().join(' ')
+    expect(classes).toContain('data-[state=checked]:bg-[var(--ui-danger)]')
+  })
+
+  it('renders a spinning loading icon in the thumb when loading is set', async () => {
+    const wrapper = await mountSuspended(Switch, { props: { loading: true } })
+    const icon = wrapper.find('.iconify')
+    expect(icon.exists()).toBe(true)
+    expect(icon.classes()).toContain('animate-spin')
+  })
+
+  it('renders checkedIcon/uncheckedIcon based on modelValue', async () => {
+    const on = await mountSuspended(Switch, {
+      props: { modelValue: true, checkedIcon: 'ph:check', uncheckedIcon: 'ph:x' },
+    })
+    expect(on.find('.iconify').classes()).toContain('i-ph:check')
+
+    const off = await mountSuspended(Switch, {
+      props: { modelValue: false, checkedIcon: 'ph:check', uncheckedIcon: 'ph:x' },
+    })
+    expect(off.find('.iconify').classes()).toContain('i-ph:x')
+  })
+
+  it('renders description as a second, muted line under the label', async () => {
+    const wrapper = await mountSuspended(Switch, {
+      props: { label: 'Marketing emails', description: 'Occasional updates.' },
+    })
+    expect(wrapper.text()).toContain('Marketing emails')
+    expect(wrapper.text()).toContain('Occasional updates.')
+  })
+
+  it('forwards required onto the underlying control', async () => {
+    const wrapper = await mountSuspended(Switch, { props: { required: true } })
+    expect(wrapper.find('button').attributes('aria-required')).toBe('true')
+  })
 })
