@@ -587,12 +587,16 @@ const rangeCellTriggerUi = {
             variant="text"
             color="neutral"
             :size="effectiveSize"
-            :trailing-icon="clearable && hasValue ? undefined : icons.calendar"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
             :ui="buttonTriggerUi"
           >
             {{ hasValue ? formattedValue : messages.pickDate }}
+            <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
+              <slot name="trigger-icon">
+                <Icon :name="icons.calendar" :class="iconClass" />
+              </slot>
+            </template>
           </Button>
         </DateRangePickerTrigger>
         <Button
@@ -728,12 +732,16 @@ const rangeCellTriggerUi = {
             variant="text"
             color="neutral"
             :size="effectiveSize"
-            :trailing-icon="clearable && hasValue ? undefined : icons.clock"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
             :ui="buttonTriggerUi"
           >
             {{ hasValue ? formattedTimeValue : messages.pickTime }}
+            <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
+              <slot name="trigger-icon">
+                <Icon :name="icons.clock" :class="iconClass" />
+              </slot>
+            </template>
           </Button>
         </PopoverTrigger>
         <Button
@@ -853,12 +861,16 @@ const rangeCellTriggerUi = {
             variant="text"
             color="neutral"
             :size="effectiveSize"
-            :trailing-icon="clearable && hasValue ? undefined : icons.calendar"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
             :ui="buttonTriggerUi"
           >
             {{ hasValue ? formattedValue : messages.pickDate }}
+            <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
+              <slot name="trigger-icon">
+                <Icon :name="icons.calendar" :class="iconClass" />
+              </slot>
+            </template>
           </Button>
         </DatePickerTrigger>
         <Button

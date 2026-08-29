@@ -740,4 +740,25 @@ describe('datePicker', () => {
 
     expect(document.body.querySelector('.my-footer')?.textContent).toBe('Custom footer')
   })
+
+  it('the trigger-icon slot replaces the field-mode trigger button\'s default icon', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { modelValue: new CalendarDate(2024, 1, 15) },
+      slots: { 'trigger-icon': '<span class="my-trigger-icon">*</span>' },
+    })
+
+    const triggerButton = wrapper.find('button[aria-label="Date picker"]')
+    expect(triggerButton.find('.my-trigger-icon').exists()).toBe(true)
+    expect(triggerButton.find('.iconify').exists()).toBe(false)
+  })
+
+  it('the trigger-icon slot also replaces button-mode\'s trailing icon', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { triggerMode: 'button', modelValue: new CalendarDate(2024, 1, 15) },
+      slots: { 'trigger-icon': '<span class="my-trigger-icon">*</span>' },
+    })
+
+    expect(wrapper.find('.my-trigger-icon').exists()).toBe(true)
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+  })
 })

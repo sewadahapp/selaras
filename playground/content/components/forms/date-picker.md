@@ -349,7 +349,7 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | --- | --- | --- |
 | `day` | `{ date, dayValue, selected, disabled }` (range mode adds `selectionStart`, `selectionEnd`, `highlighted`) | Custom content inside a day-cell button (single-date and range grids) |
 | `clear-icon` | - | Replaces the clear button's icon (default: `ph:x`) |
-| `trigger-icon` | - | Replaces the field-mode trigger button's icon (default: `ph:calendar`/`ph:clock`) - button-mode's own trigger isn't covered, see [Button trigger](#button-trigger) |
+| `trigger-icon` | - | Replaces the trigger button's icon in both trigger modes (default: `ph:calendar`/`ph:clock`) |
 | `footer` | - | Content appended below the calendar/time content, above the Done button |
 
 ## Emits
