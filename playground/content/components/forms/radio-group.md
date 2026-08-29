@@ -89,6 +89,21 @@ with or without `description`:
 />
 ```
 
+### Colors
+
+`color` sets the checked-state ring/dot color (and, combined with
+`variant="card"`, the card's own highlight border/tint) - unchecked always
+stays the same neutral ring regardless:
+
+::component-example{name="radio-group-colors"}
+::
+
+```vue-html
+<SRadioGroup v-model="primary" color="primary" :items="['one', 'two']" />
+<SRadioGroup v-model="success" color="success" :items="['one', 'two']" />
+<SRadioGroup v-model="danger" color="danger" :items="['one', 'two']" />
+```
+
 ### States
 
 Setting `disabled` on an individual item (rather than the whole
@@ -172,6 +187,7 @@ not something to configure here.
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `orientation` | `'vertical' \| 'horizontal'` | `vertical` |
 | `variant` | `'default' \| 'card'` | `default` |
 | `ui` | `Partial<Record<'root' \| 'itemWrapper' \| 'item' \| 'indicator' \| 'label' \| 'description', string \| object>>` | - |

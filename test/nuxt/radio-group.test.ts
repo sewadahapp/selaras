@@ -58,4 +58,17 @@ describe('radioGroup', () => {
     expect(buttons[0]!.attributes('disabled')).toBeUndefined()
     expect(buttons[1]!.attributes('disabled')).toBeDefined()
   })
+
+  it('applies the color prop to the checked-state item classes', async () => {
+    const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one', 'two'], color: 'danger' } })
+    const classes = wrapper.find('button').classes().join(' ')
+    expect(classes).toContain('data-[state=checked]:ring-[var(--ui-danger)]')
+  })
+
+  it('applies the matching card-highlight compound variant for color + variant="card"', async () => {
+    const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one', 'two'], color: 'danger', variant: 'card' } })
+    const classes = wrapper.find('label').classes().join(' ')
+    expect(classes).toContain('has-[[data-state=checked]]:border-[var(--ui-danger)]')
+    expect(classes).toContain('has-[[data-state=checked]]:bg-[var(--ui-danger-soft)]')
+  })
 })

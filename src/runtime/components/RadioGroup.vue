@@ -28,6 +28,7 @@ const props = defineProps<{
   disabled?: boolean
   invalid?: boolean
   size?: RadioGroupVariants['size']
+  color?: RadioGroupVariants['color']
   orientation?: RadioGroupVariants['orientation']
   variant?: RadioGroupVariants['variant']
   ui?: UiProp<RadioGroupSlots>
@@ -57,6 +58,7 @@ const theme = useComponentTheme('radioGroup', radioGroupTheme)
 const ui = computed(() => theme.value({
   invalid: radioGroupInvalid.value,
   size: effectiveSize.value,
+  color: props.color,
   orientation: props.orientation,
   variant: props.variant,
 }))
