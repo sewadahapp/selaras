@@ -49,6 +49,54 @@ they'd otherwise fall inside a collapsed range:
 <SPagination v-model:page="page" :total="200" :items-per-page="10" :sibling-count="1" :show-edges="false" />
 ```
 
+### Links
+
+`to` maps a page number to a route/href, rendering every control as a real
+`<a>` instead of a plain button - useful for crawlable, SEO-friendly
+pagination on a content site. Clicking still drives the page change through
+the same handling as a plain button (no full navigation) - `to` only
+changes what markup renders, not the behavior:
+
+::component-example{name="pagination-links"}
+::
+
+```vue-html
+<SPagination v-model:page="page" :total="120" :items-per-page="10" :to="(p) => `/posts?page=${p}`" />
+```
+
+### Hiding controls
+
+`show-controls` (on by default) toggles Previous/Next - set it `false` for
+a bare page-number-only strip:
+
+::component-example{name="pagination-show-controls"}
+::
+
+```vue-html
+<SPagination v-model:page="page" :total="50" :items-per-page="10" :show-controls="false" />
+```
+
+### Color & variant
+
+`color`/`variant` style every inactive control (First/Prev/Next/Last and
+non-current page numbers); `active-color`/`active-variant` style the
+current page's own button separately:
+
+::component-example{name="pagination-colors"}
+::
+
+```vue-html
+<SPagination
+  v-model:page="page"
+  :total="50"
+  :items-per-page="10"
+  color="primary"
+  variant="outline"
+  active-color="danger"
+  active-variant="solid"
+/>
+```
+
 ### First/Last buttons
 
 `show-first-last` adds jump-to-first/jump-to-last buttons on either end,
@@ -97,8 +145,14 @@ underlying primitive, not something this component reimplements.
 | `siblingCount` | `number` | `1` |
 | `showEdges` | `boolean` | `true` |
 | `showFirstLast` | `boolean` | `false` |
+| `showControls` | `boolean` | `true` |
+| `to` | `(page: number) => string` | - |
 | `disabled` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'text'` | `'ghost'` |
+| `activeColor` | same as `color` | `'primary'` |
+| `activeVariant` | same as `variant` | `'solid'` |
 | `ui` | `Partial<Record<'root' \| 'list' \| 'ellipsis', string \| object>>` | - |
 
 ## Emits

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
+import type { buttonTheme } from '../theme/button'
 import type { PaginationSlots } from '../theme/pagination'
 import type { UiProp } from '../utils/ui'
 import {
@@ -12,7 +13,7 @@ import {
   PaginationPrev,
   PaginationRoot,
 } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, resolveComponent } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { paginationTheme } from '../theme/pagination'
@@ -20,6 +21,7 @@ import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 
 type PaginationVariants = VariantProps<typeof paginationTheme>
+type ButtonVariants = VariantProps<typeof buttonTheme>
 
 defineOptions({ inheritAttrs: false })
 
@@ -34,8 +36,18 @@ const props = withDefaults(defineProps<{
   showEdges?: boolean
   /** Adds jump-to-first/jump-to-last buttons alongside the always-present Prev/Next. */
   showFirstLast?: boolean
+  /** Set `false` to hide Previous/Next entirely, for a bare page-number-only strip. */
+  showControls?: boolean
+  /** Maps a page number to a route/href, rendering every control as a real link (progressive enhancement - clicking still drives the page change through Reka's own handling, same as a plain button). */
+  to?: (page: number) => string
   disabled?: boolean
   size?: PaginationVariants['size']
+  /** Inactive controls (First/Prev/Next/Last and non-current page numbers). */
+  color?: ButtonVariants['color']
+  variant?: ButtonVariants['variant']
+  /** The current page's own button. */
+  activeColor?: ButtonVariants['color']
+  activeVariant?: ButtonVariants['variant']
   ui?: UiProp<PaginationSlots>
 }>(), {
   total: 0,
@@ -44,6 +56,11 @@ const props = withDefaults(defineProps<{
   siblingCount: 1,
   showEdges: true,
   showFirstLast: false,
+  showControls: true,
+  color: 'neutral',
+  variant: 'ghost',
+  activeColor: 'primary',
+  activeVariant: 'solid',
 })
 
 const emit = defineEmits<{
@@ -63,6 +80,17 @@ const ellipsisProps = computed(() => resolveSlot(ui.value.ellipsis, props.ui?.el
 // enough here (unlike Table's expand chevron) since these icons have no
 // separate "expanded" toggle state to interact with the mirror transform.
 const mirroredIconUi = { leadingIcon: 'rtl:-scale-x-100' }
+
+// resolveComponent (not a bare `as="NuxtLink"` string) matches the pattern
+// Button.md's own docs already establish for link rendering - Reka's
+// Primitive ends up calling Vue's `h()` directly with whatever `as` is, and
+// `h()` doesn't resolve a plain string against the global component
+// registry the way a compiled template's `<component :is="...">` would.
+const NuxtLink = resolveComponent('NuxtLink')
+
+function linkProps(page: number) {
+  return props.to ? { as: NuxtLink, to: props.to(page) } : {}
+}
 </script>
 
 <template>
@@ -78,7 +106,7 @@ const mirroredIconUi = { leadingIcon: 'rtl:-scale-x-100' }
     v-bind="rootProps"
     @update:page="(value) => emit('update:page', value)"
   >
-    <template #default="{ page: currentPage }">
+    <template #default="{ page: currentPage, pageCount }">
       <!--
         No `:disabled` bound on any nested Button below - Reka's own
         PaginationPrev/Next/First/Last/ListItem each already compute their
@@ -93,10 +121,10 @@ const mirroredIconUi = { leadingIcon: 'rtl:-scale-x-100' }
         `undefined` on every page but the disabled boundary.
       -->
       <PaginationFirst v-if="showFirstLast" as-child>
-        <Button variant="ghost" color="neutral" :size="size" :icon="icons.chevronsLeft" :aria-label="messages.first" :ui="mirroredIconUi" />
+        <Button :variant="variant" :color="color" :size="size" :icon="icons.chevronsLeft" :aria-label="messages.first" :ui="mirroredIconUi" v-bind="linkProps(1)" />
       </PaginationFirst>
-      <PaginationPrev as-child>
-        <Button variant="ghost" color="neutral" :size="size" :icon="icons.chevronLeft" :aria-label="messages.previous" :ui="mirroredIconUi" />
+      <PaginationPrev v-if="showControls" as-child>
+        <Button :variant="variant" :color="color" :size="size" :icon="icons.chevronLeft" :aria-label="messages.previous" :ui="mirroredIconUi" v-bind="linkProps(currentPage - 1)" />
       </PaginationPrev>
 
       <PaginationList v-slot="{ items }" v-bind="listProps">
@@ -106,10 +134,11 @@ const mirroredIconUi = { leadingIcon: 'rtl:-scale-x-100' }
           </PaginationEllipsis>
           <PaginationListItem v-else :value="item.value" as-child>
             <Button
-              :variant="item.value === currentPage ? 'solid' : 'ghost'"
-              :color="item.value === currentPage ? 'primary' : 'neutral'"
+              :variant="item.value === currentPage ? activeVariant : variant"
+              :color="item.value === currentPage ? activeColor : color"
               :size="size"
               square
+              v-bind="linkProps(item.value)"
             >
               {{ item.value }}
             </Button>
@@ -117,11 +146,11 @@ const mirroredIconUi = { leadingIcon: 'rtl:-scale-x-100' }
         </template>
       </PaginationList>
 
-      <PaginationNext as-child>
-        <Button variant="ghost" color="neutral" :size="size" :icon="icons.chevronRight" :aria-label="messages.next" :ui="mirroredIconUi" />
+      <PaginationNext v-if="showControls" as-child>
+        <Button :variant="variant" :color="color" :size="size" :icon="icons.chevronRight" :aria-label="messages.next" :ui="mirroredIconUi" v-bind="linkProps(currentPage + 1)" />
       </PaginationNext>
       <PaginationLast v-if="showFirstLast" as-child>
-        <Button variant="ghost" color="neutral" :size="size" :icon="icons.chevronsRight" :aria-label="messages.last" :ui="mirroredIconUi" />
+        <Button :variant="variant" :color="color" :size="size" :icon="icons.chevronsRight" :aria-label="messages.last" :ui="mirroredIconUi" v-bind="linkProps(pageCount)" />
       </PaginationLast>
     </template>
   </PaginationRoot>

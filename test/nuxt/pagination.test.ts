@@ -57,4 +57,40 @@ describe('pagination', () => {
     expect(buttons[0]!.attributes('aria-current')).toBeUndefined()
     expect(buttons[2]!.attributes('aria-current')).toBeUndefined()
   })
+
+  it('renders no Previous/Next when showControls is false', async () => {
+    const wrapper = await mountSuspended(Pagination, { props: { total: 30, itemsPerPage: 10, showControls: false } })
+    expect(wrapper.find('button[aria-label="Previous"]').exists()).toBe(false)
+    expect(wrapper.find('button[aria-label="Next"]').exists()).toBe(false)
+  })
+
+  it('renders every control as a real link with the page-derived href when to is set', async () => {
+    const wrapper = await mountSuspended(Pagination, {
+      props: { total: 30, itemsPerPage: 10, defaultPage: 2, to: (p: number) => `/posts?page=${p}` },
+    })
+    const pageLinks = wrapper.findAll('[data-type="page"]')
+    expect(pageLinks.map(el => el.element.tagName)).toEqual(['A', 'A', 'A'])
+    expect(pageLinks.map(el => el.attributes('href'))).toEqual(['/posts?page=1', '/posts?page=2', '/posts?page=3'])
+
+    const next = wrapper.find('[aria-label="Next"]')
+    expect(next.element.tagName).toBe('A')
+    expect(next.attributes('href')).toBe('/posts?page=3')
+  })
+
+  it('applies color/variant to inactive controls and activeColor/activeVariant to the current page', async () => {
+    const wrapper = await mountSuspended(Pagination, {
+      props: {
+        total: 30,
+        itemsPerPage: 10,
+        defaultPage: 2,
+        color: 'primary',
+        variant: 'outline',
+        activeColor: 'danger',
+        activeVariant: 'solid',
+      },
+    })
+    const [page1, page2] = wrapper.findAll('[data-type="page"]')
+    expect(page1!.classes().join(' ')).toContain('ring-[var(--ui-primary)]')
+    expect(page2!.classes().join(' ')).toContain('bg-[var(--ui-danger)]')
+  })
 })
