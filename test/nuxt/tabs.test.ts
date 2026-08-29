@@ -99,4 +99,54 @@ describe('tabs', () => {
     // its own state.
     expect(wrapper.text()).toContain('First panel content')
   })
+
+  it('the label slot replaces a tab\'s label content, scoped with item and index', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: { items: [{ label: 'One', value: 'a' }, { label: 'Two', value: 'b' }], defaultValue: 'a' },
+      slots: {
+        label: '<template #label="{ item, index }">[{{ index }}:{{ item.label }}]</template>',
+        a: () => 'First panel content',
+      },
+    })
+    await nextTick()
+
+    expect(wrapper.text()).toContain('[0:One]')
+    expect(wrapper.text()).toContain('[1:Two]')
+  })
+
+  it('falls back to the plain label when the label slot is unset', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: { items: [{ label: 'One', value: 'a' }], defaultValue: 'a' },
+      slots: { a: () => 'First panel content' },
+    })
+    await nextTick()
+
+    expect(wrapper.text()).toContain('One')
+  })
+
+  it('renders an item\'s icon before its label when set', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: {
+        items: [{ label: 'One', value: 'a', icon: 'lucide:user' }, { label: 'Two', value: 'b' }],
+        defaultValue: 'a',
+      },
+      slots: { a: () => 'First panel content' },
+    })
+    await nextTick()
+
+    const icons = wrapper.findAll('.iconify')
+    expect(icons).toHaveLength(1)
+    expect(icons[0]!.classes()).toContain('i-lucide:user')
+  })
+
+  it('applies the pill variant\'s classes to the list', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: { items: [{ label: 'One', value: 'a' }], variant: 'pill', defaultValue: 'a' },
+      slots: { a: () => 'First panel content' },
+    })
+    await nextTick()
+
+    const list = wrapper.find('[role="tablist"]')
+    expect(list.classes()).toContain('rounded-full')
+  })
 })
