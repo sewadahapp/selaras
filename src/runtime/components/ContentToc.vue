@@ -31,6 +31,12 @@ const props = withDefaults(defineProps<{
   isNested: false,
 })
 
+defineSlots<{
+  title?: (props: object) => any
+  /** Replaces a link's content - scoped with `active`, matching linkProps' own computation. */
+  link?: (props: { link: TocLink, active: boolean }) => any
+}>()
+
 const isRoot = !props.isNested
 const localActiveIds = ref<Set<string>>(new Set())
 const activeIds = computed(() => props.isNested ? (props.activeIds ?? new Set<string>()) : localActiveIds.value)
@@ -277,6 +283,12 @@ function linkProps(link: TocLink) {
     'data-toc-link': 'true',
     'data-depth': link.depth,
     'data-active': active || undefined,
+    // 'location' (not 'page') is the WAI-ARIA token for "the current
+    // location within an environment" - a TOC/breadcrumb use case
+    // specifically, not pagination. The rail itself only echoes this
+    // visually (see railContainer's own aria-hidden below), so this is
+    // the only place a screen reader learns which section is active.
+    'aria-current': active ? 'location' : undefined,
   }
 }
 </script>
@@ -293,6 +305,7 @@ function linkProps(link: TocLink) {
       <div
         v-if="railHeight > 0"
         v-bind="resolveSlot(ui.railContainer, props.ui?.railContainer)"
+        aria-hidden="true"
         :style="{ width: `${RAIL_WIDTH}px`, height: `${railHeight}px` }"
       >
         <div v-bind="resolveSlot(ui.railTrack, props.ui?.railTrack)" :style="railMaskStyle" />
@@ -308,11 +321,17 @@ function linkProps(link: TocLink) {
 
       <ul v-bind="resolveSlot(ui.list, props.ui?.list)">
         <li v-for="link in links" :key="link.id" v-bind="resolveSlot(ui.item, props.ui?.item)">
-          <a :href="`#${link.id}`" v-bind="linkProps(link)">{{ link.text }}</a>
+          <a :href="`#${link.id}`" v-bind="linkProps(link)">
+            <slot name="link" :link="link" :active="activeIds.has(link.id)">{{ link.text }}</slot>
+          </a>
           <div v-if="link.children?.length" v-bind="resolveSlot(ui.content, props.ui?.content)">
             <!-- Vue's SFC self-recursion resolves by this file's own bare name -
                  keep it unprefixed even though the public component is SContentToc. -->
-            <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui" />
+            <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui">
+              <template #link="scope">
+                <slot name="link" v-bind="scope" />
+              </template>
+            </ContentToc>
           </div>
         </li>
       </ul>
@@ -320,9 +339,15 @@ function linkProps(link: TocLink) {
 
     <ul v-else v-bind="resolveSlot(ui.list, props.ui?.list)">
       <li v-for="link in links" :key="link.id" v-bind="resolveSlot(ui.item, props.ui?.item)">
-        <a :href="`#${link.id}`" v-bind="linkProps(link)">{{ link.text }}</a>
+        <a :href="`#${link.id}`" v-bind="linkProps(link)">
+          <slot name="link" :link="link" :active="activeIds.has(link.id)">{{ link.text }}</slot>
+        </a>
         <div v-if="link.children?.length" v-bind="resolveSlot(ui.content, props.ui?.content)">
-          <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui" />
+          <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui">
+            <template #link="scope">
+              <slot name="link" v-bind="scope" />
+            </template>
+          </ContentToc>
         </div>
       </li>
     </ul>

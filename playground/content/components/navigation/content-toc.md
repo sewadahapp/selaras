@@ -37,6 +37,35 @@ primary-colored active overlay - no JS animation library involved, just a
 CSS `transition` on the overlay's position/size, the same "CSS-only
 animation" constraint every other component in this library follows.
 
+### Custom link content
+
+The `link` slot replaces a link's plain-text content - scoped with `link`
+and `active`, so a single template can react to whichever section is
+currently being read:
+
+::component-example{name="content-toc-custom-link"}
+::
+
+```vue-html
+<SContentToc :links="links">
+  <template #link="{ link, active }">
+    <span class="flex items-center gap-2">
+      {{ link.text }}
+      <SBadge v-if="active" label="Reading" color="primary" size="sm" />
+    </span>
+  </template>
+</SContentToc>
+```
+
+### Accessibility
+
+The active link(s) get `aria-current="location"` - the WAI-ARIA token for
+"the current location within an environment," matching a table of
+contents specifically (not `"page"`, which is for pagination). The rail
+itself is purely decorative (`aria-hidden`) - it's a sighted-only visual
+echo of what `aria-current` already conveys on the real links, not a
+separate source of information.
+
 ## Props
 
 | Prop | Type | Default |
@@ -47,6 +76,7 @@ animation" constraint every other component in this library follows.
 
 ## Slots
 
-| Slot | Description |
-| --- | --- |
-| `title` | Custom title content, overrides `title` prop |
+| Slot | Props | Description |
+| --- | --- | --- |
+| `title` | - | Custom title content, overrides `title` prop |
+| `link` | `{ link, active }` | Replaces a link's content |

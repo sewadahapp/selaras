@@ -73,4 +73,47 @@ describe('contentToc', () => {
     expect(wrapper.find('nav').exists()).toBe(false)
     expect(wrapper.find('p').exists()).toBe(false)
   })
+
+  it('the link slot replaces a link\'s content, scoped with link and active', async () => {
+    const wrapper = await mountSuspended(ContentToc, {
+      props: {
+        links: [{ id: 'intro', text: 'Introduction', depth: 2 }],
+        isNested: true,
+        activeIds: new Set(['intro']),
+      },
+      slots: { link: '<template #link="{ link, active }">[{{ link.text }}:{{ active }}]</template>' },
+    })
+    expect(wrapper.find('a').text()).toBe('[Introduction:true]')
+  })
+
+  it('the link slot also applies to a nested child link', async () => {
+    const wrapper = await mountSuspended(ContentToc, {
+      props: {
+        links: [{ id: 'parent', text: 'Parent', depth: 2, children: [{ id: 'child', text: 'Child', depth: 3 }] }],
+      },
+      slots: { link: '<template #link="{ link }">[{{ link.text }}]</template>' },
+    })
+    const nestedLink = wrapper.findAll('a').find(a => a.text() === '[Child]')
+    expect(nestedLink).toBeTruthy()
+  })
+
+  it('falls back to the plain text when the link slot is unset', async () => {
+    const wrapper = await mountSuspended(ContentToc, {
+      props: { links: [{ id: 'intro', text: 'Introduction', depth: 2 }] },
+    })
+    expect(wrapper.find('a').text()).toBe('Introduction')
+  })
+
+  it('gives the active link aria-current="location", and no aria-current on an inactive one', async () => {
+    const wrapper = await mountSuspended(ContentToc, {
+      props: {
+        links: [{ id: 'intro', text: 'Introduction', depth: 2 }, { id: 'usage', text: 'Usage', depth: 2 }],
+        isNested: true,
+        activeIds: new Set(['intro']),
+      },
+    })
+    const links = wrapper.findAll('a')
+    expect(links[0]!.attributes('aria-current')).toBe('location')
+    expect(links[1]!.attributes('aria-current')).toBeUndefined()
+  })
 })
