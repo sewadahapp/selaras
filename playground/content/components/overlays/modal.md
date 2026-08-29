@@ -42,6 +42,28 @@ Always pass `title` (or a `header` slot containing a heading) - without one,
 the dialog has no accessible name for screen readers, and dev mode warns
 about it.
 
+### Fullscreen
+
+`fullscreen` takes the dialog full-viewport instead of the default centered
+card - useful for image viewers, complex forms, or anything that benefits
+from the extra room.
+
+::component-example{name="modal-fullscreen"}
+::
+
+```vue-html
+<SModal v-model="open" fullscreen title="Fullscreen" />
+```
+
+### Scrollable content
+
+The dialog is capped to the viewport height - a body taller than that
+scrolls internally on its own, while the header and footer stay pinned in
+place.
+
+::component-example{name="modal-scrollable"}
+::
+
 ### Intercepting dismissal
 
 `SModal` doesn't override Reka UI's own defaults (Escape and an outside
@@ -58,6 +80,21 @@ unsaved changes:
 />
 ```
 
+For the simpler, all-or-nothing case - a dialog that must not be dismissed
+by anything but an explicit choice - `dismissible="false"` disables both
+Escape and outside-click at once, and `close="false"` removes the close
+button too:
+
+::component-example{name="modal-dismissible"}
+::
+
+```vue-html
+<SModal v-model="open" :dismissible="false" :close="false" title="Confirm your plan" />
+```
+
+The two raw events still fire even with `dismissible="false"` - useful for
+something like a shake animation to signal the dialog won't close that way.
+
 ## Props
 
 | Prop | Type | Default |
@@ -65,6 +102,9 @@ unsaved changes:
 | `modelValue` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
+| `fullscreen` | `boolean` | `false` |
+| `dismissible` | `boolean` | `true` |
+| `close` | `boolean` | `true` |
 | `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'title' \| 'description' \| 'close' \| 'body' \| 'footer', string \| object>>` | - |
 
 ## Events

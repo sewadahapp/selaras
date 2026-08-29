@@ -9,18 +9,39 @@ import { modalTheme } from '../theme/modal'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Button from './Button.vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   modelValue?: boolean
   title?: string
   description?: string
+  /** Full-viewport layout instead of the default centered card. */
+  fullscreen?: boolean
+  /** When `false`, Escape and an outside click no longer close the dialog - the `escapeKeyDown`/`pointerDownOutside` events still fire, so a consumer can still react (e.g. a shake animation), but neither closes it on their own anymore. */
+  dismissible?: boolean
+  /** Set `false` to render no close button at all - usually paired with `dismissible={false}` for a dialog that only closes via an explicit footer action. */
+  close?: boolean
   ui?: UiProp<ModalSlots>
-}>()
+}>(), {
+  dismissible: true,
+  close: true,
+})
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
   'escapeKeyDown': [event: KeyboardEvent]
   'pointerDownOutside': [event: Event]
 }>()
+
+function onEscapeKeyDown(event: KeyboardEvent) {
+  if (!props.dismissible)
+    event.preventDefault()
+  emit('escapeKeyDown', event)
+}
+
+function onPointerDownOutside(event: Event) {
+  if (!props.dismissible)
+    event.preventDefault()
+  emit('pointerDownOutside', event)
+}
 
 const slots = useSlots()
 
@@ -34,7 +55,7 @@ if (import.meta.dev) {
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('modal', modalTheme)
-const ui = computed(() => theme.value())
+const ui = computed(() => theme.value({ fullscreen: props.fullscreen }))
 
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -55,8 +76,8 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
       <DialogOverlay v-bind="overlayProps" />
       <DialogContent
         v-bind="contentProps"
-        @escape-key-down="(event) => emit('escapeKeyDown', event)"
-        @pointer-down-outside="(event) => emit('pointerDownOutside', event)"
+        @escape-key-down="onEscapeKeyDown"
+        @pointer-down-outside="onPointerDownOutside"
       >
         <div v-if="title || description || $slots.header" v-bind="headerProps">
           <div>
@@ -69,7 +90,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
               </DialogDescription>
             </slot>
           </div>
-          <DialogClose as-child>
+          <DialogClose v-if="close" as-child>
             <Button size="sm" variant="ghost" color="neutral" :icon="icons.close" :aria-label="messages.close" v-bind="closeProps" />
           </DialogClose>
         </div>

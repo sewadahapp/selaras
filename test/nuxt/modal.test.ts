@@ -50,4 +50,35 @@ describe('modal', () => {
     expect(emitted).toBeTruthy()
     expect(emitted![0]![0]).toBeInstanceOf(Event)
   })
+
+  it('applies the full-viewport layout instead of the centered card when fullscreen is set', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Delete item', fullscreen: true } })
+
+    const dialog = document.body.querySelector('[role=dialog]')!
+    expect(dialog.className).toContain('rounded-none')
+    expect(dialog.className).not.toContain('max-w-md')
+  })
+
+  it('renders no close button when close is false', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Delete item', close: false } })
+
+    const closeButton = document.body.querySelector<HTMLButtonElement>('button[aria-label="Close"]')
+    expect(closeButton).toBeFalsy()
+  })
+
+  it('still emits escapeKeyDown when dismissible is false, but does not close', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Confirm', dismissible: false } })
+
+    const dialog = document.body.querySelector('[role=dialog]')!
+    // cancelable: true matters here - a real browser keydown is cancelable
+    // by default, but the synthetic KeyboardEvent above (deliberately not
+    // cancelable, since that test never calls preventDefault) is not. A
+    // preventDefault() call on a non-cancelable event is a silent no-op per
+    // spec, which would make this test pass for the wrong reason.
+    dialog.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.emitted('escapeKeyDown')).toBeTruthy()
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
 })
