@@ -33,9 +33,9 @@ export const tabsTheme = tv({
         indicator: 'inset-x-0 bottom-0 h-0.5 rounded-full bg-[var(--ui-primary)]',
       },
       pill: {
-        list: 'gap-1 rounded-full border-0 bg-[var(--ui-bg-elevated)] p-1',
-        trigger: 'rounded-full px-3',
-        indicator: 'inset-y-1 rounded-full bg-[var(--ui-bg)] shadow-[var(--ui-shadow-sm)]',
+        list: 'gap-1 rounded-[var(--ui-radius-md)] border-0 bg-[var(--ui-bg-elevated)] p-1',
+        trigger: 'rounded-[var(--ui-radius-sm)] px-3',
+        indicator: 'inset-y-1 rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-sm)]',
       },
     },
   },
