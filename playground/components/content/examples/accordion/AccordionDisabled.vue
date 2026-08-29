@@ -1,0 +1,27 @@
+<script setup lang="ts">
+const itemsWithDisabledItem = [
+  { value: 'a', label: 'What is Selaras?' },
+  { value: 'b', label: 'Is it free?', disabled: true },
+]
+</script>
+
+<template>
+  <div class="flex flex-col gap-6">
+    <SAccordion :items="itemsWithDisabledItem">
+      <template #a>
+        A UI component library for Nuxt, themed with tv() and CSS variables.
+      </template>
+      <template #b>
+        Yes, MIT licensed.
+      </template>
+    </SAccordion>
+    <SAccordion disabled :items="itemsWithDisabledItem">
+      <template #a>
+        A UI component library for Nuxt, themed with tv() and CSS variables.
+      </template>
+      <template #b>
+        Yes, MIT licensed.
+      </template>
+    </SAccordion>
+  </div>
+</template>

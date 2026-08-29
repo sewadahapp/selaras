@@ -115,4 +115,56 @@ describe('accordion', () => {
     expect(content.classes().some(c => c.includes('data-[state=open]:animate-'))).toBe(true)
     expect(content.classes().some(c => c.includes('data-[state=closed]:animate-'))).toBe(true)
   })
+
+  it('type="single" opening a second item closes the first', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: {
+        type: 'single',
+        items: [{ value: 'a', label: 'First' }, { value: 'b', label: 'Second' }],
+        defaultValue: 'a',
+      },
+      slots: { a: () => 'First answer', b: () => 'Second answer' },
+    })
+    await nextTick()
+
+    const triggers = wrapper.findAll('button')
+    expect(triggers[0]!.attributes('data-state')).toBe('open')
+    expect(triggers[1]!.attributes('data-state')).toBe('closed')
+
+    await triggers[1]!.trigger('click')
+    await nextTick()
+
+    expect(triggers[0]!.attributes('data-state')).toBe('closed')
+    expect(triggers[1]!.attributes('data-state')).toBe('open')
+  })
+
+  it('a top-level disabled blocks every trigger from toggling', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: {
+        disabled: true,
+        items: [{ value: 'a', label: 'Question one' }],
+        defaultValue: ['a'],
+      },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    const trigger = wrapper.find('button')
+    expect(trigger.attributes('disabled')).toBeDefined()
+
+    await trigger.trigger('click')
+    await nextTick()
+
+    expect(trigger.attributes('data-state')).toBe('open')
+  })
+
+  it('applies the size variant\'s classes to the trigger', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { size: 'lg', items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    expect(wrapper.find('button').classes()).toContain('py-4')
+  })
 })

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { VariantProps } from 'tailwind-variants'
 import type { AccordionSlots } from '../theme/accordion'
 import type { UiProp } from '../utils/ui'
 import { AccordionContent, AccordionHeader, AccordionItem, AccordionRoot, AccordionTrigger } from 'reka-ui'
@@ -7,6 +8,8 @@ import { useIcons } from '../composables/use-icons'
 import { accordionTheme } from '../theme/accordion'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
+
+type AccordionVariants = VariantProps<typeof accordionTheme>
 
 export interface AccordionItemDef {
   value: string
@@ -22,6 +25,9 @@ const props = withDefaults(defineProps<{
   defaultValue?: string | string[]
   modelValue?: string | string[]
   collapsible?: boolean
+  /** Disables every item at once - Reka's own AccordionRoot already blocks all interaction when this is set, so this is a straight pass-through. */
+  disabled?: boolean
+  size?: AccordionVariants['size']
   ui?: UiProp<AccordionSlots>
 }>(), {
   type: 'multiple',
@@ -34,7 +40,7 @@ defineEmits<{
 
 const icons = useIcons()
 const theme = useComponentTheme('accordion', accordionTheme)
-const ui = computed(() => theme.value())
+const ui = computed(() => theme.value({ size: props.size }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 </script>
@@ -46,6 +52,7 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
       :default-value="(defaultValue as any)"
       :model-value="(modelValue as any)"
       :collapsible="type === 'single' ? collapsible : undefined"
+      :disabled="disabled"
       v-bind="rootProps"
       @update:model-value="(value) => $emit('update:modelValue', value as string | string[])"
     >
@@ -89,7 +96,7 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
       <div v-bind="rootProps">
         <div v-for="item in items" :key="item.value">
           <div v-bind="resolveSlot(ui.header, props.ui?.header)">
-            <div v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
+            <div v-bind="resolveSlot(ui.trigger, props.ui?.trigger)" :class="(disabled || item.disabled) ? 'opacity-50 pointer-events-none' : undefined">
               <span v-bind="resolveSlot(ui.label, props.ui?.label)">
                 <slot name="label" :item="item">{{ item.label }}</slot>
               </span>

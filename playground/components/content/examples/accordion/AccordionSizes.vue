@@ -1,0 +1,35 @@
+<script setup lang="ts">
+const items = [
+  { value: 'a', label: 'What is Selaras?' },
+  { value: 'b', label: 'Is it free?' },
+]
+</script>
+
+<template>
+  <div class="flex flex-col gap-6">
+    <SAccordion size="sm" :items="items">
+      <template #a>
+        A UI component library for Nuxt, themed with tv() and CSS variables.
+      </template>
+      <template #b>
+        Yes, MIT licensed.
+      </template>
+    </SAccordion>
+    <SAccordion size="md" :items="items">
+      <template #a>
+        A UI component library for Nuxt, themed with tv() and CSS variables.
+      </template>
+      <template #b>
+        Yes, MIT licensed.
+      </template>
+    </SAccordion>
+    <SAccordion size="lg" :items="items">
+      <template #a>
+        A UI component library for Nuxt, themed with tv() and CSS variables.
+      </template>
+      <template #b>
+        Yes, MIT licensed.
+      </template>
+    </SAccordion>
+  </div>
+</template>
