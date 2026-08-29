@@ -265,6 +265,32 @@ describe('table', () => {
     expect(custom.text()).toBe('Admin')
   })
 
+  it('renders a real <SColumn> header slot as real content, falling back to the string prop when unset', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: { data: [{ role: 'Admin' }] },
+      slots: {
+        default: () => [
+          h(Column, { field: 'role', header: 'Role' }, {
+            header: () => h('strong', { class: 'custom-header' }, 'Custom Role'),
+          }),
+        ],
+      },
+    })
+
+    const custom = wrapper.find('.custom-header')
+    expect(custom.exists()).toBe(true)
+    expect(custom.text()).toBe('Custom Role')
+  })
+
+  it('falls back to the plain header string when the header slot is unset', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: { data: [{ role: 'Admin' }] },
+      slots: { default: () => h(Column, { field: 'role', header: 'Role' }) },
+    })
+
+    expect(wrapper.find('th').text()).toContain('Role')
+  })
+
   it('virtualize: does not render every row into the DOM for a large dataset', async () => {
     const data = Array.from({ length: 500 }, (_, i) => ({ n: i }))
     const wrapper = await mountSuspended(Table, {

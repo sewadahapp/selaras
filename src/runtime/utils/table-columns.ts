@@ -25,6 +25,21 @@ function toBooleanProp(value: unknown, defaultValue: boolean): boolean {
   return !!value
 }
 
+/**
+ * TanStack's own ColumnDef.header/footer already accept a render function
+ * exactly like `cell` does - this just wires <SColumn>/<SColumnGroup>'s
+ * own #header/#footer slots (when given) into that, falling back to the
+ * plain string prop otherwise. Scoped with `{ column }` (TanStack's column
+ * API - getIsSorted(), getCanSort(), etc.) so a custom header can reflect
+ * sort state itself if it wants to, mirroring the cell slot's own
+ * `{ row, value }` scoping.
+ */
+function buildHeaderOrFooter(slot: ((scope: { column: unknown }) => unknown) | undefined, fallback: string | undefined) {
+  if (!slot)
+    return fallback
+  return (context: any) => h(Fragment, slot({ column: context.column }) as any)
+}
+
 function flattenColumnChildren(vnodes: VNode[]): VNode[] {
   const result: VNode[] = []
   for (const vnode of vnodes) {
@@ -66,10 +81,15 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
     .map((vnode) => {
       if (vnode.type === ColumnGroup) {
         const props = (vnode.props ?? {}) as { header?: string, footer?: string }
-        const slotChildren = (vnode.children as any)?.default?.() as VNode[] | undefined
+        const slots = (vnode.children ?? {}) as {
+          default?: () => VNode[]
+          header?: (scope: { column: unknown }) => unknown
+          footer?: (scope: { column: unknown }) => unknown
+        }
+        const slotChildren = slots.default?.()
         return {
-          header: props.header,
-          footer: props.footer,
+          header: buildHeaderOrFooter(slots.header, props.header),
+          footer: buildHeaderOrFooter(slots.footer, props.footer),
           columns: convertChildrenToColumns(slotChildren),
         }
       }
@@ -83,15 +103,17 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
           filterable?: boolean
           pinned?: 'left' | 'right'
         }
-        const cellSlot = (vnode.children as any)?.default as
-          | ((scope: { row: unknown, value: unknown }) => unknown)
-          | undefined
+        const slots = (vnode.children ?? {}) as {
+          default?: (scope: { row: unknown, value: unknown }) => unknown
+          header?: (scope: { column: unknown }) => unknown
+          footer?: (scope: { column: unknown }) => unknown
+        }
 
         return {
           id: props.field,
           accessorKey: props.field,
-          header: props.header ?? props.field,
-          footer: props.footer,
+          header: buildHeaderOrFooter(slots.header, props.header ?? props.field),
+          footer: buildHeaderOrFooter(slots.footer, props.footer),
           enableSorting: toBooleanProp(props.sortable, true),
           sortFn: 'alphanumeric',
           enableColumnFilter: toBooleanProp(props.filterable, false),
@@ -103,8 +125,8 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
           // its object branch and gets wrongly treated as a component
           // (h(array, props)), rendering nothing. Wrapping in a Fragment
           // gives flexRender one real VNode to render.
-          cell: cellSlot
-            ? (context: any) => h(Fragment, cellSlot({ row: context.row.original, value: context.getValue() }) as any)
+          cell: slots.default
+            ? (context: any) => h(Fragment, slots.default!({ row: context.row.original, value: context.getValue() }) as any)
             : (context: any) => context.getValue(),
         }
       }

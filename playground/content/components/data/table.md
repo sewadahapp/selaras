@@ -109,6 +109,28 @@ that column's own field value:
 </SColumn>
 ```
 
+### Custom header content
+
+`<SColumn>`/`<SColumnGroup>` take the same treatment for their `header`/
+`footer` - a named slot (scoped with `{ column }`, TanStack's own column
+API) that replaces the plain string prop when given:
+
+::component-example{name="table-custom-header"}
+::
+
+```vue-html
+<SColumn field="role">
+  <template #header>
+    <span class="inline-flex items-center gap-1">
+      Role
+      <STooltip text="Admins can manage billing and members">
+        <SIcon name="ph:info" class="size-3.5 text-[var(--ui-text-muted)]" />
+      </STooltip>
+    </span>
+  </template>
+</SColumn>
+```
+
 ### Row expansion
 
 `expandable` adds a leading toggle column; give `STable` an `expanded` slot
@@ -354,7 +376,9 @@ reimplementing it here.
 | `expanded` | `{ row }` | Detail content for an expanded row (requires `expandable`) |
 
 `SColumn`'s own default slot customizes that column's cell content - see
-[Custom cell content](#custom-cell-content) above.
+[Custom cell content](#custom-cell-content) above. `SColumn`/`SColumnGroup`
+also both take `header`/`footer` slots (scoped with `{ column }`) - see
+[Custom header content](#custom-header-content) above.
 
 ## Methods
 

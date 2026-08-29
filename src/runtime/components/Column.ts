@@ -6,6 +6,11 @@ import { defineComponent } from 'vue'
  * TanStack ColumnDef, a technique several Vue table libraries use for a <Table>/<Column>
  * uses. Mounting <SColumn> anywhere other than inside <STable> is a silent
  * no-op, never an error.
+ *
+ * Three named slots read the same way: `default` (scoped with `{ row,
+ * value }`) customizes a cell's content, `header`/`footer` (scoped with
+ * `{ column }`) customize the column's header/footer cell - all three fall
+ * back to the plain `header`/`footer` string props when unset.
  */
 export default defineComponent({
   name: 'SColumn',

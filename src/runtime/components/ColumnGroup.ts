@@ -5,6 +5,10 @@ import { defineComponent } from 'vue'
  * "group" column def ({ header, columns: [...] }); SColumn always maps to
  * a leaf def. Two components mirror TanStack's own ColumnDef union directly,
  * rather than one component guessing its role from slot content.
+ *
+ * `default` holds the group's child `<SColumn>`/`<SColumnGroup>` tags;
+ * `header`/`footer` (scoped with `{ column }`) customize the group's own
+ * header/footer cell, falling back to the plain string props when unset.
  */
 export default defineComponent({
   name: 'SColumnGroup',
