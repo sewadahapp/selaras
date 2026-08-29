@@ -21,6 +21,15 @@ describe('chip', () => {
     expect(wrapper.find('.iconify').classes()).toContain('i-lucide:apple')
   })
 
+  it('lets the icon slot replace the leading icon entirely', async () => {
+    const wrapper = await mountSuspended(Chip, {
+      props: { label: 'Apple', icon: 'lucide:apple' },
+      slots: { icon: '<template #icon="{ class: klass }"><span class="my-icon" :class="klass">*</span></template>' },
+    })
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+    expect(wrapper.find('.my-icon').exists()).toBe(true)
+  })
+
   it('does not render a remove button by default', async () => {
     const wrapper = await mountSuspended(Chip, { props: { label: 'Apple' } })
     expect(wrapper.find('button').exists()).toBe(false)

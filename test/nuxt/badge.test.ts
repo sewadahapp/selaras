@@ -56,6 +56,24 @@ describe('badge', () => {
     expect(wrapper.find('.iconify').classes()).toContain('i-lucide:chevron-right')
   })
 
+  it('lets the icon slot replace the leading icon entirely', async () => {
+    const wrapper = await mountSuspended(Badge, {
+      props: { label: 'New', icon: 'lucide:sparkles' },
+      slots: { icon: '<template #icon="{ class: klass }"><span class="my-icon" :class="klass">*</span></template>' },
+    })
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+    expect(wrapper.find('.my-icon').exists()).toBe(true)
+  })
+
+  it('lets the trailing-icon slot replace the trailing icon entirely', async () => {
+    const wrapper = await mountSuspended(Badge, {
+      props: { label: 'New', trailingIcon: 'lucide:chevron-right' },
+      slots: { 'trailing-icon': '<template #default="{ class: klass }"><span class="my-trailing-icon" :class="klass">*</span></template>' },
+    })
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+    expect(wrapper.find('.my-trailing-icon').exists()).toBe(true)
+  })
+
   it('orders a leading and trailing icon around the label', async () => {
     const wrapper = await mountSuspended(Badge, {
       props: { label: 'New', icon: 'lucide:sparkles', trailingIcon: 'lucide:chevron-right' },

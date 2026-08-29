@@ -51,10 +51,14 @@ const dotOnlyProps = useRootProps(() => ui.value.dot, () => props.ui?.dot)
   <span v-if="dotOnly" v-bind="dotOnlyProps" />
   <span v-else v-bind="rootProps">
     <span v-if="dot" v-bind="resolveSlot(ui.dot, props.ui?.dot)" />
-    <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <slot name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
+      <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    </slot>
     <span v-if="hasLabel" v-bind="resolveSlot(ui.label, props.ui?.label)">
       <slot>{{ label }}</slot>
     </span>
-    <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    <slot name="trailing-icon" :class="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon).class">
+      <Icon v-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    </slot>
   </span>
 </template>

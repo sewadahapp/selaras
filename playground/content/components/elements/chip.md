@@ -40,7 +40,9 @@ unset a filter, whatever fits).
 
 ### Icon
 
-`icon` adds a leading icon, and combines with `removable` freely.
+`icon` adds a leading icon, and combines with `removable` freely - the
+matching `icon` slot replaces the glyph entirely when a plain icon name
+isn't enough.
 
 ::component-example{name="chip-icon"}
 ::
@@ -90,10 +92,12 @@ control that has to live inside another interactive element.
 
 ## Slots
 
-| Slot | Description |
-| --- | --- |
-| default | Custom content, overrides `label` |
-| remove-icon | Replaces the remove button's icon (default: `ph:x`) |
+| Slot | Props | Description |
+| --- | --- | --- |
+| default | - | Custom content, overrides `label` |
+| `icon` | - | Replaces the leading icon entirely |
+| `remove` | `{ remove }` | Replaces the whole remove control (not just its icon) - needed when a host context must supply its own interactive element there. Call the scoped `remove` function to fire the same `remove` event the default button does |
+| `remove-icon` | - | Replaces the remove button's icon (default: `ph:x`) |
 
 ## Emits
 

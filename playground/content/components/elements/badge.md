@@ -20,7 +20,8 @@ order: 11
 `icon` and `trailingIcon` add an icon before or after the label - useful for
 a status glyph or a disclosure chevron. Badge is purely a display element,
 though - for a dismissible tag, see [Chip](/components/elements/chip)
-instead.
+instead. The matching `icon`/`trailing-icon` slots replace the glyph
+entirely when a plain icon name isn't enough (a spinner, for one).
 
 ::component-example{name="badge-icon"}
 ::
@@ -85,3 +86,5 @@ reads as a status indicator at this size.
 | Slot | Description |
 | --- | --- |
 | default | Custom content, overrides `label` |
+| `icon` | Replaces the leading icon entirely |
+| `trailing-icon` | Replaces the trailing icon entirely |

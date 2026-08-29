@@ -52,7 +52,9 @@ const effectiveRemoveLabel = computed(() => props.removeLabel ?? messages.value.
 
 <template>
   <span v-bind="rootProps">
-    <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <slot name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
+      <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    </slot>
     <span v-bind="resolveSlot(ui.label, props.ui?.label)">
       <slot>{{ label }}</slot>
     </span>
