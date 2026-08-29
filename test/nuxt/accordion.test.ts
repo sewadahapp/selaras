@@ -55,4 +55,41 @@ describe('accordion', () => {
     expect(triggers[0]!.attributes('data-state')).toBe('open')
     expect(triggers[1]!.attributes('data-state')).toBe('open')
   })
+
+  it('the label slot replaces an item\'s label content, scoped with item', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }] },
+      slots: {
+        label: '<template #label="{ item }">[{{ item.label }}]</template>',
+        a: () => 'Answer one',
+      },
+    })
+    await nextTick()
+
+    expect(wrapper.text()).toContain('[Question one]')
+  })
+
+  it('falls back to the plain label when the label slot is unset', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    expect(wrapper.text()).toContain('Question one')
+  })
+
+  it('the chevron-icon slot replaces the default chevron', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }] },
+      slots: {
+        'chevron-icon': '<span class="my-chevron">v</span>',
+        'a': () => 'Answer one',
+      },
+    })
+    await nextTick()
+
+    expect(wrapper.find('.my-chevron').exists()).toBe(true)
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+  })
 })

@@ -58,8 +58,12 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
       >
         <AccordionHeader as="div" v-bind="resolveSlot(ui.header, props.ui?.header)">
           <AccordionTrigger v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
-            <span v-bind="resolveSlot(ui.label, props.ui?.label)">{{ item.label }}</span>
-            <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
+            <span v-bind="resolveSlot(ui.label, props.ui?.label)">
+              <slot name="label" :item="item">{{ item.label }}</slot>
+            </span>
+            <slot name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
+              <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
+            </slot>
           </AccordionTrigger>
         </AccordionHeader>
         <AccordionContent v-bind="resolveSlot(ui.content, props.ui?.content)">
@@ -84,7 +88,9 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
         <div v-for="item in items" :key="item.value">
           <div v-bind="resolveSlot(ui.header, props.ui?.header)">
             <div v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
-              <span v-bind="resolveSlot(ui.label, props.ui?.label)">{{ item.label }}</span>
+              <span v-bind="resolveSlot(ui.label, props.ui?.label)">
+                <slot name="label" :item="item">{{ item.label }}</slot>
+              </span>
             </div>
           </div>
           <div v-bind="resolveSlot(ui.content, props.ui?.content)">
