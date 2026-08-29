@@ -67,7 +67,9 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
           </AccordionTrigger>
         </AccordionHeader>
         <AccordionContent v-bind="resolveSlot(ui.content, props.ui?.content)">
-          <slot :name="item.value" />
+          <div v-bind="resolveSlot(ui.contentInner, props.ui?.contentInner)">
+            <slot :name="item.value" />
+          </div>
         </AccordionContent>
       </AccordionItem>
     </AccordionRoot>
@@ -94,7 +96,9 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
             </div>
           </div>
           <div v-bind="resolveSlot(ui.content, props.ui?.content)">
-            <slot :name="item.value" />
+            <div v-bind="resolveSlot(ui.contentInner, props.ui?.contentInner)">
+              <slot :name="item.value" />
+            </div>
           </div>
         </div>
       </div>

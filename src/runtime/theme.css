@@ -23,6 +23,27 @@
   }
 }
 
+/* Expand/collapse motion for Accordion's content panel - Reka's own
+   AccordionContent measures the panel's real, natural height and exposes
+   it as --reka-accordion-content-height, so this only needs to interpolate
+   between 0 and that value; it never has to guess or hardcode a height. */
+@keyframes selaras-accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--reka-accordion-content-height);
+  }
+}
+@keyframes selaras-accordion-up {
+  from {
+    height: var(--reka-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
 /*
  * tw-animate-css's enter/exit utilities (animate-in, zoom-in-95, fade-in-0,
  * ...) - used by Select/Dropdown/Modal/Toast/Tooltip's open/close

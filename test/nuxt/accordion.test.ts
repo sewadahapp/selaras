@@ -92,4 +92,27 @@ describe('accordion', () => {
     expect(wrapper.find('.my-chevron').exists()).toBe(true)
     expect(wrapper.find('.iconify').exists()).toBe(false)
   })
+
+  it('the root always spans full width, regardless of any item\'s open/closed state', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    expect(wrapper.find('div').classes()).toContain('w-full')
+  })
+
+  it('animates the content panel via data-state, clipped so it never overflows mid-animation', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    const content = wrapper.find('[role="region"]')
+    expect(content.classes()).toContain('overflow-hidden')
+    expect(content.classes().some(c => c.includes('data-[state=open]:animate-'))).toBe(true)
+    expect(content.classes().some(c => c.includes('data-[state=closed]:animate-'))).toBe(true)
+  })
 })
