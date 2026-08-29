@@ -63,6 +63,28 @@ describe('formField', () => {
     expect(label.attributes('for')).toBe(input.attributes('id'))
   })
 
+  it('renders description between the label and the wrapped control', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { label: 'Email', description: 'We\'ll use this to send your receipt.' },
+      slots: { default: () => h(Input) },
+    })
+    const html = wrapper.html()
+    const labelIndex = html.indexOf('Email')
+    const descriptionIndex = html.indexOf('receipt')
+    const inputIndex = html.indexOf('<input')
+    expect(labelIndex).toBeLessThan(descriptionIndex)
+    expect(descriptionIndex).toBeLessThan(inputIndex)
+  })
+
+  it('does not wire description into aria-describedby - only hint/error do', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { description: 'Extra context', hint: 'Optional' },
+      slots: { default: () => h(Input) },
+    })
+    const hint = wrapper.findAll('p').at(-1)!
+    expect(wrapper.find('input').attributes('aria-describedby')).toBe(hint.attributes('id'))
+  })
+
   it('updates a descendant\'s invalid/describedby reactively when error changes', async () => {
     const wrapper = await mountSuspended(FormField, {
       props: { error: false, hint: 'Optional' },

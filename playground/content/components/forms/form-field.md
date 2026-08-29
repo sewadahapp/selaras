@@ -1,6 +1,6 @@
 ---
 title: FormField
-description: Label, hint, and error-message wrapper that wires id/aria-describedby/invalid into whatever form control it wraps.
+description: Label, description, hint, and error-message wrapper that wires id/aria-describedby/invalid into whatever form control it wraps.
 order: 27
 ---
 
@@ -22,6 +22,18 @@ const email = ref('')
     <SInput v-model="email" type="email" placeholder="you@example.com" />
   </SFormField>
 </template>
+```
+
+### Description
+
+`description` adds a second, muted line under the label, before the
+control - for context the user should read before reaching it (unlike
+`hint`, which sits below the control instead):
+
+```vue-html
+<SFormField label="Email" description="We'll use this to send your receipt.">
+  <SInput v-model="email" type="email" />
+</SFormField>
 ```
 
 ### Error state
@@ -68,14 +80,16 @@ can't be forced back to valid while its FormField has one.
 | --- | --- | --- |
 | `label` | `string` | - |
 | `name` | `string` | - |
+| `description` | `string` | - |
 | `hint` | `string` | - |
 | `error` | `string \| boolean` | - |
 | `required` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | - |
-| `ui` | `Partial<Record<'root' \| 'label' \| 'required' \| 'container' \| 'hint' \| 'error', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'label' \| 'required' \| 'description' \| 'container' \| 'hint' \| 'error', string \| object>>` | - |
 
 ## Slots
 
 | Slot | Props | Description |
 | --- | --- | --- |
 | default | `{ id, invalid, describedBy }` | The wrapped control. Props are also available if you need to bind them manually. |
+| `description` | - | Custom content, overrides `description` |

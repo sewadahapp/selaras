@@ -11,6 +11,8 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<{
   label?: string
   name?: string
+  /** A second, muted line under the label, before the control - for context the user should read before reaching it (e.g. "We'll use this to send your receipt"). Distinct from `hint`, which sits below the control instead. */
+  description?: string
   hint?: string
   error?: string | boolean
   required?: boolean
@@ -44,6 +46,7 @@ const ui = computed(() => theme.value())
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 const requiredProps = computed(() => resolveSlot(ui.value.required, props.ui?.required))
+const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
 const containerProps = computed(() => resolveSlot(ui.value.container, props.ui?.container))
 const hintProps = computed(() => resolveSlot(ui.value.hint, props.ui?.hint))
 const errorProps = computed(() => resolveSlot(ui.value.error, props.ui?.error))
@@ -54,6 +57,11 @@ const errorProps = computed(() => resolveSlot(ui.value.error, props.ui?.error))
     <label v-if="label" :for="id" v-bind="labelProps">
       {{ label }}<span v-if="required" v-bind="requiredProps">*</span>
     </label>
+    <p v-if="description" v-bind="descriptionProps">
+      <slot name="description">
+        {{ description }}
+      </slot>
+    </p>
     <div v-bind="containerProps">
       <slot :id="id" :invalid="invalid" :described-by="describedBy" />
     </div>

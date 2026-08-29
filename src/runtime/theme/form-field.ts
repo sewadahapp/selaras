@@ -5,6 +5,7 @@ export const formFieldTheme = tv({
     root: 'flex flex-col gap-1.5',
     label: 'text-sm font-medium text-[var(--ui-text)]',
     required: 'ms-0.5 text-[var(--ui-danger)]',
+    description: 'text-xs text-[var(--ui-text-muted)]',
     container: '',
     hint: 'text-xs text-[var(--ui-text-muted)]',
     error: 'text-xs text-[var(--ui-danger)]',
