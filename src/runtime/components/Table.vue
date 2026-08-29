@@ -40,12 +40,10 @@ const props = withDefaults(defineProps<{
   /** Enables vertical scroll with a sticky header, capped at this CSS height (e.g. '24rem'). */
   scrollHeight?: string
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
-  /** Opts out of the local sorted/filtered/paginated row models - set when `data` is already sorted/filtered/paginated server-side, so this table doesn't redundantly (and incorrectly) reprocess an already-server-processed slice. `sorting`/`globalFilter`/`pageIndex` still drive the UI and still emit their `update:*` events the same way - only the *local row model* is skipped, not the state itself. */
+  /** Opts out of the local sorted/filtered/paginated row models - set when `data` is already sorted/filtered/paginated server-side, so this table doesn't redundantly (and incorrectly) reprocess an already-server-processed slice. `sorting`/`globalFilter`/`pageIndex` still drive the UI and still emit their `update:*` events the same way - only the *local row model* is skipped, not the state itself. `manualPagination` also suppresses the built-in Pagination UI entirely (there's no way to know the real page count from a server-paginated slice) - bring your own `SPagination`, bound to your own server metadata, the same way this table already expects you to bring your own search input for `globalFilter`. */
   manualSorting?: boolean
   manualFiltering?: boolean
   manualPagination?: boolean
-  /** Required alongside `manualPagination` - the real total page count, since it can no longer be derived from `data.length` once pagination is server-driven. */
-  pageCount?: number
   /** Adds a class to a body row based on its own data - e.g. highlighting a flagged row. Called per row, not per render, so keep it cheap. */
   rowClass?: (row: unknown) => string | undefined
   /** Same as `rowClass`, for inline styles. */
@@ -179,18 +177,6 @@ const columnToggleItemProps = computed(() => resolveSlot(ui.value.columnToggleIt
 
 const hasFooter = computed(() =>
   table.getFooterGroups().some(group => group.headers.some(header => header.column.columnDef.footer)),
-)
-
-// The nested <Pagination> computes its own page count from total/itemsPerPage
-// - it has no way to read TanStack's own getPageCount() directly. Normally
-// that's fine (getFilteredRowModel().rows.length IS the real total), but
-// once manualPagination is set, `data` only ever holds the current page's
-// rows - passing that as `total` would make Pagination think there's just
-// one page. `pageCount * effectivePageSize` reproduces the real page count
-// through Pagination's own Math.ceil(total / itemsPerPage) math exactly
-// (no rounding drift), without needing a real row-count total at all.
-const paginationTotal = computed(() =>
-  props.manualPagination ? table.getPageCount() * effectivePageSize.value : table.getFilteredRowModel().rows.length,
 )
 
 // --- column pinning: sticky offsets, measured from real rendered widths ---
@@ -404,14 +390,14 @@ defineExpose({
       <Icon :name="icons.loading" v-bind="loadingIconProps" />
     </div>
 
-    <div v-if="table.getPageCount() > 1" v-bind="paginationWrapperProps">
+    <div v-if="!manualPagination && table.getPageCount() > 1" v-bind="paginationWrapperProps">
       <span v-bind="paginationInfoProps">
         {{ messages.paginationInfo(pageIndex + 1, table.getPageCount()) }}
       </span>
       <div v-bind="paginationButtonsProps">
         <Pagination
           :page="pageIndex + 1"
-          :total="paginationTotal"
+          :total="table.getFilteredRowModel().rows.length"
           :items-per-page="effectivePageSize"
           :size="size"
           @update:page="(value) => table.setPageIndex(value - 1)"

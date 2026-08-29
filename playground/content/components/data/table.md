@@ -335,21 +335,27 @@ opts that specific concern out of the local row model, so `STable` doesn't
 redundantly (and incorrectly) reprocess a slice the server already
 handled. `sorting`/`global-filter`/`page-index` still drive the UI and
 still emit their own `update:*` events the normal way; only the local row
-model backing them changes. `manual-pagination` also needs `page-count` -
-the real total page count, since it can no longer be derived from
-`data.length` once pagination is server-driven:
+model backing them changes.
+
+`manual-pagination` also suppresses the built-in pagination UI entirely -
+there's no way to derive a real page count from a server-paginated slice
+of `data`, and guessing at one would be misleading. Bring your own
+[SPagination](/components/navigation/pagination) instead, bound to
+whatever your server actually returns, the same way this table already
+expects you to bring your own search input for `global-filter` (see
+[Usage](#usage) above) rather than rendering one itself:
 
 ```vue-html
 <script setup lang="ts">
 const sorting = ref([])
 const pageIndex = ref(0)
-const pageCount = ref(1)
+const total = ref(0)
 const rows = ref([])
 
 watch([sorting, pageIndex], async () => {
   const result = await fetchUsers({ sorting: sorting.value, page: pageIndex.value })
   rows.value = result.rows
-  pageCount.value = result.pageCount
+  total.value = result.total
 }, { immediate: true })
 </script>
 
@@ -358,13 +364,18 @@ watch([sorting, pageIndex], async () => {
     v-model:sorting="sorting"
     v-model:page-index="pageIndex"
     :data="rows"
-    :page-count="pageCount"
     manual-sorting
     manual-pagination
   >
     <SColumn field="name" header="Name" />
     <SColumn field="email" header="Email" />
   </STable>
+  <SPagination
+    :page="pageIndex + 1"
+    :total="total"
+    :items-per-page="10"
+    @update:page="(page) => pageIndex = page - 1"
+  />
 </template>
 ```
 
@@ -432,7 +443,6 @@ reimplementing it here.
 | `manualSorting` | `boolean` | `false` |
 | `manualFiltering` | `boolean` | `false` |
 | `manualPagination` | `boolean` | `false` |
-| `pageCount` | `number` | - (required with `manualPagination`) |
 | `rowClass` | `(row: unknown) => string \| undefined` | - |
 | `rowStyle` | `(row: unknown) => Record<string, string> \| undefined` | - |
 | `ui` | `Partial<Record<TableSlot, string \| object>>` | - |

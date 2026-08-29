@@ -60,7 +60,6 @@ interface UseTableProps {
   manualSorting?: boolean
   manualFiltering?: boolean
   manualPagination?: boolean
-  pageCount?: number
 }
 
 interface UseTableEmit {
@@ -165,7 +164,6 @@ export function useTable(props: UseTableProps, emit: UseTableEmit, columns: Comp
     manualSorting: !!props.manualSorting,
     manualFiltering: !!props.manualFiltering,
     manualPagination: !!props.manualPagination,
-    pageCount: props.manualPagination ? (props.pageCount ?? -1) : undefined,
     state: computed(() => ({
       sorting: sorting.value,
       rowSelection: rowSelection.value,
