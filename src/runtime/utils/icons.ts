@@ -20,6 +20,10 @@ export interface IconRegistry {
   clock: string
   plus: string
   minus: string
+  success: string
+  danger: string
+  warning: string
+  info: string
 }
 
 // Phosphor by default. One registry keyed by semantic purpose, not by
@@ -49,4 +53,8 @@ export const defaultIcons: IconRegistry = {
   clock: 'ph:clock',
   plus: 'ph:plus',
   minus: 'ph:minus',
+  success: 'ph:check-circle',
+  danger: 'ph:x-circle',
+  warning: 'ph:warning',
+  info: 'ph:info',
 }

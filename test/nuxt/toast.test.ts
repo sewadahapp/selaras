@@ -65,4 +65,42 @@ describe('toast', () => {
 
     expect(toasts.value.find(t => t.id === id)).toBeUndefined()
   })
+
+  // Excludes the close button's own icon (always rendered, "ph:x") from
+  // every query below - only interested in the status icon these tests
+  // are actually about.
+  function statusIcons() {
+    return Array.from(document.body.querySelectorAll('.iconify')).filter(el => !el.closest('button[aria-label="Close"]'))
+  }
+
+  it('a color toast renders with its color\'s own default icon', async () => {
+    const { add } = useToast()
+    add({ title: 'Saved', color: 'success' })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const icons = statusIcons()
+    expect(icons).toHaveLength(1)
+    expect(icons[0]!.classList.contains('i-ph:check-circle')).toBe(true)
+  })
+
+  it('an explicit icon overrides the color\'s own default', async () => {
+    const { add } = useToast()
+    add({ title: 'Saved', color: 'success', icon: 'lucide:star' })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const icons = statusIcons()
+    expect(icons).toHaveLength(1)
+    expect(icons[0]!.classList.contains('i-lucide:star')).toBe(true)
+  })
+
+  it('renders no icon at all when neither color nor icon is set', async () => {
+    const { add } = useToast()
+    add({ title: 'Saved' })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(statusIcons()).toHaveLength(0)
+  })
 })
