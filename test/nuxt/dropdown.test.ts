@@ -72,4 +72,39 @@ describe('dropdown', () => {
     const item = document.body.querySelector<HTMLElement>('[role="menuitem"]')!
     expect(item.getAttribute('data-disabled')).not.toBeNull()
   })
+
+  it('the item slot replaces an item\'s label content, scoped with item', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { items: [[{ label: 'Edit' }]] },
+      slots: {
+        default: () => h('button', 'Open menu'),
+        item: '<template #item="{ item }">[{{ item.label }}]</template>',
+      },
+    })
+    await openMenu()
+
+    expect(document.body.querySelector('[role="menuitem"]')?.textContent?.trim()).toBe('[Edit]')
+  })
+
+  it('falls back to the plain label when the item slot is unset', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await openMenu()
+
+    expect(document.body.querySelector('[role="menuitem"]')?.textContent?.trim()).toBe('Edit')
+  })
+
+  it('applies the destructive variant\'s classes only to the item marked destructive', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { items: [[{ label: 'Edit' }, { label: 'Delete', destructive: true }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await openMenu()
+
+    const items = document.body.querySelectorAll('[role="menuitem"]')
+    expect(items[0]!.className).not.toContain('text-[var(--ui-danger)]')
+    expect(items[1]!.className).toContain('text-[var(--ui-danger)]')
+  })
 })

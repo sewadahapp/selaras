@@ -11,6 +11,8 @@ export interface DropdownItem {
   label: string
   icon?: string
   disabled?: boolean
+  /** Styles this item for a delete/remove-style action (danger text, danger-tinted hover) - just this one flag rather than the full color palette, since a menu item realistically only ever needs this one special case. */
+  destructive?: boolean
   onSelect?: () => void
 }
 
@@ -23,8 +25,15 @@ const theme = useComponentTheme('dropdown', dropdownTheme)
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
-const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
-const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
+// Resolved per item (not a single shared computed) - `destructive` can
+// differ between items in the same menu, unlike every other themed slot
+// here which is the same for every item.
+function itemPropsFor(item: DropdownItem) {
+  return resolveSlot(theme.value({ destructive: item.destructive }).item, props.ui?.item)
+}
+function iconPropsFor(item: DropdownItem) {
+  return resolveSlot(theme.value({ destructive: item.destructive }).icon, props.ui?.icon)
+}
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
 </script>
 
@@ -41,11 +50,13 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
             v-for="(item, itemIndex) in group"
             :key="itemIndex"
             :disabled="item.disabled"
-            v-bind="itemProps"
+            v-bind="itemPropsFor(item)"
             @select="item.onSelect?.()"
           >
-            <Icon v-if="item.icon" :name="item.icon" v-bind="iconProps" />
-            {{ item.label }}
+            <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
+            <slot name="item" :item="item">
+              {{ item.label }}
+            </slot>
           </DropdownMenuItem>
         </template>
       </DropdownMenuContent>

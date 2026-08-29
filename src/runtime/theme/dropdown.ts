@@ -7,6 +7,17 @@ export const dropdownTheme = tv({
     icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',
     separator: '-mx-1 my-1 h-px bg-[var(--ui-border)]',
   },
+  variants: {
+    // For a delete/remove-style action - deliberately just this one flag
+    // rather than the full 7-color palette Badge/Chip expose, since a menu
+    // item realistically only ever needs this one special case.
+    destructive: {
+      true: {
+        item: 'text-[var(--ui-danger)] data-[highlighted]:bg-[var(--ui-danger-soft)]',
+        icon: 'text-[var(--ui-danger)]',
+      },
+    },
+  },
 })
 
 export type DropdownSlots = keyof (typeof dropdownTheme)['slots']
