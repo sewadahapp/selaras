@@ -104,4 +104,14 @@ describe('button', () => {
     expect(wrapper.classes().some(c => c.includes('bg-'))).toBe(false)
     expect(wrapper.classes()).toContain('hover:text-[var(--ui-text)]')
   })
+
+  it('does not spawn a ripple for the `text` variant, since it would reintroduce a background fill', async () => {
+    const textWrapper = await mountSuspended(Button, { props: { variant: 'text' }, slots: { default: () => 'Clear' } })
+    textWrapper.element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    expect(textWrapper.element.querySelector('span[aria-hidden="true"]')).toBeNull()
+
+    const ghostWrapper = await mountSuspended(Button, { props: { variant: 'ghost' }, slots: { default: () => 'Clear' } })
+    ghostWrapper.element.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }))
+    expect(ghostWrapper.element.querySelector('span[aria-hidden="true"]')).not.toBeNull()
+  })
 })

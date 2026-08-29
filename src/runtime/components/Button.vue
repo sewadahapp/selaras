@@ -57,7 +57,12 @@ const iconOnly = computed(() => !slots.default)
 
 const icons = useIcons()
 const messages = useMessages()
-const rippleEnabled = useRippleEnabled()
+const rippleEnabledSetting = useRippleEnabled()
+// `text` never paints a background at any state (see theme/button.ts) -
+// a ripple is itself a transient background fill, so it would reintroduce
+// the exact "fill competing with an adjacent border" look that variant
+// exists to avoid.
+const rippleEnabled = computed(() => rippleEnabledSetting.value && props.variant !== 'text')
 const theme = useComponentTheme('button', buttonTheme)
 
 const ui = computed(() => theme.value({
