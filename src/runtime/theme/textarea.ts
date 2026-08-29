@@ -3,7 +3,9 @@ import { tv } from 'tailwind-variants'
 export const textareaTheme = tv({
   slots: {
     root: 'relative w-full',
-    base: 'w-full resize-y rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-2 text-sm text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none disabled:resize-none',
+    // not-focus: on the hover ring - see input.ts's own base slot for why
+    // (same fix, same reasoning).
+    base: 'w-full resize-y rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-2 text-sm text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none disabled:resize-none',
     // Anchored to the top corner (`top-2.5`), not vertically centered the
     // way Input's own icons are - once content wraps past one line,
     // centering against the whole (variable) box height would drift the

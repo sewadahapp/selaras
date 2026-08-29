@@ -18,7 +18,15 @@ export const inputNumberTheme = tv({
     // real `disabled` prop (bound solely to the <input>) should trigger this.
     // `relative` is unused in the default horizontal layout but required by
     // `stepper` below once orientation="vertical" positions against it.
-    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[input:disabled]:opacity-50 has-[input:disabled]:pointer-events-none',
+    // not-focus-within: on the hover ring specifically - without it, hovering
+    // anywhere in here (which is unavoidable while clicking the +/- buttons,
+    // since the pointer sits right on top of them) let the plain gray hover
+    // ring beat the primary focus-within ring in the cascade, since both are
+    // equal-specificity pseudo-class selectors and hover's happened to win.
+    // bg's own hover change is left unscoped - there's no competing
+    // focus-driven background to conflict with, so it can keep showing
+    // regardless of focus state.
+    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[input:disabled]:opacity-50 has-[input:disabled]:pointer-events-none',
     // Borderless/transparent - root already carries the visual box, this is
     // just the editable text. Centered + tabular-nums so digits don't shift
     // width as the value changes - orientation="vertical" overrides the

@@ -3,7 +3,11 @@ import { tv } from 'tailwind-variants'
 export const inputTheme = tv({
   slots: {
     root: 'relative inline-flex items-center w-full',
-    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
+    // not-focus: on the hover ring - without it, hovering while focused
+    // (unavoidable while the pointer sits on the input) let the plain gray
+    // hover ring beat the primary focus ring, since both are equal-
+    // specificity pseudo-class selectors and hover's happened to win.
+    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
     leadingIcon: 'absolute start-2.5 shrink-0 text-[var(--ui-text-muted)]',
     trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--ui-text-muted)]',
     // A separate slot from trailingIcon (not reused) - that one is a

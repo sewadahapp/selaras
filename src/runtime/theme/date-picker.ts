@@ -7,7 +7,11 @@ export const datePickerTheme = tv({
     // (theme/input.ts) - this is an Input-look box wrapping real interactive
     // children (segments + trigger button) rather than a single <input>, so
     // the focus ring keys off :focus-within instead of :focus.
-    field: 'inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[[data-disabled]]:opacity-50 has-[[data-disabled]]:pointer-events-none',
+    // not-focus-within: on the hover ring - see input-number.ts's own root
+    // slot for why (same fix, same reasoning: hovering while focused is
+    // unavoidable here, and would otherwise let the plain gray hover ring
+    // beat the primary focus-within ring).
+    field: 'inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[[data-disabled]]:opacity-50 has-[[data-disabled]]:pointer-events-none',
     // rounded-sm + tabular-nums keeps digit width stable as a segment's
     // value changes; the segment itself is the contenteditable element
     // Reka renders, so focus state is real :focus, not a data-attribute.
