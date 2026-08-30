@@ -51,7 +51,7 @@ import {
   TimeFieldInput,
   TimeFieldRoot,
 } from 'reka-ui'
-import { computed, ref, useId, watch } from 'vue'
+import { computed, ref, shallowRef, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -243,7 +243,14 @@ function normalizeForGranularity(value: DateValue | undefined) {
 // Seeded as time-capable up front for hour/minute granularity, so Reka's
 // segment rendering picks up hour/minute segments from the very first
 // render rather than only after a value is set.
-const placeholder = ref<DateValue>((() => {
+// shallowRef, not ref - DateValue is always replaced wholesale (every write
+// below is `placeholder.value = <new instance>`, never a mutation of an
+// existing one), and a plain ref's UnwrapRef mapped type strips the private
+// fields these date classes carry, so passing `placeholder.value` back into
+// a function/prop typed as DateValue fails type-checking even though the
+// runtime value is completely correct. shallowRef's type keeps the original
+// class untouched, matching how the value is actually used.
+const placeholder = shallowRef<DateValue>((() => {
   const seed = singleModelValue.value ?? today(getLocalTimeZone())
   return isTimeGranularity.value ? ensureTimeCapable(seed) : seed
 })())
@@ -369,7 +376,9 @@ function setMinute(minute: number) {
 // hour would.
 const timeOnlyGranularity = computed(() => (props.granularity === 'hour' ? 'hour' : 'minute'))
 const timeOnlyValue = computed(() => (props.timeOnly ? (props.modelValue as Time | undefined) : undefined))
-const timePlaceholder = ref<Time>(timeOnlyValue.value ?? (() => {
+// shallowRef, not ref - same reasoning as `placeholder` above (Time is
+// replaced wholesale, and a plain ref's type would strip its private fields).
+const timePlaceholder = shallowRef<Time>(timeOnlyValue.value ?? (() => {
   const now = new Date()
   return new Time(now.getHours(), now.getMinutes())
 })())
@@ -424,14 +433,16 @@ function visibleSegments(segments: { part: SegmentPart, value: string }[]) {
   const result: typeof segments = []
   for (const segment of segments) {
     if (segment.part === 'literal') {
-      if (result.length && result[result.length - 1].part !== 'literal')
+      // The length check already guarantees this index is in bounds - TS
+      // can't correlate the two on its own.
+      if (result.length && result[result.length - 1]!.part !== 'literal')
         result.push(segment)
     }
     else if (keptParts.includes(segment.part)) {
       result.push(segment)
     }
   }
-  while (result.length && result[result.length - 1].part === 'literal')
+  while (result.length && result[result.length - 1]!.part === 'literal')
     result.pop()
   return result
 }
