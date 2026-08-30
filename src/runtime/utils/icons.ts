@@ -24,6 +24,7 @@ export interface IconRegistry {
   danger: string
   warning: string
   info: string
+  user: string
 }
 
 // Hugeicons by default. One registry keyed by semantic purpose, not by
@@ -61,4 +62,5 @@ export const defaultIcons: IconRegistry = {
   danger: 'hugeicons:cancel-circle',
   warning: 'hugeicons:alert-circle',
   info: 'hugeicons:information-circle',
+  user: 'hugeicons:user',
 }
