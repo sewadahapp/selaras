@@ -65,6 +65,15 @@ describe('radioGroup', () => {
     expect(classes).toContain('data-[state=checked]:ring-[var(--ui-danger)]')
   })
 
+  it('invalid wins over a custom color for the checked-state ring, not the other way around', async () => {
+    const wrapper = await mountSuspended(RadioGroup, {
+      props: { items: ['one'], color: 'success', invalid: true, modelValue: 'one' },
+    })
+    const classes = wrapper.find('button').classes().join(' ')
+    expect(classes).toContain('data-[state=checked]:ring-[var(--ui-danger)]')
+    expect(classes).not.toContain('data-[state=checked]:ring-[var(--ui-success)]')
+  })
+
   it('applies the matching card-highlight compound variant for color + variant="card"', async () => {
     const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one', 'two'], color: 'danger', variant: 'card' } })
     const classes = wrapper.find('label').classes().join(' ')

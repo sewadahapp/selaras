@@ -49,6 +49,13 @@ describe('switch', () => {
     expect(classes).toContain('data-[state=checked]:bg-[var(--ui-danger)]')
   })
 
+  it('invalid wins over a custom color for the checked-state track, not the other way around', async () => {
+    const wrapper = await mountSuspended(Switch, { props: { invalid: true, color: 'success', modelValue: true } })
+    const classes = wrapper.find('button').classes().join(' ')
+    expect(classes).toContain('data-[state=checked]:bg-[var(--ui-danger)]')
+    expect(classes).not.toContain('data-[state=checked]:bg-[var(--ui-success)]')
+  })
+
   it('renders a spinning loading icon in the thumb when loading is set', async () => {
     const wrapper = await mountSuspended(Switch, { props: { loading: true } })
     const icon = wrapper.find('.iconify')

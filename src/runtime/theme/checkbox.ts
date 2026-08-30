@@ -39,13 +39,6 @@ export const checkboxTheme = tv({
     description: 'select-none text-xs text-[var(--ui-text-muted)]',
   },
   variants: {
-    // Recolors the existing ring rather than adding a second outline
-    // outside it, matching the same fix made on RadioGroup - see its
-    // theme file for why. data-[state=checked]/indeterminate need their
-    // own danger override too, for the same reason.
-    invalid: {
-      true: { box: 'ring-[var(--ui-danger)] data-[state=checked]:ring-[var(--ui-danger)] data-[state=indeterminate]:ring-[var(--ui-danger)]' },
-    },
     // Fills/rings the box in the given color when checked/indeterminate,
     // and colors the checkmark stroke (via the indicator's own
     // `currentColor`) with that color's matching foreground token - same
@@ -97,6 +90,14 @@ export const checkboxTheme = tv({
         root: 'w-full items-start gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] px-3.5 py-3 transition-colors has-[[data-state=checked]]:border-[var(--ui-primary)] has-[[data-state=checked]]:bg-[var(--ui-primary-soft)]',
         box: 'mt-0.5',
       },
+    },
+    // Declared last (after color) so tailwind-merge lets its own
+    // data-[state=checked]/indeterminate ring override win over color's -
+    // invalid should always show danger regardless of what color was also
+    // requested, not whichever variant happens to compose later. See
+    // RadioGroup's own theme file, which already has this order right.
+    invalid: {
+      true: { box: 'ring-[var(--ui-danger)] data-[state=checked]:ring-[var(--ui-danger)] data-[state=indeterminate]:ring-[var(--ui-danger)]' },
     },
   },
   defaultVariants: {

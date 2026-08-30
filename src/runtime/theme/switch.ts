@@ -35,13 +35,6 @@ export const switchTheme = tv({
     description: 'select-none text-xs text-[var(--ui-text-muted)]',
   },
   variants: {
-    // ring rather than an offset outline - the track has no border of its
-    // own to recolor (unlike Radio/Checkbox's ring-inset), but an offset
-    // outline left a visible gap between it and the pill, unlike every
-    // other invalid state in this library, which sits flush.
-    invalid: {
-      true: { track: 'ring-2 ring-[var(--ui-danger)]' },
-    },
     // Only affects the checked state - unchecked always stays the same
     // neutral border color regardless of `color`, matching how this
     // library's other "off" states (e.g. Chip's unselected variant) never
@@ -63,6 +56,19 @@ export const switchTheme = tv({
       sm: { track: 'h-3.5 w-6', thumb: 'size-3 data-[state=checked]:translate-x-[11px] before:-inset-[6px]', icon: 'size-2', label: 'text-xs', description: 'text-xs' },
       md: { track: 'h-4.5 w-8', thumb: 'size-4 data-[state=checked]:translate-x-[15px] before:-inset-[8px]', icon: 'size-2.5', label: 'text-sm', description: 'text-xs' },
       lg: { track: 'h-5.5 w-10', thumb: 'size-5 data-[state=checked]:translate-x-[19px] before:-inset-[10px]', icon: 'size-3', label: 'text-base', description: 'text-sm' },
+    },
+    // Declared last (after color) so tailwind-merge lets its own
+    // data-[state=checked] override win over color's - invalid should
+    // always show danger regardless of what color was also requested, on
+    // the checked track/thumb too, not just via the ring below (which
+    // alone would leave an invalid-but-checked switch showing a red ring
+    // around an otherwise normally-colored track).
+    invalid: {
+      // ring rather than an offset outline - the track has no border of
+      // its own to recolor (unlike Radio/Checkbox's ring-inset), but an
+      // offset outline left a visible gap between it and the pill, unlike
+      // every other invalid state in this library, which sits flush.
+      true: { track: 'ring-2 ring-[var(--ui-danger)] data-[state=checked]:bg-[var(--ui-danger)]', thumb: 'data-[state=checked]:before:bg-[var(--ui-danger)]' },
     },
   },
   defaultVariants: {
