@@ -83,7 +83,7 @@ icons:
 ::
 
 ```vue-html
-<SSwitch v-model="airplaneMode" checked-icon="ph:airplane-tilt-fill" unchecked-icon="ph:airplane-tilt" label="Airplane mode" />
+<SSwitch v-model="airplaneMode" checked-icon="hugeicons:airplane-mode" unchecked-icon="hugeicons:airplane-mode-off" label="Airplane mode" />
 ```
 
 ### Description

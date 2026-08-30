@@ -62,8 +62,8 @@ Give an item an `icon` and it renders before the label automatically - no
 <STabs
   v-model="active"
   :items="[
-    { label: 'Profile', value: 'profile', icon: 'ph:user' },
-    { label: 'Settings', value: 'settings', icon: 'ph:gear' },
+    { label: 'Profile', value: 'profile', icon: 'hugeicons:user' },
+    { label: 'Settings', value: 'settings', icon: 'hugeicons:settings-01' },
   ]"
 />
 ```

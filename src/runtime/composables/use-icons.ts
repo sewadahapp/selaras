@@ -5,7 +5,7 @@ import { useAppConfig } from '#imports'
 import { defaultIcons } from '../utils/icons'
 
 /**
- * Merges a consumer's app.config.icons override onto the default (Phosphor)
+ * Merges a consumer's app.config.icons override onto the default (Hugeicons)
  * registry - mirrors useComponentTheme's app.config.ui.<key> merge (see
  * ../utils/ui.ts), just for icon name strings instead of tv() themes, so a
  * single semantic key (e.g. close) can be overridden once for every

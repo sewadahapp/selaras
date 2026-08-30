@@ -15,7 +15,7 @@ const users = ref<User[]>([
         <span class="inline-flex items-center gap-1">
           Role
           <STooltip text="Admins can manage billing and members">
-            <SIcon name="ph:info" class="size-3.5 text-[var(--ui-text-muted)]" />
+            <SIcon name="hugeicons:information-circle" class="size-3.5 text-[var(--ui-text-muted)]" />
           </STooltip>
         </span>
       </template>

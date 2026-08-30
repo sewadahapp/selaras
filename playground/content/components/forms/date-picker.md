@@ -408,8 +408,8 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | Slot | Props | Description |
 | --- | --- | --- |
 | `day` | `{ date, dayValue, selected, disabled }` (range mode adds `selectionStart`, `selectionEnd`, `highlighted`) | Custom content inside a day-cell button (single-date and range grids) |
-| `clear-icon` | - | Replaces the clear button's icon (default: `ph:x`) |
-| `trigger-icon` | - | Replaces the trigger button's icon in both trigger modes (default: `ph:calendar`/`ph:clock`) |
+| `clear-icon` | - | Replaces the clear button's icon (default: `hugeicons:cancel-01`) |
+| `trigger-icon` | - | Replaces the trigger button's icon in both trigger modes (default: `hugeicons:calendar-01`/`hugeicons:clock-01`) |
 | `footer` | - | Content appended below the calendar/time content, above the Done button |
 
 ## Emits

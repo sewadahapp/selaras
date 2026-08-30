@@ -33,7 +33,7 @@ describe('input', () => {
   it('takes over the trailing slot from trailingIcon while there is a value to clear', async () => {
     const wrapper = await mountSuspended(Input, { props: { clearable: true, trailingIcon: 'lucide:mic', modelValue: 'hello' } })
     const icons = wrapper.findAll('.iconify').map(el => el.classes().find(c => c.startsWith('i-')))
-    expect(icons).toEqual(['i-ph:x'])
+    expect(icons).toEqual(['i-hugeicons:cancel-01'])
   })
 
   it('hides the clear button while disabled even with a value', async () => {
@@ -58,7 +58,7 @@ describe('input', () => {
     expect(classes).toContain('size-9')
   })
 
-  it('replaces the clear icon via the clear-icon slot instead of the default ph:x', async () => {
+  it('replaces the clear icon via the clear-icon slot instead of the default', async () => {
     const wrapper = await mountSuspended(Input, {
       props: { clearable: true, modelValue: 'hello' },
       slots: { 'clear-icon': '<span class="my-custom-icon">×</span>' },

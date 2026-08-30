@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const active = ref('profile')
 const items = [
-  { label: 'Profile', value: 'profile', icon: 'ph:user' },
-  { label: 'Settings', value: 'settings', icon: 'ph:gear' },
+  { label: 'Profile', value: 'profile', icon: 'hugeicons:user' },
+  { label: 'Settings', value: 'settings', icon: 'hugeicons:settings-01' },
 ]
 </script>
 

@@ -66,9 +66,9 @@ describe('toast', () => {
     expect(toasts.value.find(t => t.id === id)).toBeUndefined()
   })
 
-  // Excludes the close button's own icon (always rendered, "ph:x") from
-  // every query below - only interested in the status icon these tests
-  // are actually about.
+  // Excludes the close button's own icon (always rendered, "hugeicons:cancel-01")
+  // from every query below - only interested in the status icon these
+  // tests are actually about.
   function statusIcons() {
     return Array.from(document.body.querySelectorAll('.iconify')).filter(el => !el.closest('button[aria-label="Close"]'))
   }
@@ -81,7 +81,7 @@ describe('toast', () => {
 
     const icons = statusIcons()
     expect(icons).toHaveLength(1)
-    expect(icons[0]!.classList.contains('i-ph:check-circle')).toBe(true)
+    expect(icons[0]!.classList.contains('i-hugeicons:checkmark-circle-01')).toBe(true)
   })
 
   it('an explicit icon overrides the color\'s own default', async () => {

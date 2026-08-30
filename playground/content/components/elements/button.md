@@ -43,14 +43,14 @@ distinguishable at a glance?).
 ### Icons
 
 `icon` and `trailingIcon` add an icon before or after the label - any
-registered icon name works, not just `ph:*`.
+registered icon name works, not just `hugeicons:*`.
 
 ::component-example{name="button-icons"}
 ::
 
 ```vue-html
-<SButton icon="ph:download">Download</SButton>
-<SButton trailing-icon="ph:arrow-right">Continue</SButton>
+<SButton icon="hugeicons:download-01">Download</SButton>
+<SButton trailing-icon="hugeicons:arrow-right-01">Continue</SButton>
 ```
 
 ### Icon only
@@ -66,7 +66,7 @@ through to the root element like any other attr (see
 ::
 
 ```vue-html
-<SButton icon="ph:gear" variant="outline" aria-label="Settings" />
+<SButton icon="hugeicons:settings-01" variant="outline" aria-label="Settings" />
 ```
 
 ### Square
@@ -96,7 +96,7 @@ would otherwise visually compete with that border right at the seam:
 ::
 
 ```vue-html
-<SButton icon="ph:x" variant="text" aria-label="Clear" />
+<SButton icon="hugeicons:cancel-01" variant="text" aria-label="Clear" />
 ```
 
 ### Loading
@@ -111,7 +111,7 @@ for their own `loading` prop.
 ::
 
 ```vue-html
-<SButton icon="ph:floppy-disk" :loading="saving" :disabled="saving" @click="save">
+<SButton icon="hugeicons:floppy-disk" :loading="saving" :disabled="saving" @click="save">
   {{ saving ? 'Saving...' : 'Save' }}
 </SButton>
 ```
@@ -126,7 +126,7 @@ external link, or a resolved `NuxtLink` reference for client-side navigation
 ::
 
 ```vue-html
-<SButton as="a" href="https://github.com" target="_blank" rel="noopener" trailing-icon="ph:arrow-square-out">
+<SButton as="a" href="https://github.com" target="_blank" rel="noopener" trailing-icon="hugeicons:square-arrow-up-right">
   Open a link
 </SButton>
 ```
@@ -171,7 +171,7 @@ on an icon-only button with a `relative`/`absolute` pair:
 
 ```vue-html
 <div class="relative inline-flex">
-  <SButton variant="outline" icon="ph:bell" aria-label="Notifications" />
+  <SButton variant="outline" icon="hugeicons:notification-01" aria-label="Notifications" />
   <SBadge label="3" color="danger" size="sm" class="absolute -top-1.5 -right-1.5" />
 </div>
 ```

@@ -3,5 +3,5 @@ const value = ref('')
 </script>
 
 <template>
-  <STextarea v-model="value" icon="ph:chat-circle" placeholder="Leave a comment..." />
+  <STextarea v-model="value" icon="hugeicons:chat" placeholder="Leave a comment..." />
 </template>

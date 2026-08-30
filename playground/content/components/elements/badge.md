@@ -27,8 +27,8 @@ entirely when a plain icon name isn't enough (a spinner, for one).
 ::
 
 ```vue-html
-<SBadge label="Verified" icon="ph:check" color="success" />
-<SBadge label="New" trailing-icon="ph:caret-right" color="primary" />
+<SBadge label="Verified" icon="hugeicons:tick-02" color="success" />
+<SBadge label="New" trailing-icon="hugeicons:arrow-right-01" color="primary" />
 ```
 
 ### Icon only
@@ -42,10 +42,10 @@ is a deliberately different shape for a deliberately different role.
 ::
 
 ```vue-html
-<SBadge icon="ph:bell" color="primary" />
-<SBadge icon="ph:check" color="success" size="lg" />
-<SBadge icon="ph:bell" color="primary" variant="solid" />
-<SBadge icon="ph:check" color="success" variant="solid" size="lg" />
+<SBadge icon="hugeicons:notification-01" color="primary" />
+<SBadge icon="hugeicons:tick-02" color="success" size="lg" />
+<SBadge icon="hugeicons:notification-01" color="primary" variant="solid" />
+<SBadge icon="hugeicons:tick-02" color="success" variant="solid" size="lg" />
 ```
 
 ### Status dot

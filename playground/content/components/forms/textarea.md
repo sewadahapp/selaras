@@ -37,7 +37,7 @@ wraps past one line:
 ::
 
 ```vue-html
-<STextarea v-model="value" icon="ph:chat-circle" placeholder="Leave a comment..." />
+<STextarea v-model="value" icon="hugeicons:chat" placeholder="Leave a comment..." />
 ```
 
 ### Clear
@@ -134,4 +134,4 @@ to configure by hand for the common case.
 
 | Slot | Props | Description |
 | --- | --- | --- |
-| `clear-icon` | - | Replaces the clear button's icon (default: `ph:x`) |
+| `clear-icon` | - | Replaces the clear button's icon (default: `hugeicons:cancel-01`) |

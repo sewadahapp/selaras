@@ -1,8 +1,8 @@
 <template>
   <SDropdown
     :items="[
-      [{ label: 'Edit', icon: 'ph:pencil' }, { label: 'Duplicate', icon: 'ph:copy' }],
-      [{ label: 'Delete', icon: 'ph:trash' }],
+      [{ label: 'Edit', icon: 'hugeicons:pencil' }, { label: 'Duplicate', icon: 'hugeicons:copy' }],
+      [{ label: 'Delete', icon: 'hugeicons:delete-02' }],
     ]"
   >
     <SButton variant="outline">

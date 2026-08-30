@@ -288,7 +288,7 @@ not something to configure here.
 | `empty` | - | Shown when `items` is empty |
 | `empty-filter` | - | Shown when a search yields no matches |
 | `header` / `footer` | - | Content above/below the option list |
-| `clear-icon` | - | Replaces the clear button's icon (default: `ph:x`) |
-| `dropdown-icon` | - | Replaces the trigger's chevron (default: `ph:caret-down`) |
-| `loading-icon` | - | Replaces the spinner shown while `loading` (default: `ph:spinner`) |
-| `filter-icon` | - | Replaces the popover search field's icon (default: `ph:magnifying-glass`) |
+| `clear-icon` | - | Replaces the clear button's icon (default: `hugeicons:cancel-01`) |
+| `dropdown-icon` | - | Replaces the trigger's chevron (default: `hugeicons:arrow-down-01`) |
+| `loading-icon` | - | Replaces the spinner shown while `loading` (default: `hugeicons:loading-02`) |
+| `filter-icon` | - | Replaces the popover search field's icon (default: `hugeicons:search-01`) |

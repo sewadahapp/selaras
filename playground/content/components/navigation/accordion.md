@@ -43,7 +43,7 @@ scoped with `item`, so a single template can vary per item:
 ```
 
 `chevron-icon` replaces the expand/collapse chevron the same way any other
-icon-swap slot in this library does (default: `ph:caret-down`).
+icon-swap slot in this library does (default: `hugeicons:arrow-down-01`).
 
 ### Single mode
 
@@ -123,4 +123,4 @@ order changes.
 | --- | --- | --- |
 | `[item.value]` | - | Content for that item, one named slot per item |
 | `label` | `{ item }` | Replaces an item's label content |
-| `chevron-icon` | - | Replaces the expand/collapse chevron (default: `ph:caret-down`) |
+| `chevron-icon` | - | Replaces the expand/collapse chevron (default: `hugeicons:arrow-down-01`) |

@@ -26,35 +26,39 @@ export interface IconRegistry {
   info: string
 }
 
-// Phosphor by default. One registry keyed by semantic purpose, not by
+// Hugeicons by default. One registry keyed by semantic purpose, not by
 // component/slot - matches how --ui-* colors are a single shared layer
 // rather than per-component tokens, so overriding app.config.icons.close
 // once retheme every dismiss/clear/remove "x" glyph in the library
 // together, instead of needing a separate override per component.
 export const defaultIcons: IconRegistry = {
-  close: 'ph:x',
-  check: 'ph:check',
-  indeterminate: 'ph:minus',
-  chevronUp: 'ph:caret-up',
-  chevronDown: 'ph:caret-down',
-  chevronRight: 'ph:caret-right',
-  chevronLeft: 'ph:caret-left',
-  chevronsLeft: 'ph:caret-double-left',
-  chevronsRight: 'ph:caret-double-right',
-  loading: 'ph:spinner',
-  search: 'ph:magnifying-glass',
-  sortAscending: 'ph:arrow-up',
-  sortDescending: 'ph:arrow-down',
-  columns: 'ph:columns',
-  copy: 'ph:copy',
-  lightMode: 'ph:sun',
-  darkMode: 'ph:moon',
-  calendar: 'ph:calendar',
-  clock: 'ph:clock',
-  plus: 'ph:plus',
-  minus: 'ph:minus',
-  success: 'ph:check-circle',
-  danger: 'ph:x-circle',
-  warning: 'ph:warning',
-  info: 'ph:info',
+  close: 'hugeicons:cancel-01',
+  check: 'hugeicons:tick-02',
+  indeterminate: 'hugeicons:minus-sign',
+  // Hugeicons' "arrow-*-01" set is the plain chevron shape (no shaft) -
+  // matches the original caret look despite the name.
+  chevronUp: 'hugeicons:arrow-up-01',
+  chevronDown: 'hugeicons:arrow-down-01',
+  chevronRight: 'hugeicons:arrow-right-01',
+  chevronLeft: 'hugeicons:arrow-left-01',
+  chevronsLeft: 'hugeicons:previous',
+  chevronsRight: 'hugeicons:next',
+  loading: 'hugeicons:loading-02',
+  search: 'hugeicons:search-01',
+  // "arrow-*-02" (shaft + arrowhead) - kept visually distinct from the
+  // plain chevrons above, matching the original caret-vs-arrow split.
+  sortAscending: 'hugeicons:arrow-up-02',
+  sortDescending: 'hugeicons:arrow-down-02',
+  columns: 'hugeicons:table-columns-split',
+  copy: 'hugeicons:copy',
+  lightMode: 'hugeicons:sun-01',
+  darkMode: 'hugeicons:moon',
+  calendar: 'hugeicons:calendar-01',
+  clock: 'hugeicons:clock-01',
+  plus: 'hugeicons:plus-sign',
+  minus: 'hugeicons:minus-sign',
+  success: 'hugeicons:checkmark-circle-01',
+  danger: 'hugeicons:cancel-circle',
+  warning: 'hugeicons:alert-circle',
+  info: 'hugeicons:information-circle',
 }

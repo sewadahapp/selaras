@@ -5,8 +5,8 @@ const airplaneMode = ref(true)
 <template>
   <SSwitch
     v-model="airplaneMode"
-    checked-icon="ph:airplane-tilt-fill"
-    unchecked-icon="ph:airplane-tilt"
+    checked-icon="hugeicons:airplane-mode"
+    unchecked-icon="hugeicons:airplane-mode-off"
     label="Airplane mode"
   />
 </template>

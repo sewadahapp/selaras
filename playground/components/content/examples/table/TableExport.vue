@@ -9,7 +9,7 @@ const users = ref([
 
 <template>
   <div class="flex flex-col gap-3">
-    <SButton variant="outline" size="sm" icon="ph:download" class="self-end" @click="tableRef.exportCsv('users.csv')">
+    <SButton variant="outline" size="sm" icon="hugeicons:download-01" class="self-end" @click="tableRef.exportCsv('users.csv')">
       Export CSV
     </SButton>
     <STable ref="tableRef" :data="users">

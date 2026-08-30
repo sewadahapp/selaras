@@ -32,8 +32,8 @@ props [Button](/components/elements/button#icons) uses for its own.
 ::
 
 ```vue-html
-<SInput v-model="search" icon="ph:magnifying-glass" placeholder="Search..." />
-<SInput v-model="amount" trailing-icon="ph:currency-dollar" placeholder="0.00" />
+<SInput v-model="search" icon="hugeicons:search-01" placeholder="Search..." />
+<SInput v-model="amount" trailing-icon="hugeicons:dollar-01" placeholder="0.00" />
 ```
 
 ### Clear
@@ -114,4 +114,4 @@ configure by hand for the common case.
 
 | Slot | Props | Description |
 | --- | --- | --- |
-| `clear-icon` | - | Replaces the clear button's icon (default: `ph:x`) |
+| `clear-icon` | - | Replaces the clear button's icon (default: `hugeicons:cancel-01`) |

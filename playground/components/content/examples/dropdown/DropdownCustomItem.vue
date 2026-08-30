@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const items = [
   [
-    { label: 'Edit', icon: 'ph:pencil', shortcut: '⌘E' },
-    { label: 'Duplicate', icon: 'ph:copy', shortcut: '⌘D' },
+    { label: 'Edit', icon: 'hugeicons:pencil', shortcut: '⌘E' },
+    { label: 'Duplicate', icon: 'hugeicons:copy', shortcut: '⌘D' },
   ],
 ]
 </script>

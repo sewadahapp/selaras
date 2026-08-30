@@ -53,7 +53,7 @@ describe('textarea', () => {
   it('takes over the trailing slot from trailingIcon while there is a value to clear', async () => {
     const wrapper = await mountSuspended(Textarea, { props: { clearable: true, trailingIcon: 'lucide:mic', modelValue: 'hello' } })
     const icons = wrapper.findAll('.iconify').map(el => el.classes().find(c => c.startsWith('i-')))
-    expect(icons).toEqual(['i-ph:x'])
+    expect(icons).toEqual(['i-hugeicons:cancel-01'])
   })
 
   it('hides the clear button while disabled even with a value', async () => {
