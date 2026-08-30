@@ -164,6 +164,20 @@ The heading can still drill *up* (e.g. a month-granularity picker jumping
 to year view to reach a distant year quickly) - only the terminal, "picking
 this is the answer" direction changes. Single-date mode only.
 
+### Custom month/year disabling
+
+`is-month-disabled`/`is-year-disabled` (`view="month"`/`"year"` only)
+disable a specific month/year on top of whatever `min-value`/`max-value`
+already disable - useful for blocking out a specific month for a known
+closure, independent of the overall allowed range:
+
+::component-example{name="date-picker-month-year-disabled"}
+::
+
+```vue-html
+<SDatePicker v-model="date" view="month" :is-month-disabled="(d) => d.month === 7" />
+```
+
 ### Date-time selection
 
 `granularity="hour"`/`"minute"` add a time-of-day section below the day
@@ -269,6 +283,33 @@ the whole control:
 <SDatePicker v-model="date" disabled />
 ```
 
+### Read-only
+
+`readonly` shows the value and blocks edits without disabling the control -
+unlike `disabled`, it stays focusable/readable, just not changeable. Not
+applicable to `time-only` (there's no readonly concept for a bare time
+field):
+
+::component-example{name="date-picker-readonly"}
+::
+
+```vue-html
+<SDatePicker v-model="date" readonly />
+```
+
+### Preventing deselection
+
+`prevent-deselect` stops a click on the only selected day from clearing it
+entirely - useful when the control should always land on *some* value
+rather than allowing an empty state. Not applicable to `time-only`:
+
+::component-example{name="date-picker-prevent-deselect"}
+::
+
+```vue-html
+<SDatePicker v-model="date" prevent-deselect />
+```
+
 ### Custom day content
 
 The `day` slot replaces a day cell's content (in both single-date and range
@@ -330,6 +371,8 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `closeOnSelect` | `boolean` | `true` |
 | `triggerMode` | `'field' \| 'button'` | `field` |
 | `view` | `'date' \| 'month' \| 'year'` (single-date mode only) | `date` |
+| `isMonthDisabled` | `(date: DateValue) => boolean` (`view="month"` only) | - |
+| `isYearDisabled` | `(year: number) => boolean` (`view="year"` only) | - |
 | `granularity` | `'year' \| 'month' \| 'day' \| 'hour' \| 'minute'` (single-date mode only) | `day` |
 | `minuteStep` | `number` (hour/minute granularity only) | `1` |
 | `hourCycle` | `12 \| 24` (hour/minute granularity only) | locale default |
@@ -338,6 +381,8 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `fixedDate` | `'start' \| 'end'` (range only) | - |
 | `maximumDays` | `number` (range only) | - |
 | `disabled` | `boolean` | `false` |
+| `readonly` | `boolean` (not `timeOnly`) | `false` |
+| `preventDeselect` | `boolean` (not `timeOnly`) | `false` |
 | `invalid` | `boolean` | `false` |
 | `clearable` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |

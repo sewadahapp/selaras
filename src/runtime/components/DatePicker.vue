@@ -107,6 +107,14 @@ const props = withDefaults(defineProps<{
   /** Range mode only - caps how many days can separate start and end. */
   maximumDays?: number
   disabled?: boolean
+  /** Shows the value and blocks edits without disabling the control - unlike `disabled`, it stays focusable/readable, just not changeable. Not applicable to `timeOnly` (Reka's own TimeField has no readonly concept). */
+  readonly?: boolean
+  /** Stops a click on the only selected day from deselecting it - not applicable to `timeOnly` (there's no calendar day to click). */
+  preventDeselect?: boolean
+  /** `view="month"` only - disables a specific month in addition to whatever minValue/maxValue already disable (doesn't replace that check). */
+  isMonthDisabled?: (date: DateValue) => boolean
+  /** `view="year"` only - disables a specific year in addition to whatever minValue/maxValue already disable (doesn't replace that check). */
+  isYearDisabled?: (year: number) => boolean
   invalid?: boolean
   clearable?: boolean
   size?: DatePickerVariants['size']
@@ -255,7 +263,7 @@ const yearGridItems = computed(() => Array.from({ length: 12 }, (_, i) => ({
 })))
 const decadeHeadingText = computed(() => `${yearWindowStart.value} – ${yearWindowStart.value + 11}`)
 
-function isMonthDisabled(date: DateValue) {
+function isMonthDisabledByRange(date: DateValue) {
   if (!props.minValue && !props.maxValue)
     return false
   if (props.maxValue && startOfMonth(date).compare(props.maxValue) > 0)
@@ -264,7 +272,7 @@ function isMonthDisabled(date: DateValue) {
     return true
   return false
 }
-function isYearDisabled(year: number) {
+function isYearDisabledByRange(year: number) {
   if (!props.minValue && !props.maxValue)
     return false
   const value = placeholder.value.set({ year })
@@ -273,6 +281,16 @@ function isYearDisabled(year: number) {
   if (props.minValue && endOfYear(value).compare(props.minValue) < 0)
     return true
   return false
+}
+// A custom isMonthDisabled/isYearDisabled disables *more* dates than the
+// range check would, not instead of it - same additive relationship
+// isDateDisabled/isDateUnavailable already have with each other elsewhere
+// in this component.
+function isMonthDisabled(date: DateValue) {
+  return isMonthDisabledByRange(date) || (props.isMonthDisabled?.(date) ?? false)
+}
+function isYearDisabled(year: number) {
+  return isYearDisabledByRange(year) || (props.isYearDisabled?.(year) ?? false)
 }
 
 function selectMonth(date: DateValue) {
@@ -536,6 +554,8 @@ const rangeCellTriggerUi = {
     :fixed-date="fixedDate"
     :maximum-days="maximumDays"
     :disabled="disabled"
+    :readonly="readonly"
+    :prevent-deselect="preventDeselect"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value)"
   >
@@ -691,6 +711,7 @@ const rangeCellTriggerUi = {
           :hour-cycle="hourCycle"
           :granularity="timeOnlyGranularity"
           :disabled="disabled"
+          :readonly="readonly"
           @update:model-value="(value) => emit('update:modelValue', value ? normalizeTimeOnly(value as Time) : undefined)"
         >
           <template v-for="segment in segments" :key="segment.part">
@@ -816,6 +837,8 @@ const rangeCellTriggerUi = {
     :fixed-weeks="fixedWeeks"
     :close-on-select="isTimeGranularity ? false : closeOnSelect"
     :disabled="disabled"
+    :readonly="readonly"
+    :prevent-deselect="preventDeselect"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', normalizeForGranularity(value as DateValue | undefined))"
   >

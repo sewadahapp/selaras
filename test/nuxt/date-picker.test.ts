@@ -318,6 +318,27 @@ describe('datePicker', () => {
     expect(viewGridButton('Jun')?.hasAttribute('disabled')).toBe(false)
   })
 
+  it('isMonthDisabled/isYearDisabled disable additional months/years, on top of whatever minValue/maxValue already disable', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        modelValue: new CalendarDate(2024, 6, 15),
+        minValue: new CalendarDate(2024, 3, 1),
+        maxValue: new CalendarDate(2024, 9, 30),
+        // Jun is in-range (per the test above) but should still be disabled
+        // here since the custom function targets it specifically.
+        isMonthDisabled: (date: CalendarDate) => date.month === 6,
+      },
+    })
+    await openCalendar(wrapper)
+    await clickAndWait(document.body.querySelector('button[aria-label="Choose month"]')!)
+
+    expect(viewGridButton('Jun')?.hasAttribute('disabled')).toBe(true)
+    // Jan stays disabled too - the custom function adds to the range check,
+    // it doesn't replace it.
+    expect(viewGridButton('Jan')?.hasAttribute('disabled')).toBe(true)
+    expect(viewGridButton('Jul')?.hasAttribute('disabled')).toBe(false)
+  })
+
   it('resets to date view after the popover closes and reopens', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 6, 15) } })
     await openCalendar(wrapper)
@@ -760,5 +781,46 @@ describe('datePicker', () => {
 
     expect(wrapper.find('.my-trigger-icon').exists()).toBe(true)
     expect(wrapper.find('.iconify').exists()).toBe(false)
+  })
+
+  it('forwards readonly onto the active root, in single, range, and timeOnly modes', async () => {
+    const single = await mountSuspended(DatePicker, {
+      props: { modelValue: new CalendarDate(2024, 1, 15), readonly: true },
+    })
+    expect(single.find('[data-readonly]').exists()).toBe(true)
+    single.unmount()
+
+    const range = await mountSuspended(DatePicker, { props: { range: true, readonly: true } })
+    expect(range.find('[data-readonly]').exists()).toBe(true)
+    range.unmount()
+
+    const timeOnly = await mountSuspended(DatePicker, { props: { timeOnly: true, readonly: true } })
+    expect(timeOnly.find('[data-readonly]').exists()).toBe(true)
+  })
+
+  it('preventDeselect keeps the only selected day selected when clicked again', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { modelValue: new CalendarDate(2024, 1, 15), preventDeselect: true },
+    })
+    await openCalendar(wrapper)
+
+    dayButton('15').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    // no state change, so no event at all - unlike the no-preventDeselect
+    // case below, which does fire (with undefined) to clear the selection.
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('without preventDeselect, clicking the only selected day clears it', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { modelValue: new CalendarDate(2024, 1, 15) },
+    })
+    await openCalendar(wrapper)
+
+    dayButton('15').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([undefined])
   })
 })
