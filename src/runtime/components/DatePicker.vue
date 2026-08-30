@@ -2,6 +2,7 @@
 import type { DateValue } from '@internationalized/date'
 import type { DateRange, SegmentPart } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
+import type { buttonTheme } from '../theme/button'
 import type { DatePickerSlots } from '../theme/date-picker'
 import type { UiProp } from '../utils/ui'
 import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, Time, toCalendarDateTime, today } from '@internationalized/date'
@@ -61,6 +62,7 @@ import Button from './Button.vue'
 import Icon from './Icon.vue'
 
 type DatePickerVariants = VariantProps<typeof datePickerTheme>
+type ButtonVariants = VariantProps<typeof buttonTheme>
 
 defineOptions({ inheritAttrs: false })
 
@@ -117,12 +119,18 @@ const props = withDefaults(defineProps<{
   isYearDisabled?: (year: number) => boolean
   invalid?: boolean
   clearable?: boolean
+  /** Chrome color - the clear/trigger buttons and prev/next month nav. Only the color changes; each button keeps its own deliberately-different variant (icon-only buttons use `text`, nav arrows use `ghost`). */
+  color?: ButtonVariants['color']
+  /** The color of whatever's currently "active" - the selected day/month/year cell and the Done button. */
+  activeColor?: ButtonVariants['color']
   size?: DatePickerVariants['size']
   ui?: UiProp<DatePickerSlots>
 }>(), {
   closeOnSelect: true,
   triggerMode: 'field',
   granularity: 'day',
+  color: 'neutral',
+  activeColor: 'primary',
   minuteStep: 1,
 })
 
@@ -477,9 +485,9 @@ const timeSectionProps = computed(() => resolveSlot(ui.value.timeSection, props.
 // The button-mode trigger's own look - Input-style ring/bg/hover, but using
 // Button's native :focus-visible (already in buttonTheme's own base) rather
 // than the field slot's :focus-within, since this is a single focusable
-// element, not a box of several. variant="text" color="neutral" contributes
-// no bg of its own, so this override's bg/ring/hover classes are the only
-// ones in play rather than fighting a second, competing background.
+// element, not a box of several. variant="text" (any color) contributes no
+// bg of its own, so this override's bg/ring/hover classes are the only ones
+// in play rather than fighting a second, competing background.
 const buttonTriggerUi = computed(() => ({
   base: [
     'w-full justify-start rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)]',
@@ -578,7 +586,7 @@ const rangeCellTriggerUi = {
           <Button
             v-if="clearable && hasValue"
             variant="text"
-            color="neutral"
+            :color="color"
             :size="iconButtonSize"
             :aria-label="messages.clear"
             @click="clear"
@@ -590,7 +598,7 @@ const rangeCellTriggerUi = {
             </template>
           </Button>
           <DateRangePickerTrigger as-child>
-            <Button variant="text" color="neutral" :size="iconButtonSize" :aria-label="messages.dateRangePicker">
+            <Button variant="text" :color="color" :size="iconButtonSize" :aria-label="messages.dateRangePicker">
               <template #icon="{ class: iconClass }">
                 <slot name="trigger-icon">
                   <Icon :name="icons.calendar" :class="iconClass" />
@@ -605,7 +613,7 @@ const rangeCellTriggerUi = {
         <DateRangePickerTrigger as-child>
           <Button
             variant="text"
-            color="neutral"
+            :color="color"
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
@@ -622,7 +630,7 @@ const rangeCellTriggerUi = {
         <Button
           v-if="clearable && hasValue"
           variant="text"
-          color="neutral"
+          :color="color"
           :size="iconButtonSize"
           :aria-label="messages.clear"
           class="absolute end-1 top-1/2 -translate-y-1/2"
@@ -641,11 +649,11 @@ const rangeCellTriggerUi = {
       <DateRangePickerCalendar v-slot="{ grid, weekDays }">
         <DateRangePickerHeader v-bind="headerProps">
           <DateRangePickerPrev as-child>
-            <Button variant="ghost" color="neutral" size="sm" :icon="icons.chevronLeft" :aria-label="messages.previousMonth" :ui="navButtonUi" />
+            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronLeft" :aria-label="messages.previousMonth" :ui="navButtonUi" />
           </DateRangePickerPrev>
           <DateRangePickerHeading v-bind="headingProps" />
           <DateRangePickerNext as-child>
-            <Button variant="ghost" color="neutral" size="sm" :icon="icons.chevronRight" :aria-label="messages.nextMonth" :ui="navButtonUi" />
+            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronRight" :aria-label="messages.nextMonth" :ui="navButtonUi" />
           </DateRangePickerNext>
         </DateRangePickerHeader>
 
@@ -669,7 +677,7 @@ const rangeCellTriggerUi = {
                   >
                     <Button
                       :variant="selectionStart || selectionEnd ? 'solid' : (highlighted || selected) ? 'soft' : 'ghost'"
-                      :color="selectionStart || selectionEnd || highlighted || selected ? 'primary' : 'neutral'"
+                      :color="selectionStart || selectionEnd || highlighted || selected ? activeColor : color"
                       size="sm"
                       :disabled="dayDisabled"
                       :ui="rangeCellTriggerUi"
@@ -724,7 +732,7 @@ const rangeCellTriggerUi = {
           <Button
             v-if="clearable && hasValue"
             variant="text"
-            color="neutral"
+            :color="color"
             :size="iconButtonSize"
             :aria-label="messages.clear"
             @click="clear"
@@ -736,7 +744,7 @@ const rangeCellTriggerUi = {
             </template>
           </Button>
           <PopoverTrigger as-child>
-            <Button variant="text" color="neutral" :size="iconButtonSize" :aria-label="messages.timePicker">
+            <Button variant="text" :color="color" :size="iconButtonSize" :aria-label="messages.timePicker">
               <template #icon="{ class: iconClass }">
                 <slot name="trigger-icon">
                   <Icon :name="icons.clock" :class="iconClass" />
@@ -751,7 +759,7 @@ const rangeCellTriggerUi = {
         <PopoverTrigger as-child>
           <Button
             variant="text"
-            color="neutral"
+            :color="color"
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
@@ -768,7 +776,7 @@ const rangeCellTriggerUi = {
         <Button
           v-if="clearable && hasValue"
           variant="text"
-          color="neutral"
+          :color="color"
           :size="iconButtonSize"
           :aria-label="messages.clear"
           class="absolute end-1 top-1/2 -translate-y-1/2"
@@ -805,7 +813,7 @@ const rangeCellTriggerUi = {
         <Button
           v-if="closeOnSelect"
           variant="solid"
-          color="primary"
+          :color="activeColor"
           size="sm"
           block
           class="mt-2"
@@ -855,7 +863,7 @@ const rangeCellTriggerUi = {
           <Button
             v-if="clearable && hasValue"
             variant="text"
-            color="neutral"
+            :color="color"
             :size="iconButtonSize"
             :aria-label="messages.clear"
             @click="clear"
@@ -867,7 +875,7 @@ const rangeCellTriggerUi = {
             </template>
           </Button>
           <DatePickerTrigger as-child>
-            <Button variant="text" color="neutral" :size="iconButtonSize" :aria-label="messages.datePicker">
+            <Button variant="text" :color="color" :size="iconButtonSize" :aria-label="messages.datePicker">
               <template #icon="{ class: iconClass }">
                 <slot name="trigger-icon">
                   <Icon :name="icons.calendar" :class="iconClass" />
@@ -882,7 +890,7 @@ const rangeCellTriggerUi = {
         <DatePickerTrigger as-child>
           <Button
             variant="text"
-            color="neutral"
+            :color="color"
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
@@ -899,7 +907,7 @@ const rangeCellTriggerUi = {
         <Button
           v-if="clearable && hasValue"
           variant="text"
-          color="neutral"
+          :color="color"
           :size="iconButtonSize"
           :aria-label="messages.clear"
           class="absolute end-1 top-1/2 -translate-y-1/2"
@@ -918,12 +926,12 @@ const rangeCellTriggerUi = {
       <DatePickerCalendar v-slot="{ grid, weekDays }">
         <DatePickerHeader v-bind="headerProps">
           <DatePickerPrev v-if="internalView === 'date'" as-child>
-            <Button variant="ghost" color="neutral" size="sm" :icon="icons.chevronLeft" :aria-label="messages.previousMonth" :ui="navButtonUi" />
+            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronLeft" :aria-label="messages.previousMonth" :ui="navButtonUi" />
           </DatePickerPrev>
           <Button
             v-else
             variant="ghost"
-            color="neutral"
+            :color="color"
             size="sm"
             :icon="icons.chevronLeft"
             :aria-label="internalView === 'month' ? messages.previousYear : messages.previousDecade"
@@ -950,12 +958,12 @@ const rangeCellTriggerUi = {
           </button>
 
           <DatePickerNext v-if="internalView === 'date'" as-child>
-            <Button variant="ghost" color="neutral" size="sm" :icon="icons.chevronRight" :aria-label="messages.nextMonth" :ui="navButtonUi" />
+            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronRight" :aria-label="messages.nextMonth" :ui="navButtonUi" />
           </DatePickerNext>
           <Button
             v-else
             variant="ghost"
-            color="neutral"
+            :color="color"
             size="sm"
             :icon="icons.chevronRight"
             :aria-label="internalView === 'month' ? messages.nextYear : messages.nextDecade"
@@ -984,7 +992,7 @@ const rangeCellTriggerUi = {
                   >
                     <Button
                       :variant="selected ? 'solid' : 'ghost'"
-                      :color="selected ? 'primary' : 'neutral'"
+                      :color="selected ? activeColor : color"
                       size="sm"
                       square
                       :disabled="dayDisabled"
@@ -1006,7 +1014,7 @@ const rangeCellTriggerUi = {
             v-for="monthItem in monthGridItems"
             :key="monthItem.value.month"
             :variant="monthItem.value.month === placeholder.month ? 'solid' : 'ghost'"
-            :color="monthItem.value.month === placeholder.month ? 'primary' : 'neutral'"
+            :color="monthItem.value.month === placeholder.month ? activeColor : color"
             size="sm"
             :disabled="isMonthDisabled(monthItem.value)"
             @click="selectMonth(monthItem.value)"
@@ -1020,7 +1028,7 @@ const rangeCellTriggerUi = {
             v-for="yearItem in yearGridItems"
             :key="yearItem.value"
             :variant="yearItem.value === placeholder.year ? 'solid' : 'ghost'"
-            :color="yearItem.value === placeholder.year ? 'primary' : 'neutral'"
+            :color="yearItem.value === placeholder.year ? activeColor : color"
             size="sm"
             :disabled="isYearDisabled(yearItem.value)"
             @click="selectYear(yearItem.value)"
@@ -1049,7 +1057,7 @@ const rangeCellTriggerUi = {
           <Button
             v-if="closeOnSelect"
             variant="solid"
-            color="primary"
+            :color="activeColor"
             size="sm"
             block
             class="mt-2"

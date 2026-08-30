@@ -270,6 +270,19 @@ day buttons together:
 <SDatePicker v-model="date" size="lg" />
 ```
 
+### Colors
+
+`color` sets the chrome color - the clear/trigger buttons and prev/next
+month nav; `active-color` sets the color of whatever's currently "active" -
+the selected day/month/year cell and the Done button:
+
+::component-example{name="date-picker-colors"}
+::
+
+```vue-html
+<SDatePicker v-model="date" color="primary" active-color="danger" />
+```
+
 ### Clearable & disabled
 
 `clearable` adds a dismiss button once a value is set; `disabled` disables
@@ -385,6 +398,8 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `preventDeselect` | `boolean` (not `timeOnly`) | `false` |
 | `invalid` | `boolean` | `false` |
 | `clearable` | `boolean` | `false` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
+| `activeColor` | same as `color` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'content' \| 'header' \| 'heading' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'timeSection', string \| object>>` | - |
 

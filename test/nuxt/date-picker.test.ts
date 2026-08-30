@@ -823,4 +823,28 @@ describe('datePicker', () => {
 
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([undefined])
   })
+
+  it('applies color to unselected days and activeColor to the selected day', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: {
+        modelValue: new CalendarDate(2024, 1, 15),
+        color: 'primary',
+        activeColor: 'danger',
+      },
+    })
+    await openCalendar(wrapper)
+
+    expect(dayButton('10').className).toContain('text-[var(--ui-primary)]')
+    expect(dayButton('15').className).toContain('bg-[var(--ui-danger)]')
+  })
+
+  it('applies color to chrome (nav arrows) regardless of selection', async () => {
+    wrapper = await mountSuspended(DatePicker, {
+      props: { modelValue: new CalendarDate(2024, 1, 15), color: 'danger' },
+    })
+    await openCalendar(wrapper)
+
+    const nextButton = document.body.querySelector('button[aria-label="Next month"]')!
+    expect(nextButton.className).toContain('text-[var(--ui-danger)]')
+  })
 })
