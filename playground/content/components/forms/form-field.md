@@ -57,6 +57,36 @@ rendering any text.
 </SFormField>
 ```
 
+### Sizes
+
+`size` also scales FormField's own label/description/hint/error text
+(`sm` / `md` / `lg`) - it's the same prop already forwarded to the
+wrapped control's own `size`, so both stay visually in sync without
+setting it twice:
+
+```vue-html
+<SFormField label="Email" size="sm">
+  <SInput v-model="email" size="sm" />
+</SFormField>
+
+<SFormField label="Email" size="lg">
+  <SInput v-model="email" size="lg" />
+</SFormField>
+```
+
+### Orientation
+
+`orientation="horizontal"` places the label beside the control instead
+of above it, with the control filling the remaining row width - useful
+for settings-page-style label-left forms. `hint`/`error` still render
+full-width below the row either way:
+
+```vue-html
+<SFormField label="Email" orientation="horizontal">
+  <SInput v-model="email" />
+</SFormField>
+```
+
 ### Works with any control
 
 ```vue-html
@@ -85,7 +115,8 @@ can't be forced back to valid while its FormField has one.
 | `error` | `string \| boolean` | - |
 | `required` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | - |
-| `ui` | `Partial<Record<'root' \| 'label' \| 'required' \| 'description' \| 'container' \| 'hint' \| 'error', string \| object>>` | - |
+| `orientation` | `'vertical' \| 'horizontal'` | `vertical` |
+| `ui` | `Partial<Record<'root' \| 'body' \| 'header' \| 'label' \| 'required' \| 'description' \| 'container' \| 'hint' \| 'error', string \| object>>` | - |
 
 ## Slots
 

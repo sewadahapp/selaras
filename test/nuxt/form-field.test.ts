@@ -97,4 +97,50 @@ describe('formField', () => {
     expect(wrapper.find('input').attributes('aria-invalid')).toBe('true')
     expect(wrapper.find('[role="alert"]').text()).toBe('Now invalid')
   })
+
+  it('defaults to text-sm on the label, matching the pre-size-variant look', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { label: 'Email' },
+      slots: { default: () => h(Input) },
+    })
+    expect(wrapper.find('label').classes()).toContain('text-sm')
+  })
+
+  it('scales the label to match size="sm"/"lg"', async () => {
+    const sm = await mountSuspended(FormField, {
+      props: { label: 'Email', size: 'sm' },
+      slots: { default: () => h(Input) },
+    })
+    expect(sm.find('label').classes()).toContain('text-xs')
+
+    const lg = await mountSuspended(FormField, {
+      props: { label: 'Email', size: 'lg' },
+      slots: { default: () => h(Input) },
+    })
+    expect(lg.find('label').classes()).toContain('text-base')
+  })
+
+  // body is two DOM levels above the label (label -> header -> body) -
+  // walking up from the label is unambiguous, unlike a bare `div > div`
+  // selector, which can match an outer wrapper div the test harness
+  // itself introduces before reaching FormField's real root.
+  function bodyClasses(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
+    return Array.from(wrapper.find('label').element.parentElement!.parentElement!.classList)
+  }
+
+  it('defaults to a vertical (flex-col) body layout', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { label: 'Email' },
+      slots: { default: () => h(Input) },
+    })
+    expect(bodyClasses(wrapper)).toContain('flex-col')
+  })
+
+  it('orientation="horizontal" switches the body layout to flex-row', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { label: 'Email', orientation: 'horizontal' },
+      slots: { default: () => h(Input) },
+    })
+    expect(bodyClasses(wrapper)).toContain('flex-row')
+  })
 })
