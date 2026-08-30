@@ -220,6 +220,20 @@ clickable - it doesn't disable the select), `disabled` prevents opening it
 entirely, and `invalid` switches the ring to `--ui-danger`. All three compose
 with everything above them on this page - see [Props](#props).
 
+### Colors
+
+`color` sets the focus-ring color - the resting (unfocused) ring stays
+`--ui-border` regardless, and `invalid` always wins over a custom `color`:
+
+::component-example{name="select-colors"}
+::
+
+```vue-html
+<SSelect v-model="primary" color="primary" :items="items" />
+<SSelect v-model="success" color="success" :items="items" />
+<SSelect v-model="danger" color="danger" :items="items" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
@@ -261,6 +275,7 @@ not something to configure here.
 | `disabled` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `invalid` | `boolean` | `false` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `ui` | `Partial<Record<SelectSlot, string \| object>>` | - |
 
 ## Slots

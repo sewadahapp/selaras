@@ -80,4 +80,16 @@ describe('textarea', () => {
     await new Promise(resolve => setTimeout(resolve, 0))
     expect(wrapper.find('textarea').attributes('style')).toBeUndefined()
   })
+
+  it('applies the color prop to the focus-ring class', async () => {
+    const wrapper = await mountSuspended(Textarea, { props: { color: 'success' } })
+    expect(wrapper.find('textarea').classes()).toContain('focus:ring-[var(--ui-success)]')
+  })
+
+  it('invalid wins over a custom color for the focus ring, not the other way around', async () => {
+    const wrapper = await mountSuspended(Textarea, { props: { color: 'success', invalid: true } })
+    const classes = wrapper.find('textarea').classes()
+    expect(classes).toContain('focus:ring-[var(--ui-danger)]')
+    expect(classes).not.toContain('focus:ring-[var(--ui-success)]')
+  })
 })

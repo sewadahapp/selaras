@@ -115,7 +115,7 @@ show the selection instead). Same `v-model:search-term` and
 
 ### Sizes and states
 
-`size`, `loading`, `disabled`, and `invalid` all behave the same as
+`size`, `loading`, `disabled`, `invalid`, and `color` all behave the same as
 [Select's](/components/forms/select#sizes) - see the [Props](#props) table
 below.
 

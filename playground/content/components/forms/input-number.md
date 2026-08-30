@@ -91,6 +91,20 @@ the control, and `invalid` switches the ring to `--ui-danger`:
 <SInputNumber v-model="value" invalid />
 ```
 
+### Colors
+
+`color` sets the focus-ring color - the resting (unfocused) ring stays
+`--ui-border` regardless, and `invalid` always wins over a custom `color`:
+
+::component-example{name="input-number-colors"}
+::
+
+```vue-html
+<SInputNumber v-model="primary" color="primary" />
+<SInputNumber v-model="success" color="success" />
+<SInputNumber v-model="danger" color="danger" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/
@@ -113,6 +127,7 @@ Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/
 | `locale` | `string` | - |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `orientation` | `'horizontal' \| 'vertical'` | `horizontal` |
 | `ui` | `Partial<Record<'root' \| 'input' \| 'stepper' \| 'stepperButton', string \| object>>` | - |

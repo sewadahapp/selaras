@@ -30,6 +30,8 @@ const props = withDefaults(defineProps<{
   locale?: string
   disabled?: boolean
   invalid?: boolean
+  /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
+  color?: InputNumberVariants['color']
   size?: InputNumberVariants['size']
   /** 'horizontal' (default) flanks the input with two full-height buttons; 'vertical' replaces them with a single compact up/down pair pinned to the end edge. */
   orientation?: InputNumberVariants['orientation']
@@ -37,6 +39,7 @@ const props = withDefaults(defineProps<{
 }>(), {
   step: 1,
   orientation: 'horizontal',
+  color: 'primary',
 })
 
 const emit = defineEmits<{
@@ -129,7 +132,7 @@ const canIncrement = computed(() => !props.disabled && (props.wrap || props.max 
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('inputNumber', inputNumberTheme)
-const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: inputInvalid.value, orientation: props.orientation }))
+const ui = computed(() => theme.value({ size: effectiveSize.value, color: props.color, invalid: inputInvalid.value, orientation: props.orientation }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))

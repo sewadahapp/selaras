@@ -24,6 +24,8 @@ const props = withDefaults(defineProps<{
   size?: TextareaVariants['size']
   disabled?: boolean
   invalid?: boolean
+  /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
+  color?: TextareaVariants['color']
   clearable?: boolean
   icon?: string
   trailingIcon?: string
@@ -34,6 +36,7 @@ const props = withDefaults(defineProps<{
   ui?: UiProp<TextareaSlots>
 }>(), {
   rows: 3,
+  color: 'primary',
 })
 
 const emit = defineEmits<{
@@ -64,6 +67,7 @@ const theme = useComponentTheme('textarea', textareaTheme)
 
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
+  color: props.color,
   invalid: textareaInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,

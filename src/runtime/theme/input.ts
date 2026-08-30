@@ -6,8 +6,11 @@ export const inputTheme = tv({
     // not-focus: on the hover ring - without it, hovering while focused
     // (unavoidable while the pointer sits on the input) let the plain gray
     // hover ring beat the primary focus ring, since both are equal-
-    // specificity pseudo-class selectors and hover's happened to win.
-    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
+    // specificity pseudo-class selectors and hover's happened to win. The
+    // focus ring's own color comes from the `color` variant below, not
+    // hardcoded here - hover's own color stays neutral regardless of
+    // `color`, matching every other component's own hover state.
+    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 disabled:opacity-50 disabled:pointer-events-none',
     leadingIcon: 'absolute start-2.5 shrink-0 text-[var(--ui-text-muted)]',
     trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--ui-text-muted)]',
     // A separate slot from trailingIcon (not reused) - that one is a
@@ -28,14 +31,31 @@ export const inputTheme = tv({
       md: { base: 'h-10 px-3 text-sm', leadingIcon: 'size-4.5', trailingIcon: 'size-4.5', clear: 'size-9' },
       lg: { base: 'h-11 px-3.5 text-base', leadingIcon: 'size-5', trailingIcon: 'size-5', clear: 'size-10' },
     },
-    invalid: {
-      true: { base: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)]' },
+    // Focus-ring color only - the resting ring stays --ui-border regardless
+    // of `color`, matching a Nuxt-ecosystem component kit's own Input
+    // (confirmed by reading its docs directly, not assumed).
+    color: {
+      primary: { base: 'focus:ring-[var(--ui-primary)]' },
+      neutral: { base: 'focus:ring-[var(--ui-bg-inverted)]' },
+      secondary: { base: 'focus:ring-[var(--ui-secondary)]' },
+      success: { base: 'focus:ring-[var(--ui-success)]' },
+      danger: { base: 'focus:ring-[var(--ui-danger)]' },
+      info: { base: 'focus:ring-[var(--ui-info)]' },
+      warning: { base: 'focus:ring-[var(--ui-warning)]' },
     },
     hasLeadingIcon: {
       true: {},
     },
     hasTrailingIcon: {
       true: {},
+    },
+    // Declared last (after color) so tailwind-merge lets its own focus:ring
+    // override win over color's - invalid should always show danger
+    // regardless of what color was also requested. See this session's own
+    // Checkbox/Switch fix for why declaration order (not runtime call
+    // order) is what decides this.
+    invalid: {
+      true: { base: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)]' },
     },
   },
   compoundVariants: [
@@ -48,6 +68,7 @@ export const inputTheme = tv({
   ],
   defaultVariants: {
     size: 'md',
+    color: 'primary',
   },
 })
 

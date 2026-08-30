@@ -25,6 +25,8 @@ const props = defineProps<{
   disabled?: boolean
   size?: SelectVariants['size']
   invalid?: boolean
+  /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
+  color?: SelectVariants['color']
   clearable?: boolean
   searchTerm?: string
   resetSearchTermOnBlur?: boolean

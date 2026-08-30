@@ -8,7 +8,7 @@ export const selectTheme = tv({
     // true (unavoidable while interacting with the trigger or its options)
     // let the plain gray hover ring beat the primary one in the cascade,
     // since they're all equal-specificity pseudo-class/attribute selectors.
-    trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-focus-within:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--ui-primary)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-focus-within:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus-within:ring-2 data-[state=open]:ring-2 disabled:opacity-50 disabled:pointer-events-none',
     value: 'flex-1 truncate text-start text-[var(--ui-text)] data-[placeholder]:text-[var(--ui-text-muted)]',
     // Both chip display branches render a real Chip (see
     // ComboboxSelectBase.vue) instead of hand-rolled markup, styled/
@@ -42,12 +42,27 @@ export const selectTheme = tv({
       md: { trigger: 'min-h-10' },
       lg: { trigger: 'min-h-11 text-base' },
     },
+    // Focus-ring color only - the resting ring stays --ui-border regardless
+    // of `color`, matching Input's own scope (see input.ts).
+    color: {
+      primary: { trigger: 'focus:ring-[var(--ui-primary)] focus-within:ring-[var(--ui-primary)] data-[state=open]:ring-[var(--ui-primary)]' },
+      neutral: { trigger: 'focus:ring-[var(--ui-bg-inverted)] focus-within:ring-[var(--ui-bg-inverted)] data-[state=open]:ring-[var(--ui-bg-inverted)]' },
+      secondary: { trigger: 'focus:ring-[var(--ui-secondary)] focus-within:ring-[var(--ui-secondary)] data-[state=open]:ring-[var(--ui-secondary)]' },
+      success: { trigger: 'focus:ring-[var(--ui-success)] focus-within:ring-[var(--ui-success)] data-[state=open]:ring-[var(--ui-success)]' },
+      danger: { trigger: 'focus:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)] data-[state=open]:ring-[var(--ui-danger)]' },
+      info: { trigger: 'focus:ring-[var(--ui-info)] focus-within:ring-[var(--ui-info)] data-[state=open]:ring-[var(--ui-info)]' },
+      warning: { trigger: 'focus:ring-[var(--ui-warning)] focus-within:ring-[var(--ui-warning)] data-[state=open]:ring-[var(--ui-warning)]' },
+    },
+    // Declared last (after color) so tailwind-merge lets its own ring
+    // overrides win over color's - see input.ts for why declaration order
+    // (not runtime call order) is what decides this.
     invalid: {
-      true: { trigger: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)]' },
+      true: { trigger: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)] data-[state=open]:ring-[var(--ui-danger)]' },
     },
   },
   defaultVariants: {
     size: 'md',
+    color: 'primary',
   },
 })
 

@@ -24,12 +24,15 @@ const props = withDefaults(defineProps<{
   size?: InputVariants['size']
   disabled?: boolean
   invalid?: boolean
+  /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
+  color?: InputVariants['color']
   clearable?: boolean
   icon?: string
   trailingIcon?: string
   ui?: UiProp<InputSlots>
 }>(), {
   type: 'text',
+  color: 'primary',
 })
 
 const emit = defineEmits<{
@@ -62,6 +65,7 @@ const theme = useComponentTheme('input', inputTheme)
 
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
+  color: props.color,
   invalid: inputInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,

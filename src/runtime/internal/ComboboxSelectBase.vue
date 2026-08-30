@@ -57,6 +57,8 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   size?: SelectVariants['size']
   invalid?: boolean
+  /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
+  color?: SelectVariants['color']
   clearable?: boolean
   dropdown?: boolean
   creatable?: boolean
@@ -70,6 +72,7 @@ const props = withDefaults(defineProps<{
   maxChips: 3,
   resetSearchTermOnBlur: true,
   resetSearchTermOnSelect: true,
+  color: 'primary',
 })
 
 const emit = defineEmits<{
@@ -273,7 +276,7 @@ const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[eff
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
-const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: selectInvalid.value }))
+const ui = computed(() => theme.value({ size: effectiveSize.value, color: props.color, invalid: selectInvalid.value }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))

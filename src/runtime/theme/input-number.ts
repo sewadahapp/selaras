@@ -26,7 +26,7 @@ export const inputNumberTheme = tv({
     // bg's own hover change is left unscoped - there's no competing
     // focus-driven background to conflict with, so it can keep showing
     // regardless of focus state.
-    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[input:disabled]:opacity-50 has-[input:disabled]:pointer-events-none',
+    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 has-[input:disabled]:opacity-50 has-[input:disabled]:pointer-events-none',
     // Borderless/transparent - root already carries the visual box, this is
     // just the editable text. Centered + tabular-nums so digits don't shift
     // width as the value changes - orientation="vertical" overrides the
@@ -48,16 +48,31 @@ export const inputNumberTheme = tv({
       md: { root: 'h-10 px-1.5', input: 'text-sm' },
       lg: { root: 'h-11 px-2', input: 'text-base' },
     },
-    invalid: {
-      true: { root: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)]' },
+    // Focus-ring color only - the resting ring stays --ui-border regardless
+    // of `color`, matching Input's own scope (see input.ts).
+    color: {
+      primary: { root: 'focus-within:ring-[var(--ui-primary)]' },
+      neutral: { root: 'focus-within:ring-[var(--ui-bg-inverted)]' },
+      secondary: { root: 'focus-within:ring-[var(--ui-secondary)]' },
+      success: { root: 'focus-within:ring-[var(--ui-success)]' },
+      danger: { root: 'focus-within:ring-[var(--ui-danger)]' },
+      info: { root: 'focus-within:ring-[var(--ui-info)]' },
+      warning: { root: 'focus-within:ring-[var(--ui-warning)]' },
     },
     orientation: {
       horizontal: {},
       vertical: { input: 'text-start ps-1.5 pe-7' },
     },
+    // Declared last (after color) so tailwind-merge lets its own
+    // focus-within:ring override win over color's - see input.ts for why
+    // declaration order (not runtime call order) is what decides this.
+    invalid: {
+      true: { root: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)]' },
+    },
   },
   defaultVariants: {
     size: 'md',
+    color: 'primary',
   },
 })
 

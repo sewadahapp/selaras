@@ -81,6 +81,20 @@ textarea, and `invalid` switches the ring to `--ui-danger`:
 
 See the [Props](#props) table below.
 
+### Colors
+
+`color` sets the focus-ring color - the resting (unfocused) ring stays
+`--ui-border` regardless, and `invalid` always wins over a custom `color`:
+
+::component-example{name="textarea-colors"}
+::
+
+```vue-html
+<STextarea v-model="primary" color="primary" placeholder="Primary" />
+<STextarea v-model="success" color="success" placeholder="Success" />
+<STextarea v-model="danger" color="danger" placeholder="Danger" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid`
@@ -108,6 +122,7 @@ to configure by hand for the common case.
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `clearable` | `boolean` | `false` |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |

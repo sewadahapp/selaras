@@ -66,4 +66,16 @@ describe('input', () => {
     expect(wrapper.find('.my-custom-icon').exists()).toBe(true)
     expect(wrapper.find('.iconify').exists()).toBe(false)
   })
+
+  it('applies the color prop to the focus-ring class', async () => {
+    const wrapper = await mountSuspended(Input, { props: { color: 'success' } })
+    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--ui-success)]')
+  })
+
+  it('invalid wins over a custom color for the focus ring, not the other way around', async () => {
+    const wrapper = await mountSuspended(Input, { props: { color: 'success', invalid: true } })
+    const classes = wrapper.find('input').classes()
+    expect(classes).toContain('focus:ring-[var(--ui-danger)]')
+    expect(classes).not.toContain('focus:ring-[var(--ui-success)]')
+  })
 })
