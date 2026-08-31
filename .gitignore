@@ -49,6 +49,9 @@ coverage
 # Claude Code
 .claude
 
+# MiMoCode
+.mimocode
+
 # OSX
 .DS_Store
 .AppleDouble

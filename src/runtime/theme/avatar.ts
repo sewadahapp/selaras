@@ -3,8 +3,8 @@ import { tv } from 'tailwind-variants'
 export const avatarTheme = tv({
   slots: {
     // `relative` anchors the absolutely-positioned status dot to the corner.
-    base: 'relative inline-flex shrink-0 select-none items-center justify-center overflow-hidden align-middle',
-    image: 'h-full w-full object-cover',
+    base: 'relative inline-flex shrink-0 select-none items-center justify-center align-middle',
+    image: 'h-full w-full overflow-hidden object-cover',
     fallback: 'flex h-full w-full items-center justify-center',
     icon: 'shrink-0',
     // The ring separates the dot from the avatar itself, using the page

@@ -93,6 +93,11 @@ describe('avatar', () => {
     expect(status?.classes()).toContain('bg-[var(--ui-success)]')
   })
 
+  it('does not clip the status dot with overflow-hidden on the root', async () => {
+    const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', status: true } })
+    expect(wrapper.classes()).not.toContain('overflow-hidden')
+  })
+
   it('merges a fallthrough class attr with the theme base classes instead of dropping it', async () => {
     const wrapper = await mountSuspended(Avatar, {
       props: { text: 'JD' },

@@ -19,7 +19,7 @@ An avatar shows a person or entity: a photo when a `src` is available, and a fal
 
 A bare `<SAvatar />` - no `src`, `text`, or `icon` - renders the default user icon on top of the placeholder color, still themed by `color`/`size`/`shape`.
 
-## Fallback
+### Fallback
 
 `text` usually holds the person's initials. `icon` swaps the fallback for a glyph instead, and `text` wins when both are given. The `fallback` slot replaces the whole fallback content for anything custom.
 
@@ -36,7 +36,7 @@ A bare `<SAvatar />` - no `src`, `text`, or `icon` - renders the default user ic
 </SAvatar>
 ```
 
-## Sizes
+### Sizes
 
 ::component-example{name="avatar-sizes"}
 ::
@@ -47,7 +47,7 @@ A bare `<SAvatar />` - no `src`, `text`, or `icon` - renders the default user ic
 <SAvatar size="lg" text="JD" color="success" />
 ```
 
-## Colors
+### Colors
 
 `color` styles the placeholder background and its initials/icon, visible while the image loads (or instead of one). `neutral` uses the plain elevated background, matching the rest of the library's soft neutral treatment.
 
@@ -60,7 +60,7 @@ A bare `<SAvatar />` - no `src`, `text`, or `icon` - renders the default user ic
 <SAvatar text="IF" color="info" />
 ```
 
-## Shape
+### Shape
 
 Avatars default to a circle; `shape="rounded"` uses the standard small radius instead.
 
@@ -73,7 +73,7 @@ Avatars default to a circle; `shape="rounded"` uses the standard small radius in
 <SAvatar src="https://i.pravatar.cc/96?img=3" alt="Jane Doe" shape="rounded" />
 ```
 
-## Status
+### Status
 
 `status` adds a small solid presence dot at the avatar's bottom-right corner. Its color is independent of `color` (`statusColor`, default `neutral`) since presence semantics - online, offline, busy - rarely match the avatar's identity color.
 
@@ -86,7 +86,7 @@ Avatars default to a circle; `shape="rounded"` uses the standard small radius in
 <SAvatar src="https://i.pravatar.cc/96?img=3" alt="Jane Doe" status status-color="danger" />
 ```
 
-## Accessibility
+### Accessibility
 
 - When `src` is given, `alt` is forwarded to the image element.
 - With no image, the avatar derives an accessible name from `alt` (falling back to `text`) and puts it on the root - override it any time with a direct `aria-label` fallthrough.
