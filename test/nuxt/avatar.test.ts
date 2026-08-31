@@ -102,6 +102,18 @@ describe('avatar', () => {
     expect(content).toBeDefined()
   })
 
+  it('centers the fallback content (icon or text) within the avatar - regression: content wrapper needs its own flex centering, AvatarFallback does not stretch/center on its own', async () => {
+    const iconAvatar = await mountSuspended(Avatar, { props: {} })
+    const iconContent = iconAvatar.findAll('span').find(sp => sp.classes().includes('overflow-hidden'))
+    expect(iconContent?.classes()).toContain('items-center')
+    expect(iconContent?.classes()).toContain('justify-center')
+
+    const textAvatar = await mountSuspended(Avatar, { props: { text: 'JD' } })
+    const textContent = textAvatar.findAll('span').find(sp => sp.classes().includes('overflow-hidden'))
+    expect(textContent?.classes()).toContain('items-center')
+    expect(textContent?.classes()).toContain('justify-center')
+  })
+
   it('merges a fallthrough class attr with the theme base classes instead of dropping it', async () => {
     const wrapper = await mountSuspended(Avatar, {
       props: { text: 'JD' },

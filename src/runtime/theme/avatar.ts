@@ -6,8 +6,11 @@ export const avatarTheme = tv({
     base: 'relative inline-flex shrink-0 select-none items-center justify-center align-middle',
     // `content` wraps image + fallback with overflow-hidden so text/images
     // can't escape the avatar bounds, while the status dot (a sibling, not
-    // a child) stays unclipped outside this wrapper.
-    content: 'flex size-full overflow-hidden',
+    // a child) stays unclipped outside this wrapper. items-center/
+    // justify-center - AvatarFallback (Reka's own primitive) doesn't
+    // stretch to fill this flex container on its own, so without these the
+    // fallback icon/text sits flush at the start corner instead of centered.
+    content: 'flex size-full items-center justify-center overflow-hidden',
     image: 'h-full w-full object-cover',
     fallback: 'flex h-full w-full items-center justify-center',
     icon: 'shrink-0',
