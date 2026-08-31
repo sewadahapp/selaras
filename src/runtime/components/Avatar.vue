@@ -2,9 +2,10 @@
 import type { AvatarImageProps } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { avatarTheme } from '../theme/avatar'
+import { AVATAR_SIZE_INJECTION_KEY } from '../utils/injection-keys'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -37,11 +38,12 @@ const props = defineProps<{
 
 const icons = useIcons()
 const theme = useComponentTheme('avatar', avatarTheme)
+const groupSize = inject(AVATAR_SIZE_INJECTION_KEY, undefined)
 
 const ui = computed(() => theme.value({
   color: props.color,
   statusColor: props.statusColor,
-  size: props.size,
+  size: props.size ?? groupSize?.value,
   shape: props.shape,
 }))
 
