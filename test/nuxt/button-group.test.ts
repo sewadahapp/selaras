@@ -30,4 +30,23 @@ describe('buttonGroup', () => {
     expect(rootClasses).toContain(':not(:first-child)]:rounded-s-none')
     expect(rootClasses).toContain(':not(:last-child)]:rounded-e-none')
   })
+
+  it('applies vertical corner-squaring when orientation is vertical', async () => {
+    const wrapper = await mountSuspended(ButtonGroup, {
+      props: { orientation: 'vertical' },
+      slots: { default: () => [h(Button, {}, () => 'One'), h(Button, {}, () => 'Two')] },
+    })
+    const rootClasses = wrapper.classes().join(' ')
+    expect(rootClasses).toContain('flex-col')
+    expect(rootClasses).toContain(':not(:first-child)]:rounded-t-none')
+    expect(rootClasses).toContain(':not(:last-child)]:rounded-b-none')
+  })
+
+  it('defaults to horizontal orientation', async () => {
+    const wrapper = await mountSuspended(ButtonGroup, {
+      slots: { default: () => [h(Button, {}, () => 'One')] },
+    })
+    expect(wrapper.classes()).toContain('inline-flex')
+    expect(wrapper.classes()).not.toContain('flex-col')
+  })
 })

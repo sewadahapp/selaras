@@ -194,6 +194,21 @@ neighbor's.
 </SButtonGroup>
 ```
 
+#### Vertical
+
+`orientation="vertical"` stacks buttons vertically, squaring off the top/bottom
+corners instead:
+
+::component-example{name="button-group-vertical"}
+::
+
+```vue-html
+<SButtonGroup orientation="vertical">
+  <SButton variant="outline">Submit</SButton>
+  <SButton variant="outline">Cancel</SButton>
+</SButtonGroup>
+```
+
 ### Sizes and states
 
 `size` takes `sm` / `md` / `lg`, `disabled` prevents interaction and dims the
@@ -239,4 +254,5 @@ shown above.
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `ui` | `Partial<Record<'root', string \| object>>` | - |
