@@ -70,7 +70,7 @@ describe('avatar', () => {
   it('applies the color to the placeholder background and the text fallback', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', color: 'primary' } })
     expect(wrapper.classes()).toContain('bg-[var(--ui-primary-soft)]')
-    const fallback = wrapper.findAll('span').find(sp => sp.text() === 'JD' && sp.classes().includes('flex'))
+    const fallback = wrapper.findAll('span').find(sp => sp.text() === 'JD' && sp.classes().includes('h-full'))
     expect(fallback?.classes()).toContain('text-[var(--ui-primary)]')
     expect(fallback?.classes()).toContain('text-xs')
   })
@@ -93,9 +93,13 @@ describe('avatar', () => {
     expect(status?.classes()).toContain('bg-[var(--ui-success)]')
   })
 
-  it('does not clip the status dot with overflow-hidden on the root', async () => {
+  it('clips content but not the status dot', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', status: true } })
+    // The root must NOT have overflow-hidden (would clip the status dot)
     expect(wrapper.classes()).not.toContain('overflow-hidden')
+    // The content wrapper MUST have overflow-hidden
+    const content = wrapper.findAll('span').find(sp => sp.classes().includes('overflow-hidden'))
+    expect(content).toBeDefined()
   })
 
   it('merges a fallthrough class attr with the theme base classes instead of dropping it', async () => {

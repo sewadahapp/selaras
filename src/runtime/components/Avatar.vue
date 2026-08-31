@@ -55,22 +55,24 @@ const rootAriaLabel = computed(() => props.src ? undefined : (props.alt ?? props
 
 <template>
   <AvatarRoot :as="as" :aria-label="rootAriaLabel" v-bind="rootProps">
-    <AvatarImage
-      v-if="src"
-      :src="src"
-      :alt="alt"
-      :referrer-policy="referrerPolicy"
-      :crossorigin="crossOrigin"
-      v-bind="resolveSlot(ui.image, props.ui?.image)"
-    />
-    <AvatarFallback>
-      <slot name="fallback">
-        <span v-if="text" v-bind="resolveSlot(ui.fallback, props.ui?.fallback)">{{ text }}</span>
-        <slot v-else name="icon" :class="resolveSlot(ui.icon, props.ui?.icon).class">
-          <Icon :name="icon || icons.user" v-bind="resolveSlot(ui.icon, props.ui?.icon)" />
+    <span v-bind="resolveSlot(ui.content, props.ui?.content)">
+      <AvatarImage
+        v-if="src"
+        :src="src"
+        :alt="alt"
+        :referrer-policy="referrerPolicy"
+        :crossorigin="crossOrigin"
+        v-bind="resolveSlot(ui.image, props.ui?.image)"
+      />
+      <AvatarFallback>
+        <slot name="fallback">
+          <span v-if="text" v-bind="resolveSlot(ui.fallback, props.ui?.fallback)">{{ text }}</span>
+          <slot v-else name="icon" :class="resolveSlot(ui.icon, props.ui?.icon).class">
+            <Icon :name="icon || icons.user" v-bind="resolveSlot(ui.icon, props.ui?.icon)" />
+          </slot>
         </slot>
-      </slot>
-    </AvatarFallback>
+      </AvatarFallback>
+    </span>
     <span v-if="status" v-bind="resolveSlot(ui.status, props.ui?.status)" />
   </AvatarRoot>
 </template>
