@@ -847,4 +847,32 @@ describe('datePicker', () => {
     const nextButton = document.body.querySelector('button[aria-label="Next month"]')!
     expect(nextButton.className).toContain('text-[var(--ui-danger)]')
   })
+
+  it('renders no arrow element by default', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
+    await openCalendar(wrapper)
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeFalsy()
+  })
+
+  it('arrow renders the pointer triangle - single date mode', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), arrow: true } })
+    await openCalendar(wrapper)
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+  })
+
+  it('arrow renders the pointer triangle - range mode', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { range: true, arrow: true } })
+    await openRangeCalendar(wrapper)
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+  })
+
+  it('arrow renders the pointer triangle - timeOnly mode', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, arrow: true } })
+    await openTimePicker(wrapper)
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+  })
 })

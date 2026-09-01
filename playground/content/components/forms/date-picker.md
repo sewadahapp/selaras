@@ -283,6 +283,18 @@ the selected day/month/year cell and the Done button:
 <SDatePicker v-model="date" color="primary" active-color="danger" />
 ```
 
+### Arrow
+
+`arrow` shows a small pointer triangle connecting the panel to its
+trigger - works the same across single-date, range, and time-only mode:
+
+::component-example{name="date-picker-arrow"}
+::
+
+```vue-html
+<SDatePicker v-model="value" arrow />
+```
+
 ### Clearable & disabled
 
 `clearable` adds a dismiss button once a value is set; `disabled` disables
@@ -401,7 +413,8 @@ unavailable/disabled state of each day is exposed via `aria-selected`/
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
 | `activeColor` | same as `color` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'content' \| 'header' \| 'heading' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'timeSection', string \| object>>` | - |
+| `arrow` | `boolean` | `false` |
+| `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'content' \| 'header' \| 'heading' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'timeSection' \| 'arrow', string \| object>>` | - |
 
 ## Slots
 

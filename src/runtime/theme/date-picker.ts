@@ -44,6 +44,7 @@ export const datePickerTheme = tv({
     // Hour/minute granularity only - sits below the day grid, separated by
     // a divider so it doesn't read as part of the grid itself.
     timeSection: 'mt-3 flex items-center justify-center gap-1.5 border-t border-[var(--ui-border)] pt-3',
+    arrow: 'fill-[var(--ui-bg)] stroke-[var(--ui-border)] stroke-1',
   },
   variants: {
     size: {

@@ -8,6 +8,7 @@ import type { UiProp } from '../utils/ui'
 import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, Time, toCalendarDateTime, today } from '@internationalized/date'
 import {
   DatePickerAnchor,
+  DatePickerArrow,
   DatePickerCalendar,
   DatePickerCell,
   DatePickerCellTrigger,
@@ -26,6 +27,7 @@ import {
   DatePickerRoot,
   DatePickerTrigger,
   DateRangePickerAnchor,
+  DateRangePickerArrow,
   DateRangePickerCalendar,
   DateRangePickerCell,
   DateRangePickerCellTrigger,
@@ -44,6 +46,7 @@ import {
   DateRangePickerRoot,
   DateRangePickerTrigger,
   PopoverAnchor,
+  PopoverArrow,
   PopoverContent,
   PopoverPortal,
   PopoverRoot,
@@ -124,6 +127,8 @@ const props = withDefaults(defineProps<{
   /** The color of whatever's currently "active" - the selected day/month/year cell and the Done button. */
   activeColor?: ButtonVariants['color']
   size?: DatePickerVariants['size']
+  /** Shows a small pointer triangle connecting the panel to its trigger. */
+  arrow?: boolean
   ui?: UiProp<DatePickerSlots>
 }>(), {
   closeOnSelect: true,
@@ -132,6 +137,7 @@ const props = withDefaults(defineProps<{
   color: 'neutral',
   activeColor: 'primary',
   minuteStep: 1,
+  arrow: false,
 })
 
 const emit = defineEmits<{
@@ -483,6 +489,7 @@ const fieldProps = computed(() => resolveSlot(ui.value.field, props.ui?.field))
 const segmentProps = computed(() => resolveSlot(ui.value.segment, props.ui?.segment))
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
+const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 const headerProps = computed(() => resolveSlot(ui.value.header, props.ui?.header))
 const headingProps = computed(() => resolveSlot(ui.value.heading, props.ui?.heading))
 const gridsProps = computed(() => resolveSlot(ui.value.grids, props.ui?.grids))
@@ -714,6 +721,7 @@ const rangeCellTriggerUi = {
         </div>
         <slot name="footer" />
       </DateRangePickerCalendar>
+      <DateRangePickerArrow v-if="arrow" v-bind="arrowProps" />
     </DateRangePickerContent>
   </DateRangePickerRoot>
 
@@ -832,6 +840,7 @@ const rangeCellTriggerUi = {
         >
           {{ messages.done }}
         </Button>
+        <PopoverArrow v-if="arrow" v-bind="arrowProps" />
       </PopoverContent>
     </PopoverPortal>
   </PopoverRoot>
@@ -1079,6 +1088,7 @@ const rangeCellTriggerUi = {
         </template>
         <slot name="footer" />
       </DatePickerCalendar>
+      <DatePickerArrow v-if="arrow" v-bind="arrowProps" />
     </DatePickerContent>
   </DatePickerRoot>
 </template>
