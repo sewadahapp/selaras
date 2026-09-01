@@ -19,7 +19,13 @@ type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<RadioGroupProps>()
+
+const emit = defineEmits<RadioGroupEmits>()
+
+defineSlots<RadioGroupSlots>()
+
+export interface RadioGroupProps {
   id?: string
   name?: string
   /** A plain string is shorthand for `{ label: value, value }`. */
@@ -32,16 +38,16 @@ const props = defineProps<{
   orientation?: RadioGroupVariants['orientation']
   variant?: RadioGroupVariants['variant']
   ui?: UiProp<RadioGroupThemeSlots>
-}>()
+}
 
-const emit = defineEmits<{
+export interface RadioGroupEmits {
   'update:modelValue': [value: string]
-}>()
+}
 
-defineSlots<{
+export interface RadioGroupSlots {
   /** Replaces an item's plain label text - useful for a description, price, or other rich content alongside it (e.g. with `variant="card"`). */
   label?: (props: { item: RadioItem, checked: boolean, disabled: boolean }) => any
-}>()
+}
 
 const field = useFormField()
 

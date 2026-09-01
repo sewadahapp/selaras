@@ -10,10 +10,12 @@ type ContainerVariants = VariantProps<typeof containerTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<ContainerProps>()
+
+export interface ContainerProps {
   size?: ContainerVariants['size']
   ui?: UiProp<ContainerThemeSlots>
-}>()
+}
 
 const theme = useComponentTheme('container', containerTheme)
 

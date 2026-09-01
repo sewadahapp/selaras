@@ -19,7 +19,13 @@ interface RailSegment {
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<ContentTocProps>(), {
+  isNested: false,
+})
+
+defineSlots<ContentTocSlots>()
+
+export interface ContentTocProps {
   links: TocLink[]
   title?: string
   /** Internal: set by recursive self-calls, omit when using this component directly. */
@@ -27,15 +33,13 @@ const props = withDefaults(defineProps<{
   /** Internal: set by recursive self-calls, omit when using this component directly. */
   activeIds?: Set<string>
   ui?: UiProp<ContentTocThemeSlots>
-}>(), {
-  isNested: false,
-})
+}
 
-defineSlots<{
+export interface ContentTocSlots {
   title?: (props: object) => any
   /** Replaces a link's content - scoped with `active`, matching linkProps' own computation. */
   link?: (props: { link: TocLink, active: boolean }) => any
-}>()
+}
 
 const isRoot = !props.isNested
 const localActiveIds = ref<Set<string>>(new Set())

@@ -41,7 +41,18 @@ type SelectVariants = VariantProps<typeof selectTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<ComboboxSelectBaseProps>(), {
+  displayMode: 'comma',
+  maxChips: 3,
+  resetSearchTermOnBlur: true,
+  resetSearchTermOnSelect: true,
+  color: 'primary',
+  arrow: false,
+})
+
+const emit = defineEmits<ComboboxSelectBaseEmits>()
+
+export interface ComboboxSelectBaseProps {
   id?: string
   name?: string
   items: SelectItems
@@ -70,19 +81,12 @@ const props = withDefaults(defineProps<{
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
   ui?: UiProp<SelectThemeSlots>
-}>(), {
-  displayMode: 'comma',
-  maxChips: 3,
-  resetSearchTermOnBlur: true,
-  resetSearchTermOnSelect: true,
-  color: 'primary',
-  arrow: false,
-})
+}
 
-const emit = defineEmits<{
+export interface ComboboxSelectBaseEmits {
   'update:modelValue': [value: string | string[] | undefined]
   'update:searchTerm': [value: string]
-}>()
+}
 
 const {
   flatOptions,

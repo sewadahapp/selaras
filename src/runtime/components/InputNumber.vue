@@ -15,7 +15,15 @@ type InputNumberVariants = VariantProps<typeof inputNumberTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<InputNumberProps>(), {
+  step: 1,
+  orientation: 'horizontal',
+  color: 'primary',
+})
+
+const emit = defineEmits<InputNumberEmits>()
+
+export interface InputNumberProps {
   id?: string
   name?: string
   modelValue?: number
@@ -36,15 +44,11 @@ const props = withDefaults(defineProps<{
   /** 'horizontal' (default) flanks the input with two full-height buttons; 'vertical' replaces them with a single compact up/down pair pinned to the end edge. */
   orientation?: InputNumberVariants['orientation']
   ui?: UiProp<InputNumberThemeSlots>
-}>(), {
-  step: 1,
-  orientation: 'horizontal',
-  color: 'primary',
-})
+}
 
-const emit = defineEmits<{
+export interface InputNumberEmits {
   'update:modelValue': [value: number | undefined]
-}>()
+}
 
 const field = useFormField()
 

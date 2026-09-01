@@ -27,13 +27,15 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // inside a <nav> for every level - a real accessibility regression, not
 // just a style mismatch). Mirrors ContentNavigation.vue's own recursive
 // single-item-SAccordion-per-group technique.
-const props = defineProps<{
+export interface NavigationMenuAccordionItemProps {
   item: NavigationMenuItem
   color?: ButtonVariants['color']
   variant?: 'pill' | 'link'
   highlight?: boolean
   ui?: UiProp<NavigationMenuThemeSlots>
-}>()
+}
+
+const props = defineProps<NavigationMenuAccordionItemProps>()
 
 const route = useRoute()
 const slots = useSlots()

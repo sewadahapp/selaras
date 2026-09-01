@@ -8,13 +8,15 @@ import Button from './Button.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<ProsePreProps>()
+
+export interface ProsePreProps {
   code?: string
   language?: string
   filename?: string
   highlights?: number[]
   meta?: string
-}>()
+}
 
 const icons = useIcons()
 const theme = useComponentTheme('prose', proseTheme)

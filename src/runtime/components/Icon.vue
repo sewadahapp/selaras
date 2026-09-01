@@ -10,12 +10,14 @@ type IconVariants = VariantProps<typeof iconTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<IconProps>()
+
+export interface IconProps {
   /** Any name Nuxt Icon resolves, e.g. `hugeicons:star` (or any other registered set, like `lucide:star`). */
   name: string
   color?: IconVariants['color']
   ui?: UiProp<IconThemeSlots>
-}>()
+}
 
 const theme = useComponentTheme('icon', iconTheme)
 const ui = computed(() => theme.value({ color: props.color }))

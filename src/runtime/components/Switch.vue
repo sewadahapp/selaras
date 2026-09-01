@@ -14,7 +14,11 @@ type SwitchVariants = VariantProps<typeof switchTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<SwitchProps>()
+
+const emit = defineEmits<SwitchEmits>()
+
+export interface SwitchProps {
   id?: string
   name?: string
   modelValue?: boolean
@@ -33,11 +37,11 @@ const props = defineProps<{
   /** Icon shown in the thumb when off. */
   uncheckedIcon?: string
   ui?: UiProp<SwitchThemeSlots>
-}>()
+}
 
-const emit = defineEmits<{
+export interface SwitchEmits {
   'update:modelValue': [value: boolean]
-}>()
+}
 
 const field = useFormField()
 

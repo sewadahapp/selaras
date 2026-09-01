@@ -10,7 +10,7 @@ import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
-const props = withDefaults(defineProps<{
+export interface ModalProps {
   open?: boolean
   title?: string
   description?: string
@@ -29,15 +29,9 @@ const props = withDefaults(defineProps<{
   /** Set `false` to skip the open/close animation entirely - this library's animation is CSS-only, so this just omits those classes rather than toggling a JS transition system. */
   transition?: boolean
   ui?: UiProp<ModalThemeSlots>
-}>(), {
-  dismissible: true,
-  close: true,
-  modal: true,
-  overlay: true,
-  transition: true,
-})
+}
 
-const emit = defineEmits<{
+export interface ModalEmits {
   'update:open': [value: boolean]
   'update:fullscreen': [value: boolean]
   'escapeKeyDown': [event: KeyboardEvent]
@@ -45,7 +39,17 @@ const emit = defineEmits<{
   'focusOutside': [event: Event]
   /** Fires once the close transition has actually finished (or immediately, if `transition` is off) - the signal a programmatic caller needs before it's safe to unmount this instance without cutting its exit animation short. */
   'afterLeave': []
-}>()
+}
+
+const props = withDefaults(defineProps<ModalProps>(), {
+  dismissible: true,
+  close: true,
+  modal: true,
+  overlay: true,
+  transition: true,
+})
+
+const emit = defineEmits<ModalEmits>()
 
 function onEscapeKeyDown(event: KeyboardEvent) {
   if (!props.dismissible)

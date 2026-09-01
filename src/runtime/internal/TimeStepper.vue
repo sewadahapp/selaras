@@ -11,7 +11,7 @@ import { useMessages } from '../composables/use-messages'
 // "shared behavior justifies a private internal component" precedent).
 // Callers only ever hand this 24-hour numbers and receive 24-hour numbers
 // back - the 12-hour display/AM-PM toggling is fully contained in here.
-const props = withDefaults(defineProps<{
+export interface TimeStepperProps {
   /** Always 24-hour (0-23), regardless of what's displayed. */
   hour: number
   /** Only read/rendered when granularity is 'minute'. */
@@ -25,14 +25,18 @@ const props = withDefaults(defineProps<{
   /** Ids for the caller's own paired <label for> elements - neither SInputNumber nor SInput forward a bare aria-label to their inner <input>, so callers pair a real sr-only label instead. */
   hourId?: string
   minuteId?: string
-}>(), {
+}
+
+export interface TimeStepperEmits {
+  'update:hour': [value: number]
+  'update:minute': [value: number]
+}
+
+const props = withDefaults(defineProps<TimeStepperProps>(), {
   minuteStep: 1,
 })
 
-const emit = defineEmits<{
-  'update:hour': [value: number]
-  'update:minute': [value: number]
-}>()
+const emit = defineEmits<TimeStepperEmits>()
 
 // Same resolution the typed segmented field applies internally via Reka's
 // own hourCycle handling - deriving it here too keeps the click stepper

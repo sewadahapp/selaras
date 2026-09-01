@@ -13,7 +13,11 @@ type ChipVariants = VariantProps<typeof chipTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<ChipProps>()
+
+const emit = defineEmits<ChipEmits>()
+
+export interface ChipProps {
   label?: string
   icon?: string
   removable?: boolean
@@ -26,11 +30,11 @@ const props = defineProps<{
   variant?: ChipVariants['variant']
   size?: ChipVariants['size']
   ui?: UiProp<ChipThemeSlots>
-}>()
+}
 
-const emit = defineEmits<{
+export interface ChipEmits {
   remove: []
-}>()
+}
 
 const icons = useIcons()
 const messages = useMessages()

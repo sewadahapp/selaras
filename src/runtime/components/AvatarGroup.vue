@@ -11,12 +11,14 @@ type AvatarGroupVariants = VariantProps<typeof avatarGroupTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<AvatarGroupProps>()
+
+export interface AvatarGroupProps {
   /** Maximum number of avatars to show. Extra avatars collapse into a "+N" count indicator. */
   max?: number
   size?: AvatarGroupVariants['size']
   ui?: UiProp<AvatarGroupThemeSlots>
-}>()
+}
 
 const slots = useSlots()
 const theme = useComponentTheme('avatarGroup', avatarGroupTheme)

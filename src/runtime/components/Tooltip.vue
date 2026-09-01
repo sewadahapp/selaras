@@ -6,7 +6,7 @@ import { computed } from 'vue'
 import { tooltipTheme } from '../theme/tooltip'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
-const props = withDefaults(defineProps<{
+export interface TooltipProps {
   text?: string
   side?: 'top' | 'right' | 'bottom' | 'left'
   delayDuration?: number
@@ -16,7 +16,9 @@ const props = withDefaults(defineProps<{
   arrow?: boolean
   disabled?: boolean
   ui?: UiProp<TooltipThemeSlots>
-}>(), {
+}
+
+const props = withDefaults(defineProps<TooltipProps>(), {
   side: 'top',
   delayDuration: 200,
   arrow: true,

@@ -11,7 +11,11 @@ type FormFieldVariants = VariantProps<typeof formFieldTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<FormFieldProps>(), {
+  orientation: 'vertical',
+})
+
+export interface FormFieldProps {
   label?: string
   name?: string
   /** A second, muted line under the label, before the control - for context the user should read before reaching it (e.g. "We'll use this to send your receipt"). Distinct from `hint`, which sits below the control instead. */
@@ -23,9 +27,7 @@ const props = withDefaults(defineProps<{
   /** 'vertical' (default) stacks the label above the control; 'horizontal' places the label beside it, with the control filling the remaining row width. */
   orientation?: FormFieldVariants['orientation']
   ui?: UiProp<FormFieldThemeSlots>
-}>(), {
-  orientation: 'vertical',
-})
+}
 
 const id = useId()
 

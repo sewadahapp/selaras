@@ -15,7 +15,14 @@ type TextareaVariants = VariantProps<typeof textareaTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<TextareaProps>(), {
+  rows: 3,
+  color: 'primary',
+})
+
+const emit = defineEmits<TextareaEmits>()
+
+export interface TextareaProps {
   id?: string
   name?: string
   modelValue?: string
@@ -34,14 +41,11 @@ const props = withDefaults(defineProps<{
   /** autoresize only - caps how many rows it can grow to before switching to a scrollbar (0/unset grows indefinitely). */
   maxrows?: number
   ui?: UiProp<TextareaThemeSlots>
-}>(), {
-  rows: 3,
-  color: 'primary',
-})
+}
 
-const emit = defineEmits<{
+export interface TextareaEmits {
   'update:modelValue': [value: string]
-}>()
+}
 
 const field = useFormField()
 

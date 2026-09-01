@@ -19,7 +19,13 @@ import Pagination from './Pagination.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<TableProps>(), {
+  size: 'md',
+})
+
+const emit = defineEmits<TableEmits>()
+
+export interface TableProps {
   data: unknown[]
   columns?: any[]
   selectable?: boolean
@@ -49,11 +55,9 @@ const props = withDefaults(defineProps<{
   /** Same as `rowClass`, for inline styles. */
   rowStyle?: (row: unknown) => Record<string, string> | undefined
   ui?: UiProp<TableThemeSlots>
-}>(), {
-  size: 'md',
-})
+}
 
-const emit = defineEmits<{
+export interface TableEmits {
   'update:sorting': [value: any[]]
   'update:rowSelection': [value: Record<string, boolean>]
   'update:globalFilter': [value: string]
@@ -62,7 +66,7 @@ const emit = defineEmits<{
   'update:columnVisibility': [value: Record<string, boolean>]
   'rowClick': [row: unknown, event: MouseEvent]
   'rowContextmenu': [row: unknown, event: MouseEvent]
-}>()
+}
 
 const slots = useSlots()
 

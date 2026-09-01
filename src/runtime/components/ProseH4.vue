@@ -5,9 +5,11 @@ import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 defineOptions({ inheritAttrs: false })
 
-defineProps<{
+defineProps<ProseH4Props>()
+
+export interface ProseH4Props {
   id?: string
-}>()
+}
 
 const theme = useComponentTheme('prose', proseTheme)
 const ui = computed(() => theme.value())

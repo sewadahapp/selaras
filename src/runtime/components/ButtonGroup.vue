@@ -10,10 +10,12 @@ type ButtonGroupVariants = VariantProps<typeof buttonGroupTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<ButtonGroupProps>()
+
+export interface ButtonGroupProps {
   orientation?: ButtonGroupVariants['orientation']
   ui?: UiProp<ButtonGroupThemeSlots>
-}>()
+}
 
 const theme = useComponentTheme('buttonGroup', buttonGroupTheme)
 const ui = computed(() => theme.value({

@@ -25,7 +25,23 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<PaginationProps>(), {
+  total: 0,
+  itemsPerPage: 10,
+  defaultPage: 1,
+  siblingCount: 1,
+  showEdges: true,
+  showFirstLast: false,
+  showControls: true,
+  color: 'neutral',
+  variant: 'ghost',
+  activeColor: 'primary',
+  activeVariant: 'solid',
+})
+
+const emit = defineEmits<PaginationEmits>()
+
+export interface PaginationProps {
   /** Total item count - paired with itemsPerPage to derive the page count, same shape as Reka's own PaginationRoot. */
   total?: number
   itemsPerPage?: number
@@ -49,23 +65,11 @@ const props = withDefaults(defineProps<{
   activeColor?: ButtonVariants['color']
   activeVariant?: ButtonVariants['variant']
   ui?: UiProp<PaginationThemeSlots>
-}>(), {
-  total: 0,
-  itemsPerPage: 10,
-  defaultPage: 1,
-  siblingCount: 1,
-  showEdges: true,
-  showFirstLast: false,
-  showControls: true,
-  color: 'neutral',
-  variant: 'ghost',
-  activeColor: 'primary',
-  activeVariant: 'solid',
-})
+}
 
-const emit = defineEmits<{
+export interface PaginationEmits {
   'update:page': [value: number]
-}>()
+}
 
 const icons = useIcons()
 const messages = useMessages()

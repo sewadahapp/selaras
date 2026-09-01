@@ -5,12 +5,14 @@ import { useComponentTheme, useRootProps } from '../utils/ui'
 
 defineOptions({ inheritAttrs: false })
 
-defineProps<{
+defineProps<ProseImgProps>()
+
+export interface ProseImgProps {
   src?: string
   alt?: string
   width?: string | number
   height?: string | number
-}>()
+}
 
 const theme = useComponentTheme('prose', proseTheme)
 const ui = computed(() => theme.value())

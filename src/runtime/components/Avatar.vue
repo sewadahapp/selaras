@@ -15,7 +15,9 @@ type AvatarVariants = VariantProps<typeof avatarTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<AvatarProps>()
+
+export interface AvatarProps {
   /** A tag name ('a', 'span', ...) or a component reference - forwarded to the avatar's root element, so an avatar can be a link or whatever the consumer needs. */
   as?: string | Component
   /** The avatar image's URL. When absent (or while it loads), the fallback content shows instead. */
@@ -36,7 +38,7 @@ const props = defineProps<{
   referrerPolicy?: AvatarImageProps['referrerPolicy']
   crossOrigin?: AvatarImageProps['crossOrigin']
   ui?: UiProp<AvatarThemeSlots>
-}>()
+}
 
 const icons = useIcons()
 const theme = useComponentTheme('avatar', avatarTheme)

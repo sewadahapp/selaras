@@ -17,7 +17,18 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<ButtonProps>(), {
+  as: 'button',
+  // A bare `square?: boolean` prop with no default here resolves an absent
+  // prop to `false` (Vue's own Boolean-prop casting), not `undefined` - that
+  // would make `props.square ?? iconOnly.value` below always see `false`
+  // and never fall through to the auto-detected default. An explicit
+  // `undefined` default disables that casting, so omitting the prop stays
+  // genuinely undefined.
+  square: undefined,
+})
+
+export interface ButtonProps {
   /** A tag name ('a', 'span', ...) or a component reference (e.g. NuxtLink, via resolveComponent) - Primitive renders whichever is given. */
   as?: string | Component
   color?: ButtonVariants['color']
@@ -34,16 +45,7 @@ const props = withDefaults(defineProps<{
   /** Forces (or blocks) the equal-width/height "icon button" shape - overrides the auto-detected default below either direction. Needed for a button whose content is short *text* rather than an icon (a calendar day, a page number) - `iconOnly` below only looks at whether there's a default slot at all, not how wide its content happens to be, so a grid of these would otherwise size to each cell's own digit count instead of forming a uniform grid. */
   square?: boolean
   ui?: UiProp<ButtonThemeSlots>
-}>(), {
-  as: 'button',
-  // A bare `square?: boolean` prop with no default here resolves an absent
-  // prop to `false` (Vue's own Boolean-prop casting), not `undefined` - that
-  // would make `props.square ?? iconOnly.value` below always see `false`
-  // and never fall through to the auto-detected default. An explicit
-  // `undefined` default disables that casting, so omitting the prop stays
-  // genuinely undefined.
-  square: undefined,
-})
+}
 
 const slots = useSlots()
 

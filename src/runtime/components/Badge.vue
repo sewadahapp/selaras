@@ -11,7 +11,9 @@ type BadgeVariants = VariantProps<typeof badgeTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<BadgeProps>()
+
+export interface BadgeProps {
   label?: string
   icon?: string
   trailingIcon?: string
@@ -21,7 +23,7 @@ const props = defineProps<{
   variant?: BadgeVariants['variant']
   size?: BadgeVariants['size']
   ui?: UiProp<BadgeThemeSlots>
-}>()
+}
 
 const slots = useSlots()
 

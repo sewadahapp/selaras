@@ -19,17 +19,21 @@ export interface TabItem {
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<TabsProps>()
+
+defineEmits<TabsEmits>()
+
+export interface TabsProps {
   items: TabItem[]
   variant?: TabsVariants['variant']
   defaultValue?: string
   modelValue?: string
   ui?: UiProp<TabsThemeSlots>
-}>()
+}
 
-defineEmits<{
+export interface TabsEmits {
   'update:modelValue': [value: string]
-}>()
+}
 
 const theme = useComponentTheme('tabs', tabsTheme)
 const ui = computed(() => theme.value({ variant: props.variant }))

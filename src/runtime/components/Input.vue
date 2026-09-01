@@ -15,7 +15,14 @@ type InputVariants = VariantProps<typeof inputTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<InputProps>(), {
+  type: 'text',
+  color: 'primary',
+})
+
+const emit = defineEmits<InputEmits>()
+
+export interface InputProps {
   id?: string
   name?: string
   modelValue?: string | number
@@ -30,14 +37,11 @@ const props = withDefaults(defineProps<{
   icon?: string
   trailingIcon?: string
   ui?: UiProp<InputThemeSlots>
-}>(), {
-  type: 'text',
-  color: 'primary',
-})
+}
 
-const emit = defineEmits<{
+export interface InputEmits {
   'update:modelValue': [value: string]
-}>()
+}
 
 const field = useFormField()
 

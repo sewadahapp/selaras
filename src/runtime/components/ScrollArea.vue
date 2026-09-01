@@ -8,12 +8,14 @@ import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
-  orientation?: 'vertical' | 'horizontal' | 'both'
-  ui?: UiProp<ScrollAreaThemeSlots>
-}>(), {
+const props = withDefaults(defineProps<ScrollAreaProps>(), {
   orientation: 'vertical',
 })
+
+export interface ScrollAreaProps {
+  orientation?: 'vertical' | 'horizontal' | 'both'
+  ui?: UiProp<ScrollAreaThemeSlots>
+}
 
 const theme = useComponentTheme('scrollArea', scrollAreaTheme)
 const ui = computed(() => theme.value())

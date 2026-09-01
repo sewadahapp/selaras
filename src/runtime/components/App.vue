@@ -4,7 +4,7 @@ import { useHead } from '#imports'
 import ModalRenderer from './ModalRenderer.vue'
 import SlideoverRenderer from './SlideoverRenderer.vue'
 
-const props = withDefaults(defineProps<{
+export interface AppProps {
   /**
    * Reading direction for the whole app. Does two distinct things at once,
    * both needed for real RTL support: passed to Reka UI's ConfigProvider,
@@ -22,7 +22,9 @@ const props = withDefaults(defineProps<{
    * context, so ConfigProvider alone doesn't make anything look RTL.
    */
   dir?: 'ltr' | 'rtl'
-}>(), {
+}
+
+const props = withDefaults(defineProps<AppProps>(), {
   dir: 'ltr',
 })
 

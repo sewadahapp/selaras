@@ -24,7 +24,7 @@ import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
 
 type ButtonVariants = VariantProps<typeof buttonTheme>
 
-const props = withDefaults(defineProps<{
+export interface NavigationMenuProps {
   items: NavigationMenuItem[]
   /** Horizontal uses Reka's real shared-viewport flyout for a single level of dropdown children. Vertical falls back to a recursive accordion (see NavigationMenuAccordionItem.vue) for arbitrary depth - Reka's own NavigationMenuContent isn't built for deep nested trees. */
   orientation?: 'horizontal' | 'vertical'
@@ -33,7 +33,9 @@ const props = withDefaults(defineProps<{
   /** Draws a bar/underline next to the active item, in addition to its own color styling. */
   highlight?: boolean
   ui?: UiProp<NavigationMenuThemeSlots>
-}>(), {
+}
+
+const props = withDefaults(defineProps<NavigationMenuProps>(), {
   orientation: 'horizontal',
   variant: 'pill',
 })

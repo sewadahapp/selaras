@@ -19,7 +19,14 @@ export interface AccordionItemDef {
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<AccordionProps>(), {
+  type: 'multiple',
+  collapsible: true,
+})
+
+defineEmits<AccordionEmits>()
+
+export interface AccordionProps {
   items: AccordionItemDef[]
   type?: 'single' | 'multiple'
   defaultValue?: string | string[]
@@ -29,14 +36,11 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   size?: AccordionVariants['size']
   ui?: UiProp<AccordionThemeSlots>
-}>(), {
-  type: 'multiple',
-  collapsible: true,
-})
+}
 
-defineEmits<{
+export interface AccordionEmits {
   'update:modelValue': [value: string | string[]]
-}>()
+}
 
 const icons = useIcons()
 const theme = useComponentTheme('accordion', accordionTheme)

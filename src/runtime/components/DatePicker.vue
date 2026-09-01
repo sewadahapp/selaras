@@ -69,7 +69,19 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<{
+const props = withDefaults(defineProps<DatePickerProps>(), {
+  closeOnSelect: true,
+  triggerMode: 'field',
+  granularity: 'day',
+  color: 'neutral',
+  activeColor: 'primary',
+  minuteStep: 1,
+  arrow: false,
+})
+
+const emit = defineEmits<DatePickerEmits>()
+
+export interface DatePickerProps {
   id?: string
   name?: string
   /** A single DateValue, Reka's own `{ start?, end? }` DateRange shape when `range` is set, or a bare date-less Time when `timeOnly` is set - Vue props can't express a type that depends on a sibling prop's value, so this stays a plain union documented here rather than enforced by the type checker. */
@@ -130,20 +142,12 @@ const props = withDefaults(defineProps<{
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
   ui?: UiProp<DatePickerThemeSlots>
-}>(), {
-  closeOnSelect: true,
-  triggerMode: 'field',
-  granularity: 'day',
-  color: 'neutral',
-  activeColor: 'primary',
-  minuteStep: 1,
-  arrow: false,
-})
+}
 
-const emit = defineEmits<{
+export interface DatePickerEmits {
   'update:modelValue': [value: DateValue | DateRange | Time | undefined]
   'update:view': [view: 'date' | 'month' | 'year']
-}>()
+}
 
 const field = useFormField()
 

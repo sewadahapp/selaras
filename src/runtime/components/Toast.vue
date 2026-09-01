@@ -12,9 +12,11 @@ import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
-const props = defineProps<{
+export interface ToastProps {
   ui?: UiProp<ToastThemeSlots>
-}>()
+}
+
+const props = defineProps<ToastProps>()
 
 const { toasts, remove } = useToast()
 

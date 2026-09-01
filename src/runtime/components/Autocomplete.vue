@@ -8,7 +8,7 @@ import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>
 
-const props = defineProps<{
+export interface AutocompleteProps {
   id?: string
   name?: string
   items: SelectItems
@@ -35,12 +35,16 @@ const props = defineProps<{
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
   ui?: UiProp<SelectThemeSlots>
-}>()
+}
 
-const emit = defineEmits<{
+export interface AutocompleteEmits {
   'update:modelValue': [value: string | string[] | undefined]
   'update:searchTerm': [value: string]
-}>()
+}
+
+const props = defineProps<AutocompleteProps>()
+
+const emit = defineEmits<AutocompleteEmits>()
 
 const forwarded = useForwardPropsEmits(props, emit)
 </script>

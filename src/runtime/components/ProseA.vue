@@ -5,10 +5,12 @@ import { useComponentTheme, useRootProps } from '../utils/ui'
 
 defineOptions({ inheritAttrs: false })
 
-defineProps<{
+defineProps<ProseAProps>()
+
+export interface ProseAProps {
   href?: string
   target?: string
-}>()
+}
 
 const theme = useComponentTheme('prose', proseTheme)
 const ui = computed(() => theme.value())

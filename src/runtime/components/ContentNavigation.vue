@@ -17,15 +17,19 @@ export interface ContentNavigationLink {
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<ContentNavigationProps>()
+
+defineSlots<ContentNavigationSlots>()
+
+export interface ContentNavigationProps {
   navigation: ContentNavigationLink[]
   ui?: UiProp<ContentNavigationThemeSlots>
-}>()
+}
 
-defineSlots<{
+export interface ContentNavigationSlots {
   /** Replaces a link's (or a group header's) title content - `active` is always false for a group header, since that only ever describes a leaf link's own exact path. */
   link?: (props: { link: ContentNavigationLink, active: boolean }) => any
-}>()
+}
 
 const route = useRoute()
 

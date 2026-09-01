@@ -16,12 +16,14 @@ export interface DropdownItem {
   onSelect?: () => void
 }
 
-const props = withDefaults(defineProps<{
+export interface DropdownProps {
   items: DropdownItem[][]
   /** Shows a small pointer triangle connecting the menu to its trigger. */
   arrow?: boolean
   ui?: UiProp<DropdownThemeSlots>
-}>(), {
+}
+
+const props = withDefaults(defineProps<DropdownProps>(), {
   arrow: false,
 })
 

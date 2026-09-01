@@ -12,7 +12,11 @@ type CheckboxVariants = VariantProps<typeof checkboxTheme>
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<CheckboxProps>()
+
+const emit = defineEmits<CheckboxEmits>()
+
+export interface CheckboxProps {
   id?: string
   name?: string
   modelValue?: boolean | 'indeterminate'
@@ -27,11 +31,11 @@ const props = defineProps<{
   /** `card` wraps the checkbox and label in a bordered box, highlighted when checked - the same treatment RadioGroup's own `card` variant already applies per item. */
   variant?: CheckboxVariants['variant']
   ui?: UiProp<CheckboxThemeSlots>
-}>()
+}
 
-const emit = defineEmits<{
+export interface CheckboxEmits {
   'update:modelValue': [value: boolean | 'indeterminate']
-}>()
+}
 
 const field = useFormField()
 

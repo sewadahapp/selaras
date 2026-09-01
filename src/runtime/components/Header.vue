@@ -7,9 +7,11 @@ import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<HeaderProps>()
+
+export interface HeaderProps {
   ui?: UiProp<HeaderThemeSlots>
-}>()
+}
 
 const theme = useComponentTheme('header', headerTheme)
 const ui = computed(() => theme.value())

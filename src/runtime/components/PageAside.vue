@@ -8,9 +8,11 @@ import ScrollArea from './ScrollArea.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<{
+const props = defineProps<PageAsideProps>()
+
+export interface PageAsideProps {
   ui?: UiProp<PageAsideThemeSlots>
-}>()
+}
 
 const theme = useComponentTheme('pageAside', pageAsideTheme)
 const ui = computed(() => theme.value())
