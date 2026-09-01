@@ -89,6 +89,18 @@ start, [Select](/components/forms/select) does the same job more directly.
 <SAutocomplete v-model="value" force-selection :items="fruitItems" />
 ```
 
+### Arrow
+
+`arrow` works the same as [Select's](/components/forms/select#arrow) - a
+small pointer triangle connecting the panel to its trigger:
+
+::component-example{name="autocomplete-arrow"}
+::
+
+```vue-html
+<SAutocomplete v-model="value" arrow :items="fruitItems" />
+```
+
 ### Custom option rendering, objects, and groups
 
 The `item`/`value`/`group` slots and `labelKey`/`valueKey` mapping all work
