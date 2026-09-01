@@ -2,7 +2,17 @@ import { tv } from 'tailwind-variants'
 
 export const navigationMenuTheme = tv({
   slots: {
-    root: 'flex',
+    // w-full - without it, Root shrink-wraps to just its own trigger
+    // buttons' natural width inside whatever flex/grid container it sits
+    // in (confirmed: inside the docs site's own demo wrapper, a bare
+    // `flex` nav ended up narrower than its own dropdown content). Since
+    // `viewport` below is sized `w-full` *relative to Root*, a narrow
+    // Root clipped any dropdown content wider than the nav's own row -
+    // visible as text cut off mid-word in a custom-content example wider
+    // than the default trigger row. A real navbar spans its container's
+    // width anyway (the standard pattern), so this is correct regardless
+    // of the clipping bug it also happens to fix.
+    root: 'flex w-full',
     list: 'flex list-none',
     item: 'min-w-0',
     link: 'group relative flex items-center gap-1.5 rounded-[var(--ui-radius-md)] px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
