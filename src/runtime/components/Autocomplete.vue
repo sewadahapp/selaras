@@ -32,6 +32,8 @@ const props = defineProps<{
   searchTerm?: string
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
+  /** Shows a small pointer triangle connecting the panel to its trigger. */
+  arrow?: boolean
   ui?: UiProp<SelectSlots>
 }>()
 

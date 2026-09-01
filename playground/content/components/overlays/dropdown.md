@@ -68,6 +68,18 @@ one special case:
 </SDropdown>
 ```
 
+### Arrow
+
+`arrow` shows a small pointer triangle connecting the menu to its
+trigger:
+
+::component-example{name="dropdown-arrow"}
+::
+
+```vue-html
+<SDropdown :items="items" arrow>...</SDropdown>
+```
+
 ### Accessibility
 
 Dropdown renders Reka UI's DropdownMenu primitive, so the accessibility
@@ -85,7 +97,8 @@ to the trigger.
 | Prop | Type | Default |
 | --- | --- | --- |
 | `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void }[][]` | - |
-| `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator', string \| object>>` | - |
+| `arrow` | `boolean` | `false` |
+| `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow', string \| object>>` | - |
 
 ## Slots
 

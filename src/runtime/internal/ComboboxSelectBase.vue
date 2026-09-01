@@ -5,6 +5,7 @@ import type { SelectSlots } from '../theme/select'
 import type { UiProp } from '../utils/ui'
 import {
   ComboboxAnchor,
+  ComboboxArrow,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxGroup,
@@ -66,6 +67,8 @@ const props = withDefaults(defineProps<{
   searchTerm?: string
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
+  /** Shows a small pointer triangle connecting the panel to its trigger. */
+  arrow?: boolean
   ui?: UiProp<SelectSlots>
 }>(), {
   displayMode: 'comma',
@@ -73,6 +76,7 @@ const props = withDefaults(defineProps<{
   resetSearchTermOnBlur: true,
   resetSearchTermOnSelect: true,
   color: 'primary',
+  arrow: false,
 })
 
 const emit = defineEmits<{
@@ -303,6 +307,7 @@ const dropdownProps = computed(() => resolveSlot(ui.value.dropdown, props.ui?.dr
 const searchWrapperProps = computed(() => resolveSlot(ui.value.searchWrapper, props.ui?.searchWrapper))
 const searchInputProps = computed(() => resolveSlot(ui.value.searchInput, props.ui?.searchInput))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
+const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 const viewportProps = computed(() => resolveSlot(ui.value.viewport, props.ui?.viewport))
 const groupProps = computed(() => resolveSlot(ui.value.group, props.ui?.group))
 const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
@@ -654,6 +659,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
         </ComboboxViewport>
 
         <slot name="footer" />
+        <ComboboxArrow v-if="arrow" v-bind="arrowProps" />
       </ComboboxContent>
     </ComboboxPortal>
   </ComboboxRoot>

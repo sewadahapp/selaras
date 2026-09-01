@@ -6,6 +6,7 @@ export const dropdownTheme = tv({
     item: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] px-2 py-1.5 text-sm text-[var(--ui-text)] cursor-pointer select-none outline-none data-[highlighted]:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
     icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',
     separator: '-mx-1 my-1 h-px bg-[var(--ui-border)]',
+    arrow: 'fill-[var(--ui-bg)] stroke-[var(--ui-border)] stroke-1',
   },
   variants: {
     // For a delete/remove-style action - deliberately just this one flag

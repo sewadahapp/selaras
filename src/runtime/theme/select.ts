@@ -35,6 +35,7 @@ export const selectTheme = tv({
     item: 'relative flex items-center gap-2 rounded-[var(--ui-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--ui-text)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
     itemIndicator: 'absolute end-2 flex items-center text-[var(--ui-primary)]',
     empty: 'px-2 py-6 text-center text-sm text-[var(--ui-text-muted)]',
+    arrow: 'fill-[var(--ui-bg)] stroke-[var(--ui-border)] stroke-1',
   },
   variants: {
     size: {

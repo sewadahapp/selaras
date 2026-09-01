@@ -107,4 +107,24 @@ describe('dropdown', () => {
     expect(items[0]!.className).not.toContain('text-[var(--ui-danger)]')
     expect(items[1]!.className).toContain('text-[var(--ui-danger)]')
   })
+
+  it('renders no arrow element by default', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await openMenu()
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeFalsy()
+  })
+
+  it('arrow renders the pointer triangle', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { items: [[{ label: 'Edit' }]], arrow: true },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await openMenu()
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+  })
 })

@@ -129,4 +129,21 @@ describe('autocomplete', () => {
       expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['banana']])
     })
   })
+
+  // Confirms `arrow` actually reaches ComboboxSelectBase through
+  // Autocomplete's own separate useForwardPropsEmits call - Select has the
+  // same coverage, but that doesn't prove this component's own forwarding
+  // wires it up too.
+  it('arrow renders the pointer triangle', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: fruitItems, arrow: true },
+    })
+
+    const input = wrapper.find('input')
+    await input.setValue('app')
+    await nextTick()
+    await nextTick()
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+  })
 })

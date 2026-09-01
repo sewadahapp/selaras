@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DropdownSlots } from '../theme/dropdown'
 import type { UiProp } from '../utils/ui'
-import { DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
+import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { dropdownTheme } from '../theme/dropdown'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -16,15 +16,20 @@ export interface DropdownItem {
   onSelect?: () => void
 }
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   items: DropdownItem[][]
+  /** Shows a small pointer triangle connecting the menu to its trigger. */
+  arrow?: boolean
   ui?: UiProp<DropdownSlots>
-}>()
+}>(), {
+  arrow: false,
+})
 
 const theme = useComponentTheme('dropdown', dropdownTheme)
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
+const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 // Resolved per item (not a single shared computed) - `destructive` can
 // differ between items in the same menu, unlike every other themed slot
 // here which is the same for every item.
@@ -59,6 +64,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
             </slot>
           </DropdownMenuItem>
         </template>
+        <DropdownMenuArrow v-if="arrow" v-bind="arrowProps" />
       </DropdownMenuContent>
     </DropdownMenuPortal>
   </DropdownMenuRoot>

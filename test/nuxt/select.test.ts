@@ -188,6 +188,22 @@ describe('select', () => {
 
     expect(document.body.textContent).toContain('Category: Fruits')
   })
+
+  it('renders no arrow element by default', async () => {
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems } })
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeFalsy()
+  })
+
+  it('arrow renders the pointer triangle', async () => {
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, arrow: true } })
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+
+    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+  })
 })
 
 describe('select icon slots', () => {

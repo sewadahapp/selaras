@@ -234,6 +234,18 @@ with everything above them on this page - see [Props](#props).
 <SSelect v-model="danger" color="danger" :items="items" />
 ```
 
+### Arrow
+
+`arrow` shows a small pointer triangle connecting the panel to its
+trigger:
+
+::component-example{name="select-arrow"}
+::
+
+```vue-html
+<SSelect v-model="fruit" arrow :items="items" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
@@ -276,6 +288,7 @@ not something to configure here.
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `invalid` | `boolean` | `false` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `arrow` | `boolean` | `false` |
 | `ui` | `Partial<Record<SelectSlot, string \| object>>` | - |
 
 ## Slots
