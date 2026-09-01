@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { RadioGroupSlots } from '../theme/radio-group'
+import type { RadioGroupThemeSlots } from '../theme/radio-group'
 import type { UiProp } from '../utils/ui'
 import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed } from 'vue'
@@ -31,7 +31,7 @@ const props = defineProps<{
   color?: RadioGroupVariants['color']
   orientation?: RadioGroupVariants['orientation']
   variant?: RadioGroupVariants['variant']
-  ui?: UiProp<RadioGroupSlots>
+  ui?: UiProp<RadioGroupThemeSlots>
 }>()
 
 const emit = defineEmits<{

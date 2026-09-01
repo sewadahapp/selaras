@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SlideoverSlots } from '../theme/slideover'
+import type { SlideoverThemeSlots } from '../theme/slideover'
 import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
 import { computed, ref, useSlots, watch, watchEffect } from 'vue'
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
   overlay?: boolean
   /** Set `false` to skip the open/close animation entirely - this library's animation is CSS-only, so this just omits those classes rather than toggling a JS transition system. */
   transition?: boolean
-  ui?: UiProp<SlideoverSlots>
+  ui?: UiProp<SlideoverThemeSlots>
 }>(), {
   side: 'right',
   inset: false,

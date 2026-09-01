@@ -68,4 +68,4 @@ export const datePickerTheme = tv({
   },
 })
 
-export type DatePickerSlots = keyof (typeof datePickerTheme)['slots']
+export type DatePickerThemeSlots = keyof (typeof datePickerTheme)['slots']

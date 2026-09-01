@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PopoverSlots } from '../theme/popover'
+import type { PopoverThemeSlots } from '../theme/popover'
 import type { UiProp } from '../utils/ui'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
 import { popoverTheme } from '../theme/popover'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
-const props = withDefaults(defineProps<{
+export interface PopoverProps {
   open?: boolean
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'start' | 'center' | 'end'
@@ -16,8 +16,24 @@ const props = withDefaults(defineProps<{
   dismissible?: boolean
   /** Shows the little pointer triangle connecting the popover to its trigger. */
   arrow?: boolean
-  ui?: UiProp<PopoverSlots>
-}>(), {
+  ui?: UiProp<PopoverThemeSlots>
+}
+
+export interface PopoverEmits {
+  'update:open': [value: boolean]
+  'escapeKeyDown': [event: KeyboardEvent]
+  'pointerDownOutside': [event: Event]
+  'focusOutside': [event: Event]
+}
+
+export interface PopoverSlots {
+  /** The trigger element. */
+  default?: () => any
+  /** The popover's own content. */
+  content?: () => any
+}
+
+const props = withDefaults(defineProps<PopoverProps>(), {
   side: 'bottom',
   align: 'center',
   modal: false,
@@ -25,12 +41,8 @@ const props = withDefaults(defineProps<{
   arrow: false,
 })
 
-const emit = defineEmits<{
-  'update:open': [value: boolean]
-  'escapeKeyDown': [event: KeyboardEvent]
-  'pointerDownOutside': [event: Event]
-  'focusOutside': [event: Event]
-}>()
+const emit = defineEmits<PopoverEmits>()
+defineSlots<PopoverSlots>()
 
 function onEscapeKeyDown(event: KeyboardEvent) {
   if (!props.dismissible)

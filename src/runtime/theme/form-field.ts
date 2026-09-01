@@ -36,4 +36,4 @@ export const formFieldTheme = tv({
   },
 })
 
-export type FormFieldSlots = keyof (typeof formFieldTheme)['slots']
+export type FormFieldThemeSlots = keyof (typeof formFieldTheme)['slots']

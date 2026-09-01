@@ -26,4 +26,4 @@ export const iconTheme = tv({
   },
 })
 
-export type IconSlots = keyof (typeof iconTheme)['slots']
+export type IconThemeSlots = keyof (typeof iconTheme)['slots']

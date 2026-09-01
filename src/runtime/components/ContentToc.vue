@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ContentTocSlots } from '../theme/content-toc'
+import type { ContentTocThemeSlots } from '../theme/content-toc'
 import type { UiProp } from '../utils/ui'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { contentTocTheme } from '../theme/content-toc'
@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
   isNested?: boolean
   /** Internal: set by recursive self-calls, omit when using this component directly. */
   activeIds?: Set<string>
-  ui?: UiProp<ContentTocSlots>
+  ui?: UiProp<ContentTocThemeSlots>
 }>(), {
   isNested: false,
 })

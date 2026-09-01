@@ -106,4 +106,4 @@ export const checkboxTheme = tv({
   },
 })
 
-export type CheckboxSlots = keyof (typeof checkboxTheme)['slots']
+export type CheckboxThemeSlots = keyof (typeof checkboxTheme)['slots']

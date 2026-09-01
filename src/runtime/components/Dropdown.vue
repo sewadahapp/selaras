@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DropdownSlots } from '../theme/dropdown'
+import type { DropdownThemeSlots } from '../theme/dropdown'
 import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
 import { computed } from 'vue'
@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{
   items: DropdownItem[][]
   /** Shows a small pointer triangle connecting the menu to its trigger. */
   arrow?: boolean
-  ui?: UiProp<DropdownSlots>
+  ui?: UiProp<DropdownThemeSlots>
 }>(), {
   arrow: false,
 })

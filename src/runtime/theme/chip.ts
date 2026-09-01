@@ -93,4 +93,4 @@ export const chipTheme = tv({
   },
 })
 
-export type ChipSlots = keyof (typeof chipTheme)['slots']
+export type ChipThemeSlots = keyof (typeof chipTheme)['slots']

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { InputSlots } from '../theme/input'
+import type { InputThemeSlots } from '../theme/input'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<{
   clearable?: boolean
   icon?: string
   trailingIcon?: string
-  ui?: UiProp<InputSlots>
+  ui?: UiProp<InputThemeSlots>
 }>(), {
   type: 'text',
   color: 'primary',

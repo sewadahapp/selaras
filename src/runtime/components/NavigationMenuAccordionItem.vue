@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ButtonVariants } from '../theme/button'
-import type { NavigationMenuSlots } from '../theme/navigation-menu'
+import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed, useId, useSlots } from 'vue'
@@ -29,7 +29,7 @@ const props = defineProps<{
   color?: ButtonVariants['color']
   variant?: 'pill' | 'link'
   highlight?: boolean
-  ui?: UiProp<NavigationMenuSlots>
+  ui?: UiProp<NavigationMenuThemeSlots>
 }>()
 
 const route = useRoute()

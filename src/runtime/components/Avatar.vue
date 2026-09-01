@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { AvatarImageProps } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
+import type { AvatarThemeSlots } from '../theme/avatar'
+import type { UiProp } from '../utils/ui'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 import { computed, inject } from 'vue'
 import { useIcons } from '../composables/use-icons'
@@ -33,7 +35,7 @@ const props = defineProps<{
   status?: boolean
   referrerPolicy?: AvatarImageProps['referrerPolicy']
   crossOrigin?: AvatarImageProps['crossOrigin']
-  ui?: UiProp<AvatarSlots>
+  ui?: UiProp<AvatarThemeSlots>
 }>()
 
 const icons = useIcons()

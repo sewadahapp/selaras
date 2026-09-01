@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { SelectItems } from '../composables/use-combobox-select'
-import type { SelectSlots, selectTheme } from '../theme/select'
+import type { selectTheme, SelectThemeSlots } from '../theme/select'
 import type { UiProp } from '../utils/ui'
 import { useForwardPropsEmits } from 'reka-ui'
 import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
@@ -33,7 +33,7 @@ const props = defineProps<{
   resetSearchTermOnSelect?: boolean
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
-  ui?: UiProp<SelectSlots>
+  ui?: UiProp<SelectThemeSlots>
 }>()
 
 const emit = defineEmits<{

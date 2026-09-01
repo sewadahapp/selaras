@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TooltipSlots } from '../theme/tooltip'
+import type { TooltipThemeSlots } from '../theme/tooltip'
 import type { UiProp } from '../utils/ui'
 import { TooltipArrow, TooltipContent, TooltipPortal, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { computed } from 'vue'
@@ -15,7 +15,7 @@ const props = withDefaults(defineProps<{
   /** Set `false` to hide the little pointer triangle. */
   arrow?: boolean
   disabled?: boolean
-  ui?: UiProp<TooltipSlots>
+  ui?: UiProp<TooltipThemeSlots>
 }>(), {
   side: 'top',
   delayDuration: 200,

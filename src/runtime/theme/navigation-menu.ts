@@ -132,4 +132,4 @@ export const navigationMenuTheme = tv({
   },
 })
 
-export type NavigationMenuSlots = keyof (typeof navigationMenuTheme)['slots']
+export type NavigationMenuThemeSlots = keyof (typeof navigationMenuTheme)['slots']

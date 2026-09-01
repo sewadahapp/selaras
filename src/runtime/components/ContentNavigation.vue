@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ContentNavigationSlots } from '../theme/content-navigation'
+import type { ContentNavigationThemeSlots } from '../theme/content-navigation'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useRoute } from '#imports'
@@ -19,7 +19,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   navigation: ContentNavigationLink[]
-  ui?: UiProp<ContentNavigationSlots>
+  ui?: UiProp<ContentNavigationThemeSlots>
 }>()
 
 defineSlots<{

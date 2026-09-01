@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { BadgeSlots } from '../theme/badge'
+import type { BadgeThemeSlots } from '../theme/badge'
 import type { UiProp } from '../utils/ui'
 import { computed, useSlots } from 'vue'
 import { badgeTheme } from '../theme/badge'
@@ -20,7 +20,7 @@ const props = defineProps<{
   color?: BadgeVariants['color']
   variant?: BadgeVariants['variant']
   size?: BadgeVariants['size']
-  ui?: UiProp<BadgeSlots>
+  ui?: UiProp<BadgeThemeSlots>
 }>()
 
 const slots = useSlots()

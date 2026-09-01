@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ScrollAreaSlots } from '../theme/scroll-area'
+import type { ScrollAreaThemeSlots } from '../theme/scroll-area'
 import type { UiProp } from '../utils/ui'
 import { ScrollAreaCorner, ScrollAreaRoot, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport } from 'reka-ui'
 import { computed } from 'vue'
@@ -10,7 +10,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   orientation?: 'vertical' | 'horizontal' | 'both'
-  ui?: UiProp<ScrollAreaSlots>
+  ui?: UiProp<ScrollAreaThemeSlots>
 }>(), {
   orientation: 'vertical',
 })

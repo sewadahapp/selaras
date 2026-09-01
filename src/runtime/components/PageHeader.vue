@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PageHeaderSlots } from '../theme/page-header'
+import type { PageHeaderThemeSlots } from '../theme/page-header'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { pageHeaderTheme } from '../theme/page-header'
@@ -10,7 +10,7 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<{
   title?: string
   description?: string
-  ui?: UiProp<PageHeaderSlots>
+  ui?: UiProp<PageHeaderThemeSlots>
 }>()
 
 const theme = useComponentTheme('pageHeader', pageHeaderTheme)

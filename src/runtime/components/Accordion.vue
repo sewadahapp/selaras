@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { AccordionSlots } from '../theme/accordion'
+import type { AccordionThemeSlots } from '../theme/accordion'
 import type { UiProp } from '../utils/ui'
 import { AccordionContent, AccordionHeader, AccordionItem, AccordionRoot, AccordionTrigger } from 'reka-ui'
 import { computed } from 'vue'
@@ -28,7 +28,7 @@ const props = withDefaults(defineProps<{
   /** Disables every item at once - Reka's own AccordionRoot already blocks all interaction when this is set, so this is a straight pass-through. */
   disabled?: boolean
   size?: AccordionVariants['size']
-  ui?: UiProp<AccordionSlots>
+  ui?: UiProp<AccordionThemeSlots>
 }>(), {
   type: 'multiple',
   collapsible: true,

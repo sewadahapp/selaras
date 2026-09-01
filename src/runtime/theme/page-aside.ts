@@ -9,4 +9,4 @@ export const pageAsideTheme = tv({
   },
 })
 
-export type PageAsideSlots = keyof (typeof pageAsideTheme)['slots']
+export type PageAsideThemeSlots = keyof (typeof pageAsideTheme)['slots']

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { SwitchSlots } from '../theme/switch'
+import type { SwitchThemeSlots } from '../theme/switch'
 import type { UiProp } from '../utils/ui'
 import { SwitchRoot, SwitchThumb } from 'reka-ui'
 import { computed } from 'vue'
@@ -32,7 +32,7 @@ const props = defineProps<{
   checkedIcon?: string
   /** Icon shown in the thumb when off. */
   uncheckedIcon?: string
-  ui?: UiProp<SwitchSlots>
+  ui?: UiProp<SwitchThemeSlots>
 }>()
 
 const emit = defineEmits<{

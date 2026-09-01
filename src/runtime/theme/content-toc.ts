@@ -41,4 +41,4 @@ export const contentTocTheme = tv({
   },
 })
 
-export type ContentTocSlots = keyof (typeof contentTocTheme)['slots']
+export type ContentTocThemeSlots = keyof (typeof contentTocTheme)['slots']

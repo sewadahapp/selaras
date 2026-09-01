@@ -77,4 +77,4 @@ export const switchTheme = tv({
   },
 })
 
-export type SwitchSlots = keyof (typeof switchTheme)['slots']
+export type SwitchThemeSlots = keyof (typeof switchTheme)['slots']

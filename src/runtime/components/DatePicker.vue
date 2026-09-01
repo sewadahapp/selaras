@@ -3,7 +3,7 @@ import type { DateValue } from '@internationalized/date'
 import type { DateRange, SegmentPart } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import type { buttonTheme } from '../theme/button'
-import type { DatePickerSlots } from '../theme/date-picker'
+import type { DatePickerThemeSlots } from '../theme/date-picker'
 import type { UiProp } from '../utils/ui'
 import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, Time, toCalendarDateTime, today } from '@internationalized/date'
 import {
@@ -129,7 +129,7 @@ const props = withDefaults(defineProps<{
   size?: DatePickerVariants['size']
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
-  ui?: UiProp<DatePickerSlots>
+  ui?: UiProp<DatePickerThemeSlots>
 }>(), {
   closeOnSelect: true,
   triggerMode: 'field',

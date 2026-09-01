@@ -67,4 +67,4 @@ export const selectTheme = tv({
   },
 })
 
-export type SelectSlots = keyof (typeof selectTheme)['slots']
+export type SelectThemeSlots = keyof (typeof selectTheme)['slots']

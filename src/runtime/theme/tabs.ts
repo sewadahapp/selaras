@@ -44,4 +44,4 @@ export const tabsTheme = tv({
   },
 })
 
-export type TabsSlots = keyof (typeof tabsTheme)['slots']
+export type TabsThemeSlots = keyof (typeof tabsTheme)['slots']

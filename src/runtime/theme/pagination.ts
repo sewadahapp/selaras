@@ -21,4 +21,4 @@ export const paginationTheme = tv({
   },
 })
 
-export type PaginationSlots = keyof (typeof paginationTheme)['slots']
+export type PaginationThemeSlots = keyof (typeof paginationTheme)['slots']

@@ -8,4 +8,4 @@ export const pageHeaderTheme = tv({
   },
 })
 
-export type PageHeaderSlots = keyof (typeof pageHeaderTheme)['slots']
+export type PageHeaderThemeSlots = keyof (typeof pageHeaderTheme)['slots']

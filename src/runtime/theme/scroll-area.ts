@@ -10,4 +10,4 @@ export const scrollAreaTheme = tv({
   },
 })
 
-export type ScrollAreaSlots = keyof (typeof scrollAreaTheme)['slots']
+export type ScrollAreaThemeSlots = keyof (typeof scrollAreaTheme)['slots']

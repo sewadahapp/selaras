@@ -72,4 +72,4 @@ export const inputTheme = tv({
   },
 })
 
-export type InputSlots = keyof (typeof inputTheme)['slots']
+export type InputThemeSlots = keyof (typeof inputTheme)['slots']

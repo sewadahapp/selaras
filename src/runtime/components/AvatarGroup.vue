@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { AvatarGroupSlots } from '../theme/avatar-group'
+import type { AvatarGroupThemeSlots } from '../theme/avatar-group'
 import type { UiProp } from '../utils/ui'
 import { computed, provide, useSlots } from 'vue'
 import { avatarGroupTheme } from '../theme/avatar-group'
@@ -15,7 +15,7 @@ const props = defineProps<{
   /** Maximum number of avatars to show. Extra avatars collapse into a "+N" count indicator. */
   max?: number
   size?: AvatarGroupVariants['size']
-  ui?: UiProp<AvatarGroupSlots>
+  ui?: UiProp<AvatarGroupThemeSlots>
 }>()
 
 const slots = useSlots()

@@ -13,7 +13,8 @@
     "./directives": {
       "types": "./dist/runtime/directives/index.d.ts",
       "import": "./dist/runtime/directives/index.js"
-    }
+    },
+    "./components/*": "./dist/runtime/components/*"
   },
   "main": "./dist/module.mjs",
   "typesVersions": {
@@ -23,6 +24,9 @@
       ],
       "directives": [
         "./dist/runtime/directives/index.d.ts"
+      ],
+      "components/*": [
+        "./dist/runtime/components/*"
       ]
     }
   },

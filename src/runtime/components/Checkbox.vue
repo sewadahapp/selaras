@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { CheckboxSlots } from '../theme/checkbox'
+import type { CheckboxThemeSlots } from '../theme/checkbox'
 import type { UiProp } from '../utils/ui'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { computed } from 'vue'
@@ -26,7 +26,7 @@ const props = defineProps<{
   color?: CheckboxVariants['color']
   /** `card` wraps the checkbox and label in a bordered box, highlighted when checked - the same treatment RadioGroup's own `card` variant already applies per item. */
   variant?: CheckboxVariants['variant']
-  ui?: UiProp<CheckboxSlots>
+  ui?: UiProp<CheckboxThemeSlots>
 }>()
 
 const emit = defineEmits<{

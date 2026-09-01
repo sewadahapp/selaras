@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { InputNumberSlots } from '../theme/input-number'
+import type { InputNumberThemeSlots } from '../theme/input-number'
 import type { UiProp } from '../utils/ui'
 import { computed, ref } from 'vue'
 import { useFormField } from '../composables/use-form-field'
@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<{
   size?: InputNumberVariants['size']
   /** 'horizontal' (default) flanks the input with two full-height buttons; 'vertical' replaces them with a single compact up/down pair pinned to the end edge. */
   orientation?: InputNumberVariants['orientation']
-  ui?: UiProp<InputNumberSlots>
+  ui?: UiProp<InputNumberThemeSlots>
 }>(), {
   step: 1,
   orientation: 'horizontal',

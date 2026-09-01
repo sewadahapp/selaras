@@ -35,4 +35,4 @@ export const proseTheme = tv({
   },
 })
 
-export type ProseSlots = keyof (typeof proseTheme)['slots']
+export type ProseThemeSlots = keyof (typeof proseTheme)['slots']

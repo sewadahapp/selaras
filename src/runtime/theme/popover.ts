@@ -7,4 +7,4 @@ export const popoverTheme = tv({
   },
 })
 
-export type PopoverSlots = keyof (typeof popoverTheme)['slots']
+export type PopoverThemeSlots = keyof (typeof popoverTheme)['slots']

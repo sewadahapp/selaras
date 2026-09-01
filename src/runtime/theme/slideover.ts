@@ -62,4 +62,4 @@ export const slideoverTheme = tv({
   },
 })
 
-export type SlideoverSlots = keyof (typeof slideoverTheme)['slots']
+export type SlideoverThemeSlots = keyof (typeof slideoverTheme)['slots']

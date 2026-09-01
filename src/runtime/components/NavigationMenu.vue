@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ButtonVariants } from '../theme/button'
-import type { NavigationMenuSlots } from '../theme/navigation-menu'
+import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import {
@@ -29,7 +29,7 @@ const props = withDefaults(defineProps<{
   variant?: 'pill' | 'link'
   /** Draws a bar/underline next to the active item, in addition to its own color styling. */
   highlight?: boolean
-  ui?: UiProp<NavigationMenuSlots>
+  ui?: UiProp<NavigationMenuThemeSlots>
 }>(), {
   orientation: 'horizontal',
   variant: 'pill',

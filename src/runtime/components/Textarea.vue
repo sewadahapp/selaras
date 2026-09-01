@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { TextareaSlots } from '../theme/textarea'
+import type { TextareaThemeSlots } from '../theme/textarea'
 import type { UiProp } from '../utils/ui'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<{
   autoresize?: boolean
   /** autoresize only - caps how many rows it can grow to before switching to a scrollbar (0/unset grows indefinitely). */
   maxrows?: number
-  ui?: UiProp<TextareaSlots>
+  ui?: UiProp<TextareaThemeSlots>
 }>(), {
   rows: 3,
   color: 'primary',

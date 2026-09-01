@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { IconSlots } from '../theme/icon'
+import type { IconThemeSlots } from '../theme/icon'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { iconTheme } from '../theme/icon'
@@ -14,7 +14,7 @@ const props = defineProps<{
   /** Any name Nuxt Icon resolves, e.g. `hugeicons:star` (or any other registered set, like `lucide:star`). */
   name: string
   color?: IconVariants['color']
-  ui?: UiProp<IconSlots>
+  ui?: UiProp<IconThemeSlots>
 }>()
 
 const theme = useComponentTheme('icon', iconTheme)

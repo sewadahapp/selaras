@@ -107,4 +107,4 @@ export const buttonTheme = tv({
   },
 })
 
-export type ButtonSlots = keyof (typeof buttonTheme)['slots']
+export type ButtonThemeSlots = keyof (typeof buttonTheme)['slots']

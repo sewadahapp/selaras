@@ -31,4 +31,4 @@ export const toastTheme = tv({
   },
 })
 
-export type ToastSlots = keyof (typeof toastTheme)['slots']
+export type ToastThemeSlots = keyof (typeof toastTheme)['slots']

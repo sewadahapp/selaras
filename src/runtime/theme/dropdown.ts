@@ -21,4 +21,4 @@ export const dropdownTheme = tv({
   },
 })
 
-export type DropdownSlots = keyof (typeof dropdownTheme)['slots']
+export type DropdownThemeSlots = keyof (typeof dropdownTheme)['slots']

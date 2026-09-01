@@ -14,4 +14,4 @@ export const tooltipTheme = tv({
   },
 })
 
-export type TooltipSlots = keyof (typeof tooltipTheme)['slots']
+export type TooltipThemeSlots = keyof (typeof tooltipTheme)['slots']

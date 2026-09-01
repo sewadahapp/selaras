@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { FormFieldSlots } from '../theme/form-field'
+import type { FormFieldThemeSlots } from '../theme/form-field'
 import type { UiProp } from '../utils/ui'
 import { computed, useId } from 'vue'
 import { provideFormField } from '../composables/use-form-field'
@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<{
   size?: FormFieldVariants['size']
   /** 'vertical' (default) stacks the label above the control; 'horizontal' places the label beside it, with the control filling the remaining row width. */
   orientation?: FormFieldVariants['orientation']
-  ui?: UiProp<FormFieldSlots>
+  ui?: UiProp<FormFieldThemeSlots>
 }>(), {
   orientation: 'vertical',
 })

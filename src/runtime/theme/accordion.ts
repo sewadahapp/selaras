@@ -36,4 +36,4 @@ export const accordionTheme = tv({
   },
 })
 
-export type AccordionSlots = keyof (typeof accordionTheme)['slots']
+export type AccordionThemeSlots = keyof (typeof accordionTheme)['slots']

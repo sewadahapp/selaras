@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { TabsSlots } from '../theme/tabs'
+import type { TabsThemeSlots } from '../theme/tabs'
 import type { UiProp } from '../utils/ui'
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed } from 'vue'
@@ -24,7 +24,7 @@ const props = defineProps<{
   variant?: TabsVariants['variant']
   defaultValue?: string
   modelValue?: string
-  ui?: UiProp<TabsSlots>
+  ui?: UiProp<TabsThemeSlots>
 }>()
 
 defineEmits<{

@@ -98,4 +98,4 @@ export const badgeTheme = tv({
   },
 })
 
-export type BadgeSlots = keyof (typeof badgeTheme)['slots']
+export type BadgeThemeSlots = keyof (typeof badgeTheme)['slots']

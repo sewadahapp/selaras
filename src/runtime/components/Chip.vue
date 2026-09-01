@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { ChipSlots } from '../theme/chip'
+import type { ChipThemeSlots } from '../theme/chip'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
@@ -25,7 +25,7 @@ const props = defineProps<{
   color?: ChipVariants['color']
   variant?: ChipVariants['variant']
   size?: ChipVariants['size']
-  ui?: UiProp<ChipSlots>
+  ui?: UiProp<ChipThemeSlots>
 }>()
 
 const emit = defineEmits<{

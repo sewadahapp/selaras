@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HeaderSlots } from '../theme/header'
+import type { HeaderThemeSlots } from '../theme/header'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { headerTheme } from '../theme/header'
@@ -8,7 +8,7 @@ import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
-  ui?: UiProp<HeaderSlots>
+  ui?: UiProp<HeaderThemeSlots>
 }>()
 
 const theme = useComponentTheme('header', headerTheme)

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { ContainerSlots } from '../theme/container'
+import type { ContainerThemeSlots } from '../theme/container'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { containerTheme } from '../theme/container'
@@ -12,7 +12,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   size?: ContainerVariants['size']
-  ui?: UiProp<ContainerSlots>
+  ui?: UiProp<ContainerThemeSlots>
 }>()
 
 const theme = useComponentTheme('container', containerTheme)

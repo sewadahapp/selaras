@@ -58,4 +58,4 @@ export const modalTheme = tv({
   },
 })
 
-export type ModalSlots = keyof (typeof modalTheme)['slots']
+export type ModalThemeSlots = keyof (typeof modalTheme)['slots']

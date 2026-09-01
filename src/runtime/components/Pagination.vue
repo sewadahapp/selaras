@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { buttonTheme } from '../theme/button'
-import type { PaginationSlots } from '../theme/pagination'
+import type { PaginationThemeSlots } from '../theme/pagination'
 import type { UiProp } from '../utils/ui'
 import {
   PaginationEllipsis,
@@ -48,7 +48,7 @@ const props = withDefaults(defineProps<{
   /** The current page's own button. */
   activeColor?: ButtonVariants['color']
   activeVariant?: ButtonVariants['variant']
-  ui?: UiProp<PaginationSlots>
+  ui?: UiProp<PaginationThemeSlots>
 }>(), {
   total: 0,
   itemsPerPage: 10,

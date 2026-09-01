@@ -18,4 +18,4 @@ export const containerTheme = tv({
   },
 })
 
-export type ContainerSlots = keyof (typeof containerTheme)['slots']
+export type ContainerThemeSlots = keyof (typeof containerTheme)['slots']

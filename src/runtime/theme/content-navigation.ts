@@ -18,4 +18,4 @@ export const contentNavigationTheme = tv({
   },
 })
 
-export type ContentNavigationSlots = keyof (typeof contentNavigationTheme)['slots']
+export type ContentNavigationThemeSlots = keyof (typeof contentNavigationTheme)['slots']

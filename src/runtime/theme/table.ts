@@ -59,4 +59,4 @@ export const tableTheme = tv({
   },
 })
 
-export type TableSlots = keyof (typeof tableTheme)['slots']
+export type TableThemeSlots = keyof (typeof tableTheme)['slots']

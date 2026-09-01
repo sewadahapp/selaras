@@ -67,4 +67,4 @@ export const avatarTheme = tv({
   },
 })
 
-export type AvatarSlots = keyof (typeof avatarTheme)['slots']
+export type AvatarThemeSlots = keyof (typeof avatarTheme)['slots']

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PageAsideSlots } from '../theme/page-aside'
+import type { PageAsideThemeSlots } from '../theme/page-aside'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { pageAsideTheme } from '../theme/page-aside'
@@ -9,7 +9,7 @@ import ScrollArea from './ScrollArea.vue'
 defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
-  ui?: UiProp<PageAsideSlots>
+  ui?: UiProp<PageAsideThemeSlots>
 }>()
 
 const theme = useComponentTheme('pageAside', pageAsideTheme)

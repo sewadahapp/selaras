@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { ButtonGroupSlots } from '../theme/button-group'
+import type { ButtonGroupThemeSlots } from '../theme/button-group'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { buttonGroupTheme } from '../theme/button-group'
@@ -12,7 +12,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = defineProps<{
   orientation?: ButtonGroupVariants['orientation']
-  ui?: UiProp<ButtonGroupSlots>
+  ui?: UiProp<ButtonGroupThemeSlots>
 }>()
 
 const theme = useComponentTheme('buttonGroup', buttonGroupTheme)

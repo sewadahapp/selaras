@@ -18,4 +18,4 @@ export const avatarGroupTheme = tv({
   },
 })
 
-export type AvatarGroupSlots = keyof (typeof avatarGroupTheme)['slots']
+export type AvatarGroupThemeSlots = keyof (typeof avatarGroupTheme)['slots']

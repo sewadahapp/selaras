@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ToastItem } from '../composables/use-toast'
-import type { ToastSlots } from '../theme/toast'
+import type { ToastThemeSlots } from '../theme/toast'
 import type { UiProp } from '../utils/ui'
 import { ToastClose, ToastDescription, ToastPortal, ToastRoot, ToastTitle, ToastViewport } from 'reka-ui'
 import { computed } from 'vue'
@@ -13,7 +13,7 @@ import Button from './Button.vue'
 import Icon from './Icon.vue'
 
 const props = defineProps<{
-  ui?: UiProp<ToastSlots>
+  ui?: UiProp<ToastThemeSlots>
 }>()
 
 const { toasts, remove } = useToast()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TableSlots } from '../theme/table'
+import type { TableThemeSlots } from '../theme/table'
 import type { UiProp } from '../utils/ui'
 import { FlexRender } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
@@ -48,7 +48,7 @@ const props = withDefaults(defineProps<{
   rowClass?: (row: unknown) => string | undefined
   /** Same as `rowClass`, for inline styles. */
   rowStyle?: (row: unknown) => Record<string, string> | undefined
-  ui?: UiProp<TableSlots>
+  ui?: UiProp<TableThemeSlots>
 }>(), {
   size: 'md',
 })

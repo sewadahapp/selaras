@@ -56,4 +56,4 @@ export const textareaTheme = tv({
   },
 })
 
-export type TextareaSlots = keyof (typeof textareaTheme)['slots']
+export type TextareaThemeSlots = keyof (typeof textareaTheme)['slots']

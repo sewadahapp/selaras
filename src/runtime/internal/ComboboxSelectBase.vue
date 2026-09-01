@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { SelectItems, SelectOption } from '../composables/use-combobox-select'
-import type { SelectSlots } from '../theme/select'
+import type { SelectThemeSlots } from '../theme/select'
 import type { UiProp } from '../utils/ui'
 import {
   ComboboxAnchor,
@@ -69,7 +69,7 @@ const props = withDefaults(defineProps<{
   resetSearchTermOnSelect?: boolean
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
-  ui?: UiProp<SelectSlots>
+  ui?: UiProp<SelectThemeSlots>
 }>(), {
   displayMode: 'comma',
   maxChips: 3,

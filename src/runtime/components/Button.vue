@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { Component } from 'vue'
-import type { ButtonSlots } from '../theme/button'
+import type { ButtonThemeSlots } from '../theme/button'
 import type { UiProp } from '../utils/ui'
 import { Primitive } from 'reka-ui'
 import { computed, useSlots } from 'vue'
@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<{
   trailingIcon?: string
   /** Forces (or blocks) the equal-width/height "icon button" shape - overrides the auto-detected default below either direction. Needed for a button whose content is short *text* rather than an icon (a calendar day, a page number) - `iconOnly` below only looks at whether there's a default slot at all, not how wide its content happens to be, so a grid of these would otherwise size to each cell's own digit count instead of forming a uniform grid. */
   square?: boolean
-  ui?: UiProp<ButtonSlots>
+  ui?: UiProp<ButtonThemeSlots>
 }>(), {
   as: 'button',
   // A bare `square?: boolean` prop with no default here resolves an absent

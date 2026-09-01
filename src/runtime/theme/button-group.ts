@@ -21,4 +21,4 @@ export const buttonGroupTheme = tv({
   },
 })
 
-export type ButtonGroupSlots = keyof (typeof buttonGroupTheme)['slots']
+export type ButtonGroupThemeSlots = keyof (typeof buttonGroupTheme)['slots']

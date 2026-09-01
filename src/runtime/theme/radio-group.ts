@@ -129,4 +129,4 @@ export const radioGroupTheme = tv({
   },
 })
 
-export type RadioGroupSlots = keyof (typeof radioGroupTheme)['slots']
+export type RadioGroupThemeSlots = keyof (typeof radioGroupTheme)['slots']
