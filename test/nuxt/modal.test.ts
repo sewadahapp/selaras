@@ -81,4 +81,136 @@ describe('modal', () => {
     expect(wrapper.emitted('escapeKeyDown')).toBeTruthy()
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
   })
+
+  it('non-modal + dismissible=false: focusing an outside element does not close it either - regression, this used to only guard pointerDownOutside/escapeKeyDown', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const outside = document.createElement('button')
+    outside.id = 'outside'
+    outside.textContent = 'Outside'
+    container.appendChild(outside)
+
+    wrapper = await mountSuspended(Modal, {
+      attachTo: container,
+      props: { modelValue: true, title: 'Non-modal', modal: false, dismissible: false },
+    })
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    outside.focus()
+    await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(document.body.querySelector('[role=dialog]')).toBeTruthy()
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    container.remove()
+  })
+
+  it('renders the content slot in place of header/body/footer entirely', async () => {
+    wrapper = await mountSuspended(Modal, {
+      props: { modelValue: true, title: 'Ignored' },
+      slots: { content: () => 'Fully custom content', header: () => 'Ignored header', footer: () => 'Ignored footer' },
+    })
+
+    const dialog = document.body.querySelector('[role=dialog]')!
+    expect(dialog.textContent).toBe('Fully custom content')
+  })
+
+  it('replaces the close icon via the close-icon slot', async () => {
+    wrapper = await mountSuspended(Modal, {
+      props: { modelValue: true, title: 'Delete item' },
+      slots: { 'close-icon': '<span class="my-close-icon">x</span>' },
+    })
+
+    expect(document.body.querySelector('.my-close-icon')).toBeTruthy()
+    expect(document.body.querySelector('.iconify')).toBeFalsy()
+  })
+
+  it('maximizable renders a toggle button that flips fullscreen and emits update:fullscreen', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Report', maximizable: true } })
+
+    const maximizeButton = document.body.querySelector<HTMLButtonElement>('button[aria-label="Maximize"]')!
+    expect(maximizeButton).toBeTruthy()
+
+    const dialog = document.body.querySelector('[role=dialog]')!
+    expect(dialog.className).not.toContain('rounded-none')
+
+    maximizeButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await wrapper.vm.$nextTick()
+
+    expect(dialog.className).toContain('rounded-none')
+    expect(wrapper.emitted('update:fullscreen')?.at(-1)).toEqual([true])
+    expect(document.body.querySelector('button[aria-label="Minimize"]')).toBeTruthy()
+  })
+
+  it('replaces the maximize/minimize icons via their own slots', async () => {
+    wrapper = await mountSuspended(Modal, {
+      props: { modelValue: true, title: 'Report', maximizable: true },
+      slots: { 'maximize-icon': '<span class="my-maximize-icon">+</span>' },
+    })
+
+    expect(document.body.querySelector('.my-maximize-icon')).toBeTruthy()
+  })
+
+  it('does not render a maximize button when maximizable is unset', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Delete item' } })
+
+    expect(document.body.querySelector('button[aria-label="Maximize"]')).toBeFalsy()
+  })
+
+  it('modal="false" does not hide the rest of the page from assistive tech, unlike the modal default', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Non-modal', modal: false } })
+
+    expect(document.getElementById('__nuxt')?.getAttribute('aria-hidden')).toBeNull()
+  })
+
+  it('is modal (hides the rest of the page) by default', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Modal' } })
+
+    expect(document.getElementById('__nuxt')?.getAttribute('aria-hidden')).toBe('true')
+  })
+
+  it('renders no overlay element when overlay is false', async () => {
+    const withOverlay = await mountSuspended(Modal, { props: { modelValue: true, title: 'A' } })
+    expect(document.body.querySelector('[data-state="open"].bg-black\\/50')).toBeTruthy()
+    withOverlay.unmount()
+
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'B', overlay: false } })
+    expect(document.body.querySelector('.bg-black\\/50')).toBeFalsy()
+  })
+
+  it('strips the animation classes entirely when transition is false', async () => {
+    const withTransition = await mountSuspended(Modal, { props: { modelValue: true, title: 'A' } })
+    expect(document.body.querySelector('[role=dialog]')!.className).toContain('data-[state=open]:animate-in')
+    withTransition.unmount()
+
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'No transition', transition: false } })
+    const dialog = document.body.querySelector('[role=dialog]')!
+    expect(dialog.className).not.toContain('animate-in')
+    expect(dialog.className).not.toContain('animate-out')
+  })
+
+  it('supports a modal nested inside another modal, opened independently', async () => {
+    wrapper = await mountSuspended({
+      components: { Modal },
+      data: () => ({ outer: true, inner: false }),
+      template: `
+        <Modal v-model="outer" title="Outer">
+          <template #body>
+            <button id="open-inner" @click="inner = true">Open inner</button>
+          </template>
+        </Modal>
+        <Modal v-model="inner" title="Inner" />
+      `,
+    })
+
+    expect(document.body.querySelectorAll('[role=dialog]')).toHaveLength(1)
+
+    document.getElementById('open-inner')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await wrapper.vm.$nextTick()
+
+    const dialogs = document.body.querySelectorAll('[role=dialog]')
+    expect(dialogs).toHaveLength(2)
+    expect(Array.from(dialogs).map(d => d.textContent)).toContain('Inner')
+  })
 })

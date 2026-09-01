@@ -38,9 +38,52 @@ const open = ref(false)
 </template>
 ```
 
-Always pass `title` (or a `header` slot containing a heading) - without one,
-the dialog has no accessible name for screen readers, and dev mode warns
-about it.
+Always pass `title` (or a `header`/`content` slot containing a heading) -
+without one, the dialog has no accessible name for screen readers, and dev
+mode warns about it.
+
+### Controlling it programmatically
+
+`modelValue` is a real controlled value, not tied to a click - setting it
+from anywhere (a timeout, an async callback, a route watcher, another
+component) opens the dialog identically. No trigger element, or even a
+default slot, is required:
+
+::component-example{name="modal-programmatic"}
+::
+
+```vue-html
+<SModal v-model="open" title="Opened by the timeout" />
+```
+
+```ts
+function simulate() {
+  setTimeout(() => {
+    open.value = true
+  }, 1000)
+}
+```
+
+### Custom content
+
+`content` replaces the header/title/description/body/footer structure
+entirely - useful when the dialog doesn't fit the header-plus-body shape at
+all (a success screen, a fully custom form layout). `title`/`description`/
+`close`/`maximizable` are all ignored once `content` is provided, since the
+slot owns the whole dialog:
+
+::component-example{name="modal-content"}
+::
+
+```vue-html
+<SModal v-model="open">
+  <template #content>
+    <div class="flex flex-col items-center gap-4 p-8 text-center">
+      ...
+    </div>
+  </template>
+</SModal>
+```
 
 ### Fullscreen
 
@@ -53,6 +96,35 @@ from the extra room.
 
 ```vue-html
 <SModal v-model="open" fullscreen title="Fullscreen" />
+```
+
+### Maximizable
+
+`fullscreen` alone only sets a fixed initial layout - `maximizable` adds a
+header button next to close that lets the user toggle between the default
+and full-viewport layout at runtime, matching a comparable reference's own dialog maximize toggle. `fullscreen`
+still sets which one it starts in; pair with `v-model:fullscreen` if you
+need to read or control the current state yourself:
+
+::component-example{name="modal-maximizable"}
+::
+
+```vue-html
+<SModal v-model="open" maximizable title="Report" />
+```
+
+### Non-modal
+
+`modal="false"` stops the dialog from blocking interaction with the rest of
+the page - no focus trap, outside elements stay reachable and aren't hidden
+from assistive tech. `overlay` is independent of this - a non-modal dialog
+can still show (or hide) its own backdrop:
+
+::component-example{name="modal-non-modal"}
+::
+
+```vue-html
+<SModal v-model="open" :modal="false" title="Non-modal" />
 ```
 
 ### Scrollable content
@@ -95,6 +167,17 @@ button too:
 The two raw events still fire even with `dismissible="false"` - useful for
 something like a shake animation to signal the dialog won't close that way.
 
+### Customizing the close/maximize buttons
+
+Both header buttons render as real `<SButton>`s, so `:ui.close`/`:ui.maximize`
+already reach them fully - not just classes. An object `:ui` value's
+non-`class` keys apply as raw attrs/props, so `:ui="{ close: { color: 'danger' } }"`
+works today without a dedicated prop for it:
+
+```vue-html
+<SModal v-model="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -103,15 +186,20 @@ something like a shake animation to signal the dialog won't close that way.
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `fullscreen` | `boolean` | `false` |
+| `maximizable` | `boolean` | `false` |
 | `dismissible` | `boolean` | `true` |
 | `close` | `boolean` | `true` |
-| `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'title' \| 'description' \| 'close' \| 'body' \| 'footer', string \| object>>` | - |
+| `modal` | `boolean` | `true` |
+| `overlay` | `boolean` | `true` |
+| `transition` | `boolean` | `true` |
+| `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'headerActions' \| 'title' \| 'description' \| 'close' \| 'maximize' \| 'body' \| 'footer', string \| object>>` | - |
 
 ## Events
 
 | Event | Payload | Description |
 | --- | --- | --- |
 | `update:modelValue` | `boolean` | Open state changed |
+| `update:fullscreen` | `boolean` | Fired when `maximizable`'s toggle button changes the layout |
 | `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
 | `pointerDownOutside` | `Event` | A pointer went down outside the dialog - `preventDefault()` to stop it from closing |
 
@@ -120,6 +208,10 @@ something like a shake animation to signal the dialog won't close that way.
 | Slot | Description |
 | --- | --- |
 | default | The trigger element |
+| `content` | Replaces header/title/description/body/footer entirely |
 | `header` | Overrides the default title/description block |
 | `body` | Main content |
 | `footer` | Usually action buttons |
+| `close-icon` | Replaces the close button's icon (default: `hugeicons:cancel-01`) |
+| `maximize-icon` | Replaces the maximize button's icon while not fullscreen |
+| `minimize-icon` | Replaces the maximize button's icon while fullscreen |

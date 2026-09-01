@@ -25,6 +25,8 @@ export interface IconRegistry {
   warning: string
   info: string
   user: string
+  maximize: string
+  minimize: string
 }
 
 // Hugeicons by default. One registry keyed by semantic purpose, not by
@@ -63,4 +65,8 @@ export const defaultIcons: IconRegistry = {
   warning: 'hugeicons:alert-circle',
   info: 'hugeicons:information-circle',
   user: 'hugeicons:user',
+  // Four expanding corner brackets / two arrows converging - a matched
+  // expand/collapse pair, not just any two vaguely-related glyphs.
+  maximize: 'hugeicons:fullscreen',
+  minimize: 'hugeicons:collapse',
 }

@@ -36,6 +36,8 @@ export interface MessageRegistry {
   noData: string
   expandRow: string
   collapseRow: string
+  maximize: string
+  minimize: string
   /** A single removed/removable item's accessible name - `label` is omitted for a bare, unlabeled control (matches Chip's own existing fallback). */
   removeItem: (label?: string) => string
   moreItems: (count: number) => string
@@ -88,6 +90,8 @@ export const defaultMessages: MessageRegistry = {
   noData: 'No data',
   expandRow: 'Expand row',
   collapseRow: 'Collapse row',
+  maximize: 'Maximize',
+  minimize: 'Minimize',
   removeItem: label => label ? `Remove ${label}` : 'Remove',
   moreItems: count => `+${count} more`,
   paginationInfo: (page, total) => `Page ${page} of ${total}`,
