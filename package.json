@@ -14,6 +14,10 @@
       "types": "./dist/runtime/directives/index.d.ts",
       "import": "./dist/runtime/directives/index.js"
     },
+    "./types": {
+      "types": "./dist/runtime/types/index.d.ts",
+      "import": "./dist/runtime/types/index.js"
+    },
     "./components/*": "./dist/runtime/components/*"
   },
   "main": "./dist/module.mjs",
@@ -24,6 +28,9 @@
       ],
       "directives": [
         "./dist/runtime/directives/index.d.ts"
+      ],
+      "types": [
+        "./dist/runtime/types/index.d.ts"
       ],
       "components/*": [
         "./dist/runtime/components/*"
