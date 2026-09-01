@@ -18,7 +18,7 @@ const items = [
 <template>
   <SNavigationMenu :items="items">
     <template #item-content="{ item }">
-      <ul class="grid w-96 grid-cols-2 gap-2 p-2">
+      <ul class="grid w-full grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-2 p-2">
         <li v-for="child in item.children" :key="child.label">
           <NuxtLink :to="child.to" class="flex flex-col gap-1 rounded-[var(--ui-radius-md)] p-3 hover:bg-[var(--ui-bg-elevated)]">
             <span class="flex items-center gap-2 text-sm font-medium text-[var(--ui-text)]">

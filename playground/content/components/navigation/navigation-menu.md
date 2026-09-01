@@ -95,6 +95,13 @@ accordion group, closed by default:
 <SNavigationMenu :items="items" orientation="vertical" />
 ```
 
+At a more realistic scale - a settings/docs-style sidebar, three levels
+deep, icons throughout, mixing leaf links with nested groups, plus an
+active and a disabled item:
+
+::component-example{name="navigation-menu-vertical-full"}
+::
+
 ### Variant
 
 `variant="pill"` (default) gives the active item a filled background;

@@ -48,13 +48,18 @@ export const navigationMenuTheme = tv({
       // viewport to whichever is active.
       // `childList`: adaptive column count (not a fixed grid-cols-2 like
       // a comparable reference's own default) - a fixed count leaves an awkward empty
-      // cell for an odd number of children; auto-fill instead flows
-      // however many columns actually fit a ~11rem minimum.
+      // cell for an odd number of children. `auto-fit`, not `auto-fill` -
+      // fill reserves empty phantom tracks for however many columns
+      // WOULD fit the container width, leaving that much dead space when
+      // there are fewer actual children than that - exactly what showed
+      // up as a wide empty gap next to a 4-item grid in a very wide
+      // panel. `auto-fit` collapses those phantom tracks to 0 instead,
+      // so existing children always stretch to fill the full width.
       horizontal: {
         root: 'relative items-center',
         list: 'items-center gap-1',
         content: 'absolute inset-x-0 top-0 w-full max-h-[70vh] overflow-y-auto',
-        childList: 'grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]',
+        childList: 'grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]',
       },
       vertical: { root: 'flex-col', list: 'flex-col gap-1' },
     },
