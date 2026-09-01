@@ -5,7 +5,6 @@ import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import {
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuRoot,
@@ -162,12 +161,7 @@ const fallbackItems = computed(() => flatten(props.items))
       </NavigationMenuList>
       <slot name="list-trailing" />
 
-      <div v-if="orientation === 'horizontal'" v-bind="resolveSlot(ui.viewportWrapper, props.ui?.viewportWrapper)">
-        <NavigationMenuIndicator v-bind="resolveSlot(ui.indicator, props.ui?.indicator)">
-          <div v-bind="resolveSlot(ui.arrow, props.ui?.arrow)" />
-        </NavigationMenuIndicator>
-        <NavigationMenuViewport v-bind="resolveSlot(ui.viewport, props.ui?.viewport)" />
-      </div>
+      <NavigationMenuViewport v-if="orientation === 'horizontal'" v-bind="resolveSlot(ui.viewport, props.ui?.viewport)" />
     </NavigationMenuRoot>
 
     <!--

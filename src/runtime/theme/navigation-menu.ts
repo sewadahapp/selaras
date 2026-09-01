@@ -14,14 +14,14 @@ export const navigationMenuTheme = tv({
     // rendered only 120px wide). A minimum keeps that from looking
     // cramped while still letting longer labels grow the panel further.
     content: 'min-w-48 p-2',
-    // Positions the shared viewport panel under the top-level list -
-    // matches every reference implementation's own real approach (a
-    // single floating panel every open item's content teleports into,
-    // not N independent per-item popovers).
-    viewportWrapper: 'absolute left-0 top-full flex w-full justify-center',
-    viewport: 'relative z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-[var(--reka-navigation-menu-viewport-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[width,height] duration-200',
-    indicator: 'top-full z-[var(--ui-z-dropdown)] flex h-2 items-end justify-center overflow-hidden transition-[translate,width] duration-200',
-    arrow: 'relative top-1/2 size-2.5 rotate-45 rounded-[2px] bg-[var(--ui-bg)] ring-1 ring-[var(--ui-border)]',
+    // Tracks the specific open trigger, not the nav bar as a whole -
+    // Reka's own Viewport computes and exposes these exact CSS vars for
+    // this (measured relative to NavigationMenuRoot, which `root`'s own
+    // `relative` below establishes as the positioning context). Regression:
+    // an earlier version centered this in a full-width wrapper instead,
+    // so it always sat near the middle of the whole nav bar regardless of
+    // which trigger was actually open.
+    viewport: 'absolute left-[var(--reka-navigation-menu-viewport-left)] top-[var(--reka-navigation-menu-viewport-top)] z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-[var(--reka-navigation-menu-viewport-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[width,height,left,top] duration-200',
     childList: 'grid gap-1',
     childItem: '',
     childLink: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
