@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { DateRange } from 'reka-ui'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const range = ref<DateRange>()
+const range = shallowRef<DateRange>()
 </script>
 
 <template>

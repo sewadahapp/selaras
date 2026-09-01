@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { getLocalTimeZone, today } from '@internationalized/date'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const date = ref<DateValue>()
+const date = shallowRef<DateValue>()
 const now = today(getLocalTimeZone())
 
 // Weekends unavailable - still selectable (isDateUnavailable only marks the

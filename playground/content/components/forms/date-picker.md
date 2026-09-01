@@ -21,8 +21,13 @@ interop with a plain string, and `@internationalized/date`'s own `today()`/
 ```vue
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
+import { shallowRef } from 'vue'
 
-const date = ref<DateValue>()
+// shallowRef, not ref - DateValue instances carry real private class
+// fields that a plain ref's type would strip, breaking assignability
+// back into v-model. The value is always replaced wholesale anyway,
+// never mutated in place.
+const date = shallowRef<DateValue>()
 </script>
 
 <template>
@@ -77,8 +82,9 @@ a single month instead:
 ```vue
 <script setup lang="ts">
 import type { DateRange } from 'reka-ui'
+import { shallowRef } from 'vue'
 
-const range = ref<DateRange>()
+const range = shallowRef<DateRange>()
 </script>
 
 <template>
@@ -196,8 +202,9 @@ entirely if you pass `close-on-select="false"`, since that already means
 ```vue
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
+import { shallowRef } from 'vue'
 
-const value = ref<DateValue>()
+const value = shallowRef<DateValue>()
 </script>
 
 <template>
@@ -241,8 +248,9 @@ is just the hour/minute steppers, the same ones `granularity="hour"`/
 ```vue
 <script setup lang="ts">
 import type { Time } from '@internationalized/date'
+import { shallowRef } from 'vue'
 
-const value = ref<Time>()
+const value = shallowRef<Time>()
 </script>
 
 <template>

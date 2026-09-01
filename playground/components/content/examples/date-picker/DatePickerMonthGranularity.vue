@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const month = ref<DateValue>()
-const year = ref<DateValue>()
+const month = shallowRef<DateValue>()
+const year = shallowRef<DateValue>()
 </script>
 
 <template>

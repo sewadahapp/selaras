@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
 import { CalendarDate } from '@internationalized/date'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const clearable = ref<DateValue>(new CalendarDate(2024, 6, 15))
-const disabled = ref<DateValue>()
+const clearable = shallowRef<DateValue>(new CalendarDate(2024, 6, 15))
+const disabled = shallowRef<DateValue>()
 </script>
 
 <template>

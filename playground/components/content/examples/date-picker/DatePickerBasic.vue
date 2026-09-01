@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const date = ref<DateValue>()
+// shallowRef, not ref - DateValue instances carry real private class
+// fields that a plain ref's type would strip, breaking assignability
+// back into v-model. The value is always replaced wholesale anyway,
+// never mutated in place.
+const date = shallowRef<DateValue>()
 </script>
 
 <template>

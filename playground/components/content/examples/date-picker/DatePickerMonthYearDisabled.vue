@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import { ref } from 'vue'
+import { shallowRef } from 'vue'
 
-const date = ref<DateValue>()
+const date = shallowRef<DateValue>()
 
 // Blocks July for a known closure - independent of minValue/maxValue.
 function isMonthDisabled(monthDate: DateValue) {
