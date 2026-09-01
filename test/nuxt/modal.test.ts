@@ -106,6 +106,13 @@ describe('modal', () => {
     container.remove()
   })
 
+  it('body grows to fill remaining space - regression: without flex-1, the footer sat right after a short body instead of pinned to the bottom once fullscreen gave the dialog a real fixed height', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'Fullscreen', fullscreen: true } })
+
+    const body = document.body.querySelector('.overflow-y-auto')!
+    expect(body.className).toContain('flex-1')
+  })
+
   it('renders the content slot in place of header/body/footer entirely', async () => {
     wrapper = await mountSuspended(Modal, {
       props: { modelValue: true, title: 'Ignored' },

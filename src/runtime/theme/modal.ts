@@ -21,7 +21,14 @@ export const modalTheme = tv({
     // its default rounded-md just for this dismiss-glyph family (close/clear).
     close: 'shrink-0 rounded-full',
     maximize: 'shrink-0 rounded-full',
-    body: 'overflow-y-auto p-4 sm:px-6',
+    // flex-1 - without it, body only grows to its own content's height, so
+    // in `fullscreen` (a real fixed h-full, not just a max-h cap) the
+    // footer ends up stranded right after a short body instead of pinned
+    // to the bottom of the viewport. Harmless for the default compact
+    // card too: a flex-growing child in a max-h-capped column still just
+    // shrinks to fit short content the same as before - this only matters
+    // once the column's own height is truly fixed, not merely capped.
+    body: 'flex-1 overflow-y-auto p-4 sm:px-6',
     footer: 'flex items-center justify-end gap-2 p-4 sm:px-6',
   },
   variants: {
