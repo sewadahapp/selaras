@@ -942,7 +942,14 @@ const rangeCellTriggerUi = {
       </div>
     </DatePickerAnchor>
 
-    <DatePickerContent :side-offset="6" align="start" v-bind="contentProps">
+    <!-- align="start" (the default everywhere else) puts the trigger's own
+    center outside the calendar grid's bounds here, since the grid is
+    noticeably wider than the compact field/button trigger - Reka's own
+    Floating UI arrow middleware refuses to render an arrow it can't
+    center without clipping, so it silently hides instead. Centering the
+    panel on the trigger only when `arrow` is on sidesteps that without
+    changing the default (start-aligned) layout everyone already sees. -->
+    <DatePickerContent :side-offset="6" :align="arrow ? 'center' : 'start'" v-bind="contentProps">
       <DatePickerCalendar v-slot="{ grid, weekDays }">
         <DatePickerHeader v-bind="headerProps">
           <DatePickerPrev v-if="internalView === 'date'" as-child>
