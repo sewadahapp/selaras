@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ConfigProvider, ToastProvider, TooltipProvider } from 'reka-ui'
 import { useHead } from '#imports'
+import ModalRenderer from './ModalRenderer.vue'
 
 const props = withDefaults(defineProps<{
   /**
@@ -34,5 +35,6 @@ useHead({ htmlAttrs: { dir: () => props.dir } })
         <slot />
       </TooltipProvider>
     </ToastProvider>
+    <ModalRenderer />
   </ConfigProvider>
 </template>

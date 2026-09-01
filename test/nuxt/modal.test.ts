@@ -197,6 +197,29 @@ describe('modal', () => {
     expect(dialog.className).not.toContain('animate-out')
   })
 
+  it('emits afterLeave when the closing animation finishes, not the opening one', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'A' } })
+
+    const dialog = document.body.querySelector('[role=dialog]')!
+    dialog.dispatchEvent(new AnimationEvent('animationend'))
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('afterLeave')).toBeUndefined()
+
+    await wrapper.setProps({ modelValue: false })
+    dialog.dispatchEvent(new AnimationEvent('animationend'))
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('afterLeave')).toBeTruthy()
+  })
+
+  it('emits afterLeave immediately on close when transition is off, with no animation to wait for', async () => {
+    wrapper = await mountSuspended(Modal, { props: { modelValue: true, title: 'A', transition: false } })
+
+    await wrapper.setProps({ modelValue: false })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.emitted('afterLeave')).toBeTruthy()
+  })
+
   it('supports a modal nested inside another modal, opened independently', async () => {
     wrapper = await mountSuspended({
       components: { Modal },

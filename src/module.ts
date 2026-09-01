@@ -54,6 +54,12 @@ export default defineNuxtModule<ModuleOptions>({
       // SColumn/SColumnGroup are plain .ts files (never render real DOM), not
       // .vue SFCs - addComponentsDir only scans .vue by default.
       extensions: ['vue', 'ts'],
+      // ModalRenderer is App.vue's own internal render loop for useModal(),
+      // mirroring a comparable reference's own un-exported OverlayProvider - not meant to be
+      // placed by a consumer (App.vue already mounts one; a second copy
+      // would render every open programmatic modal twice, since useModal()'s
+      // state is a shared singleton).
+      ignore: ['**/ModalRenderer.vue'],
     })
 
     addImportsDir(resolver.resolve('./runtime/composables'))

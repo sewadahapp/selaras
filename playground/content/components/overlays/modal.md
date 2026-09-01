@@ -178,6 +178,48 @@ works today without a dedicated prop for it:
 <SModal v-model="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
 ```
 
+## Programmatic usage
+
+`useModal()` opens a dialog from anywhere - a click handler, an async
+callback - without a `v-model` of your own to manage. It works
+automatically once `<SApp>` wraps your app, exactly like every other
+component here; there's nothing extra to place, unlike `<SToast />`.
+
+The given component owns the dialog's entire content, the same as the
+`content` slot above - its own heading, its own buttons. `open()` returns
+a promise that resolves with whatever value the component's own `close`
+event carries, so an explicit action can resolve with real data while
+dismissing via Escape or an outside click resolves with `undefined`:
+
+::component-example{name="modal-use-modal"}
+::
+
+```vue-html
+<!-- ModalConfirmDialog.vue - a self-contained dialog -->
+<template>
+  <div class="p-8 text-center">
+    <h2>Delete this item?</h2>
+    <SButton variant="ghost" @click="$emit('close', false)">Cancel</SButton>
+    <SButton color="danger" @click="$emit('close', true)">Delete</SButton>
+  </div>
+</template>
+```
+
+```ts
+import ModalConfirmDialog from './ModalConfirmDialog.vue'
+
+const modal = useModal()
+const confirmed = await modal.open(ModalConfirmDialog)
+// true, false, or undefined if dismissed without an explicit choice
+```
+
+`open()` also takes the same `dismissible`/`modal`/`overlay`/`transition`
+options as the declarative props:
+
+```ts
+await modal.open(ModalConfirmDialog, { dismissible: false })
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -202,6 +244,8 @@ works today without a dedicated prop for it:
 | `update:fullscreen` | `boolean` | Fired when `maximizable`'s toggle button changes the layout |
 | `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
 | `pointerDownOutside` | `Event` | A pointer went down outside the dialog - `preventDefault()` to stop it from closing |
+| `focusOutside` | `Event` | A non-modal dialog's outside element received focus - `preventDefault()` to stop it from closing |
+| `afterLeave` | - | The close transition has finished (or fires immediately if `transition` is `false`) |
 
 ## Slots
 
