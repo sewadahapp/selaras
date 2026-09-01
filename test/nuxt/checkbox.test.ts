@@ -64,6 +64,11 @@ describe('checkbox', () => {
     })
     expect(wrapper.text()).toContain('Accept terms')
     expect(wrapper.text()).toContain('Read the fine print.')
+
+    // block, not the default inline span - otherwise it sits beside the
+    // label instead of wrapping onto its own line underneath it.
+    const description = Array.from(wrapper.findAll('span')).find(el => el.text() === 'Read the fine print.')
+    expect(description?.classes()).toContain('block')
   })
 
   it('forwards required onto the underlying control', async () => {

@@ -81,6 +81,11 @@ describe('switch', () => {
     })
     expect(wrapper.text()).toContain('Marketing emails')
     expect(wrapper.text()).toContain('Occasional updates.')
+
+    // block, not the default inline span - otherwise it sits beside the
+    // label instead of wrapping onto its own line underneath it.
+    const description = Array.from(wrapper.findAll('span')).find(el => el.text() === 'Occasional updates.')
+    expect(description?.classes()).toContain('block')
   })
 
   it('forwards required onto the underlying control', async () => {

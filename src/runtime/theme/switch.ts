@@ -32,7 +32,7 @@ export const switchTheme = tv({
     // currentColor from a colored parent).
     icon: 'size-2.5 text-[var(--ui-text-muted)]',
     label: 'select-none text-sm text-[var(--ui-text)]',
-    description: 'select-none text-xs text-[var(--ui-text-muted)]',
+    description: 'block select-none text-xs text-[var(--ui-text-muted)]',
   },
   variants: {
     // Only affects the checked state - unchecked always stays the same

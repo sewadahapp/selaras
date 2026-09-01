@@ -36,7 +36,7 @@ export const checkboxTheme = tv({
     checkIcon: '[stroke-dasharray:20px] [stroke-dashoffset:20px] transition-[stroke-dashoffset] duration-200 data-[state=checked]:[stroke-dashoffset:0]',
     indeterminateIcon: '[stroke-dasharray:14px] [stroke-dashoffset:14px] transition-[stroke-dashoffset] duration-200 data-[state=indeterminate]:[stroke-dashoffset:0]',
     label: 'select-none text-sm text-[var(--ui-text)]',
-    description: 'select-none text-xs text-[var(--ui-text-muted)]',
+    description: 'block select-none text-xs text-[var(--ui-text-muted)]',
   },
   variants: {
     // Fills/rings the box in the given color when checked/indeterminate,
