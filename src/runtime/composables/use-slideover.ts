@@ -1,4 +1,4 @@
-import type { Component } from 'vue'
+import type { Component, Ref } from 'vue'
 import { ref } from 'vue'
 
 export interface SlideoverInstance {
@@ -15,21 +15,32 @@ export interface SlideoverInstance {
   resolve: (value: unknown) => void
 }
 
+export interface UseSlideoverOpenOptions {
+  props?: Record<string, unknown>
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  inset?: boolean
+  dismissible?: boolean
+  modal?: boolean
+  overlay?: boolean
+  transition?: boolean
+}
+
+export interface UseSlideoverReturn {
+  slideovers: Ref<SlideoverInstance[]>
+  open: <T = void>(component: Component, options?: UseSlideoverOpenOptions) => Promise<T | undefined>
+  close: (id: number, value?: unknown) => void
+  remove: (id: number) => void
+}
+
 // Module-level singleton, not useState - see use-modal.ts for why
 // (components aren't SSR-serializable, and this is a client-only action).
 const slideovers = ref<SlideoverInstance[]>([])
 let counter = 0
 
-export function useSlideover() {
-  function open<T = void>(component: Component, options?: {
-    props?: Record<string, unknown>
-    side?: 'top' | 'right' | 'bottom' | 'left'
-    inset?: boolean
-    dismissible?: boolean
-    modal?: boolean
-    overlay?: boolean
-    transition?: boolean
-  }): Promise<T | undefined> {
+// Explicit return type - see use-modal.ts's useModal() for why (TS2883,
+// breaks the real non-stub build without it).
+export function useSlideover(): UseSlideoverReturn {
+  function open<T = void>(component: Component, options?: UseSlideoverOpenOptions): Promise<T | undefined> {
     return new Promise((resolve) => {
       slideovers.value.push({
         id: counter++,

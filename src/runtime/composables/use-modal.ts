@@ -1,4 +1,4 @@
-import type { Component } from 'vue'
+import type { Component, Ref } from 'vue'
 import { ref } from 'vue'
 
 export interface ModalInstance {
@@ -13,6 +13,21 @@ export interface ModalInstance {
   resolve: (value: unknown) => void
 }
 
+export interface UseModalOpenOptions {
+  props?: Record<string, unknown>
+  dismissible?: boolean
+  modal?: boolean
+  overlay?: boolean
+  transition?: boolean
+}
+
+export interface UseModalReturn {
+  modals: Ref<ModalInstance[]>
+  open: <T = void>(component: Component, options?: UseModalOpenOptions) => Promise<T | undefined>
+  close: (id: number, value?: unknown) => void
+  remove: (id: number) => void
+}
+
 // Module-level singleton, not useState - a modal opened programmatically
 // renders an arbitrary Vue component, which isn't SSR-serializable, so it
 // can't live in Nuxt's useState. Opening a modal is realistically always a
@@ -20,14 +35,12 @@ export interface ModalInstance {
 const modals = ref<ModalInstance[]>([])
 let counter = 0
 
-export function useModal() {
-  function open<T = void>(component: Component, options?: {
-    props?: Record<string, unknown>
-    dismissible?: boolean
-    modal?: boolean
-    overlay?: boolean
-    transition?: boolean
-  }): Promise<T | undefined> {
+// Explicit return type - without it, TS infers a structural type that
+// can't be printed in a declaration file without referencing internal
+// Vue/Nuxt types (TS2883), breaking `nuxt-module-build`'s real (non-stub)
+// build.
+export function useModal(): UseModalReturn {
+  function open<T = void>(component: Component, options?: UseModalOpenOptions): Promise<T | undefined> {
     return new Promise((resolve) => {
       modals.value.push({
         id: counter++,
