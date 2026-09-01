@@ -11,7 +11,7 @@ import Button from './Button.vue'
 import Icon from './Icon.vue'
 
 const props = withDefaults(defineProps<{
-  modelValue?: boolean
+  open?: boolean
   title?: string
   description?: string
   /** Full-viewport layout instead of the default centered card. Still the initial state when `maximizable` is set - the toggle button takes over from there, optionally controllable via `v-model:fullscreen`. */
@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
+  'update:open': [value: boolean]
   'update:fullscreen': [value: boolean]
   'escapeKeyDown': [event: KeyboardEvent]
   'pointerDownOutside': [event: Event]
@@ -84,18 +84,38 @@ function onContentAnimationEnd(event: AnimationEvent) {
     emit('afterLeave')
 }
 
+// Mirrors DatePicker's own view/internalView/update:view pattern - an
+// always-concrete local ref synced with an *optional* external v-model,
+// rather than binding `:open="open"` straight through. A compiled SFC
+// binding Reka's `DialogRoot` `:open` directly to an optional prop
+// that's currently `undefined` (genuinely uncontrolled, no v-model)
+// breaks Reka's own passive/uncontrolled useVModel mode in a real
+// browser once a second instance of the same SFC exists on the page -
+// keeping `open` always a real boolean sidesteps that mode entirely
+// instead of relying on it.
+const internalOpen = ref(props.open ?? false)
+watch(() => props.open, (value) => {
+  if (value !== undefined)
+    internalOpen.value = value
+})
+function onUpdateOpen(value: boolean) {
+  internalOpen.value = value
+  emit('update:open', value)
+}
+
 // transition=false means no animate-out class ever runs, so animationend
-// never fires on its own - emit afterLeave directly in that case.
-watch(() => props.modelValue, (value) => {
+// never fires on its own - emit afterLeave directly in that case. Keys
+// off internalOpen (the real open state) rather than props.open, which
+// stays undefined forever for a genuinely uncontrolled Modal.
+watch(internalOpen, (value) => {
   if (!value && !props.transition)
     emit('afterLeave')
 })
 
-// Mirrors DatePicker's own view/internalView/update:view pattern - an
-// optional v-model. `fullscreen` alone keeps working exactly as before
-// (just the initial value here); `maximizable`'s toggle button flips this
-// local copy and emits `update:fullscreen`, so a consumer only needs
-// `v-model:fullscreen` if they actually want to observe/control it.
+// `fullscreen` alone keeps working exactly as before (just the initial
+// value here); `maximizable`'s toggle button flips this local copy and
+// emits `update:fullscreen`, so a consumer only needs `v-model:fullscreen`
+// if they actually want to observe/control it.
 const internalFullscreen = ref(props.fullscreen ?? false)
 watch(() => props.fullscreen, (value) => {
   if (value !== undefined)
@@ -133,7 +153,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
 </script>
 
 <template>
-  <DialogRoot :open="modelValue" :modal="modal" @update:open="(value) => emit('update:modelValue', value)">
+  <DialogRoot :open="internalOpen" :modal="modal" @update:open="onUpdateOpen">
     <DialogTrigger v-if="$slots.default" as-child>
       <slot />
     </DialogTrigger>

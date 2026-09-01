@@ -7,7 +7,7 @@ const open = ref(false)
     Open slideover with long content
   </SButton>
 
-  <SSlideover v-model="open" title="Terms of service" description="Please read the whole thing.">
+  <SSlideover v-model:open="open" title="Terms of service" description="Please read the whole thing.">
     <template #body>
       <p v-for="i in 20" :key="i" class="mb-3 last:mb-0">
         Paragraph {{ i }} - the body scrolls internally once its content

@@ -2,7 +2,7 @@
 import type { SlideoverSlots } from '../theme/slideover'
 import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
-import { computed, useSlots, watch, watchEffect } from 'vue'
+import { computed, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { slideoverTheme } from '../theme/slideover'
@@ -11,7 +11,7 @@ import Button from './Button.vue'
 import Icon from './Icon.vue'
 
 const props = withDefaults(defineProps<{
-  modelValue?: boolean
+  open?: boolean
   title?: string
   description?: string
   /** Which edge the panel slides in from. */
@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
+  'update:open': [value: boolean]
   'escapeKeyDown': [event: KeyboardEvent]
   'pointerDownOutside': [event: Event]
   'focusOutside': [event: Event]
@@ -81,9 +81,30 @@ function onContentAnimationEnd(event: AnimationEvent) {
     emit('afterLeave')
 }
 
+// Mirrors Modal.vue's own internalOpen pattern - an always-concrete
+// local ref synced with an *optional* external v-model, rather than
+// binding `:open="open"` straight through. A compiled SFC binding
+// Reka's `DialogRoot` `:open` directly to an optional prop that's
+// currently `undefined` (genuinely uncontrolled, no v-model) breaks
+// Reka's own passive/uncontrolled useVModel mode in a real browser once
+// a second instance of the same SFC exists on the page - keeping `open`
+// always a real boolean sidesteps that mode entirely instead of relying
+// on it.
+const internalOpen = ref(props.open ?? false)
+watch(() => props.open, (value) => {
+  if (value !== undefined)
+    internalOpen.value = value
+})
+function onUpdateOpen(value: boolean) {
+  internalOpen.value = value
+  emit('update:open', value)
+}
+
 // transition=false means no animate-out class ever runs, so animationend
-// never fires on its own - emit afterLeave directly in that case.
-watch(() => props.modelValue, (value) => {
+// never fires on its own - emit afterLeave directly in that case. Keys
+// off internalOpen (the real open state) rather than props.open, which
+// stays undefined forever for a genuinely uncontrolled Slideover.
+watch(internalOpen, (value) => {
   if (!value && !props.transition)
     emit('afterLeave')
 })
@@ -113,7 +134,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
 </script>
 
 <template>
-  <DialogRoot :open="modelValue" :modal="modal" @update:open="(value) => emit('update:modelValue', value)">
+  <DialogRoot :open="internalOpen" :modal="modal" @update:open="onUpdateOpen">
     <DialogTrigger v-if="$slots.default" as-child>
       <slot />
     </DialogTrigger>

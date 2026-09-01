@@ -7,7 +7,7 @@ const open = ref(false)
     Open modal with long content
   </SButton>
 
-  <SModal v-model="open" title="Terms of service" description="Please read the whole thing.">
+  <SModal v-model:open="open" title="Terms of service" description="Please read the whole thing.">
     <template #body>
       <p v-for="i in 20" :key="i" class="mb-3 last:mb-0">
         Paragraph {{ i }} - the body scrolls internally once its content

@@ -7,7 +7,7 @@ const open = ref(false)
     Open fullscreen modal
   </SButton>
 
-  <SModal v-model="open" fullscreen title="Fullscreen" description="Takes up the entire viewport.">
+  <SModal v-model:open="open" fullscreen title="Fullscreen" description="Takes up the entire viewport.">
     <template #body>
       Useful for image viewers, complex forms, or anything that benefits from
       the extra room a centered card can't give it.

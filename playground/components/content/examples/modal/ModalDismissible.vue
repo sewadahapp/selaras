@@ -8,7 +8,7 @@ const open = ref(false)
   </SButton>
 
   <SModal
-    v-model="open"
+    v-model:open="open"
     :dismissible="false"
     :close="false"
     title="Confirm your plan"

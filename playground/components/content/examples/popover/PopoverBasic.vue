@@ -4,7 +4,7 @@ const name = ref('')
 </script>
 
 <template>
-  <SPopover v-model="open">
+  <SPopover v-model:open="open">
     <SButton variant="outline">
       Edit name
     </SButton>

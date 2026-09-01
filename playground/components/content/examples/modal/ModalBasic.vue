@@ -7,7 +7,7 @@ const open = ref(false)
     Open modal
   </SButton>
 
-  <SModal v-model="open" title="Delete item" description="This action cannot be undone.">
+  <SModal v-model:open="open" title="Delete item" description="This action cannot be undone.">
     <template #body>
       Are you sure you want to delete this item?
     </template>

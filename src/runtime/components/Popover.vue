@@ -7,7 +7,7 @@ import { popoverTheme } from '../theme/popover'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
 const props = withDefaults(defineProps<{
-  modelValue?: boolean
+  open?: boolean
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'start' | 'center' | 'end'
   /** Forwarded to Reka UI's own PopoverRoot `modal` prop - `true` traps focus and blocks interaction with the rest of the page, like a lightweight modal dialog. */
@@ -26,7 +26,7 @@ const props = withDefaults(defineProps<{
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean]
+  'update:open': [value: boolean]
   'escapeKeyDown': [event: KeyboardEvent]
   'pointerDownOutside': [event: Event]
   'focusOutside': [event: Event]
@@ -64,21 +64,21 @@ const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 
 // Mirrors Modal.vue's own fullscreen/internalFullscreen pattern - an
 // always-concrete local ref synced with an *optional* external v-model,
-// rather than binding `:open="modelValue"` straight through. A compiled
+// rather than binding `:open="open"` straight through. A compiled
 // SFC binding Reka's `PopoverRoot`/`DialogRoot` `:open` directly to an
 // optional prop that's currently `undefined` (genuinely uncontrolled, no
 // v-model) breaks Reka's own passive/uncontrolled useVModel mode in a
 // real browser once a second instance of the same SFC exists on the
 // page - keeping `open` always a real boolean sidesteps that mode
 // entirely instead of relying on it.
-const internalOpen = ref(props.modelValue ?? false)
-watch(() => props.modelValue, (value) => {
+const internalOpen = ref(props.open ?? false)
+watch(() => props.open, (value) => {
   if (value !== undefined)
     internalOpen.value = value
 })
 function onUpdateOpen(value: boolean) {
   internalOpen.value = value
-  emit('update:modelValue', value)
+  emit('update:open', value)
 }
 </script>
 

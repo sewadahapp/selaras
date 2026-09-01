@@ -9,12 +9,12 @@ const { modals, close, remove } = useModal()
   <Modal
     v-for="instance in modals"
     :key="instance.id"
-    :model-value="instance.isOpen"
+    :open="instance.isOpen"
     :dismissible="instance.dismissible"
     :modal="instance.modal"
     :overlay="instance.overlay"
     :transition="instance.transition"
-    @update:model-value="(open) => !open && close(instance.id)"
+    @update:open="(open) => !open && close(instance.id)"
     @after-leave="remove(instance.id)"
   >
     <template #content>

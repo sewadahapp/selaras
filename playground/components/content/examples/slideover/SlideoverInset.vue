@@ -7,7 +7,7 @@ const open = ref(false)
     Open inset slideover
   </SButton>
 
-  <SSlideover v-model="open" inset title="Notifications">
+  <SSlideover v-model:open="open" inset title="Notifications">
     <template #body>
       Floats with a margin and rounded corners instead of sitting flush
       against the edge.

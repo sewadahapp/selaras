@@ -13,7 +13,7 @@ const clicks = ref(0)
     </SButton>
   </div>
 
-  <SModal v-model="open" :modal="false" :dismissible="false" title="Non-modal" description="The rest of the page stays interactive.">
+  <SModal v-model:open="open" :modal="false" :dismissible="false" title="Non-modal" description="The rest of the page stays interactive.">
     <template #body>
       Try clicking the "Page button" above without closing this dialog first -
       it still works, since <code class="font-mono">modal="false"</code>

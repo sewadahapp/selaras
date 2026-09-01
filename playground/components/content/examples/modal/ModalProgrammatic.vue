@@ -23,7 +23,7 @@ function simulate() {
     {{ counting ? 'Waiting a second...' : 'Simulate an async event' }}
   </SButton>
 
-  <SModal v-model="open" title="Opened by the timeout" description="Nothing was clicked to show this - the button above only started a timer.">
+  <SModal v-model:open="open" title="Opened by the timeout" description="Nothing was clicked to show this - the button above only started a timer.">
     <template #body>
       <code class="font-mono text-xs">v-model</code> is a real controlled
       value - setting it from anywhere (a timeout, an async callback, a

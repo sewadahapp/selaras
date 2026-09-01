@@ -6,8 +6,8 @@ order: 54
 
 ## Usage
 
-Slideover visibility is controlled with `v-model`, so it needs a ref from
-the page it's used on.
+Slideover visibility is controlled with `v-model:open`, so it needs a ref
+from the page it's used on.
 
 ::component-example{name="slideover-basic"}
 ::
@@ -22,7 +22,7 @@ const open = ref(false)
     Open slideover
   </SButton>
 
-  <SSlideover v-model="open" title="Edit profile" description="Update your personal details.">
+  <SSlideover v-model:open="open" title="Edit profile" description="Update your personal details.">
     <template #body>
       Slideover content goes here.
     </template>
@@ -51,7 +51,7 @@ mode warns about it.
 ::
 
 ```vue-html
-<SSlideover v-model="open" side="left" title="Filters" />
+<SSlideover v-model:open="open" side="left" title="Filters" />
 ```
 
 ### Inset
@@ -63,7 +63,7 @@ sitting flush against the edge:
 ::
 
 ```vue-html
-<SSlideover v-model="open" inset title="Notifications" />
+<SSlideover v-model:open="open" inset title="Notifications" />
 ```
 
 ### Custom content
@@ -77,7 +77,7 @@ provided, since the slot owns the whole panel:
 ::
 
 ```vue-html
-<SSlideover v-model="open">
+<SSlideover v-model:open="open">
   <template #content>
     <div class="flex flex-col items-center gap-4 p-8 text-center">
       ...
@@ -97,7 +97,7 @@ can still show (or hide) its own backdrop:
 ::
 
 ```vue-html
-<SSlideover v-model="open" :modal="false" title="Non-modal" />
+<SSlideover v-model:open="open" :modal="false" title="Non-modal" />
 ```
 
 ### Scrollable content
@@ -117,7 +117,7 @@ with unsaved changes:
 
 ```vue-html
 <SSlideover
-  v-model="open"
+  v-model:open="open"
   title="Edit profile"
   @escape-key-down="(e) => hasChanges && e.preventDefault()"
   @pointer-down-outside="(e) => hasChanges && e.preventDefault()"
@@ -130,7 +130,7 @@ Escape and outside-click at once, and `close="false"` removes the close
 button too:
 
 ```vue-html
-<SSlideover v-model="open" :dismissible="false" :close="false" title="Confirm your plan" />
+<SSlideover v-model:open="open" :dismissible="false" :close="false" title="Confirm your plan" />
 ```
 
 The two raw events still fire even with `dismissible="false"` - useful for
@@ -144,7 +144,7 @@ keys apply as raw attrs/props, so `:ui="{ close: { color: 'danger' } }"`
 works today without a dedicated prop for it:
 
 ```vue-html
-<SSlideover v-model="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
+<SSlideover v-model:open="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
 ```
 
 ## Programmatic usage
@@ -194,7 +194,7 @@ await slideover.open(SlideoverFilterPanel, { side: 'left' })
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `modelValue` | `boolean` | `false` |
+| `open` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'right'` |
@@ -210,7 +210,7 @@ await slideover.open(SlideoverFilterPanel, { side: 'left' })
 
 | Event | Payload | Description |
 | --- | --- | --- |
-| `update:modelValue` | `boolean` | Open state changed |
+| `update:open` | `boolean` | Open state changed |
 | `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
 | `pointerDownOutside` | `Event` | A pointer went down outside the panel - `preventDefault()` to stop it from closing |
 | `focusOutside` | `Event` | A non-modal panel's outside element received focus - `preventDefault()` to stop it from closing |

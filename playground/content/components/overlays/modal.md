@@ -6,8 +6,8 @@ order: 50
 
 ## Usage
 
-Modal visibility is controlled with `v-model`, so it needs a ref from the
-page it's used on.
+Modal visibility is controlled with `v-model:open`, so it needs a ref from
+the page it's used on.
 
 ::component-example{name="modal-basic"}
 ::
@@ -22,7 +22,7 @@ const open = ref(false)
     Open modal
   </SButton>
 
-  <SModal v-model="open" title="Delete item" description="This action cannot be undone.">
+  <SModal v-model:open="open" title="Delete item" description="This action cannot be undone.">
     <template #body>
       Are you sure you want to delete this item?
     </template>
@@ -44,7 +44,7 @@ mode warns about it.
 
 ### Controlling it programmatically
 
-`modelValue` is a real controlled value, not tied to a click - setting it
+`open` is a real controlled value, not tied to a click - setting it
 from anywhere (a timeout, an async callback, a route watcher, another
 component) opens the dialog identically. No trigger element, or even a
 default slot, is required:
@@ -53,7 +53,7 @@ default slot, is required:
 ::
 
 ```vue-html
-<SModal v-model="open" title="Opened by the timeout" />
+<SModal v-model:open="open" title="Opened by the timeout" />
 ```
 
 ```ts
@@ -76,7 +76,7 @@ slot owns the whole dialog:
 ::
 
 ```vue-html
-<SModal v-model="open">
+<SModal v-model:open="open">
   <template #content>
     <div class="flex flex-col items-center gap-4 p-8 text-center">
       ...
@@ -95,7 +95,7 @@ from the extra room.
 ::
 
 ```vue-html
-<SModal v-model="open" fullscreen title="Fullscreen" />
+<SModal v-model:open="open" fullscreen title="Fullscreen" />
 ```
 
 ### Maximizable
@@ -110,7 +110,7 @@ need to read or control the current state yourself:
 ::
 
 ```vue-html
-<SModal v-model="open" maximizable title="Report" />
+<SModal v-model:open="open" maximizable title="Report" />
 ```
 
 ### Non-modal
@@ -124,7 +124,7 @@ can still show (or hide) its own backdrop:
 ::
 
 ```vue-html
-<SModal v-model="open" :modal="false" title="Non-modal" />
+<SModal v-model:open="open" :modal="false" title="Non-modal" />
 ```
 
 ### Scrollable content
@@ -145,7 +145,7 @@ unsaved changes:
 
 ```vue-html
 <SModal
-  v-model="open"
+  v-model:open="open"
   title="Edit profile"
   @escape-key-down="(e) => hasChanges && e.preventDefault()"
   @pointer-down-outside="(e) => hasChanges && e.preventDefault()"
@@ -161,7 +161,7 @@ button too:
 ::
 
 ```vue-html
-<SModal v-model="open" :dismissible="false" :close="false" title="Confirm your plan" />
+<SModal v-model:open="open" :dismissible="false" :close="false" title="Confirm your plan" />
 ```
 
 The two raw events still fire even with `dismissible="false"` - useful for
@@ -175,7 +175,7 @@ non-`class` keys apply as raw attrs/props, so `:ui="{ close: { color: 'danger' }
 works today without a dedicated prop for it:
 
 ```vue-html
-<SModal v-model="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
+<SModal v-model:open="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
 ```
 
 ## Programmatic usage
@@ -224,7 +224,7 @@ await modal.open(ModalConfirmDialog, { dismissible: false })
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `modelValue` | `boolean` | `false` |
+| `open` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `fullscreen` | `boolean` | `false` |
@@ -240,7 +240,7 @@ await modal.open(ModalConfirmDialog, { dismissible: false })
 
 | Event | Payload | Description |
 | --- | --- | --- |
-| `update:modelValue` | `boolean` | Open state changed |
+| `update:open` | `boolean` | Open state changed |
 | `update:fullscreen` | `boolean` | Fired when `maximizable`'s toggle button changes the layout |
 | `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
 | `pointerDownOutside` | `Event` | A pointer went down outside the dialog - `preventDefault()` to stop it from closing |

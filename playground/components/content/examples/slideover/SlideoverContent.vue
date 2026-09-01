@@ -7,7 +7,7 @@ const open = ref(false)
     Open custom slideover
   </SButton>
 
-  <SSlideover v-model="open">
+  <SSlideover v-model:open="open">
     <template #content>
       <div class="flex flex-col items-center gap-4 p-8 text-center">
         <div class="flex size-12 items-center justify-center rounded-full bg-[var(--ui-success-soft)] text-[var(--ui-success)]">

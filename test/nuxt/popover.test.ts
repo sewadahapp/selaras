@@ -18,7 +18,7 @@ afterEach(() => {
 describe('popover', () => {
   it('renders the content slot when open', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true },
+      props: { open: true },
       slots: { content: () => 'Popover body' },
     })
 
@@ -27,7 +27,7 @@ describe('popover', () => {
 
   it('renders nothing from the content slot when closed', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: false },
+      props: { open: false },
       slots: { default: () => 'Trigger', content: () => 'Popover body' },
     })
 
@@ -36,7 +36,7 @@ describe('popover', () => {
 
   it('forwards escapeKeyDown so a consumer can preventDefault it', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true },
+      props: { open: true },
       slots: { content: () => 'Body' },
     })
 
@@ -51,7 +51,7 @@ describe('popover', () => {
 
   it('still emits escapeKeyDown when dismissible is false, but does not close', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true, dismissible: false },
+      props: { open: true, dismissible: false },
       slots: { content: () => 'Body' },
     })
 
@@ -61,7 +61,7 @@ describe('popover', () => {
     await wrapper.vm.$nextTick()
 
     expect(wrapper.emitted('escapeKeyDown')).toBeTruthy()
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:open')).toBeUndefined()
   })
 
   it('non-modal (the default) + dismissible=false: focusing an outside element does not close it either', async () => {
@@ -74,7 +74,7 @@ describe('popover', () => {
 
     wrapper = await mountSuspended(Popover, {
       attachTo: container,
-      props: { modelValue: true, dismissible: false },
+      props: { open: true, dismissible: false },
       slots: { content: () => 'Body' },
     })
     await new Promise(resolve => setTimeout(resolve, 50))
@@ -84,14 +84,14 @@ describe('popover', () => {
     await new Promise(resolve => setTimeout(resolve, 50))
 
     expect(document.body.textContent).toContain('Body')
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.emitted('update:open')).toBeUndefined()
 
     container.remove()
   })
 
   it.each(['top', 'right', 'bottom', 'left'] as const)('side=%s reaches the underlying content classes', async (side) => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true, side },
+      props: { open: true, side },
       slots: { content: () => 'Body' },
     })
 
@@ -106,7 +106,7 @@ describe('popover', () => {
 
   it('renders no arrow element by default', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true },
+      props: { open: true },
       slots: { content: () => 'Body' },
     })
 
@@ -115,7 +115,7 @@ describe('popover', () => {
 
   it('arrow renders the pointer triangle', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true, arrow: true },
+      props: { open: true, arrow: true },
       slots: { content: () => 'Body' },
     })
 
@@ -124,7 +124,7 @@ describe('popover', () => {
 
   it('modal="true" hides the rest of the page from assistive tech', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true, modal: true },
+      props: { open: true, modal: true },
       slots: { content: () => 'Body' },
     })
 
@@ -133,14 +133,14 @@ describe('popover', () => {
 
   it('is non-modal by default - does not hide the rest of the page', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { modelValue: true },
+      props: { open: true },
       slots: { content: () => 'Body' },
     })
 
     expect(document.getElementById('__nuxt')?.getAttribute('aria-hidden')).toBeNull()
   })
 
-  it('uncontrolled (no modelValue) opens on trigger click and tracks its own state independently of a sibling instance', async () => {
+  it('uncontrolled (no open prop) opens on trigger click and tracks its own state independently of a sibling instance', async () => {
     const a = await mountSuspended(Popover, {
       slots: { default: () => h('button', 'Trigger A'), content: () => 'Body A' },
     })

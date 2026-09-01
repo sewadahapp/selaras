@@ -16,7 +16,7 @@ function openWith(value: typeof sides[number]) {
     </SButton>
   </SButtonGroup>
 
-  <SSlideover v-model="open" :side="side" title="Filters">
+  <SSlideover v-model:open="open" :side="side" title="Filters">
     <template #body>
       Slides in from the {{ side }} edge.
     </template>

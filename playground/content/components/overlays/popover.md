@@ -21,7 +21,7 @@ const name = ref('')
 </script>
 
 <template>
-  <SPopover v-model="open">
+  <SPopover v-model:open="open">
     <SButton variant="outline">
       Edit name
     </SButton>
@@ -40,7 +40,7 @@ const name = ref('')
 </template>
 ```
 
-`v-model` is optional - omit it and the popover manages its own open
+`v-model:open` is optional - omit it and the popover manages its own open
 state internally, toggled by clicking the trigger.
 
 ### Side and align
@@ -106,7 +106,7 @@ so a consumer can still react, but none of them close it on their own:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `modelValue` | `boolean` | - |
+| `open` | `boolean` | - |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` |
 | `align` | `'start' \| 'center' \| 'end'` | `'center'` |
 | `modal` | `boolean` | `false` |
@@ -118,7 +118,7 @@ so a consumer can still react, but none of them close it on their own:
 
 | Event | Payload | Description |
 | --- | --- | --- |
-| `update:modelValue` | `boolean` | Open state changed |
+| `update:open` | `boolean` | Open state changed |
 | `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
 | `pointerDownOutside` | `Event` | A pointer went down outside the popover - `preventDefault()` to stop it from closing |
 | `focusOutside` | `Event` | A non-modal popover's outside element received focus - `preventDefault()` to stop it from closing |

@@ -7,7 +7,7 @@ const open = ref(false)
     Open slideover
   </SButton>
 
-  <SSlideover v-model="open" title="Edit profile" description="Update your personal details.">
+  <SSlideover v-model:open="open" title="Edit profile" description="Update your personal details.">
     <template #body>
       Slideover content goes here.
     </template>
