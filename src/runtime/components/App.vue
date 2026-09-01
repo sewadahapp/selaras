@@ -2,6 +2,7 @@
 import { ConfigProvider, ToastProvider, TooltipProvider } from 'reka-ui'
 import { useHead } from '#imports'
 import ModalRenderer from './ModalRenderer.vue'
+import SlideoverRenderer from './SlideoverRenderer.vue'
 
 const props = withDefaults(defineProps<{
   /**
@@ -36,5 +37,6 @@ useHead({ htmlAttrs: { dir: () => props.dir } })
       </TooltipProvider>
     </ToastProvider>
     <ModalRenderer />
+    <SlideoverRenderer />
   </ConfigProvider>
 </template>

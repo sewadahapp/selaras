@@ -2,7 +2,7 @@
 import type { SlideoverSlots } from '../theme/slideover'
 import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
-import { computed, useSlots, watchEffect } from 'vue'
+import { computed, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { slideoverTheme } from '../theme/slideover'
@@ -44,6 +44,8 @@ const emit = defineEmits<{
   'escapeKeyDown': [event: KeyboardEvent]
   'pointerDownOutside': [event: Event]
   'focusOutside': [event: Event]
+  /** Fires once the close transition has actually finished (or immediately, if `transition` is off) - the signal a programmatic caller needs before it's safe to unmount this instance without cutting its exit animation short. */
+  'afterLeave': []
 }>()
 
 function onEscapeKeyDown(event: KeyboardEvent) {
@@ -67,6 +69,24 @@ function onFocusOutside(event: Event) {
     event.preventDefault()
   emit('focusOutside', event)
 }
+
+// See Modal.vue for the same pattern. Guarded by target===currentTarget
+// so a child's own animation can't be mistaken for the panel's; guarded
+// by data-state==='closed' so the *opening* animation's own animationend
+// doesn't also fire this.
+function onContentAnimationEnd(event: AnimationEvent) {
+  if (event.target !== event.currentTarget)
+    return
+  if ((event.target as HTMLElement).getAttribute('data-state') === 'closed')
+    emit('afterLeave')
+}
+
+// transition=false means no animate-out class ever runs, so animationend
+// never fires on its own - emit afterLeave directly in that case.
+watch(() => props.modelValue, (value) => {
+  if (!value && !props.transition)
+    emit('afterLeave')
+})
 
 const slots = useSlots()
 
@@ -104,6 +124,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
         @escape-key-down="onEscapeKeyDown"
         @pointer-down-outside="onPointerDownOutside"
         @focus-outside="onFocusOutside"
+        @animationend="onContentAnimationEnd"
       >
         <slot v-if="$slots.content" name="content" />
         <template v-else>

@@ -147,6 +147,49 @@ works today without a dedicated prop for it:
 <SSlideover v-model="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
 ```
 
+## Programmatic usage
+
+`useSlideover()` opens a panel from anywhere - a click handler, an async
+callback - without a `v-model` of your own to manage. It works
+automatically once `<SApp>` wraps your app, exactly like `useModal()`;
+there's nothing extra to place.
+
+The given component owns the panel's entire content, the same as the
+`content` slot above - its own heading, its own buttons. `open()` returns
+a promise that resolves with whatever value the component's own `close`
+event carries, so an explicit action can resolve with real data while
+dismissing via Escape or an outside click resolves with `undefined`:
+
+::component-example{name="slideover-use-slideover"}
+::
+
+```vue-html
+<!-- SlideoverFilterPanel.vue - a self-contained panel -->
+<template>
+  <div class="flex h-full flex-col">
+    <h2>Filters</h2>
+    <SCheckbox label="In stock only" />
+    <SButton variant="ghost" @click="$emit('close', false)">Cancel</SButton>
+    <SButton @click="$emit('close', true)">Apply</SButton>
+  </div>
+</template>
+```
+
+```ts
+import SlideoverFilterPanel from './SlideoverFilterPanel.vue'
+
+const slideover = useSlideover()
+const applied = await slideover.open(SlideoverFilterPanel)
+// true, false, or undefined if dismissed without an explicit choice
+```
+
+`open()` also takes the same `side`/`inset`/`dismissible`/`modal`/
+`overlay`/`transition` options as the declarative props:
+
+```ts
+await slideover.open(SlideoverFilterPanel, { side: 'left' })
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -171,6 +214,7 @@ works today without a dedicated prop for it:
 | `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
 | `pointerDownOutside` | `Event` | A pointer went down outside the panel - `preventDefault()` to stop it from closing |
 | `focusOutside` | `Event` | A non-modal panel's outside element received focus - `preventDefault()` to stop it from closing |
+| `afterLeave` | - | The close transition has finished (or fires immediately if `transition` is `false`) |
 
 ## Slots
 

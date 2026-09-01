@@ -61,7 +61,9 @@ export default defineNuxtModule<ModuleOptions>({
       // state is a shared singleton). NavigationMenuAccordionItem is
       // NavigationMenu's own internal recursive helper for vertical mode's
       // arbitrary-depth tree - not meant to be placed directly either.
-      ignore: ['**/ModalRenderer.vue', '**/NavigationMenuAccordionItem.vue'],
+      // SlideoverRenderer is useSlideover()'s own render loop, same
+      // reasoning as ModalRenderer.
+      ignore: ['**/ModalRenderer.vue', '**/NavigationMenuAccordionItem.vue', '**/SlideoverRenderer.vue'],
     })
 
     addImportsDir(resolver.resolve('./runtime/composables'))
