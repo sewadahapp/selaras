@@ -83,6 +83,101 @@ describe('navigationMenu (horizontal)', () => {
     expect(link.classes()).toContain('text-[var(--ui-danger)]')
     expect(link.classes().some(c => c.includes('after:'))).toBe(true)
   })
+
+  it('the dropdown content has a minimum width - regression, it used to render as narrow as 120px for a short child list', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items } })
+
+    const trigger = wrapper.find('button')
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const content = wrapper.find('a[href="/guides/getting-started"]').element.closest('[class*="min-w"]')
+    expect(content?.className).toContain('min-w-48')
+  })
+})
+
+describe('navigationMenu (slots)', () => {
+  const items: NavigationMenuItem[] = [
+    { label: 'Home', to: '/' },
+    { label: 'Guides', children: [
+      { label: 'Getting started', to: '/guides/getting-started' },
+    ] },
+  ]
+
+  async function openGuides(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
+    wrapper.find('button').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+  }
+
+  it('the generic item-content slot replaces a dropdown\'s entire body', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items },
+      slots: { 'item-content': '<template #item-content="{ item }">Custom for {{ item.label }}</template>' },
+    })
+    await openGuides(wrapper)
+
+    expect(wrapper.text()).toContain('Custom for Guides')
+    expect(wrapper.find('a[href="/guides/getting-started"]').exists()).toBe(false)
+  })
+
+  it('item.slot + a matching named -content slot wins over the generic item-content slot', async () => {
+    const named: NavigationMenuItem[] = [
+      { label: 'Guides', slot: 'guidesMenu', children: [{ label: 'Getting started', to: '/guides/getting-started' }] },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items: named },
+      slots: {
+        'item-content': '<template #item-content>Generic</template>',
+        'guidesMenu-content': '<template #guidesMenu-content="{ item }">Named for {{ item.label }}</template>',
+      },
+    })
+    await openGuides(wrapper)
+
+    expect(wrapper.text()).toContain('Named for Guides')
+    expect(wrapper.text()).not.toContain('Generic')
+  })
+
+  it('item-leading/item-label/item-trailing each independently replace just their own piece', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items: [{ label: 'Docs', icon: 'lucide:book', to: '/docs' }] },
+      slots: {
+        'item-leading': '<template #item-leading>[icon]</template>',
+        'item-label': '<template #item-label="{ item }">[{{ item.label }}]</template>',
+      },
+    })
+
+    const link = wrapper.find('a[href="/docs"]')
+    expect(link.text()).toBe('[icon][Docs]')
+  })
+
+  it('list-leading and list-trailing render outside the item list', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items: [{ label: 'Docs', to: '/docs' }] },
+      slots: {
+        'list-leading': '<template #list-leading><span class="my-logo">Logo</span></template>',
+        'list-trailing': '<template #list-trailing><button class="my-cta">Sign up</button></template>',
+      },
+    })
+
+    expect(wrapper.find('.my-logo').exists()).toBe(true)
+    expect(wrapper.find('.my-cta').exists()).toBe(true)
+  })
+
+  it('the item-content override also works in vertical mode, through the recursive accordion relay', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items, orientation: 'vertical' },
+      slots: { 'item-content': '<template #item-content="{ item }">Custom for {{ item.label }}</template>' },
+    })
+    const trigger = wrapper.findAll('button').find(b => b.text() === 'Guides')!
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(wrapper.text()).toContain('Custom for Guides')
+    expect(wrapper.find('a[href="/guides/getting-started"]').exists()).toBe(false)
+  })
 })
 
 describe('navigationMenu (vertical)', () => {

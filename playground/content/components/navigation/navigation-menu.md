@@ -125,6 +125,58 @@ navigation, no `onSelect`, marked `aria-disabled`:
 <SNavigationMenu :items="items" color="secondary" />
 ```
 
+### Customizing content
+
+Every rendering spot has a matching slot, scoped with the item's own
+data - `item-leading`/`item-label`/`item-trailing` replace one piece at a
+time, `item` replaces a whole item's content, and `item-content` replaces
+an entire dropdown's body, letting you build a genuine multi-column mega
+menu instead of the default single-column list:
+
+::component-example{name="navigation-menu-custom"}
+::
+
+```vue-html
+<SNavigationMenu :items="items">
+  <template #item-content="{ item }">
+    <ul class="grid w-96 grid-cols-2 gap-2 p-2">
+      <li v-for="child in item.children" :key="child.label">
+        <NuxtLink :to="child.to">{{ child.label }}</NuxtLink>
+      </li>
+    </ul>
+  </template>
+</SNavigationMenu>
+```
+
+Every one of these slots also has a **per-item** form: set `slot` on one
+item and it targets `#{slot}-content` (or `-leading`/`-label`/`-trailing`)
+ahead of the generic slot above - useful when only one or two items need
+bespoke content and the rest are happy with the default:
+
+```vue-html
+<SNavigationMenu :items="[{ label: 'Help', slot: 'help', children: [...] }]">
+  <template #help-content="{ item }">
+    <!-- only this item's dropdown uses this -->
+  </template>
+</SNavigationMenu>
+```
+
+`list-leading`/`list-trailing` sit outside the item list entirely -
+useful for a logo or a call-to-action button alongside the menu:
+
+```vue-html
+<SNavigationMenu :items="items">
+  <template #list-leading>
+    <img src="/logo.svg" class="h-6">
+  </template>
+  <template #list-trailing>
+    <SButton size="sm">Sign up</SButton>
+  </template>
+</SNavigationMenu>
+```
+
+These same slots work identically in vertical mode.
+
 ## Props
 
 | Prop | Type | Default |
@@ -147,8 +199,19 @@ navigation, no `onSelect`, marked `aria-disabled`:
 | `active` | `boolean` | Overrides the auto-detected route match. |
 | `children` | `NavigationMenuItem[]` | One level for horizontal; arbitrary depth for vertical. |
 | `onSelect` | `(event: Event) => void` | Fired when a leaf item is activated. |
+| `slot` | `string` | Targets this item's own named slots ahead of the generic ones - see [Customizing content](#customizing-content). |
 
 ## Slots
 
-This component is fully data-driven via `items` - there are no content
-slots. Use `:ui` to override any slot's classes.
+| Slot | Scope | Description |
+| --- | --- | --- |
+| `item` | `{ item, active }` | Replaces an item's entire content (icon+label, or icon+label+chevron for a trigger) |
+| `item-leading` | `{ item, active }` | Replaces the leading icon |
+| `item-label` | `{ item, active }` | Replaces the label text |
+| `item-trailing` | `{ item, active }` | Replaces the trailing content (the chevron, for a trigger) |
+| `item-content` | `{ item }` | Replaces an entire dropdown/accordion body |
+| `list-leading` | - | Rendered before the item list |
+| `list-trailing` | - | Rendered after the item list |
+
+Every slot above also has a per-item form via `item.slot` - see
+[Customizing content](#customizing-content).

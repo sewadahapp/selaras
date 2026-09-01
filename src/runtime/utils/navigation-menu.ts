@@ -8,6 +8,8 @@ export interface NavigationMenuItem {
   /** One level for horizontal (Reka's own real limit for its shared-viewport flyout); arbitrary depth for vertical, which falls back to a recursive accordion instead. */
   children?: NavigationMenuItem[]
   onSelect?: (event: Event) => void
+  /** Targets this item's own named slots (`#{slot}`, `#{slot}-leading`, `#{slot}-label`, `#{slot}-trailing`, `#{slot}-content`) ahead of the generic `#item`/`#item-leading`/etc, when the named one is actually provided. */
+  slot?: string
 }
 
 // Shared between NavigationMenu.vue (top level, both orientations) and

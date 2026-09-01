@@ -9,7 +9,11 @@ export const navigationMenuTheme = tv({
     linkIcon: 'size-4 shrink-0',
     linkLabel: 'truncate',
     linkTrailingIcon: 'size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180',
-    content: 'p-2',
+    // min-w, not a fixed w - without it the shared viewport auto-sizes to
+    // the narrowest possible content (measured: a 3-short-label dropdown
+    // rendered only 120px wide). A minimum keeps that from looking
+    // cramped while still letting longer labels grow the panel further.
+    content: 'min-w-48 p-2',
     // Positions the shared viewport panel under the top-level list -
     // matches every reference implementation's own real approach (a
     // single floating panel every open item's content teleports into,

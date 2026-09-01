@@ -3,7 +3,7 @@ import type { ButtonVariants } from '../theme/button'
 import type { NavigationMenuSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
-import { computed, useId } from 'vue'
+import { computed, useId, useSlots } from 'vue'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
@@ -33,6 +33,17 @@ const props = defineProps<{
 }>()
 
 const route = useRoute()
+const slots = useSlots()
+
+// Same resolver as NavigationMenu.vue - duplicated, not shared, matching
+// this pair's existing precedent (onSelect is duplicated the same way).
+function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' | '-trailing' | '-content') {
+  const named = item.slot ? `${item.slot}${suffix}` : undefined
+  if (named && slots[named])
+    return named
+  return `item${suffix}`
+}
+
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const ui = computed(() => theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight }))
 
@@ -82,32 +93,51 @@ function onSelect(item: NavigationMenuItem, event: Event) {
 <template>
   <Accordion :items="accordionItems" :default-value="[]" :ui="groupUi">
     <template #label>
-      <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-      <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
+      <slot :name="slotName(item, '')" :item="item" :active="false">
+        <slot :name="slotName(item, '-leading')" :item="item" :active="false">
+          <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
+        </slot>
+        <slot :name="slotName(item, '-label')" :item="item" :active="false">
+          <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
+        </slot>
+      </slot>
     </template>
     <template #[accordionValue]>
-      <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
-        <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
-          <NavigationMenuAccordionItem
-            v-if="child.children?.length"
-            :item="child"
-            :color="color"
-            :variant="variant"
-            :highlight="highlight"
-            :ui="props.ui"
-          />
-          <NuxtLink
-            v-else
-            :to="child.to"
-            v-bind="childLinkProps(child)"
-            :aria-disabled="child.disabled ? 'true' : undefined"
-            @click="onSelect(child, $event)"
-          >
-            <Icon v-if="child.icon" :name="child.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-            <span v-bind="resolveSlot(ui.childLinkLabel, props.ui?.childLinkLabel)">{{ child.label }}</span>
-          </NuxtLink>
-        </li>
-      </ul>
+      <slot :name="slotName(item, '-content')" :item="item">
+        <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
+          <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
+            <NavigationMenuAccordionItem
+              v-if="child.children?.length"
+              :item="child"
+              :color="color"
+              :variant="variant"
+              :highlight="highlight"
+              :ui="props.ui"
+            >
+              <template v-for="(_, name) in slots" #[name]="scope">
+                <slot :name="name" v-bind="scope" />
+              </template>
+            </NavigationMenuAccordionItem>
+            <NuxtLink
+              v-else
+              :to="child.to"
+              v-bind="childLinkProps(child)"
+              :aria-disabled="child.disabled ? 'true' : undefined"
+              @click="onSelect(child, $event)"
+            >
+              <slot :name="slotName(child, '')" :item="child" :active="isActive(child)">
+                <slot :name="slotName(child, '-leading')" :item="child" :active="isActive(child)">
+                  <Icon v-if="child.icon" :name="child.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
+                </slot>
+                <slot :name="slotName(child, '-label')" :item="child" :active="isActive(child)">
+                  <span v-bind="resolveSlot(ui.childLinkLabel, props.ui?.childLinkLabel)">{{ child.label }}</span>
+                </slot>
+                <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
+              </slot>
+            </NuxtLink>
+          </li>
+        </ul>
+      </slot>
     </template>
   </Accordion>
 </template>
