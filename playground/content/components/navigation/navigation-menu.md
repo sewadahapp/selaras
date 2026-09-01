@@ -36,7 +36,12 @@ An item with `children` renders as a trigger instead of a link - clicking
 (or hovering) it opens a dropdown. Every open dropdown teleports into one
 shared floating panel that smoothly resizes and cross-fades as you move
 between different top-level items - Reka UI's own real navigation-menu
-mechanism, not an independent popover per item:
+mechanism, not an independent popover per item. The panel always spans
+the **full width** of the nav bar, flowing children into as many columns
+as comfortably fit - matching both a comparable reference's own default and another's
+MegaMenu (its actual wide-panel component - Menubar's own submenus are
+narrow/cascading instead), rather than a narrow popover sized to its own
+content:
 
 ::component-example{name="navigation-menu-children"}
 ::
@@ -53,6 +58,12 @@ mechanism, not an independent popover per item:
 This is a single level of children only - Reka's own shared-viewport
 dropdown isn't built for deeper nesting. For an arbitrary-depth tree, use
 [Vertical](#vertical) instead.
+
+At a larger scale - more items, more children each, with icons - the same
+default rendering (no custom slot needed) holds up on its own:
+
+::component-example{name="navigation-menu-full"}
+::
 
 ### Active item
 

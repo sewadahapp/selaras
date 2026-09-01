@@ -84,7 +84,7 @@ describe('navigationMenu (horizontal)', () => {
     expect(link.classes().some(c => c.includes('after:'))).toBe(true)
   })
 
-  it('the dropdown content has a minimum width - regression, it used to render as narrow as 120px for a short child list', async () => {
+  it('the dropdown spans the full width of the nav bar - regression, it used to size itself to the narrowest possible content (120px for a short child list)', async () => {
     const wrapper = await mountSuspended(NavigationMenu, { props: { items } })
 
     const trigger = wrapper.find('button')
@@ -92,8 +92,8 @@ describe('navigationMenu (horizontal)', () => {
     await nextTick()
     await macrotask()
 
-    const content = wrapper.find('a[href="/guides/getting-started"]').element.closest('[class*="min-w"]')
-    expect(content?.className).toContain('min-w-48')
+    const viewport = wrapper.find('a[href="/guides/getting-started"]').element.closest('[class*="z-\\[var(--ui-z-dropdown)\\]"]')
+    expect(viewport?.className).toContain('w-full')
   })
 })
 
@@ -210,6 +210,22 @@ describe('navigationMenu (vertical)', () => {
     const leaf = wrapper.find('a[href="/deep/level-3"]')
     expect(leaf.exists()).toBe(true)
     expect(leaf.text()).toBe('Level 3')
+  })
+
+  it('the nested list stays a normal single-column, in-flow list - regression, horizontal\'s own absolute-positioned multi-column dropdown styling leaked into vertical\'s accordion content too', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items: [{ label: 'Level 1', children: [{ label: 'Level 2', to: '/deep/level-2' }] }], orientation: 'vertical' },
+    })
+    findTrigger(wrapper, 'Level 1').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    // max-h-[70vh] is a unique marker only ever added by the horizontal
+    // variant of the `content` slot - its presence anywhere in a vertical
+    // render means the two got merged again.
+    expect(wrapper.html()).not.toContain('max-h-[70vh]')
+    const list = wrapper.find('a[href="/deep/level-2"]').element.closest('ul')
+    expect(list?.className).not.toContain('grid-cols-[repeat(auto-fill')
   })
 
   it('clicking a deep leaf link fires its onSelect callback', async () => {

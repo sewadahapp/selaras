@@ -9,25 +9,18 @@ export const navigationMenuTheme = tv({
     linkIcon: 'size-4 shrink-0',
     linkLabel: 'truncate',
     linkTrailingIcon: 'size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180',
-    // min-w, not a fixed w - without it the shared viewport auto-sizes to
-    // the narrowest possible content (measured: a 3-short-label dropdown
-    // rendered only 120px wide). A minimum keeps that from looking
-    // cramped while still letting longer labels grow the panel further.
-    content: 'min-w-48 p-2',
-    // `left` tracks the specific open trigger horizontally, via Reka's own
-    // exposed --reka-navigation-menu-viewport-left (measured relative to
-    // NavigationMenuRoot, which `root`'s own `relative` below establishes
-    // as the positioning context) - confirmed working via real browser
-    // measurement (panel moved from x=365 to x=475 switching triggers).
-    // `top` deliberately does NOT use Reka's matching `-top` var, even
-    // though it exists - Reka's default `align="center"` computes it to
-    // vertically CENTER the panel over the trigger's own row (not place
-    // it below), which floated the panel up over the nav bar entirely.
-    // Every trigger sits in the same single row here, so a plain
-    // `top-full` relative to Root places it directly below the whole row
-    // regardless of which specific trigger opened it - correct without
-    // needing Reka's per-trigger vertical value at all.
-    viewport: 'absolute left-[var(--reka-navigation-menu-viewport-left)] top-full z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-[var(--reka-navigation-menu-viewport-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[width,height,left] duration-200',
+    // `content` and `childList` below are shared between horizontal's
+    // NavigationMenuContent (stacked absolutely inside the shared
+    // viewport, wide/multi-column) and vertical's own accordion panel
+    // (a normal in-flow, single-column nested list - see
+    // NavigationMenuAccordionItem.vue). Regression: an earlier version put
+    // the horizontal-only absolute positioning and multi-column grid
+    // directly in these base strings, which broke vertical mode entirely
+    // (ripped its accordion content out of normal flow, and turned its
+    // indented nested list into a multi-column grid). Both now live in
+    // the `orientation` variant below instead, so vertical gets none of it.
+    content: 'p-2',
+    viewport: 'absolute inset-x-0 top-full z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-full overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[height] duration-200',
     childList: 'grid gap-1',
     childItem: '',
     childLink: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
@@ -35,7 +28,24 @@ export const navigationMenuTheme = tv({
   },
   variants: {
     orientation: {
-      horizontal: { root: 'relative items-center', list: 'items-center gap-1' },
+      // `content`: full width of the nav bar, not sized to its own
+      // content - confirmed directly against both references (one reference's
+      // own real theme sizes this `w-full`; another reference's MegaMenu - the
+      // actual comparable component for this wide-panel behavior, not
+      // Menubar's own narrow cascading submenus - does the same). Each
+      // open item's own panel stacks absolutely inside the shared
+      // viewport (only one visible via Presence), rather than sizing the
+      // viewport to whichever is active.
+      // `childList`: adaptive column count (not a fixed grid-cols-2 like
+      // a comparable reference's own default) - a fixed count leaves an awkward empty
+      // cell for an odd number of children; auto-fill instead flows
+      // however many columns actually fit a ~11rem minimum.
+      horizontal: {
+        root: 'relative items-center',
+        list: 'items-center gap-1',
+        content: 'absolute inset-x-0 top-0 w-full max-h-[70vh] overflow-y-auto',
+        childList: 'grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]',
+      },
       vertical: { root: 'flex-col', list: 'flex-col gap-1' },
     },
     color: {
