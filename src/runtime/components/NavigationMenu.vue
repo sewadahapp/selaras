@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ButtonVariants } from '../theme/button'
+import type { VariantProps } from 'tailwind-variants'
+import type { buttonTheme } from '../theme/button'
 import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
@@ -20,6 +21,8 @@ import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
+
+type ButtonVariants = VariantProps<typeof buttonTheme>
 
 const props = withDefaults(defineProps<{
   items: NavigationMenuItem[]

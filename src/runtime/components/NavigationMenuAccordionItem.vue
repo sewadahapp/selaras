@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ButtonVariants } from '../theme/button'
+import type { VariantProps } from 'tailwind-variants'
+import type { buttonTheme } from '../theme/button'
 import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
@@ -16,6 +17,8 @@ import Icon from './Icon.vue'
 // self-recursion resolution the way ContentNavigation.vue does; importing
 // itself directly works regardless, via plain SFC self-recursion.
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
+
+type ButtonVariants = VariantProps<typeof buttonTheme>
 
 // Reka's real NavigationMenuContent/Viewport is a shallow, single-level
 // flyout (see NavigationMenu.vue's own top-of-file note) - arbitrary-depth
