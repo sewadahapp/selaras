@@ -58,8 +58,10 @@ export default defineNuxtModule<ModuleOptions>({
       // mirroring a comparable reference's own un-exported OverlayProvider - not meant to be
       // placed by a consumer (App.vue already mounts one; a second copy
       // would render every open programmatic modal twice, since useModal()'s
-      // state is a shared singleton).
-      ignore: ['**/ModalRenderer.vue'],
+      // state is a shared singleton). NavigationMenuAccordionItem is
+      // NavigationMenu's own internal recursive helper for vertical mode's
+      // arbitrary-depth tree - not meant to be placed directly either.
+      ignore: ['**/ModalRenderer.vue', '**/NavigationMenuAccordionItem.vue'],
     })
 
     addImportsDir(resolver.resolve('./runtime/composables'))
