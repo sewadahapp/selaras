@@ -14,14 +14,20 @@ export const navigationMenuTheme = tv({
     // rendered only 120px wide). A minimum keeps that from looking
     // cramped while still letting longer labels grow the panel further.
     content: 'min-w-48 p-2',
-    // Tracks the specific open trigger, not the nav bar as a whole -
-    // Reka's own Viewport computes and exposes these exact CSS vars for
-    // this (measured relative to NavigationMenuRoot, which `root`'s own
-    // `relative` below establishes as the positioning context). Regression:
-    // an earlier version centered this in a full-width wrapper instead,
-    // so it always sat near the middle of the whole nav bar regardless of
-    // which trigger was actually open.
-    viewport: 'absolute left-[var(--reka-navigation-menu-viewport-left)] top-[var(--reka-navigation-menu-viewport-top)] z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-[var(--reka-navigation-menu-viewport-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[width,height,left,top] duration-200',
+    // `left` tracks the specific open trigger horizontally, via Reka's own
+    // exposed --reka-navigation-menu-viewport-left (measured relative to
+    // NavigationMenuRoot, which `root`'s own `relative` below establishes
+    // as the positioning context) - confirmed working via real browser
+    // measurement (panel moved from x=365 to x=475 switching triggers).
+    // `top` deliberately does NOT use Reka's matching `-top` var, even
+    // though it exists - Reka's default `align="center"` computes it to
+    // vertically CENTER the panel over the trigger's own row (not place
+    // it below), which floated the panel up over the nav bar entirely.
+    // Every trigger sits in the same single row here, so a plain
+    // `top-full` relative to Root places it directly below the whole row
+    // regardless of which specific trigger opened it - correct without
+    // needing Reka's per-trigger vertical value at all.
+    viewport: 'absolute left-[var(--reka-navigation-menu-viewport-left)] top-full z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-[var(--reka-navigation-menu-viewport-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[width,height,left] duration-200',
     childList: 'grid gap-1',
     childItem: '',
     childLink: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
