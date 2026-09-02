@@ -167,4 +167,55 @@ describe('accordion', () => {
 
     expect(wrapper.find('button').classes()).toContain('py-4')
   })
+
+  it('defaults to the list variant - no per-item card styling', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    expect(wrapper.find('[data-state][data-orientation]').classes()).toContain('border-b')
+  })
+
+  it('applies the pill variant\'s per-item card classes', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { variant: 'pill', items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    const item = wrapper.find('[data-state][data-orientation]')
+    expect(item.classes()).toContain('ring-1')
+    expect(item.classes()).not.toContain('border-b')
+  })
+
+  it('defaults to the chevron at the end, after the label, with justify-between', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    const trigger = wrapper.find('button')
+    expect(trigger.classes()).toContain('justify-between')
+    const [first, second] = [...trigger.element.children]
+    expect(first?.className).not.toContain('iconify')
+    expect(second?.className).toContain('iconify')
+  })
+
+  it('moves the chevron before the label when chevronPosition is start', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { chevronPosition: 'start', items: [{ value: 'a', label: 'Question one' }] },
+      slots: { a: () => 'Answer one' },
+    })
+    await nextTick()
+
+    const trigger = wrapper.find('button')
+    expect(trigger.classes()).toContain('justify-start')
+    expect(trigger.classes()).not.toContain('justify-between')
+    const [first, second] = [...trigger.element.children]
+    expect(first?.className).toContain('iconify')
+    expect(second?.className).not.toContain('iconify')
+  })
 })

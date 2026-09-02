@@ -7,9 +7,9 @@ export const accordionTheme = tv({
     // item's own title vs an open item's own content), so the whole
     // accordion visibly resized itself as items opened/closed.
     root: 'w-full flex flex-col',
-    item: 'border-b border-[var(--ui-border)] last:border-b-0',
+    item: '',
     header: '',
-    trigger: 'group flex w-full items-center justify-between gap-2 text-start font-medium text-[var(--ui-text)] transition-colors hover:text-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'group flex w-full items-center gap-2 text-start font-medium text-[var(--ui-text)] transition-colors hover:text-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
     label: '',
     chevron: 'size-4 shrink-0 text-[var(--ui-text-muted)] transition-transform group-data-[state=open]:rotate-180',
     // overflow-hidden clips the panel to its own animated height (without
@@ -30,9 +30,33 @@ export const accordionTheme = tv({
       md: { trigger: 'py-3 text-sm', content: 'text-sm' },
       lg: { trigger: 'py-4 text-base', content: 'text-base' },
     },
+    // Lives on `trigger` (not baked into its base string) so a consumer's
+    // own :ui.trigger override doesn't have to fight a hardcoded
+    // justify-between/justify-start to move the chevron.
+    chevronPosition: {
+      end: { trigger: 'justify-between' },
+      start: { trigger: 'justify-start' },
+    },
+    // list: the original flat look - a single shared divider between
+    // items, no per-item shape of its own.
+    // pill: each item becomes its own bordered, rounded card (same visual
+    // language as Card's own `outline` variant) with a gap between items
+    // instead of a shared divider - overflow-hidden on `item` clips the
+    // content panel's corners to match, the same way Card's root does.
+    variant: {
+      list: { item: 'border-b border-[var(--ui-border)] last:border-b-0' },
+      pill: {
+        root: 'gap-2',
+        item: 'rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-[var(--ui-border)] overflow-hidden',
+        trigger: 'px-3 hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)]',
+        contentInner: 'px-3',
+      },
+    },
   },
   defaultVariants: {
     size: 'md',
+    variant: 'list',
+    chevronPosition: 'end',
   },
 })
 

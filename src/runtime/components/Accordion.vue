@@ -35,6 +35,10 @@ export interface AccordionProps {
   /** Disables every item at once - Reka's own AccordionRoot already blocks all interaction when this is set, so this is a straight pass-through. */
   disabled?: boolean
   size?: AccordionVariants['size']
+  /** @default 'list' */
+  variant?: AccordionVariants['variant']
+  /** @default 'end' */
+  chevronPosition?: AccordionVariants['chevronPosition']
   ui?: UiProp<AccordionThemeSlots>
 }
 
@@ -44,7 +48,7 @@ export interface AccordionEmits {
 
 const icons = useIcons()
 const theme = useComponentTheme('accordion', accordionTheme)
-const ui = computed(() => theme.value({ size: props.size }))
+const ui = computed(() => theme.value({ size: props.size, variant: props.variant, chevronPosition: props.chevronPosition }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 </script>
@@ -69,10 +73,13 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
       >
         <AccordionHeader as="div" v-bind="resolveSlot(ui.header, props.ui?.header)">
           <AccordionTrigger v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
+            <slot v-if="chevronPosition === 'start'" name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
+              <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
+            </slot>
             <span v-bind="resolveSlot(ui.label, props.ui?.label)">
               <slot name="label" :item="item">{{ item.label }}</slot>
             </span>
-            <slot name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
+            <slot v-if="chevronPosition !== 'start'" name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
               <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
             </slot>
           </AccordionTrigger>

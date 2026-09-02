@@ -45,6 +45,47 @@ scoped with `item`, so a single template can vary per item:
 `chevron-icon` replaces the expand/collapse chevron the same way any other
 icon-swap slot in this library does (default: `hugeicons:arrow-down-01`).
 
+### Icon in the label
+
+An icon next to the label is just more `label` slot content - it's
+independent of the chevron on the other end of the trigger:
+
+::component-example{name="accordion-icon"}
+::
+
+```vue-html
+<SAccordion :items="items">
+  <template #label="{ item }">
+    <span class="flex items-center gap-2">
+      <SIcon :name="item.icon" class="size-4 text-[var(--ui-text-muted)]" />
+      {{ item.label }}
+    </span>
+  </template>
+  ...
+</SAccordion>
+```
+
+### Custom chevron
+
+`chevron-icon` isn't limited to a single swapped-in icon - here two icons
+are cross-faded via `group-data-[state=open]:` instead of the default
+icon's rotation, for a plus/minus toggle instead of an arrow:
+
+::component-example{name="accordion-custom-chevron"}
+::
+
+```vue-html
+<SAccordion :items="items">
+  <template #chevron-icon>
+    <span class="relative size-4 shrink-0 text-[var(--ui-text-muted)]">
+      <SIcon name="hugeicons:plus-sign" class="absolute inset-0 transition-opacity group-data-[state=open]:opacity-0" />
+      <SIcon name="hugeicons:minus-sign" class="absolute inset-0 opacity-0 transition-opacity group-data-[state=open]:opacity-100" />
+    </span>
+  </template>
+  ...
+</SAccordion>
+```
+
 ### Single mode
 
 `type="single"` allows only one item open at a time - opening one closes
@@ -74,6 +115,35 @@ the content's text together:
 <SAccordion size="sm" :items="items">...</SAccordion>
 <SAccordion size="md" :items="items">...</SAccordion>
 <SAccordion size="lg" :items="items">...</SAccordion>
+```
+
+### Variant
+
+`list` (default) is a flat list with a shared divider between items.
+`pill` gives each item its own bordered, rounded card instead, with a gap
+between them - the same visual language as [Card](/components/layout/card)'s
+own `outline` variant:
+
+::component-example{name="accordion-variant"}
+::
+
+```vue-html
+<SAccordion variant="list" :items="items">...</SAccordion>
+<SAccordion variant="pill" :items="items">...</SAccordion>
+```
+
+### Chevron position
+
+`chevronPosition` moves the chevron to the start of the trigger instead of
+the end - the label stays flush next to it rather than pushed to the
+opposite side, since `justify-between` only applies in the (default) `end`
+position:
+
+::component-example{name="accordion-chevron-position"}
+::
+
+```vue-html
+<SAccordion chevron-position="start" :items="items">...</SAccordion>
 ```
 
 ### Disabled
@@ -115,6 +185,8 @@ order changes.
 | `collapsible` | `boolean` | `true` |
 | `disabled` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
+| `variant` | `'list' \| 'pill'` | `list` |
+| `chevronPosition` | `'start' \| 'end'` | `end` |
 | `ui` | `Partial<Record<AccordionSlot, string \| object>>` | - |
 
 ## Slots
