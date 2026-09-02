@@ -4,6 +4,13 @@ export const sliderTheme = tv({
   slots: {
     root: 'relative flex touch-none select-none items-center data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
     track: 'relative grow rounded-full bg-[var(--ui-border)]',
+    // Reka's own SliderRange sets left/right (horizontal) or top/bottom
+    // (vertical) itself via inline style, to size the *main* axis - the
+    // *cross* axis (this slot's own height for horizontal, width for
+    // vertical) is left entirely up to the theme, and an absolutely
+    // positioned element with no top/bottom of its own collapses to 0
+    // height. inset-y-0/inset-x-0 below (in the orientation variant)
+    // supply that missing cross-axis size.
     range: 'absolute rounded-full',
     thumb: 'block shrink-0 rounded-full bg-[var(--ui-bg)] shadow-[var(--ui-shadow-sm)] ring-2 transition-shadow focus-visible:outline-none focus-visible:ring-4',
     // Own addition - Reka's Slider has no tick/mark concept of its own.
@@ -29,8 +36,8 @@ export const sliderTheme = tv({
     // Vertical needs a real, non-zero height to size against - unlike
     // horizontal, which sizes off its own intrinsic full width.
     orientation: {
-      horizontal: { root: 'w-full' },
-      vertical: { root: 'h-44 flex-col', tick: 'inset-x-1/2 top-auto translate-x-0 translate-y-1/2' },
+      horizontal: { root: 'w-full', range: 'inset-y-0' },
+      vertical: { root: 'h-44 flex-col', range: 'inset-x-0', tick: 'inset-x-1/2 top-auto translate-x-0 translate-y-1/2' },
     },
   },
   compoundVariants: [
