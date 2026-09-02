@@ -44,6 +44,18 @@
   }
 }
 
+/* Sweep motion for Skeleton's shimmer animation - the theme sets a
+   200%-wide gradient background (theme/skeleton.ts), this just slides its
+   position so the lighter band travels left to right across the block. */
+@keyframes selaras-skeleton-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
 /*
  * tw-animate-css's enter/exit utilities (animate-in, zoom-in-95, fade-in-0,
  * ...) - used by Select/Dropdown/Modal/Toast/Tooltip's open/close
