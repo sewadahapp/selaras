@@ -57,6 +57,12 @@ describe('card', () => {
     expect(wrapper.classes()).not.toContain('ring-1')
   })
 
+  it('applies the subtle variant classes - soft\'s background, plus a border', async () => {
+    const wrapper = await mountSuspended(Card, { props: { variant: 'subtle' }, slots: { default: () => 'Body' } })
+    expect(wrapper.classes()).toContain('bg-[var(--ui-bg-elevated)]')
+    expect(wrapper.classes()).toContain('ring-1')
+  })
+
   it('merges a fallthrough class attr with the theme root classes instead of dropping it', async () => {
     const wrapper = await mountSuspended(Card, {
       slots: { default: () => 'Body' },

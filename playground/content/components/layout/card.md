@@ -56,6 +56,9 @@ separating border) when you actually pass it:
 <SCard variant="soft">
   <!-- subtle tinted background -->
 </SCard>
+<SCard variant="subtle">
+  <!-- tinted background, plus a border -->
+</SCard>
 ```
 
 ### Blog post
@@ -122,7 +125,7 @@ card's edges, with your own padded wrapper underneath for the details:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `variant` | `'outline' \| 'solid' \| 'soft'` | `'outline'` |
+| `variant` | `'outline' \| 'solid' \| 'soft' \| 'subtle'` | `'outline'` |
 | `ui` | `Partial<Record<CardSlot, string \| object>>` | - |
 
 ## Slots

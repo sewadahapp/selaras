@@ -12,6 +12,10 @@ export const cardTheme = tv({
       outline: { root: 'bg-[var(--ui-bg)] ring-1 ring-[var(--ui-border)]' },
       solid: { root: 'bg-[var(--ui-bg-elevated)] shadow-[var(--ui-shadow-md)]' },
       soft: { root: 'bg-[var(--ui-bg-elevated)]' },
+      // Same elevated background as soft, plus outline's own border - a
+      // middle ground between the two rather than a combination of their
+      // literal classes, so it stays its own single, ordinary variant.
+      subtle: { root: 'bg-[var(--ui-bg-elevated)] ring-1 ring-[var(--ui-border)]' },
     },
   },
   defaultVariants: {

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-const variants = ['outline', 'solid', 'soft'] as const
+const variants = ['outline', 'solid', 'soft', 'subtle'] as const
 </script>
 
 <template>
-  <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
     <SCard v-for="variant in variants" :key="variant" :variant="variant">
       <p class="text-xs font-medium tracking-wide text-[var(--ui-text-muted)] uppercase">
         {{ variant }}
