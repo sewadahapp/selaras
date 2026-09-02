@@ -26,6 +26,7 @@
 // this list.
 
 export type * from '../components/Accordion.vue'
+export type * from '../components/Alert.vue'
 export type * from '../components/App.vue'
 export type * from '../components/Autocomplete.vue'
 export type * from '../components/Avatar.vue'
