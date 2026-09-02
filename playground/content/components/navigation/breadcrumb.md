@@ -60,11 +60,41 @@ same look as the trail, without being clickable:
 <SBreadcrumb :items="items" separator-icon="hugeicons:slash" />
 ```
 
+### Collapsing long trails
+
+`max-items` collapses the middle of a long trail behind an ellipsis
+button once there are more items than that - the first item and the
+last `maxItems - 1` stay visible, everything else moves into an
+overflow menu:
+
+::component-example{name="breadcrumb-max-items"}
+::
+
+```vue-html
+<SBreadcrumb :items="items" :max-items="4" />
+```
+
+### Truncating long labels
+
+`truncate` keeps a single long label - a dynamic product title, say -
+from breaking the trail's layout. `true` caps it at `12rem`; pass a
+CSS length string (`'20rem'`, `'300px'`) for a custom cap. The full
+label is still available on hover via the native `title` attribute:
+
+::component-example{name="breadcrumb-truncate"}
+::
+
+```vue-html
+<SBreadcrumb :items="items" truncate />
+```
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
 | `items` | `BreadcrumbItem[]` | - |
+| `maxItems` | `number` | - |
+| `truncate` | `boolean \| string` | `false` |
 | `separatorIcon` | `string` | `icons.chevronRight` |
 | `ui` | `Partial<Record<BreadcrumbSlot, string \| object>>` | - |
 

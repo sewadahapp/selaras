@@ -1,6 +1,12 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import Breadcrumb from '../../src/runtime/components/Breadcrumb.vue'
+
+const { navigateToMock } = vi.hoisted(() => ({ navigateToMock: vi.fn() }))
+vi.mock('#app/composables/router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('#app/composables/router')>()
+  return { ...actual, navigateTo: navigateToMock }
+})
 
 const items = [
   { label: 'Home', to: '/' },
@@ -79,5 +85,87 @@ describe('breadcrumb', () => {
     const wrapper = await mountSuspended(Breadcrumb, { props: { items, ui: { link: 'custom-class' } } })
 
     expect(wrapper.find('a').classes()).toContain('custom-class')
+  })
+
+  describe('maxItems', () => {
+    const longTrail = [
+      { label: 'Home', to: '/' },
+      { label: 'Category', to: '/category' },
+      { label: 'Subcategory', to: '/category/sub' },
+      { label: 'Product', to: '/category/sub/product' },
+      { label: 'Variant' },
+    ]
+
+    it('renders every item when items.length <= maxItems', async () => {
+      const wrapper = await mountSuspended(Breadcrumb, { props: { items: longTrail, maxItems: 5 } })
+
+      expect(wrapper.findAll('li[aria-hidden="true"]')).toHaveLength(4)
+      expect(wrapper.find('[aria-label="Show hidden breadcrumb items"]').exists()).toBe(false)
+    })
+
+    it('collapses the middle items behind an ellipsis trigger, keeping the first item and the last maxItems - 1', async () => {
+      const wrapper = await mountSuspended(Breadcrumb, { props: { items: longTrail, maxItems: 3 } })
+
+      const trigger = wrapper.find('[aria-label="Show hidden breadcrumb items"]')
+      expect(trigger.exists()).toBe(true)
+
+      const text = wrapper.text()
+      expect(text).toContain('Home')
+      expect(text).toContain('Product')
+      expect(text).toContain('Variant')
+      expect(text).not.toContain('Category')
+      expect(text).not.toContain('Subcategory')
+    })
+
+    it('navigates to a hidden item selected from the overflow menu', async () => {
+      const wrapper = await mountSuspended(Breadcrumb, { props: { items: longTrail, maxItems: 3 } })
+
+      // DropdownMenuContent renders through a real Teleport to
+      // document.body once opened - query document.body directly
+      // instead of wrapper.find, same as Dropdown's own tests.
+      await wrapper.find('[aria-label="Show hidden breadcrumb items"]').trigger('click')
+      await new Promise(resolve => setTimeout(resolve, 50))
+
+      const hiddenItem = Array.from(document.body.querySelectorAll<HTMLElement>('[role="menuitem"]'))
+        .find(el => el.textContent?.trim() === 'Category')
+      expect(hiddenItem).toBeDefined()
+
+      hiddenItem!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+      await new Promise(resolve => setTimeout(resolve, 50))
+
+      expect(navigateToMock).toHaveBeenCalledWith('/category')
+      wrapper.unmount()
+    })
+  })
+
+  describe('truncate', () => {
+    const longLabelItems = [
+      { label: 'Home', to: '/' },
+      { label: 'A product title long enough to break the layout on its own', to: '/product' },
+      { label: 'Current' },
+    ]
+
+    it('leaves labels full width with no title attribute by default', async () => {
+      const wrapper = await mountSuspended(Breadcrumb, { props: { items: longLabelItems } })
+
+      const label = wrapper.findAll('a')[1]!.find('span')
+      expect(label.attributes('style')).toBeUndefined()
+      expect(label.attributes('title')).toBeUndefined()
+    })
+
+    it('truncate: true caps the label at 12rem and sets a title with the full text', async () => {
+      const wrapper = await mountSuspended(Breadcrumb, { props: { items: longLabelItems, truncate: true } })
+
+      const label = wrapper.findAll('a')[1]!.find('span')
+      expect(label.attributes('style')).toContain('max-width: 12rem')
+      expect(label.attributes('title')).toBe(longLabelItems[1]!.label)
+    })
+
+    it('truncate as a string sets a custom max-width', async () => {
+      const wrapper = await mountSuspended(Breadcrumb, { props: { items: longLabelItems, truncate: '320px' } })
+
+      const label = wrapper.findAll('a')[1]!.find('span')
+      expect(label.attributes('style')).toContain('max-width: 320px')
+    })
   })
 })

@@ -13,8 +13,12 @@ export const breadcrumbTheme = tv({
     // to link to, so it renders like `link` but inert.
     disabled: 'flex items-center gap-1 text-[var(--ui-text-muted)] opacity-50',
     icon: 'size-4 shrink-0',
+    // `block` (not `inline`) so an inline-max-width set by the
+    // `truncate` prop actually applies.
+    label: 'block truncate',
     separator: 'flex items-center text-[var(--ui-text-muted)]',
     separatorIcon: 'size-4 shrink-0',
+    ellipsis: 'flex items-center text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
   },
 })
 
