@@ -1,0 +1,21 @@
+import { tv } from 'tailwind-variants'
+
+export const breadcrumbTheme = tv({
+  slots: {
+    root: '',
+    list: 'flex items-center gap-1.5 text-sm',
+    item: 'flex items-center',
+    link: 'flex items-center gap-1 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
+    // The trail's last item - "you are here", visually emphasized
+    // rather than muted like the earlier, clickable steps.
+    current: 'flex items-center gap-1 font-medium text-[var(--ui-text)]',
+    // An earlier item with neither `to` nor `disabled` unset - nothing
+    // to link to, so it renders like `link` but inert.
+    disabled: 'flex items-center gap-1 text-[var(--ui-text-muted)] opacity-50',
+    icon: 'size-4 shrink-0',
+    separator: 'flex items-center text-[var(--ui-text-muted)]',
+    separatorIcon: 'size-4 shrink-0',
+  },
+})
+
+export type BreadcrumbThemeSlots = keyof (typeof breadcrumbTheme)['slots']
