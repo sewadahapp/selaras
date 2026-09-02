@@ -178,36 +178,8 @@ on an icon-only button with a `relative`/`absolute` pair:
 
 ### Button group
 
-`SButtonGroup` visually joins adjacent buttons - it squares off each one's
-inner corner and overlaps their 1px rings so the shared edge isn't
-double-thick, bumping the hovered/focused button's edge on top of its
-neighbor's.
-
-::component-example{name="button-group-basic"}
-::
-
-```vue-html
-<SButtonGroup>
-  <SButton variant="outline">Day</SButton>
-  <SButton variant="outline">Week</SButton>
-  <SButton variant="outline">Month</SButton>
-</SButtonGroup>
-```
-
-#### Vertical
-
-`orientation="vertical"` stacks buttons vertically, squaring off the top/bottom
-corners instead:
-
-::component-example{name="button-group-vertical"}
-::
-
-```vue-html
-<SButtonGroup orientation="vertical">
-  <SButton variant="outline">Submit</SButton>
-  <SButton variant="outline">Cancel</SButton>
-</SButtonGroup>
-```
+Adjacent buttons visually joined into one unit are their own component -
+see [ButtonGroup](/components/elements/button-group).
 
 ### Sizes and states
 
@@ -249,10 +221,3 @@ shown above.
 | `trailingIcon` | `string` | - |
 | `square` | `boolean` | - |
 | `ui` | `Partial<Record<'base' \| 'leadingIcon' \| 'trailingIcon', string \| object>>` | - |
-
-## ButtonGroup props
-
-| Prop | Type | Default |
-| --- | --- | --- |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
-| `ui` | `Partial<Record<'root', string \| object>>` | - |
