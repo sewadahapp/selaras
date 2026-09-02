@@ -80,6 +80,89 @@ one):
 <SSlider v-model="value" orientation="vertical" />
 ```
 
+### Thumb variant
+
+`thumb-variant="bar"` swaps the default circular thumb for a thin bar,
+sized off the track's own `size` and `orientation`:
+
+::component-example{name="slider-thumb-variant"}
+::
+
+```vue-html
+<SSlider v-model="value" thumb-variant="bar" />
+```
+
+### Start and end slots
+
+`#start`/`#end` render content flanking the track - an icon, an emoji,
+a unit label:
+
+::component-example{name="slider-flanking"}
+::
+
+```vue-html
+<SSlider v-model="value">
+  <template #start>😞</template>
+  <template #end>😄</template>
+</SSlider>
+```
+
+### Tooltip
+
+`tooltip` wraps each thumb in a tooltip showing its current value on
+hover or focus:
+
+::component-example{name="slider-tooltip"}
+::
+
+```vue-html
+<SSlider v-model="value" tooltip />
+```
+
+### Controls
+
+`controls` adds `-`/`+` buttons flanking the track that step the value
+by `step`, disabling at `min`/`max` - only rendered for a single-value
+slider, since stepping two independent range thumbs with one shared
+button pair has no obvious single meaning:
+
+::component-example{name="slider-controls"}
+::
+
+```vue-html
+<SSlider v-model="value" controls />
+```
+
+### Side labels
+
+Plain text either side of the track composes with no extra API:
+
+::component-example{name="slider-labels"}
+::
+
+```vue-html
+<div class="flex items-center gap-3">
+  <span>Low</span>
+  <SSlider v-model="value" />
+  <span>High</span>
+</div>
+```
+
+### Paired with a number input
+
+`SSlider` and `SInputNumber` sharing one `v-model` gives an exact,
+typeable value alongside the drag control:
+
+::component-example{name="slider-with-input"}
+::
+
+```vue-html
+<div class="flex items-center gap-3">
+  <SSlider v-model="value" />
+  <SInputNumber v-model="value" :min="0" :max="100" />
+</div>
+```
+
 ### Accessible labeling
 
 A slider thumb has no visible text of its own, so it needs an accessible
@@ -121,6 +204,9 @@ intermediate frame, like a debounced request:
 | `showTicks` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `thumbVariant` | `'circle' \| 'bar'` | `circle` |
+| `tooltip` | `boolean` | `false` |
+| `controls` | `boolean` | `false` |
 | `ariaLabel` | `string \| string[]` | - |
 | `name` | `string` | - |
 | `ui` | `Partial<Record<SliderSlot, string \| object>>` | - |
@@ -131,3 +217,10 @@ intermediate frame, like a debounced request:
 | --- | --- | --- |
 | `update:modelValue` | `number \| number[]` | Fires continuously while dragging |
 | `valueCommit` | `number \| number[]` | Fires once, when a drag finishes with a changed value |
+
+## Slots
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `start` | - | Content flanking the start of the track |
+| `end` | - | Content flanking the end of the track |
