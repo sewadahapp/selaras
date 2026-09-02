@@ -27,6 +27,7 @@ export interface IconRegistry {
   user: string
   maximize: string
   minimize: string
+  star: string
 }
 
 // Hugeicons by default. One registry keyed by semantic purpose, not by
@@ -69,4 +70,5 @@ export const defaultIcons: IconRegistry = {
   // expand/collapse pair, not just any two vaguely-related glyphs.
   maximize: 'hugeicons:fullscreen',
   minimize: 'hugeicons:collapse',
+  star: 'hugeicons:star',
 }
