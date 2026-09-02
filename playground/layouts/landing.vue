@@ -5,12 +5,7 @@
         Selaras
       </NuxtLink>
       <template #right>
-        <NuxtLink
-          to="/components/elements/button"
-          class="text-sm text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]"
-        >
-          Docs
-        </NuxtLink>
+        <SNavigationMenu :items="docsNavItems" variant="link" :ui="{ root: 'w-auto' }" />
         <SColorModeToggle />
       </template>
     </SHeader>

@@ -1,11 +1,17 @@
 <script setup lang="ts">
+const route = useRoute()
+
 const { data: rawNavigation } = await useAsyncData('docs-navigation', () =>
   queryCollectionNavigation('docs').order('order', 'ASC'))
 
-// queryCollectionNavigation wraps everything in one root node named after the
-// collection's own source folder ("components") - redundant here since this
-// whole sidebar is already scoped to components; unwrap to its real groups.
-const navigation = computed(() => rawNavigation.value?.[0]?.children ?? [])
+// queryCollectionNavigation wraps each top-level content folder (guides,
+// components, ...) in its own root node - pick the one matching the current
+// route's section so the sidebar only shows that section's groups, not
+// every section merged together.
+const navigation = computed(() => {
+  const section = `/${route.path.split('/')[1]}`
+  return rawNavigation.value?.find(node => node.path === section)?.children ?? []
+})
 
 const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
 </script>
@@ -17,6 +23,7 @@ const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
         Selaras
       </NuxtLink>
       <template #right>
+        <SNavigationMenu :items="docsNavItems" variant="link" :ui="{ root: 'w-auto' }" />
         <SColorModeToggle />
       </template>
     </SHeader>

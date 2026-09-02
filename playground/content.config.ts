@@ -4,7 +4,7 @@ export default defineContentConfig({
   collections: {
     docs: defineCollection({
       type: 'page',
-      source: 'components/**/*.md',
+      source: '**/*.md',
       schema: z.object({
         order: z.number(),
       }),
