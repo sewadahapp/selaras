@@ -43,6 +43,10 @@ export interface MessageRegistry {
   moreItems: (count: number) => string
   paginationInfo: (page: number, total: number) => string
   codeTabFallback: (index: number) => string
+  dropFiles: string
+  invalidFileType: (name: string) => string
+  invalidFileSize: (name: string, max: string) => string
+  tooManyFiles: (max: number) => string
 }
 
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
@@ -96,4 +100,8 @@ export const defaultMessages: MessageRegistry = {
   moreItems: count => `+${count} more`,
   paginationInfo: (page, total) => `Page ${page} of ${total}`,
   codeTabFallback: index => `Tab ${index}`,
+  dropFiles: 'Drop files here or click to browse',
+  invalidFileType: name => `${name}: invalid file type`,
+  invalidFileSize: (name, max) => `${name}: exceeds the ${max} size limit`,
+  tooManyFiles: max => `Only ${max} file${max === 1 ? '' : 's'} allowed`,
 }

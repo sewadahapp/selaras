@@ -28,6 +28,8 @@ export interface IconRegistry {
   maximize: string
   minimize: string
   star: string
+  upload: string
+  file: string
 }
 
 // Hugeicons by default. One registry keyed by semantic purpose, not by
@@ -71,4 +73,6 @@ export const defaultIcons: IconRegistry = {
   maximize: 'hugeicons:fullscreen',
   minimize: 'hugeicons:collapse',
   star: 'hugeicons:star',
+  upload: 'hugeicons:upload-01',
+  file: 'hugeicons:file-01',
 }
