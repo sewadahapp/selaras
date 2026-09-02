@@ -6,7 +6,7 @@ const danger = ref()
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 max-w-xs">
+  <div class="flex w-full max-w-xs flex-col gap-4">
     <SSelect v-model="primary" :items="items" color="primary" placeholder="Primary" />
     <SSelect v-model="success" :items="items" color="success" placeholder="Success" />
     <SSelect v-model="danger" :items="items" color="danger" placeholder="Danger" />

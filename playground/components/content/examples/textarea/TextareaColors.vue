@@ -5,7 +5,7 @@ const danger = ref('')
 </script>
 
 <template>
-  <div class="flex flex-col gap-4 max-w-xs">
+  <div class="flex w-full max-w-xs flex-col gap-4">
     <STextarea v-model="primary" color="primary" placeholder="Primary" />
     <STextarea v-model="success" color="success" placeholder="Success" />
     <STextarea v-model="danger" color="danger" placeholder="Danger" />

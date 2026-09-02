@@ -6,7 +6,7 @@ const itemsWithDisabledItem = [
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
+  <div class="flex w-full flex-col gap-6">
     <SAccordion :items="itemsWithDisabledItem">
       <template #a>
         A UI component library for Nuxt, themed with tv() and CSS variables.
