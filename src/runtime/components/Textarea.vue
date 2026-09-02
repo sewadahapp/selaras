@@ -119,6 +119,7 @@ watch(() => props.modelValue, resize)
     <textarea
       :id="textareaId"
       ref="textareaRef"
+      data-ui-group-item
       :value="modelValue"
       :name="name ?? field?.name"
       :placeholder="placeholder"

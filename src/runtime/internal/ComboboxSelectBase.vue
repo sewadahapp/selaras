@@ -341,6 +341,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
       <div
         v-if="creatable"
         :id="selectId"
+        data-ui-group-item
         :aria-invalid="selectInvalid || undefined"
         :aria-describedby="describedBy"
         :aria-busy="loading || undefined"
@@ -458,6 +459,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
       <ComboboxTrigger
         v-else
         :id="selectId"
+        data-ui-group-item
         :aria-invalid="selectInvalid || undefined"
         :aria-describedby="describedBy"
         :aria-busy="loading || undefined"

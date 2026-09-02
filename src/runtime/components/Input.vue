@@ -84,6 +84,7 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
     <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <input
       :id="inputId"
+      data-ui-group-item
       :value="modelValue"
       :type="type"
       :name="name ?? field?.name"
