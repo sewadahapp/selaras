@@ -44,6 +44,26 @@
   }
 }
 
+/* Same expand/collapse motion as Accordion's own, for the standalone
+   Collapsible component - Reka's CollapsibleContent exposes the panel's
+   measured natural height as --reka-collapsible-content-height. */
+@keyframes selaras-collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--reka-collapsible-content-height);
+  }
+}
+@keyframes selaras-collapsible-up {
+  from {
+    height: var(--reka-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
 /* Sweep motion for Skeleton's shimmer animation - the theme sets a
    200%-wide gradient background (theme/skeleton.ts), this just slides its
    position so the lighter band travels left to right across the block. */
