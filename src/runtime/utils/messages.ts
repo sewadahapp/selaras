@@ -50,6 +50,7 @@ export interface MessageRegistry {
   showMore: string
   showLess: string
   selectFile: string
+  toggleSidebar: string
 }
 
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
@@ -110,4 +111,5 @@ export const defaultMessages: MessageRegistry = {
   showMore: 'Show more',
   showLess: 'Show less',
   selectFile: 'Select a file to view its content',
+  toggleSidebar: 'Toggle sidebar',
 }
