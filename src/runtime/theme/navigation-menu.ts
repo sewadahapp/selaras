@@ -86,6 +86,16 @@ export const navigationMenuTheme = tv({
     highlight: {
       true: {},
     },
+    // Icon-only rail mode (vertical only - see NavigationMenu.vue's own
+    // `collapsed` prop). `sr-only` on the labels, not a `v-if` removing
+    // them from the template - keeps every link's accessible name intact
+    // for assistive tech while hiding it visually, the same reasoning
+    // Button's own icon-only buttons already lean on via `aria-label`.
+    // `justify-center` re-centers the now-solo icon in the row instead of
+    // leaving it sitting in the gap the label used to fill.
+    collapsed: {
+      true: { link: 'justify-center', linkLabel: 'sr-only', childLink: 'justify-center', childLinkLabel: 'sr-only' },
+    },
   },
   compoundVariants: [
     { variant: 'pill', active: false, class: { link: 'hover:bg-[var(--ui-bg-elevated)]', childLink: 'hover:bg-[var(--ui-bg-elevated)]' } },

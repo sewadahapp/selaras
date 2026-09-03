@@ -266,3 +266,27 @@ describe('navigationMenu (vertical)', () => {
     expect(selected).toBe(false)
   })
 })
+
+describe('navigationMenu (collapsed)', () => {
+  it('visually hides a leaf item\'s label (sr-only, not removed) while keeping its icon', async () => {
+    const items: NavigationMenuItem[] = [{ label: 'Docs', icon: 'lucide:book', to: '/docs' }]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+
+    const link = wrapper.find('a[href="/docs"]')
+    expect(link.text()).toBe('Docs')
+    const label = link.findAll('span').find(s => s.text() === 'Docs')
+    expect(label?.classes()).toContain('sr-only')
+    expect(link.find('.iconify').exists()).toBe(true)
+  })
+
+  it('renders a parent-with-children as a plain inert item, not an expandable accordion trigger', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Guides', icon: 'lucide:book', children: [{ label: 'Getting started', to: '/guides/getting-started' }] },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+
+    expect(wrapper.find('button').exists()).toBe(false)
+    expect(wrapper.find('.iconify').exists()).toBe(true)
+    expect(wrapper.find('a[href="/guides/getting-started"]').exists()).toBe(false)
+  })
+})

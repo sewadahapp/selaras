@@ -102,6 +102,23 @@ active and a disabled item:
 ::component-example{name="navigation-menu-vertical-full"}
 ::
 
+### Collapsed
+
+`collapsed` (vertical only) shrinks every item down to just its own icon -
+an icon rail, the shape a sidebar nav commonly takes once collapsed. Labels
+stay in the DOM for assistive tech (`sr-only`, not removed), so this is
+CSS-only and doesn't change what a screen reader announces. A parent with
+children renders as a plain, non-expanding icon instead of a trigger -
+there's no room for a nested list in an icon rail, and nothing to flyout
+to:
+
+::component-example{name="navigation-menu-collapsed"}
+::
+
+```vue-html
+<SNavigationMenu :items="items" orientation="vertical" collapsed />
+```
+
 ### Variant
 
 `variant="pill"` (default) gives the active item a filled background;
@@ -204,6 +221,7 @@ These same slots work identically in vertical mode.
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
 | `variant` | `'pill' \| 'link'` | `'pill'` |
 | `highlight` | `boolean` | `false` |
+| `collapsed` | `boolean` | `false` |
 | `ui` | `Partial<Record<NavigationMenuSlot, string \| object>>` | - |
 
 `NavigationMenuItem`:
