@@ -33,6 +33,7 @@ export interface IconRegistry {
   folder: string
   folderOpen: string
   more: string
+  sidebarCollapse: string
 }
 
 // Hugeicons by default. One registry keyed by semantic purpose, not by
@@ -81,4 +82,13 @@ export const defaultIcons: IconRegistry = {
   folder: 'hugeicons:folder-01',
   folderOpen: 'hugeicons:folder-open',
   more: 'hugeicons:more-horizontal',
+  // A panel-with-a-shaded-column glyph reads as "sidebar" far more directly
+  // than a generic double-chevron - DashboardSidebarToggle mirrors this one
+  // horizontally (`scaleX(-1)`, not a rotation) once collapsed, rather than
+  // swapping in hugeicons:sidebar-right-01. Confirmed by diffing both
+  // icons' real path data: they're identical except every x-coordinate is
+  // reflected around the icon's center (same y-coordinates throughout) -
+  // a true mirror image, not a 180°-rotated one, which would put the
+  // little nav-line details at the bottom instead of back at the top.
+  sidebarCollapse: 'hugeicons:sidebar-left-01',
 }

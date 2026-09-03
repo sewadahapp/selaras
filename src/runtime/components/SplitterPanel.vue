@@ -12,6 +12,8 @@ const props = defineProps<SplitterPanelProps>()
 
 const emit = defineEmits<SplitterPanelEmits>()
 
+defineSlots<SplitterPanelSlots>()
+
 export interface SplitterPanelProps {
   /** Initial size - a percentage of the group's total by default (`sizeUnit="%"`), or pixels with `sizeUnit="px"`. */
   defaultSize?: number
@@ -32,6 +34,10 @@ export interface SplitterPanelEmits {
   collapse: []
   expand: []
   resize: [size: number]
+}
+
+export interface SplitterPanelSlots {
+  default?: (props: { isCollapsed: boolean, isExpanded: boolean, collapse: () => void, expand: () => void }) => any
 }
 
 const panelRef = ref<InstanceType<typeof RekaSplitterPanel>>()
@@ -66,6 +72,8 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
     @expand="emit('expand')"
     @resize="(size) => emit('resize', size)"
   >
-    <slot />
+    <template #default="{ isCollapsed, isExpanded, collapse, expand }">
+      <slot :is-collapsed="isCollapsed" :is-expanded="isExpanded" :collapse="collapse" :expand="expand" />
+    </template>
   </RekaSplitterPanel>
 </template>

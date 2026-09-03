@@ -22,6 +22,35 @@ export const AVATAR_SIZE_INJECTION_KEY: InjectionKey<ComputedRef<'sm' | 'md' | '
 export interface DashboardContext {
   isMobile: Ref<boolean>
   toggleSidebar: Ref<(() => void) | undefined>
+  /**
+   * Same populate-after-mount reasoning as `toggleSidebar` - DashboardGroup
+   * doesn't know the sidebar's own collapsed state, only DashboardSidebar
+   * does, so it keeps this ref's value in sync. On mobile this tracks the
+   * drawer's own closed/open state (closed = "collapsed", the same
+   * "sidebar isn't currently taking up space" meaning collapsed has on
+   * desktop) rather than a hardcoded `false` - DashboardSidebarToggle
+   * mirrors its icon off this one flag regardless of which mode is active.
+   */
+  isSidebarCollapsed: Ref<boolean>
+  /**
+   * Owned by DashboardGroup itself (not DashboardSidebar) for a real
+   * reason, not just consistency with the other two - DashboardGroup's
+   * own `v-if="!isMobile"`/`v-else` wraps its *entire* default slot, not
+   * just the Splitter, so DashboardSidebar (along with everything else in
+   * that slot) is fully unmounted and re-created on every mobile
+   * transition, not merely swapping an internal branch. A value living on
+   * DashboardSidebar's own instance can't survive that - it's gone the
+   * moment the old instance is torn down, before a fresh instance's own
+   * watchers ever get a chance to observe the transition. DashboardGroup
+   * is the one thing that actually persists across it, so the last known
+   * desktop pixel width has to live here instead, written by
+   * DashboardSidebar's own `resize` handler and read back by a freshly
+   * mounted DashboardSidebar to correct Reka's own cookie-restored
+   * percentage (recalibrated against whatever the container's width
+   * happens to be at that specific remount - see DashboardSidebar.vue's
+   * own comment for the full explanation).
+   */
+  lastDesktopWidthPx: Ref<number | undefined>
 }
 
 export const DASHBOARD_INJECTION_KEY: InjectionKey<DashboardContext> = Symbol('selaras-dashboard')

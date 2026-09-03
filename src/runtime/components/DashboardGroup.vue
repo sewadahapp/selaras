@@ -44,7 +44,9 @@ onMounted(() => {
 onUnmounted(() => mediaQuery?.removeEventListener('change', updateIsMobile))
 
 const toggleSidebar = ref<(() => void) | undefined>(undefined)
-provide(DASHBOARD_INJECTION_KEY, { isMobile, toggleSidebar })
+const isSidebarCollapsed = ref(false)
+const lastDesktopWidthPx = ref<number | undefined>(undefined)
+provide(DASHBOARD_INJECTION_KEY, { isMobile, toggleSidebar, isSidebarCollapsed, lastDesktopWidthPx })
 
 // Cookie-backed, not Reka's own default localStorage-backed storage -
 // same-origin server-readable, portable across a full page reload (not
@@ -65,7 +67,20 @@ provide(DASHBOARD_INJECTION_KEY, { isMobile, toggleSidebar })
 // object returns - a pre-existing Reka limitation, not something wiring
 // in a cookie can work around from here. The corrected width still
 // applies quickly once mounted, just not before that first paint.
-const layoutCookie = useCookie<string | undefined>(props.autoSaveId, { default: () => undefined })
+// Custom encode/decode - the value handed to setItem is already a JSON
+// string (Reka's own JSON.stringify of its layout state, not a plain JS
+// value). Nuxt's default cookie codec doesn't know that: it JSON.parses
+// the string to check its type, sees an object, and JSON.stringifies the
+// whole thing again on top - a real, still-correct-either-way round trip
+// (decode symmetrically unwraps it), but it leaves the cookie itself
+// doubly-escaped and roughly twice the size for no reason. Treating the
+// value as already-opaque text here keeps the wire value a plain,
+// directly-readable JSON blob instead.
+const layoutCookie = useCookie<string | undefined>(props.autoSaveId, {
+  default: () => undefined,
+  encode: value => encodeURIComponent(value ?? ''),
+  decode: value => (value ? decodeURIComponent(value) : value),
+})
 const storage = {
   getItem: () => layoutCookie.value ?? null,
   setItem: (_name: string, value: string) => {
