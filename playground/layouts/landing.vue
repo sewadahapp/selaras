@@ -5,6 +5,7 @@
         Selaras
       </NuxtLink>
       <template #right>
+        <DocsSearchButton />
         <SNavigationMenu :items="docsNavItems" variant="link" :ui="{ root: 'w-auto' }" />
         <SColorModeToggle />
       </template>

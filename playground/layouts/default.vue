@@ -23,6 +23,7 @@ const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
         Selaras
       </NuxtLink>
       <template #right>
+        <DocsSearchButton />
         <SNavigationMenu :items="docsNavItems" variant="link" :ui="{ root: 'w-auto' }" />
         <SColorModeToggle />
       </template>

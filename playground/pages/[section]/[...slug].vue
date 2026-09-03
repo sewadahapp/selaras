@@ -26,6 +26,8 @@ const proseComponents = {
   h6: 'SProseH6',
   pre: 'SProsePre',
 }
+
+const surround = useDocsSurround()
 </script>
 
 <template>
@@ -33,6 +35,7 @@ const proseComponents = {
     <SContainer size="full" class="min-w-0 flex-1 px-0">
       <SPageHeader :title="page?.title" :description="page?.description" />
       <ContentRenderer :value="page" :components="proseComponents" class="docs-content selaras-prose pt-6" />
+      <SContentSurround :prev="surround.prev" :next="surround.next" class="mt-8" />
     </SContainer>
     <SPageAside v-if="page?.body?.toc?.links?.length" :ui="{ root: 'top-16 h-[calc(100vh-4rem)]' }">
       <SContentToc :links="page.body.toc.links" />
