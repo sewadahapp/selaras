@@ -44,7 +44,7 @@ const asideUi = { root: 'top-16 h-[calc(100vh-4rem)]' }
  * when that text is a live component's label (e.g. a button's slot content).
  * Reset it back to inherited styling wherever it ends up inside an
  * interactive element instead of flowing prose text. This is unrelated to
- * markdown's own <p> rendering (handled by SProseP/ProseP.vue).
+ * markdown's own <p> rendering (styled by the selaras-prose CSS class).
  */
 .docs-content button p,
 .docs-content a p {

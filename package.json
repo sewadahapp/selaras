@@ -18,7 +18,8 @@
       "types": "./dist/runtime/types/index.d.ts",
       "import": "./dist/runtime/types/index.js"
     },
-    "./components/*": "./dist/runtime/components/*"
+    "./components/*": "./dist/runtime/components/*",
+    "./prose.css": "./dist/runtime/prose.css"
   },
   "main": "./dist/module.mjs",
   "typesVersions": {

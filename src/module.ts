@@ -66,6 +66,41 @@ export default defineNuxtModule<ModuleOptions>({
       ignore: ['**/ModalRenderer.vue', '**/NavigationMenuAccordionItem.vue', '**/SlideoverRenderer.vue', '**/DrawerRenderer.vue'],
     })
 
+    // ProsePre/ProseH1-H6 are the only two Prose*.vue components with real
+    // behavior beyond styling (a copy-to-clipboard button, an auto-anchor-
+    // linked heading) - see prose.md for the rest, which moved to a plain
+    // CSS class instead. This registers them a second time under their own
+    // bare, unprefixed names (`ProseH1`, not `SProseH1`) - additive, not a
+    // rename: `SProsePre`/`SProseH1`-`H6` (the main registration above)
+    // keep working unchanged for direct use.
+    //
+    // NOT sufficient on its own for @nuxt/content/@nuxtjs/mdc specifically,
+    // even with a high `priority` here: confirmed by reading its source
+    // that it ships its own built-in default ProseH1/ProsePre under these
+    // same bare names, and its `MDCRenderer` never does a global-name
+    // component *lookup* for these tags at all (registration
+    // order/priority genuinely never enters into it) - it resolves
+    // through a `components` prop passed to `<ContentRenderer>` instead.
+    // Still worth registering here regardless: this is the correct
+    // mechanism for any *other* renderer that resolves markdown elements
+    // to real component instances without shipping its own conflicting
+    // defaults. See prose.md's own "Wiring into @nuxt/content" section for
+    // the actual working `<ContentRenderer :components="...">` pattern.
+    const hasContentModule = nuxt.options.modules.some((m) => {
+      const name = typeof m === 'string' ? m : Array.isArray(m) && typeof m[0] === 'string' ? m[0] : undefined
+      return name === '@nuxt/content' || name === '@nuxtjs/mdc'
+    })
+    if (hasContentModule) {
+      addComponentsDir({
+        path: resolver.resolve('./runtime/components'),
+        pattern: ['ProsePre.vue', 'ProseH[1-6].vue'],
+        prefix: '',
+        pathPrefix: false,
+        global: true,
+        priority: 10,
+      })
+    }
+
     addImportsDir(resolver.resolve('./runtime/composables'))
 
     // Registers vRipple as an auto-importable directive - plain

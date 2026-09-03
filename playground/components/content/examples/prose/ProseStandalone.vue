@@ -1,11 +1,13 @@
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="selaras-prose">
     <SProseH3 id="standalone-heading">
       A heading
     </SProseH3>
-    <SProseP>
-      Used directly, with no Nuxt Content involved - <SProseStrong>bold</SProseStrong>,
-      <SProseEm>italic</SProseEm>, and <SProseCode>inline code</SProseCode> all work the same way.
-    </SProseP>
+    <p>
+      Any plain HTML picks up consistent typography from the
+      <code>.selaras-prose</code> class alone - <strong>bold</strong>,
+      <em>italic</em>, and <code>inline code</code> all work with no
+      components involved.
+    </p>
   </div>
 </template>

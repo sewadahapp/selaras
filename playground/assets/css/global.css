@@ -1,4 +1,16 @@
 /*
+ * The pipeline-agnostic prose typography class (src/runtime/prose.css) -
+ * opt-in and not bundled into theme.css, so this docs site imports it
+ * explicitly like any other consumer would. A real external consumer
+ * would write `@import "selaras/prose.css";` (the package's own exported
+ * path) instead of this relative one - this repo's own playground isn't
+ * an npm dependent of the root package (it references the module via a
+ * relative path in nuxt.config.ts, not a package name), so there's no
+ * node_modules/selaras symlink for that specifier to resolve against.
+ */
+@import "../../../src/runtime/prose.css";
+
+/*
  * Docs-site-only typography. Deliberately NOT in src/runtime/theme.css -
  * that file ships to every consumer of the library, and this is a choice
  * about how the *documentation* presents itself, not the component
