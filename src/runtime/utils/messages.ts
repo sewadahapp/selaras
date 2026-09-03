@@ -49,6 +49,7 @@ export interface MessageRegistry {
   tooManyFiles: (max: number) => string
   showMore: string
   showLess: string
+  selectFile: string
 }
 
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
@@ -108,4 +109,5 @@ export const defaultMessages: MessageRegistry = {
   tooManyFiles: max => `Only ${max} file${max === 1 ? '' : 's'} allowed`,
   showMore: 'Show more',
   showLess: 'Show less',
+  selectFile: 'Select a file to view its content',
 }

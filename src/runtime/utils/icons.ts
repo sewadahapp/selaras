@@ -30,6 +30,8 @@ export interface IconRegistry {
   star: string
   upload: string
   file: string
+  folder: string
+  folderOpen: string
   more: string
 }
 
@@ -76,5 +78,7 @@ export const defaultIcons: IconRegistry = {
   star: 'hugeicons:star',
   upload: 'hugeicons:upload-01',
   file: 'hugeicons:file-01',
+  folder: 'hugeicons:folder-01',
+  folderOpen: 'hugeicons:folder-open',
   more: 'hugeicons:more-horizontal',
 }
