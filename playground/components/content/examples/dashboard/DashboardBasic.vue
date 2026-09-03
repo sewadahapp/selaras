@@ -1,11 +1,34 @@
 <script setup lang="ts">
 const active = ref('Overview')
 
+function link(label: string, icon?: string) {
+  return { label, icon, active: active.value === label, onSelect: () => (active.value = label) }
+}
+
+// A deliberate mix of icon presence at every level (a leaf with/without
+// its own icon, a parent with/without one, a 3rd-level group under a
+// 2nd-level one) - every row's label still lands at the same x position
+// regardless, the whole point of linkIconWrapper's fixed-width reservation.
 const links = computed(() => [
-  { label: 'Overview', icon: 'hugeicons:dashboard-square-01', active: active.value === 'Overview', onSelect: () => { active.value = 'Overview' } },
-  { label: 'Analytics', icon: 'hugeicons:chart-line-data-01', active: active.value === 'Analytics', onSelect: () => { active.value = 'Analytics' } },
-  { label: 'Customers', icon: 'hugeicons:user-group', active: active.value === 'Customers', onSelect: () => { active.value = 'Customers' } },
-  { label: 'Settings', icon: 'hugeicons:settings-01', active: active.value === 'Settings', onSelect: () => { active.value = 'Settings' } },
+  link('Overview', 'hugeicons:dashboard-square-01'),
+  {
+    label: 'Analytics',
+    icon: 'hugeicons:chart-line-data-01',
+    children: [
+      link('Traffic', 'hugeicons:chart-line-data-01'),
+      link('Conversion'),
+      {
+        label: 'Reports',
+        icon: 'hugeicons:file-01',
+        children: [link('Daily'), link('Weekly', 'hugeicons:calendar-01')],
+      },
+    ],
+  },
+  link('Customers', 'hugeicons:user-group'),
+  {
+    label: 'Settings',
+    children: [link('General', 'hugeicons:settings-01'), link('Billing')],
+  },
 ])
 </script>
 

@@ -89,6 +89,56 @@ describe('popover', () => {
     container.remove()
   })
 
+  it('by default, closing the popover returns focus to its trigger', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    wrapper = await mountSuspended(Popover, {
+      attachTo: container,
+      props: { open: true },
+      slots: { default: () => h('button', { id: 'trigger' }, 'Trigger'), content: () => h('button', { id: 'inside' }, 'Inside') },
+    })
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    document.getElementById('inside')?.focus()
+    expect(document.activeElement?.id).toBe('inside')
+
+    await wrapper.setProps({ open: false })
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(document.activeElement?.id).toBe('trigger')
+
+    container.remove()
+  })
+
+  // A popover that can open via hover rather than a deliberate click (see
+  // NavigationMenuFlyoutTrigger.vue) needs to opt out of this - focus
+  // landing back on a trigger nobody meant to focus can itself register as
+  // focus moving "outside" whatever *other* popover is open by then,
+  // closing that one too. See that component's own note for the full,
+  // real-world failure sequence this was confirmed against.
+  it('returnFocusOnClose=false: closing the popover leaves focus wherever it already was', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    wrapper = await mountSuspended(Popover, {
+      attachTo: container,
+      props: { open: true, returnFocusOnClose: false },
+      slots: { default: () => h('button', { id: 'trigger' }, 'Trigger'), content: () => h('button', { id: 'inside' }, 'Inside') },
+    })
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    document.getElementById('inside')?.focus()
+    expect(document.activeElement?.id).toBe('inside')
+
+    await wrapper.setProps({ open: false })
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(document.activeElement?.id).not.toBe('trigger')
+
+    container.remove()
+  })
+
   it.each(['top', 'right', 'bottom', 'left'] as const)('side=%s reaches the underlying content classes', async (side) => {
     wrapper = await mountSuspended(Popover, {
       props: { open: true, side },

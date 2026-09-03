@@ -194,7 +194,7 @@ describe('navigationMenu (vertical)', () => {
   // shouldn't force every group open the way ContentNavigation's docs
   // sidebar does), so reaching a deep leaf means expanding every ancestor
   // group's trigger button by its label first.
-  function findTrigger(wrapper: { findAll: (selector: string) => { text: () => string, element: Element }[] }, label: string) {
+  function findTrigger(wrapper: { findAll: (selector: string) => { text: () => string, element: Element, classes: () => string[] }[] }, label: string) {
     return wrapper.findAll('button').find(b => b.text() === label)!
   }
 
@@ -210,6 +210,51 @@ describe('navigationMenu (vertical)', () => {
     const leaf = wrapper.find('a[href="/deep/level-3"]')
     expect(leaf.exists()).toBe(true)
     expect(leaf.text()).toBe('Level 3')
+  })
+
+  // Regression (redesigned architecture): a nested group's own trigger
+  // (a 2nd-level item that itself has children, like "Security" below)
+  // used to style itself off a `nested`-conditional `ps-0` override,
+  // trying to keep two parallel row styles (`link` vs `childLink`) in
+  // sync across every nesting level by hand - a real bug (and a second
+  // one, a stale gap-1.5) both slipped through exactly there. Redesigned
+  // to match a comparable reference's own real source (confirmed by reading it
+  // directly): there's only ever one row style, `link`, at every depth -
+  // the indent step comes entirely from the *wrapping* childList/
+  // childItem's own margin/border, not from the row itself. So "Profile"
+  // (a leaf) and "Security" (a nested trigger) should carry the exact
+  // same row classes now, and their own wrapping `<li>` should carry the
+  // shared indent/guide-line treatment.
+  it('a nested group\'s own trigger uses the exact same row classes as its sibling leaf links', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Account', children: [
+        { label: 'Profile', to: '/account/profile' },
+        { label: 'Security', children: [{ label: '2FA', to: '/account/security/2fa' }] },
+      ] },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+    findTrigger(wrapper, 'Account').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const profile = wrapper.find('a[href="/account/profile"]')
+    const security = findTrigger(wrapper, 'Security')
+    // Both a leaf `<a>` and a nested trigger `<button>` share the exact
+    // same `link`-derived class list now (bar `w-full`/`justify-between`/
+    // `text-start`, the trigger's own layout additions on top).
+    for (const cls of profile.classes())
+      expect(security.classes()).toContain(cls)
+
+    // Their own wrapping <li> (childItem) is what actually carries the
+    // indent this time, not the row - both should carry it identically.
+    expect(profile.element.closest('li')?.classList.contains('ps-1.5')).toBe(true)
+    expect(security.element.closest('li')?.classList.contains('ps-1.5')).toBe(true)
+
+    // The wrapping <ul> (childList) draws the guide line - a start-margin
+    // plus a start-border, matching the reference's own real look.
+    const childList = profile.element.closest('ul')
+    expect(childList?.classList.contains('ms-5')).toBe(true)
+    expect(childList?.classList.contains('border-s')).toBe(true)
   })
 
   it('the nested list stays a normal single-column, in-flow list - regression, horizontal\'s own absolute-positioned multi-column dropdown styling leaked into vertical\'s accordion content too', async () => {
@@ -279,14 +324,257 @@ describe('navigationMenu (collapsed)', () => {
     expect(link.find('.iconify').exists()).toBe(true)
   })
 
-  it('renders a parent-with-children as a plain inert item, not an expandable accordion trigger', async () => {
+  // PopoverContent (the flyout) teleports through a real Teleport to
+  // document.body, same as every other Popover - invisible to
+  // wrapper.find, so its content is checked via document.body directly
+  // instead, and the wrapper is unmounted afterward so a later test's own
+  // document.body query in this file can't match this one's stale node.
+  it('renders a parent-with-children as a Popover flyout trigger, not an expandable accordion', async () => {
     const items: NavigationMenuItem[] = [
       { label: 'Guides', icon: 'lucide:book', children: [{ label: 'Getting started', to: '/guides/getting-started' }] },
     ]
     const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
 
-    expect(wrapper.find('button').exists()).toBe(false)
-    expect(wrapper.find('.iconify').exists()).toBe(true)
-    expect(wrapper.find('a[href="/guides/getting-started"]').exists()).toBe(false)
+    const trigger = wrapper.find('button')
+    expect(trigger.exists()).toBe(true)
+    expect(trigger.find('.iconify').exists()).toBe(true)
+    // Regression: a collapsed-rail trigger is a fixed square (`size-10`,
+    // matching Button's own icon-only `square` sizing), not stretched to
+    // the rail's full width - a plain `<button>` with `display: flex` and
+    // no width utility would otherwise shrink-to-fit its own icon instead
+    // (the "bare buttons don't stretch like <a>/<div>" quirk, the reason
+    // `w-full` used to be here), landing as a thin sliver rather than a
+    // proper icon button matching its sibling `<a>` rows' own footprint.
+    expect(trigger.classes()).toContain('size-10')
+    expect(trigger.classes()).not.toContain('w-full')
+    expect(document.body.querySelector('a[href="/guides/getting-started"]')).toBeFalsy()
+
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const child = document.body.querySelector('a[href="/guides/getting-started"]')
+    expect(child).toBeTruthy()
+    expect(child?.textContent).toBe('Getting started')
+
+    // Regression: the flyout's own label span was inheriting `collapsed`
+    // from the shared `ui` computed (built with the trigger row's own
+    // `collapsed: true`), landing `sr-only` on children that have full
+    // room to show real text - `textContent` alone doesn't catch this,
+    // since sr-only hides visually, not from the DOM.
+    const label = child?.querySelector('span.truncate')
+    expect(label?.classList.contains('sr-only')).toBe(false)
+
+    wrapper.unmount()
+  })
+
+  // Regression: a flyout child that itself has children (a 3rd-level
+  // group) used to render as a plain <a> with no `to` and no way to
+  // reach its own children at all - dead, inert, and its own subtree
+  // completely unreachable once the sidebar was collapsed. It now renders
+  // as a real collapsible trigger (NavigationMenuAccordionItem, the same
+  // component the expanded sidebar's own nested groups already use) -
+  // not a link itself, but a chevron-toggled row whose own children only
+  // appear once it's expanded.
+  it('a flyout child with its own children renders as a collapsible trigger, its grandchildren revealed on click', async () => {
+    const items: NavigationMenuItem[] = [
+      {
+        label: 'Analytics',
+        icon: 'lucide:chart',
+        children: [
+          { label: 'Traffic', to: '/traffic' },
+          { label: 'Reports', icon: 'lucide:file', children: [
+            { label: 'Daily', to: '/reports/daily' },
+            { label: 'Weekly', icon: 'lucide:calendar', to: '/reports/weekly' },
+          ] },
+        ],
+      },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+
+    wrapper.find('button').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    // Reports itself is not a link - only its own children are - and its
+    // own grandchildren stay collapsed until its trigger is clicked.
+    expect(document.body.querySelector('a[href="/traffic"]')).toBeTruthy()
+    expect(Array.from(document.body.querySelectorAll('a')).some(a => a.textContent?.includes('Reports'))).toBe(false)
+    expect(document.body.querySelector('a[href="/reports/daily"]')).toBeFalsy()
+
+    const reportsTrigger = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.includes('Reports'))
+    expect(reportsTrigger).toBeTruthy()
+    reportsTrigger!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const daily = document.body.querySelector('a[href="/reports/daily"]')
+    const weekly = document.body.querySelector('a[href="/reports/weekly"]')
+    expect(daily?.textContent).toBe('Daily')
+    expect(weekly?.textContent).toBe('Weekly')
+    expect(weekly?.querySelector('.iconify')).toBeTruthy()
+
+    wrapper.unmount()
+  })
+
+  // Regression: each trigger used to hold its own local open/close-timer
+  // state, with nothing coordinating across siblings - hovering down a
+  // tightly-packed rail could open several flyouts at once, since the
+  // previous one's own 200ms close timer hadn't fired yet by the time the
+  // next one's hover opened it. Opening a second trigger now closes the
+  // first synchronously, via one shared "which flyout is open" value.
+  it('hovering a second collapsed trigger closes the first immediately, not after its own close timer', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Guides', icon: 'lucide:book', children: [{ label: 'Getting started', to: '/guides/getting-started' }] },
+      { label: 'Team', icon: 'lucide:users', children: [{ label: 'Members', to: '/team/members' }] },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+    const [guidesTrigger, teamTrigger] = wrapper.findAll('button')
+
+    guidesTrigger!.element.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+    expect(document.body.querySelector('a[href="/guides/getting-started"]')).toBeTruthy()
+
+    // No mouseleave dispatched on Guides first - mirrors the real-world
+    // case of the pointer moving straight from one trigger to the next.
+    teamTrigger!.element.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(document.body.querySelector('a[href="/team/members"]')).toBeTruthy()
+    expect(document.body.querySelector('a[href="/guides/getting-started"]')).toBeFalsy()
+
+    wrapper.unmount()
+  })
+
+  // A collapsed rail's icon has no chevron/label to hint it even has
+  // children - hovering it has to be enough to find out, not just
+  // clicking, or there's no way to discover the flyout without committing
+  // to a click first.
+  it('a collapsed parent-with-children trigger opens its flyout on hover, without a click', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Guides', icon: 'lucide:book', children: [{ label: 'Getting started', to: '/guides/getting-started' }] },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+
+    expect(document.body.querySelector('a[href="/guides/getting-started"]')).toBeFalsy()
+
+    wrapper.find('button').element.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(document.body.querySelector('a[href="/guides/getting-started"]')).toBeTruthy()
+
+    wrapper.unmount()
+  })
+
+  // A collapsed top-level item with no icon used to render with nothing
+  // in its leading slot at all - visually empty, indistinguishable from a
+  // missing/broken row. It now falls back to the label's own first
+  // character so there's still something in the icon's own spot.
+  it('a collapsed item with no icon falls back to its label\'s first character, for both a leaf and a flyout trigger', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Reports', to: '/reports' },
+      { label: 'Team', children: [{ label: 'Members', to: '/team/members' }] },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+
+    const leaf = wrapper.find('a[href="/reports"]')
+    expect(leaf.find('.iconify').exists()).toBe(false)
+    expect(leaf.text()).toContain('R')
+
+    const trigger = wrapper.find('button')
+    expect(trigger.find('.iconify').exists()).toBe(false)
+    expect(trigger.text()).toContain('T')
+
+    wrapper.unmount()
+  })
+
+  // The flyout's own outermost child list sits directly inside the
+  // popover with no visible parent row above it (the real parent - the
+  // icon trigger - is outside the popover entirely), so its guide line
+  // used to just float, connected to nothing. A group nested further
+  // inside the same flyout (Permissions, here) still has a real, visible
+  // heading row right above its own children, so its guide line stays.
+  it('the flyout\'s own root child list has no guide line, but a group nested inside the same flyout keeps one', async () => {
+    const items: NavigationMenuItem[] = [
+      {
+        label: 'Team',
+        icon: 'lucide:users',
+        children: [
+          { label: 'Members', to: '/team/members' },
+          { label: 'Permissions', icon: 'lucide:key', children: [{ label: 'Read', to: '/team/permissions/read' }] },
+        ],
+      },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+
+    wrapper.find('button').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const members = document.body.querySelector('a[href="/team/members"]')
+    const rootList = members?.closest('ul')
+    expect(rootList?.classList.contains('border-s')).toBe(false)
+    expect(rootList?.classList.contains('ms-5')).toBe(false)
+
+    // Permissions is its own collapsible trigger now (NavigationMenuAccordionItem)
+    // - its own children stay collapsed until it's clicked open too.
+    const permissionsTrigger = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.includes('Permissions'))
+    permissionsTrigger!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const read = document.body.querySelector('a[href="/team/permissions/read"]')
+    const nestedList = read?.closest('ul')
+    expect(nestedList?.classList.contains('border-s')).toBe(true)
+    expect(nestedList?.classList.contains('ms-5')).toBe(true)
+
+    wrapper.unmount()
+  })
+})
+
+describe('navigationMenu (label/separator items)', () => {
+  it('renders a label item as a non-interactive heading, not a real link', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Links', type: 'label' },
+      { label: 'Docs', to: '/docs' },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+
+    expect(wrapper.text()).toContain('Links')
+    // A label item is never a real navigable link - only the ordinary
+    // 'Docs' item below it is.
+    expect(wrapper.findAll('a')).toHaveLength(1)
+  })
+
+  it('renders a separator item as a role="separator" element with no text', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Docs', to: '/docs' },
+      { label: 'sep-1', type: 'separator' },
+      { label: 'Settings', to: '/settings' },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+
+    const separator = wrapper.find('[role="separator"]')
+    expect(separator.exists()).toBe(true)
+    expect(separator.text()).toBe('')
+    expect(wrapper.text()).not.toContain('sep-1')
+  })
+
+  it('a group is just a label item followed by ordinary items, no wrapping structure', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Guide', type: 'label' },
+      { label: 'Installation', to: '/installation' },
+      { label: 'Components', type: 'label' },
+      { label: 'Button', to: '/button' },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+
+    const text = wrapper.text()
+    expect(text.indexOf('Guide')).toBeLessThan(text.indexOf('Installation'))
+    expect(text.indexOf('Installation')).toBeLessThan(text.indexOf('Components'))
+    expect(text.indexOf('Components')).toBeLessThan(text.indexOf('Button'))
   })
 })

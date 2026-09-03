@@ -27,6 +27,13 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // inside a <nav> for every level - a real accessibility regression, not
 // just a style mismatch). Mirrors ContentNavigation.vue's own recursive
 // single-item-SAccordion-per-group technique.
+//
+// Every level (top or nested, leaf or group) styles itself off the exact
+// same `link` slot - see navigation-menu.ts's own comment on that slot
+// for why this file doesn't (and used to, wrongly) carry any of its own
+// depth-specific styling. The visual step-in per level comes entirely
+// from `childList`'s own start-margin/border below, not from anything a
+// `nested`/depth prop would need to toggle here.
 export interface NavigationMenuAccordionItemProps {
   item: NavigationMenuItem
   color?: ButtonVariants['color']
@@ -63,7 +70,7 @@ const accordionItems = computed(() => [{ value: accordionValue, label: props.ite
 const groupUi = computed(() => ({
   item: '',
   trigger: `${ui.value.link({ active: false, disabled: props.item.disabled })} w-full justify-between text-start`,
-  label: 'inline-flex min-w-0 items-center gap-1.5',
+  label: 'inline-flex min-w-0 items-center gap-2',
   chevron: ui.value.linkTrailingIcon(),
   content: ui.value.content(),
 }))
@@ -73,13 +80,13 @@ function isActive(item: NavigationMenuItem) {
 }
 
 // Recomputed per child, not the shared `ui` above - active/disabled vary
-// row-to-row (same reasoning as NavigationMenu.vue's own childLinkProps).
-// Must live in <script>, not called inline in the template - a top-level
+// row-to-row (same reasoning as NavigationMenu.vue's own linkProps). Must
+// live in <script>, not called inline in the template - a top-level
 // `computed()` like `theme` is auto-unwrapped in templates, so writing
 // `theme.value(...)` there would try to read `.value` off the already-
 // unwrapped function itself.
-function childLinkProps(child: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).childLink, props.ui?.childLink)
+function linkProps(child: NavigationMenuItem) {
+  return resolveSlot(theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
 }
 
 // Reka's real NavigationMenuLink has no `disabled` prop - a disabled leaf
@@ -126,7 +133,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
             <NuxtLink
               v-else
               :to="child.to"
-              v-bind="childLinkProps(child)"
+              v-bind="linkProps(child)"
               :aria-disabled="child.disabled ? 'true' : undefined"
               @click="onSelect(child, $event)"
             >
@@ -135,7 +142,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                   <Icon v-if="child.icon" :name="child.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
                 </slot>
                 <slot :name="slotName(child, '-label')" :item="child" :active="isActive(child)">
-                  <span v-bind="resolveSlot(ui.childLinkLabel, props.ui?.childLinkLabel)">{{ child.label }}</span>
+                  <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ child.label }}</span>
                 </slot>
                 <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
               </slot>

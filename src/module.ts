@@ -58,12 +58,15 @@ export default defineNuxtModule<ModuleOptions>({
       // mirroring a comparable reference's own un-exported OverlayProvider - not meant to be
       // placed by a consumer (App.vue already mounts one; a second copy
       // would render every open programmatic modal twice, since useModal()'s
-      // state is a shared singleton). NavigationMenuAccordionItem is
-      // NavigationMenu's own internal recursive helper for vertical mode's
-      // arbitrary-depth tree - not meant to be placed directly either.
-      // SlideoverRenderer/DrawerRenderer are useSlideover()'s/useDrawer()'s
-      // own render loops, same reasoning as ModalRenderer.
-      ignore: ['**/ModalRenderer.vue', '**/NavigationMenuAccordionItem.vue', '**/SlideoverRenderer.vue', '**/DrawerRenderer.vue'],
+      // state is a shared singleton). NavigationMenuAccordionItem,
+      // NavigationMenuFlyoutList and NavigationMenuFlyoutTrigger are
+      // NavigationMenu's own internal recursive helpers for vertical mode's
+      // arbitrary-depth tree (expanded, collapsed-flyout content, and the
+      // collapsed-flyout's own hover/click trigger, respectively) - not
+      // meant to be placed directly either. SlideoverRenderer/DrawerRenderer
+      // are useSlideover()'s/useDrawer()'s own render loops, same reasoning
+      // as ModalRenderer.
+      ignore: ['**/ModalRenderer.vue', '**/NavigationMenuAccordionItem.vue', '**/NavigationMenuFlyoutList.vue', '**/NavigationMenuFlyoutTrigger.vue', '**/SlideoverRenderer.vue', '**/DrawerRenderer.vue'],
     })
 
     // ProsePre/ProseH1-H6 are the only two Prose*.vue components with real

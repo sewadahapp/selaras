@@ -108,9 +108,10 @@ active and a disabled item:
 an icon rail, the shape a sidebar nav commonly takes once collapsed. Labels
 stay in the DOM for assistive tech (`sr-only`, not removed), so this is
 CSS-only and doesn't change what a screen reader announces. A parent with
-children renders as a plain, non-expanding icon instead of a trigger -
-there's no room for a nested list in an icon rail, and nothing to flyout
-to:
+children renders as a themed flyout trigger instead of an expandable
+accordion row - there's no room for a nested list in an icon rail, so its
+children surface in a small popover next to the icon instead, the same
+pattern a collapsed sidebar commonly uses elsewhere:
 
 ::component-example{name="navigation-menu-collapsed"}
 ::
@@ -118,6 +119,33 @@ to:
 ```vue-html
 <SNavigationMenu :items="items" orientation="vertical" collapsed />
 ```
+
+### Labels and separators
+
+An item can be a real link (the default), or `type: 'label'`/`type: 'separator'`
+instead - a non-interactive section heading and a thin divider line,
+respectively. Both are just items in the same flat array, not a wrapping
+structure - a "group" is nothing more than a `label` item followed by the
+items it introduces:
+
+::component-example{name="navigation-menu-labels"}
+::
+
+```vue-html
+<SNavigationMenu :items="[
+  { label: 'Guide', type: 'label' },
+  { label: 'Introduction', to: '/introduction' },
+  { label: 'Installation', to: '/installation' },
+  { label: 'sep-1', type: 'separator' },
+  { label: 'Components', type: 'label' },
+  { label: 'Button', to: '/components/button' },
+]" orientation="vertical" />
+```
+
+A `separator` item still needs a unique `label` even though it's never
+displayed - every item's `label` doubles as its list key. Top-level only:
+a `children` array doesn't check `type`, so a nested tree can't group its
+own children under a sub-heading.
 
 ### Variant
 
@@ -236,6 +264,7 @@ These same slots work identically in vertical mode.
 | `children` | `NavigationMenuItem[]` | One level for horizontal; arbitrary depth for vertical. |
 | `onSelect` | `(event: Event) => void` | Fired when a leaf item is activated. |
 | `slot` | `string` | Targets this item's own named slots ahead of the generic ones - see [Customizing content](#customizing-content). |
+| `type` | `'link' \| 'label' \| 'separator'` | `'link'` unless set - see [Labels and separators](#labels-and-separators). |
 
 ## Slots
 
@@ -243,7 +272,7 @@ These same slots work identically in vertical mode.
 | --- | --- | --- |
 | `item` | `{ item, active }` | Replaces an item's entire content (icon+label, or icon+label+chevron for a trigger) |
 | `item-leading` | `{ item, active }` | Replaces the leading icon |
-| `item-label` | `{ item, active }` | Replaces the label text |
+| `item-label` | `{ item, active }` | Replaces the label text - also the only slot a `type: 'label'` item uses |
 | `item-trailing` | `{ item, active }` | Replaces the trailing content (the chevron, for a trigger) |
 | `item-content` | `{ item }` | Replaces an entire dropdown/accordion body |
 | `list-leading` | - | Rendered before the item list |

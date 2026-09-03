@@ -15,8 +15,29 @@ export const navigationMenuTheme = tv({
     root: 'flex w-full',
     list: 'flex list-none',
     item: 'min-w-0',
-    link: 'group relative flex items-center gap-1.5 rounded-[var(--ui-radius-md)] px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    // `link` is the *only* row style vertical orientation ever uses, at
+    // every depth - a top-level leaf, a top-level trigger, a 3rd-level
+    // leaf nested three accordions deep, all get this same class, recursed
+    // through NavigationMenuAccordionItem.vue rather than switching to a
+    // separate "child" style partway down. `childLink` below still exists,
+    // but only for horizontal's own dropdown panel - a real second row
+    // style there, not a nesting-depth concern. This mirrors a comparable reference's own
+    // real navigation-menu source (confirmed by reading it directly): it
+    // has no `childLink` at all for vertical mode, only ever `link` with a
+    // `level` variant. An earlier version of this file tried to keep two
+    // parallel row styles in sync across every nesting level instead (a
+    // `childLink` used from 2nd level down, `ps-0`/gap fixes chasing each
+    // new place the two silently drifted apart) - genuinely not worth it;
+    // one style everywhere is both simpler and correct by construction.
+    link: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
     linkIcon: 'size-4 shrink-0',
+    // Collapsed-rail fallback for a top-level item with no icon (see the
+    // `collapsed` variant below) - same box size as `linkIcon` so it
+    // drops into the exact same visual slot instead of the row looking
+    // empty. Purely decorative (`aria-hidden` at the call site) - the
+    // item's real accessible name is still `linkLabel`, kept in the DOM
+    // via `sr-only` rather than removed.
+    linkIconFallback: 'flex size-4 shrink-0 items-center justify-center text-[10px] font-semibold uppercase',
     linkLabel: 'truncate',
     linkTrailingIcon: 'size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180',
     // `content` and `childList` below are shared between horizontal's
@@ -35,6 +56,13 @@ export const navigationMenuTheme = tv({
     childItem: '',
     childLink: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
     childLinkLabel: 'truncate',
+    // `type: 'label'`/`'separator'` items (see NavigationMenuItem's own
+    // doc comment) - non-interactive, so neither gets `link`'s own
+    // hover/focus/active treatment. groupLabel's own px-2.5 matches
+    // link's, so a "Links"-style heading sits flush with the real items
+    // below it.
+    groupLabel: 'px-2.5 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-[var(--ui-text-muted)] first:pt-0',
+    separator: 'my-1 h-px bg-[var(--ui-border)]',
   },
   variants: {
     orientation: {
@@ -61,7 +89,26 @@ export const navigationMenuTheme = tv({
         content: 'absolute inset-x-0 top-0 w-full max-h-[70vh] overflow-y-auto',
         childList: 'grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]',
       },
-      vertical: { root: 'flex-col', list: 'flex-col gap-1' },
+      // The whole indent story for a nested tree, confirmed against Nuxt
+      // UI's own real source: every level of nesting reuses the exact
+      // same `link` row unstyled by depth - what actually creates the
+      // step-in per level is the *wrapping* childList/childItem, not the
+      // row itself. `childList`'s own start-margin (ms-5) plus a
+      // start-border draws one continuous guide line down each branch of
+      // the tree (matching the reference's own look, not something this
+      // project invented); `childItem`'s own ps-1.5 sits the row a touch
+      // off that line, and `-ms-px` pulls it back by the border's own
+      // width so the line doesn't silently add an extra pixel of its
+      // own. `content` carries no horizontal padding of its own for
+      // vertical - childList's ms-5 is the only indent source, so
+      // nothing here doubles up with it.
+      vertical: {
+        root: 'flex-col',
+        list: 'flex-col gap-1',
+        content: 'px-0 py-1',
+        childList: 'ms-5 border-s border-[var(--ui-border)]',
+        childItem: 'ps-1.5 -ms-px',
+      },
     },
     color: {
       primary: '',
@@ -87,14 +134,37 @@ export const navigationMenuTheme = tv({
       true: {},
     },
     // Icon-only rail mode (vertical only - see NavigationMenu.vue's own
-    // `collapsed` prop). `sr-only` on the labels, not a `v-if` removing
-    // them from the template - keeps every link's accessible name intact
-    // for assistive tech while hiding it visually, the same reasoning
+    // `collapsed` prop). `sr-only` on the label, not a `v-if` removing it
+    // from the template - keeps every link's accessible name intact for
+    // assistive tech while hiding it visually, the same reasoning
     // Button's own icon-only buttons already lean on via `aria-label`.
-    // `justify-center` re-centers the now-solo icon in the row instead of
-    // leaving it sitting in the gap the label used to fill.
+    // `size-10 p-0 mx-auto` (matching Button's own `square` md size)
+    // makes the row a fixed, centered square instead of a short rectangle
+    // stretched to the rail's full width with only the icon centered
+    // inside it - a plain `link` otherwise fills its container's width
+    // the same way an `<a>`/`<div>` always does (see NavigationMenu.vue's
+    // own note on that), which reads as "wide button with a tiny icon in
+    // it" rather than a real icon button once the label's gone. `p-0`
+    // overrides the base row's own `px-2.5 py-1.5` outright (twMerge
+    // resolves a bare `p-0` against a `px-*`/`py-*` pair correctly, same
+    // as every other partial-padding-override case in this file);
+    // `justify-center` (kept from before) centers the icon inside that
+    // now-fixed box.
     collapsed: {
-      true: { link: 'justify-center', linkLabel: 'sr-only', childLink: 'justify-center', childLinkLabel: 'sr-only' },
+      true: { link: 'size-10 justify-center p-0 mx-auto', linkLabel: 'sr-only' },
+    },
+    // A flyout's own *root* child list - the one rendered directly inside
+    // the collapsed rail's Popover content, with no visible parent row
+    // above it inside that popover (the real "parent" is the icon trigger
+    // sitting outside the popover entirely) - draws no guide line, since
+    // there's nothing inside the popover for it to visually connect to.
+    // A *nested* group further down the same flyout (e.g. a 3rd-level
+    // group's own children, sitting right below its own real, visible
+    // heading row) keeps the normal indent/line treatment untouched - see
+    // NavigationMenuFlyoutList.vue's own `root` prop, which is what wires
+    // this variant in only for that outermost call.
+    flyoutRoot: {
+      true: { childList: 'ms-0 border-s-0' },
     },
   },
   compoundVariants: [
@@ -115,7 +185,7 @@ export const navigationMenuTheme = tv({
     { variant: 'link', active: true, color: 'info', class: { link: 'text-[var(--ui-info)]' } },
     { variant: 'link', active: true, color: 'warning', class: { link: 'text-[var(--ui-warning)]' } },
 
-    // Child links (inside a dropdown/accordion panel) always get the
+    // Child links (inside horizontal's own dropdown panel) always get the
     // "active" text-color treatment regardless of `variant` - a pill-style
     // background on every list row in a dropdown would be visual noise.
     { active: true, color: 'primary', class: { childLink: 'text-[var(--ui-primary)]' } },

@@ -14,6 +14,8 @@ export interface PopoverProps {
   modal?: boolean
   /** When `false`, Escape and an outside click (or, since a popover is non-modal by default, an outside element merely receiving focus) no longer close the popover - the `escapeKeyDown`/`pointerDownOutside`/`focusOutside` events still fire, so a consumer can still react, but none of them close it on their own anymore. */
   dismissible?: boolean
+  /** When `false`, closing the popover no longer returns keyboard focus to its trigger. Reka does this by default regardless of *why* the popover closed, including a purely programmatic `open` change - which matters for a popover that can open via hover rather than a deliberate click/keypress: focus landing back on a trigger nobody meant to focus can itself count as focus moving "outside" whatever *other* popover the pointer has since moved on to, closing that one too. Defaults to `true`, matching Reka's own out-of-the-box behavior. */
+  returnFocusOnClose?: boolean
   /** Shows the little pointer triangle connecting the popover to its trigger. */
   arrow?: boolean
   ui?: UiProp<PopoverThemeSlots>
@@ -38,6 +40,7 @@ const props = withDefaults(defineProps<PopoverProps>(), {
   align: 'center',
   modal: false,
   dismissible: true,
+  returnFocusOnClose: true,
   arrow: false,
 })
 
@@ -66,6 +69,11 @@ function onFocusOutside(event: Event) {
   if (!props.dismissible)
     event.preventDefault()
   emit('focusOutside', event)
+}
+
+function onCloseAutoFocus(event: Event) {
+  if (!props.returnFocusOnClose)
+    event.preventDefault()
 }
 
 const theme = useComponentTheme('popover', popoverTheme)
@@ -108,6 +116,7 @@ function onUpdateOpen(value: boolean) {
         @escape-key-down="onEscapeKeyDown"
         @pointer-down-outside="onPointerDownOutside"
         @focus-outside="onFocusOutside"
+        @close-auto-focus="onCloseAutoFocus"
       >
         <slot name="content" />
         <PopoverArrow v-if="arrow" v-bind="arrowProps" />
