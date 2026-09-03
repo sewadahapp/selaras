@@ -26,6 +26,8 @@ export interface CollapsibleProps {
   defaultOpen?: boolean
   disabled?: boolean
   size?: CollapsibleVariants['size']
+  /** Which way the content reveals - `down` expands below the trigger, `up` above it. Flips the chevron's rest/open rotation to match. @default 'down' */
+  direction?: CollapsibleVariants['direction']
   ui?: UiProp<CollapsibleThemeSlots>
 }
 
@@ -44,7 +46,7 @@ export interface CollapsibleSlots {
 const icons = useIcons()
 
 const theme = useComponentTheme('collapsible', collapsibleTheme)
-const ui = computed(() => theme.value({ size: props.size }))
+const ui = computed(() => theme.value({ size: props.size, direction: props.direction }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))

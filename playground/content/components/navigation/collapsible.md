@@ -55,6 +55,25 @@ state:
 </SCollapsible>
 ```
 
+### Direction
+
+`direction="up"` reveals the content above the trigger instead of
+below it - the chevron's rest/open rotation flips to match, still
+pointing toward where the content will appear:
+
+::component-example{name="collapsible-direction"}
+::
+
+```vue-html
+<SCollapsible direction="up">
+  <template #trigger>
+    What's included in the free plan?
+  </template>
+  Everything you need to get started: unlimited projects, community
+  support, and access to every core feature.
+</SCollapsible>
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -63,6 +82,7 @@ state:
 | `defaultOpen` | `boolean` | `false` |
 | `disabled` | `boolean` | - |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `direction` | `'down' \| 'up'` | `'down'` |
 | `ui` | `Partial<Record<CollapsibleSlot, string \| object>>` | - |
 
 ## Emits

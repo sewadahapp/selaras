@@ -106,4 +106,45 @@ describe('collapsible', () => {
 
     expect(wrapper.find('button').classes()).toContain('custom-class')
   })
+
+  describe('direction', () => {
+    it('down (default) stacks the trigger above the content, chevron pointing down at rest', async () => {
+      const wrapper = await mountSuspended(Collapsible, {
+        slots: { trigger: () => 'Toggle', default: () => 'Content' },
+      })
+      await nextTick()
+
+      expect(wrapper.find('[data-state]').classes()).toContain('flex-col')
+      const chevron = wrapper.find('.iconify')
+      expect(chevron.classes()).not.toContain('rotate-180')
+      expect(chevron.classes()).toContain('group-data-[state=open]:rotate-180')
+    })
+
+    it('up visually reverses the stack and flips the chevron\'s rest/open rotation', async () => {
+      const wrapper = await mountSuspended(Collapsible, {
+        props: { direction: 'up' },
+        slots: { trigger: () => 'Toggle', default: () => 'Content' },
+      })
+      await nextTick()
+
+      expect(wrapper.find('[data-state]').classes()).toContain('flex-col-reverse')
+      const chevron = wrapper.find('.iconify')
+      expect(chevron.classes()).toContain('rotate-180')
+      expect(chevron.classes()).toContain('group-data-[state=open]:rotate-0')
+    })
+
+    it('up still renders the trigger before the content in the DOM', async () => {
+      const wrapper = await mountSuspended(Collapsible, {
+        props: { direction: 'up', defaultOpen: true },
+        slots: { trigger: () => 'Toggle', default: () => 'Content-marker' },
+      })
+      await nextTick()
+
+      const root = wrapper.find('[data-state]')
+      const triggerIndex = root.html().indexOf('Toggle')
+      const contentIndex = root.html().indexOf('Content-marker')
+      expect(triggerIndex).toBeGreaterThan(-1)
+      expect(triggerIndex).toBeLessThan(contentIndex)
+    })
+  })
 })

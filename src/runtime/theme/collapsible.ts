@@ -23,9 +23,26 @@ export const collapsibleTheme = tv({
       md: { trigger: 'text-sm', content: 'text-sm' },
       lg: { trigger: 'text-base', content: 'text-base' },
     },
+    // Reka always renders the trigger before the content in the DOM -
+    // that never changes. `flex-col-reverse` only flips the *visual*
+    // order, so `up` still reveals below the same trigger element in
+    // the accessibility tree/tab order, it just displays above it.
+    direction: {
+      down: { root: 'flex flex-col' },
+      up: {
+        root: 'flex flex-col-reverse',
+        // Base chevron points down at rest, rotates to point up once
+        // open - backwards for `up`, where content reveals upward.
+        // Flipped here so it still points toward where the content
+        // will appear: up at rest, back down once open.
+        chevron: 'rotate-180 group-data-[state=open]:rotate-0',
+        contentInner: 'pt-0 pb-2',
+      },
+    },
   },
   defaultVariants: {
     size: 'md',
+    direction: 'down',
   },
 })
 
