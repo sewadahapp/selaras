@@ -174,6 +174,25 @@ between triggers, and each panel is exposed as `role="region"` with
 always knows which question a given answer belongs to, even if the DOM
 order changes.
 
+## In markdown
+
+Every Selaras component is already globally registered under its `S`-prefixed
+name - a bare `::s-accordion{...}` block works with no extra wiring (see
+[Callout](/components/typography/callout)'s own "In markdown" section for how
+the pattern works generally). `items` is an array prop, not a string - bind
+it with a leading `:` so `@nuxtjs/mdc` parses the attribute as an expression
+instead of literal text. Each item's own content is a `#slot-name` line
+matching that item's `value`:
+
+```text
+::s-accordion{:items='[{"label":"First","value":"a"},{"label":"Second","value":"b"}]'}
+#a
+Content for the first item.
+#b
+Content for the second item.
+::
+```
+
 ## Props
 
 | Prop | Type | Default |

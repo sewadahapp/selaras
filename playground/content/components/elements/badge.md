@@ -68,6 +68,18 @@ reads as a status indicator at this size.
 <SBadge dot color="success" aria-label="Online" />
 ```
 
+## In markdown
+
+Every Selaras component is already globally registered under its `S`-prefixed
+name - a bare `::s-badge{...}` block works with no extra wiring, props
+included (see [Callout](/components/typography/callout)'s own "In markdown"
+section for how the pattern works generally):
+
+```md
+::s-badge{label="New" color="primary"}
+::
+```
+
 ## Props
 
 | Prop | Type | Default |

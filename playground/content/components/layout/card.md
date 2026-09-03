@@ -121,6 +121,29 @@ card's edges, with your own padded wrapper underneath for the details:
 </SCard>
 ```
 
+## In markdown
+
+Every Selaras component is already globally registered under its `S`-prefixed
+name - a bare `::s-card{...}` block works with no extra wiring (see
+[Callout](/components/typography/callout)'s own "In markdown" section for how
+the pattern works generally). Its `header`/`footer` named slots are each a
+`#slot-name` line inside the block, `@nuxtjs/mdc`'s own convention:
+
+```text
+::s-card
+#header
+Design
+#footer
+Posted March 2026
+::
+```
+
+A block mixing `header`/`footer` markers with unmarked body text for the
+default slot doesn't reliably separate the two - confirmed empirically, not
+just undocumented - so keep a markdown-authored card to its named slots only;
+reach for `<SCard>` directly in a `.vue` file once the body needs its own
+text.
+
 ## Props
 
 | Prop | Type | Default |

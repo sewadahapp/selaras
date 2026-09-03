@@ -74,6 +74,19 @@ default. This changes every component that uses that key at once - setting
 button, and `Chip`'s remove button all together, rather than needing a
 separate override for each.
 
+## In markdown
+
+Every Selaras component is already globally registered under its `S`-prefixed
+name - a bare `::s-icon{...}` block works with no extra wiring (see
+[Callout](/components/typography/callout)'s own "In markdown" section for how
+the pattern works generally). `Icon` has no body content, but the block
+still needs its own closing line:
+
+```md
+::s-icon{name="hugeicons:star" color="warning"}
+::
+```
+
 ## Props
 
 | Prop | Type | Default |

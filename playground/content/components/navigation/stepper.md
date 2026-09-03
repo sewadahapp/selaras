@@ -105,6 +105,23 @@ checkmark once completed) or annotating the active step:
 <SStepper :items="items" color="success" />
 ```
 
+## In markdown
+
+Every Selaras component is already globally registered under its `S`-prefixed
+name - a bare `::s-stepper{...}` block works with no extra wiring (see
+[Callout](/components/typography/callout)'s own "In markdown" section for how
+the pattern works generally). `items` is an array prop, not a string - bind
+it with a leading `:` so `@nuxtjs/mdc` parses the attribute as an expression
+instead of literal text. Unlike [Tabs](/components/navigation/tabs) or
+[Accordion](/components/navigation/accordion), each step's own text comes
+from its `title`/`description` fields directly, not a per-item slot - the
+block needs no body at all:
+
+```md
+::s-stepper{:items='[{"title":"Cart"},{"title":"Shipping"},{"title":"Payment"}]'}
+::
+```
+
 ## Props
 
 | Prop | Type | Default |

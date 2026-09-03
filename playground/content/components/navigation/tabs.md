@@ -80,6 +80,25 @@ with the sliding indicator as a raised background instead of a bottom bar:
 <STabs v-model="active" :items="items" variant="pill" />
 ```
 
+## In markdown
+
+Every Selaras component is already globally registered under its `S`-prefixed
+name - a bare `::s-tabs{...}` block works with no extra wiring (see
+[Callout](/components/typography/callout)'s own "In markdown" section for how
+the pattern works generally). `items` is an array prop, not a string - bind
+it with a leading `:` so `@nuxtjs/mdc` parses the attribute as an expression
+instead of literal text. Each tab's own content is a `#slot-name` line
+matching that item's `value`:
+
+```text
+::s-tabs{:items='[{"label":"One","value":"one"},{"label":"Two","value":"two"}]'}
+#one
+Content for the first tab.
+#two
+Content for the second tab.
+::
+```
+
 ## Props
 
 | Prop | Type | Default |

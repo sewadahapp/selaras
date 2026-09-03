@@ -41,6 +41,18 @@ for the default slot.
 <SKbd size="lg" value="meta" />
 ```
 
+## In markdown
+
+Every Selaras component is already globally registered under its `S`-prefixed
+name - a bare `::s-kbd{...}` block works with no extra wiring (see
+[Callout](/components/typography/callout)'s own "In markdown" section for how
+the pattern works generally):
+
+```md
+::s-kbd{value="meta"}
+::
+```
+
 ## Props
 
 | Prop | Type | Default |
