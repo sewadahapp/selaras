@@ -76,6 +76,18 @@
   }
 }
 
+/* Sliding motion for Progress's indeterminate linear indicator (no known
+   value to track a real width against) - the indicator is fixed at 1/3 the
+   track's own width, this just slides it fully across and back out again. */
+@keyframes selaras-progress-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
 /*
  * tw-animate-css's enter/exit utilities (animate-in, zoom-in-95, fade-in-0,
  * ...) - used by Select/Dropdown/Modal/Toast/Tooltip's open/close
