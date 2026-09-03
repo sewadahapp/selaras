@@ -19,7 +19,7 @@ order: 41
 
 Each item's content comes from a named slot matching its `value`. `type`
 defaults to `'multiple'` (independent items can each be open at once) -
-[ContentNavigation](/components/navigation/content-navigation) uses this internally for
+[ContentNavigation](/blocks/documentation/content-navigation) uses this internally for
 its collapsible nav groups.
 
 ### Custom label content

@@ -4,7 +4,7 @@ const route = useRoute()
 const { data: page } = await useAsyncData(route.path, () => queryCollection('docs').path(route.path).first())
 
 if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Component not found', fatal: true })
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
 // @nuxtjs/mdc ships its own built-in default prose components under the

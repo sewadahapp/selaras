@@ -1,7 +1,7 @@
 ---
 title: PageHeader
 description: Renders a content page's title and description.
-order: 62
+order: 10
 ---
 
 ## Usage

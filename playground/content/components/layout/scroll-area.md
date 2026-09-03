@@ -18,7 +18,7 @@ order: 65
 ```
 
 Give it a height via `class` (fallthrough) - `SScrollArea` fills whatever
-box it's placed in. [PageAside](/components/layout/page-aside) uses this internally
+box it's placed in. [PageAside](/blocks/documentation/page-aside) uses this internally
 for its scrollable body.
 
 ## Props

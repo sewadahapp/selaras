@@ -20,7 +20,7 @@ order: 63
 
 `SHeader` is `sticky top-0` by default, meant to sit above everything else on
 the page - this docs site's own top bar is exactly this component. If you
-also use [PageAside](/components/layout/page-aside) below it (for nav or TOC), give
+also use [PageAside](/blocks/documentation/page-aside) below it (for nav or TOC), give
 it a matching offset via its `ui` prop so it doesn't sit under the header:
 
 ```vue-html

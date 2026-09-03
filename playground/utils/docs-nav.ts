@@ -11,6 +11,7 @@ export const docsNavItems = [
     ],
   },
   { label: 'Components', to: '/components/elements/button' },
+  { label: 'Blocks', to: '/blocks/documentation/page-header' },
   {
     label: 'Utilities',
     children: [

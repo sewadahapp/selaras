@@ -1,7 +1,7 @@
 ---
 title: ContentNavigation
 description: A nested, collapsible nav tree - feed it queryCollectionNavigation()'s result directly.
-order: 42
+order: 30
 ---
 
 ## Usage
