@@ -47,6 +47,8 @@ export interface MessageRegistry {
   invalidFileType: (name: string) => string
   invalidFileSize: (name: string, max: string) => string
   tooManyFiles: (max: number) => string
+  showMore: string
+  showLess: string
 }
 
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
@@ -104,4 +106,6 @@ export const defaultMessages: MessageRegistry = {
   invalidFileType: name => `${name}: invalid file type`,
   invalidFileSize: (name, max) => `${name}: exceeds the ${max} size limit`,
   tooManyFiles: max => `Only ${max} file${max === 1 ? '' : 's'} allowed`,
+  showMore: 'Show more',
+  showLess: 'Show less',
 }
