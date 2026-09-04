@@ -18,7 +18,7 @@ export const proseTheme = tv({
     preHeader: 'flex items-center justify-between gap-2 border-b border-[var(--ui-border)] bg-[var(--ui-bg-elevated)] px-3 py-1.5',
     preFilename: 'font-mono text-xs text-[var(--ui-text-muted)]',
     preCopyButton: 'shrink-0',
-    pre: 'overflow-x-auto bg-[var(--ui-bg)] p-4 font-mono text-sm leading-relaxed',
+    pre: 'overflow-x-auto bg-[var(--ui-bg-elevated)] p-4 font-mono text-sm leading-relaxed',
   },
 })
 
