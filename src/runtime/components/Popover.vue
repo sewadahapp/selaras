@@ -26,6 +26,8 @@ export interface PopoverEmits {
   'escapeKeyDown': [event: KeyboardEvent]
   'pointerDownOutside': [event: Event]
   'focusOutside': [event: Event]
+  /** Fires right before Reka moves keyboard focus into the popover on open. Forwarded raw (no `dismissible`-style prop gating it, unlike the events above) - a consumer that only wants to suppress this for *some* opens (e.g. a hover-opened popover where a mouse-driven open shouldn't yank focus, but a keyboard-driven one still should) needs to decide per-event, which a static prop can't express. Call `event.preventDefault()` in a listener to skip the default autofocus for that one open. */
+  'openAutoFocus': [event: Event]
 }
 
 export interface PopoverSlots {
@@ -76,6 +78,10 @@ function onCloseAutoFocus(event: Event) {
     event.preventDefault()
 }
 
+function onOpenAutoFocus(event: Event) {
+  emit('openAutoFocus', event)
+}
+
 const theme = useComponentTheme('popover', popoverTheme)
 const ui = computed(() => theme.value())
 
@@ -117,6 +123,7 @@ function onUpdateOpen(value: boolean) {
         @pointer-down-outside="onPointerDownOutside"
         @focus-outside="onFocusOutside"
         @close-auto-focus="onCloseAutoFocus"
+        @open-auto-focus="onOpenAutoFocus"
       >
         <slot name="content" />
         <PopoverArrow v-if="arrow" v-bind="arrowProps" />

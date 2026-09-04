@@ -578,3 +578,138 @@ describe('navigationMenu (label/separator items)', () => {
     expect(text.indexOf('Components')).toBeLessThan(text.indexOf('Button'))
   })
 })
+
+// Regression: a leaf item with `onSelect` but no `to` (a legitimate,
+// documented case - `to` is optional on NavigationMenuItem) rendered as a
+// plain `<NuxtLink :to="undefined">`, which resolves to an `<a>` with no
+// `href` attribute at all. An anchor with no `href` isn't a real link -
+// browsers exclude it from Tab order entirely, so the item was reachable
+// by mouse click (a native listener doesn't care about `href`) but
+// completely unreachable by keyboard. Every leaf-rendering site now
+// renders a real `<button type="button">` instead whenever `to` is unset.
+describe('navigationMenu (leaf items without `to`)', () => {
+  it('a top-level leaf with onSelect but no `to` renders as a real, focusable button - not an anchor with no href', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Overview', onSelect: () => {} },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+
+    expect(wrapper.find('a').exists()).toBe(false)
+    const button = wrapper.find('button')
+    expect(button.exists()).toBe(true)
+    expect(button.attributes('type')).toBe('button')
+  })
+
+  it('a nested accordion child with no `to` also renders as a button, not a hrefless anchor', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Team', children: [{ label: 'Members', onSelect: () => {} }] },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+
+    wrapper.find('button').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(wrapper.find('a').exists()).toBe(false)
+    const buttons = wrapper.findAll('button').map(b => b.text())
+    expect(buttons).toContain('Members')
+  })
+
+  it('an item with a real `to` is unaffected - still a real link, not a button', async () => {
+    const items: NavigationMenuItem[] = [{ label: 'Docs', to: '/docs' }]
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+
+    expect(wrapper.find('a[href="/docs"]').exists()).toBe(true)
+    expect(wrapper.find('button').exists()).toBe(false)
+  })
+})
+
+// Regression: hovering a collapsed rail's parent-with-children trigger
+// opened its flyout via Reka's default openAutoFocus behavior, which
+// moves keyboard focus into the content on open - painting a visible
+// focus ring on whatever it landed on despite no keyboard ever being
+// touched (confirmed live: hovering alone put a ring around the first
+// item inside). A keyboard-driven open (Tab to the trigger, press Enter)
+// still needs that same autofocus to actually reach the flyout's own
+// content at all, since it's portaled elsewhere in the DOM with no
+// natural Tab path into it - so autofocus is only suppressed for the
+// specific open that happened via hover, not click/keyboard opens.
+describe('navigationMenu (collapsed flyout autofocus)', () => {
+  it('a hover-opened flyout does not move focus into its own content', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Team', children: [{ label: 'Members', to: '/team/members' }] },
+    ]
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const wrapper = await mountSuspended(NavigationMenu, { attachTo: container, props: { items, orientation: 'vertical', collapsed: true } })
+
+    const trigger = wrapper.find('button')
+    trigger.element.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(document.body.querySelector('a[href="/team/members"]')).toBeTruthy()
+    expect(document.activeElement?.textContent?.trim()).not.toBe('Members')
+
+    wrapper.unmount()
+    container.remove()
+  })
+
+  it('a click-opened flyout still moves focus into its own content, same as any other Popover trigger', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Team', children: [{ label: 'Members', to: '/team/members' }] },
+    ]
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const wrapper = await mountSuspended(NavigationMenu, { attachTo: container, props: { items, orientation: 'vertical', collapsed: true } })
+
+    const trigger = wrapper.find('button')
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(document.body.querySelector('a[href="/team/members"]')).toBeTruthy()
+    expect(document.activeElement?.textContent?.trim()).toBe('Members')
+
+    wrapper.unmount()
+    container.remove()
+  })
+})
+
+// Regression: a collapsed flyout's own return-focus-to-trigger-on-close
+// was disabled outright to fix a different bug (a *closing* item's
+// delayed return-focus stealing focus from a sibling that had since
+// opened) - but that meant a genuine Escape/outside-click dismiss, with
+// no sibling involved at all, now abandoned focus to the page instead of
+// returning it to the trigger, a real regression on its own. Whether
+// return-focus is allowed for a given close now depends on whether a
+// *different* flyout is currently open at that moment.
+describe('navigationMenu (collapsed flyout Escape focus return)', () => {
+  it('escape, with no sibling flyout open, returns focus to this trigger - not abandoned', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Team', children: [{ label: 'Members', to: '/team/members' }] },
+    ]
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const wrapper = await mountSuspended(NavigationMenu, { attachTo: container, props: { items, orientation: 'vertical', collapsed: true } })
+
+    const trigger = wrapper.find('button')
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const content = document.body.querySelector('[role=dialog]')!
+    content.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(document.body.querySelector('a[href="/team/members"]')).toBeFalsy()
+    // Team has no icon in this test's own items, so its button falls back
+    // to showing its label's first character too (see the collapsed-icon
+    // fallback tests above) - `textContent` picks up both, hence `toContain`.
+    expect(document.activeElement?.textContent?.trim()).toContain('Team')
+
+    wrapper.unmount()
+    container.remove()
+  })
+})

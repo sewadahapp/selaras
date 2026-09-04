@@ -5,6 +5,7 @@ import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
+import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
@@ -60,10 +61,14 @@ function linkProps(item: NavigationMenuItem) {
   <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
     <li v-for="item in items" :key="item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
       <NavigationMenuAccordionItem v-if="item.children?.length" :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui" />
-      <NuxtLink v-else :to="item.to" v-bind="linkProps(item)" :aria-disabled="item.disabled ? 'true' : undefined" @click="onSelect(item, $event)">
+      <component
+        :is="item.to ? NuxtLink : 'button'" v-else :to="item.to" :type="item.to ? undefined : 'button'"
+        :disabled="item.to ? undefined : item.disabled" v-bind="linkProps(item)"
+        :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
+      >
         <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
         <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
-      </NuxtLink>
+      </component>
     </li>
   </ul>
 </template>

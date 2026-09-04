@@ -14,6 +14,7 @@ import {
   NavigationMenuItem as RekaNavigationMenuItem,
 } from 'reka-ui'
 import { computed, ref, useSlots } from 'vue'
+import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { navigationMenuTheme } from '../theme/navigation-menu'
@@ -96,6 +97,19 @@ function onFlyoutOpenChange(item: NavigationMenuItem, value: boolean) {
     openFlyoutLabel.value = null
 }
 
+// Regression: Reka returns focus to a popover's own trigger on close
+// regardless of *why* it closed - including this one closing because a
+// sibling just took over. That's correct default behavior for a genuine
+// dismiss (Escape, outside click) but wrong for the mutual-exclusion
+// case, where the *closing* item's own trigger stealing focus back from
+// the sibling that's now legitimately open is exactly the bug the shared
+// `openFlyoutLabel` above already fixed once - and did so again here,
+// since NavigationMenuFlyoutTrigger.vue needs to tell them apart to
+// know whether to allow Reka's own return-focus for a given close.
+function anotherFlyoutOpen(item: NavigationMenuItem) {
+  return openFlyoutLabel.value !== null && openFlyoutLabel.value !== item.label
+}
+
 // Reka's real NavigationMenuLink has no `disabled` prop (confirmed via its
 // source) - a disabled leaf link stays visually/aria disabled and simply
 // swallows the click rather than navigating or firing onSelect.
@@ -144,7 +158,8 @@ const fallbackItems = computed(() => flatten(props.items))
             <template v-else-if="orientation === 'vertical' && item.children?.length && collapsed">
               <NavigationMenuFlyoutTrigger
                 :item="item" :color="color" :variant="variant" :highlight="highlight" :on-select="onSelect" :ui="props.ui"
-                :open="openFlyoutLabel === item.label" @update:open="onFlyoutOpenChange(item, $event)"
+                :open="openFlyoutLabel === item.label" :another-flyout-open="anotherFlyoutOpen(item)"
+                @update:open="onFlyoutOpenChange(item, $event)"
               >
                 <template v-for="(_, name) in slots" #[name]="scope">
                   <slot :name="name" v-bind="scope" />
@@ -170,7 +185,11 @@ const fallbackItems = computed(() => flatten(props.items))
                   <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
                     <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
                       <NavigationMenuLink as-child :active="isActive(child)">
-                        <NuxtLink :to="child.to" v-bind="childLinkProps(child)" @click="onSelect(child, $event)">
+                        <component
+                          :is="child.to ? NuxtLink : 'button'" :to="child.to" :type="child.to ? undefined : 'button'"
+                          :disabled="child.to ? undefined : child.disabled" v-bind="childLinkProps(child)"
+                          :aria-disabled="child.to && child.disabled ? 'true' : undefined" @click="onSelect(child, $event)"
+                        >
                           <slot :name="slotName(child, '')" :item="child" :active="isActive(child)">
                             <slot :name="slotName(child, '-leading')" :item="child" :active="isActive(child)">
                               <Icon v-if="child.icon" :name="child.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
@@ -180,7 +199,7 @@ const fallbackItems = computed(() => flatten(props.items))
                             </slot>
                             <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
                           </slot>
-                        </NuxtLink>
+                        </component>
                       </NavigationMenuLink>
                     </li>
                   </ul>
@@ -188,7 +207,11 @@ const fallbackItems = computed(() => flatten(props.items))
               </NavigationMenuContent>
             </template>
             <NavigationMenuLink v-else as-child :active="isActive(item)">
-              <NuxtLink :to="item.to" v-bind="linkProps(item)" :aria-disabled="item.disabled ? 'true' : undefined" @click="onSelect(item, $event)">
+              <component
+                :is="item.to ? NuxtLink : 'button'" :to="item.to" :type="item.to ? undefined : 'button'"
+                :disabled="item.to ? undefined : item.disabled" v-bind="linkProps(item)"
+                :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
+              >
                 <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
                   <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
                     <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
@@ -199,7 +222,7 @@ const fallbackItems = computed(() => flatten(props.items))
                   </slot>
                   <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)" />
                 </slot>
-              </NuxtLink>
+              </component>
             </NavigationMenuLink>
           </RekaNavigationMenuItem>
         </template>

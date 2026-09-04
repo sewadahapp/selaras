@@ -5,6 +5,7 @@ import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed, useId, useSlots } from 'vue'
+import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
@@ -130,11 +131,14 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                 <slot :name="name" v-bind="scope" />
               </template>
             </NavigationMenuAccordionItem>
-            <NuxtLink
+            <component
+              :is="child.to ? NuxtLink : 'button'"
               v-else
               :to="child.to"
+              :type="child.to ? undefined : 'button'"
+              :disabled="child.to ? undefined : child.disabled"
               v-bind="linkProps(child)"
-              :aria-disabled="child.disabled ? 'true' : undefined"
+              :aria-disabled="child.to && child.disabled ? 'true' : undefined"
               @click="onSelect(child, $event)"
             >
               <slot :name="slotName(child, '')" :item="child" :active="isActive(child)">
@@ -146,7 +150,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                 </slot>
                 <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
               </slot>
-            </NuxtLink>
+            </component>
           </li>
         </ul>
       </slot>

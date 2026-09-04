@@ -34,17 +34,6 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // programmatic `open:false`), which would fire a `focus` event on this
 // exact button; pairing that with an `@focus` handler that reopens it
 // created a live reopen loop against the mutual-exclusion logic below.
-// `return-focus-on-close="false"` below closes that same hole from the
-// other side too: without it, item A's own *delayed* return-focus (its
-// close transition has to finish first) can land back on A's trigger
-// well after item B has already opened and taken focus into its own
-// content - Reka reads that as focus having moved "outside" B's popover
-// and dismisses B as a result, even though the pointer never left it
-// (confirmed live: hovering B closed A correctly, but a few hundred ms
-// later A's return-focus silently closed B too). A keyboard user tabbing
-// to the button doesn't need `focus` to preview it either - Reka's
-// PopoverTrigger already toggles `open` on Enter/Space, the normal way
-// any button-triggered popover works.
 //
 // `open` is a *controlled* prop, not local state - NavigationMenu.vue owns
 // a single shared "which flyout is open" value across every sibling
@@ -55,12 +44,29 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // upstream makes opening item B *synchronously* close item A's popover
 // the instant B opens, rather than racing two independent 200ms timers
 // against each other.
+//
+// `anotherFlyoutOpen` (also from NavigationMenu.vue's shared state) drives
+// `return-focus-on-close` below, and needs to be reactive rather than a
+// flat `false` - Reka's default return-focus-to-trigger-on-close is
+// exactly what a *genuine* Escape/outside-click dismiss should do (skip
+// it entirely and keyboard focus is simply abandoned on close, a real
+// regression on its own); it only needs suppressing for the one case
+// where *this* item is closing because a sibling just took over, whose
+// own delayed return-focus (it waits on this item's close transition)
+// would otherwise land back on this trigger well after the sibling has
+// already opened and taken focus into its own content - which Reka reads
+// as focus having moved "outside" the sibling's popover and dismisses it
+// too, even though the pointer never left it (confirmed live: hovering
+// a second trigger closed the first correctly, but a few hundred ms
+// later the first's return-focus silently closed the second as well).
 export interface NavigationMenuFlyoutTriggerProps {
   item: NavigationMenuItem
   color?: ButtonVariants['color']
   variant?: 'pill' | 'link'
   highlight?: boolean
   open: boolean
+  /** Whether a *different* sibling trigger currently holds the flyout - see the note above on why `return-focus-on-close` needs this rather than a flat `false`. */
+  anotherFlyoutOpen?: boolean
   onSelect: (item: NavigationMenuItem, event: Event) => void
   ui?: UiProp<NavigationMenuThemeSlots>
 }
@@ -94,8 +100,24 @@ function cancelClose() {
     closeTimer = undefined
   }
 }
+
+// Tracks whether the *current* open happened via hover, so `onOpenAutoFocus`
+// below can tell a mouse-hover open apart from a click/keyboard one - Reka
+// autofocusing content is exactly what a keyboard user needs to actually
+// reach a flyout portaled elsewhere in the DOM (there's no natural Tab
+// order from this button into it otherwise), but the same programmatic
+// focus for a hover-driven open paints a visible focus ring on whatever
+// it lands on despite no keyboard ever being touched (confirmed live:
+// hovering "Team" alone put a ring around "Permissions" inside it, before
+// any click). Reset to `false` on a real click of this button - a mouse
+// click on the trigger should keep Reka's normal autofocus behavior
+// (matching how every other Popover-based trigger in the app already
+// behaves), it's only the hover path that's new here and needs opting out.
+let openedViaHover = false
+
 function openNow() {
   cancelClose()
+  openedViaHover = true
   emit('update:open', true)
 }
 function scheduleClose() {
@@ -104,16 +126,27 @@ function scheduleClose() {
     emit('update:open', false)
   }, 200)
 }
+function onTriggerClick() {
+  openedViaHover = false
+}
+function onOpenAutoFocus(event: Event) {
+  if (openedViaHover)
+    event.preventDefault()
+}
 </script>
 
 <template>
-  <Popover :open="open" side="right" align="start" :return-focus-on-close="false" :ui="{ content: 'p-2' }" @update:open="emit('update:open', $event)">
+  <Popover
+    :open="open" side="right" align="start" :return-focus-on-close="!anotherFlyoutOpen" :ui="{ content: 'p-2' }"
+    @update:open="emit('update:open', $event)" @open-auto-focus="onOpenAutoFocus"
+  >
     <button
       type="button"
       :disabled="item.disabled"
       v-bind="resolveSlot(ui.link, props.ui?.link)"
       @mouseenter="openNow"
       @mouseleave="scheduleClose"
+      @click="onTriggerClick"
     >
       <slot :name="slotName(item, '-leading')" :item="item" :active="false">
         <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
