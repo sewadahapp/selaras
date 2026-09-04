@@ -190,7 +190,7 @@ not something to configure here.
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `orientation` | `'vertical' \| 'horizontal'` | `vertical` |
 | `variant` | `'default' \| 'card'` | `default` |
-| `ui` | `Partial<Record<'root' \| 'itemWrapper' \| 'item' \| 'indicator' \| 'label' \| 'description', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'itemWrapper' \| 'item' \| 'indicator' \| 'label' \| 'description' \| 'labelGroup', string \| object>>` | - |
 
 ## Slots
 

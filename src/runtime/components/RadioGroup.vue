@@ -83,6 +83,7 @@ function itemPropsFor(item: RadioItem) {
 const indicatorProps = computed(() => resolveSlot(ui.value.indicator, props.ui?.indicator))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
+const labelGroupProps = computed(() => resolveSlot(ui.value.labelGroup, props.ui?.labelGroup))
 </script>
 
 <template>
@@ -107,7 +108,7 @@ const descriptionProps = computed(() => resolveSlot(ui.value.description, props.
         :checked="modelValue === item.value"
         :disabled="Boolean(disabled || item.disabled)"
       >
-        <span v-if="item.description">
+        <span v-if="item.description" v-bind="labelGroupProps">
           <span v-bind="labelProps">{{ item.label }}</span>
           <span v-bind="descriptionProps">{{ item.description }}</span>
         </span>

@@ -60,6 +60,15 @@ export const radioGroupTheme = tv({
     indicator: 'rounded-full [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
     label: 'select-none text-[var(--ui-text)]',
     description: 'block select-none text-[var(--ui-text-muted)]',
+    // Only rendered when an item has a description (wrapping the label and
+    // description together so they stack under one another). The label
+    // text visually sits a bit lower than its own line box's true center -
+    // a font/line-height rendering characteristic (Plus Jakarta Sans specifically,
+    // confirmed against a real browser rather than assumed), not a layout
+    // bug - so this nudges the whole block up slightly to compensate. Left
+    // untouched by size, since it wasn't verified per size and it's a small
+    // enough correction to not obviously need it.
+    labelGroup: '-mt-[2.5px]',
   },
   variants: {
     size: {
