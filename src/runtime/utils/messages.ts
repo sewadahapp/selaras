@@ -3,6 +3,7 @@ export interface MessageRegistry {
   clear: string
   close: string
   colorModeToggle: string
+  colorPicker: string
   search: string
   columns: string
   filterPlaceholder: string
@@ -65,6 +66,7 @@ export const defaultMessages: MessageRegistry = {
   clear: 'Clear',
   close: 'Close',
   colorModeToggle: 'Toggle color mode',
+  colorPicker: 'Color picker',
   search: 'Search...',
   columns: 'Columns',
   filterPlaceholder: 'Filter...',
