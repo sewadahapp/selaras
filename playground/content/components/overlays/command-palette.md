@@ -80,8 +80,24 @@ or an outside click closes it without running anything.
 | Prop | Type | Default |
 | --- | --- | --- |
 | `groups` | `{ label?: string; items: { label: string; icon?: string; shortcut?: string; disabled?: boolean; onSelect?: () => void }[] }[]` | - |
+| `open` | `boolean` | - |
 | `shortcut` | `boolean` | `true` |
 | `ui` | `Partial<Record<CommandPaletteSlot, string \| object>>` | - |
+
+### Multiple instances
+
+Pass `v-model:open` if you need a second, independently-controlled palette
+(a different `groups` list, scoped to some part of the app) instead of the
+one shared instance:
+
+```vue-html
+<SCommandPalette v-model:open="open" :groups="scopedGroups" />
+```
+
+This instance stops reacting to `useCommandPalette()` entirely - its own
+`open`/`close`/Cmd-K state is fully local. The default (no `open` prop)
+stays wired to the shared singleton described above, which is what you
+want for the single app-wide palette.
 
 ## `useCommandPalette()`
 

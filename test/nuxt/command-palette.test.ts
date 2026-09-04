@@ -172,4 +172,45 @@ describe('commandPalette', () => {
 
     expect(document.body.querySelector('[role="dialog"][data-state="open"]')).toBeFalsy()
   })
+
+  it('an `open` prop makes it a local, independent instance instead of the shared singleton', async () => {
+    wrapper = await mountSuspended(CommandPalette, { props: { groups: makeGroups(), open: true } })
+    await macrotask()
+
+    expect(document.body.querySelector('[role="dialog"][data-state="open"]')).toBeTruthy()
+
+    // The shared singleton never moved - closing it has no effect on this
+    // controlled instance, which stays exactly at what its own `open` prop says.
+    useCommandPalette().close()
+    await macrotask()
+    expect(document.body.querySelector('[role="dialog"][data-state="open"]')).toBeTruthy()
+  })
+
+  it('a controlled instance emits update:open and does not touch the shared singleton', async () => {
+    wrapper = await mountSuspended(CommandPalette, { props: { groups: makeGroups(), open: true } })
+    await macrotask()
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await macrotask()
+
+    expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(useCommandPalette().isOpen.value).toBe(false)
+  })
+
+  it('two simultaneously-mounted instances - one controlled, one on the shared singleton - stay independent', async () => {
+    const controlledGroups = [{ label: 'Controlled group', items: [{ label: 'Controlled item' }] }]
+    const sharedGroups = [{ label: 'Shared group', items: [{ label: 'Shared item' }] }]
+
+    wrapper = await mountSuspended(CommandPalette, { props: { groups: controlledGroups, open: false } })
+    const shared = await mountSuspended(CommandPalette, { props: { groups: sharedGroups } })
+
+    useCommandPalette().open()
+    await macrotask()
+
+    const dialogs = document.body.querySelectorAll('[role="dialog"][data-state="open"]')
+    expect(dialogs).toHaveLength(1)
+    expect(dialogs[0]?.textContent).toContain('Shared item')
+
+    shared.unmount()
+  })
 })

@@ -29,17 +29,75 @@ export interface CommandPaletteGroup {
 defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<CommandPaletteProps>(), {
+  // Vue's compiler-inferred runtime prop options coerce an *absent* boolean
+  // prop to `false` (not `undefined`) unless it has an explicit default -
+  // silently destroying the "was this actually passed?" check `isControlled`
+  // below relies on. An explicit `undefined` default satisfies that check
+  // (Vue only auto-coerces when there's no default at all), so an
+  // uncontrolled instance's `props.open` genuinely stays `undefined`.
+  open: undefined,
   shortcut: true,
 })
 
+const emit = defineEmits<CommandPaletteEmits>()
+
 export interface CommandPaletteProps {
   groups: CommandPaletteGroup[]
+  /**
+   * Controls this instance locally instead of the shared `useCommandPalette()`
+   * singleton - pass this (with `v-model:open`) for a self-contained
+   * instance that doesn't affect (or get affected by) any other
+   * `SCommandPalette` mounted elsewhere in the app, e.g. a second, scoped
+   * palette. Omit it (the default) to stay wired to the one shared
+   * instance, matching `useModal()`/`useSlideover()`'s own pattern - the
+   * right choice for the single app-wide palette this component is meant
+   * for.
+   */
+  open?: boolean
   /** Binds Cmd/Ctrl+K to open this instance. @default true */
   shortcut?: boolean
   ui?: UiProp<CommandPaletteThemeSlots>
 }
 
-const { isOpen, close, toggle } = useCommandPalette()
+export interface CommandPaletteEmits {
+  'update:open': [value: boolean]
+}
+
+const shared = useCommandPalette()
+const isControlled = computed(() => props.open !== undefined)
+// Mirrors Modal's own internalOpen pattern - an always-concrete local ref
+// synced with an *optional* external v-model. Only actually read/written
+// while this instance is controlled (see `isOpen`/`close`/`toggle` below) -
+// an uncontrolled instance keeps reacting to `useCommandPalette().open()`
+// called from anywhere, unchanged from before this prop existed.
+const internalOpen = ref(props.open ?? false)
+watch(() => props.open, (value) => {
+  if (value !== undefined)
+    internalOpen.value = value
+})
+
+const isOpen = computed(() => isControlled.value ? internalOpen.value : shared.isOpen.value)
+
+function close() {
+  if (isControlled.value) {
+    internalOpen.value = false
+    emit('update:open', false)
+  }
+  else {
+    shared.close()
+  }
+}
+
+function toggle() {
+  if (isControlled.value) {
+    internalOpen.value = !internalOpen.value
+    emit('update:open', internalOpen.value)
+  }
+  else {
+    shared.toggle()
+  }
+}
+
 const icons = useIcons()
 const messages = useMessages()
 

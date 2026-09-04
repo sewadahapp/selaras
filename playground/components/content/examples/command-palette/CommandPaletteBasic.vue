@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const palette = useCommandPalette()
+const open = ref(false)
 const result = ref<string>()
 
 const groups = [
@@ -22,16 +22,20 @@ const groups = [
 
 <template>
   <div class="flex flex-col items-start gap-2">
-    <SButton variant="outline" @click="palette.open()">
+    <SButton variant="outline" @click="open = true">
       Open command palette
-      <template #trailing-icon>
-        <SKbd value="meta" size="sm" /><SKbd value="k" size="sm" />
-      </template>
     </SButton>
     <p v-if="result" class="text-sm text-[var(--ui-text-muted)]">
       Ran: {{ result }}
     </p>
   </div>
 
-  <SCommandPalette :groups="groups" />
+  <!--
+    This docs page already has the site's own real command palette mounted
+    globally (its Cmd/Ctrl+K), so this self-contained demo runs as its own
+    locally-controlled instance instead of the shared useCommandPalette()
+    singleton - shortcut disabled to avoid a second dialog stacking on top
+    of the real one when the same key is pressed.
+  -->
+  <SCommandPalette v-model:open="open" :groups="groups" :shortcut="false" />
 </template>
