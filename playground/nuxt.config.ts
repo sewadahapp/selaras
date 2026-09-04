@@ -9,6 +9,17 @@ export default defineNuxtConfig({
       { name: 'JetBrains Mono', provider: 'google' },
     ],
   },
+  build: {
+    // Without this, Vite's SSR build leaves these as external imports in the
+    // server bundle, so they resolve through Nitro's separately-traced
+    // node_modules copy of Vue instead of the one bundled into the app's own
+    // entry chunk - two disconnected Vue module instances means Reka's
+    // provide-inject-based primitives (Accordion, ScrollArea, NavigationMenu,
+    // ConfigProvider, ...) crash on `getCurrentInstance()` in a real
+    // production build. Forcing these into the same bundle keeps every
+    // component on one Vue instance.
+    transpile: ['reka-ui', /^@vueuse\//, 'vue-demi'],
+  },
   hooks: {
     // @nuxt/content asks Vite to pre-bundle `@nuxtjs/mdc`'s own dependencies
     // via the "pkg > subpkg" nested-resolution syntax, which needs
