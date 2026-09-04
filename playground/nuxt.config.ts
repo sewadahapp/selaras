@@ -1,3 +1,50 @@
+import { readdirSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
+
+/**
+ * `NavigationMenu`/`Breadcrumb` demo examples link to placeholder routes
+ * (`/pricing`, `/electronics/computers/laptops`, ...) purely to show
+ * realistic-looking content - `nuxt generate`'s link-crawler follows them
+ * like any other link and 404s on them, which fails the whole build (Nuxt's
+ * own nitro wrapper forces `prerender.failOnError: true`, unlike Nitro's own
+ * default - and that strictness is worth keeping, since turning it off would
+ * silently let a genuinely broken real page drop out of the static output
+ * with the build still exiting 0). Deriving the ignore list from the demo
+ * files themselves means a newly added fake link is caught automatically -
+ * no hand-maintained list to fall out of sync - while an actually-real route
+ * a demo happens to reference (`realRouteExceptions` below) still gets
+ * crawled and would still fail the build if it broke.
+ */
+function fakeDemoLinkedPaths() {
+  const dir = join(__dirname, 'components/content/examples')
+  const realRouteExceptions = new Set([
+    '/',
+    '/dashboard',
+    '/components/forms/input',
+    '/components/forms/select',
+    '/components/overlays/modal',
+    '/components/overlays/slideover',
+  ])
+  const paths = new Set<string>()
+  for (const rel of readdirSync(dir, { recursive: true }) as string[]) {
+    if (!rel.endsWith('.vue'))
+      continue
+    const content = readFileSync(join(dir, rel), 'utf8')
+    for (const match of content.matchAll(/\bto:\s*['"]([^'"]+)['"]/g)) {
+      const to = match[1]
+      if (to && !realRouteExceptions.has(to))
+        paths.add(to)
+    }
+  }
+  return paths
+}
+
+const fakeDemoLinkedPathsCache = fakeDemoLinkedPaths()
+
+function isFakeDemoLinkedPath(path: string) {
+  return fakeDemoLinkedPathsCache.has(path)
+}
+
 export default defineNuxtConfig({
   modules: ['../src/module', '@nuxt/content', '@nuxt/fonts'],
   css: ['~/assets/css/global.css'],
@@ -8,6 +55,11 @@ export default defineNuxtConfig({
       { name: 'Plus Jakarta Sans', provider: 'google' },
       { name: 'JetBrains Mono', provider: 'google' },
     ],
+  },
+  nitro: {
+    prerender: {
+      ignore: [isFakeDemoLinkedPath],
+    },
   },
   build: {
     // Without this, Vite's SSR build leaves these as external imports in the
