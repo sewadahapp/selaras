@@ -69,42 +69,17 @@ function onUpdateOpen(value: boolean) {
 </script>
 
 <template>
-  <ClientOnly>
-    <CollapsibleRoot :open="internalOpen" :disabled="disabled" v-bind="rootProps" @update:open="onUpdateOpen">
-      <CollapsibleTrigger v-bind="triggerProps">
-        <slot name="trigger" :open="internalOpen" />
-        <slot name="chevron-icon" :open="internalOpen">
-          <Icon :name="icons.chevronDown" v-bind="chevronProps" />
-        </slot>
-      </CollapsibleTrigger>
-      <CollapsibleContent v-bind="contentProps">
-        <div v-bind="contentInnerProps">
-          <slot :open="internalOpen" />
-        </div>
-      </CollapsibleContent>
-    </CollapsibleRoot>
-
-    <!--
-      Reka UI compound components (provide/inject based) crash production SSR
-      builds in this project - see Accordion.vue's own comment for the full
-      writeup. ClientOnly is the established workaround; the fallback renders
-      the same content permanently expanded (no collapse behavior, but fully
-      readable/navigable for SSR, no-JS, and crawlers) rather than nothing.
-    -->
-    <template #fallback>
-      <div v-bind="rootProps">
-        <div v-bind="triggerProps" :class="disabled ? 'opacity-50 pointer-events-none' : undefined">
-          <slot name="trigger" :open="true" />
-          <slot name="chevron-icon" :open="true">
-            <Icon :name="icons.chevronDown" v-bind="chevronProps" />
-          </slot>
-        </div>
-        <div v-bind="contentProps">
-          <div v-bind="contentInnerProps">
-            <slot :open="true" />
-          </div>
-        </div>
+  <CollapsibleRoot :open="internalOpen" :disabled="disabled" v-bind="rootProps" @update:open="onUpdateOpen">
+    <CollapsibleTrigger v-bind="triggerProps">
+      <slot name="trigger" :open="internalOpen" />
+      <slot name="chevron-icon" :open="internalOpen">
+        <Icon :name="icons.chevronDown" v-bind="chevronProps" />
+      </slot>
+    </CollapsibleTrigger>
+    <CollapsibleContent v-bind="contentProps">
+      <div v-bind="contentInnerProps">
+        <slot :open="internalOpen" />
       </div>
-    </template>
-  </ClientOnly>
+    </CollapsibleContent>
+  </CollapsibleRoot>
 </template>

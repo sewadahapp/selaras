@@ -54,72 +54,40 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 </script>
 
 <template>
-  <ClientOnly>
-    <AccordionRoot
-      :type="(type as any)"
-      :default-value="(defaultValue as any)"
-      :model-value="(modelValue as any)"
-      :collapsible="type === 'single' ? collapsible : undefined"
-      :disabled="disabled"
-      v-bind="rootProps"
-      @update:model-value="(value) => $emit('update:modelValue', value as string | string[])"
+  <AccordionRoot
+    :type="(type as any)"
+    :default-value="(defaultValue as any)"
+    :model-value="(modelValue as any)"
+    :collapsible="type === 'single' ? collapsible : undefined"
+    :disabled="disabled"
+    v-bind="rootProps"
+    @update:model-value="(value) => $emit('update:modelValue', value as string | string[])"
+  >
+    <AccordionItem
+      v-for="item in items"
+      :key="item.value"
+      :value="item.value"
+      :disabled="item.disabled"
+      v-bind="resolveSlot(ui.item, props.ui?.item)"
     >
-      <AccordionItem
-        v-for="item in items"
-        :key="item.value"
-        :value="item.value"
-        :disabled="item.disabled"
-        v-bind="resolveSlot(ui.item, props.ui?.item)"
-      >
-        <AccordionHeader as="div" v-bind="resolveSlot(ui.header, props.ui?.header)">
-          <AccordionTrigger v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
-            <slot v-if="chevronPosition === 'start'" name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
-              <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
-            </slot>
-            <span v-bind="resolveSlot(ui.label, props.ui?.label)">
-              <slot name="label" :item="item">{{ item.label }}</slot>
-            </span>
-            <slot v-if="chevronPosition !== 'start'" name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
-              <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
-            </slot>
-          </AccordionTrigger>
-        </AccordionHeader>
-        <AccordionContent v-bind="resolveSlot(ui.content, props.ui?.content)">
-          <div v-bind="resolveSlot(ui.contentInner, props.ui?.contentInner)">
-            <slot :name="item.value" />
-          </div>
-        </AccordionContent>
-      </AccordionItem>
-    </AccordionRoot>
-
-    <!--
-      Reka UI compound components (provide/inject based) crash production SSR
-      builds in this project with `null is not an object (evaluating
-      'currentRenderingInstance.ce')` - a pre-existing, documented issue (see
-      ComponentExample.vue), confirmed here via `nuxt build` + serving the
-      built output (dev mode SSR does not reproduce it, so always verify
-      Reka-wrapping components against a real production build, not just dev).
-      ClientOnly is the established workaround. The fallback renders the same
-      content permanently expanded (no collapse behavior, but fully
-      readable/navigable for SSR, no-JS, and crawlers) rather than nothing.
-    -->
-    <template #fallback>
-      <div v-bind="rootProps">
-        <div v-for="item in items" :key="item.value">
-          <div v-bind="resolveSlot(ui.header, props.ui?.header)">
-            <div v-bind="resolveSlot(ui.trigger, props.ui?.trigger)" :class="(disabled || item.disabled) ? 'opacity-50 pointer-events-none' : undefined">
-              <span v-bind="resolveSlot(ui.label, props.ui?.label)">
-                <slot name="label" :item="item">{{ item.label }}</slot>
-              </span>
-            </div>
-          </div>
-          <div v-bind="resolveSlot(ui.content, props.ui?.content)">
-            <div v-bind="resolveSlot(ui.contentInner, props.ui?.contentInner)">
-              <slot :name="item.value" />
-            </div>
-          </div>
+      <AccordionHeader as="div" v-bind="resolveSlot(ui.header, props.ui?.header)">
+        <AccordionTrigger v-bind="resolveSlot(ui.trigger, props.ui?.trigger)">
+          <slot v-if="chevronPosition === 'start'" name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
+            <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
+          </slot>
+          <span v-bind="resolveSlot(ui.label, props.ui?.label)">
+            <slot name="label" :item="item">{{ item.label }}</slot>
+          </span>
+          <slot v-if="chevronPosition !== 'start'" name="chevron-icon" :class="resolveSlot(ui.chevron, props.ui?.chevron).class">
+            <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.chevron, props.ui?.chevron)" />
+          </slot>
+        </AccordionTrigger>
+      </AccordionHeader>
+      <AccordionContent v-bind="resolveSlot(ui.content, props.ui?.content)">
+        <div v-bind="resolveSlot(ui.contentInner, props.ui?.contentInner)">
+          <slot :name="item.value" />
         </div>
-      </div>
-    </template>
-  </ClientOnly>
+      </AccordionContent>
+    </AccordionItem>
+  </AccordionRoot>
 </template>

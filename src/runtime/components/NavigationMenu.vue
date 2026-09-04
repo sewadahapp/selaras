@@ -120,143 +120,101 @@ function onSelect(item: NavigationMenuItem, event: Event) {
   }
   item.onSelect?.(event)
 }
-
-// Flattens the whole tree (arbitrary depth) for the ClientOnly fallback
-// below - a flat link list, not a recursive component, since the
-// fallback's only job is basic no-JS/crawler accessibility, not feature
-// completeness (mirrors Accordion.vue's own "permanently expanded,
-// simplified" fallback).
-function flatten(list: NavigationMenuItem[], depth = 0): { item: NavigationMenuItem, depth: number }[] {
-  return list.flatMap(item => [
-    { item, depth },
-    ...(item.children ? flatten(item.children, depth + 1) : []),
-  ])
-}
-const fallbackItems = computed(() => flatten(props.items))
 </script>
 
 <template>
-  <ClientOnly>
-    <NavigationMenuRoot :orientation="orientation" v-bind="rootProps">
-      <slot name="list-leading" />
-      <NavigationMenuList v-bind="listProps">
-        <template v-for="item in items" :key="item.label">
-          <li v-if="item.type === 'separator'" role="separator" v-bind="resolveSlot(ui.separator, props.ui?.separator)" />
-          <li v-else-if="item.type === 'label'" v-bind="resolveSlot(ui.groupLabel, props.ui?.groupLabel)">
-            <slot :name="slotName(item, '-label')" :item="item" :active="false">
-              {{ item.label }}
-            </slot>
-          </li>
-          <RekaNavigationMenuItem v-else v-bind="resolveSlot(ui.item, props.ui?.item)">
-            <template v-if="orientation === 'vertical' && item.children?.length && !collapsed">
-              <NavigationMenuAccordionItem :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui">
-                <template v-for="(_, name) in slots" #[name]="scope">
-                  <slot :name="name" v-bind="scope" />
-                </template>
-              </NavigationMenuAccordionItem>
-            </template>
-            <template v-else-if="orientation === 'vertical' && item.children?.length && collapsed">
-              <NavigationMenuFlyoutTrigger
-                :item="item" :color="color" :variant="variant" :highlight="highlight" :on-select="onSelect" :ui="props.ui"
-                :open="openFlyoutLabel === item.label" :another-flyout-open="anotherFlyoutOpen(item)"
-                @update:open="onFlyoutOpenChange(item, $event)"
-              >
-                <template v-for="(_, name) in slots" #[name]="scope">
-                  <slot :name="name" v-bind="scope" />
-                </template>
-              </NavigationMenuFlyoutTrigger>
-            </template>
-            <template v-else-if="orientation === 'horizontal' && item.children?.length">
-              <NavigationMenuTrigger :disabled="item.disabled" v-bind="linkProps(item)">
-                <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
-                  <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
-                    <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-                  </slot>
-                  <slot :name="slotName(item, '-label')" :item="item" :active="isActive(item)">
-                    <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
-                  </slot>
-                  <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)">
-                    <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.linkTrailingIcon, props.ui?.linkTrailingIcon)" />
-                  </slot>
+  <NavigationMenuRoot :orientation="orientation" v-bind="rootProps">
+    <slot name="list-leading" />
+    <NavigationMenuList v-bind="listProps">
+      <template v-for="item in items" :key="item.label">
+        <li v-if="item.type === 'separator'" role="separator" v-bind="resolveSlot(ui.separator, props.ui?.separator)" />
+        <li v-else-if="item.type === 'label'" v-bind="resolveSlot(ui.groupLabel, props.ui?.groupLabel)">
+          <slot :name="slotName(item, '-label')" :item="item" :active="false">
+            {{ item.label }}
+          </slot>
+        </li>
+        <RekaNavigationMenuItem v-else v-bind="resolveSlot(ui.item, props.ui?.item)">
+          <template v-if="orientation === 'vertical' && item.children?.length && !collapsed">
+            <NavigationMenuAccordionItem :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui">
+              <template v-for="(_, name) in slots" #[name]="scope">
+                <slot :name="name" v-bind="scope" />
+              </template>
+            </NavigationMenuAccordionItem>
+          </template>
+          <template v-else-if="orientation === 'vertical' && item.children?.length && collapsed">
+            <NavigationMenuFlyoutTrigger
+              :item="item" :color="color" :variant="variant" :highlight="highlight" :on-select="onSelect" :ui="props.ui"
+              :open="openFlyoutLabel === item.label" :another-flyout-open="anotherFlyoutOpen(item)"
+              @update:open="onFlyoutOpenChange(item, $event)"
+            >
+              <template v-for="(_, name) in slots" #[name]="scope">
+                <slot :name="name" v-bind="scope" />
+              </template>
+            </NavigationMenuFlyoutTrigger>
+          </template>
+          <template v-else-if="orientation === 'horizontal' && item.children?.length">
+            <NavigationMenuTrigger :disabled="item.disabled" v-bind="linkProps(item)">
+              <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
+                <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
+                  <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
                 </slot>
-              </NavigationMenuTrigger>
-              <NavigationMenuContent v-bind="resolveSlot(ui.content, props.ui?.content)">
-                <slot :name="slotName(item, '-content')" :item="item">
-                  <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
-                    <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
-                      <NavigationMenuLink as-child :active="isActive(child)">
-                        <component
-                          :is="child.to ? NuxtLink : 'button'" :to="child.to" :type="child.to ? undefined : 'button'"
-                          :disabled="child.to ? undefined : child.disabled" v-bind="childLinkProps(child)"
-                          :aria-disabled="child.to && child.disabled ? 'true' : undefined" @click="onSelect(child, $event)"
-                        >
-                          <slot :name="slotName(child, '')" :item="child" :active="isActive(child)">
-                            <slot :name="slotName(child, '-leading')" :item="child" :active="isActive(child)">
-                              <Icon v-if="child.icon" :name="child.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-                            </slot>
-                            <slot :name="slotName(child, '-label')" :item="child" :active="isActive(child)">
-                              <span v-bind="resolveSlot(ui.childLinkLabel, props.ui?.childLinkLabel)">{{ child.label }}</span>
-                            </slot>
-                            <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
+                <slot :name="slotName(item, '-label')" :item="item" :active="isActive(item)">
+                  <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
+                </slot>
+                <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)">
+                  <Icon :name="icons.chevronDown" v-bind="resolveSlot(ui.linkTrailingIcon, props.ui?.linkTrailingIcon)" />
+                </slot>
+              </slot>
+            </NavigationMenuTrigger>
+            <NavigationMenuContent v-bind="resolveSlot(ui.content, props.ui?.content)">
+              <slot :name="slotName(item, '-content')" :item="item">
+                <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
+                  <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
+                    <NavigationMenuLink as-child :active="isActive(child)">
+                      <component
+                        :is="child.to ? NuxtLink : 'button'" :to="child.to" :type="child.to ? undefined : 'button'"
+                        :disabled="child.to ? undefined : child.disabled" v-bind="childLinkProps(child)"
+                        :aria-disabled="child.to && child.disabled ? 'true' : undefined" @click="onSelect(child, $event)"
+                      >
+                        <slot :name="slotName(child, '')" :item="child" :active="isActive(child)">
+                          <slot :name="slotName(child, '-leading')" :item="child" :active="isActive(child)">
+                            <Icon v-if="child.icon" :name="child.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
                           </slot>
-                        </component>
-                      </NavigationMenuLink>
-                    </li>
-                  </ul>
+                          <slot :name="slotName(child, '-label')" :item="child" :active="isActive(child)">
+                            <span v-bind="resolveSlot(ui.childLinkLabel, props.ui?.childLinkLabel)">{{ child.label }}</span>
+                          </slot>
+                          <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
+                        </slot>
+                      </component>
+                    </NavigationMenuLink>
+                  </li>
+                </ul>
+              </slot>
+            </NavigationMenuContent>
+          </template>
+          <NavigationMenuLink v-else as-child :active="isActive(item)">
+            <component
+              :is="item.to ? NuxtLink : 'button'" :to="item.to" :type="item.to ? undefined : 'button'"
+              :disabled="item.to ? undefined : item.disabled" v-bind="linkProps(item)"
+              :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
+            >
+              <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
+                <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
+                  <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
+                  <span v-else-if="collapsed" v-bind="resolveSlot(ui.linkIconFallback, props.ui?.linkIconFallback)" aria-hidden="true">{{ item.label.charAt(0) }}</span>
                 </slot>
-              </NavigationMenuContent>
-            </template>
-            <NavigationMenuLink v-else as-child :active="isActive(item)">
-              <component
-                :is="item.to ? NuxtLink : 'button'" :to="item.to" :type="item.to ? undefined : 'button'"
-                :disabled="item.to ? undefined : item.disabled" v-bind="linkProps(item)"
-                :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
-              >
-                <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
-                  <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
-                    <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-                    <span v-else-if="collapsed" v-bind="resolveSlot(ui.linkIconFallback, props.ui?.linkIconFallback)" aria-hidden="true">{{ item.label.charAt(0) }}</span>
-                  </slot>
-                  <slot :name="slotName(item, '-label')" :item="item" :active="isActive(item)">
-                    <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
-                  </slot>
-                  <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)" />
+                <slot :name="slotName(item, '-label')" :item="item" :active="isActive(item)">
+                  <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
                 </slot>
-              </component>
-            </NavigationMenuLink>
-          </RekaNavigationMenuItem>
-        </template>
-      </NavigationMenuList>
-      <slot name="list-trailing" />
+                <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)" />
+              </slot>
+            </component>
+          </NavigationMenuLink>
+        </RekaNavigationMenuItem>
+      </template>
+    </NavigationMenuList>
+    <slot name="list-trailing" />
 
-      <NavigationMenuViewport v-if="orientation === 'horizontal'" v-bind="resolveSlot(ui.viewport, props.ui?.viewport)" />
-    </NavigationMenuRoot>
-
-    <!--
-      Reka UI compound components (provide/inject based) crash production SSR
-      builds in this project with `null is not an object (evaluating
-      'currentRenderingInstance.ce')` - the same pre-existing issue
-      Accordion.vue/ScrollArea.vue already work around (confirmed here too,
-      via a real `nuxt build` + serving the built output - dev mode SSR does
-      not reproduce it). The fallback flattens the whole tree into plain
-      links - no dropdown/accordion interactivity, but fully readable/
-      navigable for SSR, no-JS, and crawlers, rather than nothing.
-    -->
-    <template #fallback>
-      <nav v-bind="rootProps">
-        <ul v-bind="listProps">
-          <li v-for="{ item, depth } in fallbackItems" :key="item.label" :style="{ paddingInlineStart: `${depth}rem` }" v-bind="resolveSlot(ui.item, props.ui?.item)">
-            <NuxtLink v-if="item.to" :to="item.to" v-bind="linkProps(item)" :aria-disabled="item.disabled ? 'true' : undefined">
-              <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-              <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
-            </NuxtLink>
-            <span v-else v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">
-              <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-              {{ item.label }}
-            </span>
-          </li>
-        </ul>
-      </nav>
-    </template>
-  </ClientOnly>
+    <NavigationMenuViewport v-if="orientation === 'horizontal'" v-bind="resolveSlot(ui.viewport, props.ui?.viewport)" />
+  </NavigationMenuRoot>
 </template>
