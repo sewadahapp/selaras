@@ -318,3 +318,108 @@ describe('select chip roving focus (non-creatable trigger, hand-rolled equivalen
     expect(activeChipLabel(wrapper)).toBeUndefined()
   })
 })
+
+// window.matchMedia isn't simulated in this test environment (it never
+// matches a real viewport size - see dashboard-group.test.ts's own note
+// on this), so useIsMobile's underlying query is stubbed directly here to
+// exercise both branches deterministically instead.
+function mockMatchMedia(matches: boolean) {
+  const original = window.matchMedia
+  window.matchMedia = ((query: string) => ({
+    matches,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia
+  return () => {
+    window.matchMedia = original
+  }
+}
+
+describe('select (mobileModal)', () => {
+  it('mobileModal unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems } })
+
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+
+    expect(document.body.querySelector('[role=dialog]')).toBeFalsy()
+    expect(document.body.textContent).toContain('Apple')
+
+    wrapper.unmount()
+    restore()
+  })
+
+  it('mobileModal=true on a desktop viewport: still the anchored popover, not a Modal', async () => {
+    const restore = mockMatchMedia(false)
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+
+    expect(document.body.querySelector('[role=dialog]')).toBeFalsy()
+    expect(document.body.textContent).toContain('Apple')
+
+    wrapper.unmount()
+    restore()
+  })
+
+  it('mobileModal=true on a mobile-matching viewport: renders a Modal, and selecting an item there still updates modelValue', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+
+    const dialog = document.body.querySelector('[role=dialog]')
+    expect(dialog).toBeTruthy()
+    expect(dialog?.textContent).toContain('Apple')
+
+    const appleItem = Array.from(document.body.querySelectorAll('[role="option"]')).find(el => el.textContent?.trim() === 'Apple') as HTMLElement
+    appleItem.click()
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['apple'])
+
+    wrapper.unmount()
+    restore()
+  })
+
+  // Select's own trigger is a one-off tap (a button, not something typed
+  // into while the modal stays open) - unlike Autocomplete, it keeps
+  // Modal's default open-autofocus (see ComboboxSelectBase.vue's own
+  // `auto-focus="!creatable"` and autocomplete.test.ts's contrasting case).
+  it('mobileModal=true: still moves focus into the modal on open, unlike Autocomplete', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(document.body.querySelector('[role=dialog]')?.contains(document.activeElement)).toBe(true)
+
+    wrapper.unmount()
+    restore()
+  })
+
+  it('mobileModal=true: the modal content uses the same rounded-md as every other floating panel here, not Modal\'s own larger default', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+
+    const dialog = document.body.querySelector('[role=dialog]')
+    expect(dialog?.classList.contains('rounded-[var(--ui-radius-md)]')).toBe(true)
+    expect(dialog?.classList.contains('rounded-[var(--ui-radius-lg)]')).toBe(false)
+
+    wrapper.unmount()
+    restore()
+  })
+})

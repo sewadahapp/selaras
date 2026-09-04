@@ -7,17 +7,11 @@ import {
   ComboboxAnchor,
   ComboboxArrow,
   ComboboxContent,
-  ComboboxEmpty,
-  ComboboxGroup,
   ComboboxInput,
-  ComboboxItem,
-  ComboboxItemIndicator,
-  ComboboxLabel,
   ComboboxPortal,
   ComboboxRoot,
   ComboboxTrigger,
-  ComboboxViewport,
-  ComboboxVirtualizer,
+  DialogTitle,
   TagsInputInput,
   TagsInputItem,
   TagsInputItemDelete,
@@ -29,13 +23,16 @@ import { computed, ref } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
+import Modal from '../components/Modal.vue'
 import Tooltip from '../components/Tooltip.vue'
-import { isOptionGroup, useComboboxSelect } from '../composables/use-combobox-select'
+import { useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
+import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import ComboboxSelectBody from './ComboboxSelectBody.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>
 
@@ -80,6 +77,8 @@ export interface ComboboxSelectBaseProps {
   resetSearchTermOnSelect?: boolean
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
+  /** Below 768px viewport width, presents the popover as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`) rather than automatic, so an existing usage's look never changes without asking for it. */
+  mobileModal?: boolean
   ui?: UiProp<SelectThemeSlots>
 }
 
@@ -317,10 +316,49 @@ const groupProps = computed(() => resolveSlot(ui.value.group, props.ui?.group))
 const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
 const itemIndicatorProps = computed(() => resolveSlot(ui.value.itemIndicator, props.ui?.itemIndicator))
 const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
+const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
+
+// ComboboxRoot's own open state used to be fully uncontrolled - now always
+// bound to this local ref instead, so the exact same state can also drive
+// the mobileModal branch's own Modal below. Behavior-invisible when
+// mobileModal is false; not gated behind it, since passing a real ref
+// sometimes and leaving `open` unbound other times is exactly the
+// uncontrolled-mode bug Popover.vue's own identical `internalOpen`
+// pattern exists to avoid (see that file's own comment on it).
+const internalOpen = ref(false)
+
+const isMobile = useIsMobile()
+const showMobileModal = computed(() => props.mobileModal && isMobile.value)
+
+// Single source of truth for ComboboxSelectBody's own (large) prop
+// surface, so the desktop and mobileModal template branches below each
+// just `v-bind` this instead of repeating every prop twice.
+const bodyProps = computed(() => ({
+  searchable: props.searchable,
+  creatable: props.creatable,
+  searchText: searchText.value,
+  displayValue,
+  items: props.items,
+  flatOptions: flatOptions.value,
+  virtualizeConfig: virtualizeConfig.value,
+  virtualizedOptions: virtualizedOptions.value,
+  toOption,
+  groupOptions,
+  onSearchKeydown,
+  onSearchBlur,
+  searchWrapperProps: searchWrapperProps.value,
+  searchInputProps: searchInputProps.value,
+  viewportProps: viewportProps.value,
+  emptyProps: emptyProps.value,
+  groupProps: groupProps.value,
+  itemProps: itemProps.value,
+  itemIndicatorProps: itemIndicatorProps.value,
+}))
 </script>
 
 <template>
   <ComboboxRoot
+    :open="internalOpen"
     :model-value="modelValue"
     :multiple="multiple"
     :disabled="disabled"
@@ -329,6 +367,7 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
     :reset-search-term-on-blur="resetSearchTermOnBlur"
     :reset-search-term-on-select="resetSearchTermOnSelect"
     v-bind="rootProps"
+    @update:open="internalOpen = $event"
     @update:model-value="(value) => emit('update:modelValue', value as string | string[] | undefined)"
   >
     <ComboboxAnchor>
@@ -562,111 +601,102 @@ const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
       </ComboboxTrigger>
     </ComboboxAnchor>
 
-    <ComboboxPortal>
+    <ComboboxPortal v-if="!showMobileModal">
       <ComboboxContent position="popper" :side-offset="4" v-bind="contentProps">
-        <slot name="header" />
-
-        <div v-if="searchable && !creatable" v-bind="searchWrapperProps">
-          <slot name="filter-icon">
-            <Icon :name="icons.search" class="size-4 text-[var(--ui-text-muted)]" />
-          </slot>
-          <ComboboxInput
-            v-model="searchText"
-            :display-value="displayValue"
-            :placeholder="messages.search"
-            v-bind="searchInputProps"
-            @keydown="onSearchKeydown"
-            @blur="onSearchBlur"
-          />
-        </div>
-
-        <div v-if="flatOptions.length === 0" v-bind="emptyProps">
-          <slot name="empty">
-            {{ messages.noOptions }}
-          </slot>
-        </div>
-        <ComboboxViewport v-else v-bind="viewportProps">
-          <ComboboxEmpty v-bind="emptyProps">
-            <slot name="empty-filter">
-              {{ messages.noResultsFound }}
-            </slot>
-          </ComboboxEmpty>
-
-          <!--
-            @tanstack/vue-virtual measures real DOM/scroll state, so it can't
-            render identically during SSR - forcing it through anyway causes a
-            hydration mismatch that (confirmed empirically) breaks click
-            interactivity page-wide, not just on this component. Client-only
-            sidesteps it; the popover is closed at SSR time anyway, so there's
-            nothing meaningful to show real users in the fallback.
-          -->
-          <ClientOnly v-if="virtualizeConfig">
-            <ComboboxVirtualizer
-              v-slot="{ option, virtualItem }"
-              :options="virtualizedOptions"
-              :estimate-size="virtualizeConfig.estimateSize"
-              :overscan="virtualizeConfig.overscan"
-            >
-              <ComboboxItem
-                :key="String(virtualItem.key)"
-                :value="option.value"
-                :disabled="option.disabled"
-                :style="{ position: 'absolute', top: 0, left: 0, right: 0, transform: `translateY(${virtualItem.start}px)`, height: `${virtualItem.size}px` }"
-                v-bind="itemProps"
-              >
-                <slot name="item" :item="option.raw">
-                  {{ option.label }}
-                </slot>
-                <ComboboxItemIndicator v-bind="itemIndicatorProps">
-                  <Icon :name="icons.check" class="size-4" />
-                </ComboboxItemIndicator>
-              </ComboboxItem>
-            </ComboboxVirtualizer>
-          </ClientOnly>
-
-          <template v-else>
-            <template v-for="(entry, index) in items" :key="index">
-              <ComboboxGroup v-if="isOptionGroup(entry)">
-                <ComboboxLabel v-bind="groupProps">
-                  <slot name="group" :group="entry">
-                    {{ entry.label }}
-                  </slot>
-                </ComboboxLabel>
-                <ComboboxItem
-                  v-for="option in groupOptions(entry)"
-                  :key="option.value"
-                  :value="option.value"
-                  :disabled="option.disabled"
-                  v-bind="itemProps"
-                >
-                  <slot name="item" :item="option.raw">
-                    {{ option.label }}
-                  </slot>
-                  <ComboboxItemIndicator v-bind="itemIndicatorProps">
-                    <Icon :name="icons.check" class="size-4" />
-                  </ComboboxItemIndicator>
-                </ComboboxItem>
-              </ComboboxGroup>
-              <ComboboxItem
-                v-else
-                :value="toOption(entry).value"
-                :disabled="toOption(entry).disabled"
-                v-bind="itemProps"
-              >
-                <slot name="item" :item="entry">
-                  {{ toOption(entry).label }}
-                </slot>
-                <ComboboxItemIndicator v-bind="itemIndicatorProps">
-                  <Icon :name="icons.check" class="size-4" />
-                </ComboboxItemIndicator>
-              </ComboboxItem>
-            </template>
+        <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
+          <template #header>
+            <slot name="header" />
           </template>
-        </ComboboxViewport>
-
-        <slot name="footer" />
+          <template #filter-icon>
+            <slot name="filter-icon" />
+          </template>
+          <template #empty>
+            <slot name="empty" />
+          </template>
+          <template #empty-filter>
+            <slot name="empty-filter" />
+          </template>
+          <template #item="scope">
+            <slot name="item" v-bind="scope" />
+          </template>
+          <template #group="scope">
+            <slot name="group" v-bind="scope" />
+          </template>
+          <template #footer>
+            <slot name="footer" />
+          </template>
+        </ComboboxSelectBody>
         <ComboboxArrow v-if="arrow" v-bind="arrowProps" />
       </ComboboxContent>
     </ComboboxPortal>
+    <!--
+      Below 768px, presents the exact same ComboboxSelectBody - the same
+      Root-injected filtering/selection/keyboard behavior, unchanged -
+      inside a centered Modal instead of the small anchored popover above.
+      No ComboboxPortal here: Modal's own DialogPortal already teleports
+      #content as a whole, nesting a second teleport inside it would be
+      redundant. ComboboxContent still wraps it (no `position` prop, so
+      Reka renders it as a plain unstyled box rather than applying its own
+      Floating-UI positioning - confirmed by reading ComboboxContentImpl
+      directly) since ComboboxViewport/ComboboxItem's own context still
+      expects a ComboboxContent ancestor. DialogTitle is required
+      explicitly here - Modal's own dev-mode a11y warning is satisfied
+      merely by the content slot existing, so it won't catch a name-less
+      dialog on its own.
+    -->
+    <!--
+      auto-focus="!creatable" - Select's own trigger is a one-off tap (a
+      button; once the modal opens, the next interaction is tapping an
+      item, or typing into a *different* search box that lives inside the
+      modal itself), so Reka's default open-autofocus is fine, even
+      helpful for a keyboard user. Autocomplete's trigger *is* the search
+      input itself, typed into continuously while the modal stays open -
+      Reka's default there stole focus away on the very first keystroke
+      (confirmed live: opening via typing immediately re-focused the
+      modal's own content, silently dropping every character typed
+      afterward) - the same class of bug DatePicker's own range-mode
+      autofocus interference was, just triggered by every keystroke
+      instead of a single click.
+      :ui content - overrides Modal's own default rounded-lg down to
+      rounded-md, matching every other floating panel in this library
+      (Select/Autocomplete/DatePicker's own desktop popovers all use
+      rounded-md) - rounded-lg reads noticeably heavier/rounder than the
+      desktop equivalent for what's otherwise the same surface.
+    -->
+    <Modal
+      v-else :open="internalOpen" :auto-focus="!creatable" :ui="{ content: 'rounded-[var(--ui-radius-md)]' }"
+      @update:open="internalOpen = $event"
+    >
+      <template #content>
+        <DialogTitle class="sr-only">
+          {{ placeholder || messages.search }}
+        </DialogTitle>
+        <ComboboxContent v-bind="mobileContentProps">
+          <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
+            <template #header>
+              <slot name="header" />
+            </template>
+            <template #filter-icon>
+              <slot name="filter-icon" />
+            </template>
+            <template #empty>
+              <slot name="empty" />
+            </template>
+            <template #empty-filter>
+              <slot name="empty-filter" />
+            </template>
+            <template #item="scope">
+              <slot name="item" v-bind="scope" />
+            </template>
+            <template #group="scope">
+              <slot name="group" v-bind="scope" />
+            </template>
+            <template #footer>
+              <slot name="footer" />
+            </template>
+          </ComboboxSelectBody>
+        </ComboboxContent>
+      </template>
+    </Modal>
   </ComboboxRoot>
 </template>

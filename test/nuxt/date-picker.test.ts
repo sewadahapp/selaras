@@ -876,3 +876,118 @@ describe('datePicker', () => {
     expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
   })
 })
+
+// window.matchMedia isn't simulated in this test environment (it never
+// matches a real viewport size), so useIsMobile's underlying query is
+// stubbed directly here to exercise both branches deterministically -
+// same helper as select.test.ts's own identical need.
+function mockMatchMedia(matches: boolean) {
+  const original = window.matchMedia
+  window.matchMedia = ((query: string) => ({
+    matches,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia
+  return () => {
+    window.matchMedia = original
+  }
+}
+
+// DatePickerContent/DateRangePickerContent/timeOnly's own PopoverContent
+// are themselves thin wrappers around Reka's generic PopoverContent (see
+// DatePicker.vue's own comment on this), which - like Modal's own
+// DialogContent - resolves to role="dialog" too, so that role alone can't
+// tell the two apart the way it could for Select's own combobox popover.
+// Modal's own backdrop overlay (bg-black/50, see modal.test.ts's
+// identical selector) has no popover equivalent, so it's the reliable
+// discriminator here instead.
+function hasModalOverlay() {
+  return !!document.body.querySelector('.bg-black\\/50')
+}
+
+describe('datePicker (mobileModal)', () => {
+  it('mobileModal unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
+    const restore = mockMatchMedia(true)
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
+    await openCalendar(wrapper)
+
+    expect(hasModalOverlay()).toBe(false)
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+
+    restore()
+  })
+
+  it('mobileModal=true, plain mode, mobile viewport: renders a Modal, and picking a day still updates modelValue', async () => {
+    const restore = mockMatchMedia(true)
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), mobileModal: true } })
+    await openCalendar(wrapper)
+
+    expect(hasModalOverlay()).toBe(true)
+    expect(document.body.querySelectorAll('td button').length).toBeGreaterThan(0)
+
+    await clickAndWait(dayButton('20'))
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toEqual(new CalendarDate(2024, 1, 20))
+
+    restore()
+  })
+
+  it('mobileModal=true, range mode, mobile viewport: renders a Modal, and picking start+end still updates modelValue', async () => {
+    const restore = mockMatchMedia(true)
+    wrapper = await mountSuspended(DatePicker, { props: { range: true, defaultPlaceholder: new CalendarDate(2024, 1, 1), mobileModal: true } as any })
+    await openRangeCalendar(wrapper)
+
+    expect(hasModalOverlay()).toBe(true)
+
+    // clickAndWait alone isn't enough for a *second* click to register
+    // here - unlike a real browser, dispatching a synthetic click doesn't
+    // itself transfer focus to the clicked button, and Reka's own
+    // in-progress-range tracking needs focus to have moved to the first
+    // pick before the second click can complete the range. On the
+    // desktop path this goes unnoticed because DatePickerContent's own
+    // openAutoFocus (handleCalendarInitialFocus, intentionally not carried
+    // over to the mobileModal path - see DatePicker.vue's own comment on
+    // why) already happens to focus a day cell when it opens; the mobile
+    // Modal's own generic autofocus lands on the first tabbable element
+    // (the "Previous month" button) instead, so this test has to do
+    // explicitly what a real click already does for free.
+    dayButton('10').focus()
+    await clickAndWait(dayButton('10'))
+    dayButton('20').focus()
+    await clickAndWait(dayButton('20'))
+
+    const value = wrapper.emitted('update:modelValue')?.at(-1)?.[0] as { start: CalendarDate, end: CalendarDate }
+    expect(value.start.day).toBe(10)
+    expect(value.end.day).toBe(20)
+
+    restore()
+  })
+
+  it('mobileModal=true, timeOnly mode, mobile viewport: renders a Modal containing the time stepper', async () => {
+    const restore = mockMatchMedia(true)
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, mobileModal: true } })
+    await openTimePicker(wrapper)
+
+    expect(hasModalOverlay()).toBe(true)
+    expect(document.body.textContent).toContain('Done')
+
+    restore()
+  })
+
+  it('mobileModal=true: the modal content uses the same rounded-md as the desktop popover\'s own content, not Modal\'s own larger default', async () => {
+    const restore = mockMatchMedia(true)
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), mobileModal: true } })
+    await openCalendar(wrapper)
+
+    const dialog = document.body.querySelector('[role=dialog]')
+    expect(dialog?.classList.contains('rounded-[var(--ui-radius-md)]')).toBe(true)
+    expect(dialog?.classList.contains('rounded-[var(--ui-radius-lg)]')).toBe(false)
+
+    restore()
+  })
+})

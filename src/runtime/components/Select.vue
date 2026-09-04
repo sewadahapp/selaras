@@ -33,6 +33,8 @@ export interface SelectProps {
   resetSearchTermOnSelect?: boolean
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
+  /** Below 768px viewport width, presents the dropdown as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`) rather than automatic, so an existing usage's look never changes without asking for it. */
+  mobileModal?: boolean
   ui?: UiProp<SelectThemeSlots>
 }
 

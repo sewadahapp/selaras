@@ -28,6 +28,8 @@ export interface ModalProps {
   overlay?: boolean
   /** Set `false` to skip the open/close animation entirely - this library's animation is CSS-only, so this just omits those classes rather than toggling a JS transition system. */
   transition?: boolean
+  /** When `false`, opening the dialog never moves keyboard focus into it - for a trigger that's meant to stay focused and interactive the whole time the dialog is open (e.g. a search input whose own typing keeps filtering the dialog's contents), rather than a one-off tap/click that hands off to the dialog's own content. Defaults to `true`, matching Reka's own out-of-the-box behavior. */
+  autoFocus?: boolean
   ui?: UiProp<ModalThemeSlots>
 }
 
@@ -47,6 +49,7 @@ const props = withDefaults(defineProps<ModalProps>(), {
   modal: true,
   overlay: true,
   transition: true,
+  autoFocus: true,
 })
 
 const emit = defineEmits<ModalEmits>()
@@ -76,6 +79,11 @@ function onFocusOutside(event: Event) {
   if (!props.dismissible)
     event.preventDefault()
   emit('focusOutside', event)
+}
+
+function onOpenAutoFocus(event: Event) {
+  if (!props.autoFocus)
+    event.preventDefault()
 }
 
 // Guarded by target===currentTarget so a child's own animation can't be
@@ -169,6 +177,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
         @pointer-down-outside="onPointerDownOutside"
         @focus-outside="onFocusOutside"
         @animationend="onContentAnimationEnd"
+        @open-auto-focus="onOpenAutoFocus"
       >
         <slot v-if="$slots.content" name="content" />
         <template v-else>

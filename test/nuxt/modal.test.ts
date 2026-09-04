@@ -267,4 +267,46 @@ describe('modal', () => {
     a.unmount()
     b.unmount()
   })
+
+  it('by default, opening the dialog moves keyboard focus into it', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    wrapper = await mountSuspended(Modal, {
+      attachTo: container,
+      props: { open: true, title: 'A' },
+      slots: { body: () => h('button', { id: 'inside' }, 'Inside') },
+    })
+    await macrotask()
+
+    expect(document.body.querySelector('[role=dialog]')?.contains(document.activeElement)).toBe(true)
+
+    container.remove()
+  })
+
+  // Autocomplete's own mobileModal usage needs this - its trigger *is* a
+  // search input, typed into continuously while the dialog stays open, so
+  // Reka's default open-autofocus stealing focus away broke every
+  // keystroke after the first (confirmed live - see
+  // ComboboxSelectBase.vue's own comment on its `auto-focus="!creatable"`).
+  it('autoFocus=false: opening the dialog leaves focus wherever it already was', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const outside = document.createElement('button')
+    outside.id = 'outside'
+    outside.textContent = 'Outside'
+    container.appendChild(outside)
+    outside.focus()
+
+    wrapper = await mountSuspended(Modal, {
+      attachTo: container,
+      props: { open: true, autoFocus: false, title: 'A' },
+      slots: { body: () => h('button', { id: 'inside' }, 'Inside') },
+    })
+    await macrotask()
+
+    expect(document.activeElement?.id).toBe('outside')
+
+    container.remove()
+  })
 })

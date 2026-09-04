@@ -9,42 +9,19 @@ import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, s
 import {
   DatePickerAnchor,
   DatePickerArrow,
-  DatePickerCalendar,
-  DatePickerCell,
-  DatePickerCellTrigger,
   DatePickerContent,
   DatePickerField,
-  DatePickerGrid,
-  DatePickerGridBody,
-  DatePickerGridHead,
-  DatePickerGridRow,
-  DatePickerHeadCell,
-  DatePickerHeader,
-  DatePickerHeading,
   DatePickerInput,
-  DatePickerNext,
-  DatePickerPrev,
   DatePickerRoot,
   DatePickerTrigger,
   DateRangePickerAnchor,
   DateRangePickerArrow,
-  DateRangePickerCalendar,
-  DateRangePickerCell,
-  DateRangePickerCellTrigger,
   DateRangePickerContent,
   DateRangePickerField,
-  DateRangePickerGrid,
-  DateRangePickerGridBody,
-  DateRangePickerGridHead,
-  DateRangePickerGridRow,
-  DateRangePickerHeadCell,
-  DateRangePickerHeader,
-  DateRangePickerHeading,
   DateRangePickerInput,
-  DateRangePickerNext,
-  DateRangePickerPrev,
   DateRangePickerRoot,
   DateRangePickerTrigger,
+  DialogTitle,
   PopoverAnchor,
   PopoverArrow,
   PopoverContent,
@@ -57,12 +34,16 @@ import {
 import { computed, ref, shallowRef, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
+import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
-import TimeStepper from '../internal/TimeStepper.vue'
+import DatePickerCalendarBody from '../internal/DatePickerCalendarBody.vue'
+import DatePickerRangeCalendarBody from '../internal/DatePickerRangeCalendarBody.vue'
+import DatePickerTimeBody from '../internal/DatePickerTimeBody.vue'
 import { datePickerTheme } from '../theme/date-picker'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
+import Modal from './Modal.vue'
 
 type DatePickerVariants = VariantProps<typeof datePickerTheme>
 type ButtonVariants = VariantProps<typeof buttonTheme>
@@ -141,6 +122,8 @@ export interface DatePickerProps {
   size?: DatePickerVariants['size']
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
+  /** Below 768px viewport width, presents the calendar as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`) rather than automatic, so an existing usage's look never changes without asking for it. */
+  mobileModal?: boolean
   ui?: UiProp<DatePickerThemeSlots>
 }
 
@@ -271,6 +254,22 @@ watch(isOpen, (open) => {
   if (!open)
     setView(defaultView.value)
 })
+
+// Range mode's own popover was fully uncontrolled until now (no
+// mobileModal to also drive) - introduced only for that, but harmless
+// either way since it behaves identically to the old uncontrolled mode
+// when nothing else observes it.
+const isRangeOpen = ref(false)
+
+const isMobile = useIsMobile()
+const showMobileModal = computed(() => props.mobileModal && isMobile.value)
+// Overrides Modal's own default rounded-lg down to rounded-md, matching
+// every other floating panel here (the desktop popover's own `content`
+// slot, shared by all three branches, is already rounded-md) - rounded-lg
+// reads noticeably heavier/rounder than the desktop equivalent for what's
+// otherwise the same surface. Same fix, same reasoning, as
+// ComboboxSelectBase.vue's own identical override.
+const mobileModalUi = { content: 'rounded-[var(--ui-radius-md)]' }
 
 const monthFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', { month: 'short' }))
 const monthGridItems = computed(() => Array.from({ length: 12 }, (_, i) => {
@@ -503,6 +502,81 @@ const headCellProps = computed(() => resolveSlot(ui.value.headCell, props.ui?.he
 const cellProps = computed(() => resolveSlot(ui.value.cell, props.ui?.cell))
 const viewGridProps = computed(() => resolveSlot(ui.value.viewGrid, props.ui?.viewGrid))
 const timeSectionProps = computed(() => resolveSlot(ui.value.timeSection, props.ui?.timeSection))
+const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
+
+// Single source of truth for each extracted body component's own (large)
+// prop surface, so the desktop and mobileModal template branches below
+// each just `v-bind` this instead of repeating every prop twice - same
+// reasoning as ComboboxSelectBase.vue's own bodyProps.
+const rangeBodyProps = computed(() => ({
+  color: props.color,
+  activeColor: props.activeColor,
+  headerProps: headerProps.value,
+  headingProps: headingProps.value,
+  gridsProps: gridsProps.value,
+  gridProps: gridProps.value,
+  gridHeadProps: gridHeadProps.value,
+  headCellProps: headCellProps.value,
+  cellProps: cellProps.value,
+}))
+
+const calendarBodyProps = computed(() => ({
+  internalView: internalView.value,
+  color: props.color,
+  activeColor: props.activeColor,
+  placeholder: placeholder.value,
+  monthGridItems: monthGridItems.value,
+  yearGridItems: yearGridItems.value,
+  decadeHeadingText: decadeHeadingText.value,
+  isMonthDisabled,
+  isYearDisabled,
+  selectMonth,
+  selectYear,
+  drillUp,
+  goToPreviousYear,
+  goToNextYear,
+  goToPreviousDecade,
+  goToNextDecade,
+  isTimeGranularity: isTimeGranularity.value,
+  granularity: props.granularity,
+  placeholderHour: placeholderHour.value,
+  placeholderMinute: placeholderMinute.value,
+  hourCycle: props.hourCycle,
+  minuteStep: props.minuteStep,
+  locale: props.locale,
+  hourInputId,
+  minuteInputId,
+  setHour,
+  setMinute,
+  closeOnSelect: props.closeOnSelect,
+  close: () => { isOpen.value = false },
+  headerProps: headerProps.value,
+  headingProps: headingProps.value,
+  gridsProps: gridsProps.value,
+  gridProps: gridProps.value,
+  gridHeadProps: gridHeadProps.value,
+  headCellProps: headCellProps.value,
+  cellProps: cellProps.value,
+  viewGridProps: viewGridProps.value,
+  timeSectionProps: timeSectionProps.value,
+}))
+
+const timeBodyProps = computed(() => ({
+  hour: timePlaceholder.value.hour,
+  minute: timePlaceholder.value.minute,
+  granularity: timeOnlyGranularity.value,
+  hourCycle: props.hourCycle,
+  minuteStep: props.minuteStep,
+  locale: props.locale,
+  hourInputId,
+  minuteInputId,
+  setHour: setTimeOnlyHour,
+  setMinute: setTimeOnlyMinute,
+  closeOnSelect: props.closeOnSelect,
+  activeColor: props.activeColor,
+  close: () => { timeIsOpen.value = false },
+  timeSectionProps: timeSectionProps.value,
+}))
 
 // The button-mode trigger's own look - Input-style ring/bg/hover, but using
 // Button's native :focus-visible (already in buttonTheme's own base) rather
@@ -526,46 +600,17 @@ const buttonTriggerUi = computed(() => ({
   trailingIcon: 'ms-auto',
 }))
 
-// These are plain :ui overrides on a nested Button, not independent theme
-// slots - Button already owns variant/size/hover/focus, matching how
-// Pagination's own Prev/Next/page buttons are styled (see pagination.ts vs
-// Pagination.vue's mirroredIconUi). rtl:-scale-x-100 mirrors the chevron
-// under RTL - same simple transform Pagination's Prev/Next use, no compound
-// rotate state needed here either.
-const navButtonUi = { leadingIcon: 'rtl:-scale-x-100' }
-// The drill-down heading itself is a plain <button>, not a Button
-// composition (see cellTriggerUi's own comment for why these stay inline
-// overrides rather than theme slots) - range mode's own DateRangePickerHeading
-// stays a non-interactive <span>, so this affordance can't live in the
-// shared `heading` theme slot without misleadingly hover-highlighting text
-// that isn't clickable there. Disabled at year view (the top of the drill-up
-// chain, where a click is a no-op) rather than left clickable-looking with
-// nothing to do.
-const headingButtonUi = 'rounded-[var(--ui-radius-sm)] px-1.5 py-0.5 transition-colors hover:bg-[var(--ui-bg-elevated)] disabled:hover:bg-transparent disabled:cursor-default'
-const cellTriggerUi = {
-  base: 'relative data-[today]:font-semibold data-[today]:after:absolute data-[today]:after:bottom-1 data-[today]:after:left-1/2 data-[today]:after:size-1 data-[today]:after:-translate-x-1/2 data-[today]:after:rounded-full data-[today]:after:bg-[var(--ui-primary)] data-[outside-view]:opacity-40 data-[unavailable]:opacity-40 data-[unavailable]:line-through',
-}
-// Range-mode day cells butt up against each other (see date-picker.ts's own
-// `range` cell-padding variant), so this is w-full + squared off by default,
-// only rounding the actual start/end anchors - that's what makes a run of
-// highlighted/selected days between them read as one connected bar instead
-// of separate dots. The template checks both `highlighted` (Reka's live
-// hover-preview before the range is complete) and `selected` (true for
-// every day strictly between start/end once BOTH are set) - confirmed by
-// reading RangeCalendarRoot's own source that `highlightedRange` is
-// deliberately nulled out the moment a range is committed (start & end
-// both set), so it alone only covers the in-progress state; without also
-// checking `selected`, a finished range's connecting bar disappears the
-// instant you finish picking it.
-const rangeCellTriggerUi = {
-  base: 'relative w-full rounded-none data-[selection-start]:rounded-s-full data-[selection-end]:rounded-e-full data-[today]:font-semibold data-[today]:after:absolute data-[today]:after:bottom-1 data-[today]:after:left-1/2 data-[today]:after:size-1 data-[today]:after:-translate-x-1/2 data-[today]:after:rounded-full data-[today]:after:bg-[var(--ui-primary)] data-[outside-view]:opacity-40 data-[unavailable]:opacity-40 data-[unavailable]:line-through',
-}
+// navButtonUi/headingButtonUi/cellTriggerUi/rangeCellTriggerUi (the
+// per-branch calendar :ui overrides) moved into DatePickerCalendarBody.vue/
+// DatePickerRangeCalendarBody.vue along with the rest of each branch's own
+// calendar markup - see those files' own copies of these same comments.
 </script>
 
 <template>
   <DateRangePickerRoot
     v-if="range"
     :id="datePickerId"
+    v-model:open="isRangeOpen"
     :name="name ?? field?.name"
     :model-value="rangeModelValue"
     :min-value="minValue"
@@ -667,66 +712,41 @@ const rangeCellTriggerUi = {
       </div>
     </DateRangePickerAnchor>
 
-    <DateRangePickerContent :side-offset="6" align="start" v-bind="contentProps">
-      <DateRangePickerCalendar v-slot="{ grid, weekDays }">
-        <DateRangePickerHeader v-bind="headerProps">
-          <DateRangePickerPrev as-child>
-            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronLeft" :aria-label="messages.previousMonth" :ui="navButtonUi" />
-          </DateRangePickerPrev>
-          <DateRangePickerHeading v-bind="headingProps" />
-          <DateRangePickerNext as-child>
-            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronRight" :aria-label="messages.nextMonth" :ui="navButtonUi" />
-          </DateRangePickerNext>
-        </DateRangePickerHeader>
-
-        <div v-bind="gridsProps">
-          <DateRangePickerGrid v-for="month in grid" :key="month.value.toString()" v-bind="gridProps">
-            <DateRangePickerGridHead v-bind="gridHeadProps">
-              <DateRangePickerGridRow>
-                <DateRangePickerHeadCell v-for="day in weekDays" :key="day" v-bind="headCellProps">
-                  {{ day }}
-                </DateRangePickerHeadCell>
-              </DateRangePickerGridRow>
-            </DateRangePickerGridHead>
-            <DateRangePickerGridBody>
-              <DateRangePickerGridRow v-for="(week, weekIndex) in month.rows" :key="weekIndex">
-                <DateRangePickerCell v-for="date in week" :key="date.toString()" :date="date" v-bind="cellProps">
-                  <DateRangePickerCellTrigger
-                    v-slot="{ dayValue, selectionStart, selectionEnd, highlighted, selected, disabled: dayDisabled }"
-                    :day="date"
-                    :month="month.value"
-                    as-child
-                  >
-                    <Button
-                      :variant="selectionStart || selectionEnd ? 'solid' : (highlighted || selected) ? 'soft' : 'ghost'"
-                      :color="selectionStart || selectionEnd || highlighted || selected ? activeColor : color"
-                      size="sm"
-                      :disabled="dayDisabled"
-                      :ui="rangeCellTriggerUi"
-                    >
-                      <slot
-                        name="day"
-                        :date="date"
-                        :day-value="dayValue"
-                        :selected="selected"
-                        :disabled="dayDisabled"
-                        :selection-start="selectionStart"
-                        :selection-end="selectionEnd"
-                        :highlighted="highlighted"
-                      >
-                        {{ dayValue }}
-                      </slot>
-                    </Button>
-                  </DateRangePickerCellTrigger>
-                </DateRangePickerCell>
-              </DateRangePickerGridRow>
-            </DateRangePickerGridBody>
-          </DateRangePickerGrid>
-        </div>
-        <slot name="footer" />
-      </DateRangePickerCalendar>
+    <DateRangePickerContent v-if="!showMobileModal" :side-offset="6" align="start" v-bind="contentProps">
+      <DatePickerRangeCalendarBody v-bind="rangeBodyProps">
+        <template #day="scope">
+          <slot name="day" v-bind="scope" />
+        </template>
+        <template #footer>
+          <slot name="footer" />
+        </template>
+      </DatePickerRangeCalendarBody>
       <DateRangePickerArrow v-if="arrow" v-bind="arrowProps" />
     </DateRangePickerContent>
+    <!--
+      Below 768px, the exact same DatePickerRangeCalendarBody - the same
+      Root-injected grid/selection state, unchanged - inside a centered
+      Modal instead of the small anchored popover above. See
+      ComboboxSelectBase.vue's own mobileModal branch for why there's no
+      extra portal here and why DialogTitle is required explicitly.
+    -->
+    <Modal v-else :open="isRangeOpen" :ui="mobileModalUi" @update:open="isRangeOpen = $event">
+      <template #content>
+        <DialogTitle class="sr-only">
+          {{ messages.dateRangePicker }}
+        </DialogTitle>
+        <div v-bind="mobileContentProps">
+          <DatePickerRangeCalendarBody v-bind="rangeBodyProps">
+            <template #day="scope">
+              <slot name="day" v-bind="scope" />
+            </template>
+            <template #footer>
+              <slot name="footer" />
+            </template>
+          </DatePickerRangeCalendarBody>
+        </div>
+      </template>
+    </Modal>
   </DateRangePickerRoot>
 
   <PopoverRoot v-else-if="timeOnly" v-model:open="timeIsOpen">
@@ -814,39 +834,31 @@ const rangeCellTriggerUi = {
       </div>
     </PopoverAnchor>
 
-    <PopoverPortal>
+    <PopoverPortal v-if="!showMobileModal">
       <PopoverContent :side-offset="6" align="start" v-bind="contentProps">
-        <div v-bind="timeSectionProps">
-          <label :for="hourInputId" class="sr-only">{{ messages.hour }}</label>
-          <label v-if="timeOnlyGranularity === 'minute'" :for="minuteInputId" class="sr-only">{{ messages.minute }}</label>
-          <TimeStepper
-            :hour="timePlaceholder.hour"
-            :minute="timePlaceholder.minute"
-            :granularity="timeOnlyGranularity"
-            :hour-cycle="hourCycle"
-            :minute-step="minuteStep"
-            :locale="locale"
-            :hour-id="hourInputId"
-            :minute-id="minuteInputId"
-            @update:hour="setTimeOnlyHour"
-            @update:minute="setTimeOnlyMinute"
-          />
-        </div>
-        <slot name="footer" />
-        <Button
-          v-if="closeOnSelect"
-          variant="solid"
-          :color="activeColor"
-          size="sm"
-          block
-          class="mt-2"
-          @click="timeIsOpen = false"
-        >
-          {{ messages.done }}
-        </Button>
+        <DatePickerTimeBody v-bind="timeBodyProps">
+          <template #footer>
+            <slot name="footer" />
+          </template>
+        </DatePickerTimeBody>
         <PopoverArrow v-if="arrow" v-bind="arrowProps" />
       </PopoverContent>
     </PopoverPortal>
+    <!-- Below 768px - see the range branch's own identical note above. -->
+    <Modal v-else :open="timeIsOpen" :ui="mobileModalUi" @update:open="timeIsOpen = $event">
+      <template #content>
+        <DialogTitle class="sr-only">
+          {{ messages.timePicker }}
+        </DialogTitle>
+        <div v-bind="mobileContentProps">
+          <DatePickerTimeBody v-bind="timeBodyProps">
+            <template #footer>
+              <slot name="footer" />
+            </template>
+          </DatePickerTimeBody>
+        </div>
+      </template>
+    </Modal>
   </PopoverRoot>
 
   <DatePickerRoot
@@ -953,153 +965,34 @@ const rangeCellTriggerUi = {
     center without clipping, so it silently hides instead. Centering the
     panel on the trigger only when `arrow` is on sidesteps that without
     changing the default (start-aligned) layout everyone already sees. -->
-    <DatePickerContent :side-offset="6" :align="arrow ? 'center' : 'start'" v-bind="contentProps">
-      <DatePickerCalendar v-slot="{ grid, weekDays }">
-        <DatePickerHeader v-bind="headerProps">
-          <DatePickerPrev v-if="internalView === 'date'" as-child>
-            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronLeft" :aria-label="messages.previousMonth" :ui="navButtonUi" />
-          </DatePickerPrev>
-          <Button
-            v-else
-            variant="ghost"
-            :color="color"
-            size="sm"
-            :icon="icons.chevronLeft"
-            :aria-label="internalView === 'month' ? messages.previousYear : messages.previousDecade"
-            :ui="navButtonUi"
-            @click="internalView === 'month' ? goToPreviousYear() : goToPreviousDecade()"
-          />
-
-          <DatePickerHeading v-if="internalView === 'date'" v-slot="{ headingValue }">
-            <button type="button" :class="headingButtonUi" v-bind="headingProps" :aria-label="messages.chooseMonth" @click="drillUp">
-              {{ headingValue }}
-            </button>
-          </DatePickerHeading>
-          <button
-            v-else
-            type="button"
-            dir="ltr"
-            :class="headingButtonUi"
-            v-bind="headingProps"
-            :disabled="internalView === 'year'"
-            :aria-label="internalView === 'month' ? messages.chooseYear : undefined"
-            @click="drillUp"
-          >
-            {{ internalView === 'month' ? placeholder.year : decadeHeadingText }}
-          </button>
-
-          <DatePickerNext v-if="internalView === 'date'" as-child>
-            <Button variant="ghost" :color="color" size="sm" :icon="icons.chevronRight" :aria-label="messages.nextMonth" :ui="navButtonUi" />
-          </DatePickerNext>
-          <Button
-            v-else
-            variant="ghost"
-            :color="color"
-            size="sm"
-            :icon="icons.chevronRight"
-            :aria-label="internalView === 'month' ? messages.nextYear : messages.nextDecade"
-            :ui="navButtonUi"
-            @click="internalView === 'month' ? goToNextYear() : goToNextDecade()"
-          />
-        </DatePickerHeader>
-
-        <div v-if="internalView === 'date'" v-bind="gridsProps">
-          <DatePickerGrid v-for="month in grid" :key="month.value.toString()" v-bind="gridProps">
-            <DatePickerGridHead v-bind="gridHeadProps">
-              <DatePickerGridRow>
-                <DatePickerHeadCell v-for="day in weekDays" :key="day" v-bind="headCellProps">
-                  {{ day }}
-                </DatePickerHeadCell>
-              </DatePickerGridRow>
-            </DatePickerGridHead>
-            <DatePickerGridBody>
-              <DatePickerGridRow v-for="(week, weekIndex) in month.rows" :key="weekIndex">
-                <DatePickerCell v-for="date in week" :key="date.toString()" :date="date" v-bind="cellProps">
-                  <DatePickerCellTrigger
-                    v-slot="{ dayValue, selected, disabled: dayDisabled }"
-                    :day="date"
-                    :month="month.value"
-                    as-child
-                  >
-                    <Button
-                      :variant="selected ? 'solid' : 'ghost'"
-                      :color="selected ? activeColor : color"
-                      size="sm"
-                      square
-                      :disabled="dayDisabled"
-                      :ui="cellTriggerUi"
-                    >
-                      <slot name="day" :date="date" :day-value="dayValue" :selected="selected" :disabled="dayDisabled">
-                        {{ dayValue }}
-                      </slot>
-                    </Button>
-                  </DatePickerCellTrigger>
-                </DatePickerCell>
-              </DatePickerGridRow>
-            </DatePickerGridBody>
-          </DatePickerGrid>
-        </div>
-
-        <div v-else-if="internalView === 'month'" v-bind="viewGridProps">
-          <Button
-            v-for="monthItem in monthGridItems"
-            :key="monthItem.value.month"
-            :variant="monthItem.value.month === placeholder.month ? 'solid' : 'ghost'"
-            :color="monthItem.value.month === placeholder.month ? activeColor : color"
-            size="sm"
-            :disabled="isMonthDisabled(monthItem.value)"
-            @click="selectMonth(monthItem.value)"
-          >
-            {{ monthItem.label }}
-          </Button>
-        </div>
-
-        <div v-else v-bind="viewGridProps">
-          <Button
-            v-for="yearItem in yearGridItems"
-            :key="yearItem.value"
-            :variant="yearItem.value === placeholder.year ? 'solid' : 'ghost'"
-            :color="yearItem.value === placeholder.year ? activeColor : color"
-            size="sm"
-            :disabled="isYearDisabled(yearItem.value)"
-            @click="selectYear(yearItem.value)"
-          >
-            {{ yearItem.label }}
-          </Button>
-        </div>
-
-        <template v-if="internalView === 'date' && isTimeGranularity">
-          <div v-bind="timeSectionProps">
-            <label :for="hourInputId" class="sr-only">{{ messages.hour }}</label>
-            <label v-if="granularity === 'minute'" :for="minuteInputId" class="sr-only">{{ messages.minute }}</label>
-            <TimeStepper
-              :hour="placeholderHour"
-              :minute="placeholderMinute"
-              :granularity="granularity === 'minute' ? 'minute' : 'hour'"
-              :hour-cycle="hourCycle"
-              :minute-step="minuteStep"
-              :locale="locale"
-              :hour-id="hourInputId"
-              :minute-id="minuteInputId"
-              @update:hour="setHour"
-              @update:minute="setMinute"
-            />
-          </div>
-          <Button
-            v-if="closeOnSelect"
-            variant="solid"
-            :color="activeColor"
-            size="sm"
-            block
-            class="mt-2"
-            @click="isOpen = false"
-          >
-            {{ messages.done }}
-          </Button>
+    <DatePickerContent v-if="!showMobileModal" :side-offset="6" :align="arrow ? 'center' : 'start'" v-bind="contentProps">
+      <DatePickerCalendarBody v-bind="calendarBodyProps">
+        <template #day="scope">
+          <slot name="day" v-bind="scope" />
         </template>
-        <slot name="footer" />
-      </DatePickerCalendar>
+        <template #footer>
+          <slot name="footer" />
+        </template>
+      </DatePickerCalendarBody>
       <DatePickerArrow v-if="arrow" v-bind="arrowProps" />
     </DatePickerContent>
+    <!-- Below 768px - see the range branch's own identical note above. -->
+    <Modal v-else :open="isOpen" :ui="mobileModalUi" @update:open="isOpen = $event">
+      <template #content>
+        <DialogTitle class="sr-only">
+          {{ messages.datePicker }}
+        </DialogTitle>
+        <div v-bind="mobileContentProps">
+          <DatePickerCalendarBody v-bind="calendarBodyProps">
+            <template #day="scope">
+              <slot name="day" v-bind="scope" />
+            </template>
+            <template #footer>
+              <slot name="footer" />
+            </template>
+          </DatePickerCalendarBody>
+        </div>
+      </template>
+    </Modal>
   </DatePickerRoot>
 </template>

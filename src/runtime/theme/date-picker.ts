@@ -23,6 +23,13 @@ export const datePickerTheme = tv({
     // library's two floating-panel precedents (directional slide-in, not
     // just fade/zoom).
     content: 'z-[var(--ui-z-dropdown)] rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2',
+    // The `mobileModal` path's own content wrapper - none of `content`'s
+    // own popover chrome (ring/shadow/rounded/animate-in/slide-in, all
+    // tied to a data-[side=] this never gets since it isn't Floating-UI
+    // positioned) applies here, since Modal's own card already provides
+    // that surface. `p-3` alone carries over - the calendar grid still
+    // wants the same breathing room it gets in the popover.
+    mobileContent: 'p-3',
     header: 'mb-2 flex items-center justify-between gap-2',
     heading: 'text-sm font-medium text-[var(--ui-text)]',
     // Wraps one <table> per visible month (numberOfMonths>1, e.g. range

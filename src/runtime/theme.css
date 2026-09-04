@@ -8,6 +8,7 @@
  * dropped from the generated CSS.
  */
 @source "./components/**/*.vue";
+@source "./internal/**/*.vue";
 @source "./theme/**/*.ts";
 @source "./utils/**/*.ts";
 

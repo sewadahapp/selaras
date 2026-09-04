@@ -30,6 +30,13 @@ export const selectTheme = tv({
     searchWrapper: 'flex items-center gap-2 border-b border-[var(--ui-border)] px-2',
     searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--ui-text)] outline-none placeholder:text-[var(--ui-text-muted)]',
     content: 'z-50 max-h-72 min-w-[var(--reka-combobox-trigger-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+    // The `mobileModal` path's own content wrapper - none of `content`'s
+    // own popover chrome (ring/shadow/rounded/animate-in, sized off the
+    // trigger's own width via --reka-combobox-trigger-width, which is
+    // only ever set while position="popper" is active) applies here,
+    // since Modal's own card already provides that surface; this only
+    // needs to fill Modal's content slot width.
+    mobileContent: 'w-full',
     viewport: 'max-h-72 overflow-y-auto p-1',
     group: 'px-2 pt-2 pb-1 text-xs font-medium text-[var(--ui-text-muted)]',
     item: 'relative flex items-center gap-2 rounded-[var(--ui-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--ui-text)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',

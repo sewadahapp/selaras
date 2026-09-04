@@ -147,3 +147,57 @@ describe('autocomplete', () => {
     expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
   })
 })
+
+function macrotask() {
+  return new Promise(resolve => setTimeout(resolve, 50))
+}
+
+// window.matchMedia isn't simulated in this test environment (it never
+// matches a real viewport size), so useIsMobile's underlying query is
+// stubbed directly here - same helper as select.test.ts's own identical need.
+function mockMatchMedia(matches: boolean) {
+  const original = window.matchMedia
+  window.matchMedia = ((query: string) => ({
+    matches,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia
+  return () => {
+    window.matchMedia = original
+  }
+}
+
+// Regression: Autocomplete's own trigger *is* the search input, typed
+// into continuously while the mobile modal stays open - Reka's default
+// open-autofocus stole focus away from it the instant the modal opened
+// (confirmed live: the very first keystroke opened the modal, which then
+// immediately re-focused its own content, silently dropping every
+// character typed afterward). ComboboxSelectBase.vue now passes
+// `auto-focus="!creatable"` to Modal for exactly this reason.
+describe('autocomplete (mobileModal)', () => {
+  it('mobileModal=true on a mobile-matching viewport: opening via typing does not steal focus away from the input', async () => {
+    const restore = mockMatchMedia(true)
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    const wrapper = await mountSuspended(Autocomplete, { attachTo: container, props: { items: fruitItems, mobileModal: true } })
+
+    const input = wrapper.find('input')
+    input.element.focus()
+    await input.setValue('a')
+    await nextTick()
+    await macrotask()
+
+    expect(document.body.querySelector('.bg-black\\/50')).toBeTruthy()
+    expect(document.activeElement).toBe(input.element)
+
+    wrapper.unmount()
+    container.remove()
+    restore()
+  })
+})
