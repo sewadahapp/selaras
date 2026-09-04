@@ -4,7 +4,7 @@ import type { buttonTheme } from '../theme/button'
 import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
-import { computed, useSlots } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -133,6 +133,62 @@ function onOpenAutoFocus(event: Event) {
   if (openedViaHover)
     event.preventDefault()
 }
+
+const triggerRef = ref<HTMLButtonElement>()
+
+// Reka's own Popover hardcodes `loop` on its internal FocusScope
+// regardless of `modal`/`trapFocus` (confirmed by reading PopoverContentImpl
+// directly - there's no prop that turns it off), which means Tab reaching
+// the last focusable element *inside* the flyout wraps back to the first
+// one instead of continuing on to the next rail item, the way Tab
+// naturally continues past a horizontal dropdown's own last child to the
+// next top-level trigger. This re-implements that expected continuation
+// by hand: on a boundary Tab, close the flyout and focus whatever the
+// page's own tab order says comes right after this trigger - re-querying
+// on every keydown rather than caching it, so it stays correct no matter
+// how deep an opened nested group (e.g. "Custom" inside "Reports") pushes
+// the boundary. `stopPropagation` (not just `preventDefault`) matters here -
+// FocusScope's own keydown handler is a bubble-phase listener further up,
+// on the popover's own root, so it would still run and force its own
+// wrap-to-first otherwise.
+function getFocusableElements(): HTMLElement[] {
+  return Array.from(document.querySelectorAll<HTMLElement>(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  ))
+}
+
+function onContentKeydown(event: KeyboardEvent) {
+  if (event.key !== 'Tab' || !triggerRef.value)
+    return
+
+  const contentEl = event.currentTarget as HTMLElement
+  const withinContent = getFocusableElements().filter(el => contentEl.contains(el))
+  if (withinContent.length === 0)
+    return
+
+  const active = document.activeElement
+  const first = withinContent[0]
+  const last = withinContent[withinContent.length - 1]
+
+  if (!event.shiftKey && active === last) {
+    event.preventDefault()
+    event.stopPropagation()
+    // Computed *before* closing (containment-filtered, not DOM-removal-
+    // timed) so this is correct regardless of the close transition's own
+    // duration - the soon-to-be-removed content is excluded by checking
+    // "is this element inside contentEl" rather than "is it still present".
+    const outside = getFocusableElements().filter(el => !contentEl.contains(el))
+    const nextIndex = outside.indexOf(triggerRef.value) + 1
+    emit('update:open', false)
+    outside[nextIndex]?.focus()
+  }
+  else if (event.shiftKey && active === first) {
+    event.preventDefault()
+    event.stopPropagation()
+    emit('update:open', false)
+    triggerRef.value.focus()
+  }
+}
 </script>
 
 <template>
@@ -141,6 +197,7 @@ function onOpenAutoFocus(event: Event) {
     @update:open="emit('update:open', $event)" @open-auto-focus="onOpenAutoFocus"
   >
     <button
+      ref="triggerRef"
       type="button"
       :disabled="item.disabled"
       v-bind="resolveSlot(ui.link, props.ui?.link)"
@@ -157,7 +214,7 @@ function onOpenAutoFocus(event: Event) {
       </slot>
     </button>
     <template #content>
-      <div @mouseenter="cancelClose" @mouseleave="scheduleClose">
+      <div @mouseenter="cancelClose" @mouseleave="scheduleClose" @keydown="onContentKeydown">
         <slot :name="slotName(item, '-content')" :item="item">
           <NavigationMenuFlyoutList :items="item.children ?? []" :color="color" :variant="variant" :highlight="highlight" :on-select="onSelect" :ui="props.ui" root />
         </slot>

@@ -713,3 +713,78 @@ describe('navigationMenu (collapsed flyout Escape focus return)', () => {
     container.remove()
   })
 })
+
+// Regression: Reka's own Popover hardcodes `loop` on its internal
+// FocusScope regardless of `modal`/`trapFocus` (confirmed by reading
+// PopoverContentImpl directly - there's no prop that turns it off), so
+// Tab reaching the flyout's own last focusable element wrapped back to
+// its first one instead of continuing to the next rail item, the way Tab
+// naturally continues past a horizontal dropdown's own last child to the
+// next top-level trigger. NavigationMenuFlyoutTrigger.vue now re-
+// implements that continuation by hand.
+describe('navigationMenu (collapsed flyout Tab boundary)', () => {
+  it('tab from the deepest item in an open nested group closes the flyout and moves to the next top-level item, instead of wrapping to the first item', async () => {
+    const items: NavigationMenuItem[] = [
+      {
+        label: 'Reports',
+        children: [
+          { label: 'Daily', to: '/reports/daily' },
+          { label: 'Custom', children: [{ label: 'Saved', to: '/reports/custom/saved' }] },
+        ],
+      },
+      { label: 'Customers', to: '/customers' },
+    ]
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const wrapper = await mountSuspended(NavigationMenu, { attachTo: container, props: { items, orientation: 'vertical', collapsed: true } })
+
+    const trigger = wrapper.find('button')
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const customTrigger = Array.from(document.body.querySelectorAll('button')).find(b => b.textContent?.trim() === 'Custom')!
+    customTrigger.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const saved = document.body.querySelector('a[href="/reports/custom/saved"]') as HTMLElement
+    saved.focus()
+    saved.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(document.activeElement).toBe(wrapper.find('a[href="/customers"]').element)
+    expect(document.body.querySelector('a[href="/reports/daily"]')).toBeFalsy()
+
+    wrapper.unmount()
+    container.remove()
+  })
+
+  it('shift+tab from the flyout\'s own first item closes it and returns focus to the trigger, not the previous top-level item', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Reports', children: [{ label: 'Daily', to: '/reports/daily' }] },
+      { label: 'Customers', to: '/customers' },
+    ]
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    const wrapper = await mountSuspended(NavigationMenu, { attachTo: container, props: { items, orientation: 'vertical', collapsed: true } })
+
+    const trigger = wrapper.find('button')
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const daily = document.body.querySelector('a[href="/reports/daily"]') as HTMLElement
+    daily.focus()
+    daily.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(document.activeElement).toBe(trigger.element)
+    expect(document.body.querySelector('a[href="/reports/daily"]')).toBeFalsy()
+
+    wrapper.unmount()
+    container.remove()
+  })
+})
