@@ -82,4 +82,16 @@ describe('fileTree', () => {
     expect(selectedRow.classes().join(' ')).toContain('text-[var(--ui-primary)]')
     expect(otherRow.classes().join(' ')).not.toContain('text-[var(--ui-primary)]')
   })
+
+  it('a `ui.root` override touching padding doesn\'t strip nested levels\' indentation', async () => {
+    const wrapper = await mountSuspended(FileTree, { props: { items, ui: { root: 'p-0' } } })
+
+    // Every <ul> past the first is a nested level rendering `list`, not
+    // `root` - it should keep its own ps-4 regardless of what the
+    // top-level `root` override says.
+    const nestedLists = wrapper.findAll('ul').slice(1)
+    expect(nestedLists.length).toBeGreaterThan(0)
+    for (const list of nestedLists)
+      expect(list.classes()).toContain('ps-4')
+  })
 })

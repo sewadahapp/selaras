@@ -79,7 +79,14 @@ function iconFor(node: FileTreeNode, index: number) {
 const theme = useComponentTheme('fileTree', fileTreeTheme)
 const ui = computed(() => theme.value())
 
-const rootProps = useRootProps(() => props.isNested ? ui.value.list : ui.value.root, () => props.ui?.root)
+// A nested call renders `list`, not `root` (see the comment above), so its
+// own override has to come from `ui.list` too - passing `ui.root`
+// unconditionally here meant any override touching padding (CodeTree's own
+// `root: '... p-0'`, stripping FileTree's outer box for its split view)
+// leaked into every nested level's `ps-4` indentation as well, via
+// tailwind-merge treating `p-0`/`ps-4` as the same conflict group and
+// collapsing every level flat.
+const rootProps = useRootProps(() => props.isNested ? ui.value.list : ui.value.root, () => props.isNested ? props.ui?.list : props.ui?.root)
 const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
