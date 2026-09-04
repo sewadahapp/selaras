@@ -1,8 +1,7 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const { data: rawNavigation } = await useAsyncData('docs-navigation', () =>
-  queryCollectionNavigation('docs').order('order', 'ASC'))
+const { data: rawNavigation } = await useDocsNavigation()
 
 // queryCollectionNavigation wraps each top-level content folder (guides,
 // components, ...) in its own root node - pick the one matching the current

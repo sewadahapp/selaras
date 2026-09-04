@@ -11,11 +11,7 @@ interface DocsSearchGroup {
 
 export function useDocsSearchGroups() {
   const icons = useIcons()
-  // Same query + cache key layouts/default.vue's own sidebar nav already
-  // uses - useAsyncData dedupes by key, so this doesn't refetch when both
-  // run on the same page.
-  const { data: navigation } = useAsyncData('docs-navigation', () =>
-    queryCollectionNavigation('docs').order('order', 'ASC'))
+  const { data: navigation } = useDocsNavigation()
 
   return computed<DocsSearchGroup[]>(() => {
     return (navigation.value ?? [])

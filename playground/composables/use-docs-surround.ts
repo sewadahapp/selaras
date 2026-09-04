@@ -5,8 +5,7 @@
 // never a jump across unrelated sections.
 export function useDocsSurround() {
   const route = useRoute()
-  const { data: navigation } = useAsyncData('docs-navigation', () =>
-    queryCollectionNavigation('docs').order('order', 'ASC'))
+  const { data: navigation } = useDocsNavigation()
 
   return computed(() => {
     const section = `/${route.path.split('/')[1]}`
