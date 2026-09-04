@@ -11,24 +11,7 @@ order: 10
 
 ### Variants
 
-::s-button{variant="solid"}
-Solid
-::
-
-::s-button{variant="soft"}
-Soft
-::
-
-::s-button{variant="outline"}
-Outline
-::
-
-::s-button{variant="ghost"}
-Ghost
-::
-
-::s-button{variant="text"}
-Text
+::component-example{name="button-variants"}
 ::
 
 ### Colors
