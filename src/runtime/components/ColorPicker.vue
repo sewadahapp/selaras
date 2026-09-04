@@ -2,27 +2,14 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { ColorPickerThemeSlots } from '../theme/color-picker'
 import type { UiProp } from '../utils/ui'
-import {
-  ColorAreaArea,
-  ColorAreaRoot,
-  ColorAreaThumb,
-  ColorFieldInput,
-  ColorFieldRoot,
-  ColorSliderRoot,
-  ColorSliderThumb,
-  ColorSliderTrack,
-  ColorSwatch,
-  ColorSwatchPickerItem,
-  ColorSwatchPickerItemIndicator,
-  ColorSwatchPickerItemSwatch,
-  ColorSwatchPickerRoot,
-} from 'reka-ui'
+import { ColorSwatch, DialogTitle } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
-import { useIcons } from '../composables/use-icons'
+import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
+import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
-import Icon from './Icon.vue'
+import Modal from './Modal.vue'
 import Popover from './Popover.vue'
 
 type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
@@ -42,6 +29,8 @@ export interface ColorPickerProps {
   /** A row of preset colors shown below the hex field - omitted entirely (no swatch row) unless given. */
   swatches?: string[]
   placeholder?: string
+  /** Below a 768px viewport width, presents the popover as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`), matching Select/Autocomplete/DatePicker's own mobileModal. */
+  mobileModal?: boolean
   size?: ColorPickerVariants['size']
   color?: ColorPickerVariants['color']
   ui?: UiProp<ColorPickerThemeSlots>
@@ -51,7 +40,6 @@ export interface ColorPickerEmits {
   'update:modelValue': [value: string]
 }
 
-const icons = useIcons()
 const messages = useMessages()
 
 // Mirrors Slider.vue's own internalValue / Popover.vue's own internalOpen
@@ -75,6 +63,20 @@ function onUpdateColor(value: string) {
   emit('update:modelValue', value)
 }
 
+// Same reasoning as Popover.vue's own internalOpen - always a concrete
+// boolean, never left undefined. Needed here (unlike a plain Popover
+// consumer) so open state survives the Popover<->Modal presentation
+// swap below on a live resize - neither wrapper owns any state of its
+// own that the swap would otherwise lose, since none of the five color
+// primitives depend on either one's context.
+const internalOpen = ref(false)
+function onUpdateOpen(value: boolean) {
+  internalOpen.value = value
+}
+
+const isMobile = useIsMobile()
+const showMobileModal = computed(() => props.mobileModal && isMobile.value)
+
 const theme = useComponentTheme('colorPicker', colorPickerTheme)
 const ui = computed(() => theme.value({ size: props.size, color: props.color }))
 
@@ -91,14 +93,39 @@ const swatchProps = computed(() => resolveSlot(ui.value.swatch, props.ui?.swatch
 const swatchFillProps = computed(() => resolveSlot(ui.value.swatchFill, props.ui?.swatchFill))
 const swatchIndicatorProps = computed(() => resolveSlot(ui.value.swatchIndicator, props.ui?.swatchIndicator))
 
+const bodyProps = computed(() => ({
+  modelValue: internalColor.value,
+  disabled: props.disabled,
+  alpha: props.alpha,
+  swatches: props.swatches,
+  placeholder: props.placeholder,
+  areaProps: areaProps.value,
+  thumbProps: thumbProps.value,
+  sliderRootProps: sliderRootProps.value,
+  trackProps: trackProps.value,
+  fieldProps: fieldProps.value,
+  swatchListProps: swatchListProps.value,
+  swatchProps: swatchProps.value,
+  swatchFillProps: swatchFillProps.value,
+  swatchIndicatorProps: swatchIndicatorProps.value,
+}))
+
 // Passed to Popover's own `ui.content` override - none of Popover's own
 // content chrome needs to change, only its size/padding for this picker's
 // own layout, same as ComboboxSelectBase's mobile Modal content override.
 const popoverUi = computed(() => ({ content: resolveSlot(ui.value.content, props.ui?.content) }))
+// Same radius-matching override as Select/Autocomplete/DatePicker's own
+// mobile Modal - Modal's own default content radius (--ui-radius-lg) is
+// visibly larger than every desktop popover's own (--ui-radius-md).
+// `mobileContent` (the inner div's own padding/spacing) is this
+// component's own theme slot, not Modal's - applied directly on that div
+// below, not through Modal's `ui` prop.
+const mobileModalUi = computed(() => ({ content: 'rounded-[var(--ui-radius-md)]' }))
+const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
 </script>
 
 <template>
-  <Popover :ui="popoverUi">
+  <Popover v-if="!showMobileModal" :open="internalOpen" :ui="popoverUi" @update:open="onUpdateOpen">
     <button
       type="button"
       :disabled="disabled"
@@ -110,74 +137,28 @@ const popoverUi = computed(() => ({ content: resolveSlot(ui.value.content, props
     </button>
 
     <template #content>
-      <ColorAreaRoot
-        :model-value="internalColor"
-        color-space="hsb"
-        x-channel="saturation"
-        y-channel="brightness"
-        :disabled="disabled"
-        @update:model-value="onUpdateColor"
-      >
-        <template #default="{ style }">
-          <ColorAreaArea :style="style" v-bind="areaProps">
-            <ColorAreaThumb v-bind="thumbProps" />
-          </ColorAreaArea>
-        </template>
-      </ColorAreaRoot>
-
-      <ColorSliderRoot
-        :model-value="internalColor"
-        channel="hue"
-        :disabled="disabled"
-        v-bind="sliderRootProps"
-        @update:model-value="onUpdateColor"
-      >
-        <ColorSliderTrack v-bind="trackProps">
-          <ColorSliderThumb v-bind="thumbProps" />
-        </ColorSliderTrack>
-      </ColorSliderRoot>
-
-      <ColorSliderRoot
-        v-if="alpha"
-        :model-value="internalColor"
-        channel="alpha"
-        :disabled="disabled"
-        v-bind="sliderRootProps"
-        @update:model-value="onUpdateColor"
-      >
-        <ColorSliderTrack v-bind="trackProps">
-          <ColorSliderThumb v-bind="thumbProps" />
-        </ColorSliderTrack>
-      </ColorSliderRoot>
-
-      <ColorFieldRoot
-        :model-value="internalColor"
-        :placeholder="placeholder"
-        :disabled="disabled"
-        @update:model-value="onUpdateColor"
-      >
-        <ColorFieldInput v-bind="fieldProps" />
-      </ColorFieldRoot>
-
-      <ColorSwatchPickerRoot
-        v-if="swatches?.length"
-        :model-value="internalColor"
-        :disabled="disabled"
-        v-bind="swatchListProps"
-        @update:model-value="onUpdateColor"
-      >
-        <ColorSwatchPickerItem
-          v-for="hex in swatches"
-          :key="hex"
-          :value="hex"
-          v-bind="swatchProps"
-        >
-          <ColorSwatchPickerItemSwatch v-bind="swatchFillProps" />
-          <ColorSwatchPickerItemIndicator v-bind="swatchIndicatorProps">
-            <Icon :name="icons.check" class="size-3" />
-          </ColorSwatchPickerItemIndicator>
-        </ColorSwatchPickerItem>
-      </ColorSwatchPickerRoot>
+      <ColorPickerBody v-bind="bodyProps" @update:model-value="onUpdateColor" />
     </template>
   </Popover>
+
+  <Modal v-else :open="internalOpen" :ui="mobileModalUi" @update:open="onUpdateOpen">
+    <button
+      type="button"
+      :disabled="disabled"
+      :aria-label="messages.colorPicker"
+      v-bind="triggerProps"
+    >
+      <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
+      <span v-bind="triggerValueProps">{{ internalColor }}</span>
+    </button>
+
+    <template #content>
+      <DialogTitle class="sr-only">
+        {{ messages.colorPicker }}
+      </DialogTitle>
+      <div v-bind="mobileContentProps">
+        <ColorPickerBody v-bind="bodyProps" @update:model-value="onUpdateColor" />
+      </div>
+    </template>
+  </Modal>
 </template>

@@ -14,6 +14,12 @@ export const colorPickerTheme = tv({
     triggerSwatch: 'size-5 shrink-0 rounded-[var(--ui-radius-sm)] bg-[var(--reka-color-swatch-color)] ring-1 ring-inset ring-black/10',
     triggerValue: 'flex-1 truncate text-start font-mono text-[var(--ui-text)]',
     content: 'z-50 w-64 space-y-3 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+    // The `mobileModal` path's own content wrapper - none of `content`'s
+    // own popover chrome (width/background/shadow/ring/rounded/animate)
+    // applies here, since Modal's own card already provides that surface;
+    // this only needs this picker's own internal spacing/padding, same
+    // reasoning as Select's own mobileContent (select.ts).
+    mobileContent: 'w-full space-y-3 p-4',
     area: 'relative h-40 w-full overflow-hidden rounded-[var(--ui-radius-sm)] cursor-crosshair',
     // Shared by the area thumb and both slider thumbs below - all three
     // are the same plain white ring-bordered circle sitting on top of a

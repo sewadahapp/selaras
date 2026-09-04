@@ -133,3 +133,94 @@ describe('colorPicker', () => {
     wrapper.unmount()
   })
 })
+
+// window.matchMedia isn't simulated in this test environment (it never
+// matches a real viewport size - see dashboard-group.test.ts's own note
+// on this), so useIsMobile's underlying query is stubbed directly here to
+// exercise both branches deterministically instead. Same helper as
+// select.test.ts/autocomplete.test.ts/date-picker.test.ts's own copies.
+function mockMatchMedia(matches: boolean) {
+  const original = window.matchMedia
+  window.matchMedia = ((query: string) => ({
+    matches,
+    media: query,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  })) as unknown as typeof window.matchMedia
+  return () => {
+    window.matchMedia = original
+  }
+}
+
+// Popover's own desktop content also carries role="dialog" (confirmed by
+// reading the rendered DOM directly - Reka's PopoverContent sets it by
+// default, same reason date-picker.test.ts's own hasModalOverlay exists
+// rather than a [role=dialog] check), so the reliable discriminator
+// between the two presentations is Modal's own backdrop overlay
+// (bg-black/50, see modal.test.ts), not the ARIA role.
+function hasModalOverlay() {
+  return !!document.body.querySelector('.bg-black\\/50')
+}
+
+describe('colorPicker (mobileModal)', () => {
+  it('mobileModal unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed' } })
+    await open(wrapper)
+
+    expect(hasModalOverlay()).toBe(false)
+    expect(document.body.querySelector('[role="application"]')).toBeTruthy()
+
+    wrapper.unmount()
+    restore()
+  })
+
+  it('mobileModal=true on a desktop viewport: still the anchored popover, not a Modal', async () => {
+    const restore = mockMatchMedia(false)
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', mobileModal: true } })
+    await open(wrapper)
+
+    expect(hasModalOverlay()).toBe(false)
+    expect(document.body.querySelector('[role="application"]')).toBeTruthy()
+
+    wrapper.unmount()
+    restore()
+  })
+
+  it('mobileModal=true on a mobile-matching viewport: renders a Modal, and the hex field there still updates modelValue', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', mobileModal: true } })
+    await open(wrapper)
+
+    expect(hasModalOverlay()).toBe(true)
+    expect(document.body.querySelector('[role="application"]')).toBeTruthy()
+
+    const field = document.body.querySelector('input[type="text"]') as HTMLInputElement
+    field.value = '#00ff00'
+    field.dispatchEvent(new Event('input', { bubbles: true }))
+    field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['#00ff00'])
+
+    wrapper.unmount()
+    restore()
+  })
+
+  it('mobileModal=true: the modal content uses the same rounded-md as the desktop popover, not Modal\'s own larger default', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', mobileModal: true } })
+    await open(wrapper)
+
+    const dialog = document.body.querySelector('[role=dialog]')
+    expect(dialog?.classList.contains('rounded-[var(--ui-radius-md)]')).toBe(true)
+    expect(dialog?.classList.contains('rounded-[var(--ui-radius-lg)]')).toBe(false)
+
+    wrapper.unmount()
+    restore()
+  })
+})
