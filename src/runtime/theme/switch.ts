@@ -33,6 +33,13 @@ export const switchTheme = tv({
     icon: 'size-2.5 text-[var(--ui-text-muted)]',
     label: 'select-none text-sm text-[var(--ui-text)]',
     description: 'block select-none text-xs text-[var(--ui-text-muted)]',
+    // Only rendered when there's a description (wrapping the label and
+    // description together so they stack under one another) - same font-
+    // baseline correction as RadioGroup's own labelGroup slot (see its
+    // theme file for the full derivation): the label text visually sits a
+    // bit lower than its own line box's true center, so this nudges the
+    // whole block up slightly to compensate.
+    labelGroup: '-mt-[2.5px]',
   },
   variants: {
     // Only affects the checked state - unchecked always stays the same

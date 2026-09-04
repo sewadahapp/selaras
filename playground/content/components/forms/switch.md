@@ -135,7 +135,7 @@ not something to configure here.
 | `loading` | `boolean` | `false` |
 | `checkedIcon` | `string` | - |
 | `uncheckedIcon` | `string` | - |
-| `ui` | `Partial<Record<'root' \| 'track' \| 'thumb' \| 'icon' \| 'label' \| 'description', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'track' \| 'thumb' \| 'icon' \| 'label' \| 'description' \| 'labelGroup', string \| object>>` | - |
 
 ## Slots
 

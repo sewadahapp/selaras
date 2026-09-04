@@ -37,6 +37,13 @@ export const checkboxTheme = tv({
     indeterminateIcon: '[stroke-dasharray:14px] [stroke-dashoffset:14px] transition-[stroke-dashoffset] duration-200 data-[state=indeterminate]:[stroke-dashoffset:0]',
     label: 'select-none text-sm text-[var(--ui-text)]',
     description: 'block select-none text-xs text-[var(--ui-text-muted)]',
+    // Only rendered when there's a description (wrapping the label and
+    // description together so they stack under one another) - same font-
+    // baseline correction as RadioGroup's own labelGroup slot (see its
+    // theme file for the full derivation): the label text visually sits a
+    // bit lower than its own line box's true center, so this nudges the
+    // whole block up slightly to compensate.
+    labelGroup: '-mt-[2.5px]',
   },
   variants: {
     // Fills/rings the box in the given color when checked/indeterminate,

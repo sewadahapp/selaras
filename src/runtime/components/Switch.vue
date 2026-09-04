@@ -61,6 +61,7 @@ const rootProps = useRootProps(() => ui.value.root, () => withFallthroughClass(p
 const trackProps = computed(() => resolveSlot(ui.value.track, withFallthroughClass(props.description ? 'mt-0.5' : undefined, props.ui?.track)))
 const thumbProps = computed(() => resolveSlot(ui.value.thumb, props.ui?.thumb))
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
+const labelGroupProps = computed(() => resolveSlot(ui.value.labelGroup, props.ui?.labelGroup))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
 
@@ -86,7 +87,7 @@ const icons = useIcons()
         <Icon v-else-if="!modelValue && uncheckedIcon" :name="uncheckedIcon" v-bind="iconProps" />
       </SwitchThumb>
     </SwitchRoot>
-    <span v-if="description">
+    <span v-if="description" v-bind="labelGroupProps">
       <span v-if="label || $slots.default" v-bind="labelProps"><slot>{{ label }}</slot></span>
       <span v-bind="descriptionProps">
         <slot name="description">{{ description }}</slot>

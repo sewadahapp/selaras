@@ -59,6 +59,7 @@ const ui = computed(() => theme.value({
 const rootProps = useRootProps(() => ui.value.root, () => withFallthroughClass(props.description ? 'items-start' : undefined, props.ui?.root))
 const boxProps = computed(() => resolveSlot(ui.value.box, withFallthroughClass(props.description ? 'mt-0.5' : undefined, props.ui?.box)))
 const indicatorProps = computed(() => resolveSlot(ui.value.indicator, props.ui?.indicator))
+const labelGroupProps = computed(() => resolveSlot(ui.value.labelGroup, props.ui?.labelGroup))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
 const checkIconProps = computed(() => resolveSlot(ui.value.checkIcon, props.ui?.checkIcon))
@@ -91,7 +92,7 @@ const glyphState = computed(() => props.modelValue === 'indeterminate' ? 'indete
         </svg>
       </CheckboxIndicator>
     </CheckboxRoot>
-    <span v-if="description">
+    <span v-if="description" v-bind="labelGroupProps">
       <span v-if="label || $slots.default" v-bind="labelProps"><slot>{{ label }}</slot></span>
       <span v-bind="descriptionProps">
         <slot name="description">{{ description }}</slot>

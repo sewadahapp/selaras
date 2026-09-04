@@ -127,7 +127,7 @@ not something to configure here.
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
 | `variant` | `'default' \| 'card'` | `'default'` |
-| `ui` | `Partial<Record<'root' \| 'box' \| 'indicator' \| 'checkIcon' \| 'indeterminateIcon' \| 'label' \| 'description', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'box' \| 'indicator' \| 'checkIcon' \| 'indeterminateIcon' \| 'label' \| 'description' \| 'labelGroup', string \| object>>` | - |
 
 ## Slots
 
