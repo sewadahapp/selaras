@@ -10,7 +10,12 @@ export const colorPickerTheme = tv({
     // custom property - ColorSwatch.js applies no background of its own,
     // only exposes that var, so every consumer of it (this trigger swatch
     // and each preset item's own swatch below) pulls color from the same
-    // arbitrary-value bg-[var(...)] utility.
+    // arbitrary background color utility, spelled out fully below rather
+    // than abbreviated here. Tailwind's own class scanner treats bracketed
+    // text like that as a candidate utility even inside a plain comment,
+    // so an abbreviated, non-CSS placeholder in place of the real value
+    // gets a real attempt at CSS generation and chokes on it - confirmed:
+    // that's exactly what produced a real build warning once.
     triggerSwatch: 'size-5 shrink-0 rounded-[var(--ui-radius-sm)] bg-[var(--reka-color-swatch-color)] ring-1 ring-inset ring-black/10',
     triggerValue: 'flex-1 truncate text-start font-mono text-[var(--ui-text)]',
     content: 'z-50 w-64 space-y-3 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
