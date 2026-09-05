@@ -170,7 +170,7 @@ export const navigationMenuTheme = tv({
   compoundVariants: [
     { variant: 'pill', active: false, class: { link: 'hover:bg-[var(--ui-bg-elevated)]', childLink: 'hover:bg-[var(--ui-bg-elevated)]' } },
     { variant: 'pill', active: true, color: 'primary', class: { link: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]' } },
-    { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--ui-bg-elevated)] text-[var(--ui-text)]' } },
+    { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--ui-neutral-soft)] text-[var(--ui-text)]' } },
     { variant: 'pill', active: true, color: 'secondary', class: { link: 'bg-[var(--ui-secondary-soft)] text-[var(--ui-secondary)]' } },
     { variant: 'pill', active: true, color: 'success', class: { link: 'bg-[var(--ui-success-soft)] text-[var(--ui-success)]' } },
     { variant: 'pill', active: true, color: 'danger', class: { link: 'bg-[var(--ui-danger-soft)] text-[var(--ui-danger)]' } },

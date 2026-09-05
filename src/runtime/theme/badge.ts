@@ -50,8 +50,8 @@ export const badgeTheme = tv({
     { color: 'primary', variant: 'soft', class: { base: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]' } },
     { color: 'primary', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-primary)] text-[var(--ui-primary)]' } },
 
-    { color: 'neutral', variant: 'solid', class: { base: 'bg-[var(--ui-bg-inverted)] text-[var(--ui-text-inverted)]' } },
-    { color: 'neutral', variant: 'soft', class: { base: 'bg-[var(--ui-bg-elevated)] text-[var(--ui-text)]' } },
+    { color: 'neutral', variant: 'solid', class: { base: 'bg-[var(--ui-neutral)] text-[var(--ui-neutral-foreground)]' } },
+    { color: 'neutral', variant: 'soft', class: { base: 'bg-[var(--ui-neutral-soft)] text-[var(--ui-text)]' } },
     { color: 'neutral', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-border)] text-[var(--ui-text)]' } },
 
     { color: 'secondary', variant: 'solid', class: { base: 'bg-[var(--ui-secondary)] text-[var(--ui-secondary-foreground)]' } },

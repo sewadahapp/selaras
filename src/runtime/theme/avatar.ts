@@ -52,7 +52,7 @@ export const avatarTheme = tv({
   },
   compoundVariants: [
     { color: 'primary', class: { base: 'bg-[var(--ui-primary-soft)]', fallback: 'text-[var(--ui-primary)]' } },
-    { color: 'neutral', class: { base: 'bg-[var(--ui-bg-elevated)]', fallback: 'text-[var(--ui-text-muted)]' } },
+    { color: 'neutral', class: { base: 'bg-[var(--ui-neutral-soft)]', fallback: 'text-[var(--ui-text-muted)]' } },
     { color: 'secondary', class: { base: 'bg-[var(--ui-secondary-soft)]', fallback: 'text-[var(--ui-secondary)]' } },
     { color: 'success', class: { base: 'bg-[var(--ui-success-soft)]', fallback: 'text-[var(--ui-success)]' } },
     { color: 'danger', class: { base: 'bg-[var(--ui-danger-soft)]', fallback: 'text-[var(--ui-danger)]' } },

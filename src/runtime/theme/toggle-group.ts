@@ -34,7 +34,7 @@ export const toggleGroupTheme = tv({
   compoundVariants: [
     // Pressed (data-[state=on]) - matches Toggle's own per-color treatment.
     { color: 'primary', class: { item: 'data-[state=on]:bg-[var(--ui-primary-soft)] data-[state=on]:text-[var(--ui-primary)] data-[state=on]:hover:bg-[var(--ui-primary-soft)]/70' } },
-    { color: 'neutral', class: { item: 'data-[state=on]:bg-[var(--ui-bg-elevated)] data-[state=on]:text-[var(--ui-text)] data-[state=on]:hover:bg-[var(--ui-border)]' } },
+    { color: 'neutral', class: { item: 'data-[state=on]:bg-[var(--ui-neutral-soft)] data-[state=on]:text-[var(--ui-text)] data-[state=on]:hover:bg-[var(--ui-neutral-soft)]/70' } },
     { color: 'secondary', class: { item: 'data-[state=on]:bg-[var(--ui-secondary-soft)] data-[state=on]:text-[var(--ui-secondary)] data-[state=on]:hover:bg-[var(--ui-secondary-soft)]/70' } },
     { color: 'success', class: { item: 'data-[state=on]:bg-[var(--ui-success-soft)] data-[state=on]:text-[var(--ui-success)] data-[state=on]:hover:bg-[var(--ui-success-soft)]/70' } },
     { color: 'danger', class: { item: 'data-[state=on]:bg-[var(--ui-danger-soft)] data-[state=on]:text-[var(--ui-danger)] data-[state=on]:hover:bg-[var(--ui-danger-soft)]/70' } },

@@ -99,7 +99,7 @@ export const radioGroupTheme = tv({
     // `color` variant exactly (same reasoning, same token pattern).
     color: {
       primary: { item: 'data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]', indicator: 'bg-[var(--ui-primary)]' },
-      neutral: { item: 'data-[state=checked]:ring-[var(--ui-bg-inverted)] data-[state=checked]:before:bg-[var(--ui-bg-inverted)]', indicator: 'bg-[var(--ui-bg-inverted)]' },
+      neutral: { item: 'data-[state=checked]:ring-[var(--ui-neutral)] data-[state=checked]:before:bg-[var(--ui-neutral)]', indicator: 'bg-[var(--ui-neutral)]' },
       secondary: { item: 'data-[state=checked]:ring-[var(--ui-secondary)] data-[state=checked]:before:bg-[var(--ui-secondary)]', indicator: 'bg-[var(--ui-secondary)]' },
       success: { item: 'data-[state=checked]:ring-[var(--ui-success)] data-[state=checked]:before:bg-[var(--ui-success)]', indicator: 'bg-[var(--ui-success)]' },
       danger: { item: 'data-[state=checked]:ring-[var(--ui-danger)] data-[state=checked]:before:bg-[var(--ui-danger)]', indicator: 'bg-[var(--ui-danger)]' },
@@ -117,13 +117,9 @@ export const radioGroupTheme = tv({
     },
   },
   compoundVariants: [
-    // The card variant's own checked-state highlight, following `color` -
-    // neutral has no `-soft` token (nothing else in this codebase gives it
-    // one either), so it uses --ui-bg-elevated for the tint and
-    // --ui-bg-inverted for the border, matching how every other
-    // component's own neutral "soft"-equivalent state already handles this.
+    // The card variant's own checked-state highlight, following `color`.
     { variant: 'card', color: 'primary', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-primary)] has-[[data-state=checked]]:bg-[var(--ui-primary-soft)]' } },
-    { variant: 'card', color: 'neutral', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-bg-inverted)] has-[[data-state=checked]]:bg-[var(--ui-bg-elevated)]' } },
+    { variant: 'card', color: 'neutral', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-neutral)] has-[[data-state=checked]]:bg-[var(--ui-neutral-soft)]' } },
     { variant: 'card', color: 'secondary', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-secondary)] has-[[data-state=checked]]:bg-[var(--ui-secondary-soft)]' } },
     { variant: 'card', color: 'success', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-success)] has-[[data-state=checked]]:bg-[var(--ui-success-soft)]' } },
     { variant: 'card', color: 'danger', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-danger)] has-[[data-state=checked]]:bg-[var(--ui-danger-soft)]' } },
