@@ -177,18 +177,18 @@
   /* ---------------------------------------------------------
    * Neutral — Violet-tinted gray
    * --------------------------------------------------------- */
- --color-neutral-25:  oklch(0.995 0.0015 280);
---color-neutral-50:  oklch(0.980 0.0030 280);
---color-neutral-100: oklch(0.945 0.0065 280);
---color-neutral-200: oklch(0.900 0.0100 280);
---color-neutral-300: oklch(0.840 0.0140 280);
---color-neutral-400: oklch(0.700 0.0180 280);
---color-neutral-500: oklch(0.555 0.0200 280);
---color-neutral-600: oklch(0.445 0.0190 280);
---color-neutral-700: oklch(0.365 0.0170 280);
---color-neutral-800: oklch(0.275 0.0140 280);
---color-neutral-900: oklch(0.205 0.0110 280);
---color-neutral-950: oklch(0.145 0.0080 280);
+  --color-neutral-25:  oklch(0.995 0.0015 280);
+  --color-neutral-50:  oklch(0.980 0.0030 280);
+  --color-neutral-100: oklch(0.945 0.0065 280);
+  --color-neutral-200: oklch(0.900 0.0100 280);
+  --color-neutral-300: oklch(0.840 0.0140 280);
+  --color-neutral-400: oklch(0.700 0.0180 280);
+  --color-neutral-500: oklch(0.555 0.0200 280);
+  --color-neutral-600: oklch(0.445 0.0190 280);
+  --color-neutral-700: oklch(0.365 0.0170 280);
+  --color-neutral-800: oklch(0.275 0.0140 280);
+  --color-neutral-900: oklch(0.205 0.0110 280);
+  --color-neutral-950: oklch(0.145 0.0080 280);
 
 
   /* ---------------------------------------------------------
@@ -286,35 +286,35 @@
   --ui-primary: var(--color-primary-500);
   --ui-primary-hover: var(--color-primary-600);
   --ui-primary-active: var(--color-primary-700);
-  --ui-primary-foreground: var(--color-neutral-50);
+  --ui-primary-foreground: var(--color-neutral-25);
   --ui-primary-soft: var(--color-primary-100);
 
 
   --ui-secondary: var(--color-secondary-500);
   --ui-secondary-hover: var(--color-secondary-600);
   --ui-secondary-active: var(--color-secondary-700);
-  --ui-secondary-foreground: var(--color-neutral-50);
+  --ui-secondary-foreground: var(--color-neutral-25);
   --ui-secondary-soft: var(--color-secondary-100);
 
 
   --ui-success: var(--color-success-500);
   --ui-success-hover: var(--color-success-600);
   --ui-success-active: var(--color-success-700);
-  --ui-success-foreground: var(--color-neutral-50);
+  --ui-success-foreground: var(--color-neutral-25);
   --ui-success-soft: var(--color-success-100);
 
 
   --ui-info: var(--color-info-500);
   --ui-info-hover: var(--color-info-600);
   --ui-info-active: var(--color-info-700);
-  --ui-info-foreground: var(--color-neutral-50);
+  --ui-info-foreground: var(--color-neutral-25);
   --ui-info-soft: var(--color-info-100);
 
 
   --ui-danger: var(--color-danger-500);
   --ui-danger-hover: var(--color-danger-600);
   --ui-danger-active: var(--color-danger-700);
-  --ui-danger-foreground: var(--color-neutral-50);
+  --ui-danger-foreground: var(--color-neutral-25);
   --ui-danger-soft: var(--color-danger-100);
 
 
@@ -345,7 +345,7 @@
   --ui-neutral: var(--color-neutral-950);
   --ui-neutral-hover: var(--color-neutral-900);
   --ui-neutral-active: var(--color-neutral-800);
-  --ui-neutral-foreground: var(--color-neutral-50);
+  --ui-neutral-foreground: var(--color-neutral-25);
   --ui-neutral-soft: var(--color-neutral-100);
 }
 
