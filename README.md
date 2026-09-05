@@ -45,6 +45,13 @@ Install the module to your Nuxt application with one command:
 npx nuxt module add selaras
 ```
 
+Tailwind CSS is a peer dependency - install it alongside Selaras too, so
+your own project owns its version directly:
+
+```bash
+npm install tailwindcss
+```
+
 Import the CSS in your own stylesheet, after Tailwind itself:
 
 ```css

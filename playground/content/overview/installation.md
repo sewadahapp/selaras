@@ -6,18 +6,21 @@ order: 20
 
 ## Install the package
 
+Tailwind CSS is a peer dependency - install it alongside Selaras so your
+own project owns its version directly:
+
 ::code-group
 
 ```bash [bun]
-bun add selaras
+bun add selaras tailwindcss
 ```
 
 ```bash [npm]
-npm install selaras
+npm install selaras tailwindcss
 ```
 
 ```bash [pnpm]
-pnpm add selaras
+pnpm add selaras tailwindcss
 ```
 
 ::
