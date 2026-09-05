@@ -57,10 +57,10 @@ export const buttonTheme = tv({
     { color: 'primary', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-primary)] text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)] active:bg-[var(--ui-primary)]/10' } },
     { color: 'primary', variant: 'ghost', class: { base: 'text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)] active:bg-[var(--ui-primary)]/10' } },
 
-    { color: 'neutral', variant: 'solid', class: { base: 'bg-[var(--ui-bg-inverted)] text-[var(--ui-text-inverted)] hover:opacity-90 active:opacity-80' } },
-    { color: 'neutral', variant: 'soft', class: { base: 'bg-[var(--ui-bg-elevated)] text-[var(--ui-text)] hover:bg-[var(--ui-border)] active:bg-[var(--ui-border-hover)]' } },
-    { color: 'neutral', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-border)] text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)] active:bg-[var(--ui-border)]' } },
-    { color: 'neutral', variant: 'ghost', class: { base: 'text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)] active:bg-[var(--ui-border)]' } },
+    { color: 'neutral', variant: 'solid', class: { base: 'bg-[var(--ui-neutral)] text-[var(--ui-neutral-foreground)] hover:bg-[var(--ui-neutral-hover)] active:bg-[var(--ui-neutral-active)]' } },
+    { color: 'neutral', variant: 'soft', class: { base: 'bg-[var(--ui-neutral-soft)] text-[var(--ui-text)] hover:bg-[var(--ui-neutral-soft)]/70 active:bg-[var(--ui-neutral)]/20' } },
+    { color: 'neutral', variant: 'outline', class: { base: 'ring-1 ring-inset ring-[var(--ui-border)] text-[var(--ui-text)] hover:bg-[var(--ui-neutral-soft)] active:bg-[var(--ui-neutral)]/10' } },
+    { color: 'neutral', variant: 'ghost', class: { base: 'text-[var(--ui-text)] hover:bg-[var(--ui-neutral-soft)] active:bg-[var(--ui-neutral)]/10' } },
 
     { color: 'secondary', variant: 'solid', class: { base: 'bg-[var(--ui-secondary)] text-[var(--ui-secondary-foreground)] hover:bg-[var(--ui-secondary-hover)] active:bg-[var(--ui-secondary-active)]' } },
     { color: 'secondary', variant: 'soft', class: { base: 'bg-[var(--ui-secondary-soft)] text-[var(--ui-secondary)] hover:bg-[var(--ui-secondary-soft)]/70 active:bg-[var(--ui-secondary)]/20' } },
