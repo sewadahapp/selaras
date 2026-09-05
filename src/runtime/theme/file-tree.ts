@@ -11,7 +11,7 @@ export const fileTreeTheme = tv({
     // via this same left padding stacking once per level. `ps-4` also
     // reserves the gutter a nested row's own tree-connector rail (see
     // the `isNested` variant below) reaches back into.
-    list: 'flex flex-col gap-0.5 ps-4 font-mono text-sm',
+    list: 'flex flex-col gap-0.5 ps-4 font-mono text-sm ms-3',
     item: 'flex flex-col',
     row: 'flex w-full items-center gap-1.5 rounded-[var(--ui-radius-sm)] px-1.5 py-1 text-start text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)]',
     icon: 'size-4 shrink-0',
