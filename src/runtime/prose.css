@@ -66,6 +66,14 @@
   font-family: var(--selaras-prose-font-body);
   font-size: 1rem;
   line-height: 1.75;
+  /* A safety net, not a style choice - inherited, so it reaches every
+     paragraph/list-item/table-cell without a rule per element. A run of
+     several inline `code` spans joined by a bare "/" with no actual
+     space between them (documenting several related prop names at
+     once, say) has no natural line-break opportunity at all on a
+     narrow viewport - without this, that single unbreakable run drags
+     the *whole page* into horizontal scroll instead of just wrapping. */
+  overflow-wrap: break-word;
 }
 
 /* `.not-prose` (see ComponentExample.vue) opts a subtree - a live
@@ -233,7 +241,22 @@
   font-size: 1em;
 }
 
+/*
+ * `width: 100%` is only a suggestion, not a hard cap - a table's default
+ * `table-layout: auto` still grows columns past that to fit unwrappable
+ * cell content (a long TypeScript union in a Props table's own "Type"
+ * column is exactly this in practice), which drags the whole page into
+ * horizontal scroll on a narrow viewport instead of just the table.
+ * `display: block` + `overflow-x: auto` is the standard fix for a plain
+ * markdown table with no wrapping element of its own to put the scroll
+ * on instead (the same technique GitHub's own markdown rendering uses) -
+ * it doesn't touch how thead/tbody/tr/td lay out relative to each other,
+ * since those keep their own tag-implied table-part display roles
+ * regardless of what the outer table's own display is set to.
+ */
 .selaras-prose :where(table):not(:where(.not-prose, .not-prose *)) {
+  display: block;
+  overflow-x: auto;
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;

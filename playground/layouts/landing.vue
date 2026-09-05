@@ -6,7 +6,7 @@
       </NuxtLink>
       <template #right>
         <DocsSearchButton />
-        <SNavigationMenu :items="docsNavItems" variant="link" :ui="{ root: 'w-auto' }" />
+        <SNavigationMenu :items="docsNavItems" variant="link" :ui="{ root: 'hidden w-auto lg:flex' }" />
         <SColorModeToggle />
       </template>
     </SHeader>
