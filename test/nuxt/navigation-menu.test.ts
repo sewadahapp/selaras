@@ -246,17 +246,21 @@ describe('navigationMenu (vertical)', () => {
       expect(security.classes()).toContain(cls)
 
     // Their own wrapping <li> (childItem) is what actually carries the
-    // indent this time, not the row - both should carry it identically.
+    // indent and its own tree-connector elbow this time, not the row -
+    // both should carry it identically.
     expect(profile.element.closest('li')?.classList.contains('ps-4')).toBe(true)
     expect(security.element.closest('li')?.classList.contains('ps-4')).toBe(true)
+    expect(profile.element.closest('li')?.classList.contains('selaras-nav-elbow')).toBe(true)
+    expect(security.element.closest('li')?.classList.contains('selaras-nav-elbow')).toBe(true)
 
-    // The wrapping <ul> (childList) draws the tree-connector rail - a
-    // start-margin plus the masked trunk/elbow rail (see theme.css's own
-    // `.selaras-nav-rail` comment).
+    // The wrapping <ul> (childList) draws the trunk line - a start-margin
+    // plus a plain border, spanning the group regardless of whether a
+    // child (like Security here) is itself expanded (see theme.css's own
+    // `.selaras-nav-elbow` comment for why the trunk and each row's own
+    // elbow are drawn separately).
     const childList = profile.element.closest('ul')
     expect(childList?.classList.contains('ms-5')).toBe(true)
-    expect(childList?.classList.contains('selaras-nav-rail')).toBe(true)
-    expect(childList?.classList.contains('selaras-nav-rail--navigation-menu')).toBe(true)
+    expect(childList?.classList.contains('border-s')).toBe(true)
   })
 
   it('the nested list stays a normal single-column, in-flow list - regression, horizontal\'s own absolute-positioned multi-column dropdown styling leaked into vertical\'s accordion content too', async () => {
@@ -518,13 +522,21 @@ describe('navigationMenu (collapsed)', () => {
 
     const members = document.body.querySelector('a[href="/team/members"]')
     const rootList = members?.closest('ul')
-    // The rail's own class always applies (it's in childList's base
-    // string), but flyoutRoot's own override neutralizes its visible
-    // effect via before:!w-0 rather than removing the class - a
-    // hand-written CSS class instead of a Tailwind utility, so
-    // tailwind-merge can't dedupe it the way it does ms-5/ms-0.
-    expect(rootList?.classList.contains('before:!w-0')).toBe(true)
+    // The trunk's own `border-s` is cancelled to `border-s-0` here via
+    // tailwind-merge (a real conflicting utility, same as ms-5/ms-0).
+    expect(rootList?.classList.contains('border-s-0')).toBe(true)
+    expect(rootList?.classList.contains('border-s')).toBe(false)
     expect(rootList?.classList.contains('ms-5')).toBe(false)
+
+    // Each row's own elbow class always applies (it's in childItem's
+    // base string), but flyoutRoot's own override neutralizes its
+    // visible effect via before:!content-none rather than removing the
+    // class - a hand-written CSS class instead of a Tailwind utility, so
+    // tailwind-merge can't dedupe it the way it does ps-4/ps-0.
+    const membersItem = members?.closest('li')
+    expect(membersItem?.classList.contains('selaras-nav-elbow')).toBe(true)
+    expect(membersItem?.classList.contains('before:!content-none')).toBe(true)
+    expect(membersItem?.classList.contains('ps-0')).toBe(true)
 
     // Permissions is its own collapsible trigger now (NavigationMenuAccordionItem)
     // - its own children stay collapsed until it's clicked open too.
@@ -535,8 +547,13 @@ describe('navigationMenu (collapsed)', () => {
 
     const read = document.body.querySelector('a[href="/team/permissions/read"]')
     const nestedList = read?.closest('ul')
-    expect(nestedList?.classList.contains('before:!w-0')).toBe(false)
+    expect(nestedList?.classList.contains('border-s-0')).toBe(false)
+    expect(nestedList?.classList.contains('border-s')).toBe(true)
     expect(nestedList?.classList.contains('ms-5')).toBe(true)
+
+    const readItem = read?.closest('li')
+    expect(readItem?.classList.contains('before:!content-none')).toBe(false)
+    expect(readItem?.classList.contains('ps-4')).toBe(true)
 
     wrapper.unmount()
   })
