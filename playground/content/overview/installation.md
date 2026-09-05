@@ -32,8 +32,38 @@ export default defineNuxtConfig({
 })
 ```
 
-That's it - components are auto-imported, and the module pulls in its own
+Components are now auto-imported, and the module pulls in its own
 dependencies (`@nuxt/icon`, `@nuxtjs/color-mode`) automatically.
+
+## Import the CSS
+
+Selaras doesn't inject its own CSS for you - import it explicitly in your
+own stylesheet, after Tailwind itself:
+
+```css [assets/css/main.css]
+@import "tailwindcss";
+@import "selaras";
+```
+
+Then point Nuxt at that file:
+
+```ts
+export default defineNuxtConfig({
+  modules: ['selaras'],
+  css: ['~/assets/css/main.css'],
+})
+```
+
+`@import "selaras";` brings in every design token (`--ui-*` custom
+properties) and component-level base style - see [Theming](/overview/theming).
+If your project also renders long-form markdown/CMS content, add
+[prose.css](/components/typography/prose) the same way:
+
+```css [assets/css/main.css]
+@import "tailwindcss";
+@import "selaras";
+@import "selaras/prose.css";
+```
 
 ## Options
 

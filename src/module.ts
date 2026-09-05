@@ -44,7 +44,16 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.icon ||= {}
     nuxt.options.icon.cssLayer = 'components'
 
-    nuxt.options.css.push(resolver.resolve('./runtime/theme.css'))
+    // theme.css is no longer auto-injected via nuxt.options.css - a
+    // consumer imports it explicitly instead (`@import "tailwindcss";
+    // @import "selaras";` in their own CSS entry point - package.json's
+    // own root export declares a `style` condition pointing at theme.css,
+    // the same mechanism a bare `@import "<package>";` commonly resolves
+    // through for other Nuxt component libraries' own CSS packages),
+    // matching that same current installation story and prose.css's
+    // existing opt-in pattern here. This still wires up the actual
+    // Tailwind build pipeline regardless of where the CSS import lives -
+    // only the CSS *file itself* moved to being explicit, not this.
     addVitePlugin(tailwindcss())
 
     addComponentsDir({
@@ -55,7 +64,8 @@ export default defineNuxtModule<ModuleOptions>({
       // .vue SFCs - addComponentsDir only scans .vue by default.
       extensions: ['vue', 'ts'],
       // ModalRenderer is App.vue's own internal render loop for useModal(),
-      // mirroring a comparable reference's own un-exported OverlayProvider - not meant to be
+      // mirroring the same un-exported overlay-provider pattern other Nuxt
+      // component libraries commonly use internally - not meant to be
       // placed by a consumer (App.vue already mounts one; a second copy
       // would render every open programmatic modal twice, since useModal()'s
       // state is a shared singleton). NavigationMenuAccordionItem,

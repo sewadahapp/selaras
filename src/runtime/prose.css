@@ -11,10 +11,11 @@
  * !important anywhere, and no need to override these rules one by one on
  * a page where they don't fit; that's the whole point of :where() here.
  *
- * A separate, optionally-imported file (not bundled into theme.css, which
- * this module already auto-injects into every consumer) - `@import
- * "selaras/prose.css";` after Tailwind, only from a project that actually
- * has long-form content to style.
+ * A separate, optionally-imported file (not bundled into theme.css) -
+ * `@import "selaras/prose.css";` after `@import "tailwindcss"; @import
+ * "selaras";` in a consumer's own CSS, only from a project that
+ * actually has long-form content to style. Neither file is auto-
+ * injected by the module - both are the consumer's own explicit import.
  *
  * Everything below lives inside its own layer, `selaras-prose` - not
  * Tailwind's own `components` layer, even though that would seem like

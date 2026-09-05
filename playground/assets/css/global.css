@@ -1,12 +1,38 @@
 /*
+ * Tailwind itself is the consumer's own import now too - theme.css
+ * doesn't bundle it (see theme.css's own top comment). Must come first,
+ * before theme.css below.
+ */
+@import "tailwindcss";
+
+/*
+ * theme.css (design tokens, every component's own base styles) is no
+ * longer auto-injected by the module - a consumer imports it explicitly
+ * now. This docs site is that consumer too, so it imports it the same
+ * way any real one would. Must come before prose.css below - Tailwind's
+ * own cascade layer order is fixed by document-wide first mention, and
+ * prose.css's own `selaras-prose` layer needs Tailwind's theme/base/
+ * components/utilities layers already established first (see
+ * prose.css's own top comment for why that matters).
+ *
+ * A real external consumer would write `@import "selaras";` (the bare
+ * package name - selaras/package.json's own root export declares a
+ * `style` condition pointing at this exact file) instead of this
+ * relative one - this repo's own playground isn't an npm dependent of
+ * the root package (it references the module via a relative path in
+ * nuxt.config.ts, not a package name), so there's no node_modules/
+ * selaras symlink for that specifier to resolve against.
+ */
+@import "../../../src/runtime/theme.css";
+
+/*
  * The pipeline-agnostic prose typography class (src/runtime/prose.css) -
  * opt-in and not bundled into theme.css, so this docs site imports it
  * explicitly like any other consumer would. A real external consumer
- * would write `@import "selaras/prose.css";` (the package's own exported
- * path) instead of this relative one - this repo's own playground isn't
- * an npm dependent of the root package (it references the module via a
- * relative path in nuxt.config.ts, not a package name), so there's no
- * node_modules/selaras symlink for that specifier to resolve against.
+ * would write `@import "selaras/prose.css";` - unlike theme.css above,
+ * prose.css stays an explicit subpath (it's optional, not every
+ * consumer's project has long-form content to style), same relative-
+ * vs-package-name caveat otherwise.
  */
 @import "../../../src/runtime/prose.css";
 

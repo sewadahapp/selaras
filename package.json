@@ -8,6 +8,7 @@
   "exports": {
     ".": {
       "types": "./dist/types.d.mts",
+      "style": "./dist/runtime/theme.css",
       "import": "./dist/module.mjs"
     },
     "./directives": {
@@ -19,9 +20,11 @@
       "import": "./dist/runtime/types/index.js"
     },
     "./components/*": "./dist/runtime/components/*",
+    "./theme.css": "./dist/runtime/theme.css",
     "./prose.css": "./dist/runtime/prose.css"
   },
   "main": "./dist/module.mjs",
+  "style": "./dist/runtime/theme.css",
   "typesVersions": {
     "*": {
       ".": [

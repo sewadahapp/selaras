@@ -45,7 +45,14 @@ Install the module to your Nuxt application with one command:
 npx nuxt module add selaras
 ```
 
-That's it! Every component is now auto-imported and ready to use:
+Import the CSS in your own stylesheet, after Tailwind itself:
+
+```css
+@import "tailwindcss";
+@import "selaras";
+```
+
+Every component is now auto-imported and ready to use:
 
 ```vue-html
 <SButton color="primary" icon="ph:sparkle">

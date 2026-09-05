@@ -1,4 +1,19 @@
-@import "tailwindcss";
+/*
+ * Deliberately no `@import "tailwindcss";` here - that's the consumer's
+ * own import now (`@import "tailwindcss"; @import "selaras";` in their
+ * own CSS, in that order), matching how other Nuxt component libraries'
+ * own CSS packages commonly work (confirmed by reading a comparable
+ * reference's own shipped CSS directly: it imports its own internal
+ * build artifacts and keyframes, never `tailwindcss` itself). Tailwind
+ * v4 processes `@source`/`@theme`/`@custom-variant` anywhere in the
+ * whole resolved import graph as one unit, regardless of which specific
+ * file contains the actual `@import "tailwindcss";` - this file only
+ * needs to come *after* that import somewhere upstream, not contain it
+ * itself. `tw-animate-css` stays here though - that's this library's
+ * own internal implementation detail (the animation utilities Modal/
+ * Dropdown/Toast/Tooltip's own transitions rely on), not something a
+ * consumer should need to know to import themselves.
+ */
 @import "tw-animate-css";
 
 /*
