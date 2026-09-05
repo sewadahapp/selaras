@@ -209,6 +209,22 @@
   bottom: auto;
   height: 10px;
 }
+/* Row height 28px (py-1 + text-sm's 20px line-height); elbow curves
+   down to the row's own midpoint (y=14). List gap is 2px (gap-0.5); the
+   last row's own trunk segment stops at y=8, matching its elbow
+   curve's own start. */
+.selaras-nav-elbow--file-tree::before {
+  height: 28px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 28'%3E%3Cpath d='M1 8A6 6 0 0 0 7 14L14 14' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 28'%3E%3Cpath d='M1 8A6 6 0 0 0 7 14L14 14' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.selaras-nav-elbow--file-tree::after {
+  bottom: -2px;
+}
+.selaras-nav-elbow--file-tree:last-child::after {
+  bottom: auto;
+  height: 8px;
+}
 
 
 

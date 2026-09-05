@@ -77,7 +77,7 @@ function iconFor(node: FileTreeNode, index: number) {
 }
 
 const theme = useComponentTheme('fileTree', fileTreeTheme)
-const ui = computed(() => theme.value())
+const ui = computed(() => theme.value({ isNested: props.isNested }))
 
 // A nested call renders `list`, not `root` (see the comment above), so its
 // own override has to come from `ui.list` too - passing `ui.root`

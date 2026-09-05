@@ -94,4 +94,20 @@ describe('fileTree', () => {
     for (const list of nestedLists)
       expect(list.classes()).toContain('ps-4')
   })
+
+  // Regression: mirrors ContentNavigation's own `isNested`-gated rail -
+  // a root-level row has no parent trunk to its left to branch off of,
+  // so only a nested row (one rendered inside a recursive FileTree
+  // instance) should get the tree-connector rail.
+  it('only a nested row gets the tree-connector rail, not a root-level one', async () => {
+    const wrapper = await mountSuspended(FileTree, { props: { items } })
+
+    const rootFile = wrapper.findAll('button').find(b => b.text() === 'package.json')!.element.closest('li')
+    const rootDir = wrapper.findAll('button').find(b => b.text() === 'src')!.element.closest('li')
+    const nestedFile = wrapper.findAll('button').find(b => b.text() === 'index.ts')!.element.closest('li')
+
+    expect(rootFile?.classList.contains('selaras-nav-elbow')).toBe(false)
+    expect(rootDir?.classList.contains('selaras-nav-elbow')).toBe(false)
+    expect(nestedFile?.classList.contains('selaras-nav-elbow')).toBe(true)
+  })
 })
