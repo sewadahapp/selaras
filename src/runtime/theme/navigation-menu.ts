@@ -21,10 +21,11 @@ export const navigationMenuTheme = tv({
     // through NavigationMenuAccordionItem.vue rather than switching to a
     // separate "child" style partway down. `childLink` below still exists,
     // but only for horizontal's own dropdown panel - a real second row
-    // style there, not a nesting-depth concern. This mirrors a comparable reference's own
-    // real navigation-menu source (confirmed by reading it directly): it
-    // has no `childLink` at all for vertical mode, only ever `link` with a
-    // `level` variant. An earlier version of this file tried to keep two
+    // style there, not a nesting-depth concern. This mirrors a comparable
+    // reference's own real navigation-menu source (confirmed by reading
+    // it directly): it has no `childLink` at all for vertical mode, only
+    // ever `link` with a `level` variant. An earlier version of this
+    // file tried to keep two
     // parallel row styles in sync across every nesting level instead (a
     // `childLink` used from 2nd level down, `ps-0`/gap fixes chasing each
     // new place the two silently drifted apart) - genuinely not worth it;
@@ -67,22 +68,23 @@ export const navigationMenuTheme = tv({
   variants: {
     orientation: {
       // `content`: full width of the nav bar, not sized to its own
-      // content - confirmed directly against both references (one reference's
-      // own real theme sizes this `w-full`; another reference's MegaMenu - the
-      // actual comparable component for this wide-panel behavior, not
-      // Menubar's own narrow cascading submenus - does the same). Each
-      // open item's own panel stacks absolutely inside the shared
-      // viewport (only one visible via Presence), rather than sizing the
+      // content - confirmed directly against two comparable references
+      // (one's own real theme sizes this `w-full`; the other's own
+      // mega-menu-style wide panel component - not its own separate
+      // narrow cascading-submenu component - does the same). Each open
+      // item's own panel stacks absolutely inside the shared viewport
+      // (only one visible via Presence), rather than sizing the
       // viewport to whichever is active.
       // `childList`: adaptive column count (not a fixed grid-cols-2 like
-      // a comparable reference's own default) - a fixed count leaves an awkward empty
-      // cell for an odd number of children. `auto-fit`, not `auto-fill` -
-      // fill reserves empty phantom tracks for however many columns
-      // WOULD fit the container width, leaving that much dead space when
-      // there are fewer actual children than that - exactly what showed
-      // up as a wide empty gap next to a 4-item grid in a very wide
-      // panel. `auto-fit` collapses those phantom tracks to 0 instead,
-      // so existing children always stretch to fill the full width.
+      // a comparable reference's own default) - a fixed count leaves an
+      // awkward empty cell for an odd number of children. `auto-fit`,
+      // not `auto-fill` - fill reserves empty phantom tracks for
+      // however many columns WOULD fit the container width, leaving
+      // that much dead space when there are fewer actual children than
+      // that - exactly what showed up as a wide empty gap next to a
+      // 4-item grid in a very wide panel. `auto-fit` collapses those
+      // phantom tracks to 0 instead, so existing children always
+      // stretch to fill the full width.
       horizontal: {
         root: 'relative items-center',
         list: 'items-center gap-1',

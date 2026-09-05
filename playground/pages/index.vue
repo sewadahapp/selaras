@@ -52,7 +52,7 @@ const values = [
           Design tokens,<br>in alignment.
         </h1>
         <p class="max-w-xl text-lg text-[var(--ui-text-muted)]">
-          A Vue component library themed with <code class="font-mono text-[var(--ui-text)]">tv()</code> and CSS variables – every color a real, measured token, every component styled through one shared <code class="font-mono text-[var(--ui-text)]">:ui</code> prop.
+          A UI component library for Nuxt, themed with <code class="font-mono text-[var(--ui-text)]">tv()</code> and CSS variables – every color a real, measured token, every component styled through one shared <code class="font-mono text-[var(--ui-text)]">:ui</code> prop.
         </p>
         <div class="flex flex-wrap items-center gap-3">
           <SButton size="lg" :as="NuxtLinkComponent" to="/components/elements/button">

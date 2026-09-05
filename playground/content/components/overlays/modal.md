@@ -102,9 +102,10 @@ from the extra room.
 
 `fullscreen` alone only sets a fixed initial layout - `maximizable` adds a
 header button next to close that lets the user toggle between the default
-and full-viewport layout at runtime, matching a comparable reference's own dialog maximize toggle. `fullscreen`
-still sets which one it starts in; pair with `v-model:fullscreen` if you
-need to read or control the current state yourself:
+and full-viewport layout at runtime, matching a comparable reference's
+own dialog maximize toggle. `fullscreen` still sets which one it starts
+in; pair with `v-model:fullscreen` if you need to read or control the
+current state yourself:
 
 ::component-example{name="modal-maximizable"}
 ::

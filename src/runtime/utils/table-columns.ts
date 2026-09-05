@@ -141,10 +141,11 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
  * by convertChildrenToColumns above) into the { start, end } shape
  * TanStack v9's columnPinningFeature wants as table-level state - "start"/
  * "end" is its own (RTL-aware) naming; `pinned="left"|"right"` is the
- * public <SColumn> API since that's the more familiar term (matching
- * a comparable reference's own `alignFrozen`), mapped 1:1 assuming LTR. Declarative,
- * one-way: pin arrangement comes from which columns you marked pinned in
- * your template, not a separate piece of state to manage yourself.
+ * public <SColumn> API since that's the more familiar term (matching a
+ * comparable reference's own column-freezing option), mapped 1:1
+ * assuming LTR. Declarative, one-way: pin arrangement comes from which
+ * columns you marked pinned in your template, not a separate piece of
+ * state to manage yourself.
  */
 export function collectColumnPinning(columns: any[]): { start: string[], end: string[] } {
   const start: string[] = []

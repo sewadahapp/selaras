@@ -20,10 +20,10 @@ export interface NavigationMenuItem {
    * item's `label` doubles as its list key.
    *
    * Top-level only - a `children` array doesn't check this, so a nested
-   * tree can't group its own children under a sub-heading. A comparable reference's own
-   * "group" concept isn't a separate type here either - it's just a
-   * `'label'` item followed by the ordinary items it's meant to
-   * introduce, no wrapping structure needed for a flat array.
+   * tree can't group its own children under a sub-heading. A comparable
+   * reference's own "group" concept isn't a separate type here either -
+   * it's just a `'label'` item followed by the ordinary items it's meant
+   * to introduce, no wrapping structure needed for a flat array.
    */
   type?: 'link' | 'label' | 'separator'
 }

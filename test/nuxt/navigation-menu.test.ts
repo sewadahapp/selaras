@@ -218,9 +218,9 @@ describe('navigationMenu (vertical)', () => {
   // trying to keep two parallel row styles (`link` vs `childLink`) in
   // sync across every nesting level by hand - a real bug (and a second
   // one, a stale gap-1.5) both slipped through exactly there. Redesigned
-  // to match a comparable reference's own real source (confirmed by reading it
-  // directly): there's only ever one row style, `link`, at every depth -
-  // the indent step comes entirely from the *wrapping* childList/
+  // to match a comparable reference's own real source (confirmed by
+  // reading it directly): there's only ever one row style, `link`, at
+  // every depth - the indent step comes entirely from the *wrapping* childList/
   // childItem's own margin/border, not from the row itself. So "Profile"
   // (a leaf) and "Security" (a nested trigger) should carry the exact
   // same row classes now, and their own wrapping `<li>` should carry the

@@ -62,7 +62,8 @@ describe('select', () => {
 
   it('keeps the trigger as the only Tab stop - the clear button opts out via tabindex=-1', async () => {
     // Regression: ComboboxTrigger ships tabindex=-1 by design (Reka expects
-    // the consumer to override it - a comparable reference's own select component does the same).
+    // the consumer to override it - a comparable reference's own select
+    // component does the same).
     // Without that override, the trigger was never reachable by Tab at all -
     // this only became visible once the clear button became a real,
     // naturally-tabbable control competing for the one stop that existed.

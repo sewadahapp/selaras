@@ -5,7 +5,7 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-A Vue component library built on Reka UI and Tailwind v4. Every
+A UI component library for Nuxt, built on Reka UI and Tailwind v4. Every
 component ships a `tailwind-variants` theme and a single `:ui` prop for
 overrides - no separate pass-through prop to juggle, no specificity fights
 between the library's own classes and yours. Design tokens are plain CSS

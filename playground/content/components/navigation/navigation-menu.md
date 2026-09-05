@@ -38,10 +38,10 @@ shared floating panel that smoothly resizes and cross-fades as you move
 between different top-level items - Reka UI's own real navigation-menu
 mechanism, not an independent popover per item. The panel always spans
 the **full width** of the nav bar, flowing children into as many columns
-as comfortably fit - matching both a comparable reference's own default and another's
-MegaMenu (its actual wide-panel component - Menubar's own submenus are
-narrow/cascading instead), rather than a narrow popover sized to its own
-content:
+as comfortably fit - matching two comparable references directly (one's
+own default, and the other's own mega-menu-style wide panel component -
+not its own separate narrow/cascading submenu component), rather than a
+narrow popover sized to its own content:
 
 ::component-example{name="navigation-menu-children"}
 ::
