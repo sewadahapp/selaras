@@ -93,21 +93,20 @@ export const navigationMenuTheme = tv({
       // UI's own real source: every level of nesting reuses the exact
       // same `link` row unstyled by depth - what actually creates the
       // step-in per level is the *wrapping* childList/childItem, not the
-      // row itself. `childList`'s own start-margin (ms-5) plus a
-      // start-border draws one continuous guide line down each branch of
-      // the tree (matching the reference's own look, not something this
-      // project invented); `childItem`'s own ps-1.5 sits the row a touch
-      // off that line, and `-ms-px` pulls it back by the border's own
-      // width so the line doesn't silently add an extra pixel of its
-      // own. `content` carries no horizontal padding of its own for
-      // vertical - childList's ms-5 is the only indent source, so
-      // nothing here doubles up with it.
+      // row itself. `childList`'s own start-margin (ms-5) plus the
+      // tree-connector rail (see theme.css's own `.selaras-nav-rail`
+      // comment for the full technique) draws one continuous trunk line
+      // with a curved elbow per row, branching off it toward each item;
+      // `childItem`'s own ps-4 matches the rail's own 16px width exactly,
+      // so each row sits flush right after it. `content` carries no
+      // horizontal padding of its own for vertical - childList's ms-5 is
+      // the only indent source, so nothing here doubles up with it.
       vertical: {
         root: 'flex-col',
         list: 'flex-col gap-1',
         content: 'px-0 py-1',
-        childList: 'ms-5 border-s border-[var(--ui-border)]',
-        childItem: 'ps-1.5 -ms-px',
+        childList: 'ms-5 selaras-nav-rail selaras-nav-rail--navigation-menu',
+        childItem: 'ps-4',
       },
     },
     color: {
@@ -162,9 +161,14 @@ export const navigationMenuTheme = tv({
     // group's own children, sitting right below its own real, visible
     // heading row) keeps the normal indent/line treatment untouched - see
     // NavigationMenuFlyoutList.vue's own `root` prop, which is what wires
-    // this variant in only for that outermost call.
+    // this variant in only for that outermost call. The rail's own
+    // `.selaras-nav-rail` is a hand-written CSS class, not a Tailwind
+    // utility - tailwind-merge can't dedupe it away the way it does
+    // `ms-5`/`ms-0` here, so `before:!w-0` forces the masked pseudo's
+    // width to 0 via a real cascade override instead (the class name
+    // itself stays in the DOM either way, just with no visible effect).
     flyoutRoot: {
-      true: { childList: 'ms-0 border-s-0' },
+      true: { childList: 'ms-0 before:!w-0' },
     },
   },
   compoundVariants: [

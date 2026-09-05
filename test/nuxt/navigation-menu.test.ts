@@ -247,14 +247,16 @@ describe('navigationMenu (vertical)', () => {
 
     // Their own wrapping <li> (childItem) is what actually carries the
     // indent this time, not the row - both should carry it identically.
-    expect(profile.element.closest('li')?.classList.contains('ps-1.5')).toBe(true)
-    expect(security.element.closest('li')?.classList.contains('ps-1.5')).toBe(true)
+    expect(profile.element.closest('li')?.classList.contains('ps-4')).toBe(true)
+    expect(security.element.closest('li')?.classList.contains('ps-4')).toBe(true)
 
-    // The wrapping <ul> (childList) draws the guide line - a start-margin
-    // plus a start-border, matching the reference's own real look.
+    // The wrapping <ul> (childList) draws the tree-connector rail - a
+    // start-margin plus the masked trunk/elbow rail (see theme.css's own
+    // `.selaras-nav-rail` comment).
     const childList = profile.element.closest('ul')
     expect(childList?.classList.contains('ms-5')).toBe(true)
-    expect(childList?.classList.contains('border-s')).toBe(true)
+    expect(childList?.classList.contains('selaras-nav-rail')).toBe(true)
+    expect(childList?.classList.contains('selaras-nav-rail--navigation-menu')).toBe(true)
   })
 
   it('the nested list stays a normal single-column, in-flow list - regression, horizontal\'s own absolute-positioned multi-column dropdown styling leaked into vertical\'s accordion content too', async () => {
@@ -516,7 +518,12 @@ describe('navigationMenu (collapsed)', () => {
 
     const members = document.body.querySelector('a[href="/team/members"]')
     const rootList = members?.closest('ul')
-    expect(rootList?.classList.contains('border-s')).toBe(false)
+    // The rail's own class always applies (it's in childList's base
+    // string), but flyoutRoot's own override neutralizes its visible
+    // effect via before:!w-0 rather than removing the class - a
+    // hand-written CSS class instead of a Tailwind utility, so
+    // tailwind-merge can't dedupe it the way it does ms-5/ms-0.
+    expect(rootList?.classList.contains('before:!w-0')).toBe(true)
     expect(rootList?.classList.contains('ms-5')).toBe(false)
 
     // Permissions is its own collapsible trigger now (NavigationMenuAccordionItem)
@@ -528,7 +535,7 @@ describe('navigationMenu (collapsed)', () => {
 
     const read = document.body.querySelector('a[href="/team/permissions/read"]')
     const nestedList = read?.closest('ul')
-    expect(nestedList?.classList.contains('border-s')).toBe(true)
+    expect(nestedList?.classList.contains('before:!w-0')).toBe(false)
     expect(nestedList?.classList.contains('ms-5')).toBe(true)
 
     wrapper.unmount()

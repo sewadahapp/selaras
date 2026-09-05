@@ -14,7 +14,12 @@ export const contentNavigationTheme = tv({
     // shows before its title, not the title text itself.
     icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',
     chevron: 'size-4 shrink-0 text-[var(--ui-text-muted)] transition-transform group-data-[state=open]:rotate-180',
-    content: 'ms-3 flex flex-col gap-0.5 border-s border-[var(--ui-border)] ps-2',
+    // The tree-connector rail (see theme.css's own comment on
+    // `.selaras-nav-rail` for the full technique) replaces the old
+    // plain `border-s` trunk line - ps-4 (16px) matches the rail's own
+    // width exactly, so children sit flush right after it instead of
+    // doubling up with the rail's own reserved space.
+    content: 'selaras-nav-rail selaras-nav-rail--content-navigation ms-3 flex flex-col gap-0.5 ps-4',
   },
 })
 

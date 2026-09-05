@@ -111,6 +111,68 @@
   }
 }
 
+/*
+ * Tree-connector rail for a nested nav group's own children
+ * (ContentNavigation.vue's `content` slot, NavigationMenu's own
+ * `childList` slot in vertical mode) - a trunk line plus one curved
+ * "elbow" per row, branching off it toward each item. Unlike
+ * ContentToc.vue's own rail (a JS-measured path, since TOC headings sit
+ * at arbitrary, unpredictable positions and depths), every row in a nav
+ * group is a fixed, already-known height from this project's own
+ * spacing scale - so one row-height-tall SVG tile, repeated down the
+ * group via `mask-repeat: repeat-y`, covers the whole thing with no
+ * measurement at all. The real border color comes from `--ui-border`
+ * via `mask-image` (the SVG itself is just black-on-transparent
+ * geometry, masking a plain colored div) - the same "colored div,
+ * SVG-as-mask so the real color stays a theme token" technique
+ * ContentToc's own rail already uses, just a static tile instead of a
+ * one-off measured path.
+ *
+ * `--selaras-rail-tile-h` is set per call site (each theme's own row
+ * height + list gap) - everything else here is shared. The tile's own
+ * geometry (16px wide, trunk at x=1, elbow starting 6px above the
+ * row's own midpoint) isn't parametrized per row height beyond that,
+ * since both call sites use the same 1.5px stroke width, corner
+ * radius, and stub length - only the tile height (and so the elbow's
+ * own vertical position within it) actually differs between them.
+ */
+.selaras-nav-rail {
+  position: relative;
+}
+.selaras-nav-rail::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 0;
+  width: 16px;
+  background-color: var(--ui-border);
+  -webkit-mask-repeat: repeat-y;
+  mask-repeat: repeat-y;
+  -webkit-mask-position: top;
+  mask-position: top;
+  -webkit-mask-size: 16px var(--selaras-rail-tile-h);
+  mask-size: 16px var(--selaras-rail-tile-h);
+}
+/* Row height 40px (py-2.5 + text-sm's 20px line-height) + list gap 2px
+   (gap-0.5) = 42px tile; elbow branches at y=20 (the row's own
+   midpoint). */
+.selaras-nav-rail--content-navigation {
+  --selaras-rail-tile-h: 42px;
+}
+.selaras-nav-rail--content-navigation::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 42'%3E%3Cpath d='M1 0L1 42' stroke='black' stroke-width='1.5' fill='none'/%3E%3Cpath d='M1 14A6 6 0 0 0 7 20L14 20' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 42'%3E%3Cpath d='M1 0L1 42' stroke='black' stroke-width='1.5' fill='none'/%3E%3Cpath d='M1 14A6 6 0 0 0 7 20L14 20' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+/* Row height 32px (py-1.5 + text-sm's 20px line-height) + list gap 4px
+   (gap-1) = 36px tile; elbow branches at y=16. */
+.selaras-nav-rail--navigation-menu {
+  --selaras-rail-tile-h: 36px;
+}
+.selaras-nav-rail--navigation-menu::before {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 36'%3E%3Cpath d='M1 0L1 36' stroke='black' stroke-width='1.5' fill='none'/%3E%3Cpath d='M1 10A6 6 0 0 0 7 16L14 16' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 36'%3E%3Cpath d='M1 0L1 36' stroke='black' stroke-width='1.5' fill='none'/%3E%3Cpath d='M1 10A6 6 0 0 0 7 16L14 16' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
 
 
 @theme {
