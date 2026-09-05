@@ -10,6 +10,7 @@
   "dependencies": {
     "@nuxt/content": "^3.16.0",
     "@nuxt/fonts": "^0.14.0",
-    "nuxt": "^4.5.2"
+    "nuxt": "^4.5.2",
+    "tailwindcss": "^4.1.11"
   }
 }
