@@ -256,15 +256,15 @@ describe('navigationMenu (vertical)', () => {
     expect(security.element.closest('li')?.classList.contains('selaras-nav-elbow')).toBe(true)
 
     // The wrapping <ul> (childList) carries the indent margin *and* the
-    // ps-4 gutter the rail reaches back into - not childItem itself, or
-    // the mask's own -16px offset and this padding would both measure
-    // from the same element in opposite directions and double the
+    // ps-1.5 gutter the rail reaches back into - not childItem itself,
+    // or the mask's own -16px offset and this padding would both measure
+    // from the same element in opposite directions and widen the
     // rail-to-text gap (see this file's own comment on the vertical
     // variant for why). The trunk line itself lives entirely on each
     // item, not here (see theme.css's own `.selaras-nav-elbow` comment).
     const childList = profile.element.closest('ul')
     expect(childList?.classList.contains('ms-6')).toBe(true)
-    expect(childList?.classList.contains('ps-4')).toBe(true)
+    expect(childList?.classList.contains('ps-1.5')).toBe(true)
     expect(childList?.classList.contains('border-s')).toBe(false)
   })
 
@@ -527,10 +527,10 @@ describe('navigationMenu (collapsed)', () => {
 
     const members = document.body.querySelector('a[href="/team/members"]')
     const rootList = members?.closest('ul')
-    // `ps-0` cancels `childList`'s own `ps-4` normally via tailwind-merge
+    // `ps-0` cancels `childList`'s own `ps-1.5` normally via tailwind-merge
     // (a real conflicting utility, same as ms-0/ms-6).
     expect(rootList?.classList.contains('ms-6')).toBe(false)
-    expect(rootList?.classList.contains('ps-4')).toBe(false)
+    expect(rootList?.classList.contains('ps-1.5')).toBe(false)
     expect(rootList?.classList.contains('ps-0')).toBe(true)
 
     // Each row's own trunk+elbow classes always apply (they're in
@@ -554,7 +554,7 @@ describe('navigationMenu (collapsed)', () => {
     const read = document.body.querySelector('a[href="/team/permissions/read"]')
     const nestedList = read?.closest('ul')
     expect(nestedList?.classList.contains('ms-6')).toBe(true)
-    expect(nestedList?.classList.contains('ps-4')).toBe(true)
+    expect(nestedList?.classList.contains('ps-1.5')).toBe(true)
     expect(nestedList?.classList.contains('ps-0')).toBe(false)
 
     const readItem = read?.closest('li')

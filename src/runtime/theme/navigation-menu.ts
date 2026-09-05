@@ -101,26 +101,25 @@ export const navigationMenuTheme = tv({
       //
       // The tree-connector trunk+elbow (see theme.css's own
       // `.selaras-nav-elbow` comment for the full technique) live on
-      // `childItem`, but the 16px gutter they reach back into is
-      // reserved by `ps-4` on `childList` - not on `childItem` itself,
-      // even though the rail visually sits right at each item's own
-      // edge. Putting `ps-4` on `childItem` instead (an earlier version
-      // did) double-counts the offset: the rail's own `-16px` and the
-      // padding's own `+16px` both measure from childItem's own edge in
-      // opposite directions, landing the rail 32px from the child's own
-      // text instead of 16px - visibly further from the text than
-      // ContentNavigation's own rail (which keeps the two on separate
-      // elements: mask on `item`, padding on the wrapping `content`),
-      // reading as under-indented by comparison. Reserving the gutter on
+      // `childItem`, but the gutter they reach back into is reserved by
+      // `ps-1.5` on `childList` - not on `childItem` itself, even though
+      // the rail visually sits right at each item's own edge. Putting
+      // padding on `childItem` instead (an earlier version did, with
+      // `ps-4`) double-counts the offset: the rail's own fixed `-16px`
+      // mask offset and the padding would both measure from childItem's
+      // own edge in opposite directions, widening the rail-to-text gap
+      // well past what `ps-1.5` alone reserves. Reserving the gutter on
       // `childList` instead means childItem's own edge is *already*
-      // shifted 16px right of the rail before the mask's own offset even
-      // applies, matching ContentNavigation's clean single-application
-      // geometry.
+      // shifted right of the rail before the mask's own offset even
+      // applies - same single-application geometry ContentNavigation's
+      // own rail uses (mask on `item`, padding on the wrapping
+      // `content`), just tuned to a tighter `ps-1.5` here instead of
+      // matching the mask's own 16px width exactly.
       vertical: {
         root: 'flex-col',
         list: 'flex-col gap-1',
         content: 'px-0 py-1',
-        childList: 'ms-6 ps-4',
+        childList: 'ms-6 ps-1.5',
         childItem: 'selaras-nav-elbow selaras-nav-elbow--navigation-menu',
       },
     },
@@ -177,7 +176,7 @@ export const navigationMenuTheme = tv({
     // heading row) keeps the normal indent/line treatment untouched - see
     // NavigationMenuFlyoutList.vue's own `root` prop, which is what wires
     // this variant in only for that outermost call. `ps-0` cancels
-    // `childList`'s own `ps-4` normally via tailwind-merge (a real
+    // `childList`'s own `ps-1.5` normally via tailwind-merge (a real
     // conflicting utility, same as ms-0/ms-6). `childItem`'s own
     // `.selaras-nav-elbow` is a hand-written CSS class though, not a
     // Tailwind utility - tailwind-merge can't dedupe it away, so
