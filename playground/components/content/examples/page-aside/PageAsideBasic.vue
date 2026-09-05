@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-64 w-full rounded-[var(--ui-radius-md)] ring-1 ring-[var(--ui-border)]">
-    <SPageAside :ui="{ root: 'static h-full w-48' }">
+    <SPageAside :ui="{ root: 'static flex h-full w-48' }">
       <template #header>
         <strong class="text-sm">Header</strong>
       </template>

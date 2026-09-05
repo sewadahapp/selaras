@@ -24,6 +24,12 @@ layout does for both the left nav and right [ContentToc](/blocks/documentation/c
 rail. The example above overrides `root` via the `ui` prop to a fixed height
 so it fits inline in these docs.
 
+It's also hidden below the `lg` breakpoint by default - a fixed-width rail
+alongside the main content column has nowhere to go on a narrow viewport.
+This docs site's own right-hand ToC rail simply disappears there; its left
+nav instead surfaces through a Drawer triggered from the header, since
+unlike the ToC it still needs to be reachable on mobile.
+
 Scrolling is handled by a themed [ScrollArea](/components/layout/scroll-area)
 internally, not a plain `overflow-y-auto` div - so scrollbar styling stays
 consistent with the rest of the library.
