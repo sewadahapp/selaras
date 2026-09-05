@@ -3,11 +3,11 @@ import { tv } from 'tailwind-variants'
 export const contentNavigationTheme = tv({
   slots: {
     root: 'flex flex-col gap-0.5 text-sm',
-    // The tree-connector elbow (see theme.css's own comment on
-    // `.selaras-nav-elbow` for the full technique) branches off the
-    // parent `content` list's own trunk line toward this item's row -
-    // sized to just the row's own height, so it can't bleed into any
-    // nested content this same item stacks below its row when expanded.
+    // The tree-connector rail (trunk segment + elbow, see theme.css's
+    // own comment on `.selaras-nav-elbow` for the full technique) -
+    // both pieces live on this item, not the parent `content` list, so
+    // neither can bleed into any nested content this same item stacks
+    // below its own row when expanded.
     item: 'selaras-nav-elbow selaras-nav-elbow--content-navigation flex flex-col',
     // py-2.5 (+ text-sm's 20px line-height) lands close to the 44px touch
     // target guideline without doubling the sidebar's height the way a
@@ -19,12 +19,11 @@ export const contentNavigationTheme = tv({
     // shows before its title, not the title text itself.
     icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',
     chevron: 'size-4 shrink-0 text-[var(--ui-text-muted)] transition-transform group-data-[state=open]:rotate-180',
-    // `border-s` is the trunk line itself - a plain straight border,
-    // not the rail mask (see theme.css's `.selaras-nav-elbow` comment
-    // for why the two are separate). `ps-4` (16px) reserves the gutter
-    // each child's own elbow (on the `item` slot above) reaches back
-    // into, so children sit flush right after it either way.
-    content: 'ms-3 flex flex-col gap-0.5 border-s border-[var(--ui-border)] ps-4',
+    // `ps-4` (16px) reserves the gutter each child's own trunk segment
+    // and elbow (on the `item` slot above) reach back into - the trunk
+    // line itself has no presence here at all, see theme.css's own
+    // `.selaras-nav-elbow` comment for why it lives per-item instead.
+    content: 'ms-3 flex flex-col gap-0.5 ps-4',
   },
 })
 
