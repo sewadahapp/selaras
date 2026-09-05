@@ -255,100 +255,6 @@
   --color-danger-950: oklch(0.205 0.065 28);
 }
 
-/* :root {
-  --ui-bg: white;
-  --ui-bg-elevated: var(--color-neutral-50);
-  --ui-bg-inverted: var(--color-neutral-900);
-  --ui-border: var(--color-neutral-200);
-  --ui-border-hover: var(--color-neutral-300);
-  --ui-border-muted: var(--color-neutral-100);
-  --ui-text: var(--color-neutral-900);
-  --ui-text-muted: var(--color-neutral-500);
-  --ui-text-inverted: white;
-
-  --ui-primary: var(--color-primary-500);
-  --ui-primary-hover: var(--color-primary-600);
-  --ui-primary-active: var(--color-primary-700);
-  --ui-primary-foreground: white;
-  --ui-primary-soft: var(--color-primary-100);
-
-  --ui-secondary: var(--color-secondary-500);
-  --ui-secondary-hover: var(--color-secondary-600);
-  --ui-secondary-active: var(--color-secondary-700);
-  --ui-secondary-foreground: white;
-  --ui-secondary-soft: var(--color-secondary-100);
-
-  --ui-success: var(--color-success-500);
-  --ui-success-hover: var(--color-success-600);
-  --ui-success-active: var(--color-success-700);
-  --ui-success-foreground: white;
-  --ui-success-soft: var(--color-success-100);
-
-  --ui-danger: var(--color-danger-500);
-  --ui-danger-hover: var(--color-danger-600);
-  --ui-danger-active: var(--color-danger-700);
-  --ui-danger-foreground: white;
-  --ui-danger-soft: var(--color-danger-100);
-
-  --ui-info: var(--color-info-500);
-  --ui-info-hover: var(--color-info-600);
-  --ui-info-active: var(--color-info-700);
-  --ui-info-foreground: white;
-  --ui-info-soft: var(--color-info-100);
-
-  --ui-warning: var(--color-warning-500);
-  --ui-warning-hover: var(--color-warning-600);
-  --ui-warning-active: var(--color-warning-700);
-  --ui-warning-foreground: white;
-  --ui-warning-soft: var(--color-warning-100);
-}
-
-.dark {
-  --ui-bg: color-mix(in oklab, var(--color-neutral-900) 70%, black);
-  --ui-bg-elevated: var(--color-neutral-900);
-  --ui-bg-inverted: white;
-  --ui-border: var(--color-neutral-700);
-  --ui-border-hover: var(--color-neutral-600);
-  --ui-border-muted: var(--color-neutral-800);
-  --ui-text: var(--color-neutral-50);
-  --ui-text-muted: var(--color-neutral-400);
-  --ui-text-inverted: var(--color-neutral-900);
-
-  
-  --ui-primary: var(--color-primary-500);
-  --ui-primary-hover: var(--color-primary-600);
-  --ui-primary-active: var(--color-primary-700);
-  --ui-primary-foreground: white;
-  --ui-primary-soft: color-mix(in oklab, var(--color-primary-500) 24%, transparent);
-
-  --ui-secondary: var(--color-secondary-500);
-  --ui-secondary-hover: var(--color-secondary-600);
-  --ui-secondary-active: var(--color-secondary-700);
-  --ui-secondary-soft: color-mix(in oklab, var(--color-secondary-500) 24%, transparent);
-
-  --ui-success: var(--color-success-500);
-  --ui-success-hover: var(--color-success-600);
-  --ui-success-active: var(--color-success-700);
-  --ui-success-soft: color-mix(in oklab, var(--color-success-500) 24%, transparent);
-
-  --ui-danger: var(--color-danger-500);
-  --ui-danger-hover: var(--color-danger-600);
-  --ui-danger-active: var(--color-danger-700);
-  --ui-danger-foreground: white;
-  --ui-danger-soft: color-mix(in oklab, var(--color-danger-500) 24%, transparent);
-
-  --ui-info: var(--color-info-500);
-  --ui-info-hover: var(--color-info-600);
-  --ui-info-active: var(--color-info-700);
-  --ui-info-foreground: white;
-  --ui-info-soft: color-mix(in oklab, var(--color-info-500) 24%, transparent);
-
-  --ui-warning: var(--color-warning-500);
-  --ui-warning-hover: var(--color-warning-600);
-  --ui-warning-active: var(--color-warning-700);
-  --ui-warning-soft: color-mix(in oklab, var(--color-warning-500) 24%, transparent);
-} */
-
 :root {
   /* =========================================================
    * SURFACES — LIGHT
@@ -380,35 +286,35 @@
   --ui-primary: var(--color-primary-500);
   --ui-primary-hover: var(--color-primary-600);
   --ui-primary-active: var(--color-primary-700);
-  --ui-primary-foreground: white;
+  --ui-primary-foreground: var(--color-neutral-50);
   --ui-primary-soft: var(--color-primary-100);
 
 
   --ui-secondary: var(--color-secondary-500);
   --ui-secondary-hover: var(--color-secondary-600);
   --ui-secondary-active: var(--color-secondary-700);
-  --ui-secondary-foreground: white;
+  --ui-secondary-foreground: var(--color-neutral-50);
   --ui-secondary-soft: var(--color-secondary-100);
 
 
   --ui-success: var(--color-success-500);
   --ui-success-hover: var(--color-success-600);
   --ui-success-active: var(--color-success-700);
-  --ui-success-foreground: white;
+  --ui-success-foreground: var(--color-neutral-50);
   --ui-success-soft: var(--color-success-100);
 
 
   --ui-info: var(--color-info-500);
   --ui-info-hover: var(--color-info-600);
   --ui-info-active: var(--color-info-700);
-  --ui-info-foreground: white;
+  --ui-info-foreground: var(--color-neutral-50);
   --ui-info-soft: var(--color-info-100);
 
 
   --ui-danger: var(--color-danger-500);
   --ui-danger-hover: var(--color-danger-600);
   --ui-danger-active: var(--color-danger-700);
-  --ui-danger-foreground: white;
+  --ui-danger-foreground: var(--color-neutral-50);
   --ui-danger-soft: var(--color-danger-100);
 
 
@@ -472,23 +378,32 @@
    * fixed hue, and needs its own main/hover/active/foreground here too.
    * ========================================================= */
 
+  /* Mixed against --ui-bg, not transparent - the same visible tint on
+     the plain page background either way, but a real opaque color
+     instead of one that lets whatever's actually behind it show
+     through. That's invisible on a single flat surface (a badge, a
+     soft button) but breaks down the moment something else sits behind
+     it, like AvatarGroup's overlapping avatars: two translucent
+     circles stacked on each other just blend into a murky blob instead
+     of reading as separate solid circles, since neither the ring nor
+     the fill ever fully covers what's underneath. */
   --ui-primary-soft:
-    color-mix(in oklab, var(--color-primary-500) 24%, transparent);
+    color-mix(in oklab, var(--color-primary-500) 24%, var(--ui-bg));
 
   --ui-secondary-soft:
-    color-mix(in oklab, var(--color-secondary-500) 24%, transparent);
+    color-mix(in oklab, var(--color-secondary-500) 24%, var(--ui-bg));
 
   --ui-success-soft:
-    color-mix(in oklab, var(--color-success-500) 24%, transparent);
+    color-mix(in oklab, var(--color-success-500) 24%, var(--ui-bg));
 
   --ui-info-soft:
-    color-mix(in oklab, var(--color-info-500) 24%, transparent);
+    color-mix(in oklab, var(--color-info-500) 24%, var(--ui-bg));
 
   --ui-warning-soft:
-    color-mix(in oklab, var(--color-warning-500) 24%, transparent);
+    color-mix(in oklab, var(--color-warning-500) 24%, var(--ui-bg));
 
   --ui-danger-soft:
-    color-mix(in oklab, var(--color-danger-500) 24%, transparent);
+    color-mix(in oklab, var(--color-danger-500) 24%, var(--ui-bg));
 
   /* main/foreground match what --ui-bg-inverted/--ui-text-inverted
      already resolved to here - unchanged appearance, just a dedicated
