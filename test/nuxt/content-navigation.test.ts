@@ -110,4 +110,27 @@ describe('contentNavigation', () => {
 
     expect(wrapper.find('a[href="/components/button"]').text()).toBe('Button')
   })
+
+  // Regression: `item` is the exact same slot at every recursion depth
+  // (this component recurses into itself for every nested group, unlike
+  // NavigationMenu's genuinely distinct top-level/nested slot names), so
+  // the tree-connector rail used to apply unconditionally - drawing a
+  // disconnected elbow next to a root-level entry with no parent trunk
+  // to its left to branch off of. `isNested` (set only by the recursive
+  // self-call) gates it to nested entries only now.
+  it('only a nested entry gets the tree-connector rail, not a root-level one', async () => {
+    const wrapper = await mountSuspended(ContentNavigation, {
+      props: { navigation },
+      route: '/components/forms/input',
+    })
+    await nextTick()
+
+    const rootLeaf = wrapper.find('a[href="/components/button"]').element.closest('li')
+    const rootGroup = wrapper.find('button').element.closest('li')
+    const nestedLeaf = wrapper.find('a[href="/components/forms/input"]').element.closest('li')
+
+    expect(rootLeaf?.classList.contains('selaras-nav-elbow')).toBe(false)
+    expect(rootGroup?.classList.contains('selaras-nav-elbow')).toBe(false)
+    expect(nestedLeaf?.classList.contains('selaras-nav-elbow')).toBe(true)
+  })
 })

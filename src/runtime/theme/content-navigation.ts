@@ -3,12 +3,7 @@ import { tv } from 'tailwind-variants'
 export const contentNavigationTheme = tv({
   slots: {
     root: 'flex flex-col gap-0.5 text-sm',
-    // The tree-connector rail (trunk segment + elbow, see theme.css's
-    // own comment on `.selaras-nav-elbow` for the full technique) -
-    // both pieces live on this item, not the parent `content` list, so
-    // neither can bleed into any nested content this same item stacks
-    // below its own row when expanded.
-    item: 'selaras-nav-elbow selaras-nav-elbow--content-navigation flex flex-col',
+    item: 'flex flex-col',
     // py-2.5 (+ text-sm's 20px line-height) lands close to the 44px touch
     // target guideline without doubling the sidebar's height the way a
     // literal py-3 would across ~40 entries.
@@ -24,6 +19,22 @@ export const contentNavigationTheme = tv({
     // line itself has no presence here at all, see theme.css's own
     // `.selaras-nav-elbow` comment for why it lives per-item instead.
     content: 'ms-3 flex flex-col gap-0.5 ps-4',
+  },
+  variants: {
+    // ContentNavigation.vue recurses into itself for every nested group,
+    // reusing this exact same `item` slot at every depth - unlike
+    // NavigationMenu's own `item`/`childItem` (genuinely different slot
+    // names for top-level vs nested), there's only one slot name here,
+    // so root-level entries and nested ones need telling apart some
+    // other way. `isNested` (see ContentToc.vue's own prop of the same
+    // name for the established precedent) gates the tree-connector rail
+    // onto nested entries only - a root-level entry has no parent trunk
+    // to its left to branch off of, so giving it the rail drew a
+    // disconnected elbow floating next to it with nothing feeding into
+    // it from above.
+    isNested: {
+      true: { item: 'selaras-nav-elbow selaras-nav-elbow--content-navigation' },
+    },
   },
 })
 

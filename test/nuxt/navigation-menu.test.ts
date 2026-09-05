@@ -261,7 +261,7 @@ describe('navigationMenu (vertical)', () => {
     // the trunk line itself lives entirely on each item instead (see
     // theme.css's own `.selaras-nav-elbow` comment for why).
     const childList = profile.element.closest('ul')
-    expect(childList?.classList.contains('ms-5')).toBe(true)
+    expect(childList?.classList.contains('ms-6')).toBe(true)
     expect(childList?.classList.contains('border-s')).toBe(false)
   })
 
@@ -524,7 +524,7 @@ describe('navigationMenu (collapsed)', () => {
 
     const members = document.body.querySelector('a[href="/team/members"]')
     const rootList = members?.closest('ul')
-    expect(rootList?.classList.contains('ms-5')).toBe(false)
+    expect(rootList?.classList.contains('ms-6')).toBe(false)
 
     // Each row's own trunk+elbow classes always apply (they're in
     // childItem's base string), but flyoutRoot's own override
@@ -547,7 +547,7 @@ describe('navigationMenu (collapsed)', () => {
 
     const read = document.body.querySelector('a[href="/team/permissions/read"]')
     const nestedList = read?.closest('ul')
-    expect(nestedList?.classList.contains('ms-5')).toBe(true)
+    expect(nestedList?.classList.contains('ms-6')).toBe(true)
 
     const readItem = read?.closest('li')
     expect(readItem?.classList.contains('before:!content-none')).toBe(false)

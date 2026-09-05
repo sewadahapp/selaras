@@ -93,21 +93,25 @@ export const navigationMenuTheme = tv({
       // UI's own real source: every level of nesting reuses the exact
       // same `link` row unstyled by depth - what actually creates the
       // step-in per level is the *wrapping* childList/childItem, not the
-      // row itself. `childList`'s own start-margin (ms-5) is the only
+      // row itself. `childList`'s own start-margin (ms-6) is the only
       // indent source here - the tree-connector trunk+elbow (see
       // theme.css's own `.selaras-nav-elbow` comment for the full
       // technique) live entirely on `childItem` instead, not on
       // `childList`, so a group whose last child is itself expanded
       // doesn't drag the trunk line down through that child's own
-      // nested content. `childItem`'s own ps-4 matches the rail's own
-      // 16px width exactly, so each row sits flush right after it.
-      // `content` carries no horizontal padding of its own for vertical -
-      // nothing here doubles up with childList's ms-5.
+      // nested content. ms-6 (rather than a plainer ms-5) nudges the
+      // whole nested block - rail included - a bit further right than
+      // the parent row's own start: at ms-5, the rail read as sticking
+      // out past the parent's own text rather than tucking in under it.
+      // `childItem`'s own ps-4 matches the rail's own 16px width
+      // exactly, so each row sits flush right after it. `content`
+      // carries no horizontal padding of its own for vertical - nothing
+      // here doubles up with childList's ms-6.
       vertical: {
         root: 'flex-col',
         list: 'flex-col gap-1',
         content: 'px-0 py-1',
-        childList: 'ms-5',
+        childList: 'ms-6',
         childItem: 'selaras-nav-elbow selaras-nav-elbow--navigation-menu ps-4',
       },
     },
