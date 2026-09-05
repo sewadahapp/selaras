@@ -94,25 +94,34 @@ export const navigationMenuTheme = tv({
       // same `link` row unstyled by depth - what actually creates the
       // step-in per level is the *wrapping* childList/childItem, not the
       // row itself. `childList`'s own start-margin (ms-6) is the only
-      // indent source here - the tree-connector trunk+elbow (see
-      // theme.css's own `.selaras-nav-elbow` comment for the full
-      // technique) live entirely on `childItem` instead, not on
-      // `childList`, so a group whose last child is itself expanded
-      // doesn't drag the trunk line down through that child's own
-      // nested content. ms-6 (rather than a plainer ms-5) nudges the
-      // whole nested block - rail included - a bit further right than
-      // the parent row's own start: at ms-5, the rail read as sticking
-      // out past the parent's own text rather than tucking in under it.
-      // `childItem`'s own ps-4 matches the rail's own 16px width
-      // exactly, so each row sits flush right after it. `content`
-      // carries no horizontal padding of its own for vertical - nothing
-      // here doubles up with childList's ms-6.
+      // margin-based indent here - ms-6 (rather than a plainer ms-5)
+      // nudges the whole nested block a bit further right than the
+      // parent row's own start: at ms-5, the rail read as sticking out
+      // past the parent's own text rather than tucking in under it.
+      //
+      // The tree-connector trunk+elbow (see theme.css's own
+      // `.selaras-nav-elbow` comment for the full technique) live on
+      // `childItem`, but the 16px gutter they reach back into is
+      // reserved by `ps-4` on `childList` - not on `childItem` itself,
+      // even though the rail visually sits right at each item's own
+      // edge. Putting `ps-4` on `childItem` instead (an earlier version
+      // did) double-counts the offset: the rail's own `-16px` and the
+      // padding's own `+16px` both measure from childItem's own edge in
+      // opposite directions, landing the rail 32px from the child's own
+      // text instead of 16px - visibly further from the text than
+      // ContentNavigation's own rail (which keeps the two on separate
+      // elements: mask on `item`, padding on the wrapping `content`),
+      // reading as under-indented by comparison. Reserving the gutter on
+      // `childList` instead means childItem's own edge is *already*
+      // shifted 16px right of the rail before the mask's own offset even
+      // applies, matching ContentNavigation's clean single-application
+      // geometry.
       vertical: {
         root: 'flex-col',
         list: 'flex-col gap-1',
         content: 'px-0 py-1',
-        childList: 'ms-6',
-        childItem: 'selaras-nav-elbow selaras-nav-elbow--navigation-menu ps-4',
+        childList: 'ms-6 ps-4',
+        childItem: 'selaras-nav-elbow selaras-nav-elbow--navigation-menu',
       },
     },
     color: {
@@ -167,15 +176,17 @@ export const navigationMenuTheme = tv({
     // group's own children, sitting right below its own real, visible
     // heading row) keeps the normal indent/line treatment untouched - see
     // NavigationMenuFlyoutList.vue's own `root` prop, which is what wires
-    // this variant in only for that outermost call. The trunk+elbow both
-    // live on `childItem` as `.selaras-nav-elbow` - a hand-written CSS
-    // class, not a Tailwind utility, so tailwind-merge can't dedupe it
-    // away the way it does `ps-4` here; `before:!content-none` and
-    // `after:!content-none` force both masked pseudo-elements to stop
-    // rendering via a real cascade override instead (the class name
-    // itself stays in the DOM either way, just with no visible effect).
+    // this variant in only for that outermost call. `ps-0` cancels
+    // `childList`'s own `ps-4` normally via tailwind-merge (a real
+    // conflicting utility, same as ms-0/ms-6). `childItem`'s own
+    // `.selaras-nav-elbow` is a hand-written CSS class though, not a
+    // Tailwind utility - tailwind-merge can't dedupe it away, so
+    // `before:!content-none` and `after:!content-none` force both masked
+    // pseudo-elements to stop rendering via a real cascade override
+    // instead (the class name itself stays in the DOM either way, just
+    // with no visible effect).
     flyoutRoot: {
-      true: { childList: 'ms-0', childItem: 'ps-0 before:!content-none after:!content-none' },
+      true: { childList: 'ms-0 ps-0', childItem: 'before:!content-none after:!content-none' },
     },
   },
   compoundVariants: [

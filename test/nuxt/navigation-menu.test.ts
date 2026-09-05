@@ -245,23 +245,26 @@ describe('navigationMenu (vertical)', () => {
     for (const cls of profile.classes())
       expect(security.classes()).toContain(cls)
 
-    // Their own wrapping <li> (childItem) is what actually carries the
-    // indent and its own tree-connector trunk+elbow this time, not the
-    // row - both should carry it identically. Security is the *last*
-    // child here, which CSS's own `:last-child` selector (not a class,
-    // so not directly assertable in jsdom) shortens its trunk segment
-    // for - see theme.css's own `.selaras-nav-elbow` comment for why
-    // that matters once a last child like this is itself expanded.
-    expect(profile.element.closest('li')?.classList.contains('ps-4')).toBe(true)
-    expect(security.element.closest('li')?.classList.contains('ps-4')).toBe(true)
+    // Their own wrapping <li> (childItem) carries the tree-connector
+    // trunk+elbow, not the row - both should carry it identically.
+    // Security is the *last* child here, which CSS's own `:last-child`
+    // selector (not a class, so not directly assertable in jsdom)
+    // shortens its trunk segment for - see theme.css's own
+    // `.selaras-nav-elbow` comment for why that matters once a last
+    // child like this is itself expanded.
     expect(profile.element.closest('li')?.classList.contains('selaras-nav-elbow')).toBe(true)
     expect(security.element.closest('li')?.classList.contains('selaras-nav-elbow')).toBe(true)
 
-    // The wrapping <ul> (childList) only carries the indent margin now -
-    // the trunk line itself lives entirely on each item instead (see
-    // theme.css's own `.selaras-nav-elbow` comment for why).
+    // The wrapping <ul> (childList) carries the indent margin *and* the
+    // ps-4 gutter the rail reaches back into - not childItem itself, or
+    // the mask's own -16px offset and this padding would both measure
+    // from the same element in opposite directions and double the
+    // rail-to-text gap (see this file's own comment on the vertical
+    // variant for why). The trunk line itself lives entirely on each
+    // item, not here (see theme.css's own `.selaras-nav-elbow` comment).
     const childList = profile.element.closest('ul')
     expect(childList?.classList.contains('ms-6')).toBe(true)
+    expect(childList?.classList.contains('ps-4')).toBe(true)
     expect(childList?.classList.contains('border-s')).toBe(false)
   })
 
@@ -524,19 +527,22 @@ describe('navigationMenu (collapsed)', () => {
 
     const members = document.body.querySelector('a[href="/team/members"]')
     const rootList = members?.closest('ul')
+    // `ps-0` cancels `childList`'s own `ps-4` normally via tailwind-merge
+    // (a real conflicting utility, same as ms-0/ms-6).
     expect(rootList?.classList.contains('ms-6')).toBe(false)
+    expect(rootList?.classList.contains('ps-4')).toBe(false)
+    expect(rootList?.classList.contains('ps-0')).toBe(true)
 
     // Each row's own trunk+elbow classes always apply (they're in
     // childItem's base string), but flyoutRoot's own override
     // neutralizes their visible effect via before:!content-none and
     // after:!content-none rather than removing the class - a
     // hand-written CSS class instead of a Tailwind utility, so
-    // tailwind-merge can't dedupe it the way it does ps-4/ps-0.
+    // tailwind-merge can't dedupe it away the way it can a real utility.
     const membersItem = members?.closest('li')
     expect(membersItem?.classList.contains('selaras-nav-elbow')).toBe(true)
     expect(membersItem?.classList.contains('before:!content-none')).toBe(true)
     expect(membersItem?.classList.contains('after:!content-none')).toBe(true)
-    expect(membersItem?.classList.contains('ps-0')).toBe(true)
 
     // Permissions is its own collapsible trigger now (NavigationMenuAccordionItem)
     // - its own children stay collapsed until it's clicked open too.
@@ -548,11 +554,12 @@ describe('navigationMenu (collapsed)', () => {
     const read = document.body.querySelector('a[href="/team/permissions/read"]')
     const nestedList = read?.closest('ul')
     expect(nestedList?.classList.contains('ms-6')).toBe(true)
+    expect(nestedList?.classList.contains('ps-4')).toBe(true)
+    expect(nestedList?.classList.contains('ps-0')).toBe(false)
 
     const readItem = read?.closest('li')
     expect(readItem?.classList.contains('before:!content-none')).toBe(false)
     expect(readItem?.classList.contains('after:!content-none')).toBe(false)
-    expect(readItem?.classList.contains('ps-4')).toBe(true)
 
     wrapper.unmount()
   })
