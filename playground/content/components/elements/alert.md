@@ -31,7 +31,9 @@ order: 12.9
 ### Color
 
 `color` is one of the four semantic states - `success`, `danger`,
-`warning`, `info` - each with its own default icon, matching `Toast`:
+`warning`, `info` - each with its own default icon, matching `Toast`. That
+default only kicks in when `icon` itself is unset, and only once `color`
+is given too - an `SAlert` with neither renders no icon at all:
 
 ::component-example{name="alert-color"}
 ::

@@ -106,8 +106,8 @@ Avatars default to a circle; `shape="rounded"` uses the standard small radius in
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `shape` | `'circle' \| 'rounded'` | `'circle'` |
 | `status` | `boolean` | `false` |
-| `referrerPolicy` | `string` | - |
-| `crossOrigin` | `string` | - |
+| `referrerPolicy` | `'' \| 'no-referrer' \| 'no-referrer-when-downgrade' \| 'origin' \| 'origin-when-cross-origin' \| 'same-origin' \| 'strict-origin' \| 'strict-origin-when-cross-origin' \| 'unsafe-url'` | - |
+| `crossOrigin` | `'anonymous' \| 'use-credentials' \| ''` | - |
 | `ui` | `Partial<Record<AvatarSlot, string \| object>>` | - |
 
 ## Slots

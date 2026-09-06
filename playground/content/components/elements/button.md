@@ -204,3 +204,10 @@ shown above.
 | `trailingIcon` | `string` | - |
 | `square` | `boolean` | - |
 | `ui` | `Partial<Record<'base' \| 'leadingIcon' \| 'trailingIcon', string \| object>>` | - |
+
+## Slots
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `icon` | `{ class }` | Replaces the leading icon entirely; the scoped class carries the icon's resolved size classes |
+| `trailing-icon` | `{ class }` | Replaces the trailing icon entirely; the scoped class carries the icon's resolved size classes |
