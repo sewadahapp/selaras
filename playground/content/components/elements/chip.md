@@ -75,6 +75,14 @@ Chip's own root is a `<span>`, so the remove button renders as a real
 `<button>` inside it - nothing unusual to work around there, unlike a
 control that has to live inside another interactive element.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Chip`'s own theme file:
+
+::theme-source{name="chip"}
+::
+
 ## Props
 
 | Prop | Type | Default |

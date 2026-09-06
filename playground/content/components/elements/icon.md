@@ -73,6 +73,14 @@ still needs its own closing line:
 ::
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Icon`'s own theme file:
+
+::theme-source{name="icon"}
+::
+
 ## Props
 
 | Prop | Type | Default |

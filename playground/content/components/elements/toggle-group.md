@@ -72,6 +72,14 @@ blocks only that item:
 ]" />
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `ToggleGroup`'s own theme file:
+
+::theme-source{name="toggle-group"}
+::
+
 ## Props
 
 | Prop | Type | Default |

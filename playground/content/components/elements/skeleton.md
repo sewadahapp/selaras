@@ -52,6 +52,14 @@ square block gives the circle, everything else is layout:
 </div>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Skeleton`'s own theme file:
+
+::theme-source{name="skeleton"}
+::
+
 ## Props
 
 | Prop | Type | Default |

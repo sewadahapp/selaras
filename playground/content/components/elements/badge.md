@@ -80,6 +80,14 @@ section for how the pattern works generally):
 ::
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Badge`'s own theme file:
+
+::theme-source{name="badge"}
+::
+
 ## Props
 
 | Prop | Type | Default |

@@ -53,6 +53,14 @@ the pattern works generally):
 ::
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Kbd`'s own theme file:
+
+::theme-source{name="kbd"}
+::
+
 ## Props
 
 | Prop | Type | Default |

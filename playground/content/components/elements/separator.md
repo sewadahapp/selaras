@@ -70,6 +70,14 @@ both sides:
 <SSeparator>Or continue with</SSeparator>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Separator`'s own theme file:
+
+::theme-source{name="separator"}
+::
+
 ## Props
 
 | Prop | Type | Default |

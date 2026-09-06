@@ -50,6 +50,14 @@ bar, so `linear` doesn't get this treatment):
 </SProgress>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Progress`'s own theme file:
+
+::theme-source{name="progress"}
+::
+
 ## Props
 
 | Prop | Type | Default |

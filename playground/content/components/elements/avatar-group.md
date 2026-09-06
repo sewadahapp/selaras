@@ -49,6 +49,14 @@ Wrap multiple `SAvatar` components inside `SAvatarGroup` to stack them with over
 </SAvatarGroup>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `AvatarGroup`'s own theme file:
+
+::theme-source{name="avatar-group"}
+::
+
 ## Props
 
 | Prop | Type | Default |

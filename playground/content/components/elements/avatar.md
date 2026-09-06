@@ -92,6 +92,14 @@ Avatars default to a circle; `shape="rounded"` uses the standard small radius in
 - With no image, the avatar derives an accessible name from `alt` (falling back to `text`) and puts it on the root - override it any time with a direct `aria-label` fallthrough.
 - The default user icon alone has no text at all, so a bare `<SAvatar />` used as a meaningful control (say, a profile link) should get an `aria-label`. The status dot is decorative; if its state carries meaning, give the avatar an `aria-label` that says so.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Avatar`'s own theme file:
+
+::theme-source{name="avatar"}
+::
+
 ## Props
 
 | Prop | Type | Default |

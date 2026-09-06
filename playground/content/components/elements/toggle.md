@@ -55,6 +55,14 @@ For a set of related toggles that share one selection model (single or
 multiple), see [ToggleGroup](/components/elements/toggle-group) -
 `Toggle` on its own has no relationship to any other `Toggle`.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Toggle`'s own theme file:
+
+::theme-source{name="toggle"}
+::
+
 ## Props
 
 | Prop | Type | Default |

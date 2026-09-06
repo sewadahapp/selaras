@@ -40,6 +40,14 @@ bottom corners instead:
 for the same joining mechanism extended to Input/Select/Textarea, which
 carry their own ring/radius one level deeper than a Button does.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `ButtonGroup`'s own theme file:
+
+::theme-source{name="button-group"}
+::
+
 ## Props
 
 | Prop | Type | Default |

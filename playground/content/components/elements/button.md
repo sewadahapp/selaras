@@ -178,6 +178,12 @@ tailwind-merge'd, so conflicting utilities resolve instead of both applying.
 <SButton :ui="{ base: 'rounded-full' }">Pill button</SButton>
 ```
 
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Button`'s own theme file:
+
+::theme-source{name="button"}
+::
+
 ### Accessibility
 
 A default `as="button"` gets native button semantics (keyboard-activatable
