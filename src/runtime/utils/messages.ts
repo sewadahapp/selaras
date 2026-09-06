@@ -2,6 +2,8 @@ export interface MessageRegistry {
   loading: string
   clear: string
   close: string
+  cancel: string
+  continue: string
   colorModeToggle: string
   colorPicker: string
   colorPickerDescription: string
@@ -76,6 +78,8 @@ export const defaultMessages: MessageRegistry = {
   loading: 'Loading',
   clear: 'Clear',
   close: 'Close',
+  cancel: 'Cancel',
+  continue: 'Continue',
   colorModeToggle: 'Toggle color mode',
   colorPicker: 'Color picker',
   colorPickerDescription: 'Drag to adjust hue, saturation, and lightness',

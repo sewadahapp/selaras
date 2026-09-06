@@ -41,6 +41,8 @@ a single object literal covering every key below.
 | `loading` | `Loading` | Button/Switch's loading state |
 | `clear` | `Clear` | Input, Select, DatePicker's clear button |
 | `close` | `Close` | Modal, Toast, CommandPalette's footer hint |
+| `cancel` | `Cancel` | AlertDialog's default footer |
+| `continue` | `Continue` | AlertDialog's default footer |
 | `colorModeToggle` | `Toggle color mode` | ColorModeToggle |
 | `colorPicker` | `Color picker` | ColorPicker |
 | `colorPickerDescription` | `Drag to adjust hue, saturation, and lightness` | ColorPicker's mobileModal sr-only description |
