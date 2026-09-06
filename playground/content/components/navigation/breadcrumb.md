@@ -88,6 +88,14 @@ label is still available on hover via the native `title` attribute:
 <SBreadcrumb :items="items" truncate />
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Breadcrumb`'s own theme file:
+
+::theme-source{name="breadcrumb"}
+::
+
 ## Props
 
 | Prop | Type | Default |

@@ -74,6 +74,14 @@ pointing toward where the content will appear:
 </SCollapsible>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Collapsible`'s own theme file:
+
+::theme-source{name="collapsible"}
+::
+
 ## Props
 
 | Prop | Type | Default |

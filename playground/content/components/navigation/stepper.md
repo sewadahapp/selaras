@@ -122,6 +122,14 @@ block needs no body at all:
 ::
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Stepper`'s own theme file:
+
+::theme-source{name="stepper"}
+::
+
 ## Props
 
 | Prop | Type | Default |

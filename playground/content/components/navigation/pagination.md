@@ -134,6 +134,14 @@ disable themselves automatically at the relevant boundary (Previous/First on
 page 1, Next/Last on the last page) - that boundary logic comes from the
 underlying primitive, not something this component reimplements.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Pagination`'s own theme file:
+
+::theme-source{name="pagination"}
+::
+
 ## Props
 
 | Prop | Type | Default |

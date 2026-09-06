@@ -249,6 +249,14 @@ useful for a logo or a call-to-action button alongside the menu:
 
 These same slots work identically in vertical mode.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `NavigationMenu`'s own theme file:
+
+::theme-source{name="navigation-menu"}
+::
+
 ## Props
 
 | Prop | Type | Default |

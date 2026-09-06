@@ -99,6 +99,14 @@ Content for the second tab.
 ::
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Tabs`'s own theme file:
+
+::theme-source{name="tabs"}
+::
+
 ## Props
 
 | Prop | Type | Default |
