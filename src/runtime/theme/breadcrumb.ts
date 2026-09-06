@@ -5,7 +5,7 @@ export const breadcrumbTheme = tv({
     root: '',
     list: 'flex items-center gap-1.5 text-sm',
     item: 'flex items-center',
-    link: 'flex items-center gap-1 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
+    link: 'flex items-center gap-1 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
     // The trail's last item - "you are here", visually emphasized
     // rather than muted like the earlier, clickable steps.
     current: 'flex items-center gap-1 font-medium text-[var(--ui-text)]',

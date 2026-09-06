@@ -15,7 +15,7 @@ export const contentTocTheme = tv({
     // supplementary "on this page" list, not primary navigation - but
     // still meaningfully bigger than the original py-0.5. No left
     // border/padding for the indicator anymore - the rail owns that job.
-    link: 'block py-1.5 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
+    link: 'block py-1.5 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
     content: 'ms-3 flex flex-col gap-1',
     // The rail is a single continuous "wire" connecting every heading
     // (not just the active one), drawn as an SVG path and applied as a
