@@ -391,7 +391,7 @@ describe('navigationMenu (collapsed)', () => {
     const items: NavigationMenuItem[] = [
       {
         label: 'Analytics',
-        icon: 'lucide:chart',
+        icon: 'lucide:bar-chart',
         children: [
           { label: 'Traffic', to: '/traffic' },
           { label: 'Reports', icon: 'lucide:file', children: [
