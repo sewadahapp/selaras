@@ -265,6 +265,9 @@ Pass an object instead of `true` to tune `estimateSize`/`overscan`:
 <STable :data="rows" scroll-height="16rem" :virtualize="{ estimateSize: 48, overscan: 12 }" />
 ```
 
+Omit either field (or pass `virtualize` as plain `true`) and it defaults to
+`estimateSize: 40, overscan: 8`.
+
 Virtualizing replaces pagination as the strategy for a large dataset - while
 `virtualize` is set, `page-size` has no effect and the pagination controls
 don't render.
@@ -331,9 +334,10 @@ const tableRef = ref()
 By default, `STable` sorts/filters/paginates `data` itself, locally, every
 time. Set `manual-sorting`/`manual-filtering`/`manual-pagination` when
 `data` is already sorted/filtered/paginated server-side instead - each one
-opts that specific concern out of the local row model, so `STable` doesn't
-redundantly (and incorrectly) reprocess a slice the server already
-handled. `sorting`/`global-filter`/`page-index` still drive the UI and
+opts that specific concern out of the local row model (TanStack's term for
+the actual list of rows it computes after applying sorting/filtering/
+pagination), so `STable` doesn't redundantly (and incorrectly) reprocess a
+slice the server already handled. `sorting`/`global-filter`/`page-index` still drive the UI and
 still emit their own `update:*` events the normal way; only the local row
 model backing them changes.
 
@@ -383,7 +387,10 @@ watch([sorting, pageIndex], async () => {
 
 For full TanStack type inference (or features `<SColumn>` doesn't expose),
 pass a `columns` prop instead of `<SColumn>` children - a plain
-`ColumnDef[]` array, same shape TanStack itself accepts:
+`ColumnDef[]` array, same shape TanStack itself accepts. The prop itself is
+typed as plain `any[]` (see [Known limitation](#known-limitation) below), so
+the inference comes from annotating your own `columns` variable as
+`ColumnDef<YourRowType>[]`, not from the prop's own signature enforcing it:
 
 ```vue-html
 <STable :data="users" :columns="columns" />
@@ -399,6 +406,13 @@ the identical gap. As a cheap safety net, `STable` warns in dev mode (not
 production) if a column's `field` doesn't exist as a key on the first row of
 `data` - catching typos without any type-system gymnastics. For actual
 compile-time safety, use the `columns` escape hatch above instead.
+
+The `columns` prop has the same kind of gap: it's typed as plain `any[]`
+rather than `ColumnDef[]`, since a generic `ColumnDef<TData>[]` can't be
+expressed without `STable` itself becoming generic. `ColumnDef[]` remains
+the practical, intended shape - TanStack infers correctly off your own
+`columns` variable when you type that one as `ColumnDef<YourRowType>[]` -
+but nothing enforces it at the prop's own type level.
 
 The same limitation applies to the `expanded` slot's `row` prop - it's typed
 generically, so accessing a field specific to your data shape needs a local
@@ -422,7 +436,7 @@ reimplementing it here.
 | Prop | Type | Default |
 | --- | --- | --- |
 | `data` | `unknown[]` | - |
-| `columns` | `ColumnDef[]` | - |
+| `columns` | `any[]` | - (see [Known limitation](#known-limitation) below) |
 | `selectable` | `boolean` | `false` |
 | `pageSize` | `number` | - (no pagination until set) |
 | `loading` | `boolean` | `false` |
@@ -451,6 +465,12 @@ reimplementing it here.
 
 | Event | Payload | Description |
 | --- | --- | --- |
+| `update:sorting` | `any[]` | Backs `v-model:sorting` - fired whenever the sort state changes (see [Presort](#presort)) |
+| `update:rowSelection` | `Record<string, boolean>` | Backs `v-model:row-selection` - fired whenever the selected rows change |
+| `update:globalFilter` | `string` | Backs `v-model:global-filter` - fired whenever the global filter value changes |
+| `update:pageIndex` | `number` | Backs `v-model:page-index` - fired whenever the current page changes (see [Pagination](#pagination)) |
+| `update:expanded` | `any` | Backs `v-model:expanded` - fired whenever row expansion state changes (see [Row expansion](#row-expansion)) |
+| `update:columnVisibility` | `Record<string, boolean>` | Backs `v-model:column-visibility` - fired whenever column visibility changes (see [Column visibility toggle](#column-visibility-toggle)) |
 | `rowClick` | `(row, event: MouseEvent)` | Fired when a body row is clicked |
 | `rowContextmenu` | `(row, event: MouseEvent)` | Fired when a body row is right-clicked |
 

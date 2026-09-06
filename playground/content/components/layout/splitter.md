@@ -39,6 +39,21 @@ programmatically - see [DashboardSidebar](/blocks/dashboard/dashboard-sidebar)'s
 own source for a real example, driven by a button elsewhere on the page
 rather than a drag gesture.
 
+`SSplitterPanel`'s own default slot is scoped with `{ isCollapsed, isExpanded,
+collapse, expand }` - the same `collapse()`/`expand()` functions as the
+template-ref methods above, plus live `isCollapsed`/`isExpanded` booleans, so
+content inside the panel can react to (or trigger) collapse state without
+needing a ref at all:
+
+```vue-html
+<SSplitterPanel collapsible :collapsed-size="0">
+  <template #default="{ isCollapsed, expand }">
+    <button v-if="isCollapsed" @click="expand()">Expand</button>
+    <p v-else>Panel content</p>
+  </template>
+</SSplitterPanel>
+```
+
 ### Persistence
 
 `autoSaveId` (on `SSplitter`) remembers every panel's size across reloads,
@@ -97,3 +112,26 @@ inside a `watch()` callback, which Vue's SSR render pass doesn't flush.
 | `collapse` | - |
 | `expand` | - |
 | `resize` | `number` |
+
+## Slots
+
+### SplitterPanel
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `default` | `{ isCollapsed, isExpanded, collapse, expand }` | Panel content, scoped with live collapse state and the same `collapse()`/`expand()` functions as the template-ref methods below |
+
+## Methods
+
+### SplitterPanel
+
+Access these via a template ref on `SSplitterPanel`.
+
+| Method | Description |
+| --- | --- |
+| `collapse()` | Snaps the panel closed to `collapsedSize` |
+| `expand()` | Restores the panel to its size before it was last collapsed |
+| `resize(size: number)` | Sets the panel's size directly, in whatever unit `sizeUnit` is |
+| `getSize()` | Returns the panel's current size, in whatever unit `sizeUnit` is |
+| `isCollapsed` | Whether the panel is currently collapsed |
+| `isExpanded` | Whether the panel is currently expanded |
