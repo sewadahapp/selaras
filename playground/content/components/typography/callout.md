@@ -71,6 +71,14 @@ This changes how the export command behaves - check the migration notes first.
 ::
 <!-- eslint-enable markdown/no-missing-atx-heading-space -->
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Callout`'s own theme file:
+
+::theme-source{name="callout"}
+::
+
 ## Props
 
 | Prop | Type | Default |

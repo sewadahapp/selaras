@@ -26,6 +26,14 @@ with the default slot when they should differ:
 </SCodeButton>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `CodeButton`'s own theme file:
+
+::theme-source{name="code-button"}
+::
+
 ## Props
 
 | Prop | Type | Default |

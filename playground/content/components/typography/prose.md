@@ -162,3 +162,14 @@ immediately on client hydration (confirmed: every example on this
 page works correctly once loaded in a real browser) - the practical
 impact is limited to a no-JS/crawler-only view of the very first
 response, not anything a real visitor sees.
+
+## Custom `:ui`
+
+`SProsePre` and `SProseH1`-`SProseH6` all resolve their slots from the
+same theme file - overriding `ui` on any one of them reads from, and
+merges over, this one shared source. To see exactly what you'd be
+overriding - the current default classes for every slot and variant -
+here's `Prose`'s own theme file:
+
+::theme-source{name="prose"}
+::

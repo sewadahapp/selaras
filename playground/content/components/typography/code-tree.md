@@ -29,6 +29,14 @@ Real highlighting comes from `@nuxtjs/mdc`'s own pipeline, which only
 applies to markdown-sourced code; this component doesn't ship a
 standalone highlighter of its own.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `CodeTree`'s own theme file:
+
+::theme-source{name="code-tree"}
+::
+
 ## Props
 
 | Prop | Type | Default |

@@ -36,6 +36,14 @@ clicking a file emits the node back out, and passing it back in as
 <p>Selected: {{ selected?.name ?? 'none' }}</p>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `FileTree`'s own theme file:
+
+::theme-source{name="file-tree"}
+::
+
 ## Props
 
 | Prop | Type | Default |

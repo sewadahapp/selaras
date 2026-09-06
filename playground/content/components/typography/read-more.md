@@ -28,6 +28,14 @@ Before the first client-side measurement, though, content renders truncated
 by default (the safer assumption for SSR/no-JS output) - it never briefly
 flashes fully expanded before collapsing down.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `ReadMore`'s own theme file:
+
+::theme-source{name="read-more"}
+::
+
 ## Props
 
 | Prop | Type | Default |
