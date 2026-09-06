@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DrawerOpenChangeReason } from 'reka-ui'
+import type { DrawerOpenChangeDetails } from 'reka-ui'
 import type { DrawerThemeSlots } from '../theme/drawer'
 import type { UiProp } from '../utils/ui'
 import { DrawerClose, DrawerContent, DrawerDescription, DrawerHandle, DrawerOverlay, DrawerPortal, DrawerRoot, DrawerTitle, DrawerTrigger } from 'reka-ui'
@@ -112,7 +112,7 @@ watch(() => props.open, (value) => {
 // reports it after the fact, via this second argument on update:open.
 // Blocking it here (never letting internalOpen/the emit see the `false`)
 // is the only interception point available for it.
-function onUpdateOpen(value: boolean, details?: { reason: DrawerOpenChangeReason }) {
+function onUpdateOpen(value: boolean, details?: DrawerOpenChangeDetails) {
   if (!props.dismissible && details?.reason === 'swipe')
     return
   internalOpen.value = value

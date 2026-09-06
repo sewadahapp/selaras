@@ -159,7 +159,7 @@ function treeItemProps(entry: { bind: Record<string, unknown> }, level: number) 
         :key="entry._id"
         v-slot="{ isExpanded, isSelected, isIndeterminate }"
         :disabled="(entry.value as TreeItemType).disabled"
-        v-bind="treeItemProps(entry, entry.level)"
+        v-bind="(treeItemProps(entry, entry.level) as any)"
       >
         <Icon
           v-if="entry.hasChildren"
@@ -200,7 +200,7 @@ function treeItemProps(entry: { bind: Record<string, unknown> }, level: number) 
             :level="entry.level"
             :expanded="isExpanded"
             :selected="isSelected"
-            :indeterminate="isIndeterminate"
+            :indeterminate="isIndeterminate ?? false"
           >
             {{ (entry.value as TreeItemType).label }}
           </slot>

@@ -1,3 +1,4 @@
+import type { DateValue } from '@internationalized/date'
 import type { DOMWrapper } from '@vue/test-utils'
 import { CalendarDate, CalendarDateTime, Time } from '@internationalized/date'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
@@ -326,7 +327,7 @@ describe('datePicker', () => {
         maxValue: new CalendarDate(2024, 9, 30),
         // Jun is in-range (per the test above) but should still be disabled
         // here since the custom function targets it specifically.
-        isMonthDisabled: (date: CalendarDate) => date.month === 6,
+        isMonthDisabled: (date: DateValue) => date.month === 6,
       },
     })
     await openCalendar(wrapper)

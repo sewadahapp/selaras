@@ -391,7 +391,7 @@ function setMinute(minute: number) {
 // 'day' the granularity prop otherwise defaults to) shows hour+minute,
 // which reads better as a dedicated time picker's own default than a bare
 // hour would.
-const timeOnlyGranularity = computed(() => (props.granularity === 'hour' ? 'hour' : 'minute'))
+const timeOnlyGranularity = computed<'hour' | 'minute'>(() => (props.granularity === 'hour' ? 'hour' : 'minute'))
 const timeOnlyValue = computed(() => (props.timeOnly ? (props.modelValue as Time | undefined) : undefined))
 // shallowRef, not ref - same reasoning as `placeholder` above (Time is
 // replaced wholesale, and a plain ref's type would strip its private fields).

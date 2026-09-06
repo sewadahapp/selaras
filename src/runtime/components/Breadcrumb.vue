@@ -2,6 +2,7 @@
 import type { BreadcrumbThemeSlots } from '../theme/breadcrumb'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
+import { navigateTo } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { breadcrumbTheme } from '../theme/breadcrumb'

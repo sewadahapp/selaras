@@ -180,7 +180,7 @@ describe('table', () => {
         columns: [{ accessorKey: 'name', header: 'Name' }],
         expandable: true,
       },
-      slots: { expanded: ({ row }: { row: { name: string } }) => `Detail for ${row.name}` },
+      slots: { expanded: ({ row }: { row: any }) => `Detail for ${row.name}` },
     })
 
     expect(wrapper.text()).not.toContain('Detail for Alice')

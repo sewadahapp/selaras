@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AcceptableValue, Color } from 'reka-ui'
 import {
   ColorAreaArea,
   ColorAreaRoot,
@@ -52,8 +53,15 @@ const emit = defineEmits<ColorPickerBodyEmits>()
 
 const icons = useIcons()
 
-function onUpdateColor(value: string) {
-  emit('update:modelValue', value)
+// ColorAreaRoot/ColorSliderRoot/ColorSwatchPickerRoot's own emitted type is
+// broader than what they actually produce here (string | Color |
+// AcceptableValue) - every one of these Roots was fed a plain hex string
+// as its own model-value, so it only ever hands one back, never the
+// object-shaped Color/AcceptableValue branches those types also allow for
+// other usage patterns.
+function onUpdateColor(value: string | Color | AcceptableValue) {
+  if (typeof value === 'string')
+    emit('update:modelValue', value)
 }
 </script>
 

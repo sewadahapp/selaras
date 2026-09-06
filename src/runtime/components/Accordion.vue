@@ -15,6 +15,8 @@ export interface AccordionItemDef {
   value: string
   label: string
   disabled?: boolean
+  /** Not read by Accordion's own default label rendering - carried purely so a custom #label slot override can display one. */
+  icon?: string
 }
 
 defineOptions({ inheritAttrs: false })

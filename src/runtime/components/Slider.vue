@@ -102,7 +102,9 @@ function fromArray(value: number[]): number | number[] {
   return isRange.value ? value : (value[0] ?? props.min)
 }
 
-function onUpdateModelValue(value: number[]) {
+function onUpdateModelValue(value: number[] | undefined) {
+  if (!value)
+    return
   internalValue.value = value
   emit('update:modelValue', fromArray(value))
 }

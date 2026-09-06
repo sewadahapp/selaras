@@ -14,6 +14,8 @@ export interface DropdownItem {
   /** Styles this item for a delete/remove-style action (danger text, danger-tinted hover) - just this one flag rather than the full color palette, since a menu item realistically only ever needs this one special case. */
   destructive?: boolean
   onSelect?: () => void
+  /** Not read by Dropdown's own default item rendering - carried purely so a custom #item slot override can display one. */
+  shortcut?: string
 }
 
 export interface DropdownProps {

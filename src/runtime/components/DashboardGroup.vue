@@ -79,7 +79,7 @@ provide(DASHBOARD_INJECTION_KEY, { isMobile, toggleSidebar, isSidebarCollapsed, 
 const layoutCookie = useCookie<string | undefined>(props.autoSaveId, {
   default: () => undefined,
   encode: value => encodeURIComponent(value ?? ''),
-  decode: value => (value ? decodeURIComponent(value) : value),
+  decode: value => (value ? decodeURIComponent(value) : undefined),
 })
 const storage = {
   getItem: () => layoutCookie.value ?? null,

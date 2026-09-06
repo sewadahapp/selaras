@@ -9,7 +9,7 @@ const items = [
 <template>
   <SStepper :items="items" :default-value="2">
     <template #indicator="{ item }">
-      <SIcon :name="item.icon" class="size-4" />
+      <SIcon v-if="item.icon" :name="item.icon" class="size-4" />
     </template>
     <template #title="{ item, state }">
       {{ item.title }}

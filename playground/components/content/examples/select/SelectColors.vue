@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const items = ['Apple', 'Banana', 'Cherry']
+const items = ['Apple', 'Banana', 'Cherry'].map(label => ({ value: label, label }))
 const primary = ref()
 const success = ref()
 const danger = ref()

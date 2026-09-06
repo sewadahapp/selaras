@@ -14,6 +14,8 @@ export interface ContextMenuItemDef {
   /** Styles this item for a delete/remove-style action (danger text, danger-tinted hover) - matches Dropdown's own `destructive` flag. */
   destructive?: boolean
   onSelect?: () => void
+  /** Not read by ContextMenu's own default item rendering - carried purely so a custom #item slot override can display one. */
+  shortcut?: string
 }
 
 const props = defineProps<ContextMenuProps>()

@@ -34,7 +34,7 @@ const surround = useDocsSurround()
   <div class="flex gap-8">
     <SContainer size="full" class="min-w-0 flex-1 px-0">
       <SPageHeader :title="page?.title" :description="page?.description" />
-      <ContentRenderer :value="page" :components="proseComponents" class="docs-content selaras-prose pt-6" />
+      <ContentRenderer :value="page!" :components="proseComponents" class="docs-content selaras-prose pt-6" />
       <SContentSurround :prev="surround.prev" :next="surround.next" class="mt-8" />
     </SContainer>
     <SPageAside v-if="page?.body?.toc?.links?.length" :ui="{ root: 'top-16 h-[calc(100vh-4rem)]' }">

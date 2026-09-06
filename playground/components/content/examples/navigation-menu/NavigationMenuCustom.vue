@@ -22,7 +22,7 @@ const items = [
         <li v-for="child in item.children" :key="child.label">
           <NuxtLink :to="child.to" class="flex flex-col gap-1 rounded-[var(--ui-radius-md)] p-3 hover:bg-[var(--ui-bg-elevated)]">
             <span class="flex items-center gap-2 text-sm font-medium text-[var(--ui-text)]">
-              <SIcon :name="child.icon" class="size-4" />
+              <SIcon v-if="child.icon" :name="child.icon" class="size-4" />
               {{ child.label }}
             </span>
             <span class="text-xs text-[var(--ui-text-muted)]">{{ child.description }}</span>

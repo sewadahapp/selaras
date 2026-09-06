@@ -26,6 +26,8 @@ export interface NavigationMenuItem {
    * to introduce, no wrapping structure needed for a flat array.
    */
   type?: 'link' | 'label' | 'separator'
+  /** Not read by NavigationMenu's own default rendering - carried purely so a custom #item-content/#{slot}-content slot override can display one (a "mega menu" style description under each link, say). */
+  description?: string
 }
 
 // Shared between NavigationMenu.vue (top level, both orientations) and

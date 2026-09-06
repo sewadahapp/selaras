@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AvatarImageProps } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
+import type { Component } from 'vue'
 import type { AvatarThemeSlots } from '../theme/avatar'
 import type { UiProp } from '../utils/ui'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'

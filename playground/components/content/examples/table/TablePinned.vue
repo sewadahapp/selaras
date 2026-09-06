@@ -35,7 +35,7 @@ const employees = ref<Employee[]>(
     <SColumn field="phone" header="Phone" />
     <SColumn field="city" header="City" />
     <SColumn field="startDate" header="Start date" />
-    <SColumn field="actions" header="Actions" sortable="false" pinned="right">
+    <SColumn field="actions" header="Actions" :sortable="false" pinned="right">
       <template #default>
         <div class="flex gap-2">
           <SButton variant="outline" size="sm">

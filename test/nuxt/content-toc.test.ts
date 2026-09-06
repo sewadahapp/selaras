@@ -68,7 +68,7 @@ describe('contentToc', () => {
 
   it('renders a nested instance as a plain div rather than a nav, with no title', async () => {
     const wrapper = await mountSuspended(ContentToc, {
-      props: { links: [{ id: 'a', text: 'A', depth: 2 }], isNested: true, activeIds: new Set() },
+      props: { links: [{ id: 'a', text: 'A', depth: 2 }], isNested: true, activeIds: new Set<string>() },
     })
     expect(wrapper.find('nav').exists()).toBe(false)
     expect(wrapper.find('p').exists()).toBe(false)

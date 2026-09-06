@@ -4,6 +4,7 @@ import { nextTick } from 'vue'
 import Tree from '../../src/runtime/components/Tree.vue'
 
 interface TreeNode {
+  [key: string]: unknown
   label: string
   value: string
   icon?: string
@@ -144,7 +145,7 @@ describe('tree', () => {
     const wrapper = await mountSuspended(Tree, {
       props: { items: [{ label: 'Apple', value: 'apple' }] },
       slots: {
-        item: (props: { item: TreeNode }) => `Custom: ${props.item.label}`,
+        item: (props: { item: any }) => `Custom: ${props.item.label}`,
       },
     })
     await nextTick()

@@ -45,6 +45,13 @@ export interface NavigationMenuAccordionItemProps {
 
 const props = defineProps<NavigationMenuAccordionItemProps>()
 
+// Explicit, rather than left inferred: this component is self-recursive
+// (see the self-import above), so inferring its own slot shape from its
+// own template - which forwards every slot it's given straight through to
+// a nested instance of itself - is circular. A plain "any named slot,
+// any scope" shape is all a pure passthrough like this needs.
+defineSlots<Record<string, (props: any) => any>>()
+
 const route = useRoute()
 const slots = useSlots()
 
@@ -127,7 +134,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
               :highlight="highlight"
               :ui="props.ui"
             >
-              <template v-for="(_, name) in slots" #[name]="scope">
+              <template v-for="(_, name) in slots" #[name]="scope: any">
                 <slot :name="name" v-bind="scope" />
               </template>
             </NavigationMenuAccordionItem>
