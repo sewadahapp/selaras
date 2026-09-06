@@ -108,6 +108,12 @@ Content for the second tab.
 | `modelValue` | `string` | - |
 | `ui` | `Partial<Record<'root' \| 'list' \| 'trigger' \| 'icon' \| 'indicator' \| 'content', string \| object>>` | - |
 
+## Events
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | `string` | Fires when the active tab changes |
+
 ## Slots
 
 | Slot | Props | Description |

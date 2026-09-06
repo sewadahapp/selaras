@@ -197,7 +197,7 @@ Content for the second item.
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `{ value: string, label: string, disabled?: boolean }[]` | - |
+| `items` | `{ value: string, label: string, disabled?: boolean, icon?: string }[]` | - |
 | `type` | `'single' \| 'multiple'` | `'multiple'` |
 | `defaultValue` | `string \| string[]` | - |
 | `modelValue` | `string \| string[]` | - |
@@ -207,6 +207,12 @@ Content for the second item.
 | `variant` | `'list' \| 'pill'` | `list` |
 | `chevronPosition` | `'start' \| 'end'` | `end` |
 | `ui` | `Partial<Record<AccordionSlot, string \| object>>` | - |
+
+## Events
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:modelValue` | `string \| string[]` | Fires when the open item(s) change |
 
 ## Slots
 

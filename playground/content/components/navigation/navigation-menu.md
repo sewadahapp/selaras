@@ -165,6 +165,9 @@ own children under a sub-heading.
 own color styling - a line under it in horizontal, or beside it in
 vertical:
 
+::component-example{name="navigation-menu-highlight"}
+::
+
 ```vue-html
 <SNavigationMenu :items="items" highlight />
 ```
@@ -173,6 +176,9 @@ vertical:
 
 `disabled` on an item keeps it visible but non-interactive - no
 navigation, no `onSelect`, marked `aria-disabled`:
+
+::component-example{name="navigation-menu-disabled"}
+::
 
 ```vue-html
 <SNavigationMenu :items="[{ label: 'Coming soon', disabled: true }]" />
@@ -183,6 +189,9 @@ navigation, no `onSelect`, marked `aria-disabled`:
 `color` follows the same palette as every other component here
 (`primary`, `neutral`, `secondary`, `success`, `danger`, `info`,
 `warning`) and only affects the active item:
+
+::component-example{name="navigation-menu-color"}
+::
 
 ```vue-html
 <SNavigationMenu :items="items" color="secondary" />
@@ -262,6 +271,7 @@ These same slots work identically in vertical mode.
 | `disabled` | `boolean` | Visible but non-interactive. |
 | `active` | `boolean` | Overrides the auto-detected route match. |
 | `children` | `NavigationMenuItem[]` | One level for horizontal; arbitrary depth for vertical. |
+| `description` | `string` | Not read by NavigationMenu's own default rendering - carried purely so a custom `#item-content`/`#{slot}-content` slot override can display one (a "mega menu" style description under each link, say) - see [Customizing content](#customizing-content), whose own live example already renders this field. |
 | `onSelect` | `(event: Event) => void` | Fired when a leaf item is activated. |
 | `slot` | `string` | Targets this item's own named slots ahead of the generic ones - see [Customizing content](#customizing-content). |
 | `type` | `'link' \| 'label' \| 'separator'` | `'link'` unless set - see [Labels and separators](#labels-and-separators). |
