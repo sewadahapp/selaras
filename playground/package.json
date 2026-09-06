@@ -12,5 +12,8 @@
     "@nuxt/fonts": "^0.14.0",
     "nuxt": "^4.5.2",
     "tailwindcss": "^4.1.11"
+  },
+  "devDependencies": {
+    "vue-router": "^5.2.0"
   }
 }
