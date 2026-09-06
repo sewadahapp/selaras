@@ -43,6 +43,20 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Chromium's own UA stylesheet applies a nonzero outline-offset to a
+   focused link that no other focusable element gets - components that set
+   their own focus-visible:outline-offset-* (Button, NavigationMenu, ...)
+   already override this, but a link with no custom focus styling at all
+   (Breadcrumb, ContentSurround, ContentToc) was still exposed to it,
+   making its focus ring look inconsistent with everything else on the
+   page. Matches a comparable reference library's own reset for this
+   exact case. */
+@layer base {
+  a:focus-visible {
+    outline-offset: 0;
+  }
+}
+
 /* Grow-and-fade motion for the v-ripple directive (directives/ripple.ts) -
    one shared definition; each ripple span sets its own size/position/color
    inline and just points its `animation` at this by name. */
