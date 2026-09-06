@@ -30,6 +30,14 @@ it a matching offset via its `ui` prop so it doesn't sit under the header:
 (`top-16`/`h-4rem` match `SHeader`'s default `h-16` - adjust both together if
 you override the header's height.)
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `Header`'s own theme file:
+
+::theme-source{name="header"}
+::
+
 ## Props
 
 | Prop | Type | Default |

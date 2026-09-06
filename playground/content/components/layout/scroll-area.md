@@ -21,6 +21,14 @@ Give it a height via `class` (fallthrough) - `SScrollArea` fills whatever
 box it's placed in. [PageAside](/blocks/documentation/page-aside) uses this internally
 for its scrollable body.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `ScrollArea`'s own theme file:
+
+::theme-source{name="scroll-area"}
+::
+
 ## Props
 
 | Prop | Type | Default |

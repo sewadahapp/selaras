@@ -144,6 +144,14 @@ just undocumented - so keep a markdown-authored card to its named slots only;
 reach for `<SCard>` directly in a `.vue` file once the body needs its own
 text.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Card`'s own theme file:
+
+::theme-source{name="card"}
+::
+
 ## Props
 
 | Prop | Type | Default |

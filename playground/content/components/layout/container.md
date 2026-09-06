@@ -15,6 +15,14 @@ order: 60
 </SContainer>
 ```
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and size - here's `Container`'s own theme file:
+
+::theme-source{name="container"}
+::
+
 ## Props
 
 | Prop | Type | Default |

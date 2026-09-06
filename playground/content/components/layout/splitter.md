@@ -64,6 +64,31 @@ persist to a cookie. Whichever storage is used, the remembered layout only
 applies once mounted, not during SSR - Reka's own layout-restore call runs
 inside a `watch()` callback, which Vue's SSR render pass doesn't flush.
 
+## Custom `:ui`
+
+Each of the three components keeps its own theme file. To see exactly what
+you'd be overriding - the current default classes for every slot - here they
+are:
+
+### Splitter
+
+::theme-source{name="splitter"}
+::
+
+### SplitterPanel
+
+`SplitterPanel` has no visual styling of its own beyond clipping overflow
+(see [Usage](#usage) above), but the slot is still there to override if you
+need to add your own:
+
+::theme-source{name="splitter-panel"}
+::
+
+### SplitterResizeHandle
+
+::theme-source{name="splitter-resize-handle"}
+::
+
 ## Props
 
 ### Splitter

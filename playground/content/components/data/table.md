@@ -429,6 +429,17 @@ pagination is a nested [SPagination](/components/navigation/pagination), so
 both inherit those components' own accessibility behavior rather than
 reimplementing it here.
 
+## Custom `:ui`
+
+`SColumn`/`SColumnGroup` render no DOM of their own (see
+[Escape hatch: raw column defs](#escape-hatch-raw-column-defs) above) and
+have no theme file - every visual slot lives on `STable` itself. To see
+exactly what you'd be overriding - the current default classes for every
+slot - here's `Table`'s own theme file:
+
+::theme-source{name="table"}
+::
+
 ## Props
 
 ### STable

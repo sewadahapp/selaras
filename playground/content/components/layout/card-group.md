@@ -21,6 +21,14 @@ Single column below the `sm` breakpoint, `cols` columns at `sm` and up -
 own comparison/before-after cases). `SCardGroup` has no opinion on what's
 inside it - any children work, not just [Card](/components/layout/card).
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `CardGroup`'s own theme file:
+
+::theme-source{name="card-group"}
+::
+
 ## Props
 
 | Prop | Type | Default |
