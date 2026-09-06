@@ -34,6 +34,39 @@ Opt out per-element with `v-ripple="false"`, or override the defaults:
 | `opacity` | `number` | `0.25` | Peak opacity before fading out. |
 | `duration` | `number` | `500` | How long the ripple takes to grow and fade, in ms. |
 
+### Disabling it globally
+
+`app.config.ripple = false` turns ripples off everywhere, instead of
+opting out one element at a time:
+
+```ts
+// app.config.ts
+export default defineAppConfig({
+  ripple: false,
+})
+```
+
+This only reaches components that actually check it - Selaras's own
+components that use `v-ripple` internally (like `SButton`) already do, via
+the `useRippleEnabled()` composable. A bare `v-ripple` you write yourself
+on a plain element doesn't read `app.config.ripple` automatically (a
+directive's own lifecycle hooks can't call `useAppConfig()` - it needs a
+component's `setup()` context) - read it yourself and pass it as the
+binding value if you want your own elements to respect the same global
+toggle:
+
+```vue-html
+<script setup lang="ts">
+const rippleEnabled = useRippleEnabled()
+</script>
+
+<template>
+  <button v-ripple="rippleEnabled">
+    Click me
+  </button>
+</template>
+```
+
 ## Outside a Nuxt app
 
 `v-ripple` is also exported explicitly, for a plain Vue app or one with
