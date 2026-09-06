@@ -38,6 +38,28 @@ export default defineNuxtConfig({
 Components are now auto-imported, and the module pulls in its own
 dependencies (`@nuxt/icon`, `@nuxtjs/color-mode`) automatically.
 
+## Wrap your app in `SApp`
+
+Wrap your root `app.vue` in `<SApp>`, once:
+
+```vue-html
+<!-- app.vue -->
+<template>
+  <SApp>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </SApp>
+</template>
+```
+
+This isn't optional - without it, Tooltip loses its shared hover-delay
+behavior, and `useModal()`/`useDrawer()`/`useSlideover()` (the "open from
+anywhere" APIs) have nothing to render into. See [App](/components/layout/app)
+for the full picture, including the two components (`SToast`,
+`SCommandPalette`) that still need to be placed yourself even with `SApp`
+already wrapping everything.
+
 ## Import the CSS
 
 Selaras doesn't inject its own CSS for you - import it explicitly in your

@@ -30,7 +30,7 @@ Selaras is a Nuxt module that provides a set of UI components built on
 ## What you get
 
 Installing the module auto-imports every component with an `S` prefix
-(`SButton`, `SModal`, `SSelect`, ...), plus two composables
-(`useModal`, `useSlideover`) and one directive (`v-ripple`) for
-programmatic overlays and click-feedback. Start with
-[Installation](/overview/installation).
+(`SButton`, `SModal`, `SSelect`, ...), plus composables for programmatic
+overlays (`useModal`, `useDrawer`, `useSlideover`, `useToast`,
+`useCommandPalette`) and one directive (`v-ripple`) for click-feedback.
+Start with [Installation](/overview/installation).

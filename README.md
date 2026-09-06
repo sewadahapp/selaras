@@ -59,6 +59,21 @@ Import the CSS in your own stylesheet, after Tailwind itself:
 @import "selaras";
 ```
 
+Wrap your root `app.vue` in `<SApp>`, once - required for Tooltip's shared
+hover-delay behavior and the `useModal`/`useDrawer`/`useSlideover` composables
+to work:
+
+```vue-html
+<!-- app.vue -->
+<template>
+  <SApp>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </SApp>
+</template>
+```
+
 Every component is now auto-imported and ready to use:
 
 ```vue-html
