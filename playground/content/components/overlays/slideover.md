@@ -151,6 +151,12 @@ works today without a dedicated prop for it:
 <SSlideover v-model:open="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
 ```
 
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the panel's own theme file:
+
+::theme-source{name="slideover"}
+::
+
 ## Programmatic usage
 
 `useSlideover()` opens a panel from anywhere - a click handler, an async

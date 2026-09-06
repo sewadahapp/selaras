@@ -180,6 +180,14 @@ const checkedOut = await drawer.open(DrawerCartPanel)
 `snapPoints`/`snapPoint`/`snapToSequentialPoints`/`dismissible`/`modal`/
 `overlay`/`transition` options as the declarative props.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the panel's own theme file:
+
+::theme-source{name="drawer"}
+::
+
 ## Props
 
 | Prop | Type | Default |

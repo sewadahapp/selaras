@@ -116,6 +116,14 @@ popover the pointer has since moved on to, closing that one too.
 <SPopover :return-focus-on-close="false">...</SPopover>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the popover's own theme file:
+
+::theme-source{name="popover"}
+::
+
 ## Props
 
 | Prop | Type | Default |

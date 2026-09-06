@@ -92,6 +92,14 @@ typing a letter jumps to the next matching item, and
 <kbd>Escape</kbd> or an outside click closes the menu and returns focus
 to the trigger.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the menu's own theme file:
+
+::theme-source{name="dropdown"}
+::
+
 ## Props
 
 | Prop | Type | Default |

@@ -100,6 +100,14 @@ The `escapeKeyDown`/`pointerDownOutside` events still fire either way -
 useful for something like a shake animation to signal the dialog won't
 close that way.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the dialog's own theme file:
+
+::theme-source{name="alert-dialog"}
+::
+
 ## Props
 
 | Prop | Type | Default |

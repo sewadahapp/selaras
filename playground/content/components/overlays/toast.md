@@ -83,6 +83,14 @@ once it's left), and on touch devices it can be swiped away.
 | `add(toast)` | Pushes a toast (`{ title?, description?, duration?, color?, icon? }`), returns its id |
 | `remove(id)` | Dismisses a toast by id |
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the toast's own theme file:
+
+::theme-source{name="toast"}
+::
+
 ## Props (`SToast`)
 
 | Prop | Type | Default |

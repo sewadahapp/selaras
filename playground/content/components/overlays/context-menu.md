@@ -79,6 +79,14 @@ end), typing a letter jumps to the next matching item, and
 <kbd>Escape</kbd> or an outside click closes the menu. A touch/pen
 long-press opens it too, not just a mouse right-click.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `ContextMenu`'s own theme file:
+
+::theme-source{name="context-menu"}
+::
+
 ## Props
 
 | Prop | Type | Default |

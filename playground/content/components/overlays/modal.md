@@ -183,6 +183,12 @@ works today without a dedicated prop for it:
 <SModal v-model:open="open" title="Delete item" :ui="{ close: { color: 'danger' } }" />
 ```
 
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the dialog's own theme file:
+
+::theme-source{name="modal"}
+::
+
 ## Programmatic usage
 
 `useModal()` opens a dialog from anywhere - a click handler, an async

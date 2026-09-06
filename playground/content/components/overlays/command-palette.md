@@ -75,6 +75,14 @@ either end, skipping disabled items), <kbd>Enter</kbd> runs the
 highlighted item's `onSelect` and closes the palette, <kbd>Esc</kbd>
 or an outside click closes it without running anything.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's the palette's own theme file:
+
+::theme-source{name="command-palette"}
+::
+
 ## Props
 
 | Prop | Type | Default |

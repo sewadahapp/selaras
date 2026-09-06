@@ -70,6 +70,14 @@ useful for a richer hint than a single line of text can give:
 </STooltip>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `Tooltip`'s own theme file:
+
+::theme-source{name="tooltip"}
+::
+
 ## Props
 
 | Prop | Type | Default |
