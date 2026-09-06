@@ -3,6 +3,7 @@ import type { BreadcrumbThemeSlots } from '../theme/breadcrumb'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { breadcrumbTheme } from '../theme/breadcrumb'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Dropdown from './Dropdown.vue'
@@ -39,6 +40,7 @@ export interface BreadcrumbSlots {
 }
 
 const icons = useIcons()
+const messages = useMessages()
 
 const theme = useComponentTheme('breadcrumb', breadcrumbTheme)
 const ui = computed(() => theme.value())
@@ -107,7 +109,7 @@ function realIndex(item: BreadcrumbItem) {
 </script>
 
 <template>
-  <nav aria-label="Breadcrumb" v-bind="rootProps">
+  <nav :aria-label="messages.breadcrumb" v-bind="rootProps">
     <ol v-bind="listProps">
       <template v-for="(item, index) in visibleItems" :key="realIndex(item)">
         <li v-bind="itemProps">
@@ -134,7 +136,7 @@ function realIndex(item: BreadcrumbItem) {
         <template v-if="index === 0 && hiddenItems.length">
           <li v-bind="itemProps">
             <Dropdown :items="[hiddenDropdownItems]">
-              <button type="button" v-bind="ellipsisProps" aria-label="Show hidden breadcrumb items">
+              <button type="button" v-bind="ellipsisProps" :aria-label="messages.showHiddenBreadcrumbItems">
                 <Icon :name="icons.more" v-bind="separatorIconProps" />
               </button>
             </Dropdown>

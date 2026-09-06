@@ -17,7 +17,7 @@ export const breadcrumbTheme = tv({
     // `truncate` prop actually applies.
     label: 'block truncate',
     separator: 'flex items-center text-[var(--ui-text-muted)]',
-    separatorIcon: 'size-4 shrink-0',
+    separatorIcon: 'size-4 shrink-0 rtl:rotate-180',
     ellipsis: 'flex items-center text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
   },
 })

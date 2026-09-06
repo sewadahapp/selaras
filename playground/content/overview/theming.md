@@ -107,3 +107,14 @@ If your own Tailwind build namespaces its utilities behind a prefix, see
 [Installation](/overview/installation#class-prefix) for the matching
 `classPrefix` option - it applies after every one of the mechanisms above,
 regardless of which one produced the final class string.
+
+## Localization
+
+Retheming covers color/layout - three separate mechanisms cover text and
+direction the same way `app.config.ui` covers a component's classes:
+[`useMessages`](/utilities/composables/use-messages) overrides the text a
+component renders on its own, [`useLocale`](/utilities/composables/use-locale)
+sets the app-wide default for date/time formatting, and `SApp`'s `dir`
+prop switches the whole layout to RTL. All three are independent axes,
+matching how a page's language, its date formatting, and its reading
+direction can each vary on their own.

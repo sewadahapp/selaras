@@ -40,7 +40,7 @@ export const ratingTheme = tv({
     // 16px icon) - confirmed via getBoundingClientRect(): fillIcon sat
     // 2px lower than the backdrop/indicator/item box it should exactly
     // match, entirely explained by the button's own default padding.
-    indicator: 'group/step absolute inset-y-0 left-0 flex items-start justify-start overflow-hidden p-0 leading-none [opacity:var(--reka-rating-item-step-opacity)] [width:var(--reka-rating-item-step-width)] [z-index:var(--reka-rating-item-step-z-index)] disabled:cursor-not-allowed',
+    indicator: 'group/step absolute inset-y-0 start-0 flex items-start justify-start overflow-hidden p-0 leading-none [opacity:var(--reka-rating-item-step-opacity)] [width:var(--reka-rating-item-step-width)] [z-index:var(--reka-rating-item-step-z-index)] disabled:cursor-not-allowed',
     // Same star shape again, same fixed size as the backdrop - see the
     // indicator slot's own comment for why this can't be sized relative
     // to its own (intentionally shrunk) indicator parent. Transparent at

@@ -5,6 +5,7 @@ import type { UiProp } from '../utils/ui'
 import { computed, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
+import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { fileUploadTheme } from '../theme/file-upload'
 import { formatBytes } from '../utils/format-bytes'
@@ -68,6 +69,7 @@ const describedBy = computed(() => field?.describedBy.value)
 
 const icons = useIcons()
 const messages = useMessages()
+const effectiveLocale = useLocale()
 
 // Unlike every other component this session (all built on a Reka
 // primitive with its own internal uncontrolled-mode fallback), a plain
@@ -125,7 +127,7 @@ function validate(file: File, acceptedSoFar: number): string | undefined {
   if (props.accept && !matchesAccept(file, props.accept))
     return messages.value.invalidFileType(file.name)
   if (props.maxSize && file.size > props.maxSize)
-    return messages.value.invalidFileSize(file.name, formatBytes(props.maxSize))
+    return messages.value.invalidFileSize(file.name, formatBytes(props.maxSize, effectiveLocale.value))
   if (props.multiple && props.maxFiles && internalFiles.value.length + acceptedSoFar >= props.maxFiles)
     return messages.value.tooManyFiles(props.maxFiles)
   return undefined
@@ -248,7 +250,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
         <span v-if="accept || maxSize" v-bind="descriptionProps">
           <template v-if="accept">{{ accept }}</template>
           <template v-if="accept && maxSize"> · </template>
-          <template v-if="maxSize">Up to {{ formatBytes(maxSize) }}</template>
+          <template v-if="maxSize">{{ messages.upToSize(formatBytes(maxSize, effectiveLocale)) }}</template>
         </span>
       </slot>
       <input
@@ -275,7 +277,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
           <Icon v-else :name="icons.file" v-bind="fileIconProps" />
           <span v-bind="fileInfoProps">
             <span v-bind="fileNameProps">{{ file.name }}</span>
-            <span v-bind="fileSizeProps">{{ formatBytes(file.size) }}</span>
+            <span v-bind="fileSizeProps">{{ formatBytes(file.size, effectiveLocale) }}</span>
           </span>
           <Button
             :size="removeButtonSize"

@@ -5,6 +5,7 @@ import type { UiProp } from '../utils/ui'
 import { computed, ref } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
+import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
@@ -67,7 +68,8 @@ const isFocused = ref(false)
 // every keystroke, only committed (parsed + clamped) on blur/Enter.
 const editingValue = ref('')
 
-const numberFormatter = computed(() => props.formatOptions ? new Intl.NumberFormat(props.locale ?? 'en-US', props.formatOptions) : undefined)
+const effectiveLocale = computed(() => props.locale ?? useLocale().value)
+const numberFormatter = computed(() => props.formatOptions ? new Intl.NumberFormat(effectiveLocale.value, props.formatOptions) : undefined)
 const displayValue = computed(() => {
   if (isFocused.value)
     return editingValue.value

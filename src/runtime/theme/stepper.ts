@@ -47,7 +47,7 @@ export const stepperTheme = tv({
         // separator below to have real height to grow into. labels opts
         // back out of that stretch itself (self-start below).
         root: 'flex-col',
-        item: 'w-full flex-row gap-3 text-left',
+        item: 'w-full flex-row gap-3 text-start',
         connector: 'w-auto flex-col',
         // Extra bottom padding gives the connecting line a decent
         // minimum length even for a single short line of title text.

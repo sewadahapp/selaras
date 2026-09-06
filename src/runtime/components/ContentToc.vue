@@ -2,6 +2,7 @@
 import type { ContentTocThemeSlots } from '../theme/content-toc'
 import type { UiProp } from '../utils/ui'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useMessages } from '../composables/use-messages'
 import { contentTocTheme } from '../theme/content-toc'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -125,6 +126,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', onScrollOrResize)
 })
 
+const messages = useMessages()
 const theme = useComponentTheme('contentToc', contentTocTheme)
 const ui = computed(() => theme.value())
 
@@ -301,7 +303,7 @@ function linkProps(link: TocLink) {
   <component :is="isRoot ? 'nav' : 'div'" v-bind="isRoot ? rootProps : undefined">
     <p v-if="isRoot" v-bind="resolveSlot(ui.title, props.ui?.title)">
       <slot name="title">
-        {{ title ?? 'On this page' }}
+        {{ title ?? messages.onThisPage }}
       </slot>
     </p>
 

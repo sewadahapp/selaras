@@ -102,3 +102,12 @@ export type * from '../components/Toast.vue'
 export type * from '../components/Toggle.vue'
 export type * from '../components/ToggleGroup.vue'
 export type * from '../components/Tooltip.vue'
+
+// The two global override registries (useMessages()/useIcons(), see their
+// own composables) - exported so a consumer can type their own partial
+// override object (e.g. a shared `const messages: Partial<MessageRegistry> = {...}`)
+// instead of relying on inference alone.
+export type { IconRegistry } from '../utils/icons'
+export { defaultIcons } from '../utils/icons'
+export type { MessageRegistry } from '../utils/messages'
+export { defaultMessages } from '../utils/messages'

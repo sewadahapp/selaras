@@ -27,8 +27,6 @@ export interface MessageRegistry {
   chooseYear: string
   hour: string
   minute: string
-  am: string
-  pm: string
   done: string
   increment: string
   decrement: string
@@ -52,6 +50,13 @@ export interface MessageRegistry {
   showLess: string
   selectFile: string
   toggleSidebar: string
+  breadcrumb: string
+  showHiddenBreadcrumbItems: string
+  commandPalette: string
+  navigate: string
+  select: string
+  onThisPage: string
+  upToSize: (size: string) => string
 }
 
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
@@ -90,8 +95,6 @@ export const defaultMessages: MessageRegistry = {
   chooseYear: 'Choose year',
   hour: 'Hour',
   minute: 'Minute',
-  am: 'AM',
-  pm: 'PM',
   done: 'Done',
   increment: 'Increment',
   decrement: 'Decrement',
@@ -114,4 +117,11 @@ export const defaultMessages: MessageRegistry = {
   showLess: 'Show less',
   selectFile: 'Select a file to view its content',
   toggleSidebar: 'Toggle sidebar',
+  breadcrumb: 'Breadcrumb',
+  showHiddenBreadcrumbItems: 'Show hidden breadcrumb items',
+  commandPalette: 'Command palette',
+  navigate: 'Navigate',
+  select: 'Select',
+  onThisPage: 'On this page',
+  upToSize: size => `Up to ${size}`,
 }

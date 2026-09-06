@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ConfigProvider, ToastProvider, TooltipProvider } from 'reka-ui'
 import { useHead } from '#imports'
+import { useLocale } from '../composables/use-locale'
 import DrawerRenderer from './DrawerRenderer.vue'
 import ModalRenderer from './ModalRenderer.vue'
 import SlideoverRenderer from './SlideoverRenderer.vue'
@@ -29,7 +30,12 @@ const props = withDefaults(defineProps<AppProps>(), {
   dir: 'ltr',
 })
 
-useHead({ htmlAttrs: { dir: () => props.dir } })
+// `lang` is driven by the global locale default (app.config.locale, see
+// use-locale.ts) rather than a prop of its own - dir is a distinct,
+// per-app layout choice, while lang should just track whatever locale the
+// rest of the library is already resolving text/date formatting against.
+const locale = useLocale()
+useHead({ htmlAttrs: { dir: () => props.dir, lang: () => locale.value } })
 </script>
 
 <template>

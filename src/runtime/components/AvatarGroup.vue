@@ -3,6 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { AvatarGroupThemeSlots } from '../theme/avatar-group'
 import type { UiProp } from '../utils/ui'
 import { computed, provide, useSlots } from 'vue'
+import { useMessages } from '../composables/use-messages'
 import { avatarGroupTheme } from '../theme/avatar-group'
 import { AVATAR_SIZE_INJECTION_KEY } from '../utils/injection-keys'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
@@ -21,6 +22,7 @@ export interface AvatarGroupProps {
 }
 
 const slots = useSlots()
+const messages = useMessages()
 const theme = useComponentTheme('avatarGroup', avatarGroupTheme)
 
 const ui = computed(() => theme.value({
@@ -52,7 +54,7 @@ const overflowCount = computed(() => {
 
 <template>
   <div v-bind="rootProps">
-    <span v-if="overflowCount" v-bind="resolveSlot(ui.count, props.ui?.count)">+{{ overflowCount }}</span>
+    <span v-if="overflowCount" v-bind="resolveSlot(ui.count, props.ui?.count)">{{ messages.moreItems(overflowCount) }}</span>
     <span v-for="(child, i) in visibleChildren" :key="i" v-bind="resolveSlot(ui.item, props.ui?.item)">
       <component :is="child" />
     </span>

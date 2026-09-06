@@ -57,7 +57,8 @@ const messages = useMessages()
       <template #icon="{ class: klass }">
         <Icon
           :name="props.icon ?? icons.sidebarCollapse"
-          :class="[applyClassPrefix('transition-transform duration-200'), klass, dashboard.isSidebarCollapsed.value && applyClassPrefix('scale-x-[-1]')]"
+          :data-collapsed="dashboard.isSidebarCollapsed.value ? '' : undefined"
+          :class="[applyClassPrefix('transition-transform duration-200 rtl:scale-x-[-1] data-[collapsed]:scale-x-[-1] rtl:data-[collapsed]:scale-x-100'), klass]"
         />
       </template>
     </Button>

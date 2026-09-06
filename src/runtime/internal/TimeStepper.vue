@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import Button from '../components/Button.vue'
 import InputNumber from '../components/InputNumber.vue'
-import { useMessages } from '../composables/use-messages'
+import { useLocale } from '../composables/use-locale'
 
 // Shared by DatePicker.vue's hour/minute granularity time section and its
 // time-only mode - both need the identical hour/minute steppers + AM/PM
@@ -43,15 +43,27 @@ const emit = defineEmits<TimeStepperEmits>()
 // and the typed field showing the same thing for the same value, instead
 // of "14" next to "2:00 PM". h11/h12 are the two 12-hour cycles Intl can
 // resolve to, h23/h24 the two 24-hour ones.
+const effectiveLocale = computed(() => props.locale ?? useLocale().value)
 const resolvedIs12Hour = computed(() => {
   if (props.hourCycle === 12)
     return true
   if (props.hourCycle === 24)
     return false
-  const resolved = new Intl.DateTimeFormat(props.locale ?? 'en-US', { hour: 'numeric' }).resolvedOptions().hourCycle
+  const resolved = new Intl.DateTimeFormat(effectiveLocale.value, { hour: 'numeric' }).resolvedOptions().hourCycle
   return resolved === 'h11' || resolved === 'h12'
 })
 const isPM = computed(() => props.hour >= 12)
+// Derived from the same locale driving resolvedIs12Hour above, via
+// Intl's own 'dayPeriod' part, rather than the global messages registry -
+// the two used to be independent channels that could disagree (an
+// Arabic-formatted hour cycle next to an always-English "AM"/"PM"). An
+// arbitrary reference date supplies the hour; only its dayPeriod part is
+// read back out.
+const meridiemText = computed(() => {
+  const parts = new Intl.DateTimeFormat(effectiveLocale.value, { hour: 'numeric', hour12: true })
+    .formatToParts(new Date(2020, 0, 1, isPM.value ? 13 : 1))
+  return parts.find(part => part.type === 'dayPeriod')?.value ?? (isPM.value ? 'PM' : 'AM')
+})
 function to12Hour(hour24: number) {
   const hour = hour24 % 12
   return hour === 0 ? 12 : hour
@@ -94,7 +106,6 @@ function toggleMeridiem() {
   emit('update:hour', isPM.value ? props.hour - 12 : props.hour + 12)
 }
 
-const messages = useMessages()
 const twoDigitFormat = { minimumIntegerDigits: 2 }
 const effectiveSize = computed(() => props.size ?? 'sm')
 </script>
@@ -132,6 +143,6 @@ const effectiveSize = computed(() => props.size ?? 'sm')
     :size="effectiveSize"
     @click="toggleMeridiem"
   >
-    {{ isPM ? messages.pm : messages.am }}
+    {{ meridiemText }}
   </Button>
 </template>

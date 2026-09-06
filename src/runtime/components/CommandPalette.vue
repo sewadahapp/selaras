@@ -241,7 +241,7 @@ function itemId(index: number) {
       <DialogOverlay v-bind="overlayProps" />
       <DialogContent v-bind="contentProps" @open-auto-focus="onOpenAutoFocus">
         <DialogTitle :class="applyClassPrefix('sr-only')">
-          Command palette
+          {{ messages.commandPalette }}
         </DialogTitle>
         <div v-bind="headerProps">
           <Icon :name="icons.search" v-bind="searchIconProps" />
@@ -290,9 +290,9 @@ function itemId(index: number) {
           </p>
         </div>
         <div v-bind="footerProps">
-          <span v-bind="footerKeyProps"><Kbd value="up" size="sm" /><Kbd value="down" size="sm" /> Navigate</span>
-          <span v-bind="footerKeyProps"><Kbd value="enter" size="sm" /> Select</span>
-          <span v-bind="footerKeyProps"><Kbd value="escape" size="sm" /> Close</span>
+          <span v-bind="footerKeyProps"><Kbd value="up" size="sm" /><Kbd value="down" size="sm" /> {{ messages.navigate }}</span>
+          <span v-bind="footerKeyProps"><Kbd value="enter" size="sm" /> {{ messages.select }}</span>
+          <span v-bind="footerKeyProps"><Kbd value="escape" size="sm" /> {{ messages.close }}</span>
         </div>
       </DialogContent>
     </DialogPortal>

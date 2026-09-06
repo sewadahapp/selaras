@@ -126,6 +126,13 @@ export default defineNuxtModule<ModuleOptions>({
 
     addImportsDir(resolver.resolve('./runtime/composables'))
 
+    // Types app.config.ts's messages/icons/locale override surface (see
+    // runtime/types/app-config.d.ts) - without this reference, a consumer's
+    // own app.config.ts sees `messages`/`icons`/`locale` as untyped.
+    nuxt.hook('prepare:types', ({ references }) => {
+      references.push({ path: resolver.resolve('./runtime/types/app-config.d.ts') })
+    })
+
     // Registers vRipple as an auto-importable directive - plain
     // addImportsDir doesn't mark an import as a directive (confirmed: a
     // v-ripple used only in a template, with no matching identifier

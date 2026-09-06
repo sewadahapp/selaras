@@ -16,7 +16,7 @@ export const avatarTheme = tv({
     icon: 'shrink-0',
     // The ring separates the dot from the avatar itself, using the page
     // background so it reads as a clean offset indicator at any size.
-    status: 'absolute bottom-0 right-0 rounded-full ring-2 ring-[var(--ui-bg)]',
+    status: 'absolute bottom-0 end-0 rounded-full ring-2 ring-[var(--ui-bg)]',
   },
   variants: {
     color: {

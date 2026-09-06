@@ -5,7 +5,7 @@ export const contentSurroundTheme = tv({
     root: 'grid grid-cols-2 gap-4 border-t border-[var(--ui-border)] pt-6',
     link: 'group flex flex-col gap-1 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] p-4 transition-colors hover:border-[var(--ui-border-hover)]',
     label: 'flex items-center gap-1 text-xs font-medium text-[var(--ui-text-muted)]',
-    icon: 'size-3.5 shrink-0',
+    icon: 'size-3.5 shrink-0 rtl:rotate-180',
     title: 'text-sm font-medium text-[var(--ui-text)] transition-colors group-hover:text-[var(--ui-primary)]',
   },
   variants: {

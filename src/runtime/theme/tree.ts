@@ -14,7 +14,7 @@ export const treeTheme = tv({
     // chevron. A leaf row (no children) renders `spacer` instead, sized
     // identically, so labels still align into one column regardless of
     // depth.
-    toggle: 'flex size-4 shrink-0 items-center justify-center text-[var(--ui-text-muted)] transition-transform data-[expanded]:rotate-90',
+    toggle: 'flex size-4 shrink-0 items-center justify-center text-[var(--ui-text-muted)] transition-transform rtl:rotate-180 data-[expanded]:rotate-90 rtl:data-[expanded]:rotate-90',
     spacer: 'size-4 shrink-0',
     checkbox: 'shrink-0 pointer-events-none',
     icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',

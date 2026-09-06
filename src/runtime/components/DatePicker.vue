@@ -34,6 +34,7 @@ import {
 import { computed, ref, shallowRef, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
+import { useLocale } from '../composables/use-locale'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import DatePickerCalendarBody from '../internal/DatePickerCalendarBody.vue'
@@ -271,7 +272,14 @@ const showMobileModal = computed(() => props.mobileModal && isMobile.value)
 // ComboboxSelectBase.vue's own identical override.
 const mobileModalUi = { content: 'rounded-[var(--ui-radius-md)]' }
 
-const monthFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', { month: 'short' }))
+// Falls back to the global default (app.config.locale, see use-locale.ts)
+// instead of a hardcoded 'en-US' - every locale-consuming computed/prop
+// below reads this instead of `props.locale` directly, so a consumer only
+// needs to set the locale once globally rather than repeating it on every
+// DatePicker instance.
+const effectiveLocale = computed(() => props.locale ?? useLocale().value)
+
+const monthFormatter = computed(() => new DateFormatter(effectiveLocale.value, { month: 'short' }))
 const monthGridItems = computed(() => Array.from({ length: 12 }, (_, i) => {
   const value = placeholder.value.set({ month: i + 1, day: 1 })
   return { value, label: monthFormatter.value.format(value.toDate(getLocalTimeZone())) }
@@ -412,7 +420,7 @@ function setTimeOnlyMinute(minute: number) {
   emit('update:modelValue', normalizeTimeOnly(value))
 }
 
-const timeOnlyFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? (timeOnlyGranularity.value === 'hour' ? { hour: 'numeric' } : { timeStyle: 'short' })))
+const timeOnlyFormatter = computed(() => new DateFormatter(effectiveLocale.value, props.format ?? (timeOnlyGranularity.value === 'hour' ? { hour: 'numeric' } : { timeStyle: 'short' })))
 // Time has no .toDate() - no date component to anchor a timezone
 // conversion to - so it's combined with an arbitrary reference date to get
 // something DateFormatter/.toDate() can format, reading back out only the
@@ -467,7 +475,7 @@ const defaultFormat = computed<Intl.DateTimeFormatOptions>(() => {
     return { dateStyle: 'medium', timeStyle: 'short' }
   return { dateStyle: 'medium' }
 })
-const dateFormatter = computed(() => new DateFormatter(props.locale ?? 'en-US', props.format ?? defaultFormat.value))
+const dateFormatter = computed(() => new DateFormatter(effectiveLocale.value, props.format ?? defaultFormat.value))
 const formattedValue = computed(() => {
   if (props.range) {
     const range = props.modelValue as DateRange | undefined
@@ -543,7 +551,7 @@ const calendarBodyProps = computed(() => ({
   placeholderMinute: placeholderMinute.value,
   hourCycle: props.hourCycle,
   minuteStep: props.minuteStep,
-  locale: props.locale,
+  locale: effectiveLocale.value,
   hourInputId,
   minuteInputId,
   setHour,
@@ -567,7 +575,7 @@ const timeBodyProps = computed(() => ({
   granularity: timeOnlyGranularity.value,
   hourCycle: props.hourCycle,
   minuteStep: props.minuteStep,
-  locale: props.locale,
+  locale: effectiveLocale.value,
   hourInputId,
   minuteInputId,
   setHour: setTimeOnlyHour,
@@ -618,7 +626,7 @@ const buttonTriggerUi = computed(() => ({
     :is-date-unavailable="isDateUnavailable"
     :is-date-disabled="isDateDisabled"
     :is-date-highlightable="isDateHighlightable"
-    :locale="locale"
+    :locale="effectiveLocale"
     :number-of-months="effectiveNumberOfMonths"
     :paged-navigation="pagedNavigation"
     :week-starts-on="weekStartsOn"
@@ -758,7 +766,7 @@ const buttonTriggerUi = computed(() => ({
           v-model:placeholder="timePlaceholder"
           :model-value="timeOnlyValue"
           :name="name ?? field?.name"
-          :locale="locale"
+          :locale="effectiveLocale"
           :hour-cycle="hourCycle"
           :granularity="timeOnlyGranularity"
           :disabled="disabled"
@@ -872,7 +880,7 @@ const buttonTriggerUi = computed(() => ({
     :max-value="maxValue"
     :is-date-unavailable="isDateUnavailable"
     :is-date-disabled="isDateDisabled"
-    :locale="locale"
+    :locale="effectiveLocale"
     :hour-cycle="hourCycle"
     :number-of-months="effectiveNumberOfMonths"
     :paged-navigation="pagedNavigation"
