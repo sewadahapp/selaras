@@ -51,7 +51,7 @@ export const sliderTheme = tv({
     // per-size class here isn't enough on its own).
     thumbVariant: {
       circle: { thumb: 'rounded-full' },
-      bar: { thumb: 'rounded-sm' },
+      bar: { thumb: 'rounded-[var(--ui-radius-sm)]' },
     },
   },
   compoundVariants: [

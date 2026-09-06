@@ -18,7 +18,7 @@ export const colorPickerTheme = tv({
     // that's exactly what produced a real build warning once.
     triggerSwatch: 'size-5 shrink-0 rounded-[var(--ui-radius-sm)] bg-[var(--reka-color-swatch-color)] ring-1 ring-inset ring-black/10',
     triggerValue: 'flex-1 truncate text-start font-mono text-[var(--ui-text)]',
-    content: 'z-50 w-64 space-y-3 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+    content: 'z-[var(--ui-z-dropdown)] w-64 space-y-3 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
     // The `mobileModal` path's own content wrapper - none of `content`'s
     // own popover chrome (width/background/shadow/ring/rounded/animate)
     // applies here, since Modal's own card already provides that surface;

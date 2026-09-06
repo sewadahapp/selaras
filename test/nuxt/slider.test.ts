@@ -142,7 +142,7 @@ describe('slider', () => {
     const wrapper = await mountSuspended(Slider, { props: { modelValue: 30, thumbVariant: 'bar' } })
 
     const thumb = wrapper.find('[role="slider"]')
-    expect(thumb.classes()).toContain('rounded-sm')
+    expect(thumb.classes()).toContain('rounded-[var(--ui-radius-sm)]')
     expect(thumb.classes()).not.toContain('rounded-full')
   })
 

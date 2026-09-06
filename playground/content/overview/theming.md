@@ -11,8 +11,9 @@ of precedence.
 
 ## 1. Design tokens
 
-`--ui-*` custom properties carry the semantic palette - components never
-reference a raw Tailwind color class directly:
+`--ui-*` custom properties carry every component's colors, radius,
+shadow, and overlay stacking order - components never reference a raw
+Tailwind color/radius/shadow class directly:
 
 | Token | Purpose |
 | --- | --- |
@@ -20,11 +21,38 @@ reference a raw Tailwind color class directly:
 | `--ui-border`, `--ui-border-hover`, `--ui-border-muted` | Borders |
 | `--ui-text`, `--ui-text-muted`, `--ui-text-inverted` | Text |
 | `--ui-primary`, `--ui-secondary`, `--ui-success`, `--ui-danger`, `--ui-info`, `--ui-warning` | Role colors, each with a `-hover`, `-active`, `-foreground` and `-soft` variant |
+| `--ui-radius` | Base corner radius - see below |
+| `--ui-shadow-sm`, `--ui-shadow-md`, `--ui-shadow-lg` | Overlay elevation (Modal, Dropdown, Popover, ...) |
+| `--ui-z-modal-overlay`, `--ui-z-modal`, `--ui-z-dropdown`, `--ui-z-tooltip`, `--ui-z-toast` | Overlay stacking order, reflecting real nesting (a Dropdown can open from inside a Modal, a Toast always stays on top) |
 
 Redefine any of these in your own CSS to retheme the whole library without
 touching a single component. Dark mode is just a second set of the same
 tokens, applied under a `.dark` class on `<html>` (flipped by
 `SColorModeToggle`, or your own `useColorMode()` logic).
+
+**Radius is one knob, not four.** `--ui-radius-sm`/`-md`/`-lg` are derived
+from `--ui-radius` itself (0.75x/1x/2x), so changing the single base value
+rescales every component's corners proportionally:
+
+```css
+:root {
+  --ui-radius: 0.25rem; /* sharper corners across the whole library */
+}
+```
+
+`--ui-radius-full` (pills, avatars) stays independent - "pill-shaped" is
+a distinct visual choice, not a point on the same size gradient.
+
+**Breakpoints and spacing** aren't Selaras tokens at all - components use
+Tailwind's own default scale directly, so you customize them the same way
+you would in any Tailwind v4 project, through Tailwind's own `@theme`:
+
+```css
+@theme {
+  --breakpoint-3xl: 1920px;
+  --spacing: 0.2rem;
+}
+```
 
 ## 2. The `:ui` prop
 
