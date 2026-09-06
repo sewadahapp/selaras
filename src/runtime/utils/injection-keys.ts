@@ -54,3 +54,20 @@ export interface DashboardContext {
 }
 
 export const DASHBOARD_INJECTION_KEY: InjectionKey<DashboardContext> = Symbol('selaras-dashboard')
+
+/**
+ * Provided by STheme (Theme.vue), read by useComponentTheme/useThemeProps
+ * (utils/ui.ts) - `parent` is a deliberate back-reference to whatever
+ * STheme (if any) the providing one is itself nested inside, rather than
+ * a pre-merged bag: this lets the read side walk the *whole* ancestor
+ * chain and compose overrides in the correct outermost-to-innermost
+ * order (see useComponentTheme's own collectThemeChain), so nesting two
+ * STheme components inherits an outer one's unset slots/props instead of
+ * an inner one wholesale replacing it.
+ */
+export interface ThemeContext {
+  ui?: Partial<Record<string, object>>
+  props?: Partial<Record<string, Record<string, unknown>>>
+  parent?: ThemeContext
+}
+export const THEME_INJECTION_KEY: InjectionKey<ComputedRef<ThemeContext>> = Symbol('selaras-theme')

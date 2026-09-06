@@ -10,7 +10,7 @@ import { useMessages } from '../composables/use-messages'
 import { useRippleEnabled } from '../composables/use-ripple'
 import { vRipple } from '../directives/ripple'
 import { buttonTheme } from '../theme/button'
-import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
 type ButtonVariants = VariantProps<typeof buttonTheme>
@@ -66,11 +66,12 @@ const rippleEnabledSetting = useRippleEnabled()
 // exists to avoid.
 const rippleEnabled = computed(() => rippleEnabledSetting.value && props.variant !== 'text')
 const theme = useComponentTheme('button', buttonTheme)
+const themeProps = useThemeProps('button')
 
 const ui = computed(() => theme.value({
-  color: props.color,
+  color: props.color ?? themeProps.value.color as ButtonVariants['color'],
   variant: props.variant,
-  size: props.size,
+  size: props.size ?? themeProps.value.size as ButtonVariants['size'],
   block: props.block,
   raised: props.raised,
   square: props.square ?? iconOnly.value,

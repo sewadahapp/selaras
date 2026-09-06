@@ -6,7 +6,7 @@ order: 30
 
 Every component reads its colors from a small set of semantic CSS custom
 properties, and its layout/variant classes from a `tailwind-variants`
-theme. There are three ways to customize a component, in increasing order
+theme. There are four ways to customize a component, in increasing order
 of precedence.
 
 ## 1. Design tokens
@@ -74,7 +74,25 @@ slot name; each value is either:
 </SButton>
 ```
 
-## 3. Global overrides
+## 3. `STheme`
+
+To retheme every component inside one part of the page - a card, a
+sidebar - without making that a global default, wrap it in
+[`STheme`](/components/layout/theme):
+
+```vue-html
+<STheme :ui="{ button: { slots: { base: 'font-mono' } } }">
+  <!-- every SButton in here, however deeply nested -->
+</STheme>
+```
+
+Same override shape as `app.config.ui` (below), and merged onto the
+component's theme the same way - just scoped to `STheme`'s own subtree
+instead of the whole app. It can also default a prop's value (`:props`)
+for a component that opts into reading it - see its own doc page for
+which components currently do.
+
+## 4. Global overrides
 
 To retheme a component everywhere instead of one instance at a time,
 extend its theme from `app.config.ts` under `ui.<componentKey>` (the
@@ -98,8 +116,9 @@ own `extend`, so you only need to specify what you're changing.
 ## Precedence
 
 Lowest to highest: the component's base `tv()` theme → your
-`app.config.ts` override → the instance's `:ui` prop → a native `class`/
-fallthrough attribute on the component's root element.
+`app.config.ts` override → an ancestor `STheme`'s override → the
+instance's `:ui` prop/explicit prop → a native `class`/fallthrough
+attribute on the component's root element.
 
 ## Class prefix
 

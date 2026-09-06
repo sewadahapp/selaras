@@ -8,7 +8,7 @@ import { computed, inject } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { avatarTheme } from '../theme/avatar'
 import { AVATAR_SIZE_INJECTION_KEY } from '../utils/injection-keys'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
 type AvatarVariants = VariantProps<typeof avatarTheme>
@@ -42,12 +42,16 @@ export interface AvatarProps {
 
 const icons = useIcons()
 const theme = useComponentTheme('avatar', avatarTheme)
+const themeProps = useThemeProps('avatar')
 const groupSize = inject(AVATAR_SIZE_INJECTION_KEY, undefined)
 
 const ui = computed(() => theme.value({
-  color: props.color,
+  color: props.color ?? themeProps.value.color as AvatarVariants['color'],
   statusColor: props.statusColor,
-  size: props.size ?? groupSize?.value,
+  // AvatarGroup's own size (the more locally-specific ancestor) wins over
+  // an STheme prop default before falling all the way back to tv()'s own
+  // defaultVariants.
+  size: props.size ?? groupSize?.value ?? themeProps.value.size as AvatarVariants['size'],
   shape: props.shape,
 }))
 

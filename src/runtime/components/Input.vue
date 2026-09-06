@@ -7,7 +7,7 @@ import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { inputTheme } from '../theme/input'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -17,7 +17,6 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<InputProps>(), {
   type: 'text',
-  color: 'primary',
 })
 
 const emit = defineEmits<InputEmits>()
@@ -56,7 +55,8 @@ function clear() {
   emit('update:modelValue', '')
 }
 
-const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
+const themeProps = useThemeProps('input')
+const effectiveSize = computed(() => props.size ?? field?.size ?? themeProps.value.size as InputVariants['size'] ?? 'md')
 
 // One size step down from the input itself - a full-size dismiss icon reads
 // as too heavy next to the input's own text, especially at lg. sm has no
@@ -69,7 +69,7 @@ const theme = useComponentTheme('input', inputTheme)
 
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
-  color: props.color,
+  color: props.color ?? themeProps.value.color as InputVariants['color'] ?? 'primary',
   invalid: inputInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,

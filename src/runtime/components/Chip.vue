@@ -6,7 +6,7 @@ import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { chipTheme } from '../theme/chip'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
 type ChipVariants = VariantProps<typeof chipTheme>
@@ -39,11 +39,12 @@ export interface ChipEmits {
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('chip', chipTheme)
+const themeProps = useThemeProps('chip')
 
 const ui = computed(() => theme.value({
-  color: props.color,
+  color: props.color ?? themeProps.value.color as ChipVariants['color'],
   variant: props.variant,
-  size: props.size,
+  size: props.size ?? themeProps.value.size as ChipVariants['size'],
   disabled: props.disabled,
   rounded: props.rounded,
   removable: props.removable,

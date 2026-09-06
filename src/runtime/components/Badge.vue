@@ -4,7 +4,7 @@ import type { BadgeThemeSlots } from '../theme/badge'
 import type { UiProp } from '../utils/ui'
 import { computed, useSlots } from 'vue'
 import { badgeTheme } from '../theme/badge'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
 type BadgeVariants = VariantProps<typeof badgeTheme>
@@ -37,11 +37,12 @@ const dotOnly = computed(() => !!props.dot && !hasLabel.value)
 const iconOnly = computed(() => !hasLabel.value && !!props.icon && !props.dot)
 
 const theme = useComponentTheme('badge', badgeTheme)
+const themeProps = useThemeProps('badge')
 
 const ui = computed(() => theme.value({
-  color: props.color,
+  color: props.color ?? themeProps.value.color as BadgeVariants['color'],
   variant: props.variant,
-  size: props.size,
+  size: props.size ?? themeProps.value.size as BadgeVariants['size'],
   iconOnly: iconOnly.value,
 }))
 
