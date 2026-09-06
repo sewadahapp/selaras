@@ -73,6 +73,10 @@ touchable in the meantime:
 ::component-example{name="switch-loading"}
 ::
 
+```vue-html
+<SSwitch :model-value="enabled" :loading="loading" label="Sync with server" @update:model-value="onUpdate" />
+```
+
 ### Icons
 
 `checked-icon`/`unchecked-icon` render inside the thumb for each state -

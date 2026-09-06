@@ -246,6 +246,17 @@ trigger:
 <SSelect v-model="fruit" arrow :items="items" />
 ```
 
+### Mobile modal presentation
+
+`mobileModal` switches the popover to a centered [Modal](/components/overlays/modal)
+below a 768px viewport width, instead of the small anchored panel - easier to
+tap with a finger. Opt-in (defaults `false`) rather than automatic, so an
+existing usage's look never changes without asking for it:
+
+```vue-html
+<SSelect v-model="fruit" mobile-modal placeholder="Pick a fruit" :items="fruitItems" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
@@ -289,6 +300,7 @@ not something to configure here.
 | `invalid` | `boolean` | `false` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `arrow` | `boolean` | `false` |
+| `mobileModal` | `boolean` | `false` |
 | `ui` | `Partial<Record<SelectSlot, string \| object>>` | - |
 
 ## Slots

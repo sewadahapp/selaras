@@ -73,6 +73,17 @@ picked:
 <SColorPicker v-model="color" size="lg" />
 ```
 
+### Mobile modal presentation
+
+Below a 768px viewport width, `mobileModal` presents the popover as a
+centered [Modal](/components/overlays/modal) instead of a small anchored
+panel - easier to tap with a finger. Opt-in (defaults `false`), matching
+Select/Autocomplete/DatePicker's own `mobileModal`:
+
+```vue-html
+<SColorPicker v-model="color" mobile-modal />
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -83,6 +94,7 @@ picked:
 | `alpha` | `boolean` | `true` |
 | `swatches` | `string[]` | - |
 | `placeholder` | `string` | - |
+| `mobileModal` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `ui` | `Partial<Record<ColorPickerSlot, string \| object>>` | - |

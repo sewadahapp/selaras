@@ -87,10 +87,18 @@ one:
 <SRating v-model="value" orientation="vertical" />
 ```
 
+### Forms integration
+
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically - `invalid` falls back to
+FormField's own state when not set directly on the rating, and `size`
+does the same.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | - |
 | `modelValue` | `number` | - |
 | `defaultValue` | `number` | - |
 | `length` | `number` | `5` |

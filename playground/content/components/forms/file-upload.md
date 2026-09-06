@@ -69,10 +69,18 @@ it however you like:
 <SFileUpload color="success" />
 ```
 
+### Forms integration
+
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically - `invalid` falls back to
+FormField's own state when not set directly on the file upload, and `size`
+does the same.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | - |
 | `modelValue` | `File[]` | - |
 | `accept` | `string` | - |
 | `multiple` | `boolean` | `false` |

@@ -131,6 +131,18 @@ show the selection instead). Same `v-model:search-term` and
 [Select's](/components/forms/select#sizes) - see the [Props](#props) table
 below.
 
+### Mobile modal presentation
+
+`mobileModal` works the same as
+[Select's](/components/forms/select#mobile-modal-presentation) - below a
+768px viewport width, it presents the popover as a centered
+[Modal](/components/overlays/modal) instead of a small anchored panel,
+easier to tap with a finger:
+
+```vue-html
+<SAutocomplete v-model="value" mobile-modal placeholder="Type anything" :items="fruitItems" />
+```
+
 ### Forms integration
 
 Also the same as [Select's](/components/forms/select#forms-integration) -

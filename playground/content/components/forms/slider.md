@@ -80,6 +80,19 @@ one):
 <SSlider v-model="value" orientation="vertical" />
 ```
 
+### Inverted
+
+`inverted` visually (and directionally) flips the slider - the max end
+renders where the min end normally would, and dragging is reversed to
+match:
+
+::component-example{name="slider-inverted"}
+::
+
+```vue-html
+<SSlider v-model="value" inverted aria-label="Volume (inverted)" />
+```
+
 ### Thumb variant
 
 `thumb-variant="bar"` swaps the default circular thumb for a thin bar,
@@ -208,7 +221,7 @@ intermediate frame, like a debounced request:
 | `tooltip` | `boolean` | `false` |
 | `controls` | `boolean` | `false` |
 | `ariaLabel` | `string \| string[]` | - |
-| `name` | `string` | - |
+| `name` | `string` (submitted via a hidden input Reka renders internally - only takes effect inside a real `<form>`) | - |
 | `ui` | `Partial<Record<SliderSlot, string \| object>>` | - |
 
 ## Events

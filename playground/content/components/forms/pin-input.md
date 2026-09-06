@@ -79,10 +79,18 @@ stays neutral regardless, matching `Input`:
 <SPinInput color="success" />
 ```
 
+### Forms integration
+
+Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
+`aria-describedby` wired up automatically - `invalid` falls back to
+FormField's own state when not set directly on the pin input, and `size`
+does the same.
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | - |
 | `modelValue` | `(string \| number)[]` | - |
 | `defaultValue` | `(string \| number)[]` | - |
 | `length` | `number` | `5` |
