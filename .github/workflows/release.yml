@@ -1,0 +1,84 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump (leave as auto to let changelogen infer it from commit types)
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.19.0
+          registry-url: https://registry.npmjs.org
+
+      # Trusted publishing (OIDC, see the Publish step below) needs npm CLI
+      # >= 11.5.1 - not guaranteed to be what Node 24.19.0 happens to bundle.
+      - run: npm install -g npm@latest
+
+      - run: npm i -g --force corepack@latest && corepack enable
+
+      - name: Install dependencies
+        run: npx nypm@latest i
+
+      - name: Playground prepare
+        run: npm run dev:prepare
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Build
+        run: npm run prepack
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Bumps package.json, writes CHANGELOG.md, commits + tags, pushes, and
+      # creates the GitHub release - all via the automatic GITHUB_TOKEN, no
+      # extra secret needed for this step. `bump` defaults to "auto" (changelogen
+      # infers patch/minor/major from commit types since the last tag,
+      # matching this repo's own Conventional Commits history) - the workflow
+      # input only overrides it when explicitly set to patch/minor/major.
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx changelogen --release --push ${{ inputs.bump != 'auto' && format('--{0}', inputs.bump) || '' }}
+
+      # BOOTSTRAP ONLY: npm wouldn't let a trusted publisher be configured
+      # for "selaras" before it exists, so this first release still
+      # authenticates with the NPM_TOKEN secret (an Automation token).
+      # Once this release succeeds, go configure Trusted Publishers on the
+      # package's own Settings page on npmjs.com (GitHub Actions -> org
+      # "sewadahapp", repo "selaras", workflow filename "release.yml"),
+      # then delete the `env:` block below and the NPM_TOKEN secret - the
+      # `id-token: write` permission above is already in place for it.
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
