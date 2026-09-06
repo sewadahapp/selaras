@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import process from 'node:process'
 
 /**
  * `NavigationMenu`/`Breadcrumb` demo examples link to placeholder routes
@@ -41,8 +42,16 @@ function fakeDemoLinkedPaths() {
 
 const fakeDemoLinkedPathsCache = fakeDemoLinkedPaths()
 
+// Nitro's crawler passes the full path including any configured baseURL
+// (e.g. `/selaras/pricing` when NUXT_APP_BASE_URL=/selaras/, as set by the
+// GitHub Pages deploy job) - the cache above is built from each demo's raw
+// `to="..."` value, which never has that prefix, so it has to be stripped
+// before checking membership or every fake link "reappears" as a real 404
+// once a baseURL is in play.
 function isFakeDemoLinkedPath(path: string) {
-  return fakeDemoLinkedPathsCache.has(path)
+  const baseURL = (process.env.NUXT_APP_BASE_URL ?? '/').replace(/\/$/, '')
+  const normalized = baseURL && path.startsWith(baseURL) ? path.slice(baseURL.length) || '/' : path
+  return fakeDemoLinkedPathsCache.has(normalized)
 }
 
 export default defineNuxtConfig({

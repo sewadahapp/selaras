@@ -13,13 +13,13 @@ on:
           - minor
           - major
 
-permissions:
-  contents: write
-  id-token: write
-
 jobs:
   release:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v7
@@ -84,3 +84,56 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
+
+  docs:
+    needs: release
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # The `release` job just pushed a version-bump commit - check out its
+      # tip (not the older commit that triggered this workflow) so the
+      # deployed docs reflect the version that was actually just released.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.19.0
+
+      - name: Install dependencies
+        run: bun install
+
+      # A GitHub Pages *project* site (not a custom domain or a
+      # <org>.github.io root repo) serves from a /selaras/ subpath, not the
+      # domain root - NUXT_APP_BASE_URL is Nuxt's own env-var mapping for
+      # runtimeConfig.app.baseURL, so every generated link/asset path
+      # accounts for it. Left unset for local `bun run dev:generate`, which
+      # still defaults to `/`.
+      - name: Generate static docs site
+        run: bun run --bun dev:generate
+        env:
+          NUXT_APP_BASE_URL: /selaras/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: playground/.output/public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
