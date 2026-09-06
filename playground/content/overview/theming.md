@@ -74,6 +74,22 @@ any of these role colors regardless of theme). The same shape applies to
 `secondary`/`success`/`danger`/`info`/`warning` - just swap the color
 name.
 
+Tailwind v4 only keeps a theme variable in the compiled CSS if it detects
+the variable actually being used somewhere - normally that means a
+utility class like `bg-primary-500` appearing literally in a scanned
+file. Overriding a color Selaras already ships (as above) works with a
+plain `@theme` block, since Selaras's own CSS already references the full
+scale internally. If a color you add still doesn't show up in your build
+- most likely a token that isn't one of Selaras's own roles - add
+`static` to your own block instead (`@theme static { ... }`), which tells
+Tailwind to always keep it regardless of detected usage:
+
+```css
+@theme static {
+  --color-brand-500: oklch(0.55 0.20 300);
+}
+```
+
 **Radius is one knob, not four.** `--ui-radius-sm`/`-md`/`-lg` are derived
 from `--ui-radius` itself (0.75x/1x/2x), so changing the single base value
 rescales every component's corners proportionally:
