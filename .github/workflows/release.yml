@@ -45,16 +45,16 @@ jobs:
         run: bun install
 
       - name: Playground prepare
-        run: bun run --bun dev:prepare
+        run: bun run dev:prepare
 
       - name: Lint
-        run: bun run --bun lint
+        run: bun run lint
 
       - name: Test
-        run: bun run --bun test
+        run: bun run test
 
       - name: Build
-        run: bun run --bun prepack
+        run: bun run prepack
 
       - name: Configure git identity
         run: |
@@ -124,7 +124,7 @@ jobs:
       # accounts for it. Left unset for local `bun run dev:generate`, which
       # still defaults to `/`.
       - name: Generate static docs site
-        run: bun run --bun dev:generate
+        run: bun run dev:generate
         env:
           NUXT_APP_BASE_URL: /selaras/
 
