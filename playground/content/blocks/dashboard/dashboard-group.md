@@ -62,6 +62,14 @@ all - `SDashboardSidebar` switches to rendering its content inside a
 sidebar isn't part of a split layout). Try resizing this page's own browser
 window narrower than a phone to see it switch live.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `DashboardGroup`'s own theme file:
+
+::theme-source{name="dashboard-group"}
+::
+
 ## Props
 
 | Prop | Type | Default |

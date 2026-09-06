@@ -72,6 +72,14 @@ that only ever describes a leaf link's own exact path):
 </SContentNavigation>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `ContentNavigation`'s own theme file:
+
+::theme-source{name="content-navigation"}
+::
+
 ### Accessibility
 
 The active link gets `aria-current="page"` automatically - `NuxtLink`'s own

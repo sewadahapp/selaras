@@ -24,6 +24,14 @@ from a content collection's own surrounding-page query (e.g.
 hand - see this page's own "Previous"/"Next" links at the bottom for a live
 example.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `ContentSurround`'s own theme file:
+
+::theme-source{name="content-surround"}
+::
+
 ## Props
 
 | Prop | Type | Default |

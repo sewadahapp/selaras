@@ -42,6 +42,14 @@ below `mobileBreakpoint`, the same content renders inside a
 sidebar's width reads more naturally in pixels than as a fraction of
 however wide the page happens to be.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `DashboardSidebar`'s own theme file:
+
+::theme-source{name="dashboard-sidebar"}
+::
+
 ## Props
 
 | Prop | Type | Default |

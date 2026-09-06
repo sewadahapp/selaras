@@ -64,6 +64,14 @@ currently being read:
 </SContentToc>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `ContentToc`'s own theme file:
+
+::theme-source{name="content-toc"}
+::
+
 ### Accessibility
 
 The active link(s) get `aria-current="location"` - the WAI-ARIA token for

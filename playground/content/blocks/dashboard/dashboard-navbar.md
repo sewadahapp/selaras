@@ -35,6 +35,14 @@ on mobile, see [DashboardGroup](/blocks/dashboard/dashboard-group)'s own
 sidebar in the same [DashboardGroup](/blocks/dashboard/dashboard-group) to
 control.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `DashboardNavbar`'s own theme file:
+
+::theme-source{name="dashboard-navbar"}
+::
+
 ## Props
 
 | Prop | Type | Default |

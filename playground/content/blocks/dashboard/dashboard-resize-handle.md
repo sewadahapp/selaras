@@ -26,6 +26,14 @@ the mobile check: renders nothing below `mobileBreakpoint` - there's
 nothing to drag once the sidebar isn't part of a split layout at all, see
 [DashboardGroup](/blocks/dashboard/dashboard-group)'s own "Mobile" section.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `DashboardResizeHandle`'s own theme file:
+
+::theme-source{name="dashboard-resize-handle"}
+::
+
 ## Props
 
 | Prop | Type | Default |

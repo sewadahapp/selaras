@@ -27,6 +27,14 @@ contains a [DashboardNavbar](/blocks/dashboard/dashboard-navbar) plus a
 scrollable `<main>` for the actual page content - neither is required
 though, `SDashboardPanel` has no opinion on what's inside it.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `DashboardPanel`'s own theme file:
+
+::theme-source{name="dashboard-panel"}
+::
+
 ## Props
 
 | Prop | Type | Default |

@@ -52,6 +52,14 @@ See also [PageAside](/blocks/documentation/page-aside),
 [ContentNavigation](/blocks/documentation/content-navigation) and
 [ContentToc](/blocks/documentation/content-toc).
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `PageHeader`'s own theme file:
+
+::theme-source{name="page-header"}
+::
+
 ## Props
 
 | Prop | Type | Default |

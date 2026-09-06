@@ -40,6 +40,14 @@ see [PageHeader](/blocks/documentation/page-header)'s "Assembling a full page
 layout" section for how all three combine with a main content column into
 one page.
 
+## Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot - here's `PageAside`'s own theme file:
+
+::theme-source{name="page-aside"}
+::
+
 ## Props
 
 | Prop | Type | Default |
