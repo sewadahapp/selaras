@@ -34,6 +34,12 @@ Scrolling is handled by a themed [ScrollArea](/components/layout/scroll-area)
 internally, not a plain `overflow-y-auto` div - so scrollbar styling stays
 consistent with the rest of the library.
 
+Typically wraps a [ContentNavigation](/blocks/documentation/content-navigation)
+(left nav) or a [ContentToc](/blocks/documentation/content-toc) (right rail) -
+see [PageHeader](/blocks/documentation/page-header)'s "Assembling a full page
+layout" section for how all three combine with a main content column into
+one page.
+
 ## Props
 
 | Prop | Type | Default |

@@ -19,6 +19,13 @@ needed. As with [ContentNavigation](/blocks/documentation/content-navigation), t
 no hard dependency on `@nuxt/content` - build the array yourself if you don't
 use it.
 
+It's normally wrapped in a [PageAside](/blocks/documentation/page-aside)
+rather than used bare, which supplies the sticky positioning and scrollable
+rail chrome - see [PageHeader](/blocks/documentation/page-header)'s
+"Assembling a full page layout" section for how it and
+[ContentNavigation](/blocks/documentation/content-navigation) fit together
+with the rest of a page.
+
 The active heading(s) are tracked by comparing scroll position against
 each heading's own content range (from its position down to the next
 heading's, or to the end of the document for the last one) - not a single

@@ -25,7 +25,12 @@ as an [Accordion](/components/navigation/accordion) item internally
 group starts open by default) rather than a hand-rolled toggle.
 
 This docs site's own left sidebar is exactly this component, fed
-`queryCollectionNavigation('docs').order('order', 'ASC')`.
+`queryCollectionNavigation('docs').order('order', 'ASC')`. It's normally
+wrapped in a [PageAside](/blocks/documentation/page-aside) rather than used
+bare, which supplies the sticky positioning and scrollable rail chrome - see
+[PageHeader](/blocks/documentation/page-header)'s "Assembling a full page
+layout" section for how it and [ContentToc](/blocks/documentation/content-toc)
+fit together with the rest of a page.
 
 A `path` starting with `http://`/`https://` renders as a real external link
 automatically - that's `NuxtLink`'s own default behavior, nothing to opt into.
