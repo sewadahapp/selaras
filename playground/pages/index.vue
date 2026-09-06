@@ -58,7 +58,7 @@ const values = [
           <SButton size="lg" :as="NuxtLinkComponent" to="/components/elements/button">
             Browse components
           </SButton>
-          <SButton size="lg" variant="ghost" as="a" href="https://github.com/wypratama/selaras" target="_blank" rel="noopener">
+          <SButton size="lg" variant="ghost" as="a" href="https://github.com/sewadahapp/selaras" target="_blank" rel="noopener">
             View source
           </SButton>
         </div>
