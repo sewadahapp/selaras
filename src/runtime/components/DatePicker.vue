@@ -40,7 +40,7 @@ import DatePickerCalendarBody from '../internal/DatePickerCalendarBody.vue'
 import DatePickerRangeCalendarBody from '../internal/DatePickerRangeCalendarBody.vue'
 import DatePickerTimeBody from '../internal/DatePickerTimeBody.vue'
 import { datePickerTheme } from '../theme/date-picker'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 import Modal from './Modal.vue'
@@ -649,7 +649,7 @@ const buttonTriggerUi = computed(() => ({
             </DateRangePickerInput>
           </template>
         </DateRangePickerField>
-        <div class="ms-auto flex shrink-0 items-center gap-1">
+        <div :class="applyClassPrefix('ms-auto flex shrink-0 items-center gap-1')">
           <Button
             v-if="clearable && hasValue"
             variant="text"
@@ -676,7 +676,7 @@ const buttonTriggerUi = computed(() => ({
         </div>
       </div>
 
-      <div v-else class="relative inline-block w-full">
+      <div v-else :class="applyClassPrefix('relative inline-block w-full')">
         <DateRangePickerTrigger as-child>
           <Button
             variant="text"
@@ -700,7 +700,7 @@ const buttonTriggerUi = computed(() => ({
           :color="color"
           :size="iconButtonSize"
           :aria-label="messages.clear"
-          class="absolute end-1 top-1/2 -translate-y-1/2"
+          :class="applyClassPrefix('absolute end-1 top-1/2 -translate-y-1/2')"
           @click.stop="clear"
         >
           <template #icon="{ class: iconClass }">
@@ -732,7 +732,7 @@ const buttonTriggerUi = computed(() => ({
     -->
     <Modal v-else :open="isRangeOpen" :ui="mobileModalUi" @update:open="isRangeOpen = $event">
       <template #content>
-        <DialogTitle class="sr-only">
+        <DialogTitle :class="applyClassPrefix('sr-only')">
           {{ messages.dateRangePicker }}
         </DialogTitle>
         <div v-bind="mobileContentProps">
@@ -771,7 +771,7 @@ const buttonTriggerUi = computed(() => ({
             </TimeFieldInput>
           </template>
         </TimeFieldRoot>
-        <div class="ms-auto flex shrink-0 items-center gap-1">
+        <div :class="applyClassPrefix('ms-auto flex shrink-0 items-center gap-1')">
           <Button
             v-if="clearable && hasValue"
             variant="text"
@@ -798,7 +798,7 @@ const buttonTriggerUi = computed(() => ({
         </div>
       </div>
 
-      <div v-else class="relative inline-block w-full">
+      <div v-else :class="applyClassPrefix('relative inline-block w-full')">
         <PopoverTrigger as-child>
           <Button
             variant="text"
@@ -822,7 +822,7 @@ const buttonTriggerUi = computed(() => ({
           :color="color"
           :size="iconButtonSize"
           :aria-label="messages.clear"
-          class="absolute end-1 top-1/2 -translate-y-1/2"
+          :class="applyClassPrefix('absolute end-1 top-1/2 -translate-y-1/2')"
           @click.stop="clear"
         >
           <template #icon="{ class: iconClass }">
@@ -847,7 +847,7 @@ const buttonTriggerUi = computed(() => ({
     <!-- Below 768px - see the range branch's own identical note above. -->
     <Modal v-else :open="timeIsOpen" :ui="mobileModalUi" @update:open="timeIsOpen = $event">
       <template #content>
-        <DialogTitle class="sr-only">
+        <DialogTitle :class="applyClassPrefix('sr-only')">
           {{ messages.timePicker }}
         </DialogTitle>
         <div v-bind="mobileContentProps">
@@ -895,7 +895,7 @@ const buttonTriggerUi = computed(() => ({
             </DatePickerInput>
           </template>
         </DatePickerField>
-        <div class="ms-auto flex shrink-0 items-center gap-1">
+        <div :class="applyClassPrefix('ms-auto flex shrink-0 items-center gap-1')">
           <Button
             v-if="clearable && hasValue"
             variant="text"
@@ -922,7 +922,7 @@ const buttonTriggerUi = computed(() => ({
         </div>
       </div>
 
-      <div v-else class="relative inline-block w-full">
+      <div v-else :class="applyClassPrefix('relative inline-block w-full')">
         <DatePickerTrigger as-child>
           <Button
             variant="text"
@@ -946,7 +946,7 @@ const buttonTriggerUi = computed(() => ({
           :color="color"
           :size="iconButtonSize"
           :aria-label="messages.clear"
-          class="absolute end-1 top-1/2 -translate-y-1/2"
+          :class="applyClassPrefix('absolute end-1 top-1/2 -translate-y-1/2')"
           @click.stop="clear"
         >
           <template #icon="{ class: iconClass }">
@@ -979,7 +979,7 @@ const buttonTriggerUi = computed(() => ({
     <!-- Below 768px - see the range branch's own identical note above. -->
     <Modal v-else :open="isOpen" :ui="mobileModalUi" @update:open="isOpen = $event">
       <template #content>
-        <DialogTitle class="sr-only">
+        <DialogTitle :class="applyClassPrefix('sr-only')">
           {{ messages.datePicker }}
         </DialogTitle>
         <div v-bind="mobileContentProps">

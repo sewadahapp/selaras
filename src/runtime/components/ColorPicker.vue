@@ -8,7 +8,7 @@ import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme } from '../utils/ui'
 import Modal from './Modal.vue'
 import Popover from './Popover.vue'
 
@@ -153,7 +153,7 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
     </button>
 
     <template #content>
-      <DialogTitle class="sr-only">
+      <DialogTitle :class="applyClassPrefix('sr-only')">
         {{ messages.colorPicker }}
       </DialogTitle>
       <div v-bind="mobileContentProps">

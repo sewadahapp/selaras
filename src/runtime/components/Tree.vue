@@ -188,7 +188,6 @@ function treeItemProps(entry: { bind: Record<string, unknown> }, level: number) 
         <Checkbox
           v-if="checkbox"
           :model-value="isIndeterminate ? 'indeterminate' : isSelected"
-          class="pointer-events-none"
           v-bind="checkboxProps"
         />
 

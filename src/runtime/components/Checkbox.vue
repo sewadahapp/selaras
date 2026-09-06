@@ -6,7 +6,7 @@ import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { checkboxTheme } from '../theme/checkbox'
-import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 
 type CheckboxVariants = VariantProps<typeof checkboxTheme>
 
@@ -86,7 +86,7 @@ const glyphState = computed(() => props.modelValue === 'indeterminate' ? 'indete
       @update:model-value="(value) => emit('update:modelValue', value)"
     >
       <CheckboxIndicator force-mount v-bind="indicatorProps">
-        <svg viewBox="0 0 24 24" class="size-full" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" :class="applyClassPrefix('size-full')" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 13l4 4L19 7" :data-state="glyphState" v-bind="checkIconProps" />
           <path d="M5 12h14" :data-state="glyphState" v-bind="indeterminateIconProps" />
         </svg>

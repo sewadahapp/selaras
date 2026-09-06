@@ -72,3 +72,10 @@ own `extend`, so you only need to specify what you're changing.
 Lowest to highest: the component's base `tv()` theme → your
 `app.config.ts` override → the instance's `:ui` prop → a native `class`/
 fallthrough attribute on the component's root element.
+
+## Class prefix
+
+If your own Tailwind build namespaces its utilities behind a prefix, see
+[Installation](/overview/installation#class-prefix) for the matching
+`classPrefix` option - it applies after every one of the mechanisms above,
+regardless of which one produced the final class string.

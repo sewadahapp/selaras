@@ -1,4 +1,5 @@
-import { addComponentsDir, addImports, addImportsDir, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addComponentsDir, addImports, addImportsDir, addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { Scanner } from '@tailwindcss/oxide'
 import tailwindcss from '@tailwindcss/vite'
 
 export interface ModuleOptions {
@@ -7,6 +8,15 @@ export interface ModuleOptions {
    * @default 'S'
    */
   prefix?: string
+  /**
+   * Namespaces every class Selaras's own components render behind this
+   * Tailwind v4 class-prefix (`tw:flex` instead of `flex`) - matches a
+   * consumer's own `@import "tailwindcss" prefix(tw);` declaration, which
+   * must use the exact same string or the whole UI renders unstyled with
+   * no error. Unset by default (no prefixing). See "Class prefix" in the
+   * installation docs before setting this.
+   */
+  classPrefix?: string
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -135,5 +145,95 @@ export default defineNuxtModule<ModuleOptions>({
       from: resolver.resolve('./runtime/directives/ripple'),
       meta: { vueDirective: true },
     })
+
+    // Threads `classPrefix` from this build-time module option into runtime
+    // code (`applyClassPrefix` in runtime/utils/ui.ts) via a virtual
+    // constants module - the same pattern @nuxtjs/color-mode (already a
+    // dependency here) uses for its own options, confirmed by reading its
+    // shipped source (`addTemplate({ filename: 'color-mode-options.mjs', ...
+    // export const ${key} = ... })`, imported via `#build/color-mode-
+    // options.mjs`). Always registered, even when unset (`classPrefix:
+    // null`), so ui.ts's own import of this virtual module never fails to
+    // resolve regardless of whether this feature is in use.
+    addTemplate({
+      filename: 'selaras-class-prefix.mjs',
+      getContents: () => `export const classPrefix = ${JSON.stringify(options.classPrefix ?? null)}\n`,
+    })
+
+    if (options.classPrefix) {
+      // Tailwind v4 only generates CSS for a class it can find as literal
+      // text (via file scanning or an explicit `@source inline(...)`
+      // safelist) - never by pattern-matching whatever `applyClassPrefix`
+      // produces at render time (confirmed directly: an unprefixed
+      // candidate is rejected outright the moment any `prefix(...)` is
+      // active in a compilation, regardless of discovery mechanism). So
+      // Tailwind has to be told, at this build time, that every one of
+      // Selaras's own classes now also exists in `${classPrefix}:`-prefixed
+      // form - `@tailwindcss/oxide`'s `Scanner` is Tailwind's own native
+      // candidate scanner (the exact code path a real Tailwind build uses
+      // to turn `@source` globs into candidates), scanning the same three
+      // globs theme.css's own `@source` directives already declare so this
+      // stays in sync with that list by construction rather than a second
+      // hand-maintained copy.
+      const runtimeBase = resolver.resolve('./runtime')
+      const scanner = new Scanner({
+        sources: [
+          { base: runtimeBase, pattern: './components/**/*.vue', negated: false },
+          { base: runtimeBase, pattern: './theme/**/*.ts', negated: false },
+          { base: runtimeBase, pattern: './utils/**/*.ts', negated: false },
+        ],
+      })
+      const candidates = scanner.scan().filter((candidate) => {
+        // selaras-nav-elbow (& variants) are hand-authored literal CSS
+        // selectors (theme.css), never real Tailwind utilities -
+        // applyClassPrefix skips them at render time too, so they must
+        // never end up in this prefixed safelist either.
+        if (candidate.startsWith('selaras-'))
+          return false
+        // The scanner reads plain file text, not syntax, so it also
+        // picks up destructured variable names and TS identifiers
+        // (`!canDecrement`, `accessorKey`) from the same files - harmless
+        // if left in (Tailwind silently ignores anything that isn't a
+        // real utility), but every real Tailwind class in this codebase
+        // is lowercase and never starts with `!` (confirmed by grep), so
+        // this keeps the generated safelist's size down.
+        if (candidate.startsWith('!') || /[A-Z]/.test(candidate))
+          return false
+        return true
+      })
+      const safelist = candidates.map(candidate => `${options.classPrefix}:${candidate}`).join(' ')
+
+      const safelistTemplate = addTemplate({
+        filename: 'selaras-prefix-safelist.css',
+        // Tailwind's split entry points (`tailwindcss/theme.css` +
+        // `tailwindcss/utilities.css`, each with their own `prefix(...)`)
+        // emit only the utilities layer for this file's own safelist
+        // candidates, instead of a second full copy of Preflight/theme
+        // output the plain `@import "tailwindcss" prefix(...)` form would
+        // otherwise duplicate (confirmed: ~3.4KB vs ~190KB for an
+        // equivalent safelist). `theme(reference)` on the theme import:
+        // this file only needs to *resolve* Tailwind's own theme values
+        // for candidate generation, not emit them again.
+        //
+        // `tw-animate-css` and `@custom-variant dark` are also imported/
+        // declared here, matching theme.css's own - both live only in
+        // theme.css's (separate) compilation otherwise, so without them
+        // every `${prefix}:animate-in`/`${prefix}:fade-in-0`/etc class
+        // (every Modal/Dropdown/Select/Toast/Tooltip/Drawer open-close
+        // transition) would silently generate no CSS at all under a
+        // configured prefix - confirmed empirically. `dark:` isn't used
+        // by any real component class yet, but costs nothing to close now.
+        getContents: () => [
+          `@import "tailwindcss/theme.css" theme(reference) prefix(${options.classPrefix});`,
+          `@import "tailwindcss/utilities.css" layer(utilities) prefix(${options.classPrefix});`,
+          `@import "tw-animate-css";`,
+          `@custom-variant dark (&:where(.dark, .dark *));`,
+          `@source inline("${safelist}");`,
+          '',
+        ].join('\n'),
+        write: true,
+      })
+      nuxt.options.css.push(safelistTemplate.dst)
+    }
   },
 })

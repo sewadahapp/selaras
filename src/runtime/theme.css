@@ -245,32 +245,6 @@
 
 @theme {
 
-    /* radius scale, generous by default */
-  --ui-radius-sm: 6px;
-  --ui-radius-md: 8px;
-  --ui-radius-lg: 16px;
-  --ui-radius-full: 9999px;
-
-  /* overlay elevation */
-  --ui-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.06);
-  --ui-shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
-  --ui-shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.16);
-
-  /*
-   * Overlay stacking order. Every overlay used to share a flat z-50, which
-   * only worked by accident of portal-mount order - a Dropdown opened from
-   * inside an open Modal (e.g. a row-actions menu in a dialog) would render
-   * behind the modal instead of above it. This tier reflects real nesting:
-   * a Dropdown can open from inside a Modal; a Tooltip can be triggered from
-   * inside either; a Toast is a global notification that must stay visible
-   * above everything else regardless of what's open.
-   */
-  --ui-z-modal-overlay: 40;
-  --ui-z-modal: 50;
-  --ui-z-dropdown: 60;
-  --ui-z-tooltip: 70;
-  --ui-z-toast: 80;
-
     /* ---------------------------------------------------------
    * Primary — Indigo/Violet
    * Anchor: oklch(0.4755 0.2026 279.99)
@@ -386,21 +360,59 @@
 }
 
 :root {
+  /*
+   * Plain CSS, deliberately not `@theme` - these aren't a Tailwind theme
+   * namespace (`--radius-*`/`--shadow-*`/`--z-*` are; `--ui-radius-*`/
+   * `--ui-shadow-*`/`--ui-z-*` aren't), and nothing anywhere references
+   * them via Tailwind's named-utility convention, only ever arbitrary
+   * values (`rounded-[var(--ui-radius-md)]`) - so there's no Tailwind
+   * theme-merge behavior to gain from `@theme` here, only its downside:
+   * under a configured class prefix, Tailwind renames/prunes `@theme`
+   * variables it can't prove are used by a discovered utility candidate.
+   * Plain custom properties are never touched by that, prefixed or not.
+   */
+
+  /* radius scale, generous by default */
+  --ui-radius-sm: 6px;
+  --ui-radius-md: 8px;
+  --ui-radius-lg: 16px;
+  --ui-radius-full: 9999px;
+
+  /* overlay elevation */
+  --ui-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --ui-shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
+  --ui-shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.16);
+
+  /*
+   * Overlay stacking order. Every overlay used to share a flat z-50, which
+   * only worked by accident of portal-mount order - a Dropdown opened from
+   * inside an open Modal (e.g. a row-actions menu in a dialog) would render
+   * behind the modal instead of above it. This tier reflects real nesting:
+   * a Dropdown can open from inside a Modal; a Tooltip can be triggered from
+   * inside either; a Toast is a global notification that must stay visible
+   * above everything else regardless of what's open.
+   */
+  --ui-z-modal-overlay: 40;
+  --ui-z-modal: 50;
+  --ui-z-dropdown: 60;
+  --ui-z-tooltip: 70;
+  --ui-z-toast: 80;
+
   /* =========================================================
    * SURFACES — LIGHT
    * ========================================================= */
 
-  --ui-bg: var(--color-neutral-25);
-  --ui-bg-elevated: var(--color-neutral-50);
-  --ui-bg-inverted: var(--color-neutral-950);
+  --ui-bg: --theme(--color-neutral-25);
+  --ui-bg-elevated: --theme(--color-neutral-50);
+  --ui-bg-inverted: --theme(--color-neutral-950);
 
-  --ui-border: var(--color-neutral-200);
-  --ui-border-hover: var(--color-neutral-300);
-  --ui-border-muted: var(--color-neutral-100);
+  --ui-border: --theme(--color-neutral-200);
+  --ui-border-hover: --theme(--color-neutral-300);
+  --ui-border-muted: --theme(--color-neutral-100);
 
-  --ui-text: var(--color-neutral-950);
-  --ui-text-muted: var(--color-neutral-600);
-  --ui-text-inverted: var(--color-neutral-50);
+  --ui-text: --theme(--color-neutral-950);
+  --ui-text-muted: --theme(--color-neutral-600);
+  --ui-text-inverted: --theme(--color-neutral-50);
 
 
   /* =========================================================
@@ -413,50 +425,50 @@
    * 700 = active / pressed
    * ========================================================= */
 
-  --ui-primary: var(--color-primary-500);
-  --ui-primary-hover: var(--color-primary-600);
-  --ui-primary-active: var(--color-primary-700);
-  --ui-primary-foreground: var(--color-neutral-25);
-  --ui-primary-soft: var(--color-primary-100);
+  --ui-primary: --theme(--color-primary-500);
+  --ui-primary-hover: --theme(--color-primary-600);
+  --ui-primary-active: --theme(--color-primary-700);
+  --ui-primary-foreground: --theme(--color-neutral-25);
+  --ui-primary-soft: --theme(--color-primary-100);
 
 
-  --ui-secondary: var(--color-secondary-500);
-  --ui-secondary-hover: var(--color-secondary-600);
-  --ui-secondary-active: var(--color-secondary-700);
-  --ui-secondary-foreground: var(--color-neutral-25);
-  --ui-secondary-soft: var(--color-secondary-100);
+  --ui-secondary: --theme(--color-secondary-500);
+  --ui-secondary-hover: --theme(--color-secondary-600);
+  --ui-secondary-active: --theme(--color-secondary-700);
+  --ui-secondary-foreground: --theme(--color-neutral-25);
+  --ui-secondary-soft: --theme(--color-secondary-100);
 
 
-  --ui-success: var(--color-success-500);
-  --ui-success-hover: var(--color-success-600);
-  --ui-success-active: var(--color-success-700);
-  --ui-success-foreground: var(--color-neutral-25);
-  --ui-success-soft: var(--color-success-100);
+  --ui-success: --theme(--color-success-500);
+  --ui-success-hover: --theme(--color-success-600);
+  --ui-success-active: --theme(--color-success-700);
+  --ui-success-foreground: --theme(--color-neutral-25);
+  --ui-success-soft: --theme(--color-success-100);
 
 
-  --ui-info: var(--color-info-500);
-  --ui-info-hover: var(--color-info-600);
-  --ui-info-active: var(--color-info-700);
-  --ui-info-foreground: var(--color-neutral-25);
-  --ui-info-soft: var(--color-info-100);
+  --ui-info: --theme(--color-info-500);
+  --ui-info-hover: --theme(--color-info-600);
+  --ui-info-active: --theme(--color-info-700);
+  --ui-info-foreground: --theme(--color-neutral-25);
+  --ui-info-soft: --theme(--color-info-100);
 
 
-  --ui-danger: var(--color-danger-500);
-  --ui-danger-hover: var(--color-danger-600);
-  --ui-danger-active: var(--color-danger-700);
-  --ui-danger-foreground: var(--color-neutral-25);
-  --ui-danger-soft: var(--color-danger-100);
+  --ui-danger: --theme(--color-danger-500);
+  --ui-danger-hover: --theme(--color-danger-600);
+  --ui-danger-active: --theme(--color-danger-700);
+  --ui-danger-foreground: --theme(--color-neutral-25);
+  --ui-danger-soft: --theme(--color-danger-100);
 
 
   /*
    * Warning is the intentional exception:
    * amber stays bright and therefore uses dark text.
    */
-  --ui-warning: var(--color-warning-500);
-  --ui-warning-hover: var(--color-warning-600);
-  --ui-warning-active: var(--color-warning-700);
-  --ui-warning-foreground: var(--color-neutral-950);
-  --ui-warning-soft: var(--color-warning-100);
+  --ui-warning: --theme(--color-warning-500);
+  --ui-warning-hover: --theme(--color-warning-600);
+  --ui-warning-active: --theme(--color-warning-700);
+  --ui-warning-foreground: --theme(--color-neutral-950);
+  --ui-warning-soft: --theme(--color-warning-100);
 
   /*
    * Neutral gets the same 5-token shape every other color has - main/
@@ -472,11 +484,11 @@
    * one and two places back from that same extreme, replacing the
    * opacity-90/80 hack Button used to fake a hover/active state.
    */
-  --ui-neutral: var(--color-neutral-950);
-  --ui-neutral-hover: var(--color-neutral-900);
-  --ui-neutral-active: var(--color-neutral-800);
-  --ui-neutral-foreground: var(--color-neutral-25);
-  --ui-neutral-soft: var(--color-neutral-100);
+  --ui-neutral: --theme(--color-neutral-950);
+  --ui-neutral-hover: --theme(--color-neutral-900);
+  --ui-neutral-active: --theme(--color-neutral-800);
+  --ui-neutral-foreground: --theme(--color-neutral-25);
+  --ui-neutral-soft: --theme(--color-neutral-100);
 }
 
 
@@ -485,17 +497,17 @@
    * SURFACES — DARK
    * ========================================================= */
 
-  --ui-bg: var(--color-neutral-950);
-  --ui-bg-elevated: var(--color-neutral-900);
-  --ui-bg-inverted: var(--color-neutral-50);
+  --ui-bg: --theme(--color-neutral-950);
+  --ui-bg-elevated: --theme(--color-neutral-900);
+  --ui-bg-inverted: --theme(--color-neutral-50);
 
-  --ui-border: var(--color-neutral-800);
-  --ui-border-hover: var(--color-neutral-700);
-  --ui-border-muted: var(--color-neutral-900);
+  --ui-border: --theme(--color-neutral-800);
+  --ui-border-hover: --theme(--color-neutral-700);
+  --ui-border-muted: --theme(--color-neutral-900);
 
-  --ui-text: var(--color-neutral-50);
-  --ui-text-muted: var(--color-neutral-400);
-  --ui-text-inverted: var(--color-neutral-950);
+  --ui-text: --theme(--color-neutral-50);
+  --ui-text-muted: --theme(--color-neutral-400);
+  --ui-text-inverted: --theme(--color-neutral-950);
 
 
   /* =========================================================
@@ -518,22 +530,22 @@
      of reading as separate solid circles, since neither the ring nor
      the fill ever fully covers what's underneath. */
   --ui-primary-soft:
-    color-mix(in oklab, var(--color-primary-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-primary-500) 24%, var(--ui-bg));
 
   --ui-secondary-soft:
-    color-mix(in oklab, var(--color-secondary-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-secondary-500) 24%, var(--ui-bg));
 
   --ui-success-soft:
-    color-mix(in oklab, var(--color-success-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-success-500) 24%, var(--ui-bg));
 
   --ui-info-soft:
-    color-mix(in oklab, var(--color-info-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-info-500) 24%, var(--ui-bg));
 
   --ui-warning-soft:
-    color-mix(in oklab, var(--color-warning-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-warning-500) 24%, var(--ui-bg));
 
   --ui-danger-soft:
-    color-mix(in oklab, var(--color-danger-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-danger-500) 24%, var(--ui-bg));
 
   /* main/foreground match what --ui-bg-inverted/--ui-text-inverted
      already resolved to here - unchanged appearance, just a dedicated
@@ -541,9 +553,9 @@
      what --ui-bg-elevated already resolved to here - the reported "too
      bright" problem is light-mode only (see :root's own comment on
      this token), so dark mode just keeps its existing look there. */
-  --ui-neutral: var(--color-neutral-50);
-  --ui-neutral-hover: var(--color-neutral-100);
-  --ui-neutral-active: var(--color-neutral-200);
-  --ui-neutral-foreground: var(--color-neutral-950);
-  --ui-neutral-soft: var(--color-neutral-900);
+  --ui-neutral: --theme(--color-neutral-50);
+  --ui-neutral-hover: --theme(--color-neutral-100);
+  --ui-neutral-active: --theme(--color-neutral-200);
+  --ui-neutral-foreground: --theme(--color-neutral-950);
+  --ui-neutral-soft: --theme(--color-neutral-900);
 }

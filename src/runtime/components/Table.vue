@@ -10,7 +10,7 @@ import { useTable } from '../composables/use-table'
 import { tableTheme } from '../theme/table'
 import { collectColumnPinning, convertChildrenToColumns } from '../utils/table-columns'
 import { exportTableToCsv } from '../utils/table-export'
-import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 import Button from './Button.vue'
 import Checkbox from './Checkbox.vue'
 import Icon from './Icon.vue'
@@ -281,7 +281,7 @@ defineExpose({
 
 <template>
   <div v-bind="rootProps">
-    <div v-if="columnToggle" class="mb-2 flex justify-end">
+    <div v-if="columnToggle" :class="applyClassPrefix('mb-2 flex justify-end')">
       <div data-column-toggle v-bind="columnToggleProps">
         <Button variant="outline" size="sm" :icon="icons.columns" @click="showColumnTogglePanel = !showColumnTogglePanel">
           {{ messages.columns }}

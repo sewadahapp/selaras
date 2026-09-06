@@ -7,7 +7,7 @@ import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -201,7 +201,7 @@ const stepButtonUi = { base: 'shrink-0' }
         tabindex="-1"
         @click="stepBy(step)"
       >
-        <Icon :name="icons.chevronUp" class="size-3" />
+        <Icon :name="icons.chevronUp" :class="applyClassPrefix('size-3')" />
       </button>
       <button
         type="button"
@@ -211,7 +211,7 @@ const stepButtonUi = { base: 'shrink-0' }
         tabindex="-1"
         @click="stepBy(-step)"
       >
-        <Icon :name="icons.chevronDown" class="size-3" />
+        <Icon :name="icons.chevronDown" :class="applyClassPrefix('size-3')" />
       </button>
     </div>
   </div>

@@ -7,7 +7,7 @@ import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { switchTheme } from '../theme/switch'
-import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 import Icon from './Icon.vue'
 
 type SwitchVariants = VariantProps<typeof switchTheme>
@@ -82,7 +82,7 @@ const icons = useIcons()
       @update:model-value="(value) => emit('update:modelValue', value)"
     >
       <SwitchThumb v-bind="thumbProps">
-        <Icon v-if="loading" :name="icons.loading" class="animate-spin" v-bind="iconProps" />
+        <Icon v-if="loading" :name="icons.loading" :class="applyClassPrefix('animate-spin')" v-bind="iconProps" />
         <Icon v-else-if="modelValue && checkedIcon" :name="checkedIcon" v-bind="iconProps" />
         <Icon v-else-if="!modelValue && uncheckedIcon" :name="uncheckedIcon" v-bind="iconProps" />
       </SwitchThumb>

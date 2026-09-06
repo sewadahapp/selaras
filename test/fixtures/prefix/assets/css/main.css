@@ -1,0 +1,12 @@
+@import "tailwindcss" prefix(tw);
+@import "../../../../../src/runtime/theme.css";
+
+/*
+ * A consumer's own conventional @theme override, declared after Selaras's -
+ * confirms Selaras's --theme() fix (theme.css) still respects Tailwind's
+ * own theme-merge-by-key semantics under a configured prefix, not just its
+ * own unprefixed default.
+ */
+@theme {
+  --color-primary-500: oklch(0.9 0.15 300);
+}

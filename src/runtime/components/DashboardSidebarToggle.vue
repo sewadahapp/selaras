@@ -3,6 +3,7 @@ import { inject } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { DASHBOARD_INJECTION_KEY } from '../utils/injection-keys'
+import { applyClassPrefix } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -56,8 +57,7 @@ const messages = useMessages()
       <template #icon="{ class: klass }">
         <Icon
           :name="props.icon ?? icons.sidebarCollapse"
-          class="transition-transform duration-200"
-          :class="[klass, dashboard.isSidebarCollapsed.value && 'scale-x-[-1]']"
+          :class="[applyClassPrefix('transition-transform duration-200'), klass, dashboard.isSidebarCollapsed.value && applyClassPrefix('scale-x-[-1]')]"
         />
       </template>
     </Button>

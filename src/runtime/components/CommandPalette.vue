@@ -8,7 +8,7 @@ import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { commandPaletteTheme } from '../theme/command-palette'
 import { fuzzyScore } from '../utils/fuzzy-match'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 import Kbd from './Kbd.vue'
 
@@ -240,7 +240,7 @@ function itemId(index: number) {
     <DialogPortal>
       <DialogOverlay v-bind="overlayProps" />
       <DialogContent v-bind="contentProps" @open-auto-focus="onOpenAutoFocus">
-        <DialogTitle class="sr-only">
+        <DialogTitle :class="applyClassPrefix('sr-only')">
           Command palette
         </DialogTitle>
         <div v-bind="headerProps">

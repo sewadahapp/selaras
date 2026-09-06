@@ -10,7 +10,7 @@ import { useMessages } from '../composables/use-messages'
 import { useRippleEnabled } from '../composables/use-ripple'
 import { vRipple } from '../directives/ripple'
 import { buttonTheme } from '../theme/button'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
 type ButtonVariants = VariantProps<typeof buttonTheme>
@@ -81,7 +81,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 
 <template>
   <Primitive v-ripple="rippleEnabled" :as="as" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
-    <Icon v-if="loading" :name="icons.loading" class="animate-spin" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+    <Icon v-if="loading" :name="icons.loading" :class="applyClassPrefix('animate-spin')" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <!--
       A named slot (not just the `icon` prop) so a consumer building a
       custom control on top of Button (Select's clear button, for one) can
@@ -92,7 +92,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
     <slot v-else name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
       <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     </slot>
-    <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
+    <span v-if="loading" :class="applyClassPrefix('sr-only')">{{ messages.loading }}</span>
     <slot />
     <!-- Same reasoning as the leading `icon` slot above - a named slot so a
       consumer can swap the trailing glyph entirely (DatePicker's button-mode

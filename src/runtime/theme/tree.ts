@@ -16,7 +16,7 @@ export const treeTheme = tv({
     // depth.
     toggle: 'flex size-4 shrink-0 items-center justify-center text-[var(--ui-text-muted)] transition-transform data-[expanded]:rotate-90',
     spacer: 'size-4 shrink-0',
-    checkbox: 'shrink-0',
+    checkbox: 'shrink-0 pointer-events-none',
     icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',
     label: 'truncate',
   },
