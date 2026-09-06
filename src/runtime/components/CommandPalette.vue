@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CommandPaletteThemeSlots } from '../theme/command-palette'
 import type { UiProp } from '../utils/ui'
-import { DialogContent, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui'
+import { DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useCommandPalette } from '../composables/use-command-palette'
 import { useIcons } from '../composables/use-icons'
@@ -243,6 +243,9 @@ function itemId(index: number) {
         <DialogTitle :class="applyClassPrefix('sr-only')">
           {{ messages.commandPalette }}
         </DialogTitle>
+        <DialogDescription :class="applyClassPrefix('sr-only')">
+          {{ messages.commandPaletteDescription }}
+        </DialogDescription>
         <div v-bind="headerProps">
           <Icon :name="icons.search" v-bind="searchIconProps" />
           <input

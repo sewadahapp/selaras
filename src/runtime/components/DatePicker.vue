@@ -21,7 +21,6 @@ import {
   DateRangePickerInput,
   DateRangePickerRoot,
   DateRangePickerTrigger,
-  DialogTitle,
   PopoverAnchor,
   PopoverArrow,
   PopoverContent,
@@ -736,13 +735,14 @@ const buttonTriggerUi = computed(() => ({
       Root-injected grid/selection state, unchanged - inside a centered
       Modal instead of the small anchored popover above. See
       ComboboxSelectBase.vue's own mobileModal branch for why there's no
-      extra portal here and why DialogTitle is required explicitly.
+      extra portal here and why `title`/`description` are passed
+      explicitly.
     -->
-    <Modal v-else :open="isRangeOpen" :ui="mobileModalUi" @update:open="isRangeOpen = $event">
+    <Modal
+      v-else :open="isRangeOpen" :title="messages.dateRangePicker" :description="messages.dateRangePickerDescription"
+      :ui="mobileModalUi" @update:open="isRangeOpen = $event"
+    >
       <template #content>
-        <DialogTitle :class="applyClassPrefix('sr-only')">
-          {{ messages.dateRangePicker }}
-        </DialogTitle>
         <div v-bind="mobileContentProps">
           <DatePickerRangeCalendarBody v-bind="rangeBodyProps">
             <template #day="scope">
@@ -853,11 +853,11 @@ const buttonTriggerUi = computed(() => ({
       </PopoverContent>
     </PopoverPortal>
     <!-- Below 768px - see the range branch's own identical note above. -->
-    <Modal v-else :open="timeIsOpen" :ui="mobileModalUi" @update:open="timeIsOpen = $event">
+    <Modal
+      v-else :open="timeIsOpen" :title="messages.timePicker" :description="messages.timePickerDescription"
+      :ui="mobileModalUi" @update:open="timeIsOpen = $event"
+    >
       <template #content>
-        <DialogTitle :class="applyClassPrefix('sr-only')">
-          {{ messages.timePicker }}
-        </DialogTitle>
         <div v-bind="mobileContentProps">
           <DatePickerTimeBody v-bind="timeBodyProps">
             <template #footer>
@@ -985,11 +985,11 @@ const buttonTriggerUi = computed(() => ({
       <DatePickerArrow v-if="arrow" v-bind="arrowProps" />
     </DatePickerContent>
     <!-- Below 768px - see the range branch's own identical note above. -->
-    <Modal v-else :open="isOpen" :ui="mobileModalUi" @update:open="isOpen = $event">
+    <Modal
+      v-else :open="isOpen" :title="messages.datePicker" :description="messages.datePickerDescription"
+      :ui="mobileModalUi" @update:open="isOpen = $event"
+    >
       <template #content>
-        <DialogTitle :class="applyClassPrefix('sr-only')">
-          {{ messages.datePicker }}
-        </DialogTitle>
         <div v-bind="mobileContentProps">
           <DatePickerCalendarBody v-bind="calendarBodyProps">
             <template #day="scope">

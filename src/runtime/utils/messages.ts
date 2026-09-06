@@ -4,7 +4,9 @@ export interface MessageRegistry {
   close: string
   colorModeToggle: string
   colorPicker: string
+  colorPickerDescription: string
   search: string
+  searchDescription: string
   columns: string
   filterPlaceholder: string
   previous: string
@@ -13,8 +15,11 @@ export interface MessageRegistry {
   last: string
   pagination: string
   datePicker: string
+  datePickerDescription: string
   dateRangePicker: string
+  dateRangePickerDescription: string
   timePicker: string
+  timePickerDescription: string
   pickTime: string
   previousMonth: string
   nextMonth: string
@@ -53,6 +58,7 @@ export interface MessageRegistry {
   breadcrumb: string
   showHiddenBreadcrumbItems: string
   commandPalette: string
+  commandPaletteDescription: string
   navigate: string
   select: string
   onThisPage: string
@@ -72,7 +78,9 @@ export const defaultMessages: MessageRegistry = {
   close: 'Close',
   colorModeToggle: 'Toggle color mode',
   colorPicker: 'Color picker',
+  colorPickerDescription: 'Drag to adjust hue, saturation, and lightness',
   search: 'Search...',
+  searchDescription: 'Type to filter, then use arrow keys and enter to select',
   columns: 'Columns',
   filterPlaceholder: 'Filter...',
   previous: 'Previous',
@@ -81,8 +89,11 @@ export const defaultMessages: MessageRegistry = {
   last: 'Last',
   pagination: 'Pagination',
   datePicker: 'Date picker',
+  datePickerDescription: 'Use arrow keys to navigate days, enter to select',
   dateRangePicker: 'Date range picker',
+  dateRangePickerDescription: 'Use arrow keys to navigate days, enter to select a start and end date',
   timePicker: 'Time picker',
+  timePickerDescription: 'Use arrow keys to adjust the highlighted field',
   pickTime: 'Pick a time',
   previousMonth: 'Previous month',
   nextMonth: 'Next month',
@@ -120,6 +131,7 @@ export const defaultMessages: MessageRegistry = {
   breadcrumb: 'Breadcrumb',
   showHiddenBreadcrumbItems: 'Show hidden breadcrumb items',
   commandPalette: 'Command palette',
+  commandPaletteDescription: 'Search for a command and press enter',
   navigate: 'Navigate',
   select: 'Select',
   onThisPage: 'On this page',

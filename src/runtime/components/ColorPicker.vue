@@ -2,13 +2,13 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { ColorPickerThemeSlots } from '../theme/color-picker'
 import type { UiProp } from '../utils/ui'
-import { ColorSwatch, DialogTitle } from 'reka-ui'
+import { ColorSwatch } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
-import { applyClassPrefix, resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Modal from './Modal.vue'
 import Popover from './Popover.vue'
 
@@ -141,7 +141,10 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
     </template>
   </Popover>
 
-  <Modal v-else :open="internalOpen" :ui="mobileModalUi" @update:open="onUpdateOpen">
+  <Modal
+    v-else :open="internalOpen" :title="messages.colorPicker" :description="messages.colorPickerDescription"
+    :ui="mobileModalUi" @update:open="onUpdateOpen"
+  >
     <button
       type="button"
       :disabled="disabled"
@@ -153,9 +156,6 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
     </button>
 
     <template #content>
-      <DialogTitle :class="applyClassPrefix('sr-only')">
-        {{ messages.colorPicker }}
-      </DialogTitle>
       <div v-bind="mobileContentProps">
         <ColorPickerBody v-bind="bodyProps" @update:model-value="onUpdateColor" />
       </div>

@@ -11,7 +11,6 @@ import {
   ComboboxPortal,
   ComboboxRoot,
   ComboboxTrigger,
-  DialogTitle,
   TagsInputInput,
   TagsInputItem,
   TagsInputItemDelete,
@@ -639,10 +638,12 @@ const bodyProps = computed(() => ({
       Reka renders it as a plain unstyled box rather than applying its own
       Floating-UI positioning - confirmed by reading ComboboxContentImpl
       directly) since ComboboxViewport/ComboboxItem's own context still
-      expects a ComboboxContent ancestor. DialogTitle is required
-      explicitly here - Modal's own dev-mode a11y warning is satisfied
-      merely by the content slot existing, so it won't catch a name-less
-      dialog on its own.
+      expects a ComboboxContent ancestor. `title`/`description` are
+      passed explicitly here - Modal's own dev-mode a11y warning is
+      satisfied merely by the content slot existing, so it won't catch a
+      name-less dialog on its own; Modal registers both with Reka
+      (visually hidden) even though the content slot replaces its own
+      visible header.
     -->
     <!--
       auto-focus="!creatable" - Select's own trigger is a one-off tap (a
@@ -664,13 +665,11 @@ const bodyProps = computed(() => ({
       desktop equivalent for what's otherwise the same surface.
     -->
     <Modal
-      v-else :open="internalOpen" :auto-focus="!creatable" :ui="{ content: 'rounded-[var(--ui-radius-md)]' }"
+      v-else :open="internalOpen" :title="placeholder || messages.search" :description="messages.searchDescription"
+      :auto-focus="!creatable" :ui="{ content: 'rounded-[var(--ui-radius-md)]' }"
       @update:open="internalOpen = $event"
     >
       <template #content>
-        <DialogTitle class="sr-only">
-          {{ placeholder || messages.search }}
-        </DialogTitle>
         <ComboboxContent v-bind="mobileContentProps">
           <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
             <template #header>
