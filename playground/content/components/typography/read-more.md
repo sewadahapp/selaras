@@ -34,3 +34,9 @@ flashes fully expanded before collapsing down.
 | --- | --- | --- |
 | `previewHeight` | `number` | `200` |
 | `ui` | `Partial<Record<ReadMoreSlot, string \| object>>` | - |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| default | The content being truncated |

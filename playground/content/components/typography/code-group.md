@@ -23,7 +23,8 @@ pnpm add selaras
 `SCodeGroup` reads its own default slot's children directly (works with any
 children, not just [Prose](/components/typography/prose) ones) and renders each as a tab
 via [Tabs](/components/navigation/tabs) - the label comes from each child's `filename`
-prop, falling back to `language`. It doesn't wrap or re-render its
+prop, falling back to `language`, falling back to `Tab 1`/`Tab 2`/... (by
+position) for a child with neither. It doesn't wrap or re-render its
 children's content, so anything already working standalone (like
 [ProsePre](/components/typography/prose)'s copy button) keeps working inside a group.
 

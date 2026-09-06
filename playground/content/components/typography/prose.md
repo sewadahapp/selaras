@@ -68,6 +68,32 @@ Both are usable directly, the same as any other component:
 <SProsePre code="const x = 1" language="ts" />
 ```
 
+## Props
+
+### `SProsePre`
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `code` | `string` | - |
+| `language` | `string` | - |
+| `filename` | `string` | - |
+| `highlights` | `number[]` | - |
+| `meta` | `string` | - |
+
+`code` drives the copy button (nothing renders if it's unset) and is also
+copied verbatim, regardless of what's in the default slot. The header bar
+shows `filename` if set, else a `Badge` for `language` if that's set, else
+nothing. `highlights` and `meta` are accepted but currently have no
+effect - there's no line-highlighting logic wired up yet anywhere in the
+component, so passing either does nothing visible today. They're reserved
+for that feature landing later; don't wire them up expecting output.
+
+### `SProseH1`-`SProseH6`
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `id` | `string` | - |
+
 ### Why only these two aren't CSS
 
 Everything else a markdown renderer produces - links, images,

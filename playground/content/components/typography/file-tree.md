@@ -22,6 +22,20 @@ with that node). Pass `selected` back in to highlight the active row - a
 controlled pattern, the same shape [CodeTree](/components/typography/code-tree)
 builds on for its own file-to-content pairing.
 
+### Controlled selection
+
+`selected`/`update:selected` follow Vue's `v-model:selected` shorthand -
+clicking a file emits the node back out, and passing it back in as
+`selected` highlights that row:
+
+::component-example{name="file-tree-selection"}
+::
+
+```vue-html
+<SFileTree v-model:selected="selected" :items="items" />
+<p>Selected: {{ selected?.name ?? 'none' }}</p>
+```
+
 ## Props
 
 | Prop | Type | Default |
