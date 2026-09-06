@@ -1,11 +1,13 @@
 import type { Component, Ref } from 'vue'
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 
 export interface ModalInstance {
   id: number
   component: Component
   props: Record<string, unknown>
   isOpen: boolean
+  title?: string
+  description?: string
   dismissible?: boolean
   modal?: boolean
   overlay?: boolean
@@ -15,6 +17,10 @@ export interface ModalInstance {
 
 export interface UseModalOpenOptions {
   props?: Record<string, unknown>
+  /** Registered with Reka as the dialog's accessible name, visually hidden - the opened component still supplies its own visible header via the content slot. */
+  title?: string
+  /** Registered with Reka as the dialog's accessible description, visually hidden. */
+  description?: string
   dismissible?: boolean
   modal?: boolean
   overlay?: boolean
@@ -44,9 +50,15 @@ export function useModal(): UseModalReturn {
     return new Promise((resolve) => {
       modals.value.push({
         id: counter++,
-        component,
+        // Vue components are meant to stay an opaque, non-reactive value -
+        // without this, pushing one into this reactive array wraps it in
+        // a reactive proxy too, which Vue's own dev warning flags as
+        // wasted overhead for no benefit.
+        component: markRaw(component),
         props: options?.props ?? {},
         isOpen: true,
+        title: options?.title,
+        description: options?.description,
         dismissible: options?.dismissible,
         modal: options?.modal,
         overlay: options?.overlay,

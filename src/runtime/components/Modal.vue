@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ModalThemeSlots } from '../theme/modal'
 import type { UiProp } from '../utils/ui'
-import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
+import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger, VisuallyHidden } from 'reka-ui'
 import { computed, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -179,7 +179,25 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
         @animationend="onContentAnimationEnd"
         @open-auto-focus="onOpenAutoFocus"
       >
-        <slot v-if="$slots.content" name="content" />
+        <template v-if="$slots.content">
+          <!-- The content slot replaces our own header entirely, so a
+          consumer's `title`/`description` would otherwise go nowhere -
+          keep registering them with Reka (satisfies its own a11y
+          warning and gives screen readers a name/description) without
+          showing a second, visible title the consumer's own content
+          didn't ask for. -->
+          <VisuallyHidden v-if="title" as-child>
+            <DialogTitle v-bind="titleProps">
+              {{ title }}
+            </DialogTitle>
+          </VisuallyHidden>
+          <VisuallyHidden v-if="description" as-child>
+            <DialogDescription v-bind="descriptionProps">
+              {{ description }}
+            </DialogDescription>
+          </VisuallyHidden>
+          <slot name="content" />
+        </template>
         <template v-else>
           <div v-if="title || description || $slots.header || close || maximizable" v-bind="headerProps">
             <div>

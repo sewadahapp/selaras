@@ -2,7 +2,7 @@
 import type { DrawerOpenChangeDetails } from 'reka-ui'
 import type { DrawerThemeSlots } from '../theme/drawer'
 import type { UiProp } from '../utils/ui'
-import { DrawerClose, DrawerContent, DrawerDescription, DrawerHandle, DrawerOverlay, DrawerPortal, DrawerRoot, DrawerTitle, DrawerTrigger } from 'reka-ui'
+import { DrawerClose, DrawerContent, DrawerDescription, DrawerHandle, DrawerOverlay, DrawerPortal, DrawerRoot, DrawerTitle, DrawerTrigger, VisuallyHidden } from 'reka-ui'
 import { computed, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -176,7 +176,21 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
         @focus-outside="onFocusOutside"
         @animationend="onContentAnimationEnd"
       >
-        <slot v-if="$slots.content" name="content" />
+        <template v-if="$slots.content">
+          <!-- See Modal.vue for why this stays registered with Reka even
+          though the content slot replaces our own header entirely. -->
+          <VisuallyHidden v-if="title" as-child>
+            <DrawerTitle v-bind="titleProps">
+              {{ title }}
+            </DrawerTitle>
+          </VisuallyHidden>
+          <VisuallyHidden v-if="description" as-child>
+            <DrawerDescription v-bind="descriptionProps">
+              {{ description }}
+            </DrawerDescription>
+          </VisuallyHidden>
+          <slot name="content" />
+        </template>
         <template v-else>
           <DrawerHandle v-if="handle" v-bind="handleProps" />
           <div v-if="title || description || $slots.header || close" v-bind="headerProps">

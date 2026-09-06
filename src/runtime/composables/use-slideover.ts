@@ -1,11 +1,13 @@
 import type { Component, Ref } from 'vue'
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 
 export interface SlideoverInstance {
   id: number
   component: Component
   props: Record<string, unknown>
   isOpen: boolean
+  title?: string
+  description?: string
   side?: 'top' | 'right' | 'bottom' | 'left'
   inset?: boolean
   dismissible?: boolean
@@ -17,6 +19,10 @@ export interface SlideoverInstance {
 
 export interface UseSlideoverOpenOptions {
   props?: Record<string, unknown>
+  /** Registered with Reka as the panel's accessible name, visually hidden - the opened component still supplies its own visible header via the content slot. */
+  title?: string
+  /** Registered with Reka as the panel's accessible description, visually hidden. */
+  description?: string
   side?: 'top' | 'right' | 'bottom' | 'left'
   inset?: boolean
   dismissible?: boolean
@@ -44,9 +50,15 @@ export function useSlideover(): UseSlideoverReturn {
     return new Promise((resolve) => {
       slideovers.value.push({
         id: counter++,
-        component,
+        // Vue components are meant to stay an opaque, non-reactive value -
+        // without this, pushing one into this reactive array wraps it in
+        // a reactive proxy too, which Vue's own dev warning flags as
+        // wasted overhead for no benefit.
+        component: markRaw(component),
         props: options?.props ?? {},
         isOpen: true,
+        title: options?.title,
+        description: options?.description,
         side: options?.side,
         inset: options?.inset,
         dismissible: options?.dismissible,

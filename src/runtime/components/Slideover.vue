@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { SlideoverThemeSlots } from '../theme/slideover'
 import type { UiProp } from '../utils/ui'
-import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger } from 'reka-ui'
+import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger, VisuallyHidden } from 'reka-ui'
 import { computed, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -151,7 +151,21 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
         @focus-outside="onFocusOutside"
         @animationend="onContentAnimationEnd"
       >
-        <slot v-if="$slots.content" name="content" />
+        <template v-if="$slots.content">
+          <!-- See Modal.vue for why this stays registered with Reka even
+          though the content slot replaces our own header entirely. -->
+          <VisuallyHidden v-if="title" as-child>
+            <DialogTitle v-bind="titleProps">
+              {{ title }}
+            </DialogTitle>
+          </VisuallyHidden>
+          <VisuallyHidden v-if="description" as-child>
+            <DialogDescription v-bind="descriptionProps">
+              {{ description }}
+            </DialogDescription>
+          </VisuallyHidden>
+          <slot name="content" />
+        </template>
         <template v-else>
           <div v-if="title || description || $slots.header || close" v-bind="headerProps">
             <div>

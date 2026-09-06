@@ -1,11 +1,13 @@
 import type { Component, Ref } from 'vue'
-import { ref } from 'vue'
+import { markRaw, ref } from 'vue'
 
 export interface DrawerInstance {
   id: number
   component: Component
   props: Record<string, unknown>
   isOpen: boolean
+  title?: string
+  description?: string
   side?: 'top' | 'right' | 'bottom' | 'left'
   handle?: boolean
   snapPoints?: (number | string)[]
@@ -20,6 +22,10 @@ export interface DrawerInstance {
 
 export interface UseDrawerOpenOptions {
   props?: Record<string, unknown>
+  /** Registered with Reka as the drawer's accessible name, visually hidden - the opened component still supplies its own visible header via the content slot. */
+  title?: string
+  /** Registered with Reka as the drawer's accessible description, visually hidden. */
+  description?: string
   side?: 'top' | 'right' | 'bottom' | 'left'
   handle?: boolean
   snapPoints?: (number | string)[]
@@ -50,9 +56,15 @@ export function useDrawer(): UseDrawerReturn {
     return new Promise((resolve) => {
       drawers.value.push({
         id: counter++,
-        component,
+        // Vue components are meant to stay an opaque, non-reactive value -
+        // without this, pushing one into this reactive array wraps it in
+        // a reactive proxy too, which Vue's own dev warning flags as
+        // wasted overhead for no benefit.
+        component: markRaw(component),
         props: options?.props ?? {},
         isOpen: true,
+        title: options?.title,
+        description: options?.description,
         side: options?.side,
         handle: options?.handle,
         snapPoints: options?.snapPoints,

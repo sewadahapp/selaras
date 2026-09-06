@@ -36,7 +36,7 @@ describe('useModal', () => {
   it('open() resolves with the value the rendered component\'s close event carries', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open } = useModal()
-    const promise = open<string>(TestDialog)
+    const promise = open<string>(TestDialog, { title: 'Test dialog', description: 'Test dialog' })
     await wrapper.vm.$nextTick()
 
     document.body.querySelector<HTMLButtonElement>('.confirm-btn')!.click()
@@ -47,7 +47,7 @@ describe('useModal', () => {
   it('passes props through to the rendered component', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open } = useModal()
-    open(TestDialog, { props: { message: 'Hello from useModal' } })
+    open(TestDialog, { title: 'Test dialog', description: 'Test dialog', props: { message: 'Hello from useModal' } })
     await wrapper.vm.$nextTick()
 
     expect(document.body.querySelector('.test-dialog-message')?.textContent).toBe('Hello from useModal')
@@ -56,7 +56,7 @@ describe('useModal', () => {
   it('close(id) with no value resolves the promise with undefined', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open, close, modals } = useModal()
-    const promise = open(TestDialog)
+    const promise = open(TestDialog, { title: 'Test dialog', description: 'Test dialog' })
     await wrapper.vm.$nextTick()
 
     close(modals.value[0]!.id)
@@ -67,8 +67,8 @@ describe('useModal', () => {
   it('renders two independent instances from two open() calls at once', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open } = useModal()
-    open(TestDialog, { props: { message: 'First' } })
-    open(TestDialog, { props: { message: 'Second' } })
+    open(TestDialog, { title: 'Test dialog', description: 'Test dialog', props: { message: 'First' } })
+    open(TestDialog, { title: 'Test dialog', description: 'Test dialog', props: { message: 'Second' } })
     await wrapper.vm.$nextTick()
 
     const messages = Array.from(document.body.querySelectorAll('.test-dialog-message')).map(el => el.textContent)
@@ -78,7 +78,7 @@ describe('useModal', () => {
   it('modal option reaches the underlying SModal instance', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open } = useModal()
-    open(TestDialog, { modal: false })
+    open(TestDialog, { title: 'Test dialog', description: 'Test dialog', modal: false })
     await wrapper.vm.$nextTick()
 
     expect(document.getElementById('__nuxt')?.getAttribute('aria-hidden')).toBeNull()
@@ -87,7 +87,7 @@ describe('useModal', () => {
   it('overlay option reaches the underlying SModal instance', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open } = useModal()
-    open(TestDialog, { overlay: false })
+    open(TestDialog, { title: 'Test dialog', description: 'Test dialog', overlay: false })
     await wrapper.vm.$nextTick()
 
     expect(document.body.querySelector('.bg-black\\/50')).toBeFalsy()
@@ -96,7 +96,7 @@ describe('useModal', () => {
   it('transition option reaches the underlying SModal instance', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open } = useModal()
-    open(TestDialog, { transition: false })
+    open(TestDialog, { title: 'Test dialog', description: 'Test dialog', transition: false })
     await wrapper.vm.$nextTick()
 
     expect(document.body.querySelector('[role=dialog]')!.className).not.toContain('animate-in')
@@ -105,7 +105,7 @@ describe('useModal', () => {
   it('does not remove the dialog from the DOM until the exit animation finishes', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open, close, modals } = useModal()
-    const promise = open(TestDialog)
+    const promise = open(TestDialog, { title: 'Test dialog', description: 'Test dialog' })
     await wrapper.vm.$nextTick()
 
     const id = modals.value[0]!.id
@@ -126,7 +126,7 @@ describe('useModal', () => {
   it('removes the dialog immediately when transition is off, with no animationend needed', async () => {
     wrapper = await mountSuspended(ModalRenderer)
     const { open, close, modals } = useModal()
-    open(TestDialog, { transition: false })
+    open(TestDialog, { title: 'Test dialog', description: 'Test dialog', transition: false })
     await wrapper.vm.$nextTick()
 
     close(modals.value[0]!.id)
