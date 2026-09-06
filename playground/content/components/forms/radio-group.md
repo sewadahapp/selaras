@@ -176,6 +176,14 @@ down for the default vertical layout, left/right when `orientation` is
 [ARIA radio group pattern](https://www.w3.org/WAI/ARIA/apg/patterns/radio/),
 not something to configure here.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `RadioGroup`'s own theme file:
+
+::theme-source{name="radio-group"}
+::
+
 ## Props
 
 | Prop | Type | Default |

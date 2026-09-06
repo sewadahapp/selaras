@@ -94,6 +94,14 @@ Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid
 FormField's own state when not set directly on the rating, and `size`
 does the same.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Rating`'s own theme file:
+
+::theme-source{name="rating"}
+::
+
 ## Props
 
 | Prop | Type | Default |

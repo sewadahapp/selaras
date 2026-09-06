@@ -110,6 +110,14 @@ and `aria-describedby` are set automatically once `invalid` is true or the
 textarea is wrapped in [FormField](/components/forms/form-field) - nothing
 to configure by hand for the common case.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Textarea`'s own theme file:
+
+::theme-source{name="textarea"}
+::
+
 ## Props
 
 | Prop | Type | Default |

@@ -394,6 +394,14 @@ paging past a grid edge advances the month), and the current/selected/
 unavailable/disabled state of each day is exposed via `aria-selected`/
 `aria-disabled` in addition to the visual styling.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `DatePicker`'s own theme file:
+
+::theme-source{name="date-picker"}
+::
+
 ## Props
 
 | Prop | Type | Default |

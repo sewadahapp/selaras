@@ -92,6 +92,14 @@ for typing, selection, and autofill all come for free. `aria-invalid` and
 is wrapped in [FormField](/components/forms/form-field) - nothing to
 configure by hand for the common case.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Input`'s own theme file:
+
+::theme-source{name="input"}
+::
+
 ## Props
 
 | Prop | Type | Default |

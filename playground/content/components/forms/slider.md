@@ -201,6 +201,14 @@ intermediate frame, like a debounced request:
 <SSlider v-model="value" @value-commit="(v) => fetchResultsFor(v)" />
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Slider`'s own theme file:
+
+::theme-source{name="slider"}
+::
+
 ## Props
 
 | Prop | Type | Default |

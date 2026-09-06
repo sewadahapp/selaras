@@ -57,6 +57,14 @@ Any groupable component works, not just Input and Button - here a
 </SInputGroup>
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `InputGroup`'s own theme file:
+
+::theme-source{name="input-group"}
+::
+
 ## Props
 
 | Prop | Type | Default |

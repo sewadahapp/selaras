@@ -159,6 +159,14 @@ the input, `role="option"` per suggestion, arrow keys to move the highlight,
 since (unlike Select) the trigger is a real editable text field with live
 suggestions as you type.
 
+### Custom `:ui`
+
+Autocomplete renders the same internal combobox base as
+[Select](/components/forms/select#custom-ui), so they share one theme file:
+
+::theme-source{name="select"}
+::
+
 ## Props
 
 Same as [Select](/components/forms/select#props), minus `searchable` (always

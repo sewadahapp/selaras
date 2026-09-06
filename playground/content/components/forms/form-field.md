@@ -104,6 +104,14 @@ explicitly. `invalid` is OR'd with the field's error state instead, so a
 control can opt into looking invalid on its own even without an error, but
 can't be forced back to valid while its FormField has one.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `FormField`'s own theme file:
+
+::theme-source{name="form-field"}
+::
+
 ## Props
 
 | Prop | Type | Default |

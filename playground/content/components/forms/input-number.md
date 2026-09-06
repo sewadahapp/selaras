@@ -111,6 +111,14 @@ Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/
 `invalid` and `aria-describedby` wired up automatically - `invalid` and
 `size` both fall back to FormField's own state when not set directly.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `InputNumber`'s own theme file:
+
+::theme-source{name="input-number"}
+::
+
 ## Props
 
 | Prop | Type | Default |

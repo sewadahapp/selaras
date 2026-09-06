@@ -84,6 +84,14 @@ Select/Autocomplete/DatePicker's own `mobileModal`:
 <SColorPicker v-model="color" mobile-modal />
 ```
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `ColorPicker`'s own theme file:
+
+::theme-source{name="color-picker"}
+::
+
 ## Props
 
 | Prop | Type | Default |

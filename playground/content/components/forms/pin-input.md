@@ -86,6 +86,14 @@ Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid
 FormField's own state when not set directly on the pin input, and `size`
 does the same.
 
+### Custom `:ui`
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `PinInput`'s own theme file:
+
+::theme-source{name="pin-input"}
+::
+
 ## Props
 
 | Prop | Type | Default |
