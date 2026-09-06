@@ -54,7 +54,7 @@
     "dev:generate": "nuxt generate playground",
     "dev:preview": "NODE_ENV=production bun playground/.output/server/index.mjs",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
-    "release": "bun run lint && bun run test && bun run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "release": "bun run lint && bun run test && changelogen --bump && bun run prepack && npm publish --access public && bash scripts/tag-and-push-release.sh && changelogen gh release",
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
     "test": "vitest run",

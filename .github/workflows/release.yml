@@ -53,24 +53,27 @@ jobs:
       - name: Test
         run: bun run test
 
-      - name: Build
-        run: bun run prepack
-
       - name: Configure git identity
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # Bumps package.json, writes CHANGELOG.md, commits + tags, pushes, and
-      # creates the GitHub release - all via the automatic GITHUB_TOKEN, no
-      # extra secret needed for this step. `bump` defaults to "auto" (changelogen
-      # infers patch/minor/major from commit types since the last tag,
-      # matching this repo's own Conventional Commits history) - the workflow
-      # input only overrides it when explicitly set to patch/minor/major.
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx changelogen --release --push ${{ inputs.bump != 'auto' && format('--{0}', inputs.bump) || '' }}
+      # Only bumps package.json and writes CHANGELOG.md - no commit, tag,
+      # push, or GitHub release yet. Everything that mutates git/GitHub
+      # happens *after* the npm publish step below now, not before - a
+      # failed publish used to still leave a pushed bump commit, tag, and
+      # GitHub release behind with nothing to undo them (found the hard
+      # way: a 403 from npm still left v0.1.1 tagged and released on
+      # GitHub). Publishing first means a failure here simply stops the
+      # job - there's nothing to revert because nothing was pushed.
+      # `bump` defaults to "auto" (changelogen infers patch/minor/major
+      # from commit types since the last tag) - the workflow input only
+      # overrides it when explicitly set to patch/minor/major.
+      - name: Bump version
+        run: npx changelogen --bump ${{ inputs.bump != 'auto' && format('--{0}', inputs.bump) || '' }}
+
+      - name: Build
+        run: bun run prepack
 
       # BOOTSTRAP ONLY: npm wouldn't let a trusted publisher be configured
       # for "selaras" before it exists, so this first release still
@@ -84,6 +87,22 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
+
+      # Only reached once the publish above has actually succeeded - now
+      # it's safe to commit the version bump, tag it, and push. Same
+      # script the local `npm run release` uses, so there's one place
+      # that defines this instead of two copies to keep in sync.
+      - name: Commit and tag the release
+        run: bash scripts/tag-and-push-release.sh
+
+      # Reads the entry `Bump version` just wrote into CHANGELOG.md and
+      # creates the matching GitHub release from it - no recomputation of
+      # commits/version, so this can't drift from what was actually
+      # published above.
+      - name: Create GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx changelogen gh release
 
   docs:
     needs: release
