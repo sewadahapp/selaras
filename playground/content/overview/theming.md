@@ -30,6 +30,50 @@ touching a single component. Dark mode is just a second set of the same
 tokens, applied under a `.dark` class on `<html>` (flipped by
 `SColorModeToggle`, or your own `useColorMode()` logic).
 
+**Recoloring a role (`primary`, `secondary`, `success`, `danger`, `info`,
+`warning`) takes more than just overriding `--ui-primary` itself.** Each
+`--ui-*` role token above is only the semantic *entry point* - `--ui-primary`,
+`--ui-primary-hover`, `--ui-primary-active`, and `--ui-primary-soft` each
+resolve to a different step of an 11-shade `--color-primary-50` through
+`--color-primary-950` scale (defined in Selaras's own `@theme` block), not
+to each other. Overriding `--ui-primary` alone changes the base color but
+leaves hover/active/soft still pointing at the *old* scale's other shades -
+a visibly inconsistent result. Override the whole scale instead, in your
+own `@theme` block (same mechanism the breakpoints/spacing example below
+uses):
+
+```css
+@theme {
+  /* Every shade shares one hue (the third oklch number) - only the
+     lightness/chroma (first two numbers) step from light to dark. Swap
+     the hue to recolor while keeping the same accessible contrast steps
+     Selaras's own scale was tuned with; only touch lightness/chroma too
+     if you want a fundamentally different saturation curve. */
+  --color-primary-50:  oklch(0.9700 0.0120 25);
+  --color-primary-100: oklch(0.9300 0.0280 25);
+  --color-primary-200: oklch(0.8600 0.0550 25);
+  --color-primary-300: oklch(0.7800 0.1000 25);
+  --color-primary-400: oklch(0.6400 0.1650 25);
+  --color-primary-500: oklch(0.4755 0.2026 25);
+  --color-primary-600: oklch(0.4150 0.1850 25);
+  --color-primary-700: oklch(0.3550 0.1580 25);
+  --color-primary-800: oklch(0.2950 0.1280 25);
+  --color-primary-900: oklch(0.2350 0.0950 25);
+  --color-primary-950: oklch(0.1700 0.0600 25);
+}
+```
+
+`--ui-primary`/`-hover`/`-active` read from `--color-primary-500`/`-600`/
+`-700` (`-soft` reads from the scale too - `-100` in light mode, a
+computed blend against the current background in dark mode, so it stays
+legible on either) - overriding the full scale, not the semantic tokens
+directly, is what keeps all of these in sync (`-foreground` is the one
+exception - it's a fixed near-white constant in both light and dark mode,
+since a solid-variant button/badge stays readable with white text against
+any of these role colors regardless of theme). The same shape applies to
+`secondary`/`success`/`danger`/`info`/`warning` - just swap the color
+name.
+
 **Radius is one knob, not four.** `--ui-radius-sm`/`-md`/`-lg` are derived
 from `--ui-radius` itself (0.75x/1x/2x), so changing the single base value
 rescales every component's corners proportionally:
