@@ -51,6 +51,25 @@ hides the little pointer triangle for a plain floating tooltip:
 <STooltip text="No arrow" :arrow="false">...</STooltip>
 ```
 
+### Custom content
+
+The `content` slot replaces the plain-text `text` prop with anything -
+useful for a richer hint than a single line of text can give:
+
+```vue-html
+<STooltip>
+  <SButton variant="outline">
+    Hover me
+  </SButton>
+  <template #content>
+    <span class="flex items-center gap-1">
+      <SIcon name="hugeicons:information-circle" />
+      Custom content
+    </span>
+  </template>
+</STooltip>
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -62,3 +81,10 @@ hides the little pointer triangle for a plain floating tooltip:
 | `arrow` | `boolean` | `true` |
 | `disabled` | `boolean` | `false` |
 | `ui` | `Partial<Record<'content' \| 'arrow' \| 'kbds' \| 'kbd', string \| object>>` | - |
+
+## Slots
+
+| Slot | Description |
+| --- | --- |
+| default | The trigger element |
+| `content` | Replaces the plain-text `text` with custom content |

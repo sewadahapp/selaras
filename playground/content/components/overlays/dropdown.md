@@ -96,7 +96,7 @@ to the trigger.
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void }[][]` | - |
+| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string }[][]` | - |
 | `arrow` | `boolean` | `false` |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow', string \| object>>` | - |
 
@@ -104,4 +104,5 @@ to the trigger.
 
 | Slot | Props | Description |
 | --- | --- | --- |
+| `default` | - | The trigger element |
 | `item` | `{ item }` | Replaces an item's label content |

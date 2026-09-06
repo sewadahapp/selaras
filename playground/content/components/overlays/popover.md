@@ -102,6 +102,20 @@ so a consumer can still react, but none of them close it on their own:
 <SPopover :dismissible="false">...</SPopover>
 ```
 
+### Return focus on close
+
+Reka returns keyboard focus to the trigger whenever the popover closes,
+regardless of *why* it closed - including a purely programmatic `open`
+change. That matters for a popover that can open on hover rather than a
+deliberate click/keypress: focus landing back on a trigger nobody meant
+to focus can itself count as focus moving "outside" whatever *other*
+popover the pointer has since moved on to, closing that one too.
+`returnFocusOnClose="false"` disables the behavior for cases like that:
+
+```vue-html
+<SPopover :return-focus-on-close="false">...</SPopover>
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -111,6 +125,7 @@ so a consumer can still react, but none of them close it on their own:
 | `align` | `'start' \| 'center' \| 'end'` | `'center'` |
 | `modal` | `boolean` | `false` |
 | `dismissible` | `boolean` | `true` |
+| `returnFocusOnClose` | `boolean` | `true` |
 | `arrow` | `boolean` | `false` |
 | `ui` | `Partial<Record<'content' \| 'arrow', string \| object>>` | - |
 
@@ -122,6 +137,7 @@ so a consumer can still react, but none of them close it on their own:
 | `escapeKeyDown` | `KeyboardEvent` | Escape was pressed - `preventDefault()` to stop it from closing |
 | `pointerDownOutside` | `Event` | A pointer went down outside the popover - `preventDefault()` to stop it from closing |
 | `focusOutside` | `Event` | A non-modal popover's outside element received focus - `preventDefault()` to stop it from closing |
+| `openAutoFocus` | `Event` | Fires right before focus moves into the popover on open - `preventDefault()` to skip autofocus for that open (e.g. a hover-triggered open that shouldn't yank focus, while a keyboard-triggered one still should) |
 
 ## Slots
 
