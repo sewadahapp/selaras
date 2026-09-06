@@ -5,9 +5,10 @@ import ColumnGroup from '../components/ColumnGroup'
 
 /**
  * Recursively flattens Fragment/array VNodes (from v-for/v-if/template
- * groups) into a flat list - a common pattern among Vue table libraries -
- * needed because slots.default() doesn't always return a flat array of the
- * actual <SColumn>/<SColumnGroup> tags directly.
+ * groups) into a flat list - a common pattern among Vue table libraries
+ * that read column config from children - needed because slots.default()
+ * doesn't always return a flat array of the actual <SColumn>/<SColumnGroup>
+ * tags directly.
  */
 /**
  * SColumn/SColumnGroup never mount, so Vue's normal boolean-prop casting

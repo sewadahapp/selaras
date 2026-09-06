@@ -3,9 +3,9 @@ import { defineComponent } from 'vue'
 /**
  * Never renders real DOM - STable reads this component's VNode props/slots
  * directly out of its own default slot (via table-columns.ts) to build a
- * TanStack ColumnDef, a technique several Vue table libraries use for a <Table>/<Column>
- * uses. Mounting <SColumn> anywhere other than inside <STable> is a silent
- * no-op, never an error.
+ * TanStack ColumnDef, a technique several Vue table libraries use for a
+ * <Table>/<Column> children-as-config API. Mounting <SColumn> anywhere
+ * other than inside <STable> is a silent no-op, never an error.
  *
  * Three named slots read the same way: `default` (scoped with `{ row,
  * value }`) customizes a cell's content, `header`/`footer` (scoped with
