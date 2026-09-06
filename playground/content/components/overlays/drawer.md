@@ -89,6 +89,30 @@ draggable - set `handle="false"` to remove it:
 <SDrawer v-model:open="open" :handle="false" title="No handle" />
 ```
 
+### Custom content
+
+`content` replaces the header/title/description/body/footer structure
+entirely - useful when the panel doesn't fit the header-plus-body shape at
+all. `close`/`handle` are ignored once `content` is provided, since the
+slot owns the whole visible panel - but `title`/`description`, if still
+set, stay registered with Reka as the panel's accessible name/description,
+just visually hidden instead of rendered as a header. Pass them if your
+own custom content doesn't already include a heading Reka can associate
+with the panel:
+
+::component-example{name="drawer-content"}
+::
+
+```vue-html
+<SDrawer v-model:open="open">
+  <template #content>
+    <div class="flex flex-col items-center gap-4 p-8 text-center">
+      ...
+    </div>
+  </template>
+</SDrawer>
+```
+
 ### Non-modal
 
 `modal="false"` stops the panel from blocking interaction with the rest of
@@ -152,9 +176,9 @@ const checkedOut = await drawer.open(DrawerCartPanel)
 // true, false, or undefined if dismissed without an explicit choice
 ```
 
-`open()` also takes the same `side`/`handle`/`snapPoints`/`snapPoint`/
-`snapToSequentialPoints`/`dismissible`/`modal`/`overlay`/`transition`
-options as the declarative props.
+`open()` also takes the same `title`/`description`/`side`/`handle`/
+`snapPoints`/`snapPoint`/`snapToSequentialPoints`/`dismissible`/`modal`/
+`overlay`/`transition` options as the declarative props.
 
 ## Props
 
@@ -191,7 +215,7 @@ options as the declarative props.
 | Slot | Description |
 | --- | --- |
 | default | The trigger element |
-| `content` | Replaces header/title/description/body/footer entirely |
+| `content` | Replaces the visible header/body/footer entirely (title/description, if set, still register for a11y) |
 | `header` | Overrides the default title/description block |
 | `body` | Main content |
 | `footer` | Usually action buttons |

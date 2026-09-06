@@ -50,13 +50,20 @@ explicit value (e.g. Escape, backdrop click).
 | Option | Type | Description |
 | --- | --- | --- |
 | `props` | `Record<string, unknown>` | Props passed to the opened component. |
+| `title` | `string` | Registered with Reka as the dialog's accessible name, visually hidden - the opened component still supplies its own visible header via the content slot. |
+| `description` | `string` | Registered with Reka as the dialog's accessible description, visually hidden. |
 | `dismissible` | `boolean` | Whether Escape/backdrop click closes it. |
 | `modal` | `boolean` | Whether it traps focus and blocks interaction outside. |
 | `overlay` | `boolean` | Whether a backdrop is rendered. |
 | `transition` | `boolean` | Whether the open/close animation plays. |
 
 Every option is forwarded straight through to the underlying `SModal`
-instance, and defaults to `SModal`'s own defaults when omitted.
+instance, and defaults to `SModal`'s own defaults when omitted. Since the
+opened component always renders through `SModal`'s `content` slot (see
+[Modal](/components/overlays/modal#custom-content)), `title`/`description`
+are the only way to give a programmatically-opened dialog a real
+accessible name/description - pass them if the opened component's own
+content doesn't already include a heading Reka can associate with it.
 
 `modals` is the full list of currently-open instances, mostly useful if
 you're building your own rendering loop instead of relying on the

@@ -70,8 +70,12 @@ sitting flush against the edge:
 
 `content` replaces the header/title/description/body/footer structure
 entirely - useful when the panel doesn't fit the header-plus-body shape at
-all. `title`/`description`/`close` are all ignored once `content` is
-provided, since the slot owns the whole panel:
+all. `close` is ignored once `content` is provided, since the slot owns
+the whole visible panel - but `title`/`description`, if still set, stay
+registered with Reka as the panel's accessible name/description, just
+visually hidden instead of rendered as a header. Pass them if your own
+custom content doesn't already include a heading Reka can associate with
+the panel:
 
 ::component-example{name="slideover-content"}
 ::
@@ -183,8 +187,9 @@ const applied = await slideover.open(SlideoverFilterPanel)
 // true, false, or undefined if dismissed without an explicit choice
 ```
 
-`open()` also takes the same `side`/`inset`/`dismissible`/`modal`/
-`overlay`/`transition` options as the declarative props:
+`open()` also takes the same `title`/`description`/`side`/`inset`/
+`dismissible`/`modal`/`overlay`/`transition` options as the declarative
+props:
 
 ```ts
 await slideover.open(SlideoverFilterPanel, { side: 'left' })
@@ -221,7 +226,7 @@ await slideover.open(SlideoverFilterPanel, { side: 'left' })
 | Slot | Description |
 | --- | --- |
 | default | The trigger element |
-| `content` | Replaces header/title/description/body/footer entirely |
+| `content` | Replaces the visible header/body/footer entirely (title/description, if set, still register for a11y) |
 | `header` | Overrides the default title/description block |
 | `body` | Main content |
 | `footer` | Usually action buttons |

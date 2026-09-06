@@ -43,7 +43,7 @@ unique to a slide-in panel:
 | --- | --- | --- |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | Which edge the panel slides in from. |
 | `inset` | `boolean` | Whether the panel floats with a gap instead of flush against the edge. |
-| `props`, `dismissible`, `modal`, `overlay`, `transition` | | Same as `useModal`. |
+| `props`, `title`, `description`, `dismissible`, `modal`, `overlay`, `transition` | | Same as `useModal`. |
 
 ## Setup
 

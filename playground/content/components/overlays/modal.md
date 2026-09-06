@@ -68,9 +68,13 @@ function simulate() {
 
 `content` replaces the header/title/description/body/footer structure
 entirely - useful when the dialog doesn't fit the header-plus-body shape at
-all (a success screen, a fully custom form layout). `title`/`description`/
-`close`/`maximizable` are all ignored once `content` is provided, since the
-slot owns the whole dialog:
+all (a success screen, a fully custom form layout). `close`/`maximizable`
+are ignored once `content` is provided, since the slot owns the whole
+visible dialog - but `title`/`description`, if still set, stay registered
+with Reka as the dialog's accessible name/description, just visually
+hidden instead of rendered as a header. Pass them if your own custom
+content doesn't already include a heading Reka can associate with the
+dialog:
 
 ::component-example{name="modal-content"}
 ::
@@ -214,8 +218,11 @@ const confirmed = await modal.open(ModalConfirmDialog)
 // true, false, or undefined if dismissed without an explicit choice
 ```
 
-`open()` also takes the same `dismissible`/`modal`/`overlay`/`transition`
-options as the declarative props:
+`open()` also takes the same `title`/`description`/`dismissible`/`modal`/
+`overlay`/`transition` options as the declarative props - `title`/
+`description` are the only way to give a programmatically-opened dialog a
+real accessible name/description, since the opened component always
+renders through the `content` slot:
 
 ```ts
 await modal.open(ModalConfirmDialog, { dismissible: false })
@@ -253,7 +260,7 @@ await modal.open(ModalConfirmDialog, { dismissible: false })
 | Slot | Description |
 | --- | --- |
 | default | The trigger element |
-| `content` | Replaces header/title/description/body/footer entirely |
+| `content` | Replaces the visible header/body/footer entirely (title/description, if set, still register for a11y) |
 | `header` | Overrides the default title/description block |
 | `body` | Main content |
 | `footer` | Usually action buttons |
