@@ -74,6 +74,12 @@ slot name; each value is either:
 </SButton>
 ```
 
+To know what you're actually overriding - the current default classes for
+every slot and variant - every component's own doc page ends with a "Theme
+source" block showing its real `src/runtime/theme/*.ts` file, read live
+rather than transcribed by hand (so it can never drift from what's
+actually shipped, the way a hand-written table would).
+
 ## 3. `STheme`
 
 To retheme every component inside one part of the page - a card, a
