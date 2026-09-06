@@ -26,10 +26,10 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: npx nypm@latest i
+        run: bun install
 
       - name: Lint
-        run: npm run lint
+        run: bun run --bun lint
 
   typecheck:
     runs-on: ubuntu-latest
@@ -48,13 +48,13 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: npx nypm@latest i
+        run: bun install
 
       - name: Playground prepare
-        run: npm run dev:prepare
+        run: bun run --bun dev:prepare
 
       - name: Typecheck
-        run: npm run test:types
+        run: bun run --bun test:types
 
   test:
     runs-on: ubuntu-latest
@@ -73,10 +73,10 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: npx nypm@latest i
+        run: bun install
 
       - name: Playground prepare
-        run: npm run dev:prepare
+        run: bun run --bun dev:prepare
 
       - name: Test
-        run: npm run test
+        run: bun run --bun test

@@ -42,19 +42,19 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: npx nypm@latest i
+        run: bun install
 
       - name: Playground prepare
-        run: npm run dev:prepare
+        run: bun run --bun dev:prepare
 
       - name: Lint
-        run: npm run lint
+        run: bun run --bun lint
 
       - name: Test
-        run: npm run test
+        run: bun run --bun test
 
       - name: Build
-        run: npm run prepack
+        run: bun run --bun prepack
 
       - name: Configure git identity
         run: |
