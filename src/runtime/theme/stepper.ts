@@ -33,12 +33,15 @@ export const stepperTheme = tv({
         root: 'flex-row',
         connector: 'w-full justify-center',
         // Every item is an equal-width flex-1 column, so a line starting
-        // at *this* item's own center (left-1/2, matching connector's own
+        // at *this* item's own center (start-1/2, matching connector's own
         // justify-center anchor above) and spanning one more full item-
         // width (w-full, relative to this same connector) lands exactly
         // on the *next* item's center - reaching a correctly-centered
         // indicator there regardless of either item's own label width.
-        separator: 'left-1/2 top-1/2 h-0.5 w-full -translate-y-1/2',
+        // A logical `start` (not physical `left`) so it still reaches
+        // forward - not backward - once flex-row's own item order flips
+        // under `dir="rtl"`.
+        separator: 'start-1/2 top-1/2 h-0.5 w-full -translate-y-1/2',
       },
       vertical: {
         // No items-start here (default align-items: stretch) - connector
