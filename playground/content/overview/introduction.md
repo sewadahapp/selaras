@@ -34,3 +34,18 @@ Installing the module auto-imports every component with an `S` prefix
 overlays (`useModal`, `useDrawer`, `useSlideover`, `useToast`,
 `useCommandPalette`) and one directive (`v-ripple`) for click-feedback.
 Start with [Installation](/overview/installation).
+
+## Acknowledgments
+
+Selaras is built directly on top of [Reka UI](https://reka-ui.com) for its
+accessible primitives. Beyond that foundation, its API shapes and
+interaction patterns were also informed by looking at how other component
+libraries in the Vue ecosystem approach the same problems, including:
+
+- [Nuxt UI](https://ui.nuxt.com) - a full-featured Vue and Nuxt component library maintained by the Nuxt team.
+- [PrimeVue](https://primevue.org) - a long-established, broad Vue UI component library.
+- [shadcn-vue](https://www.shadcn-vue.com) - a Vue port of shadcn/ui's copy-into-your-project approach to components.
+- [UI Thing](https://ui-thing.behonbaker.com) - a set of Nuxt components built on Reka UI and Tailwind CSS.
+- [Quasar](https://quasar.dev) - a Vue framework with a large set of Material Design-influenced components.
+
+Thanks to those communities for the ideas.
