@@ -84,7 +84,8 @@ a single object literal covering every key below.
 | `maximize` | `Maximize` | Modal's fullscreen toggle |
 | `minimize` | `Minimize` | Modal's fullscreen toggle |
 | `removeItem(label?)` | `Remove ${label}` / `Remove` | Chip, FileUpload's remove button |
-| `moreItems(count)` | `+${count} more` | AvatarGroup's overflow indicator |
+| `moreItems(count)` | `+${count} more` | Select/Autocomplete's chip-overflow indicator |
+| `avatarGroupOverflow(count)` | `+${count}` | AvatarGroup's overflow indicator |
 | `paginationInfo(page, total)` | `Page ${page} of ${total}` | Pagination |
 | `codeTabFallback(index)` | `Tab ${index}` | Tabs (code block group) |
 | `dropFiles` | `Drop files here or click to browse` | FileUpload |

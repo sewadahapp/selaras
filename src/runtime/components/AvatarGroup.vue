@@ -54,7 +54,7 @@ const overflowCount = computed(() => {
 
 <template>
   <div v-bind="rootProps">
-    <span v-if="overflowCount" v-bind="resolveSlot(ui.count, props.ui?.count)">{{ messages.moreItems(overflowCount) }}</span>
+    <span v-if="overflowCount" v-bind="resolveSlot(ui.count, props.ui?.count)">{{ messages.avatarGroupOverflow(overflowCount) }}</span>
     <span v-for="(child, i) in visibleChildren" :key="i" v-bind="resolveSlot(ui.item, props.ui?.item)">
       <component :is="child" />
     </span>

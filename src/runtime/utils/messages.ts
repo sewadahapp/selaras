@@ -47,6 +47,7 @@ export interface MessageRegistry {
   /** A single removed/removable item's accessible name - `label` is omitted for a bare, unlabeled control (matches Chip's own existing fallback). */
   removeItem: (label?: string) => string
   moreItems: (count: number) => string
+  avatarGroupOverflow: (count: number) => string
   paginationInfo: (page: number, total: number) => string
   codeTabFallback: (index: number) => string
   dropFiles: string
@@ -122,6 +123,7 @@ export const defaultMessages: MessageRegistry = {
   minimize: 'Minimize',
   removeItem: label => label ? `Remove ${label}` : 'Remove',
   moreItems: count => `+${count} more`,
+  avatarGroupOverflow: count => `+${count}`,
   paginationInfo: (page, total) => `Page ${page} of ${total}`,
   codeTabFallback: index => `Tab ${index}`,
   dropFiles: 'Drop files here or click to browse',
