@@ -21,9 +21,9 @@ class for consistent long-form typography, no components or
 </div>
 ```
 
-It's a separate, opt-in stylesheet - not bundled into `theme.css`,
-which this module already injects into every consumer automatically -
-so a project with no long-form content never pays for it:
+It's a separate, opt-in stylesheet - not bundled into `theme.css` (which
+you already import yourself, see [Installation](/overview/installation))
+- so a project with no long-form content never pays for it:
 
 ```css
 @import "tailwindcss";
