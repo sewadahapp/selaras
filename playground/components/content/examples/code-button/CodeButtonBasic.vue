@@ -1,3 +1,3 @@
 <template>
-  <SCodeButton code="npm install selaras" />
+  <SCodeButton code="npm install @sewadah/selaras" />
 </template>

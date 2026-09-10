@@ -11,11 +11,11 @@ order: 71
 
 ```vue-html
 <SCodeGroup>
-  <SProsePre filename="npm" language="bash" code="npm install selaras">
-npm install selaras
+  <SProsePre filename="npm" language="bash" code="npm install @sewadah/selaras">
+npm install @sewadah/selaras
   </SProsePre>
-  <SProsePre filename="pnpm" language="bash" code="pnpm add selaras">
-pnpm add selaras
+  <SProsePre filename="pnpm" language="bash" code="pnpm add @sewadah/selaras">
+pnpm add @sewadah/selaras
   </SProsePre>
 </SCodeGroup>
 ```
@@ -39,11 +39,11 @@ becomes each tab's title:
 ::code-group
 
 ```bash [npm]
-npm install selaras
+npm install @sewadah/selaras
 ```
 
 ```bash [pnpm]
-pnpm add selaras
+pnpm add @sewadah/selaras
 ```
 
 ::

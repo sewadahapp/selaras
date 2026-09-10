@@ -14,7 +14,7 @@ import type { Directive } from 'vue'
 //   detect ("Failed to resolve directive: ripple", reproduced directly
 //   before finding addImports' meta option).
 // - Explicit `import { vRipple } from '../directives/ripple'` (or, for an
-//   external consumer, `from 'selaras/directives'`) still works too, and
+//   external consumer, `from '@sewadah/selaras/directives'`) still works too, and
 //   stays useful outside a Nuxt app entirely, or one with autoImport
 //   disabled - Vue (3.3+) auto-registers any `<script setup>` import
 //   matching the vXxx naming convention as a local directive under that

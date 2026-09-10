@@ -27,7 +27,7 @@ so a project with no long-form content never pays for it:
 
 ```css
 @import "tailwindcss";
-@import "selaras/prose.css";
+@import "@sewadah/selaras/prose.css";
 ```
 
 Every element selector inside it is wrapped in `:where(...)`, which

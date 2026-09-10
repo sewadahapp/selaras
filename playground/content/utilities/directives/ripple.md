@@ -73,7 +73,7 @@ const rippleEnabled = useRippleEnabled()
 auto-imports disabled:
 
 ```ts
-import { vRipple } from 'selaras/directives'
+import { vRipple } from '@sewadah/selaras/directives'
 ```
 
 ## Behavior notes

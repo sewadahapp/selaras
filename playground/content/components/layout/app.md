@@ -32,7 +32,7 @@ This isn't optional for most of what Selaras ships - without it:
   `<SModal>`/`<SDrawer>`/`<SSlideover>` placed directly in a page doesn't
   need this - only the `useX()` composable versions do.
 
-If you generated your project via `npx nuxt module add selaras`, or copied
+If you generated your project via `npx nuxt module add @sewadah/selaras`, or copied
 the Quick Setup snippet from the [installation guide](/overview/installation),
 this is already done for you.
 

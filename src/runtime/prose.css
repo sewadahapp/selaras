@@ -12,8 +12,8 @@
  * a page where they don't fit; that's the whole point of :where() here.
  *
  * A separate, optionally-imported file (not bundled into theme.css) -
- * `@import "selaras/prose.css";` after `@import "tailwindcss"; @import
- * "selaras";` in a consumer's own CSS, only from a project that
+ * `@import "@sewadah/selaras/prose.css";` after `@import "tailwindcss"; @import
+ * "@sewadah/selaras";` in a consumer's own CSS, only from a project that
  * actually has long-form content to style. Neither file is auto-
  * injected by the module - both are the consumer's own explicit import.
  *

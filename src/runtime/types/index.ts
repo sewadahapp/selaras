@@ -1,7 +1,7 @@
 // Re-exports every public component's Props/Emits/Slots types (and
 // any other already-exported data-shape type, e.g. DropdownItem), so
-// a consumer can `import type { ModalProps } from 'selaras/types'`
-// instead of needing the deep `selaras/components/Modal.vue` path
+// a consumer can `import type { ModalProps } from '@sewadah/selaras/types'`
+// instead of needing the deep `@sewadah/selaras/components/Modal.vue` path
 // (which also still works directly, unchanged, for one component).
 //
 // This file is excluded from both this project's own tsconfig.json

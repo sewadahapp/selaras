@@ -12,26 +12,26 @@ own project owns its version directly:
 ::code-group
 
 ```bash [bun]
-bun add selaras tailwindcss
+bun add @sewadah/selaras tailwindcss
 ```
 
 ```bash [npm]
-npm install selaras tailwindcss
+npm install @sewadah/selaras tailwindcss
 ```
 
 ```bash [pnpm]
-pnpm add selaras tailwindcss
+pnpm add @sewadah/selaras tailwindcss
 ```
 
 ::
 
 ## Register the module
 
-Add `selaras` to `modules` in `nuxt.config.ts`:
+Add `@sewadah/selaras` to `modules` in `nuxt.config.ts`:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['selaras'],
+  modules: ['@sewadah/selaras'],
 })
 ```
 
@@ -67,27 +67,27 @@ own stylesheet, after Tailwind itself:
 
 ```css [assets/css/main.css]
 @import "tailwindcss";
-@import "selaras";
+@import "@sewadah/selaras";
 ```
 
 Then point Nuxt at that file:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['selaras'],
+  modules: ['@sewadah/selaras'],
   css: ['~/assets/css/main.css'],
 })
 ```
 
-`@import "selaras";` brings in every design token (`--ui-*` custom
+`@import "@sewadah/selaras";` brings in every design token (`--ui-*` custom
 properties) and component-level base style - see [Theming](/overview/theming).
 If your project also renders long-form markdown/CMS content, add
 [prose.css](/components/typography/prose) the same way:
 
 ```css [assets/css/main.css]
 @import "tailwindcss";
-@import "selaras";
-@import "selaras/prose.css";
+@import "@sewadah/selaras";
+@import "@sewadah/selaras/prose.css";
 ```
 
 ## Options
@@ -96,7 +96,7 @@ Configure the module under the `selaras` key:
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['selaras'],
+  modules: ['@sewadah/selaras'],
   selaras: {
     // Prefix used for auto-imported components.
     prefix: 'S', // default
@@ -120,7 +120,7 @@ can match that prefix in the classes its own components render, via
 
 ```ts
 export default defineNuxtConfig({
-  modules: ['selaras'],
+  modules: ['@sewadah/selaras'],
   selaras: {
     classPrefix: 'tw',
   },

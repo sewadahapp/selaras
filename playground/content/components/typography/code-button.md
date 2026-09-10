@@ -10,7 +10,7 @@ order: 73
 ::
 
 ```vue-html
-<SCodeButton code="npm install selaras" />
+<SCodeButton code="npm install @sewadah/selaras" />
 ```
 
 Unlike [ProsePre](/components/typography/prose) (a full code block) or
@@ -21,7 +21,7 @@ displayed and what actually gets copied; override just the displayed text
 with the default slot when they should differ:
 
 ```vue-html
-<SCodeButton code="npm install selaras">
+<SCodeButton code="npm install @sewadah/selaras">
   Copy install command
 </SCodeButton>
 ```

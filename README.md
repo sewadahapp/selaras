@@ -16,7 +16,7 @@ matter of overriding variables, not rebuilding the library.
 
 > **Status:** pre-1.0 and still moving - component APIs, the color token
 > system, and internal structure can change between minor versions until
-> things settle. Not yet published to npm.
+> things settle.
 
 ## Features
 
@@ -42,7 +42,7 @@ matter of overriding variables, not rebuilding the library.
 Install the module to your Nuxt application with one command:
 
 ```bash
-npx nuxt module add selaras
+npx nuxt module add @sewadah/selaras
 ```
 
 Tailwind CSS is a peer dependency - install it alongside Selaras too, so
@@ -56,7 +56,7 @@ Import the CSS in your own stylesheet, after Tailwind itself:
 
 ```css
 @import "tailwindcss";
-@import "selaras";
+@import "@sewadah/selaras";
 ```
 
 Wrap your root `app.vue` in `<SApp>`, once - required for Tooltip's shared
@@ -118,14 +118,14 @@ Every component is now auto-imported and ready to use:
 
 
 <!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/selaras/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/selaras
+[npm-version-src]: https://img.shields.io/npm/v/@sewadah/selaras/latest.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-version-href]: https://npmjs.com/package/@sewadah/selaras
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/selaras.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-downloads-href]: https://npm.chart.dev/selaras
+[npm-downloads-src]: https://img.shields.io/npm/dm/@sewadah/selaras.svg?style=flat&colorA=020420&colorB=00DC82
+[npm-downloads-href]: https://npm.chart.dev/@sewadah/selaras
 
-[license-src]: https://img.shields.io/npm/l/selaras.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/selaras
+[license-src]: https://img.shields.io/npm/l/@sewadah/selaras.svg?style=flat&colorA=020420&colorB=00DC82
+[license-href]: https://npmjs.com/package/@sewadah/selaras
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt
 [nuxt-href]: https://nuxt.com
