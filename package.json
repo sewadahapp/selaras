@@ -1,7 +1,7 @@
 {
   "name": "@sewadah/selaras",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A UI component library for Nuxt",
   "license": "MIT",
   "repository": "sewadahapp/selaras",
