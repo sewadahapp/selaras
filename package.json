@@ -2,9 +2,26 @@
   "name": "@sewadah/selaras",
   "type": "module",
   "version": "0.1.1",
-  "description": "A UI component library for Nuxt",
+  "description": "A UI component library for Nuxt, built on Reka UI and Tailwind v4",
+  "author": "Wicaksana Pratama <wicaksanapratama@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/sewadahapp/selaras#readme",
   "repository": "sewadahapp/selaras",
+  "bugs": "https://github.com/sewadahapp/selaras/issues",
+  "keywords": [
+    "nuxt",
+    "nuxt-module",
+    "vue",
+    "vue-components",
+    "component-library",
+    "ui-library",
+    "ui-kit",
+    "design-system",
+    "tailwindcss",
+    "reka-ui",
+    "headless-ui",
+    "oklch"
+  ],
   "exports": {
     ".": {
       "types": "./dist/types.d.mts",
