@@ -136,6 +136,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Playground prepare
+        run: bun run dev:prepare
+
       # A GitHub Pages *project* site (not a custom domain or a
       # <org>.github.io root repo) serves from a /selaras/ subpath, not the
       # domain root - NUXT_APP_BASE_URL is Nuxt's own env-var mapping for
