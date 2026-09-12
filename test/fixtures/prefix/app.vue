@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+const unknownRole = 'not-registered' as any
 </script>
 
 <template>
@@ -6,6 +7,9 @@
     <SButton>Click me</SButton>
     <SButton id="enterprise-button" color="enterprise">
       Enterprise
+    </SButton>
+    <SButton id="unknown-role-button" :color="unknownRole">
+      Unknown role
     </SButton>
     <div style="--company-brand-fill: rgb(17 34 51); --company-brand-on-fill: white; --company-brand-subtle: rgb(34 51 68); --company-brand-on-subtle: white; --company-brand-text: rgb(17 34 51); --company-brand-border: rgb(17 34 51);">
       <SButton id="brand-vars-button" color="brand-vars">

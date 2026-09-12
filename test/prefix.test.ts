@@ -35,6 +35,15 @@ describe('classPrefix', async () => {
     expect(html).toMatch(/<button[^>]*data-selaras-color="brand-vars"[^>]*id="brand-vars-button"/)
   })
 
+  it('falls back safely for an unknown runtime role in the packed consumer', async () => {
+    const html = await $fetch('/')
+    const button = html.match(/<button[^>]*id="unknown-role-button"[^>]*>/)?.[0]
+    expect(button).toBeTruthy()
+    expect(button).not.toContain('data-selaras-color=')
+    expect(button).not.toContain('data-selaras-color="')
+    expect(button).toContain('bg-')
+  })
+
   it('generates real CSS for the tw:-prefixed classes - the whole point of the build-time safelist', async () => {
     const css = await fetchCss()
     expect(css).toContain('.tw\\:inline-flex')
