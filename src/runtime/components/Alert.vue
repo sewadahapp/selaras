@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { AlertThemeSlots } from '../theme/alert'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { alertTheme } from '../theme/alert'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
@@ -27,7 +30,7 @@ export interface AlertProps {
   icon?: string
   /** Shows a dismiss button and emits `close` when clicked. The alert has no open state of its own - closing it is left to the consumer's own v-if/v-for, the same way Chip's own `removable` + `remove` already works. */
   closable?: boolean
-  color?: AlertVariants['color']
+  color?: ColorRole
   variant?: AlertVariants['variant']
   ui?: UiProp<AlertThemeSlots>
 }
@@ -46,10 +49,13 @@ export interface AlertSlots {
 const icons = useIcons()
 const messages = useMessages()
 
-const iconName = computed(() => props.icon ?? (props.color ? icons.value[props.color] : undefined))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'info', 'info'))
+const recipeColor = computed<AlertVariants['color']>(() => isBuiltinColorRole(effectiveColor.value) && ['success', 'danger', 'warning', 'info'].includes(effectiveColor.value) ? effectiveColor.value as AlertVariants['color'] : 'info')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const iconName = computed(() => props.icon ?? (props.color ? icons.value[recipeColor.value ?? 'info'] : undefined))
 
 const theme = useComponentTheme('alert', alertTheme)
-const ui = computed(() => theme.value({ color: props.color, variant: props.variant }))
+const ui = computed(() => theme.value({ color: recipeColor.value, variant: props.variant }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
@@ -61,7 +67,7 @@ const closeProps = computed(() => resolveSlot(ui.value.close, props.ui?.close))
 </script>
 
 <template>
-  <div v-bind="rootProps">
+  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <Icon v-if="iconName" :name="iconName" v-bind="iconProps" />
     <div v-bind="contentProps">
       <p v-if="title || $slots.title" v-bind="titleProps">
