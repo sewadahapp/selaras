@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest'
 import Icon from '../../src/runtime/components/Icon.vue'
 
 describe('icon', () => {
+  it('binds a custom semantic role to the icon root', async () => {
+    const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star', color: 'premium' as any } })
+    expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
+    expect(wrapper.find('[data-selaras-color="premium"]').attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('renders the named icon', async () => {
     const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star' } })
     expect(wrapper.find('.iconify').classes()).toContain('i-lucide:star')
