@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { InputNumberThemeSlots } from '../theme/input-number'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, ref } from 'vue'
 import { useFormField } from '../composables/use-form-field'
@@ -8,6 +9,8 @@ import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
@@ -40,7 +43,7 @@ export interface InputNumberProps {
   disabled?: boolean
   invalid?: boolean
   /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
-  color?: InputNumberVariants['color']
+  color?: ColorRole
   size?: InputNumberVariants['size']
   /** 'horizontal' (default) flanks the input with two full-height buttons; 'vertical' replaces them with a single compact up/down pair pinned to the end edge. */
   orientation?: InputNumberVariants['orientation']
@@ -138,7 +141,10 @@ const canIncrement = computed(() => !props.disabled && (props.wrap || props.max 
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('inputNumber', inputNumberTheme)
-const ui = computed(() => theme.value({ size: effectiveSize.value, color: props.color, invalid: inputInvalid.value, orientation: props.orientation }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as InputNumberVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: inputInvalid.value, orientation: props.orientation }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
@@ -152,7 +158,7 @@ const stepButtonUi = { base: 'shrink-0' }
 </script>
 
 <template>
-  <div v-bind="rootProps">
+  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <Button
       v-if="orientation === 'horizontal'"
       variant="text"

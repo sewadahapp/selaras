@@ -10,6 +10,12 @@ function buttons(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
 }
 
 describe('inputNumber', () => {
+  it('binds a custom semantic role to the number field root', async () => {
+    const wrapper = await mountSuspended(InputNumber, { props: { color: 'premium' as any } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('renders the current value in the input', async () => {
     const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5 } })
     expect(wrapper.find('input').element.value).toBe('5')
