@@ -12,6 +12,7 @@ import { useRippleEnabled } from '../composables/use-ripple'
 import { vRipple } from '../directives/ripple'
 import { buttonTheme } from '../theme/button'
 import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -73,7 +74,7 @@ const rippleEnabled = computed(() => rippleEnabledSetting.value && props.variant
 const theme = useComponentTheme('button', buttonTheme)
 const themeProps = useThemeProps('button')
 
-const effectiveColor = computed(() => props.color ?? themeProps.value.color as ButtonVariants['color'] ?? 'primary')
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color as ButtonVariants['color'] ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ButtonVariants['color'] : 'primary')
 const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 

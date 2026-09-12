@@ -6,6 +6,7 @@ import type { UiProp } from '../utils/ui'
 import { computed, useSlots } from 'vue'
 import { badgeTheme } from '../theme/badge'
 import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -41,7 +42,7 @@ const iconOnly = computed(() => !hasLabel.value && !!props.icon && !props.dot)
 const theme = useComponentTheme('badge', badgeTheme)
 const themeProps = useThemeProps('badge')
 
-const effectiveColor = computed(() => props.color ?? themeProps.value.color as BadgeVariants['color'] ?? 'neutral')
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color as BadgeVariants['color'] ?? 'neutral', 'neutral'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as BadgeVariants['color'] : 'primary')
 const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 

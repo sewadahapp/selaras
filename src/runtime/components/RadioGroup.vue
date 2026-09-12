@@ -8,6 +8,7 @@ import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { radioGroupTheme } from '../theme/radio-group'
 import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 
 export interface RadioItem {
@@ -62,7 +63,7 @@ const normalizedItems = computed<RadioItem[]>(() =>
   props.items.map(item => typeof item === 'string' ? { label: item, value: item } : item),
 )
 
-const effectiveColor = computed(() => props.color ?? 'primary')
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as RadioGroupVariants['color'] : 'primary')
 const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 

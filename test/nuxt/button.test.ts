@@ -25,6 +25,12 @@ describe('button', () => {
     expect(wrapper.classes()).toContain('bg-[var(--ui-primary)]')
   })
 
+  it('falls back to primary for an unknown runtime role instead of emitting unresolved variables', async () => {
+    const wrapper = await mountSuspended(Button, { props: { color: 'not-registered' as never }, slots: { default: () => 'Fallback' } })
+    expect(wrapper.attributes('data-selaras-color')).toBeUndefined()
+    expect(wrapper.classes()).toContain('bg-[var(--ui-primary)]')
+  })
+
   it('accepts a component reference for `as`, not just a tag-name string - e.g. NuxtLink via resolveComponent', async () => {
     const FakeLink = defineComponent({
       props: { to: String },

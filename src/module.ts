@@ -174,6 +174,10 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     const colorRegistry = createColorRegistry(options.theme?.colors ?? {})
+    addTemplate({
+      filename: 'selaras-color-roles.mjs',
+      getContents: () => `export const colorRoles = ${JSON.stringify(Object.keys(colorRegistry).sort())}\n`,
+    })
     const colorRoleTypesTemplate = addTemplate({
       filename: 'selaras-color-roles.d.ts',
       getContents: () => {
