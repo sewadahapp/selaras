@@ -75,6 +75,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
     "test": "vitest run",
+    "test:browser": "playwright test",
+    "test:browser:install": "playwright install chromium",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
@@ -101,6 +103,7 @@
     "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^4.5.2",
     "@nuxt/test-utils": "^4.1.0",
+    "@playwright/test": "^1.63.0",
     "@types/node": "latest",
     "@vue/test-utils": "^2.4.11",
     "better-sqlite3": "^13.0.3",
