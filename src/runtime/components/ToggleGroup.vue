@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { ToggleGroupThemeSlots } from '../theme/toggle-group'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { ToggleGroupItem, ToggleGroupRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { toggleGroupTheme } from '../theme/toggle-group'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -36,7 +39,7 @@ export interface ToggleGroupProps {
   defaultValue?: string | string[]
   disabled?: boolean
   orientation?: ToggleGroupVariants['orientation']
-  color?: ToggleGroupVariants['color']
+  color?: ColorRole
   size?: ToggleGroupVariants['size']
   ui?: UiProp<ToggleGroupThemeSlots>
 }
@@ -55,10 +58,13 @@ const normalizedItems = computed<ToggleGroupItemDef[]>(() =>
 )
 
 const theme = useComponentTheme('toggleGroup', toggleGroupTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ToggleGroupVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   orientation: props.orientation,
   size: props.size,
-  color: props.color,
+  color: recipeColor.value,
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -82,6 +88,8 @@ function isPressed(item: ToggleGroupItemDef) {
     :default-value="(defaultValue as any)"
     :disabled="disabled"
     :orientation="orientation"
+    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
+    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as string | string[])"
   >
