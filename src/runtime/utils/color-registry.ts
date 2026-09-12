@@ -10,8 +10,11 @@ export const builtinColorNames = ['primary', 'secondary', 'success', 'info', 'wa
 
 export type BuiltinColorName = typeof builtinColorNames[number]
 
-/** Temporary open role type until Nuxt-generated role augmentation lands. */
-export type ColorRole = BuiltinColorName | (string & {})
+declare global {
+  interface SelarasColorRegistry {}
+}
+
+export type ColorRole = BuiltinColorName | Extract<keyof SelarasColorRegistry, string>
 
 export interface ColorRecipe {
   fill: string

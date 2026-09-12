@@ -174,6 +174,20 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     const colorRegistry = createColorRegistry(options.theme?.colors ?? {})
+    const colorRoleTypesTemplate = addTemplate({
+      filename: 'selaras-color-roles.d.ts',
+      getContents: () => {
+        const roles = Object.keys(colorRegistry).sort()
+        const declarations = roles.map(role => `    ${role}: true`).join('\n')
+        return `declare global {\n  interface SelarasColorRegistry {\n${declarations}\n  }\n}\n\nexport {}\n`
+      },
+      write: true,
+    })
+
+    nuxt.hook('prepare:types', ({ references }) => {
+      references.push({ path: colorRoleTypesTemplate.dst })
+    })
+
     if (Object.keys(colorRegistry).length > 0) {
       const colorsTemplate = addTemplate({
         filename: 'selaras-color-roles.css',
