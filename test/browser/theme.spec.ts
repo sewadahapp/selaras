@@ -53,3 +53,10 @@ test('isolates nested explicit theme scopes in a real browser', async ({ page, g
   await expect.poll(async () => page.locator('#nested-outer-button').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(40, 41, 42)')
   await expect.poll(async () => page.locator('#nested-inner-button').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(50, 51, 52)')
 })
+
+test('honors reduced-motion media preferences in compiled consumer CSS', async ({ page, goto }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await goto('/', { waitUntil: 'hydration' })
+
+  await expect.poll(async () => page.locator('#enterprise-button').evaluate(element => getComputedStyle(element).transitionDuration)).toBe('1e-05s')
+})
