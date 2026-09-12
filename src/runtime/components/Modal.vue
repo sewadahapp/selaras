@@ -2,7 +2,7 @@
 import type { ModalThemeSlots } from '../theme/modal'
 import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger, VisuallyHidden } from 'reka-ui'
-import { computed, ref, useSlots, watch, watchEffect } from 'vue'
+import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { modalTheme } from '../theme/modal'
@@ -12,6 +12,8 @@ import Icon from './Icon.vue'
 
 export interface ModalProps {
   open?: boolean
+  /** Initial visibility for an uncontrolled modal. Supplying `open` makes the parent authoritative. */
+  defaultOpen?: boolean
   title?: string
   description?: string
   /** Full-viewport layout instead of the default centered card. Still the initial state when `maximizable` is set - the toggle button takes over from there, optionally controllable via `v-model:fullscreen`. */
@@ -44,6 +46,7 @@ export interface ModalEmits {
 }
 
 const props = withDefaults(defineProps<ModalProps>(), {
+  open: undefined,
   dismissible: true,
   close: true,
   modal: true,
@@ -105,13 +108,15 @@ function onContentAnimationEnd(event: AnimationEvent) {
 // browser once a second instance of the same SFC exists on the page -
 // keeping `open` always a real boolean sidesteps that mode entirely
 // instead of relying on it.
-const internalOpen = ref(props.open ?? false)
+const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
+const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
 watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
+  if (isControlled)
+    internalOpen.value = value ?? false
 })
 function onUpdateOpen(value: boolean) {
-  internalOpen.value = value
+  if (!isControlled)
+    internalOpen.value = value
   emit('update:open', value)
 }
 

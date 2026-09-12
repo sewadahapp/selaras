@@ -2,7 +2,7 @@
 import type { SlideoverThemeSlots } from '../theme/slideover'
 import type { UiProp } from '../utils/ui'
 import { DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle, DialogTrigger, VisuallyHidden } from 'reka-ui'
-import { computed, ref, useSlots, watch, watchEffect } from 'vue'
+import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { slideoverTheme } from '../theme/slideover'
@@ -12,6 +12,8 @@ import Icon from './Icon.vue'
 
 export interface SlideoverProps {
   open?: boolean
+  /** Initial visibility for an uncontrolled slideover. Supplying `open` makes the parent authoritative. */
+  defaultOpen?: boolean
   title?: string
   description?: string
   /** Which edge the panel slides in from. */
@@ -41,6 +43,7 @@ export interface SlideoverEmits {
 }
 
 const props = withDefaults(defineProps<SlideoverProps>(), {
+  open: undefined,
   side: 'right',
   inset: false,
   dismissible: true,
@@ -94,13 +97,15 @@ function onContentAnimationEnd(event: AnimationEvent) {
 // a second instance of the same SFC exists on the page - keeping `open`
 // always a real boolean sidesteps that mode entirely instead of relying
 // on it.
-const internalOpen = ref(props.open ?? false)
+const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
+const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
 watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
+  if (isControlled)
+    internalOpen.value = value ?? false
 })
 function onUpdateOpen(value: boolean) {
-  internalOpen.value = value
+  if (!isControlled)
+    internalOpen.value = value
   emit('update:open', value)
 }
 

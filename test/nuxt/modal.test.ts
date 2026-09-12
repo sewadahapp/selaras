@@ -40,6 +40,14 @@ describe('modal', () => {
     expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
   })
 
+  it('does not close when a controlled parent rejects update:open', async () => {
+    wrapper = await mountSuspended(Modal, { props: { open: true, title: 'Delete item', description: 'Delete item' } })
+    document.body.querySelector<HTMLButtonElement>('button[aria-label="Close"]')!.click()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(document.body.querySelector('[role=dialog]')).toBeTruthy()
+  })
+
   it('forwards escapeKeyDown so a consumer can preventDefault it', async () => {
     wrapper = await mountSuspended(Modal, { props: { open: true, title: 'Delete item', description: 'Delete item' } })
 

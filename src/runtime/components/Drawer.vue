@@ -3,7 +3,7 @@ import type { DrawerOpenChangeDetails } from 'reka-ui'
 import type { DrawerThemeSlots } from '../theme/drawer'
 import type { UiProp } from '../utils/ui'
 import { DrawerClose, DrawerContent, DrawerDescription, DrawerHandle, DrawerOverlay, DrawerPortal, DrawerRoot, DrawerTitle, DrawerTrigger, VisuallyHidden } from 'reka-ui'
-import { computed, ref, useSlots, watch, watchEffect } from 'vue'
+import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { drawerTheme } from '../theme/drawer'
@@ -13,6 +13,8 @@ import Icon from './Icon.vue'
 
 export interface DrawerProps {
   open?: boolean
+  /** Initial visibility for an uncontrolled drawer. Supplying `open` makes the parent authoritative. */
+  defaultOpen?: boolean
   title?: string
   description?: string
   /** Which edge the panel slides in from - also the direction it's swiped toward to dismiss it. */
@@ -49,6 +51,7 @@ export interface DrawerEmits {
 }
 
 const props = withDefaults(defineProps<DrawerProps>(), {
+  open: undefined,
   side: 'bottom',
   handle: true,
   dismissible: true,
@@ -101,10 +104,11 @@ function onContentAnimationEnd(event: AnimationEvent) {
 // Mirrors Modal.vue/Slideover.vue's own internalOpen pattern - see
 // Slideover.vue for why this needs to stay an always-concrete local ref
 // rather than binding `:open="open"` straight through.
-const internalOpen = ref(props.open ?? false)
+const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
+const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
 watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
+  if (isControlled)
+    internalOpen.value = value ?? false
 })
 
 // A swipe gesture has no separate event of its own (unlike Escape/
@@ -115,7 +119,8 @@ watch(() => props.open, (value) => {
 function onUpdateOpen(value: boolean, details?: DrawerOpenChangeDetails) {
   if (!props.dismissible && details?.reason === 'swipe')
     return
-  internalOpen.value = value
+  if (!isControlled)
+    internalOpen.value = value
   emit('update:open', value)
 }
 
