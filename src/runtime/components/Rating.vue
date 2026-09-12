@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { RatingThemeSlots } from '../theme/rating'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { RatingItem, RatingItemIndicator, RatingRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { ratingTheme } from '../theme/rating'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -42,7 +45,7 @@ export interface RatingProps {
   invalid?: boolean
   orientation?: RatingVariants['orientation']
   size?: RatingVariants['size']
-  color?: RatingVariants['color']
+  color?: ColorRole
   name?: string
   required?: boolean
   ui?: UiProp<RatingThemeSlots>
@@ -62,10 +65,13 @@ const describedBy = computed(() => field?.describedBy.value)
 const icons = useIcons()
 
 const theme = useComponentTheme('rating', ratingTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as RatingVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   orientation: props.orientation,
   size: effectiveSize.value,
-  color: props.color,
+  color: recipeColor.value,
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -78,6 +84,8 @@ const fillIconProps = computed(() => resolveSlot(ui.value.fillIcon, props.ui?.fi
 <template>
   <RatingRoot
     :id="ratingId"
+    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
+    :style="colorRoleStyle"
     :model-value="modelValue"
     :default-value="defaultValue"
     :length="length"

@@ -4,6 +4,13 @@ import { nextTick } from 'vue'
 import Rating from '../../src/runtime/components/Rating.vue'
 
 describe('rating', () => {
+  it('binds a custom semantic role to the rating root', async () => {
+    const wrapper = await mountSuspended(Rating, { props: { color: 'premium' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.html()).toContain('group-data-[state=active]/step:text-[var(--ui-primary)]')
+  })
+
   it('renders 5 stars by default, none active, when no value is given', async () => {
     const wrapper = await mountSuspended(Rating)
     await nextTick()
