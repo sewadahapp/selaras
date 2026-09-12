@@ -29,6 +29,18 @@
         </template>
       </SPopover>
     </STheme>
+    <SPopover>
+      <template #default>
+        <button id="keyboard-popover-trigger">
+          Keyboard popover
+        </button>
+      </template>
+      <template #content>
+        <button id="keyboard-popover-content">
+          Keyboard content
+        </button>
+      </template>
+    </SPopover>
     <SButton id="override-button" :ui="{ base: 'tw:bg-purple-700' }">
       Overridden
     </SButton>

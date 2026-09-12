@@ -30,3 +30,19 @@ test('does not let a scoped light override win in dark mode', async ({ page, got
   const portalButton = page.locator('#scoped-popover-button')
   await expect.poll(async () => portalButton.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(167, 139, 250)')
 })
+
+test('preserves keyboard focus ownership for an uncontrolled popover', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+
+  const trigger = page.locator('#keyboard-popover-trigger')
+  await trigger.focus()
+  await page.keyboard.press('Enter')
+
+  const content = page.locator('#keyboard-popover-content')
+  await expect(content).toBeVisible()
+  await expect.poll(async () => page.evaluate(() => document.activeElement?.id)).toBe('keyboard-popover-content')
+
+  await page.keyboard.press('Escape')
+  await expect(content).toBeHidden()
+  await expect.poll(async () => page.evaluate(() => document.activeElement?.id)).toBe('keyboard-popover-trigger')
+})
