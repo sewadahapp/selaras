@@ -5,6 +5,9 @@
   "description": "A UI component library for Nuxt, built on Reka UI and Tailwind v4",
   "author": "Wicaksana Pratama <wicaksanapratama@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  },
   "homepage": "https://github.com/sewadahapp/selaras#readme",
   "repository": "sewadahapp/selaras",
   "bugs": "https://github.com/sewadahapp/selaras/issues",
@@ -77,6 +80,7 @@
     "test": "vitest run",
     "test:browser": "playwright test",
     "test:browser:install": "playwright install chromium",
+    "test:compat": "node scripts/test-compatibility.mjs",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },

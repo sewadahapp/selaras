@@ -39,3 +39,31 @@ jobs:
 
       - name: Test
         run: bun run test
+
+  node-compatibility:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 22.19.0
+          - 24.19.0
+          - 26.8.2
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build and test packed consumers under Node
+        run: node scripts/test-compatibility.mjs

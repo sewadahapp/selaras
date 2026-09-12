@@ -1,5 +1,5 @@
-<script setup lang="ts">
-const unknownRole = 'not-registered' as any
+<script setup>
+const unknownRole = /** @type {any} */ ('not-registered')
 </script>
 
 <template>
