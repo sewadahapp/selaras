@@ -3,6 +3,7 @@ import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
   test: {
+    exclude: ['test/browser/**'],
     environmentOptions: {
       nuxt: {
         // Reuses the existing e2e fixture (already installs ../../../src/module)

@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest'
 import Chip from '../../src/runtime/components/Chip.vue'
 
 describe('chip', () => {
+  it('binds a custom semantic role to the existing recipe bridge', async () => {
+    const wrapper = await mountSuspended(Chip, { props: { color: 'premium', label: 'Pro' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.classes()).toContain('bg-[var(--ui-primary-soft)]')
+  })
+
   it('renders the label prop by default', async () => {
     const wrapper = await mountSuspended(Chip, { props: { label: 'Apple' } })
     expect(wrapper.text()).toBe('Apple')
