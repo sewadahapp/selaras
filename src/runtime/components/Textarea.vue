@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { TextareaThemeSlots } from '../theme/textarea'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { textareaTheme } from '../theme/textarea'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
@@ -32,7 +35,7 @@ export interface TextareaProps {
   disabled?: boolean
   invalid?: boolean
   /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
-  color?: TextareaVariants['color']
+  color?: ColorRole
   clearable?: boolean
   icon?: string
   trailingIcon?: string
@@ -68,10 +71,13 @@ const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[eff
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('textarea', textareaTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as TextareaVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
-  color: props.color,
+  color: recipeColor.value,
   invalid: textareaInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
@@ -114,7 +120,7 @@ watch(() => props.modelValue, resize)
 </script>
 
 <template>
-  <div v-bind="rootProps">
+  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <textarea
       :id="textareaId"

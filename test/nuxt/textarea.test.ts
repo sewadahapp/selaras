@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest'
 import Textarea from '../../src/runtime/components/Textarea.vue'
 
 describe('textarea', () => {
+  it('binds a custom semantic role to the textarea root', async () => {
+    const wrapper = await mountSuspended(Textarea, { props: { color: 'premium' as any } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('emits update:modelValue with the typed value', async () => {
     const wrapper = await mountSuspended(Textarea)
     const textarea = wrapper.find('textarea')
