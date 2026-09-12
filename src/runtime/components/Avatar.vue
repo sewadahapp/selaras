@@ -3,12 +3,15 @@ import type { AvatarImageProps } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import type { Component } from 'vue'
 import type { AvatarThemeSlots } from '../theme/avatar'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 import { computed, inject } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { avatarTheme } from '../theme/avatar'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { AVATAR_SIZE_INJECTION_KEY } from '../utils/injection-keys'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -29,7 +32,7 @@ export interface AvatarProps {
   text?: string
   /** An icon shown in the fallback, in place of `text`. If neither is given, the default semantic `user` icon shows. */
   icon?: string
-  color?: AvatarVariants['color']
+  color?: ColorRole
   /** The presence/status dot's own color - independent of `color`, since presence semantics rarely match the avatar's identity color. */
   statusColor?: AvatarVariants['statusColor']
   size?: AvatarVariants['size']
@@ -45,9 +48,12 @@ const icons = useIcons()
 const theme = useComponentTheme('avatar', avatarTheme)
 const themeProps = useThemeProps('avatar')
 const groupSize = inject(AVATAR_SIZE_INJECTION_KEY, undefined)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color ?? 'neutral', 'neutral'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as AvatarVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const ui = computed(() => theme.value({
-  color: props.color ?? themeProps.value.color as AvatarVariants['color'],
+  color: recipeColor.value,
   statusColor: props.statusColor,
   // AvatarGroup's own size (the more locally-specific ancestor) wins over
   // an STheme prop default before falling all the way back to tv()'s own
@@ -65,7 +71,7 @@ const rootAriaLabel = computed(() => props.src ? undefined : (props.alt ?? props
 </script>
 
 <template>
-  <AvatarRoot :as="as" :aria-label="rootAriaLabel" v-bind="rootProps">
+  <AvatarRoot :as="as" :aria-label="rootAriaLabel" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <span v-bind="resolveSlot(ui.content, props.ui?.content)">
       <AvatarImage
         v-if="src"

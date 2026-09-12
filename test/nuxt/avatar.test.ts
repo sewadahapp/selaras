@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest'
 import Avatar from '../../src/runtime/components/Avatar.vue'
 
 describe('avatar', () => {
+  it('binds a custom semantic role to the avatar root', async () => {
+    const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', color: 'premium' as any } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('renders text fallback when no image is given', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD' } })
     expect(wrapper.text()).toBe('JD')
