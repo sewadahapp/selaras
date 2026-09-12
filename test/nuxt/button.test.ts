@@ -18,6 +18,12 @@ describe('button', () => {
     expect(reset.attributes('type')).toBe('reset')
   })
 
+  it('binds a custom semantic role to the existing recipe bridge', async () => {
+    const wrapper = await mountSuspended(Button, { props: { color: 'premium' }, slots: { default: () => 'Upgrade' } })
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--selaras-color-premium-fill)')
+    expect(wrapper.classes()).toContain('bg-[var(--ui-primary)]')
+  })
+
   it('accepts a component reference for `as`, not just a tag-name string - e.g. NuxtLink via resolveComponent', async () => {
     const FakeLink = defineComponent({
       props: { to: String },

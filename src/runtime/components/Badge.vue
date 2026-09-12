@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { BadgeThemeSlots } from '../theme/badge'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, useSlots } from 'vue'
 import { badgeTheme } from '../theme/badge'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -19,7 +21,7 @@ export interface BadgeProps {
   trailingIcon?: string
   /** A small solid-colored circle - a status indicator (online/offline, etc), shown alongside the label or alone without one. Always uses the color's solid shade, regardless of `variant`. */
   dot?: boolean
-  color?: BadgeVariants['color']
+  color?: ColorRole
   variant?: BadgeVariants['variant']
   size?: BadgeVariants['size']
   ui?: UiProp<BadgeThemeSlots>
@@ -39,8 +41,12 @@ const iconOnly = computed(() => !hasLabel.value && !!props.icon && !props.dot)
 const theme = useComponentTheme('badge', badgeTheme)
 const themeProps = useThemeProps('badge')
 
+const effectiveColor = computed(() => props.color ?? themeProps.value.color as BadgeVariants['color'] ?? 'neutral')
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as BadgeVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+
 const ui = computed(() => theme.value({
-  color: props.color ?? themeProps.value.color as BadgeVariants['color'],
+  color: recipeColor.value,
   variant: props.variant,
   size: props.size ?? themeProps.value.size as BadgeVariants['size'],
   iconOnly: iconOnly.value,
@@ -51,8 +57,8 @@ const dotOnlyProps = useRootProps(() => ui.value.dot, () => props.ui?.dot)
 </script>
 
 <template>
-  <span v-if="dotOnly" v-bind="dotOnlyProps" />
-  <span v-else v-bind="rootProps">
+  <span v-if="dotOnly" :style="colorRoleStyle" v-bind="dotOnlyProps" />
+  <span v-else :style="colorRoleStyle" v-bind="rootProps">
     <span v-if="dot" v-bind="resolveSlot(ui.dot, props.ui?.dot)" />
     <slot name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
       <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />

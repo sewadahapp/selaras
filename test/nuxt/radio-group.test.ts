@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest'
 import RadioGroup from '../../src/runtime/components/RadioGroup.vue'
 
 describe('radioGroup', () => {
+  it('binds a custom semantic role to the existing primary recipe bridge', async () => {
+    const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one'], color: 'premium' } })
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--selaras-color-premium-fill)')
+    expect(wrapper.find('button').classes()).toContain('data-[state=checked]:ring-[var(--ui-primary)]')
+  })
+
   it('normalizes a plain string item into { label: value, value }', async () => {
     const wrapper = await mountSuspended(RadioGroup, { props: { items: ['Yes', 'No'] } })
     const labels = wrapper.findAll('label')

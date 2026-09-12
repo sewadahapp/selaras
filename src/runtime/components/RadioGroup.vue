@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { RadioGroupThemeSlots } from '../theme/radio-group'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { radioGroupTheme } from '../theme/radio-group'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 
 export interface RadioItem {
@@ -34,7 +36,7 @@ export interface RadioGroupProps {
   disabled?: boolean
   invalid?: boolean
   size?: RadioGroupVariants['size']
-  color?: RadioGroupVariants['color']
+  color?: ColorRole
   orientation?: RadioGroupVariants['orientation']
   variant?: RadioGroupVariants['variant']
   ui?: UiProp<RadioGroupThemeSlots>
@@ -60,11 +62,15 @@ const normalizedItems = computed<RadioItem[]>(() =>
   props.items.map(item => typeof item === 'string' ? { label: item, value: item } : item),
 )
 
+const effectiveColor = computed(() => props.color ?? 'primary')
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as RadioGroupVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+
 const theme = useComponentTheme('radioGroup', radioGroupTheme)
 const ui = computed(() => theme.value({
   invalid: radioGroupInvalid.value,
   size: effectiveSize.value,
-  color: props.color,
+  color: recipeColor.value,
   orientation: props.orientation,
   variant: props.variant,
 }))
@@ -95,6 +101,7 @@ const labelGroupProps = computed(() => resolveSlot(ui.value.labelGroup, props.ui
     :orientation="orientation"
     :aria-invalid="radioGroupInvalid || undefined"
     :aria-describedby="describedBy"
+    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as string)"
   >

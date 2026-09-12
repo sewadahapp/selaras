@@ -3,6 +3,11 @@ import { describe, expect, it } from 'vitest'
 import Badge from '../../src/runtime/components/Badge.vue'
 
 describe('badge', () => {
+  it('binds a custom semantic role to the existing recipe bridge', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { color: 'premium', label: 'Pro' } })
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--selaras-color-premium-fill)')
+    expect(wrapper.classes()).toContain('bg-[var(--ui-primary-soft)]')
+  })
   it('renders the label prop by default', async () => {
     const wrapper = await mountSuspended(Badge, { props: { label: 'New' } })
     expect(wrapper.text()).toBe('New')
