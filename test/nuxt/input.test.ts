@@ -3,6 +3,12 @@ import { describe, expect, it, vi } from 'vitest'
 import Input from '../../src/runtime/components/Input.vue'
 
 describe('input', () => {
+  it('binds a custom semantic role to the input root', async () => {
+    const wrapper = await mountSuspended(Input, { props: { color: 'premium' as any } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('forwards native attributes and focus listeners to the actual input', async () => {
     const onFocus = vi.fn()
     const wrapper = await mountSuspended(Input, {
