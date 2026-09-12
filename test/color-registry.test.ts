@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assertColorRoleName, createColorRegistry, generateColorRoleCss, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
+import { assertColorRoleName, createColorRegistry, generateColorRoleCss, generateRuntimeColorOverrideCss, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
 
 describe('color registry', () => {
   it('normalizes omitted interaction states from the nearest authored state', () => {
@@ -103,5 +103,16 @@ describe('color registry', () => {
     const invalid = make('x')
     const normalizedInvalid = { light: normalizeColorRecipe(invalid.light), dark: normalizeColorRecipe(invalid.dark) }
     expect(() => generateColorRoleCss({ 'bad role': normalizedInvalid })).toThrow()
+  })
+
+  it('serializes runtime light/dark overrides without allowing declaration injection', () => {
+    const css = generateRuntimeColorOverrideCss({
+      light: { premium: { fill: '#5134a8', fillHover: 'var(--brand-hover)' } },
+      dark: { premium: { fill: '#a78bfa' } },
+    })
+    expect(css).toContain('[data-selaras-color="premium"]')
+    expect(css).toContain('--selaras-color-role-fill-hover: var(--brand-hover);')
+    expect(css).toContain('.dark [data-selaras-color="premium"]')
+    expect(() => generateRuntimeColorOverrideCss({ light: { premium: { fill: 'red; color: blue' } } })).toThrow()
   })
 })

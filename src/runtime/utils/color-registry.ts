@@ -36,6 +36,11 @@ export type ColorRecipeInput = Pick<ColorRecipe, 'fill' | 'onFill' | 'subtle' | 
 
 export type RuntimeColorOverrides = Partial<Record<ColorRole, Partial<ColorRecipeInput>>>
 
+export interface RuntimeTokenOverrides {
+  light?: RuntimeColorOverrides
+  dark?: RuntimeColorOverrides
+}
+
 export interface ColorModePair<T> {
   light: T
   dark: T
@@ -122,6 +127,39 @@ type GeneratedRoleField = typeof generatedRoleFields[number]
 function roleFieldValue(recipe: ColorRecipe, field: GeneratedRoleField): string {
   const property = field.replace(/-([a-z])/g, (_, character: string) => character.toUpperCase()) as keyof ColorRecipe
   return recipe[property]
+}
+
+function assertCssValue(value: string): void {
+  if (/[;{}\r\n]/.test(value))
+    throw new Error('Invalid Selaras token value: declaration delimiters are not allowed.')
+}
+
+function overrideRule(selector: string, overrides: Partial<ColorRecipeInput>): string | undefined {
+  const declarations = Object.entries(overrides).map(([field, value]) => {
+    if (value === undefined)
+      return undefined
+    assertCssValue(value)
+    const kebab = field.replace(/[A-Z]/g, character => `-${character.toLowerCase()}`)
+    return `  --selaras-color-role-${kebab}: ${value};`
+  }).filter(Boolean)
+  return declarations.length > 0 ? `${selector} {\n${declarations.join('\n')}\n}` : undefined
+}
+
+/** Serializes app-config color leaves into an SSR-safe light/dark CSS layer. */
+export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides): string {
+  const rules: string[] = []
+  for (const mode of ['light', 'dark'] as const) {
+    const colors = overrides[mode]
+    if (!colors)
+      continue
+    for (const role of Object.keys(colors).sort()) {
+      assertColorRoleName(role)
+      const rule = overrideRule(`${mode === 'dark' ? '.dark ' : ''}[data-selaras-color="${role}"]`, colors[role as ColorRole] ?? {})
+      if (rule)
+        rules.push(rule)
+    }
+  }
+  return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
 }
 
 function roleRule(selector: string, recipe: ColorRecipe): string {
