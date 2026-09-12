@@ -1,5 +1,8 @@
 <script setup>
+import { CalendarDate } from '@internationalized/date'
+
 const unknownRole = /** @type {any} */ ('not-registered')
+const scopedDate = new CalendarDate(2024, 1, 15)
 </script>
 
 <template>
@@ -32,6 +35,14 @@ const unknownRole = /** @type {any} */ ('not-registered')
           </SButton>
         </template>
       </SPopover>
+    </STheme>
+    <STheme
+      as="section"
+      :tokens="{ light: { enterprise: { fill: 'rgb(80 81 82)', onFill: 'white', subtle: 'rgb(83 84 85)', onSubtle: 'white', text: 'rgb(80 81 82)', border: 'rgb(80 81 82)' } } }"
+    >
+      <div id="scoped-date-picker-fixture">
+        <SDatePicker :model-value="scopedDate" active-color="enterprise" />
+      </div>
     </STheme>
     <SApp dir="rtl">
       <div id="rtl-probe">

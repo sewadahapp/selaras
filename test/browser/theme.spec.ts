@@ -46,6 +46,16 @@ test('resolves scoped theme colors on portalled content in a real browser', asyn
   await expect.poll(async () => portalButton.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(9, 8, 7)')
 })
 
+test('transports scoped theme colors into the DatePicker portal', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  await page.locator('#scoped-date-picker-fixture button[aria-label="Date picker"]').click()
+
+  const selectedDay = page.locator('button[data-selected][data-selaras-color="enterprise"]')
+  await expect(selectedDay).toBeVisible()
+  await expect.poll(async () => selectedDay.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme') ?? '')).not.toBe('')
+  await expect.poll(async () => selectedDay.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(80, 81, 82)')
+})
+
 test('does not let a scoped light override win in dark mode', async ({ page, goto }) => {
   await goto('/', { waitUntil: 'hydration' })
   await page.locator('html').evaluate(element => element.classList.add('dark'))
