@@ -22,3 +22,11 @@ test('resolves scoped theme colors on portalled content in a real browser', asyn
   await expect.poll(async () => portalButton.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme') ?? '')).not.toBe('')
   await expect.poll(async () => portalButton.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(9, 8, 7)')
 })
+
+test('does not let a scoped light override win in dark mode', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  await page.locator('html').evaluate(element => element.classList.add('dark'))
+
+  const portalButton = page.locator('#scoped-popover-button')
+  await expect.poll(async () => portalButton.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(167, 139, 250)')
+})
