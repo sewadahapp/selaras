@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { ProgressThemeSlots } from '../theme/progress'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { ProgressIndicator, ProgressRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { progressTheme } from '../theme/progress'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 type ProgressVariants = VariantProps<typeof progressTheme>
@@ -35,7 +38,7 @@ export interface ProgressProps {
   /** @default 'linear' */
   type?: 'linear' | 'circular'
   size?: ProgressVariants['size']
-  color?: ProgressVariants['color']
+  color?: ColorRole
   ui?: UiProp<ProgressThemeSlots>
 }
 
@@ -58,9 +61,12 @@ const circumference = computed(() => 2 * Math.PI * radius.value)
 const dashOffset = computed(() => percent.value == null ? circumference.value * 0.75 : circumference.value * (1 - percent.value / 100))
 
 const theme = useComponentTheme('progress', progressTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ProgressVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   size: props.size,
-  color: props.color,
+  color: recipeColor.value,
   indeterminate: props.modelValue == null,
 }))
 
@@ -74,10 +80,10 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 </script>
 
 <template>
-  <ProgressRoot v-if="type === 'linear'" :model-value="modelValue" :max="max" v-bind="rootProps">
+  <ProgressRoot v-if="type === 'linear'" :model-value="modelValue" :max="max" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <ProgressIndicator v-bind="indicatorProps" :style="modelValue == null ? undefined : { width: `${percent}%` }" />
   </ProgressRoot>
-  <ProgressRoot v-else :model-value="modelValue" :max="max" v-bind="circleRootProps">
+  <ProgressRoot v-else :model-value="modelValue" :max="max" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="circleRootProps">
     <svg :width="circleSpec.diameter" :height="circleSpec.diameter" :viewBox="`0 0 ${circleSpec.diameter} ${circleSpec.diameter}`" v-bind="circleWrapperProps">
       <circle
         :cx="circleSpec.diameter / 2"

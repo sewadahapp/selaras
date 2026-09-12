@@ -3,6 +3,14 @@ import { describe, expect, it } from 'vitest'
 import Progress from '../../src/runtime/components/Progress.vue'
 
 describe('progress', () => {
+  it('binds a custom semantic role to the linear progress root', async () => {
+    const wrapper = await mountSuspended(Progress, { props: { color: 'premium', modelValue: 50 } })
+    const root = wrapper.find('[role="progressbar"]')
+    expect(root.attributes('data-selaras-color')).toBe('premium')
+    expect(root.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(root.find(':scope > *').classes()).toContain('bg-[var(--ui-primary)]')
+  })
+
   it('linear: sets the indicator width from modelValue/max', async () => {
     const wrapper = await mountSuspended(Progress, { props: { modelValue: 25, max: 50 } })
 
