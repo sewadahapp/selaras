@@ -33,4 +33,22 @@ describe('app', () => {
     wrapper.unmount()
     await updateAppConfig({ locale: undefined })
   })
+
+  it('emits light/dark runtime role overrides into an SSR-safe style layer', async () => {
+    await updateAppConfig({
+      selaras: {
+        tokens: {
+          light: { colors: { premium: { fill: '#5134a8' } } },
+          dark: { colors: { premium: { fill: '#a78bfa' } } },
+        },
+      },
+    })
+    const wrapper = await mountSuspended(App)
+    await flush()
+    const style = [...document.head.querySelectorAll('style')].find(node => node.textContent?.includes('[data-selaras-color="premium"]'))
+    expect(style?.textContent).toContain('--selaras-color-role-fill: #5134a8;')
+    expect(style?.textContent).toContain('.dark [data-selaras-color="premium"]')
+    wrapper.unmount()
+    await updateAppConfig({ selaras: undefined })
+  })
 })

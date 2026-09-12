@@ -14,7 +14,7 @@ We are in **Phase 4, the theme vertical slice**, with Phases 0 and 1 complete an
 | --- | --- | --- |
 | 0. Audit and decisions | **Complete** | Architecture audit, RFC, component API convention, decision register, and ordered migration plan live in `.notes/`. |
 | 1. Token/Theme RFC | **Complete** | RFC 001 defines role semantics, DTCG boundary, CSS/Tailwind strategy, Nuxt ownership, scoped themes, portals, and compatibility policy. |
-| 2. Contract fixtures | **In progress** | Nuxt component tests and prefix/SSR fixtures exist. Still needed: packed-consumer type/export checks, two disjoint app registries, native form browser checks, scoped/portal computed-style checks, and explicit failure fixtures. |
+| 2. Contract fixtures | **In progress** | Nuxt component tests and prefix/SSR fixtures exist. Runtime `app.config.selaras.tokens` now has an App-level document-head assertion. Still needed: packed-consumer type/export checks, two disjoint app registries, native form browser checks, scoped/portal computed-style checks, and explicit failure fixtures. |
 | 3. Shared boundary defects | **Substantially complete** | Button/Input native contracts, FormField descriptions, and controlled overlay ownership are fixed and committed. Remaining audit items need a final contract-fixture pass, especially per-app providers and broader form/selection behavior. |
 | 4. Theme vertical slice | **In progress** | Color registry normalization, Nuxt CSS/type generation, `selaras` app config, runtime light/dark color overrides, and three prototype components are implemented. Missing: scoped `STheme` token transport, portalled-root transport, prefix-packed premium verification, unknown runtime-role fallback policy, and public API review. |
 | 5. DTCG source and adapter | **Not started** | Add the supported DTCG subset and deterministic adapter only after the resolved semantic contract is proven. |
@@ -46,7 +46,7 @@ We are in **Phase 4, the theme vertical slice**, with Phases 0 and 1 complete an
 
 ## Next ordered work
 
-1. Add prepared-consumer tests for `app.config.selaras.tokens`, generated CSS inclusion, generated role types, and typo rejection; repeat with the prefix fixture.
+1. Add prepared-consumer type/export checks and typo rejection; repeat the runtime CSS assertion with the prefix fixture.
 2. Define and implement scoped token transport for `STheme`, including nested role isolation and explicit portal transport. Do not rely on inherited private variables across portalled roots.
 3. Decide the unknown runtime-role behavior and test it: development diagnostic plus production fallback must never leave unresolved CSS variables.
 4. Add a second role and a CSS-variable-backed role to the packed fixture, then measure generated CSS and SSR/hydration output.
