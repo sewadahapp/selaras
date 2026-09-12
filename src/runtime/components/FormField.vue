@@ -16,6 +16,8 @@ const props = withDefaults(defineProps<FormFieldProps>(), {
 })
 
 export interface FormFieldProps {
+  /** Stable ID for the underlying control and label relationship. Defaults to Vue's SSR-stable useId(). */
+  id?: string
   label?: string
   name?: string
   /** A second, muted line under the label, before the control - for context the user should read before reaching it (e.g. "We'll use this to send your receipt"). Distinct from `hint`, which sits below the control instead. */
@@ -29,16 +31,17 @@ export interface FormFieldProps {
   ui?: UiProp<FormFieldThemeSlots>
 }
 
-const id = useId()
+const id = props.id ?? useId()
 
 const invalid = computed(() => !!props.error)
 const errorMessage = computed(() => typeof props.error === 'string' ? props.error : undefined)
 const describedBy = computed(() => {
-  if (invalid.value && errorMessage.value)
-    return `${id}-error`
-  if (props.hint)
-    return `${id}-hint`
-  return undefined
+  const ids = [
+    props.description ? `${id}-description` : undefined,
+    props.hint ? `${id}-hint` : undefined,
+    invalid.value && errorMessage.value ? `${id}-error` : undefined,
+  ].filter(Boolean)
+  return ids.length ? ids.join(' ') : undefined
 })
 
 provideFormField({
@@ -70,7 +73,7 @@ const errorProps = computed(() => resolveSlot(ui.value.error, props.ui?.error))
         <label v-if="label" :for="id" v-bind="labelProps">
           {{ label }}<span v-if="required" v-bind="requiredProps">*</span>
         </label>
-        <p v-if="description" v-bind="descriptionProps">
+        <p v-if="description" :id="`${id}-description`" v-bind="descriptionProps">
           <slot name="description">
             {{ description }}
           </slot>
@@ -83,7 +86,7 @@ const errorProps = computed(() => resolveSlot(ui.value.error, props.ui?.error))
     <p v-if="invalid && errorMessage" :id="`${id}-error`" role="alert" v-bind="errorProps">
       {{ errorMessage }}
     </p>
-    <p v-else-if="hint" :id="`${id}-hint`" v-bind="hintProps">
+    <p v-if="hint" :id="`${id}-hint`" v-bind="hintProps">
       {{ hint }}
     </p>
   </div>

@@ -76,13 +76,23 @@ describe('formField', () => {
     expect(descriptionIndex).toBeLessThan(inputIndex)
   })
 
-  it('does not wire description into aria-describedby - only hint/error do', async () => {
+  it('includes description and hint in aria-describedby in document order', async () => {
     const wrapper = await mountSuspended(FormField, {
       props: { description: 'Extra context', hint: 'Optional' },
       slots: { default: () => h(Input) },
     })
-    const hint = wrapper.findAll('p').at(-1)!
-    expect(wrapper.find('input').attributes('aria-describedby')).toBe(hint.attributes('id'))
+    const paragraphs = wrapper.findAll('p')
+    expect(paragraphs).toHaveLength(2)
+    expect(wrapper.find('input').attributes('aria-describedby')).toBe(paragraphs.map(p => p.attributes('id')).join(' '))
+  })
+
+  it('accepts a caller-supplied id for the label and descendant control', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { id: 'account-email', label: 'Email' },
+      slots: { default: () => h(Input) },
+    })
+    expect(wrapper.find('label').attributes('for')).toBe('account-email')
+    expect(wrapper.find('input').attributes('id')).toBe('account-email')
   })
 
   it('updates a descendant\'s invalid/describedby reactively when error changes', async () => {
