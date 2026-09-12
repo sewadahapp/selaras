@@ -67,3 +67,12 @@ test('propagates RTL through the Nuxt App contract', async ({ page, goto }) => {
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
   await expect(page.locator('#rtl-probe')).toHaveCSS('direction', 'rtl')
 })
+
+test('preserves a visible focus outline in forced-colors mode', async ({ page, goto }) => {
+  await page.emulateMedia({ forcedColors: 'active' })
+  await goto('/', { waitUntil: 'hydration' })
+
+  await expect.poll(async () => page.evaluate(() => window.matchMedia('(forced-colors: active)').matches)).toBe(true)
+  await page.locator('#enterprise-button').focus()
+  await expect.poll(async () => page.locator('#enterprise-button').evaluate(element => getComputedStyle(element).outlineStyle)).not.toBe('none')
+})
