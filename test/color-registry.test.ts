@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assertColorRoleName, createColorRegistry, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
+import { assertColorRoleName, createColorRegistry, generateColorRoleCss, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
 
 describe('color registry', () => {
   it('normalizes omitted interaction states from the nearest authored state', () => {
@@ -78,5 +78,29 @@ describe('color registry', () => {
     })
     expect(registry.premium.light.fill).toBe('light-fill')
     expect(registry.premium.dark.focus).toBe('dark-text')
+  })
+
+  it('generates deterministic light/dark private bindings for registered roles', () => {
+    const registry = createColorRegistry({
+      premium: {
+        light: { fill: 'light-fill', onFill: 'light-on', subtle: 'light-subtle', onSubtle: 'light-on-subtle', text: 'light-text', border: 'light-border' },
+        dark: { fill: 'dark-fill', onFill: 'dark-on', subtle: 'dark-subtle', onSubtle: 'dark-on-subtle', text: 'dark-text', border: 'dark-border' },
+      },
+    })
+    const css = generateColorRoleCss(registry)
+    expect(css).toContain('[data-selaras-color="premium"]')
+    expect(css).toContain('--_selaras-color-fill: light-fill;')
+    expect(css).toContain('.dark [data-selaras-color="premium"]')
+    expect(css).toContain('--_selaras-color-fill: dark-fill;')
+    expect(css.endsWith('\n')).toBe(true)
+  })
+
+  it('sorts role output and rejects unsafe generated selectors', () => {
+    const make = (fill: string) => ({ light: { fill, onFill: 'on', subtle: 'subtle', onSubtle: 'on-subtle', text: 'text', border: 'border' }, dark: { fill, onFill: 'on', subtle: 'subtle', onSubtle: 'on-subtle', text: 'text', border: 'border' } })
+    const css = generateColorRoleCss(createColorRegistry({ zebra: make('z'), alpha: make('a') }))
+    expect(css.indexOf('alpha')).toBeLessThan(css.indexOf('zebra'))
+    const invalid = make('x')
+    const normalizedInvalid = { light: normalizeColorRecipe(invalid.light), dark: normalizeColorRecipe(invalid.dark) }
+    expect(() => generateColorRoleCss({ 'bad role': normalizedInvalid })).toThrow()
   })
 })

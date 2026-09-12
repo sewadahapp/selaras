@@ -96,3 +96,52 @@ export function customColorRoleStyle(role: string): Record<string, string> | und
     '--ui-primary-soft': `var(${source}-subtle)`,
   }
 }
+
+const generatedRoleFields = [
+  'fill',
+  'fill-hover',
+  'fill-pressed',
+  'on-fill',
+  'subtle',
+  'subtle-hover',
+  'subtle-pressed',
+  'on-subtle',
+  'text',
+  'text-hover',
+  'text-pressed',
+  'border',
+  'focus',
+] as const
+
+type GeneratedRoleField = typeof generatedRoleFields[number]
+
+function roleFieldValue(recipe: ColorRecipe, field: GeneratedRoleField): string {
+  const property = field.replace(/-([a-z])/g, (_, character: string) => character.toUpperCase()) as keyof ColorRecipe
+  return recipe[property]
+}
+
+function roleRule(selector: string, recipe: ColorRecipe): string {
+  const declarations = generatedRoleFields
+    .map(field => `  --_selaras-color-${field}: ${roleFieldValue(recipe, field)};`)
+    .join('\n')
+  return `${selector} {\n${declarations}\n}`
+}
+
+/**
+ * Serializes normalized role recipes into the private CSS bindings consumed by
+ * role-capable components. The output is deterministic so Nuxt template
+ * hashes and HMR invalidation do not change with object insertion order.
+ */
+export function generateColorRoleCss(registry: Record<string, ColorModePair<ColorRecipe>>): string {
+  const roles = Object.keys(registry).sort()
+  for (const role of roles)
+    assertColorRoleName(role)
+
+  const rules: string[] = []
+  for (const role of roles) {
+    const modes = registry[role]!
+    rules.push(roleRule(`[data-selaras-color="${role}"]`, modes.light))
+    rules.push(roleRule(`.dark [data-selaras-color="${role}"]`, modes.dark))
+  }
+  return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
+}
