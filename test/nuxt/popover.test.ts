@@ -64,6 +64,30 @@ describe('popover', () => {
     expect(wrapper.emitted('update:open')).toBeUndefined()
   })
 
+  it('does not close a controlled popover when the parent rejects update:open', async () => {
+    wrapper = await mountSuspended(Popover, {
+      props: { open: true },
+      slots: { content: () => 'Body' },
+    })
+
+    const content = document.body.querySelector('[role=dialog]')!
+    content.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }))
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.emitted('update:open')?.[0]).toEqual([false])
+    expect(document.body.textContent).toContain('Body')
+  })
+
+  it('uses defaultOpen for an uncontrolled popover', async () => {
+    wrapper = await mountSuspended(Popover, {
+      props: { defaultOpen: true },
+      slots: { content: () => 'Body' },
+    })
+
+    await wrapper.vm.$nextTick()
+    expect(document.body.textContent).toContain('Body')
+  })
+
   it('non-modal (the default) + dismissible=false: focusing an outside element does not close it either', async () => {
     const container = document.createElement('div')
     document.body.appendChild(container)

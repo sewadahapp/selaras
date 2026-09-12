@@ -2,12 +2,14 @@
 import type { PopoverThemeSlots } from '../theme/popover'
 import type { UiProp } from '../utils/ui'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { popoverTheme } from '../theme/popover'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 
 export interface PopoverProps {
   open?: boolean
+  /** Initial visibility for an uncontrolled popover. Supplying `open` makes the parent authoritative. */
+  defaultOpen?: boolean
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'start' | 'center' | 'end'
   /** Forwarded to Reka UI's own PopoverRoot `modal` prop - `true` traps focus and blocks interaction with the rest of the page, like a lightweight modal dialog. */
@@ -38,6 +40,8 @@ export interface PopoverSlots {
 }
 
 const props = withDefaults(defineProps<PopoverProps>(), {
+  // Preserve omission so defaultOpen can initialize uncontrolled state.
+  open: undefined,
   side: 'bottom',
   align: 'center',
   modal: false,
@@ -97,13 +101,15 @@ const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 // real browser once a second instance of the same SFC exists on the
 // page - keeping `open` always a real boolean sidesteps that mode
 // entirely instead of relying on it.
-const internalOpen = ref(props.open ?? false)
+const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
+const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
 watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
+  if (isControlled)
+    internalOpen.value = value ?? false
 })
 function onUpdateOpen(value: boolean) {
-  internalOpen.value = value
+  if (!isControlled)
+    internalOpen.value = value
   emit('update:open', value)
 }
 </script>
