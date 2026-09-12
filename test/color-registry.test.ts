@@ -47,6 +47,19 @@ describe('color registry', () => {
     expect(recipe.focus).toBe('focus')
   })
 
+  it.each(['fill', 'onFill', 'subtle', 'onSubtle', 'text', 'border'] as const)('reports a missing required recipe field: %s', (field) => {
+    const recipe = {
+      fill: 'fill',
+      onFill: 'on-fill',
+      subtle: 'subtle',
+      onSubtle: 'on-subtle',
+      text: 'text',
+      border: 'border',
+    }
+    delete recipe[field]
+    expect(() => normalizeColorRecipe(recipe as never)).toThrow(`"${field}" must be a non-empty string`)
+  })
+
   it.each(['brand-accent', 'premium2', 'x'])('accepts role name %s', (name) => {
     expect(() => assertColorRoleName(name)).not.toThrow()
   })

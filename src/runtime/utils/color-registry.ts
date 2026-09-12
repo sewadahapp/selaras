@@ -48,6 +48,7 @@ export interface ColorModePair<T> {
 
 const roleNamePattern = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/
 const reservedRoleNames = new Set(['__proto__', 'constructor', 'prototype'])
+const requiredRecipeFields = ['fill', 'onFill', 'subtle', 'onSubtle', 'text', 'border'] as const
 
 export function assertColorRoleName(name: string): asserts name is string {
   if (!roleNamePattern.test(name) || reservedRoleNames.has(name))
@@ -55,6 +56,10 @@ export function assertColorRoleName(name: string): asserts name is string {
 }
 
 export function normalizeColorRecipe(input: ColorRecipeInput): ColorRecipe {
+  for (const field of requiredRecipeFields) {
+    if (typeof input?.[field] !== 'string' || input[field].length === 0)
+      throw new Error(`Invalid Selaras color recipe: "${field}" must be a non-empty string.`)
+  }
   return {
     fill: input.fill,
     fillHover: input.fillHover ?? input.fill,
