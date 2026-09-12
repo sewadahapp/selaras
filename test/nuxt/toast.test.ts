@@ -31,6 +31,17 @@ afterEach(() => {
 })
 
 describe('toast', () => {
+  it('binds a custom semantic role to a queued toast root', async () => {
+    const { add } = useToast()
+    add({ title: 'Custom', color: 'premium' as any })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const root = document.body.querySelector('[data-selaras-color="premium"]')
+    expect(root).toBeTruthy()
+    expect(root?.getAttribute('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('renders an added toast\'s title and description', async () => {
     const { add } = useToast()
     add({ title: 'Saved', description: 'Your changes were saved.' })
