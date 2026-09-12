@@ -46,3 +46,10 @@ test('preserves keyboard focus ownership for an uncontrolled popover', async ({ 
   await expect(content).toBeHidden()
   await expect.poll(async () => page.evaluate(() => document.activeElement?.id)).toBe('keyboard-popover-trigger')
 })
+
+test('isolates nested explicit theme scopes in a real browser', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+
+  await expect.poll(async () => page.locator('#nested-outer-button').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(40, 41, 42)')
+  await expect.poll(async () => page.locator('#nested-inner-button').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(50, 51, 52)')
+})

@@ -41,6 +41,22 @@
         </button>
       </template>
     </SPopover>
+    <STheme
+      as="section"
+      :tokens="{ light: { enterprise: { fill: 'rgb(40 41 42)', onFill: 'white', subtle: 'rgb(43 44 45)', onSubtle: 'white', text: 'rgb(40 41 42)', border: 'rgb(40 41 42)' } } }"
+    >
+      <SButton id="nested-outer-button" color="enterprise">
+        Outer scope
+      </SButton>
+      <STheme
+        as="div"
+        :tokens="{ light: { enterprise: { fill: 'rgb(50 51 52)', onFill: 'white', subtle: 'rgb(53 54 55)', onSubtle: 'white', text: 'rgb(50 51 52)', border: 'rgb(50 51 52)' } } }"
+      >
+        <SButton id="nested-inner-button" color="enterprise">
+          Inner scope
+        </SButton>
+      </STheme>
+    </STheme>
     <SButton id="override-button" :ui="{ base: 'tw:bg-purple-700' }">
       Overridden
     </SButton>
