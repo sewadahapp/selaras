@@ -1,4 +1,6 @@
 import { spawnSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
@@ -23,6 +25,24 @@ function run(label, script, args) {
 }
 
 console.log(`[compat] Node ${process.version}`)
+
+if (process.env.SELARAS_TAILWIND_VERSION) {
+  for (const packageName of ['tailwindcss', '@tailwindcss/vite', '@tailwindcss/oxide']) {
+    const manifest = JSON.parse(readFileSync(join(rootDir, 'node_modules', packageName, 'package.json'), 'utf8'))
+    if (manifest.version !== process.env.SELARAS_TAILWIND_VERSION) {
+      console.error(`[compat] Expected ${packageName}@${process.env.SELARAS_TAILWIND_VERSION}, resolved ${manifest.version}`)
+      process.exit(1)
+    }
+  }
+
+  console.log(`[compat] Tailwind packages ${process.env.SELARAS_TAILWIND_VERSION}`)
+}
+
+run(
+  'prepare the clean module build context',
+  'node_modules/@nuxt/module-builder/dist/cli.mjs',
+  ['prepare'],
+)
 
 run(
   'build the published module artifact',
