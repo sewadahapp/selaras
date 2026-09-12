@@ -108,6 +108,7 @@ export type * from '../components/Tooltip.vue'
 // own composables) - exported so a consumer can type their own partial
 // override object (e.g. a shared `const messages: Partial<MessageRegistry> = {...}`)
 // instead of relying on inference alone.
+export type { BuiltinColorName, ColorRecipe, ColorRecipeInput, ColorRole, RuntimeColorOverrides, RuntimeTokenOverrides } from '../utils/color-registry'
 export type { IconRegistry } from '../utils/icons'
 export { defaultIcons } from '../utils/icons'
 export type { MessageRegistry } from '../utils/messages'
