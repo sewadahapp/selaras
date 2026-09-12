@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     classPrefix: 'tw',
     theme: {
       colors: {
-        enterprise: {
+        'enterprise': {
           light: {
             fill: '#5134a8',
             onFill: '#ffffff',
@@ -24,6 +24,24 @@ export default defineNuxtConfig({
             onSubtle: '#ede9fe',
             text: '#c4b5fd',
             border: '#a78bfa',
+          },
+        },
+        'brand-vars': {
+          light: {
+            fill: 'var(--company-brand-fill)',
+            onFill: 'var(--company-brand-on-fill)',
+            subtle: 'var(--company-brand-subtle)',
+            onSubtle: 'var(--company-brand-on-subtle)',
+            text: 'var(--company-brand-text)',
+            border: 'var(--company-brand-border)',
+          },
+          dark: {
+            fill: 'var(--company-brand-dark-fill)',
+            onFill: 'var(--company-brand-dark-on-fill)',
+            subtle: 'var(--company-brand-dark-subtle)',
+            onSubtle: 'var(--company-brand-dark-on-subtle)',
+            text: 'var(--company-brand-dark-text)',
+            border: 'var(--company-brand-dark-border)',
           },
         },
       },
