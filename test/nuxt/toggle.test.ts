@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest'
 import Toggle from '../../src/runtime/components/Toggle.vue'
 
 describe('toggle', () => {
+  it('binds a custom semantic role to the existing recipe bridge', async () => {
+    const wrapper = await mountSuspended(Toggle, { props: { color: 'premium' }, slots: { default: () => 'Bold' } })
+    expect(wrapper.find('button').attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('button').attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('starts unpressed by default', async () => {
     const wrapper = await mountSuspended(Toggle, { slots: { default: () => 'Bold' } })
 

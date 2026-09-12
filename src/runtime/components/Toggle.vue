@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { ToggleThemeSlots } from '../theme/toggle'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { Toggle } from 'reka-ui'
 import { computed, useSlots } from 'vue'
 import { toggleTheme } from '../theme/toggle'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -32,7 +35,7 @@ export interface ToggleProps {
   defaultValue?: boolean
   disabled?: boolean
   icon?: string
-  color?: ToggleVariants['color']
+  color?: ColorRole
   size?: ToggleVariants['size']
   /** Forces (or blocks) the equal-width/height icon-only shape - same convention as Button's own `square`. */
   square?: boolean
@@ -51,8 +54,11 @@ const slots = useSlots()
 const iconOnly = computed(() => !slots.default)
 
 const theme = useComponentTheme('toggle', toggleTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ToggleVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
-  color: props.color,
+  color: recipeColor.value,
   size: props.size,
   square: props.square ?? iconOnly.value,
 }))
@@ -65,6 +71,8 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
     :model-value="modelValue"
     :default-value="defaultValue"
     :disabled="disabled"
+    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
+    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as boolean)"
   >
