@@ -51,6 +51,12 @@ run(
 )
 
 run(
+  'type-check the published public surface',
+  'node_modules/vue-tsc/bin/vue-tsc.js',
+  ['--project', 'test/tsconfig.packed.json'],
+)
+
+run(
   'exercise basic and prefixed packed consumers',
   'node_modules/vitest/vitest.mjs',
   ['run', 'test/basic.test.ts', 'test/prefix.test.ts'],

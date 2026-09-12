@@ -1,9 +1,10 @@
-<script setup lang="ts">
-import type { TableThemeSlots } from '../theme/table'
-import type { UiProp } from '../utils/ui'
+<script setup lang="ts" generic="TData extends RowData = RowData">
+import type { RowData } from '@tanstack/vue-table'
+import type { TableColumnDef } from '../composables/use-table'
+import type { TableEmits, TableProps, TableSlots } from '../utils/table-contracts'
 import { FlexRender } from '@tanstack/vue-table'
 import { useVirtualizer } from '@tanstack/vue-virtual'
-import { computed, getCurrentInstance, h, nextTick, onMounted, onUnmounted, ref, useSlots, watch, watchEffect } from 'vue'
+import { computed, getCurrentInstance, h, nextTick, onMounted, onUnmounted, ref, watch, watchEffect } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { useTable } from '../composables/use-table'
@@ -19,56 +20,12 @@ import Pagination from './Pagination.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = withDefaults(defineProps<TableProps>(), {
+const props = withDefaults(defineProps<TableProps<TData>>(), {
   size: 'md',
 })
 
-const emit = defineEmits<TableEmits>()
-
-export interface TableProps {
-  data: unknown[]
-  columns?: any[]
-  selectable?: boolean
-  pageSize?: number
-  loading?: boolean
-  sorting?: any[]
-  defaultSorting?: any[]
-  rowSelection?: Record<string, boolean>
-  globalFilter?: string
-  pageIndex?: number
-  size?: 'sm' | 'md' | 'lg'
-  gridlines?: boolean
-  striped?: boolean
-  expandable?: boolean
-  expanded?: any
-  columnVisibility?: Record<string, boolean>
-  columnToggle?: boolean
-  /** Enables vertical scroll with a sticky header, capped at this CSS height (e.g. '24rem'). */
-  scrollHeight?: string
-  virtualize?: boolean | { estimateSize?: number, overscan?: number }
-  /** Opts out of the local sorted/filtered/paginated row models - set when `data` is already sorted/filtered/paginated server-side, so this table doesn't redundantly (and incorrectly) reprocess an already-server-processed slice. `sorting`/`globalFilter`/`pageIndex` still drive the UI and still emit their `update:*` events the same way - only the *local row model* is skipped, not the state itself. `manualPagination` also suppresses the built-in Pagination UI entirely (there's no way to know the real page count from a server-paginated slice) - bring your own `SPagination`, bound to your own server metadata, the same way this table already expects you to bring your own search input for `globalFilter`. */
-  manualSorting?: boolean
-  manualFiltering?: boolean
-  manualPagination?: boolean
-  /** Adds a class to a body row based on its own data - e.g. highlighting a flagged row. Called per row, not per render, so keep it cheap. */
-  rowClass?: (row: unknown) => string | undefined
-  /** Same as `rowClass`, for inline styles. */
-  rowStyle?: (row: unknown) => Record<string, string> | undefined
-  ui?: UiProp<TableThemeSlots>
-}
-
-export interface TableEmits {
-  'update:sorting': [value: any[]]
-  'update:rowSelection': [value: Record<string, boolean>]
-  'update:globalFilter': [value: string]
-  'update:pageIndex': [value: number]
-  'update:expanded': [value: any]
-  'update:columnVisibility': [value: Record<string, boolean>]
-  'rowClick': [row: unknown, event: MouseEvent]
-  'rowContextmenu': [row: unknown, event: MouseEvent]
-}
-
-const slots = useSlots()
+const emit = defineEmits<TableEmits<TData>>()
+const slots = defineSlots<TableSlots<TData>>()
 
 const icons = useIcons()
 const messages = useMessages()
@@ -103,10 +60,10 @@ const expandColumn = {
   enableColumnFilter: false,
 }
 
-const columns = computed(() => {
-  const base = props.columns ?? convertChildrenToColumns(slots.default?.())
+const columns = computed<TableColumnDef<TData>[]>(() => {
+  const base = props.columns ?? convertChildrenToColumns(slots.default?.()) as TableColumnDef<TData>[]
   const withExpand = props.expandable ? [expandColumn, ...base] : base
-  return props.selectable ? [selectColumn, ...withExpand] : withExpand
+  return (props.selectable ? [selectColumn, ...withExpand] : withExpand) as TableColumnDef<TData>[]
 })
 
 const columnPinning = computed(() => collectColumnPinning(columns.value))
@@ -119,7 +76,7 @@ if (import.meta.dev) {
     if (!firstRow)
       return
     for (const column of columns.value) {
-      if (column.accessorKey && !(column.accessorKey in firstRow))
+      if ('accessorKey' in column && typeof column.accessorKey === 'string' && !(column.accessorKey in firstRow))
         console.warn(`[SColumn] field "${column.accessorKey}" was not found on the first row of data.`)
     }
   })
@@ -145,7 +102,7 @@ const instance = getCurrentInstance()
 function isRowClickable() {
   return !!(instance?.vnode.props as Record<string, unknown> | null)?.onRowClick
 }
-function bodyRowProps(rowOriginal: unknown) {
+function bodyRowProps(rowOriginal: TData) {
   const extraClass = [
     isRowClickable() ? 'cursor-pointer' : undefined,
     props.rowClass?.(rowOriginal),
@@ -154,10 +111,10 @@ function bodyRowProps(rowOriginal: unknown) {
   const rowStyle = props.rowStyle?.(rowOriginal)
   return rowStyle ? { ...base, style: { ...(base as { style?: Record<string, string> }).style, ...rowStyle } } : base
 }
-function onRowClick(rowOriginal: unknown, event: MouseEvent) {
+function onRowClick(rowOriginal: TData, event: MouseEvent) {
   emit('rowClick', rowOriginal, event)
 }
-function onRowContextmenu(rowOriginal: unknown, event: MouseEvent) {
+function onRowContextmenu(rowOriginal: TData, event: MouseEvent) {
   emit('rowContextmenu', rowOriginal, event)
 }
 

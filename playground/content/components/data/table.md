@@ -23,6 +23,7 @@ const users = ref<User[]>([
 
 const rowSelection = ref({})
 const globalFilter = ref('')
+const getUserId = (user: User) => user.email
 </script>
 
 <template>
@@ -31,6 +32,7 @@ const globalFilter = ref('')
     v-model:row-selection="rowSelection"
     v-model:global-filter="globalFilter"
     :data="users"
+    :get-row-id="getUserId"
     selectable
     :page-size="3"
   >
@@ -50,6 +52,22 @@ ascending) - both come from TanStack Table's own defaults, not something
 `STable` implements itself. `filterable` adds a per-column text filter
 input to that column's header. `selectable` adds a leading checkbox column
 wired to `v-model:row-selection`.
+
+Selection and expansion use TanStack's positional row ids by default. For
+data that can be sorted, filtered, refreshed, or paginated by a server, provide
+`get-row-id` so controlled state follows the record rather than its current
+array position:
+
+```vue-html
+<STable
+  v-model:row-selection="rowSelection"
+  :data="users"
+  :get-row-id="getUserId"
+  selectable
+>
+  <SColumn field="name" header="Name" />
+</STable>
+```
 
 `STable` doesn't render a global search input itself - wire one up yourself
 and bind it to `v-model:global-filter`, same compositional approach as the
@@ -386,19 +404,34 @@ watch([sorting, pageIndex], async () => {
 ### Escape hatch: raw column defs
 
 For full TanStack type inference (or features `<SColumn>` doesn't expose),
-pass a `columns` prop instead of `<SColumn>` children - a plain
-`ColumnDef[]` array, same shape TanStack itself accepts. The prop itself is
-typed as plain `any[]` (see [Known limitation](#known-limitation) below), so
-the inference comes from annotating your own `columns` variable as
-`ColumnDef<YourRowType>[]`, not from the prop's own signature enforcing it:
+pass a `columns` prop instead of `<SColumn>` children. `STable` infers its row
+type from `data`, and `TableColumnDef<TData>` checks accessor keys and render
+contexts against that same type. `createTableColumnHelper<TData>()` is
+auto-imported by the Nuxt module and binds TanStack v9's feature generic to the
+fixed feature set used by `STable`:
 
-```vue-html
-<STable :data="users" :columns="columns" />
+```vue
+<script setup lang="ts">
+interface User { id: string, name: string, age: number }
+
+const column = createTableColumnHelper<User>()
+const columns = column.columns([
+  column.accessor('name', { header: 'Name' }),
+  column.accessor('age', {
+    header: 'Age',
+    cell: context => context.getValue().toFixed(0),
+  }),
+])
+</script>
+
+<template>
+  <STable :data="users" :columns="columns" />
+</template>
 ```
 
 ## Known limitation
 
-`<SColumn>`'s `field` prop is typed as plain `string`, not `keyof TData` -
+`<SColumn>`'s `field` prop remains a plain `string`, rather than `keyof TData` -
 this is a genuine Vue limitation (a parent's generic type parameter doesn't
 propagate into child components referenced in its template), not something
 unique to `STable` - any declarative-column-as-children table API in Vue has
@@ -407,16 +440,9 @@ production) if a column's `field` doesn't exist as a key on the first row of
 `data` - catching typos without any type-system gymnastics. For actual
 compile-time safety, use the `columns` escape hatch above instead.
 
-The `columns` prop has the same kind of gap: it's typed as plain `any[]`
-rather than `ColumnDef[]`, since a generic `ColumnDef<TData>[]` can't be
-expressed without `STable` itself becoming generic. `ColumnDef[]` remains
-the practical, intended shape - TanStack infers correctly off your own
-`columns` variable when you type that one as `ColumnDef<YourRowType>[]` -
-but nothing enforces it at the prop's own type level.
-
-The same limitation applies to the `expanded` slot's `row` prop - it's typed
-generically, so accessing a field specific to your data shape needs a local
-cast, e.g. `(row as Order).items`.
+The table component itself is generic. Its `columns`, `getRowId`, `rowClass`,
+`rowStyle`, row events, and `expanded` slot all share the row type inferred
+from `data`.
 
 ### Accessibility
 
@@ -446,44 +472,45 @@ slot - here's `Table`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `data` | `unknown[]` | - |
-| `columns` | `any[]` | - (see [Known limitation](#known-limitation) below) |
+| `data` | `TData[]` | - |
+| `columns` | `TableColumnDef<TData>[]` | - |
 | `selectable` | `boolean` | `false` |
 | `pageSize` | `number` | - (no pagination until set) |
 | `loading` | `boolean` | `false` |
 | `sorting` | `SortingState` | - |
 | `defaultSorting` | `SortingState` | - |
-| `rowSelection` | `Record<string, boolean>` | - |
+| `rowSelection` | `TableRowSelectionState` | - |
 | `globalFilter` | `string` | - |
 | `pageIndex` | `number` | - |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `gridlines` | `boolean` | `false` |
 | `striped` | `boolean` | `false` |
 | `expandable` | `boolean` | `false` |
-| `expanded` | `ExpandedState` | - |
-| `columnVisibility` | `Record<string, boolean>` | - |
+| `expanded` | `TableExpandedState` | - |
+| `columnVisibility` | `TableColumnVisibilityState` | - |
 | `columnToggle` | `boolean` | `false` |
 | `scrollHeight` | `string` | - |
 | `virtualize` | `boolean \| { estimateSize?: number; overscan?: number }` | `false` |
 | `manualSorting` | `boolean` | `false` |
 | `manualFiltering` | `boolean` | `false` |
 | `manualPagination` | `boolean` | `false` |
-| `rowClass` | `(row: unknown) => string \| undefined` | - |
-| `rowStyle` | `(row: unknown) => Record<string, string> \| undefined` | - |
+| `getRowId` | `(row: TData, index: number) => string` | row index |
+| `rowClass` | `(row: TData) => string \| undefined` | - |
+| `rowStyle` | `(row: TData) => Record<string, string> \| undefined` | - |
 | `ui` | `Partial<Record<TableSlot, string \| object>>` | - |
 
 ## Emits
 
 | Event | Payload | Description |
 | --- | --- | --- |
-| `update:sorting` | `any[]` | Backs `v-model:sorting` - fired whenever the sort state changes (see [Presort](#presort)) |
-| `update:rowSelection` | `Record<string, boolean>` | Backs `v-model:row-selection` - fired whenever the selected rows change |
+| `update:sorting` | `TableSortingState` | Backs `v-model:sorting` - fired whenever the sort state changes (see [Presort](#presort)) |
+| `update:rowSelection` | `TableRowSelectionState` | Backs `v-model:row-selection` - fired whenever the selected rows change |
 | `update:globalFilter` | `string` | Backs `v-model:global-filter` - fired whenever the global filter value changes |
 | `update:pageIndex` | `number` | Backs `v-model:page-index` - fired whenever the current page changes (see [Pagination](#pagination)) |
-| `update:expanded` | `any` | Backs `v-model:expanded` - fired whenever row expansion state changes (see [Row expansion](#row-expansion)) |
-| `update:columnVisibility` | `Record<string, boolean>` | Backs `v-model:column-visibility` - fired whenever column visibility changes (see [Column visibility toggle](#column-visibility-toggle)) |
-| `rowClick` | `(row, event: MouseEvent)` | Fired when a body row is clicked |
-| `rowContextmenu` | `(row, event: MouseEvent)` | Fired when a body row is right-clicked |
+| `update:expanded` | `TableExpandedState` | Backs `v-model:expanded` - fired whenever row expansion state changes (see [Row expansion](#row-expansion)) |
+| `update:columnVisibility` | `TableColumnVisibilityState` | Backs `v-model:column-visibility` - fired whenever column visibility changes (see [Column visibility toggle](#column-visibility-toggle)) |
+| `rowClick` | `(row: TData, event: MouseEvent)` | Fired when a body row is clicked |
+| `rowContextmenu` | `(row: TData, event: MouseEvent)` | Fired when a body row is right-clicked |
 
 ### SColumn
 

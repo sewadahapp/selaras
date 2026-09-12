@@ -36,6 +36,10 @@
       "types": "./dist/runtime/types/index.d.ts",
       "import": "./dist/runtime/types/index.js"
     },
+    "./table": {
+      "types": "./dist/runtime/table.d.ts",
+      "import": "./dist/runtime/table.js"
+    },
     "./components/*": "./dist/runtime/components/*",
     "./theme.css": "./dist/runtime/theme.css",
     "./prose.css": "./dist/runtime/prose.css"
@@ -52,6 +56,9 @@
       ],
       "types": [
         "./dist/runtime/types/index.d.ts"
+      ],
+      "table": [
+        "./dist/runtime/table.d.ts"
       ],
       "components/*": [
         "./dist/runtime/components/*"

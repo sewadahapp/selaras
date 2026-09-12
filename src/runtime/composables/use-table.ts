@@ -1,3 +1,11 @@
+import type {
+  ColumnDef,
+  ColumnVisibilityState,
+  ExpandedState,
+  RowData,
+  RowSelectionState,
+  SortingState,
+} from '@tanstack/vue-table'
 import type { ComputedRef } from 'vue'
 import {
   columnFilteringFeature,
@@ -26,7 +34,7 @@ import { computed, ref } from 'vue'
  * a-la-carte feature menu. columnPinning/columnVisibility need no row model
  * of their own (they don't change which rows exist, only column layout).
  */
-const { useAppTable } = createTableHook({
+const tableHook = createTableHook({
   features: {
     rowSortingFeature,
     rowSelectionFeature,
@@ -45,30 +53,43 @@ const { useAppTable } = createTableHook({
   },
 })
 
-interface UseTableProps {
-  data: unknown[]
+const { useAppTable } = tableHook
+
+export type TableColumnDef<TData extends RowData = RowData> = ColumnDef<typeof tableHook.appFeatures, TData, any>
+export type TableSortingState = SortingState
+export type TableRowSelectionState = RowSelectionState
+export type TableExpandedState = ExpandedState
+export type TableColumnVisibilityState = ColumnVisibilityState
+export type TableGetRowId<TData extends RowData = RowData> = (row: TData, index: number) => string
+
+/** Creates TanStack v9 column definitions bound to STable's fixed feature set. */
+export const createTableColumnHelper = tableHook.createAppColumnHelper
+
+interface UseTableProps<TData extends RowData> {
+  data: TData[]
   selectable?: boolean
   pageSize?: number
   virtualize?: unknown
-  sorting?: any[]
-  defaultSorting?: any[]
-  rowSelection?: Record<string, boolean>
+  sorting?: TableSortingState
+  defaultSorting?: TableSortingState
+  rowSelection?: TableRowSelectionState
   globalFilter?: string
   pageIndex?: number
-  expanded?: any
-  columnVisibility?: Record<string, boolean>
+  expanded?: TableExpandedState
+  columnVisibility?: TableColumnVisibilityState
+  getRowId?: TableGetRowId<TData>
   manualSorting?: boolean
   manualFiltering?: boolean
   manualPagination?: boolean
 }
 
 interface UseTableEmit {
-  (event: 'update:sorting', value: any[]): void
-  (event: 'update:rowSelection', value: Record<string, boolean>): void
+  (event: 'update:sorting', value: TableSortingState): void
+  (event: 'update:rowSelection', value: TableRowSelectionState): void
   (event: 'update:globalFilter', value: string): void
   (event: 'update:pageIndex', value: number): void
-  (event: 'update:expanded', value: any): void
-  (event: 'update:columnVisibility', value: Record<string, boolean>): void
+  (event: 'update:expanded', value: TableExpandedState): void
+  (event: 'update:columnVisibility', value: TableColumnVisibilityState): void
 }
 
 /**
@@ -76,23 +97,23 @@ interface UseTableEmit {
  * selection/expand column, which need to render SCheckbox/an expand button
  * and so live in Table.vue instead) are passed in already built.
  */
-export function useTable(props: UseTableProps, emit: UseTableEmit, columns: ComputedRef<any[]>, columnPinning: ComputedRef<{ start: string[], end: string[] }>) {
+export function useTable<TData extends RowData>(props: UseTableProps<TData>, emit: UseTableEmit, columns: ComputedRef<TableColumnDef<TData>[]>, columnPinning: ComputedRef<{ start: string[], end: string[] }>) {
   // defaultSorting seeds the *uncontrolled* starting value once - unlike
   // `sorting`, this only matters the first time (a "presort"), not on every
   // render, matching Accordion/Tabs's own defaultValue-vs-modelValue split.
-  const internalSorting = ref<any[]>(props.defaultSorting ?? [])
+  const internalSorting = ref<TableSortingState>(props.defaultSorting ?? [])
   const sorting = computed({
     get: () => props.sorting ?? internalSorting.value,
-    set: (value: any[]) => {
+    set: (value: TableSortingState) => {
       internalSorting.value = value
       emit('update:sorting', value)
     },
   })
 
-  const internalRowSelection = ref<Record<string, boolean>>({})
+  const internalRowSelection = ref<TableRowSelectionState>({})
   const rowSelection = computed({
     get: () => props.rowSelection ?? internalRowSelection.value,
-    set: (value: Record<string, boolean>) => {
+    set: (value: TableRowSelectionState) => {
       internalRowSelection.value = value
       emit('update:rowSelection', value)
     },
@@ -122,28 +143,29 @@ export function useTable(props: UseTableProps, emit: UseTableEmit, columns: Comp
   // letting the paginated row model window it to a default page size).
   const effectivePageSize = computed(() => (props.virtualize || props.pageSize === undefined) ? Math.max(props.data.length, 1) : props.pageSize)
 
-  const internalExpanded = ref<any>({})
+  const internalExpanded = ref<TableExpandedState>({})
   const expanded = computed({
     get: () => props.expanded ?? internalExpanded.value,
-    set: (value: any) => {
+    set: (value: TableExpandedState) => {
       internalExpanded.value = value
       emit('update:expanded', value)
     },
   })
 
-  const internalColumnVisibility = ref<Record<string, boolean>>({})
+  const internalColumnVisibility = ref<TableColumnVisibilityState>({})
   const columnVisibility = computed({
     get: () => props.columnVisibility ?? internalColumnVisibility.value,
-    set: (value: Record<string, boolean>) => {
+    set: (value: TableColumnVisibilityState) => {
       internalColumnVisibility.value = value
       emit('update:columnVisibility', value)
     },
   })
 
-  const table = useAppTable({
+  const table = useAppTable<TData>({
     data: computed(() => props.data),
     columns,
     enableRowSelection: computed(() => !!props.selectable),
+    getRowId: props.getRowId,
     // Row expansion otherwise only allows expanding rows that already have
     // real hierarchical subRows - this table's own expansion is manual
     // (detail content via the `expanded` slot), not a subRow tree.

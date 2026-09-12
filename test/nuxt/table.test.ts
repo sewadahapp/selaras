@@ -114,6 +114,22 @@ describe('table', () => {
     expect(Object.values(payload)).toEqual([true, true])
   })
 
+  it('uses getRowId for identity-backed selection state', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ id: 'user-a', name: 'Alice' }, { id: 'user-b', name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        selectable: true,
+        getRowId: (row: any) => row.id,
+      },
+    })
+
+    await wrapper.findAll('tbody [role="checkbox"]')[1]!.trigger('click')
+    await nextTick()
+
+    expect(wrapper.emitted('update:rowSelection')?.[0]?.[0]).toEqual({ 'user-b': true })
+  })
+
   it('paginates by pageSize and disables Previous/Next at the boundaries', async () => {
     const wrapper = await mountSuspended(Table, {
       props: {
