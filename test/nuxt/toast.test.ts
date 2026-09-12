@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { ToastProvider } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 import Toast from '../../src/runtime/components/Toast.vue'
 import { useToast } from '../../src/runtime/composables/use-toast'
 
@@ -11,6 +12,20 @@ import { useToast } from '../../src/runtime/composables/use-toast'
 // wrap it in a real ToastProvider the same way SApp does.
 const ToastHarness = defineComponent({
   render: () => h(ToastProvider, () => h(Toast)),
+})
+
+const ScopedToastTrigger = defineComponent({
+  setup() {
+    const { add } = useToast()
+    return () => h('button', { 'data-testid': 'scoped-toast-trigger', 'onClick': () => add({ title: 'Scoped', color: 'premium' as any }) }, 'Show')
+  },
+})
+
+const ScopedToastHarness = defineComponent({
+  render: () => h(ToastProvider, () => [
+    h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () => h(ScopedToastTrigger)),
+    h(Toast),
+  ]),
 })
 
 // useToast's state is a Nuxt useState singleton, keyed by a fixed string -
@@ -39,7 +54,17 @@ describe('toast', () => {
 
     const root = document.body.querySelector('[data-selaras-color="premium"]')
     expect(root).toBeTruthy()
-    expect(root?.getAttribute('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(root?.getAttribute('style')).toContain('--ui-info: var(--_selaras-color-fill)')
+  })
+
+  it('captures the nearest explicit theme scope when the composable is created', async () => {
+    wrapper = await mountSuspended(ScopedToastHarness)
+    await wrapper.find('[data-testid="scoped-toast-trigger"]').trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const scope = wrapper.find('[data-selaras-theme]').attributes('data-selaras-theme')
+    const root = document.body.querySelector('[data-selaras-color="premium"]')
+    expect(root?.getAttribute('data-selaras-theme')).toBe(scope)
   })
 
   it('renders an added toast\'s title and description', async () => {

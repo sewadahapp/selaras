@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assertColorRoleName, createColorRegistry, generateColorRoleCss, generateRuntimeColorOverrideCss, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
+import { assertColorRoleName, createColorRegistry, customStatusColorRoleStyle, generateColorRoleCss, generateRuntimeColorOverrideCss, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
 
 describe('color registry', () => {
   it('normalizes omitted interaction states from the nearest authored state', () => {
@@ -127,5 +127,20 @@ describe('color registry', () => {
     expect(css).toContain('--selaras-color-role-fill-hover: var(--brand-hover);')
     expect(css).toContain('.dark [data-selaras-color="premium"]')
     expect(() => generateRuntimeColorOverrideCss({ light: { premium: { fill: 'red; color: blue' } } })).toThrow()
+  })
+
+  it('supports a scoped color marker on the scope root itself or a descendant', () => {
+    const css = generateRuntimeColorOverrideCss({ light: { premium: { fill: '#5134a8' } } }, '[data-selaras-theme="scope"] ')
+    expect(css).toContain('[data-selaras-theme="scope"][data-selaras-color="premium"],')
+    expect(css).toContain('[data-selaras-theme="scope"] [data-selaras-color="premium"]')
+  })
+
+  it('maps custom roles onto status-only info recipe variables', () => {
+    expect(customStatusColorRoleStyle('premium')).toEqual({
+      '--ui-info': 'var(--_selaras-color-fill)',
+      '--ui-info-foreground': 'var(--_selaras-color-on-fill)',
+      '--ui-info-soft': 'var(--_selaras-color-subtle)',
+    })
+    expect(customStatusColorRoleStyle('info')).toBeUndefined()
   })
 })

@@ -111,6 +111,18 @@ export function customColorRoleStyle(role: string): Record<string, string> | und
   }
 }
 
+/** Maps a custom role onto the static info branch used by status-only recipes. */
+export function customStatusColorRoleStyle(role: string): Record<string, string> | undefined {
+  if (isBuiltinColorRole(role))
+    return undefined
+  assertColorRoleName(role)
+  return {
+    '--ui-info': 'var(--_selaras-color-fill)',
+    '--ui-info-foreground': 'var(--_selaras-color-on-fill)',
+    '--ui-info-soft': 'var(--_selaras-color-subtle)',
+  }
+}
+
 const generatedRoleFields = [
   'fill',
   'fill-hover',
@@ -159,7 +171,11 @@ export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides
       continue
     for (const role of Object.keys(colors).sort()) {
       assertColorRoleName(role)
-      const rule = overrideRule(`${mode === 'dark' ? '.dark ' : ''}${scopeSelector}[data-selaras-color="${role}"]`, colors[role as ColorRole] ?? {})
+      const colorSelector = `[data-selaras-color="${role}"]`
+      const scope = scopeSelector.trim()
+      const selectors = scope ? [`${scope}${colorSelector}`, `${scope} ${colorSelector}`] : [colorSelector]
+      const selector = selectors.map(value => `${mode === 'dark' ? '.dark ' : ''}${value}`).join(',\n')
+      const rule = overrideRule(selector, colors[role as ColorRole] ?? {})
       if (rule)
         rules.push(rule)
     }

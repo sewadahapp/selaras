@@ -56,6 +56,16 @@ test('transports scoped theme colors into the DatePicker portal', async ({ page,
   await expect.poll(async () => selectedDay.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(80, 81, 82)')
 })
 
+test('retains the caller theme scope on a queued Toast', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  await page.locator('#scoped-toast-trigger').evaluate((element: HTMLButtonElement) => element.click())
+
+  const toast = page.locator('[data-selaras-color="enterprise"]', { hasText: 'Scoped toast' })
+  await expect(toast).toBeVisible()
+  await expect.poll(async () => toast.getAttribute('data-selaras-theme')).not.toBe('')
+  await expect.poll(async () => toast.evaluate(element => getComputedStyle(element).borderInlineStartColor)).toBe('rgb(90, 91, 92)')
+})
+
 test('does not let a scoped light override win in dark mode', async ({ page, goto }) => {
   await goto('/', { waitUntil: 'hydration' })
   await page.locator('html').evaluate(element => element.classList.add('dark'))

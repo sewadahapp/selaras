@@ -7,7 +7,7 @@ import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { alertTheme } from '../theme/alert'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { customStatusColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -51,7 +51,7 @@ const messages = useMessages()
 
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'info', 'info'))
 const recipeColor = computed<AlertVariants['color']>(() => isBuiltinColorRole(effectiveColor.value) && ['success', 'danger', 'warning', 'info'].includes(effectiveColor.value) ? effectiveColor.value as AlertVariants['color'] : 'info')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const colorRoleStyle = computed(() => customStatusColorRoleStyle(effectiveColor.value))
 const iconName = computed(() => props.icon ?? (props.color ? icons.value[recipeColor.value ?? 'info'] : undefined))
 
 const theme = useComponentTheme('alert', alertTheme)

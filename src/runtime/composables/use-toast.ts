@@ -1,8 +1,9 @@
 import type { ColorRole } from '../utils/color-registry'
+import { hasInjectionContext } from 'vue'
 import { useState } from '#imports'
+import { useThemeScope } from '../utils/ui'
 
-export interface ToastItem {
-  id: number
+export interface ToastOptions {
   title?: string
   description?: string
   duration?: number
@@ -12,13 +13,20 @@ export interface ToastItem {
   icon?: string
 }
 
+export interface ToastItem extends ToastOptions {
+  id: number
+  /** Opaque STheme marker captured where useToast() was created. @internal */
+  _themeScope?: string
+}
+
 export function useToast() {
   const toasts = useState<ToastItem[]>('selaras-toasts', () => [])
   const counter = useState('selaras-toast-counter', () => 0)
+  const themeScope = hasInjectionContext() ? useThemeScope() : undefined
 
-  function add(toast: Omit<ToastItem, 'id'>) {
+  function add(toast: ToastOptions) {
     const id = counter.value++
-    toasts.value.push({ id, ...toast })
+    toasts.value.push({ ...toast, id, _themeScope: themeScope?.value })
     return id
   }
 

@@ -6,7 +6,7 @@ describe('alert', () => {
   it('binds a custom semantic role to the alert root', async () => {
     const wrapper = await mountSuspended(Alert, { props: { color: 'premium', title: 'Notice' } as any })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style')).toContain('--ui-info: var(--_selaras-color-fill)')
   })
 
   it('renders title and description from props', async () => {

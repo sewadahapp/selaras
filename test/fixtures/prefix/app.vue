@@ -48,6 +48,15 @@ const scopedDate = new CalendarDate(2024, 1, 15)
       <div id="rtl-probe">
         RTL probe
       </div>
+      <STheme
+        as="section"
+        :tokens="{ light: { enterprise: { fill: 'rgb(90 91 92)' } } }"
+      >
+        <ScopedToastTrigger />
+      </STheme>
+      <ClientOnly>
+        <SToast />
+      </ClientOnly>
     </SApp>
     <SPopover>
       <template #default>
