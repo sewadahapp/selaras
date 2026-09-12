@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 import Button from '../../src/runtime/components/Button.vue'
+import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 
@@ -43,6 +44,21 @@ describe('theme', () => {
     const scope = wrapper.find('[data-selaras-theme]')
     const content = document.querySelector('[data-testid="popover-content"]')
     expect(scope.exists()).toBe(true)
+    expect(content?.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme')).toBe(scope.attributes('data-selaras-theme'))
+    wrapper.unmount()
+  })
+
+  it('transports the theme marker onto context-menu content', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () =>
+        h(ContextMenu, { items: [[{ label: 'Inspect' }]] }, {
+          default: () => h('button', { 'data-testid': 'context-target' }, 'Open'),
+        })),
+    }))
+    await wrapper.find('[data-testid="context-target"]').trigger('contextmenu')
+    await new Promise(resolve => setTimeout(resolve, 50))
+    const scope = wrapper.find('[data-selaras-theme]')
+    const content = document.body.querySelector('[role="menu"]')
     expect(content?.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme')).toBe(scope.attributes('data-selaras-theme'))
     wrapper.unmount()
   })

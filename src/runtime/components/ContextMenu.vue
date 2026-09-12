@@ -4,7 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { ContextMenuContent, ContextMenuItem, ContextMenuPortal, ContextMenuRoot, ContextMenuSeparator, ContextMenuTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { contextMenuTheme } from '../theme/context-menu'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
 import Icon from './Icon.vue'
 
 export interface ContextMenuItemDef {
@@ -34,6 +34,7 @@ export interface ContextMenuSlots {
 }
 
 const theme = useComponentTheme('contextMenu', contextMenuTheme)
+const themeScope = useThemeScope()
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -56,7 +57,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
       <slot />
     </ContextMenuTrigger>
     <ContextMenuPortal>
-      <ContextMenuContent v-bind="contentProps">
+      <ContextMenuContent :data-selaras-theme="themeScope" v-bind="contentProps">
         <template v-for="(group, groupIndex) in items" :key="groupIndex">
           <ContextMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />
           <ContextMenuItem

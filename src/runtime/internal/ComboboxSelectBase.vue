@@ -30,7 +30,7 @@ import { useIcons } from '../composables/use-icons'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeScope } from '../utils/ui'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>
@@ -282,6 +282,7 @@ const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[eff
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
+const themeScope = useThemeScope()
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: props.color, invalid: selectInvalid.value }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -601,7 +602,7 @@ const bodyProps = computed(() => ({
     </ComboboxAnchor>
 
     <ComboboxPortal v-if="!showMobileModal">
-      <ComboboxContent position="popper" :side-offset="4" v-bind="contentProps">
+      <ComboboxContent position="popper" :side-offset="4" :data-selaras-theme="themeScope" v-bind="contentProps">
         <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
           <template #header>
             <slot name="header" />
@@ -670,7 +671,7 @@ const bodyProps = computed(() => ({
       @update:open="internalOpen = $event"
     >
       <template #content>
-        <ComboboxContent v-bind="mobileContentProps">
+        <ComboboxContent :data-selaras-theme="themeScope" v-bind="mobileContentProps">
           <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
             <template #header>
               <slot name="header" />
