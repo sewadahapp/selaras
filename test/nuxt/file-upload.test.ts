@@ -15,6 +15,12 @@ function setInputFiles(input: HTMLInputElement, files: File[]) {
 }
 
 describe('fileUpload', () => {
+  it('binds a custom semantic role to the upload root', async () => {
+    const wrapper = await mountSuspended(FileUpload, { props: { color: 'premium' as any } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('shows a dropped file in the list even with no v-model bound (uncontrolled)', async () => {
     // Unlike every Reka-primitive-based component, FileUpload has no
     // primitive underneath to fall back to its own internal state when

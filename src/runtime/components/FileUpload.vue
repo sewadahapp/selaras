@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { FileUploadThemeSlots } from '../theme/file-upload'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
@@ -8,7 +9,9 @@ import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { fileUploadTheme } from '../theme/file-upload'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { formatBytes } from '../utils/format-bytes'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
@@ -41,7 +44,7 @@ export interface FileUploadProps {
   disabled?: boolean
   invalid?: boolean
   size?: FileUploadVariants['size']
-  color?: FileUploadVariants['color']
+  color?: ColorRole
   name?: string
   required?: boolean
   ui?: UiProp<FileUploadThemeSlots>
@@ -206,9 +209,12 @@ function removeFile(index: number) {
 }
 
 const theme = useComponentTheme('fileUpload', fileUploadTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as FileUploadVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
-  color: props.color,
+  color: recipeColor.value,
   invalid: fileUploadInvalid.value,
 }))
 
@@ -231,7 +237,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
 </script>
 
 <template>
-  <div v-bind="rootProps">
+  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <button
       ref="dropzoneEl"
       type="button"
