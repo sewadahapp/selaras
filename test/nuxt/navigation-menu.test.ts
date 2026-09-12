@@ -18,6 +18,11 @@ describe('navigationMenu (horizontal)', () => {
     ] },
   ]
 
+  it('binds a custom semantic role to navigation links', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, color: 'premium' as any } })
+    expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
+  })
+
   it('renders a leaf item as a real link to its path', async () => {
     const wrapper = await mountSuspended(NavigationMenu, { props: { items }, route: '/docs' })
 

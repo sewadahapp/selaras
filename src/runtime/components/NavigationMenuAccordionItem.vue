@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
 import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed, useId, useSlots } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Accordion from './Accordion.vue'
 import Icon from './Icon.vue'
@@ -18,8 +19,6 @@ import Icon from './Icon.vue'
 // self-recursion resolution the way ContentNavigation.vue does; importing
 // itself directly works regardless, via plain SFC self-recursion.
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
-
-type ButtonVariants = VariantProps<typeof buttonTheme>
 
 // Reka's real NavigationMenuContent/Viewport is a shallow, single-level
 // flyout (see NavigationMenu.vue's own top-of-file note) - arbitrary-depth
@@ -37,7 +36,7 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // `nested`/depth prop would need to toggle here.
 export interface NavigationMenuAccordionItemProps {
   item: NavigationMenuItem
-  color?: ButtonVariants['color']
+  color?: ColorRole
   variant?: 'pill' | 'link'
   highlight?: boolean
   ui?: UiProp<NavigationMenuThemeSlots>
@@ -65,7 +64,10 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 }
 
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
-const ui = computed(() => theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight }))
 
 const accordionValue = useId()
 const accordionItems = computed(() => [{ value: accordionValue, label: props.item.label, disabled: props.item.disabled }])
@@ -94,7 +96,7 @@ function isActive(item: NavigationMenuItem) {
 // `theme.value(...)` there would try to read `.value` off the already-
 // unwrapped function itself.
 function linkProps(child: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
 }
 
 // Reka's real NavigationMenuLink has no `disabled` prop - a disabled leaf
@@ -111,7 +113,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
 </script>
 
 <template>
-  <Accordion :items="accordionItems" :default-value="[]" :ui="groupUi">
+  <Accordion :items="accordionItems" :default-value="[]" :ui="groupUi" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle">
     <template #label>
       <slot :name="slotName(item, '')" :item="item" :active="false">
         <slot :name="slotName(item, '-leading')" :item="item" :active="false">

@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
 import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import {
@@ -18,19 +17,19 @@ import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { navigationMenuTheme } from '../theme/navigation-menu'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
 import NavigationMenuFlyoutTrigger from './NavigationMenuFlyoutTrigger.vue'
 
-type ButtonVariants = VariantProps<typeof buttonTheme>
-
 export interface NavigationMenuProps {
   items: NavigationMenuItem[]
   /** Horizontal uses Reka's real shared-viewport flyout for a single level of dropdown children. Vertical falls back to a recursive accordion (see NavigationMenuAccordionItem.vue) for arbitrary depth - Reka's own NavigationMenuContent isn't built for deep nested trees. */
   orientation?: 'horizontal' | 'vertical'
-  color?: ButtonVariants['color']
+  color?: ColorRole
   variant?: 'pill' | 'link'
   /** Draws a bar/underline next to the active item, in addition to its own color styling. */
   highlight?: boolean
@@ -60,7 +59,10 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 }
 
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
-const ui = computed(() => theme.value({ orientation: props.orientation, color: props.color, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const ui = computed(() => theme.value({ orientation: props.orientation, color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed }))
 
 const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
@@ -72,11 +74,11 @@ function isActive(item: NavigationMenuItem) {
 // Recomputed per item, not a single shared `ui` - active/disabled vary
 // row-to-row (same reasoning as Dropdown.vue's own itemPropsFor).
 function linkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: props.orientation, color: props.color, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: props.orientation, color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
 
 function childLinkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: props.orientation, color: props.color, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
+  return resolveSlot(theme.value({ orientation: props.orientation, color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
 }
 
 // A collapsed rail's own flyout triggers (see NavigationMenuFlyoutTrigger.vue)
@@ -123,7 +125,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
 </script>
 
 <template>
-  <NavigationMenuRoot :orientation="orientation" v-bind="rootProps">
+  <NavigationMenuRoot :orientation="orientation" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <slot name="list-leading" />
     <NavigationMenuList v-bind="listProps">
       <template v-for="item in items" :key="item.label">

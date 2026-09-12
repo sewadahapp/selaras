@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
 import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
-
-type ButtonVariants = VariantProps<typeof buttonTheme>
 
 // A collapsed rail's own flyout (see NavigationMenu.vue) has nowhere
 // further to collapse to - a child inside it that itself has children (a
@@ -30,7 +29,7 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // same as it already is for the sidebar's expanded tree.
 export interface NavigationMenuFlyoutListProps {
   items: NavigationMenuItem[]
-  color?: ButtonVariants['color']
+  color?: ColorRole
   variant?: 'pill' | 'link'
   highlight?: boolean
   onSelect: (item: NavigationMenuItem, event: Event) => void
@@ -50,15 +49,18 @@ function isActive(item: NavigationMenuItem) {
 // Deliberately `collapsed: false` - same reasoning as NavigationMenu.vue's
 // own flyoutUi, this content has room to show real labels.
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
-const ui = computed(() => theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
 
 function linkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
 </script>
 
 <template>
-  <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
+  <ul :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="resolveSlot(ui.childList, props.ui?.childList)">
     <li v-for="item in items" :key="item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
       <NavigationMenuAccordionItem v-if="item.children?.length" :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui" />
       <component

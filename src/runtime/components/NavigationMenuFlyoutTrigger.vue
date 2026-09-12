@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
 import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed, ref, useSlots } from 'vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuFlyoutList from './NavigationMenuFlyoutList.vue'
 import Popover from './Popover.vue'
-
-type ButtonVariants = VariantProps<typeof buttonTheme>
 
 // A collapsed rail's own parent-with-children trigger (see NavigationMenu.vue's
 // own `collapsed` prop) - split out from that file for the same reason
@@ -61,7 +60,7 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // later the first's return-focus silently closed the second as well).
 export interface NavigationMenuFlyoutTriggerProps {
   item: NavigationMenuItem
-  color?: ButtonVariants['color']
+  color?: ColorRole
   variant?: 'pill' | 'link'
   highlight?: boolean
   open: boolean
@@ -90,7 +89,10 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 }
 
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
-const ui = computed(() => theme.value({ orientation: 'vertical', color: props.color, variant: props.variant, highlight: props.highlight, collapsed: true, active: false, disabled: props.item.disabled }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: true, active: false, disabled: props.item.disabled }))
 
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 
@@ -200,6 +202,8 @@ function onContentKeydown(event: KeyboardEvent) {
       ref="triggerRef"
       type="button"
       :disabled="item.disabled"
+      :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
+      :style="colorRoleStyle"
       v-bind="resolveSlot(ui.link, props.ui?.link)"
       @mouseenter="openNow"
       @mouseleave="scheduleClose"
