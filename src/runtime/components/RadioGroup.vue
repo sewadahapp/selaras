@@ -101,6 +101,7 @@ const labelGroupProps = computed(() => resolveSlot(ui.value.labelGroup, props.ui
     :orientation="orientation"
     :aria-invalid="radioGroupInvalid || undefined"
     :aria-describedby="describedBy"
+    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
     :style="colorRoleStyle"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as string)"

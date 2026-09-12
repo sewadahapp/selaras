@@ -90,7 +90,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>
-  <Primitive v-ripple="rippleEnabled" :as="as" :type="as === 'button' ? type : undefined" :disabled="disabled" :aria-busy="loading || undefined" :style="colorRoleStyle" v-bind="rootProps">
+  <Primitive v-ripple="rippleEnabled" :as="as" :type="as === 'button' ? type : undefined" :disabled="disabled" :aria-busy="loading || undefined" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <Icon v-if="loading" :name="icons.loading" :class="applyClassPrefix('animate-spin')" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <!--
       A named slot (not just the `icon` prop) so a consumer building a

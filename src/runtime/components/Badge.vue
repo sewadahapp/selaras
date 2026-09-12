@@ -57,8 +57,8 @@ const dotOnlyProps = useRootProps(() => ui.value.dot, () => props.ui?.dot)
 </script>
 
 <template>
-  <span v-if="dotOnly" :style="colorRoleStyle" v-bind="dotOnlyProps" />
-  <span v-else :style="colorRoleStyle" v-bind="rootProps">
+  <span v-if="dotOnly" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="dotOnlyProps" />
+  <span v-else :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <span v-if="dot" v-bind="resolveSlot(ui.dot, props.ui?.dot)" />
     <slot name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
       <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />

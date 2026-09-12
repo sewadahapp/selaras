@@ -122,7 +122,13 @@ function roleFieldValue(recipe: ColorRecipe, field: GeneratedRoleField): string 
 
 function roleRule(selector: string, recipe: ColorRecipe): string {
   const declarations = generatedRoleFields
-    .map(field => `  --_selaras-color-${field}: ${roleFieldValue(recipe, field)};`)
+    .flatMap((field) => {
+      const value = roleFieldValue(recipe, field)
+      return [
+        `  --selaras-color-role-${field}: ${value};`,
+        `  --_selaras-color-${field}: var(--selaras-color-role-${field});`,
+      ]
+    })
     .join('\n')
   return `${selector} {\n${declarations}\n}`
 }

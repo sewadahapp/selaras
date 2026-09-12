@@ -20,6 +20,7 @@ describe('button', () => {
 
   it('binds a custom semantic role to the existing recipe bridge', async () => {
     const wrapper = await mountSuspended(Button, { props: { color: 'premium' }, slots: { default: () => 'Upgrade' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
     expect(wrapper.attributes('style')).toContain('--ui-primary: var(--selaras-color-premium-fill)')
     expect(wrapper.classes()).toContain('bg-[var(--ui-primary)]')
   })

@@ -89,9 +89,10 @@ describe('color registry', () => {
     })
     const css = generateColorRoleCss(registry)
     expect(css).toContain('[data-selaras-color="premium"]')
-    expect(css).toContain('--_selaras-color-fill: light-fill;')
+    expect(css).toContain('--selaras-color-role-fill: light-fill;')
+    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-role-fill);')
     expect(css).toContain('.dark [data-selaras-color="premium"]')
-    expect(css).toContain('--_selaras-color-fill: dark-fill;')
+    expect(css).toContain('--selaras-color-role-fill: dark-fill;')
     expect(css.endsWith('\n')).toBe(true)
   })
 

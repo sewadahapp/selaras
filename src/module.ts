@@ -1,6 +1,8 @@
+import type { ColorModePair, ColorRecipeInput } from './runtime/utils/color-registry'
 import { addComponentsDir, addImports, addImportsDir, addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import { Scanner } from '@tailwindcss/oxide'
 import tailwindcss from '@tailwindcss/vite'
+import { createColorRegistry, generateColorRoleCss } from './runtime/utils/color-registry'
 
 export interface ModuleOptions {
   /**
@@ -17,6 +19,10 @@ export interface ModuleOptions {
    * installation docs before setting this.
    */
   classPrefix?: string
+  /** Build-time semantic color roles. Both light and dark recipes are required. */
+  theme?: {
+    colors?: Record<string, ColorModePair<ColorRecipeInput>>
+  }
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -166,6 +172,16 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'selaras-class-prefix.mjs',
       getContents: () => `export const classPrefix = ${JSON.stringify(options.classPrefix ?? null)}\n`,
     })
+
+    const colorRegistry = createColorRegistry(options.theme?.colors ?? {})
+    if (Object.keys(colorRegistry).length > 0) {
+      const colorsTemplate = addTemplate({
+        filename: 'selaras-color-roles.css',
+        getContents: () => generateColorRoleCss(colorRegistry),
+        write: true,
+      })
+      nuxt.options.css.push(colorsTemplate.dst)
+    }
 
     if (options.classPrefix) {
       // Tailwind v4 only generates CSS for a class it can find as literal
