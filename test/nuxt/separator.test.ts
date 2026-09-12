@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest'
 import Separator from '../../src/runtime/components/Separator.vue'
 
 describe('separator', () => {
+  it('binds a custom semantic role to the existing recipe bridge', async () => {
+    const wrapper = await mountSuspended(Separator, { props: { color: 'premium' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.find('span').classes()).toContain('border-[var(--ui-primary)]')
+  })
+
   it('defaults to role="separator" with no aria-orientation (horizontal)', async () => {
     const wrapper = await mountSuspended(Separator)
 
