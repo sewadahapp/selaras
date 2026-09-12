@@ -62,6 +62,33 @@
         </SButton>
       </STheme>
     </STheme>
+    <STheme
+      as="section"
+      :tokens="{ light: { enterprise: { fill: 'rgb(60 61 62)', onFill: 'white', subtle: 'rgb(63 64 65)', onSubtle: 'white', text: 'rgb(60 61 62)', border: 'rgb(60 61 62)' } } }"
+    >
+      <SPopover :open="true">
+        <template #default>
+          <button id="nested-overlay-trigger">Nested overlay</button>
+        </template>
+        <template #content>
+          <STheme
+            as="div"
+            :tokens="{ light: { enterprise: { fill: 'rgb(70 71 72)', onFill: 'white', subtle: 'rgb(73 74 75)', onSubtle: 'white', text: 'rgb(70 71 72)', border: 'rgb(70 71 72)' } } }"
+          >
+            <SPopover :open="true">
+              <template #default>
+                <button id="nested-inner-overlay-trigger">Inner nested overlay</button>
+              </template>
+              <template #content>
+                <SButton id="nested-inner-overlay-button" color="enterprise">
+                  Inner nested portal
+                </SButton>
+              </template>
+            </SPopover>
+          </STheme>
+        </template>
+      </SPopover>
+    </STheme>
     <SButton id="override-button" :ui="{ base: 'tw:bg-purple-700' }">
       Overridden
     </SButton>

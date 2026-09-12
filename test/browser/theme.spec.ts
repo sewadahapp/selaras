@@ -77,6 +77,15 @@ test('isolates nested explicit theme scopes in a real browser', async ({ page, g
   await expect.poll(async () => page.locator('#nested-inner-button').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(50, 51, 52)')
 })
 
+test('isolates nested scoped overlays across two portal layers', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+
+  const innerPortal = page.locator('#nested-inner-overlay-button')
+  await expect(innerPortal).toHaveAttribute('data-selaras-color', 'enterprise')
+  await expect.poll(async () => innerPortal.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme') ?? '')).not.toBe('')
+  await expect.poll(async () => innerPortal.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(70, 71, 72)')
+})
+
 test('honors reduced-motion media preferences in compiled consumer CSS', async ({ page, goto }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })
   await goto('/', { waitUntil: 'hydration' })
