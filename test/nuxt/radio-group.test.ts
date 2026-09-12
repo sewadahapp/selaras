@@ -5,7 +5,7 @@ import RadioGroup from '../../src/runtime/components/RadioGroup.vue'
 describe('radioGroup', () => {
   it('binds a custom semantic role to the existing primary recipe bridge', async () => {
     const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one'], color: 'premium' } })
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--selaras-color-premium-fill)')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
     expect(wrapper.find('button').classes()).toContain('data-[state=checked]:ring-[var(--ui-primary)]')
   })
 

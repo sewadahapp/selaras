@@ -87,13 +87,12 @@ export function customColorRoleStyle(role: string): Record<string, string> | und
   if (isBuiltinColorRole(role))
     return undefined
   assertColorRoleName(role)
-  const source = `--selaras-color-${role}`
   return {
-    '--ui-primary': `var(${source}-fill)`,
-    '--ui-primary-hover': `var(${source}-fill-hover)`,
-    '--ui-primary-active': `var(${source}-fill-pressed)`,
-    '--ui-primary-foreground': `var(${source}-on-fill)`,
-    '--ui-primary-soft': `var(${source}-subtle)`,
+    '--ui-primary': 'var(--_selaras-color-fill)',
+    '--ui-primary-hover': 'var(--_selaras-color-fill-hover)',
+    '--ui-primary-active': 'var(--_selaras-color-fill-pressed)',
+    '--ui-primary-foreground': 'var(--_selaras-color-on-fill)',
+    '--ui-primary-soft': 'var(--_selaras-color-subtle)',
   }
 }
 
