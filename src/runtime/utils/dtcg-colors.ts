@@ -13,7 +13,10 @@ export interface DtcgColorToken {
   $value: string | DtcgColorValue
 }
 
-export type DtcgColorRoleGroup = Record<string, DtcgColorToken>
+export interface DtcgColorRoleGroup {
+  $type?: 'color'
+  [key: string]: DtcgColorToken | 'color' | undefined
+}
 export type DtcgColorModes = ColorModePair<Record<string, DtcgColorRoleGroup>>
 
 const fieldMap = {
@@ -46,15 +49,17 @@ function cssColor(value: string | DtcgColorValue, path: string): string {
 
 function readRole(role: string, group: DtcgColorRoleGroup, mode: keyof DtcgColorModes): ColorRecipeInput {
   assertColorRoleName(role)
+  if (group.$type && group.$type !== 'color')
+    throw new Error(`Unsupported DTCG group type at "${mode}.colors.${role}"; expected color.`)
   for (const field of requiredFields) {
     const token = group[field]
     if (!token)
       throw new Error(`Missing DTCG color token "${mode}.colors.${role}.${field}".`)
-    if (token.$type && token.$type !== 'color')
+    if (typeof token !== 'object' || (token.$type && token.$type !== 'color') || !token.$value)
       throw new Error(`Unsupported DTCG token type at "${mode}.colors.${role}.${field}"; expected color.`)
   }
   const values = Object.fromEntries(Object.entries(fieldMap).flatMap(([field, property]) => {
-    const token = group[field]
+    const token = group[field] as DtcgColorToken | undefined
     return token ? [[property, cssColor(token.$value, `${mode}.colors.${role}.${field}`)]] : []
   }))
   return values as ColorRecipeInput
