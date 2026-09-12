@@ -21,6 +21,12 @@ function attachedContainer() {
 }
 
 describe('pinInput', () => {
+  it('binds a custom semantic role to the pin input root', async () => {
+    wrapper = await mountSuspended(PinInput, { props: { color: 'premium' as any } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('renders 5 boxes by default', async () => {
     wrapper = await mountSuspended(PinInput)
     expect(wrapper.findAll('input[aria-label^="pin input"]')).toHaveLength(5)
