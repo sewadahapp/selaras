@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { DateValue } from '@internationalized/date'
-import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
+import type { ColorRole } from '../utils/color-registry'
 import {
   DatePickerCalendar,
   DatePickerCell,
@@ -20,9 +19,6 @@ import Button from '../components/Button.vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import TimeStepper from './TimeStepper.vue'
-
-type ButtonVariants = VariantProps<typeof buttonTheme>
-
 // DatePicker.vue's own plain (single-date) calendar body - everything
 // that used to sit inside <DatePickerCalendar> there (the view-aware
 // header/nav, the three mutually-exclusive date/month/year grids, and
@@ -33,8 +29,8 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // Done button.
 export interface DatePickerCalendarBodyProps {
   internalView: 'date' | 'month' | 'year'
-  color?: ButtonVariants['color']
-  activeColor?: ButtonVariants['color']
+  color?: ColorRole
+  activeColor?: ColorRole
   placeholder: DateValue
   monthGridItems: { value: DateValue, label: string }[]
   yearGridItems: { value: number, label: string }[]

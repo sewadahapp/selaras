@@ -2,8 +2,8 @@
 import type { DateValue } from '@internationalized/date'
 import type { DateRange, SegmentPart } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
 import type { DatePickerThemeSlots } from '../theme/date-picker'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, Time, toCalendarDateTime, today } from '@internationalized/date'
 import {
@@ -46,7 +46,6 @@ import Icon from './Icon.vue'
 import Modal from './Modal.vue'
 
 type DatePickerVariants = VariantProps<typeof datePickerTheme>
-type ButtonVariants = VariantProps<typeof buttonTheme>
 
 defineOptions({ inheritAttrs: false })
 
@@ -116,9 +115,9 @@ export interface DatePickerProps {
   invalid?: boolean
   clearable?: boolean
   /** Chrome color - the clear/trigger buttons and prev/next month nav. Only the color changes; each button keeps its own deliberately-different variant (icon-only buttons use `text`, nav arrows use `ghost`). */
-  color?: ButtonVariants['color']
+  color?: ColorRole
   /** The color of whatever's currently "active" - the selected day/month/year cell and the Done button. */
-  activeColor?: ButtonVariants['color']
+  activeColor?: ColorRole
   size?: DatePickerVariants['size']
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean

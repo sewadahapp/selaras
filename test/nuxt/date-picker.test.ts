@@ -46,6 +46,11 @@ async function clickAndWait(el: HTMLElement) {
 }
 
 describe('datePicker', () => {
+  it('passes a custom semantic role to trigger chrome', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { color: 'premium' as any } })
+    expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
+  })
+
   it('renders a day-number button for every day in the placeholder month', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
     await openCalendar(wrapper)

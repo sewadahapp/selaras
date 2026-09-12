@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
+import type { ColorRole } from '../utils/color-registry'
 import Button from '../components/Button.vue'
 import { useMessages } from '../composables/use-messages'
 import TimeStepper from './TimeStepper.vue'
-
-type ButtonVariants = VariantProps<typeof buttonTheme>
-
 // DatePicker.vue's own timeOnly-mode body - everything that used to sit
 // inside its own raw <PopoverContent>, split out for the same reason as
 // DatePickerRangeCalendarBody.vue/DatePickerCalendarBody.vue (see the
@@ -25,7 +21,7 @@ export interface DatePickerTimeBodyProps {
   setHour: (hour24: number) => void
   setMinute: (minute: number) => void
   closeOnSelect?: boolean
-  activeColor?: ButtonVariants['color']
+  activeColor?: ColorRole
   /** Closes the popover/modal - the Done button's own action. */
   close: () => void
   timeSectionProps?: Record<string, unknown>

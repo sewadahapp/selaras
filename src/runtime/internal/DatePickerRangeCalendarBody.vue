@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { VariantProps } from 'tailwind-variants'
-import type { buttonTheme } from '../theme/button'
+import type { ColorRole } from '../utils/color-registry'
 import {
   DateRangePickerCalendar,
   DateRangePickerCell,
@@ -18,9 +17,6 @@ import {
 import Button from '../components/Button.vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
-
-type ButtonVariants = VariantProps<typeof buttonTheme>
-
 // DatePicker.vue's own range-mode calendar body - everything that used to
 // sit inside <DateRangePickerCalendar> there, split out so the exact same
 // markup (closing over DateRangePickerRoot's own injected context - Vue's
@@ -34,8 +30,8 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 // DatePickerContent/DateRangePickerContent/*Arrow stay OUT (those genuinely
 // are anchoring-only and never instantiated on the mobile path).
 export interface DatePickerRangeCalendarBodyProps {
-  color?: ButtonVariants['color']
-  activeColor?: ButtonVariants['color']
+  color?: ColorRole
+  activeColor?: ColorRole
   headerProps?: Record<string, unknown>
   headingProps?: Record<string, unknown>
   gridsProps?: Record<string, unknown>
