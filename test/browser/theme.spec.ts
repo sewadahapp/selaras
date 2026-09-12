@@ -1,5 +1,28 @@
 import { expect, test } from '@nuxt/test-utils/playwright'
 
+test('preserves semantic role markup through SSR hydration', async ({ page, goto }) => {
+  const response = await page.request.get('/')
+  expect(response.ok()).toBe(true)
+  const html = await response.text()
+  expect(html).toMatch(/<button[^>]*data-selaras-color="enterprise"[^>]*id="enterprise-button"/)
+  expect(html).toMatch(/<button[^>]*data-selaras-color="brand-vars"[^>]*id="brand-vars-button"/)
+
+  const hydrationIssues: string[] = []
+  page.on('console', (message) => {
+    if (/hydration|mismatch/i.test(message.text()))
+      hydrationIssues.push(message.text())
+  })
+  page.on('pageerror', (error) => {
+    if (/hydration|mismatch/i.test(error.message))
+      hydrationIssues.push(error.message)
+  })
+
+  await goto('/', { waitUntil: 'hydration' })
+  await expect(page.locator('#enterprise-button')).toHaveAttribute('data-selaras-color', 'enterprise')
+  await expect(page.locator('#brand-vars-button')).toHaveAttribute('data-selaras-color', 'brand-vars')
+  expect(hydrationIssues).toEqual([])
+})
+
 test('resolves registered semantic colors in a real browser', async ({ page, goto }) => {
   await goto('/', { waitUntil: 'hydration' })
 
