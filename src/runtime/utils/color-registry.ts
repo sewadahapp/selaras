@@ -146,7 +146,7 @@ function overrideRule(selector: string, overrides: Partial<ColorRecipeInput>): s
 }
 
 /** Serializes app-config color leaves into an SSR-safe light/dark CSS layer. */
-export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides): string {
+export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides, scopeSelector = ''): string {
   const rules: string[] = []
   for (const mode of ['light', 'dark'] as const) {
     const colors = overrides[mode]
@@ -154,7 +154,7 @@ export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides
       continue
     for (const role of Object.keys(colors).sort()) {
       assertColorRoleName(role)
-      const rule = overrideRule(`${mode === 'dark' ? '.dark ' : ''}[data-selaras-color="${role}"]`, colors[role as ColorRole] ?? {})
+      const rule = overrideRule(`${mode === 'dark' ? '.dark ' : ''}${scopeSelector}[data-selaras-color="${role}"]`, colors[role as ColorRole] ?? {})
       if (rule)
         rules.push(rule)
     }

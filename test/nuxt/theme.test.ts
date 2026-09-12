@@ -16,6 +16,20 @@ describe('theme', () => {
     expect(wrapper.html()).toBe('content')
   })
 
+  it('requires an explicit root to scope token overrides and isolates the descendant role', async () => {
+    const wrapper = await mountSuspended(Theme, {
+      props: { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } },
+      slots: { default: () => h(Button, { color: 'premium' }, () => 'Scoped') },
+    })
+    expect(wrapper.element.tagName).toBe('SECTION')
+    expect(wrapper.attributes('data-selaras-theme')).toMatch(/^s/)
+    await new Promise(resolve => setTimeout(resolve, 50))
+    const style = [...document.head.querySelectorAll('style')].find(node => node.textContent?.includes('[data-selaras-theme="'))
+    expect(style?.textContent).toContain('--selaras-color-role-fill: #5134a8;')
+    expect(style?.textContent).toContain('[data-selaras-theme="')
+    wrapper.unmount()
+  })
+
   it('applies a scoped ui override to a descendant button, regardless of nesting depth', async () => {
     const wrapper = await mountSuspended(withTheme({ ui: { button: { base: 'rounded-full' } } }, [
       h('div', [h(Button, () => 'Click me')]),
