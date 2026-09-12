@@ -1,4 +1,6 @@
+import { Buffer } from 'node:buffer'
 import { fileURLToPath } from 'node:url'
+import { gzipSync } from 'node:zlib'
 import { $fetch, setup } from '@nuxt/test-utils/e2e'
 import { describe, expect, it } from 'vitest'
 
@@ -77,6 +79,12 @@ describe('classPrefix', async () => {
     // modal.ts's own `animate-in`/`animate-out` usage.
     expect(css).toContain('.tw\\:animate-in{animation:enter')
     expect(css).toContain('.tw\\:animate-out{animation:exit')
+  })
+
+  it('keeps the packed consumer stylesheet within the initial size budget', async () => {
+    const css = await fetchCss()
+    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(125_000)
+    expect(gzipSync(css).byteLength).toBeLessThanOrEqual(18_000)
   })
 
   it('lets a :ui override actually win over a conflicting base class - the real bug: tailwind-merge has no concept of tw:-style prefixes, so without normalizing the override before merging, both the base and the override class would survive and Selaras\'s own default (loaded first) would win the cascade', async () => {

@@ -68,7 +68,9 @@
     >
       <SPopover :open="true">
         <template #default>
-          <button id="nested-overlay-trigger">Nested overlay</button>
+          <button id="nested-overlay-trigger">
+            Nested overlay
+          </button>
         </template>
         <template #content>
           <STheme
@@ -77,7 +79,9 @@
           >
             <SPopover :open="true">
               <template #default>
-                <button id="nested-inner-overlay-trigger">Inner nested overlay</button>
+                <button id="nested-inner-overlay-trigger">
+                  Inner nested overlay
+                </button>
               </template>
               <template #content>
                 <SButton id="nested-inner-overlay-button" color="enterprise">
