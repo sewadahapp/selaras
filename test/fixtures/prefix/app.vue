@@ -4,7 +4,9 @@
 <template>
   <div>
     <SButton>Click me</SButton>
-    <SButton id="premium-button" color="premium">Premium</SButton>
+    <SButton id="enterprise-button" color="enterprise">
+      Enterprise
+    </SButton>
     <SButton id="override-button" :ui="{ base: 'tw:bg-purple-700' }">
       Overridden
     </SButton>

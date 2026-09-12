@@ -8,7 +8,7 @@ export default defineNuxtConfig({
     classPrefix: 'tw',
     theme: {
       colors: {
-        premium: {
+        enterprise: {
           light: {
             fill: '#5134a8',
             onFill: '#ffffff',

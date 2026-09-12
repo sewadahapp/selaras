@@ -25,7 +25,7 @@ describe('classPrefix', async () => {
 
   it('renders a registered semantic role marker in the prefixed packed consumer', async () => {
     const html = await $fetch('/')
-    expect(html).toMatch(/<button[^>]*data-selaras-color="premium"[^>]*id="premium-button"/)
+    expect(html).toMatch(/<button[^>]*data-selaras-color="enterprise"[^>]*id="enterprise-button"/)
   })
 
   it('generates real CSS for the tw:-prefixed classes - the whole point of the build-time safelist', async () => {
@@ -35,9 +35,9 @@ describe('classPrefix', async () => {
 
   it('ships generated light/dark role CSS alongside the prefixed consumer stylesheet', async () => {
     const css = await fetchCss()
-    expect(css).toContain('[data-selaras-color=premium]')
+    expect(css).toContain('[data-selaras-color=enterprise]')
     expect(css).toContain('--selaras-color-role-fill:#5134a8')
-    expect(css).toContain('.dark [data-selaras-color=premium]')
+    expect(css).toContain('.dark [data-selaras-color=enterprise]')
   })
 
   it('actually declares a real color value under the renamed theme variable - not just a class name/rule that looks right (this is exactly what silently broke before: the class rule existed, but the CSS variable it referenced had been pruned)', async () => {
