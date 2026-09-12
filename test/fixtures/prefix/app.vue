@@ -29,6 +29,11 @@
         </template>
       </SPopover>
     </STheme>
+    <SApp dir="rtl">
+      <div id="rtl-probe">
+        RTL probe
+      </div>
+    </SApp>
     <SPopover>
       <template #default>
         <button id="keyboard-popover-trigger">

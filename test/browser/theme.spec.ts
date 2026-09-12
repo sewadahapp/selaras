@@ -60,3 +60,10 @@ test('honors reduced-motion media preferences in compiled consumer CSS', async (
 
   await expect.poll(async () => page.locator('#enterprise-button').evaluate(element => getComputedStyle(element).transitionDuration)).toBe('1e-05s')
 })
+
+test('propagates RTL through the Nuxt App contract', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+  await expect(page.locator('#rtl-probe')).toHaveCSS('direction', 'rtl')
+})
