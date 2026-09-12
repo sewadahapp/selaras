@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
 
 describe('checkbox', () => {
+  it('binds a custom semantic role to the label bridge', async () => {
+    const wrapper = await mountSuspended(Checkbox, { props: { color: 'premium' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.find('button').attributes('class')).toContain('data-[state=checked]:bg-[var(--ui-primary)]')
+  })
+
   it('emits update:modelValue with true when clicked from unchecked', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { modelValue: false } })
     await wrapper.find('button').trigger('click')

@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { CheckboxThemeSlots } from '../theme/checkbox'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { checkboxTheme } from '../theme/checkbox'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 
 type CheckboxVariants = VariantProps<typeof checkboxTheme>
@@ -27,7 +30,7 @@ export interface CheckboxProps {
   invalid?: boolean
   required?: boolean
   size?: CheckboxVariants['size']
-  color?: CheckboxVariants['color']
+  color?: ColorRole
   /** `card` wraps the checkbox and label in a bordered box, highlighted when checked - the same treatment RadioGroup's own `card` variant already applies per item. */
   variant?: CheckboxVariants['variant']
   ui?: UiProp<CheckboxThemeSlots>
@@ -45,10 +48,13 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 const describedBy = computed(() => field?.describedBy.value)
 
 const theme = useComponentTheme('checkbox', checkboxTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as CheckboxVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   invalid: checkboxInvalid.value,
   size: effectiveSize.value,
-  color: props.color,
+  color: recipeColor.value,
   variant: props.variant,
 }))
 
@@ -73,7 +79,7 @@ const glyphState = computed(() => props.modelValue === 'indeterminate' ? 'indete
 </script>
 
 <template>
-  <label v-bind="rootProps">
+  <label :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
     <CheckboxRoot
       :id="checkboxId"
       :model-value="modelValue"
