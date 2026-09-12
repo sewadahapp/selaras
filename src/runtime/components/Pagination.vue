@@ -2,6 +2,7 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { buttonTheme } from '../theme/button'
 import type { PaginationThemeSlots } from '../theme/pagination'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import {
   PaginationEllipsis,
@@ -59,10 +60,10 @@ export interface PaginationProps {
   disabled?: boolean
   size?: PaginationVariants['size']
   /** Inactive controls (First/Prev/Next/Last and non-current page numbers). */
-  color?: ButtonVariants['color']
+  color?: ColorRole
   variant?: ButtonVariants['variant']
   /** The current page's own button. */
-  activeColor?: ButtonVariants['color']
+  activeColor?: ColorRole
   activeVariant?: ButtonVariants['variant']
   ui?: UiProp<PaginationThemeSlots>
 }

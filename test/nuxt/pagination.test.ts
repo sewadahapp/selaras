@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest'
 import Pagination from '../../src/runtime/components/Pagination.vue'
 
 describe('pagination', () => {
+  it('passes custom semantic roles to inactive and active page buttons', async () => {
+    const wrapper = await mountSuspended(Pagination, {
+      props: { total: 30, itemsPerPage: 10, color: 'premium' as any, activeColor: 'premium' as any },
+    })
+    expect(wrapper.findAll('[data-selaras-color="premium"]')).toHaveLength(5)
+  })
+
   it('renders one button per page number when they all fit with no ellipsis', async () => {
     const wrapper = await mountSuspended(Pagination, { props: { total: 30, itemsPerPage: 10, siblingCount: 5 } })
     expect(wrapper.findAll('[data-type="page"]').map(b => b.text())).toEqual(['1', '2', '3'])
