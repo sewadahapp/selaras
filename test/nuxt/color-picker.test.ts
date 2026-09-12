@@ -13,6 +13,11 @@ async function open(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
 }
 
 describe('colorPicker', () => {
+  it('binds a custom semantic role to the trigger', async () => {
+    const wrapper = await mountSuspended(ColorPicker, { props: { color: 'premium' as any } })
+    expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
+  })
+
   it('renders the trigger swatch and hex text from modelValue', async () => {
     const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed' } })
 

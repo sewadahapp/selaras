@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { ColorPickerThemeSlots } from '../theme/color-picker'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { ColorSwatch } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
@@ -8,6 +9,8 @@ import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Modal from './Modal.vue'
 import Popover from './Popover.vue'
@@ -32,7 +35,7 @@ export interface ColorPickerProps {
   /** Below a 768px viewport width, presents the popover as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`), matching Select/Autocomplete/DatePicker's own mobileModal. */
   mobileModal?: boolean
   size?: ColorPickerVariants['size']
-  color?: ColorPickerVariants['color']
+  color?: ColorRole
   ui?: UiProp<ColorPickerThemeSlots>
 }
 
@@ -78,7 +81,11 @@ const isMobile = useIsMobile()
 const showMobileModal = computed(() => props.mobileModal && isMobile.value)
 
 const theme = useComponentTheme('colorPicker', colorPickerTheme)
-const ui = computed(() => theme.value({ size: props.size, color: props.color }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ColorPickerVariants['color'] : 'primary')
+const colorRoleMarker = computed(() => isBuiltinColorRole(effectiveColor.value) ? undefined : effectiveColor.value)
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const ui = computed(() => theme.value({ size: props.size, color: recipeColor.value }))
 
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const triggerSwatchProps = computed(() => resolveSlot(ui.value.triggerSwatch, props.ui?.triggerSwatch))
@@ -108,6 +115,8 @@ const bodyProps = computed(() => ({
   swatchProps: swatchProps.value,
   swatchFillProps: swatchFillProps.value,
   swatchIndicatorProps: swatchIndicatorProps.value,
+  colorRoleMarker: colorRoleMarker.value,
+  colorRoleStyle: colorRoleStyle.value,
 }))
 
 // Passed to Popover's own `ui.content` override - none of Popover's own
@@ -130,6 +139,8 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
       type="button"
       :disabled="disabled"
       :aria-label="messages.colorPicker"
+      :data-selaras-color="colorRoleMarker"
+      :style="colorRoleStyle"
       v-bind="triggerProps"
     >
       <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
@@ -149,6 +160,8 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
       type="button"
       :disabled="disabled"
       :aria-label="messages.colorPicker"
+      :data-selaras-color="colorRoleMarker"
+      :style="colorRoleStyle"
       v-bind="triggerProps"
     >
       <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />

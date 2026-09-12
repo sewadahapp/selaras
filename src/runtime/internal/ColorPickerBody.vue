@@ -42,6 +42,8 @@ export interface ColorPickerBodyProps {
   swatchProps?: Record<string, unknown>
   swatchFillProps?: Record<string, unknown>
   swatchIndicatorProps?: Record<string, unknown>
+  colorRoleMarker?: string
+  colorRoleStyle?: Record<string, string>
 }
 
 export interface ColorPickerBodyEmits {
@@ -67,6 +69,8 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
 
 <template>
   <ColorAreaRoot
+    :data-selaras-color="colorRoleMarker"
+    :style="colorRoleStyle"
     :model-value="modelValue"
     color-space="hsb"
     x-channel="saturation"
@@ -82,6 +86,8 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
   </ColorAreaRoot>
 
   <ColorSliderRoot
+    :data-selaras-color="colorRoleMarker"
+    :style="colorRoleStyle"
     :model-value="modelValue"
     channel="hue"
     :disabled="disabled"
@@ -95,6 +101,8 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
 
   <ColorSliderRoot
     v-if="alpha"
+    :data-selaras-color="colorRoleMarker"
+    :style="colorRoleStyle"
     :model-value="modelValue"
     channel="alpha"
     :disabled="disabled"
@@ -107,6 +115,8 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
   </ColorSliderRoot>
 
   <ColorFieldRoot
+    :data-selaras-color="colorRoleMarker"
+    :style="colorRoleStyle"
     :model-value="modelValue"
     :placeholder="placeholder"
     :disabled="disabled"
@@ -117,6 +127,8 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
 
   <ColorSwatchPickerRoot
     v-if="swatches?.length"
+    :data-selaras-color="colorRoleMarker"
+    :style="colorRoleStyle"
     :model-value="modelValue"
     :disabled="disabled"
     v-bind="swatchListProps"
