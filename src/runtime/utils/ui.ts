@@ -147,11 +147,29 @@ export function withFallthroughClass(fallthroughClass: string | undefined, overr
  * component. Bind the result with a single `v-bind` (Vue's template compiler
  * rejects two bare v-bind spreads on the same element).
  */
-export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () => UiSlotValue | undefined) {
+export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () => UiSlotValue | undefined, options?: { exclude?: (key: string) => boolean }) {
   const { fallthroughClass, attrsWithoutClass } = useRootFallthrough()
+  const rootAttrs = computed(() => {
+    if (!options?.exclude)
+      return attrsWithoutClass.value
+    return Object.fromEntries(Object.entries(attrsWithoutClass.value).filter(([key]) => !options.exclude!(key)))
+  })
   return computed(() => mergeProps(
-    attrsWithoutClass.value,
+    rootAttrs.value,
     resolveSlot(slotFn(), withFallthroughClass(fallthroughClass.value, override())),
+  ))
+}
+
+/**
+ * Returns fallthrough attributes selected for a component's real interactive
+ * element. Wrapped controls use this alongside useRootProps: layout and
+ * component classes stay on the root slot, while native attributes/listeners
+ * such as autocomplete and focus/blur reach the input itself.
+ */
+export function useFallthroughAttrs(select: (key: string) => boolean) {
+  const attrs = useAttrs()
+  return computed(() => Object.fromEntries(
+    Object.entries(attrs).filter(([key]) => select(key)),
   ))
 }
 

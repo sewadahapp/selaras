@@ -2,12 +2,12 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { InputThemeSlots } from '../theme/input'
 import type { UiProp } from '../utils/ui'
-import { computed } from 'vue'
+import { computed, mergeProps } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { inputTheme } from '../theme/input'
-import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -75,8 +75,28 @@ const ui = computed(() => theme.value({
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
 }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
+function isNativeInputAttr(key: string) {
+  return [
+    'autocomplete',
+    'autocapitalize',
+    'autocorrect',
+    'form',
+    'inputmode',
+    'list',
+    'maxlength',
+    'minlength',
+    'pattern',
+    'readonly',
+    'required',
+    'spellcheck',
+    'step',
+  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
+}
+
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
+const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)
 const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
+const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.value))
 </script>
 
 <template>
@@ -92,7 +112,7 @@ const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
       :disabled="disabled"
       :aria-invalid="inputInvalid || undefined"
       :aria-describedby="describedBy"
-      v-bind="baseProps"
+      v-bind="inputProps"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
     <Button

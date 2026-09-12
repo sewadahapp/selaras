@@ -1,8 +1,22 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import Input from '../../src/runtime/components/Input.vue'
 
 describe('input', () => {
+  it('forwards native attributes and focus listeners to the actual input', async () => {
+    const onFocus = vi.fn()
+    const wrapper = await mountSuspended(Input, {
+      attrs: { autocomplete: 'email', inputmode: 'email', readonly: true, onFocus },
+    })
+    const input = wrapper.find('input')
+    expect(input.attributes('autocomplete')).toBe('email')
+    expect(input.attributes('inputmode')).toBe('email')
+    expect(input.attributes('readonly')).toBeDefined()
+    expect(wrapper.element.getAttribute('autocomplete')).toBeNull()
+    await input.trigger('focus')
+    expect(onFocus).toHaveBeenCalled()
+  })
+
   it('renders the leading and trailing icons when given', async () => {
     const wrapper = await mountSuspended(Input, { props: { icon: 'lucide:search', trailingIcon: 'lucide:mic' } })
     const icons = wrapper.findAll('.iconify').map(el => el.classes().find(c => c.startsWith('i-')))

@@ -7,6 +7,15 @@ describe('button', () => {
   it('renders as a plain button by default', async () => {
     const wrapper = await mountSuspended(Button, { slots: { default: () => 'Click me' } })
     expect(wrapper.element.tagName).toBe('BUTTON')
+    expect(wrapper.attributes('type')).toBe('button')
+  })
+
+  it('allows an explicit submit or reset type', async () => {
+    const submit = await mountSuspended(Button, { props: { type: 'submit' }, slots: { default: () => 'Save' } })
+    expect(submit.attributes('type')).toBe('submit')
+
+    const reset = await mountSuspended(Button, { props: { type: 'reset' }, slots: { default: () => 'Reset' } })
+    expect(reset.attributes('type')).toBe('reset')
   })
 
   it('accepts a component reference for `as`, not just a tag-name string - e.g. NuxtLink via resolveComponent', async () => {
@@ -20,6 +29,7 @@ describe('button', () => {
     })
     expect(wrapper.element.tagName).toBe('A')
     expect(wrapper.attributes('href')).toBe('/components/button')
+    expect(wrapper.attributes('type')).toBeUndefined()
   })
 
   it('shows the given icon in place of a spinner when not loading', async () => {

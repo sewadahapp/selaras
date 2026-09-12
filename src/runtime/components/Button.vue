@@ -19,6 +19,7 @@ defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<ButtonProps>(), {
   as: 'button',
+  type: 'button',
   // A bare `square?: boolean` prop with no default here resolves an absent
   // prop to `false` (Vue's own Boolean-prop casting), not `undefined` - that
   // would make `props.square ?? iconOnly.value` below always see `false`
@@ -31,6 +32,8 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 export interface ButtonProps {
   /** A tag name ('a', 'span', ...) or a component reference (e.g. NuxtLink, via resolveComponent) - Primitive renders whichever is given. */
   as?: string | Component
+  /** Native button type when `as="button"`. Defaults to `button` so actions inside forms do not submit accidentally. */
+  type?: 'button' | 'submit' | 'reset'
   color?: ButtonVariants['color']
   variant?: ButtonVariants['variant']
   size?: ButtonVariants['size']
@@ -81,7 +84,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>
-  <Primitive v-ripple="rippleEnabled" :as="as" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
+  <Primitive v-ripple="rippleEnabled" :as="as" :type="as === 'button' ? type : undefined" :disabled="disabled" :aria-busy="loading || undefined" v-bind="rootProps">
     <Icon v-if="loading" :name="icons.loading" :class="applyClassPrefix('animate-spin')" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <!--
       A named slot (not just the `icon` prop) so a consumer building a
