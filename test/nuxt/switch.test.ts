@@ -3,6 +3,13 @@ import { describe, expect, it } from 'vitest'
 import Switch from '../../src/runtime/components/Switch.vue'
 
 describe('switch', () => {
+  it('binds a custom semantic role to the label bridge', async () => {
+    const wrapper = await mountSuspended(Switch, { props: { color: 'premium' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.find('button').attributes('class')).toContain('data-[state=checked]:bg-[var(--ui-primary)]')
+  })
+
   it('emits update:modelValue with the toggled value when clicked', async () => {
     const wrapper = await mountSuspended(Switch, { props: { modelValue: false } })
     await wrapper.find('button').trigger('click')
