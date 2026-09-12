@@ -15,6 +15,13 @@ function withProvider(children: any) {
 }
 
 describe('slider', () => {
+  it('binds a custom semantic role to the slider root', async () => {
+    const wrapper = await mountSuspended(Slider, { props: { color: 'premium', modelValue: 30 } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.html()).toContain('bg-[var(--ui-primary)]')
+  })
+
   it('renders a single thumb reflecting a plain number modelValue', async () => {
     const wrapper = await mountSuspended(Slider, { props: { modelValue: 30 } })
 
