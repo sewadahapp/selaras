@@ -6,7 +6,7 @@ import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDe
 import { computed, ref, useSlots, watch, watchEffect } from 'vue'
 import { useMessages } from '../composables/use-messages'
 import { alertDialogTheme } from '../theme/alert-dialog'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
 import Button from './Button.vue'
 
 export interface AlertDialogProps {
@@ -120,6 +120,7 @@ if (import.meta.dev) {
 
 const messages = useMessages()
 const theme = useComponentTheme('alertDialog', alertDialogTheme)
+const themeScope = useThemeScope()
 const ui = computed(() => theme.value({ transition: props.transition }))
 
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
@@ -139,6 +140,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
     <AlertDialogPortal>
       <AlertDialogOverlay v-if="overlay" v-bind="overlayProps" />
       <AlertDialogContent
+        :data-selaras-theme="themeScope"
         v-bind="contentProps"
         @escape-key-down="onEscapeKeyDown"
         @pointer-down-outside="onPointerDownOutside"

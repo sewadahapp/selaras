@@ -4,7 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { dropdownTheme } from '../theme/dropdown'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
 import Icon from './Icon.vue'
 
 export interface DropdownItem {
@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<DropdownProps>(), {
 })
 
 const theme = useComponentTheme('dropdown', dropdownTheme)
+const themeScope = useThemeScope()
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -52,7 +53,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
       <slot />
     </DropdownMenuTrigger>
     <DropdownMenuPortal>
-      <DropdownMenuContent :side-offset="6" align="start" v-bind="contentProps">
+      <DropdownMenuContent :side-offset="6" align="start" :data-selaras-theme="themeScope" v-bind="contentProps">
         <template v-for="(group, groupIndex) in items" :key="groupIndex">
           <DropdownMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />
           <DropdownMenuItem

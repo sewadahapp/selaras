@@ -6,7 +6,7 @@ import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { slideoverTheme } from '../theme/slideover'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -130,6 +130,7 @@ if (import.meta.dev) {
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('slideover', slideoverTheme)
+const themeScope = useThemeScope()
 const ui = computed(() => theme.value({ side: props.side, inset: props.inset, transition: props.transition }))
 
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
@@ -150,6 +151,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
     <DialogPortal>
       <DialogOverlay v-if="overlay" v-bind="overlayProps" />
       <DialogContent
+        :data-selaras-theme="themeScope"
         v-bind="contentProps"
         @escape-key-down="onEscapeKeyDown"
         @pointer-down-outside="onPointerDownOutside"

@@ -31,12 +31,6 @@ export interface ThemeProps {
 // nesting two STheme components inherit an outer one's unset
 // slots/props rather than an inner one wholesale replacing it.
 const parent = inject(THEME_INJECTION_KEY, undefined)
-provide(THEME_INJECTION_KEY, computed(() => ({
-  ui: props.ui,
-  props: props.props,
-  parent: parent?.value,
-})))
-
 const scopeId = computed(() => {
   const source = JSON.stringify(props.tokens ?? {})
   let hash = 5381
@@ -44,6 +38,13 @@ const scopeId = computed(() => {
     hash = (hash * 33) ^ character.charCodeAt(0)
   return `s${(hash >>> 0).toString(36)}`
 })
+provide(THEME_INJECTION_KEY, computed(() => ({
+  ui: props.ui,
+  props: props.props,
+  scopeId: props.as ? scopeId.value : parent?.value?.scopeId,
+  parent: parent?.value,
+})))
+
 const scopeSelector = computed(() => `[data-selaras-theme="${scopeId.value}"] `)
 const scopedTokenCss = computed(() => props.as ? generateRuntimeColorOverrideCss(props.tokens ?? {}, scopeSelector.value) : '')
 useHead({

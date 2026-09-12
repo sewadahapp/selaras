@@ -228,3 +228,9 @@ export function useThemeProps(key: string): ComputedRef<Record<string, unknown>>
 
   return computed(() => Object.assign({}, appConfig.selaras?.defaults?.[key], ...collectThemeChain(themeContext?.value, c => c.props, key)))
 }
+
+/** Returns the nearest explicit STheme DOM marker for portalled content roots. */
+export function useThemeScope(): ComputedRef<string | undefined> {
+  const themeContext = inject(THEME_INJECTION_KEY, undefined)
+  return computed(() => themeContext?.value.scopeId)
+}

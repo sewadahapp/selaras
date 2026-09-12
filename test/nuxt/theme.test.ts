@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 import Button from '../../src/runtime/components/Button.vue'
+import Popover from '../../src/runtime/components/Popover.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 
 function withTheme(themeProps: Record<string, unknown>, children: any) {
@@ -27,6 +28,22 @@ describe('theme', () => {
     const style = [...document.head.querySelectorAll('style')].find(node => node.textContent?.includes('[data-selaras-theme="'))
     expect(style?.textContent).toContain('--selaras-color-role-fill: #5134a8;')
     expect(style?.textContent).toContain('[data-selaras-theme="')
+    wrapper.unmount()
+  })
+
+  it('transports the theme marker onto portalled popover content', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () =>
+        h(Popover, { open: true }, {
+          default: () => h('button', 'Open'),
+          content: () => h('span', { 'data-testid': 'popover-content' }, 'Content'),
+        })),
+    }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+    const scope = wrapper.find('[data-selaras-theme]')
+    const content = document.querySelector('[data-testid="popover-content"]')
+    expect(scope.exists()).toBe(true)
+    expect(content?.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme')).toBe(scope.attributes('data-selaras-theme'))
     wrapper.unmount()
   })
 

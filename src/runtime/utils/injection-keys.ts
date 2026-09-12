@@ -68,6 +68,7 @@ export const DASHBOARD_INJECTION_KEY: InjectionKey<DashboardContext> = Symbol('s
 export interface ThemeContext {
   ui?: Partial<Record<string, object>>
   props?: Partial<Record<string, Record<string, unknown>>>
+  scopeId?: string
   parent?: ThemeContext
 }
 export const THEME_INJECTION_KEY: InjectionKey<ComputedRef<ThemeContext>> = Symbol('selaras-theme')
