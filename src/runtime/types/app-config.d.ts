@@ -1,5 +1,16 @@
+import type { RuntimeColorOverrides } from '../utils/color-registry'
 import type { IconRegistry } from '../utils/icons'
 import type { MessageRegistry } from '../utils/messages'
+
+export interface SelarasRuntimeConfig {
+  defaults?: Record<string, Record<string, unknown>>
+  ui?: Record<string, object>
+  tokens?: {
+    light?: { colors?: RuntimeColorOverrides }
+    dark?: { colors?: RuntimeColorOverrides }
+  }
+  ripple?: boolean
+}
 
 // Types app.config.ts's own override surface for the three global
 // mechanisms that read from it (useIcons/useMessages/useLocale) - without
@@ -8,6 +19,7 @@ import type { MessageRegistry } from '../utils/messages'
 // into the generated nuxt.d.ts via module.ts's own `prepare:types` hook.
 declare module '@nuxt/schema' {
   interface AppConfig {
+    selaras?: SelarasRuntimeConfig
     messages?: Partial<MessageRegistry>
     icons?: Partial<IconRegistry>
     locale?: string

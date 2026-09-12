@@ -200,12 +200,12 @@ function collectThemeChain<V extends object>(context: ThemeContext | undefined, 
  * to the base theme untouched when neither exists.
  */
 export function useComponentTheme<T extends (...args: any[]) => any>(key: string, base: T): ComputedRef<T> {
-  const appConfig = useAppConfig() as { ui?: Record<string, object> }
+  const appConfig = useAppConfig() as { ui?: Record<string, object>, selaras?: { ui?: Record<string, object> } }
   const themeContext = inject(THEME_INJECTION_KEY, undefined)
 
   return computed(() => {
     let result: any = base
-    const globalOverride = appConfig.ui?.[key]
+    const globalOverride = appConfig.selaras?.ui?.[key] ?? appConfig.ui?.[key]
     if (globalOverride)
       result = tv({ extend: result, ...globalOverride })
     for (const override of collectThemeChain(themeContext?.value, c => c.ui, key))
@@ -223,7 +223,8 @@ export function useComponentTheme<T extends (...args: any[]) => any>(key: string
  * generically instead of each needing its own bespoke injection key.
  */
 export function useThemeProps(key: string): ComputedRef<Record<string, unknown>> {
+  const appConfig = useAppConfig() as { selaras?: { defaults?: Record<string, Record<string, unknown>> } }
   const themeContext = inject(THEME_INJECTION_KEY, undefined)
 
-  return computed(() => Object.assign({}, ...collectThemeChain(themeContext?.value, c => c.props, key)))
+  return computed(() => Object.assign({}, appConfig.selaras?.defaults?.[key], ...collectThemeChain(themeContext?.value, c => c.props, key)))
 }

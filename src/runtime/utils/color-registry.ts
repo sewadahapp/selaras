@@ -34,6 +34,8 @@ export interface ColorRecipe {
 
 export type ColorRecipeInput = Pick<ColorRecipe, 'fill' | 'onFill' | 'subtle' | 'onSubtle' | 'text' | 'border'> & Partial<Pick<ColorRecipe, 'fillHover' | 'fillPressed' | 'subtleHover' | 'subtlePressed' | 'textHover' | 'textPressed' | 'focus'>>
 
+export type RuntimeColorOverrides = Partial<Record<ColorRole, Partial<ColorRecipeInput>>>
+
 export interface ColorModePair<T> {
   light: T
   dark: T
