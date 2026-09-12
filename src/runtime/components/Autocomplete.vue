@@ -2,6 +2,7 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { SelectItems } from '../composables/use-combobox-select'
 import type { selectTheme, SelectThemeSlots } from '../theme/select'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { useForwardPropsEmits } from 'reka-ui'
 import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
@@ -25,7 +26,7 @@ export interface AutocompleteProps {
   size?: SelectVariants['size']
   invalid?: boolean
   /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
-  color?: SelectVariants['color']
+  color?: ColorRole
   clearable?: boolean
   dropdown?: boolean
   forceSelection?: boolean

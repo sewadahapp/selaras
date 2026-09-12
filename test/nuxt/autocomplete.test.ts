@@ -9,6 +9,11 @@ const fruitItems = [
 ]
 
 describe('autocomplete', () => {
+  it('binds a custom semantic role to the trigger root', async () => {
+    const wrapper = await mountSuspended(Autocomplete, { props: { items: [{ label: 'One', value: 'one' }], color: 'premium' as any } })
+    expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
+  })
+
   it('does not render a dropdown button by default', async () => {
     const wrapper = await mountSuspended(Autocomplete, {
       props: { items: fruitItems },

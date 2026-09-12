@@ -2,6 +2,7 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { SelectItems, SelectOption } from '../composables/use-combobox-select'
 import type { SelectThemeSlots } from '../theme/select'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import {
   ComboboxAnchor,
@@ -30,6 +31,8 @@ import { useIcons } from '../composables/use-icons'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeScope } from '../utils/ui'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
 
@@ -66,7 +69,7 @@ export interface ComboboxSelectBaseProps {
   size?: SelectVariants['size']
   invalid?: boolean
   /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
-  color?: SelectVariants['color']
+  color?: ColorRole
   clearable?: boolean
   dropdown?: boolean
   creatable?: boolean
@@ -283,7 +286,11 @@ const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
 const themeScope = useThemeScope()
-const ui = computed(() => theme.value({ size: effectiveSize.value, color: props.color, invalid: selectInvalid.value }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SelectVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const colorRoleMarker = computed(() => isBuiltinColorRole(effectiveColor.value) ? undefined : effectiveColor.value)
+const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: selectInvalid.value }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
@@ -366,6 +373,8 @@ const bodyProps = computed(() => ({
     :ignore-filter="!searchable"
     :reset-search-term-on-blur="resetSearchTermOnBlur"
     :reset-search-term-on-select="resetSearchTermOnSelect"
+    :data-selaras-color="colorRoleMarker"
+    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:open="internalOpen = $event"
     @update:model-value="(value) => emit('update:modelValue', value as string | string[] | undefined)"
@@ -602,7 +611,7 @@ const bodyProps = computed(() => ({
     </ComboboxAnchor>
 
     <ComboboxPortal v-if="!showMobileModal">
-      <ComboboxContent position="popper" :side-offset="4" :data-selaras-theme="themeScope" v-bind="contentProps">
+      <ComboboxContent position="popper" :side-offset="4" :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" :style="colorRoleStyle" v-bind="contentProps">
         <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
           <template #header>
             <slot name="header" />
@@ -671,7 +680,7 @@ const bodyProps = computed(() => ({
       @update:open="internalOpen = $event"
     >
       <template #content>
-        <ComboboxContent :data-selaras-theme="themeScope" v-bind="mobileContentProps">
+        <ComboboxContent :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" :style="colorRoleStyle" v-bind="mobileContentProps">
           <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
             <template #header>
               <slot name="header" />

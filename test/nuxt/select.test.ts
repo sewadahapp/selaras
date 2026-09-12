@@ -19,6 +19,13 @@ function withTooltipProvider(children: any) {
 }
 
 describe('select', () => {
+  it('binds a custom semantic role to the trigger and portal roots', async () => {
+    const wrapper = await mountSuspended(Select, { props: { items: [{ label: 'One', value: 'one' }], color: 'premium' as any } })
+    expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
+    await wrapper.find('button').trigger('click')
+    expect(document.querySelector('[data-selaras-color="premium"]')).toBeTruthy()
+  })
+
   // the trigger itself is a <button> (clicking anywhere on it opens the
   // popover); the clear control can't be a nested <button> - HTML doesn't
   // allow a <button> inside another one (the browser's own parser would
