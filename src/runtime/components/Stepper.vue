@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { StepperThemeSlots } from '../theme/stepper'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { StepperDescription, StepperIndicator, StepperItem, StepperRoot, StepperSeparator, StepperTitle, StepperTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { stepperTheme } from '../theme/stepper'
+import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -42,7 +45,7 @@ export interface StepperProps {
   linear?: boolean
   orientation?: StepperVariants['orientation']
   size?: StepperVariants['size']
-  color?: StepperVariants['color']
+  color?: ColorRole
   ui?: UiProp<StepperThemeSlots>
 }
 
@@ -59,10 +62,13 @@ export interface StepperSlots {
 const icons = useIcons()
 
 const theme = useComponentTheme('stepper', stepperTheme)
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as StepperVariants['color'] : 'primary')
+const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   orientation: props.orientation,
   size: props.size,
-  color: props.color,
+  color: recipeColor.value,
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -83,6 +89,8 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
     :default-value="defaultValue"
     :linear="linear"
     :orientation="orientation"
+    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
+    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as number)"
   >

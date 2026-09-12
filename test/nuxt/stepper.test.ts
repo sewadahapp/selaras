@@ -4,6 +4,15 @@ import { nextTick } from 'vue'
 import Stepper from '../../src/runtime/components/Stepper.vue'
 
 describe('stepper', () => {
+  it('binds a custom semantic role to the stepper root', async () => {
+    const wrapper = await mountSuspended(Stepper, {
+      props: { items: [{ title: 'One' }], color: 'premium' as any },
+    })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+  })
+
   it('marks step 1 active by default when neither modelValue nor defaultValue is given', async () => {
     const wrapper = await mountSuspended(Stepper, {
       props: { items: [{ title: 'One' }, { title: 'Two' }] },
