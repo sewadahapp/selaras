@@ -47,6 +47,25 @@ describe('theme', () => {
     wrapper.unmount()
   })
 
+  it('isolates nested explicit scopes with distinct role selectors', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('div', [
+        h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () => h(Button, { color: 'premium' }, () => 'Outer')),
+        h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#0f766e' } } } }, () => h(Button, { color: 'premium' }, () => 'Inner')),
+      ]),
+    }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+    const scopes = wrapper.findAll('[data-selaras-theme]')
+    expect(scopes).toHaveLength(2)
+    expect(scopes[0]!.attributes('data-selaras-theme')).not.toBe(scopes[1]!.attributes('data-selaras-theme'))
+    const css = [...document.head.querySelectorAll('style')].map(node => node.textContent ?? '').join('\n')
+    expect(css).toContain('--selaras-color-role-fill: #5134a8;')
+    expect(css).toContain('--selaras-color-role-fill: #0f766e;')
+    for (const scope of scopes)
+      expect(css).toContain(`[data-selaras-theme="${scope.attributes('data-selaras-theme')}"]`)
+    wrapper.unmount()
+  })
+
   it('applies a scoped ui override to a descendant button, regardless of nesting depth', async () => {
     const wrapper = await mountSuspended(withTheme({ ui: { button: { base: 'rounded-full' } } }, [
       h('div', [h(Button, () => 'Click me')]),
