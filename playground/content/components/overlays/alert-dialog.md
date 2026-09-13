@@ -112,7 +112,8 @@ every slot and variant - here's the dialog's own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `open` | `boolean` | `false` |
+| `open` | `boolean` | - |
+| `defaultOpen` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `cancelLabel` | `string` | `'Cancel'` |

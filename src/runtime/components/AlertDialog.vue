@@ -3,7 +3,7 @@ import type { AlertDialogThemeSlots } from '../theme/alert-dialog'
 import type { UiProp } from '../utils/ui'
 import type { ButtonProps } from './Button.vue'
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogOverlay, AlertDialogPortal, AlertDialogRoot, AlertDialogTitle, AlertDialogTrigger } from 'reka-ui'
-import { computed, ref, useSlots, watch, watchEffect } from 'vue'
+import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 'vue'
 import { useMessages } from '../composables/use-messages'
 import { alertDialogTheme } from '../theme/alert-dialog'
 import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
@@ -11,6 +11,8 @@ import Button from './Button.vue'
 
 export interface AlertDialogProps {
   open?: boolean
+  /** Initial visibility for an uncontrolled alert dialog. Supplying `open` makes the parent authoritative. */
+  defaultOpen?: boolean
   title?: string
   description?: string
   /** Label for the default Cancel button - only rendered when no `footer` slot is given. @default 'Cancel' */
@@ -42,6 +44,7 @@ export interface AlertDialogEmits {
 }
 
 const props = withDefaults(defineProps<AlertDialogProps>(), {
+  open: undefined,
   dismissible: true,
   overlay: true,
   transition: true,
@@ -77,13 +80,15 @@ function onContentAnimationEnd(event: AnimationEvent) {
 // Mirrors Modal.vue's own internalOpen pattern - see there for why this
 // needs to stay an always-concrete local ref rather than binding
 // `:open="open"` straight through.
-const internalOpen = ref(props.open ?? false)
+const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
+const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
 watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
+  if (isControlled)
+    internalOpen.value = value ?? false
 })
 function onUpdateOpen(value: boolean) {
-  internalOpen.value = value
+  if (!isControlled)
+    internalOpen.value = value
   emit('update:open', value)
 }
 

@@ -21,6 +21,22 @@ function findButton(text: string) {
 }
 
 describe('alertDialog', () => {
+  it('supports defaultOpen for uncontrolled dialogs', async () => {
+    wrapper = await mountSuspended(AlertDialog, { props: { defaultOpen: true, title: 'Confirm', description: 'Confirm' } })
+
+    expect(document.body.querySelector('[role=alertdialog]')).toBeTruthy()
+  })
+
+  it('lets a controlled parent veto a close request', async () => {
+    wrapper = await mountSuspended(AlertDialog, { props: { open: true, title: 'Confirm', description: 'Confirm' } })
+
+    findButton('Cancel')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+    expect(document.body.querySelector('[role=alertdialog]')).toBeTruthy()
+  })
+
   it('renders default Cancel/Continue buttons with no props given', async () => {
     wrapper = await mountSuspended(AlertDialog, { props: { open: true, title: 'Delete item', description: 'Delete item' } })
 
