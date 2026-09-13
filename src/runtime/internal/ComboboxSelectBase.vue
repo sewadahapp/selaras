@@ -53,9 +53,9 @@ const props = withDefaults(defineProps<ComboboxSelectBaseProps>(), {
 const emit = defineEmits<ComboboxSelectBaseEmits>()
 
 const instance = getCurrentInstance()!
+type ComboboxSelection = string | number | (string | number)[] | undefined
 const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue] : props.defaultValue
 const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
-type ComboboxSelection = string | number | (string | number)[] | undefined
 
 function selectionForMode(value: ComboboxSelection, multiple: boolean): ComboboxSelection {
   if (multiple) {
@@ -79,11 +79,26 @@ function assertControlledSelectionShape(value: ComboboxSelection, multiple: bool
     throw new TypeError('[selaras] A controlled Select or Autocomplete with multiple=false requires modelValue to be a scalar or undefined.')
 }
 
+function assertUniqueMultipleSelection(value: ComboboxSelection, property: 'modelValue' | 'defaultValue') {
+  if (!Array.isArray(value))
+    return
+
+  const values = new Set<string | number>()
+  for (const selectedValue of value) {
+    if (values.has(selectedValue))
+      throw new TypeError(`[selaras] A multiple Select or Autocomplete requires unique ${property} values.`)
+    values.add(selectedValue)
+  }
+}
+
 const localValue = ref<ComboboxSelection>(selectionForMode(initialValue, !!props.multiple))
 const selection = computed(() => {
   const value = isControlled() ? props.modelValue : localValue.value
-  if (isControlled())
+  if (isControlled()) {
     assertControlledSelectionShape(value, !!props.multiple)
+    if (props.multiple)
+      assertUniqueMultipleSelection(value, 'modelValue')
+  }
   return value
 })
 // Reka treats undefined as uncontrolled, even when the prop is supplied. Keep
@@ -108,10 +123,17 @@ function setEditableInput(element: unknown) {
   editableInput.value = typeof HTMLInputElement !== 'undefined' && candidate instanceof HTMLInputElement ? candidate : undefined
 }
 
+// A default array can become active after a dynamic mode change and native
+// reset, so reject duplicate identities while capturing it rather than later.
+assertUniqueMultipleSelection(initialValue, 'defaultValue')
+
 // Fail during setup for an invalid initial controlled contract, before the
 // value reaches Reka's ListboxRoot.
-if (isControlled())
+if (isControlled()) {
   assertControlledSelectionShape(props.modelValue, !!props.multiple)
+  if (props.multiple)
+    assertUniqueMultipleSelection(props.modelValue, 'modelValue')
+}
 
 const formAnchor = ref<HTMLInputElement>()
 let ownerForm: HTMLFormElement | null = null

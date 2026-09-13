@@ -96,6 +96,9 @@ A controlled parent must change `modelValue` and `multiple` in the same render:
 an array when `multiple` is true, and a scalar or `undefined` when it is false.
 `undefined` is allowed as the empty multiple value. A scalar value in
 multiple mode, or any array in single mode, throws a descriptive error. Select
+also requires every value in a multiple `modelValue` or `defaultValue` array to
+be unique. This includes unresolved async identities; numeric `1` and string
+`'1'` are distinct values.
 does not convert controlled values or emit an update solely because the mode
 changed.
 

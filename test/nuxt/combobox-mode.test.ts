@@ -199,6 +199,42 @@ describe('shared Select and Autocomplete multiple mode', () => {
         empty.unmount()
       }
     })
+
+    it(`${name} rejects duplicate multiple values without conflating numeric and string identities`, async () => {
+      await expect(mountSuspended(Component as any, {
+        props: { items, multiple: true, modelValue: [0, 0] },
+      })).rejects.toThrow('requires unique modelValue values')
+      await expect(mountSuspended(Component as any, {
+        props: { items, multiple: true, defaultValue: [0, 0] },
+      })).rejects.toThrow('requires unique defaultValue values')
+
+      const controlled = await mountSuspended(Component as any, {
+        props: { items, multiple: true, modelValue: [1, '1'] },
+      })
+      const uncontrolled = await mountSuspended(Component as any, {
+        props: { items, multiple: true, defaultValue: [1, '1'] },
+      })
+      controlled.unmount()
+      uncontrolled.unmount()
+    })
+
+    it(`${name} rejects duplicate values introduced by a controlled parent update`, async () => {
+      const value = ref<number[]>([0])
+      const wrapper = await mountSuspended(defineComponent({
+        render: () => h(Component as any, {
+          items,
+          multiple: true,
+          modelValue: value.value,
+        }),
+      }))
+      try {
+        value.value = [0, 0]
+        await expect(nextTick()).rejects.toThrow('requires unique modelValue values')
+      }
+      finally {
+        wrapper.unmount()
+      }
+    })
   }
 
   it('preserves a parent-controlled searchable Select query during an atomic mode change', async () => {

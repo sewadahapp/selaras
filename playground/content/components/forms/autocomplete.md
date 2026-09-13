@@ -115,6 +115,9 @@ A controlled parent must change `modelValue` and `multiple` in the same render:
 an array when `multiple` is true, and a scalar or `undefined` when it is false.
 `undefined` is allowed as the empty multiple value. A scalar value in
 multiple mode, or any array in single mode, throws a descriptive error.
+Each value in a multiple `modelValue` or `defaultValue` array must also be
+unique, including created or unresolved async identities. Numeric `1` and
+string `'1'` are distinct values.
 Autocomplete does not convert controlled values or emit an update solely
 because the mode changed. Changing modes also preserves an active query, open
 popover, and focus when the input was focused. It does not take focus from a
