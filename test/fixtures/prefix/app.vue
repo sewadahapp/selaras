@@ -169,6 +169,14 @@ function updateNestedTokens() {
       </SButton>
       <span id="builtin-foundation-probe" style="color: var(--tw-color-primary-500);">Foundation probe</span>
     </div>
+    <STheme
+      as="section"
+      :tokens="{ light: { enterprise: { fill: 'rgb(20 21 22)', subtle: 'rgb(60 61 62)', text: 'rgb(100 101 102)' } }, dark: { enterprise: { fill: 'rgb(30 31 32)', subtle: 'rgb(70 71 72)', text: 'rgb(110 111 112)' } } }"
+    >
+      <SButton id="derived-states-button" color="enterprise">
+        Derived states
+      </SButton>
+    </STheme>
     <!-- Restore the stock primary shade changed by this fixture's @theme override. -->
     <section id="stock-colors" style="--tw-color-primary-500: oklch(0.4755 0.2026 279.99); background: var(--ui-bg); position: relative; z-index: 999999;">
       <SButton

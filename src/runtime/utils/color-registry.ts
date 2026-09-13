@@ -76,6 +76,7 @@ export function assertColorRoleName(name: string): asserts name is string {
     throw new Error(`Invalid Selaras color role "${name}". Use lowercase kebab-case, for example "brand-accent".`)
 }
 
+/** Compiles omitted web recipe leaves into dependencies on resolved bindings. */
 export function normalizeColorRecipe(input: ColorRecipeInput): ColorRecipe {
   for (const field of requiredRecipeFields) {
     if (typeof input?.[field] !== 'string' || input[field].length === 0)
@@ -83,18 +84,20 @@ export function normalizeColorRecipe(input: ColorRecipeInput): ColorRecipe {
   }
   return {
     fill: input.fill,
-    fillHover: input.fillHover ?? input.fill,
-    fillPressed: input.fillPressed ?? input.fillHover ?? input.fill,
+    // Keep omitted leaves as dependencies on the resolved state, rather than
+    // copying authored values. CSS overrides then propagate through the chain.
+    fillHover: input.fillHover ?? 'var(--_selaras-color-fill)',
+    fillPressed: input.fillPressed ?? 'var(--_selaras-color-fill-hover)',
     onFill: input.onFill,
     subtle: input.subtle,
-    subtleHover: input.subtleHover ?? input.subtle,
-    subtlePressed: input.subtlePressed ?? input.subtleHover ?? input.subtle,
+    subtleHover: input.subtleHover ?? 'var(--_selaras-color-subtle)',
+    subtlePressed: input.subtlePressed ?? 'var(--_selaras-color-subtle-hover)',
     onSubtle: input.onSubtle,
     text: input.text,
-    textHover: input.textHover ?? input.text,
-    textPressed: input.textPressed ?? input.textHover ?? input.text,
+    textHover: input.textHover ?? 'var(--_selaras-color-text)',
+    textPressed: input.textPressed ?? 'var(--_selaras-color-text-hover)',
     border: input.border,
-    focus: input.focus ?? input.text,
+    focus: input.focus ?? 'var(--_selaras-color-text)',
   }
 }
 

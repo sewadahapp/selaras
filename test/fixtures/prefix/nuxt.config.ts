@@ -29,6 +29,7 @@ export default defineNuxtConfig({
         'brand-vars': {
           light: {
             fill: 'var(--company-brand-fill)',
+            fillHover: 'var(--company-brand-fill)',
             onFill: 'var(--company-brand-on-fill)',
             subtle: 'var(--company-brand-subtle)',
             onSubtle: 'var(--company-brand-on-subtle)',

@@ -12,18 +12,18 @@ describe('color registry', () => {
       border: 'var(--brand-border)',
     })).toEqual({
       fill: 'var(--brand-fill)',
-      fillHover: 'var(--brand-fill)',
-      fillPressed: 'var(--brand-fill)',
+      fillHover: 'var(--_selaras-color-fill)',
+      fillPressed: 'var(--_selaras-color-fill-hover)',
       onFill: '#fff',
       subtle: 'var(--brand-subtle)',
-      subtleHover: 'var(--brand-subtle)',
-      subtlePressed: 'var(--brand-subtle)',
+      subtleHover: 'var(--_selaras-color-subtle)',
+      subtlePressed: 'var(--_selaras-color-subtle-hover)',
       onSubtle: '#111',
       text: 'var(--brand-text)',
-      textHover: 'var(--brand-text)',
-      textPressed: 'var(--brand-text)',
+      textHover: 'var(--_selaras-color-text)',
+      textPressed: 'var(--_selaras-color-text-hover)',
       border: 'var(--brand-border)',
-      focus: 'var(--brand-text)',
+      focus: 'var(--_selaras-color-text)',
     })
   })
 
@@ -90,7 +90,7 @@ describe('color registry', () => {
       },
     })
     expect(registry.premium.light.fill).toBe('light-fill')
-    expect(registry.premium.dark.focus).toBe('dark-text')
+    expect(registry.premium.dark.focus).toBe('var(--_selaras-color-text)')
   })
 
   it('generates deterministic light/dark private bindings for registered roles', () => {
@@ -117,7 +117,8 @@ describe('color registry', () => {
     expect(base).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, shared-fill);')
     expect(dark).toContain('--_selaras-color-subtle: var(--selaras-color-premium-subtle, dark-subtle);')
     expect(dark).not.toContain('--_selaras-color-fill:')
-    expect(dark).toContain('--_selaras-color-subtle-hover:')
+    expect(base).toContain('--_selaras-color-subtle-hover:')
+    expect(dark).not.toContain('--_selaras-color-subtle-hover:')
     expect(generateColorRoleCss(createColorRegistry({ premium: { light, dark: light } }))).not.toContain('.dark')
   })
 

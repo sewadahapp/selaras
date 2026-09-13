@@ -112,8 +112,11 @@ export default defineNuxtConfig({
 })
 ```
 
-Hover, pressed, and focus leaves are optional and fall back to their related
-base value. New roles require both modes. A runtime `app.config` override can
+Hover, pressed, and focus leaves are optional. Omitted hover leaves follow
+the resolved base; omitted pressed leaves follow the resolved hover; omitted
+focus follows resolved text. CSS inputs and runtime token overrides participate
+in these chains. Explicitly authored leaves remain independent, even if their
+expression initially matches the base. New roles require both modes. A runtime `app.config` override can
 change leaves of a registered role, but cannot introduce a new role name.
 
 Custom roles accept role-specific CSS overrides such as
@@ -131,8 +134,10 @@ These variables are override inputs. Selaras resolves registered defaults
 at each role element; it does not declare a complete default palette under
 these names on `:root`. This keeps default expressions referencing local
 company variables usable. Explicit managed token overrides take precedence
-over inherited CSS inputs. Override related interaction leaves explicitly
-when changing them; overriding `fill` alone does not update `fillHover`.
+over inherited CSS inputs. Changing `fill` updates an omitted `fillHover` and
+its omitted pressed state. Override authored interaction leaves explicitly
+when you want to change them. Built-in recipes author all their state leaves,
+so changing only their fill does not retheme their interactions.
 Button now uses these inputs for built-in roles too, for example
 `--selaras-color-primary-fill`. Built-in defaults read the palette foundations,
 so a local `--ui-primary` override no longer recolors Button. Module

@@ -18,7 +18,7 @@ describe('dtcg color adapter', () => {
   it('imports explicit light/dark semantic groups and normalizes states', () => {
     const registry = createColorRegistryFromDtcg({ light: { premium: role('#5134a8') }, dark: { premium: role('#a78bfa') } })
     expect(registry.premium!.light.fill).toBe('#5134a8')
-    expect(registry.premium!.dark.fillHover).toBe('#a78bfa')
+    expect(registry.premium!.dark.fillHover).toBe('var(--_selaras-color-fill)')
   })
 
   it('serializes supported structured sRGB values to CSS color()', () => {
