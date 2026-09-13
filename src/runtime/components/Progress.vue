@@ -6,7 +6,6 @@ import type { UiProp } from '../utils/ui'
 import { ProgressIndicator, ProgressRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { progressTheme } from '../theme/progress'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -62,11 +61,9 @@ const dashOffset = computed(() => percent.value == null ? circumference.value * 
 
 const theme = useComponentTheme('progress', progressTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ProgressVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   size: props.size,
-  color: recipeColor.value,
+  color: effectiveColor.value as ProgressVariants['color'],
   indeterminate: props.modelValue == null,
 }))
 
@@ -80,10 +77,10 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 </script>
 
 <template>
-  <ProgressRoot v-if="type === 'linear'" :model-value="modelValue" :max="max" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <ProgressRoot v-if="type === 'linear'" :model-value="modelValue" :max="max" :data-selaras-color="effectiveColor" v-bind="rootProps">
     <ProgressIndicator v-bind="indicatorProps" :style="modelValue == null ? undefined : { width: `${percent}%` }" />
   </ProgressRoot>
-  <ProgressRoot v-else :model-value="modelValue" :max="max" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="circleRootProps">
+  <ProgressRoot v-else :model-value="modelValue" :max="max" :data-selaras-color="effectiveColor" v-bind="circleRootProps">
     <svg :width="circleSpec.diameter" :height="circleSpec.diameter" :viewBox="`0 0 ${circleSpec.diameter} ${circleSpec.diameter}`" v-bind="circleWrapperProps">
       <circle
         :cx="circleSpec.diameter / 2"
