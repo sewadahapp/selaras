@@ -12,7 +12,7 @@ export const ratingTheme = tv({
     // narrower-than-the-whole-star) indicator button is current, but the
     // ring should still outline the *whole* star, not just that step's
     // own cropped hit region.
-    item: 'relative shrink-0 rounded-[var(--ui-radius-sm)] transition-shadow has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--ui-primary)]',
+    item: 'relative shrink-0 rounded-[var(--ui-radius-sm)] transition-shadow has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--_selaras-color-focus)]',
     // The empty/outline star, always visible, sitting behind every step
     // indicator - what a not-yet-filled star reads as.
     icon: 'absolute inset-0 text-[var(--ui-border)]',
@@ -48,7 +48,7 @@ export const ratingTheme = tv({
     // backdrop through it, reading as "not filled" with no shape swap
     // needed - recolored once its own indicator's data-state flips to
     // active.
-    fillIcon: 'text-transparent transition-colors group-data-[state=active]/step:text-[var(--ui-primary)]',
+    fillIcon: 'text-transparent transition-colors group-data-[state=active]/step:text-[var(--_selaras-color-fill)]',
   },
   variants: {
     orientation: {
@@ -61,13 +61,13 @@ export const ratingTheme = tv({
       lg: { item: 'size-6', icon: 'size-6', fillIcon: 'size-6' },
     },
     color: {
-      primary: { fillIcon: 'group-data-[state=active]/step:text-[var(--ui-primary)]' },
+      primary: { fillIcon: 'group-data-[state=active]/step:text-[var(--_selaras-color-fill)]' },
       neutral: { fillIcon: 'group-data-[state=active]/step:text-[var(--ui-bg-inverted)]' },
-      secondary: { fillIcon: 'group-data-[state=active]/step:text-[var(--ui-secondary)]' },
-      success: { fillIcon: 'group-data-[state=active]/step:text-[var(--ui-success)]' },
-      danger: { fillIcon: 'group-data-[state=active]/step:text-[var(--ui-danger)]' },
-      info: { fillIcon: 'group-data-[state=active]/step:text-[var(--ui-info)]' },
-      warning: { fillIcon: 'group-data-[state=active]/step:text-[var(--ui-warning)]' },
+      secondary: { fillIcon: 'group-data-[state=active]/step:text-[var(--_selaras-color-fill)]' },
+      success: { fillIcon: 'group-data-[state=active]/step:text-[var(--_selaras-color-fill)]' },
+      danger: { fillIcon: 'group-data-[state=active]/step:text-[var(--_selaras-color-fill)]' },
+      info: { fillIcon: 'group-data-[state=active]/step:text-[var(--_selaras-color-fill)]' },
+      warning: { fillIcon: 'group-data-[state=active]/step:text-[var(--_selaras-color-fill)]' },
     },
   },
   defaultVariants: {
