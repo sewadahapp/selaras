@@ -3,7 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { FileUploadThemeSlots } from '../theme/file-upload'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, ref, watch } from 'vue'
+import { computed, mergeProps, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
@@ -12,7 +12,7 @@ import { fileUploadTheme } from '../theme/file-upload'
 import { isBuiltinColorRole } from '../utils/color-registry'
 import { formatBytes } from '../utils/format-bytes'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -217,12 +217,18 @@ const ui = computed(() => theme.value({
   invalid: fileUploadInvalid.value,
 }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
+function isNativeFileInputAttr(key: string) {
+  return ['capture', 'form', 'webkitdirectory'].includes(key)
+    || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
+}
+
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeFileInputAttr })
+const nativeFileInputAttrs = useFallthroughAttrs(isNativeFileInputAttr)
 const dropzoneProps = computed(() => resolveSlot(ui.value.dropzone, props.ui?.dropzone))
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
-const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
+const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.ui?.input), nativeFileInputAttrs.value))
 const fileListProps = computed(() => resolveSlot(ui.value.fileList, props.ui?.fileList))
 const fileProps = computed(() => resolveSlot(ui.value.file, props.ui?.file))
 const fileThumbnailProps = computed(() => resolveSlot(ui.value.fileThumbnail, props.ui?.fileThumbnail))

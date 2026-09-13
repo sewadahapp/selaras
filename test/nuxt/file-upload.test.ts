@@ -50,6 +50,18 @@ describe('fileUpload', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[file]])
   })
 
+  it('forwards native file input attributes to the actual file control', async () => {
+    const wrapper = await mountSuspended(FileUpload, {
+      attrs: { capture: 'environment', form: 'upload-form' },
+    })
+    const input = wrapper.find('input[type="file"]')
+
+    expect(input.attributes('capture')).toBe('environment')
+    expect(input.attributes('form')).toBe('upload-form')
+    expect(wrapper.find('div').attributes('capture')).toBeUndefined()
+    expect(wrapper.find('div').attributes('form')).toBeUndefined()
+  })
+
   it('dropping a file emits update:modelValue', async () => {
     const wrapper = await mountSuspended(FileUpload)
     const dropzone = wrapper.find('button')
