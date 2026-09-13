@@ -6,8 +6,8 @@ describe('toggleGroup', () => {
   it('binds a custom semantic role to the group root', async () => {
     const wrapper = await mountSuspended(ToggleGroup, { props: { color: 'premium', items: ['List', 'Grid'] } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
-    expect(wrapper.html()).toContain('data-[state=on]:bg-[var(--ui-primary-soft)]')
+    expect(wrapper.attributes('style')).not.toContain('--ui-primary')
+    expect(wrapper.html()).toContain('data-[state=on]:bg-[var(--_selaras-color-subtle)]')
   })
 
   it('normalizes a plain string item into { label: value, value }', async () => {
