@@ -9,7 +9,6 @@ import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -142,9 +141,7 @@ const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('inputNumber', inputNumberTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as InputNumberVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
-const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: inputInvalid.value, orientation: props.orientation }))
+const ui = computed(() => theme.value({ size: effectiveSize.value, color: effectiveColor.value as InputNumberVariants['color'], invalid: inputInvalid.value, orientation: props.orientation }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
@@ -158,7 +155,7 @@ const stepButtonUi = { base: 'shrink-0' }
 </script>
 
 <template>
-  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <div :data-selaras-color="inputInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
     <Button
       v-if="orientation === 'horizontal'"
       variant="text"
