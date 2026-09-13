@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { SelectItems } from '../composables/use-combobox-select'
+import type { SelectItems, SelectValue } from '../composables/use-combobox-select'
 import type { selectTheme, SelectThemeSlots } from '../theme/select'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
@@ -9,20 +9,20 @@ import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>
 
-export interface SelectProps {
+export interface SelectProps<Value extends SelectValue = SelectValue> {
   id?: string
   name?: string
   /** ID of an associated form outside the component's ancestors. */
   form?: string
-  items: SelectItems
+  items: SelectItems<Value>
   valueKey?: string
   labelKey?: string
   open?: boolean
   /** Initial uncontrolled open state. */
   defaultOpen?: boolean
-  modelValue?: string | number | (string | number)[]
+  modelValue?: Value | Value[]
   /** Initial uncontrolled selection and native form reset target. */
-  defaultValue?: string | number | (string | number)[]
+  defaultValue?: Value | Value[]
   multiple?: boolean
   searchable?: boolean
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
@@ -47,9 +47,9 @@ export interface SelectProps {
   ui?: UiProp<SelectThemeSlots>
 }
 
-export interface SelectEmits {
+export interface SelectEmits<Value extends SelectValue = SelectValue> {
   'update:open': [value: boolean]
-  'update:modelValue': [value: string | number | (string | number)[] | undefined]
+  'update:modelValue': [value: Value | Value[] | undefined]
   'update:searchTerm': [value: string]
 }
 

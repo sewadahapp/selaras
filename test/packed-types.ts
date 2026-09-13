@@ -1,6 +1,8 @@
 import type {
+  AutocompleteProps,
   ButtonProps,
   ColorRole,
+  SelectProps,
   TableColumnDef,
   TableEmits,
   TableProps,
@@ -18,6 +20,19 @@ interface PackedUser {
 }
 
 const packedButton: ButtonProps = { color: 'primary' }
+const numericSelect: SelectProps<number> = {
+  items: [{ label: 'One', value: 1 }],
+  modelValue: 1,
+}
+const stringAutocomplete: AutocompleteProps<string> = {
+  items: [{ label: 'One', value: 'one' }],
+  modelValue: 'one',
+}
+const invalidNumericSelect: SelectProps<number> = {
+  items: [{ label: 'One', value: 1 }],
+  // @ts-expect-error typed props keep numeric and string value contracts distinct
+  modelValue: 'one',
+}
 const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
 // @ts-expect-error scoped defaults replace the pre-1.0 props namespace
 const legacyTheme: ThemeProps = { props: { button: { size: 'lg' } } }
@@ -65,6 +80,9 @@ const packedTableEventShape: TableSortingEvent extends [any[]] ? true : false = 
 const packedRowEventShape: TableRowClickEvent extends [PackedUser, MouseEvent] ? true : false = true
 
 void packedButton
+void numericSelect
+void stringAutocomplete
+void invalidNumericSelect
 void packedTheme
 void legacyTheme
 void packedRole
