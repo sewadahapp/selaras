@@ -275,5 +275,11 @@ function updateNestedTokens() {
     <SFormField id="mobile-date" label="Mobile date" description="Choose a date on a small screen.">
       <SDatePicker mobile-modal />
     </SFormField>
+    <SFormField id="mobile-range" label="Mobile range">
+      <SDatePicker mobile-modal range />
+    </SFormField>
+    <SFormField id="mobile-time" label="Mobile time">
+      <SDatePicker mobile-modal time-only />
+    </SFormField>
   </section>
 </template>
