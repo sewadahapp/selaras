@@ -14,6 +14,7 @@ test('hydrates library-owned dates and numbers and resets errors after real blur
   const html = await (await page.request.get('/')).text()
   expect(html).toMatch(/<input[^>]*name="date"[^>]*value="2024-01-15"/)
   await expect.poll(state).toEqual({ email: '', plan: 0, files: [], date: '2024-01-15', quantity: 1, touched: false, quantityTouched: false })
+  await expect(fixture.getByRole('group', { name: 'Date', exact: true })).toBeVisible()
 
   const email = fixture.getByLabel('Email', { exact: true })
   await email.fill('invalid')

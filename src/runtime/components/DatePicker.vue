@@ -699,8 +699,8 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(value)"
   >
     <DateRangePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
-        <DateRangePickerField v-slot="{ segments }">
+      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+        <DateRangePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="segment in segments.start" :key="`start-${segment.part}`">
             <DateRangePickerInput as="span" type="start" :part="segment.part" v-bind="segmentProps">
               {{ segment.value }}
@@ -748,6 +748,7 @@ const buttonTriggerUi = computed(() => ({
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
+            :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
             {{ hasValue ? formattedValue : messages.pickDate }}
@@ -816,11 +817,14 @@ const buttonTriggerUi = computed(() => ({
 
   <PopoverRoot v-else-if="timeOnly" :open="open" :data-selaras-color="fieldColor" @update:open="onUpdateOpen">
     <PopoverAnchor as-child>
-      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
+      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <TimeFieldRoot
           :id="datePickerId"
           v-slot="{ segments }"
           v-model:placeholder="timePlaceholder"
+          :aria-labelledby="field?.labelId"
+          :aria-describedby="describedBy"
+          :aria-invalid="datePickerInvalid || undefined"
           :model-value="timeOnlyValue"
           :name="undefined"
           :locale="effectiveLocale"
@@ -871,6 +875,7 @@ const buttonTriggerUi = computed(() => ({
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
+            :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
             {{ hasValue ? formattedTimeValue : messages.pickTime }}
@@ -955,8 +960,8 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(normalizeForGranularity(value as DateValue | undefined))"
   >
     <DatePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
-        <DatePickerField v-slot="{ segments }">
+      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+        <DatePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="(segment, index) in visibleSegments(segments)" :key="`${segment.part}-${index}`">
             <DatePickerInput as="span" :part="segment.part" v-bind="segmentProps">
               {{ segment.value }}
@@ -998,6 +1003,7 @@ const buttonTriggerUi = computed(() => ({
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
+            :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
             {{ hasValue ? formattedValue : messages.pickDate }}
