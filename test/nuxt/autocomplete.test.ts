@@ -9,6 +9,16 @@ const fruitItems = [
 ]
 
 describe('autocomplete', () => {
+  it('supports a controlled open state and emits close requests', async () => {
+    const wrapper = await mountSuspended(Autocomplete, { props: { items: fruitItems, open: true, dropdown: true } })
+    const trigger = wrapper.find('[aria-haspopup="listbox"]')
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    await trigger.trigger('click')
+    expect(wrapper.emitted('update:open')?.[0]).toEqual([false])
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+  })
+
   it('uses native required validity for an empty selection', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => h('form', {}, [

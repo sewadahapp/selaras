@@ -76,6 +76,19 @@ describe('select', () => {
     expect(wrapper.text()).toContain('Zero')
   })
 
+  it('supports defaultOpen and lets a controlled parent veto closing', async () => {
+    const uncontrolled = await mountSuspended(Select, { props: { items: fruitItems, defaultOpen: true } })
+    expect(uncontrolled.find('[aria-haspopup="listbox"]').attributes('aria-expanded')).toBe('true')
+    uncontrolled.unmount()
+
+    const controlled = await mountSuspended(Select, { props: { items: fruitItems, open: true } })
+    const trigger = controlled.find('[aria-haspopup="listbox"]')
+    await trigger.trigger('click')
+    expect(controlled.emitted('update:open')?.[0]).toEqual([false])
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    controlled.unmount()
+  })
+
   it('keeps numeric and string identities distinct when removing a chip', async () => {
     const wrapper = await mountSuspended(Select, {
       props: {

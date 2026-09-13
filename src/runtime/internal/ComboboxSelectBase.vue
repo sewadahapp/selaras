@@ -78,6 +78,9 @@ export interface ComboboxSelectBaseProps {
   items: SelectItems
   valueKey?: string
   labelKey?: string
+  open?: boolean
+  /** Initial uncontrolled open state. */
+  defaultOpen?: boolean
   modelValue?: string | number | (string | number)[]
   /** Initial uncontrolled selection and native form reset target. */
   defaultValue?: string | number | (string | number)[]
@@ -109,6 +112,7 @@ export interface ComboboxSelectBaseProps {
 }
 
 export interface ComboboxSelectBaseEmits {
+  'update:open': [value: boolean]
   'update:modelValue': [value: string | number | (string | number)[] | undefined]
   'update:searchTerm': [value: string]
 }
@@ -351,14 +355,17 @@ const itemIndicatorProps = computed(() => resolveSlot(ui.value.itemIndicator, pr
 const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
 const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
 
-// ComboboxRoot's own open state used to be fully uncontrolled - now always
-// bound to this local ref instead, so the exact same state can also drive
-// the mobileModal branch's own Modal below. Behavior-invisible when
-// mobileModal is false; not gated behind it, since passing a real ref
-// sometimes and leaving `open` unbound other times is exactly the
-// uncontrolled-mode bug Popover.vue's own identical `internalOpen`
-// pattern exists to avoid (see that file's own comment on it).
-const internalOpen = ref(false)
+// One open state drives both the desktop Popover and mobile Modal branches.
+// When `open` is supplied, the parent owns the value and may veto a close by
+// leaving it true after the emitted update.
+const localOpen = ref(props.defaultOpen ?? false)
+const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
+const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
+function updateOpen(value: boolean) {
+  if (!isOpenControlled())
+    localOpen.value = value
+  emit('update:open', value)
+}
 
 function resetSelection(event: Event) {
   // Respect canceled resets and let the browser finish resetting native controls.
@@ -368,7 +375,7 @@ function resetSelection(event: Event) {
     setValue(Array.isArray(initialValue) ? [...initialValue] : initialValue ?? (props.multiple ? [] : undefined))
     searchText.value = ''
     selectedChipValue.value = undefined
-    internalOpen.value = false
+    updateOpen(false)
   })
 }
 
@@ -378,7 +385,7 @@ const isMobile = useIsMobile()
 // leave two interaction trees competing for the same Reka root. The next open
 // samples the current breakpoint again.
 const mobilePresentation = ref(false)
-watch(internalOpen, (open) => {
+watch(open, (open) => {
   mobilePresentation.value = open && !!props.mobileModal && isMobile.value
 })
 const showMobileModal = computed(() => mobilePresentation.value)
@@ -411,7 +418,7 @@ const bodyProps = computed(() => ({
 
 <template>
   <ComboboxRoot
-    :open="internalOpen"
+    :open="open"
     :model-value="selection"
     :multiple="multiple"
     :disabled="disabled"
@@ -420,7 +427,7 @@ const bodyProps = computed(() => ({
     :reset-search-term-on-select="resetSearchTermOnSelect"
     :data-selaras-color="colorRoleMarker"
     v-bind="rootProps"
-    @update:open="internalOpen = $event"
+    @update:open="updateOpen($event)"
     @update:model-value="(value) => setValue(value as string | number | (string | number)[] | undefined)"
   >
     <ComboboxAnchor>
@@ -719,9 +726,9 @@ const bodyProps = computed(() => ({
       desktop equivalent for what's otherwise the same surface.
     -->
     <Modal
-      v-else :open="internalOpen" :title="placeholder || messages.search" :description="messages.searchDescription"
+      v-else :open="open" :title="placeholder || messages.search" :description="messages.searchDescription"
       :auto-focus="!creatable" :ui="{ content: 'rounded-[var(--ui-radius-md)]' }"
-      @update:open="internalOpen = $event"
+      @update:open="updateOpen($event)"
     >
       <template #content>
         <ComboboxContent :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps">

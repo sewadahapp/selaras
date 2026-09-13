@@ -17,6 +17,9 @@ export interface SelectProps {
   items: SelectItems
   valueKey?: string
   labelKey?: string
+  open?: boolean
+  /** Initial uncontrolled open state. */
+  defaultOpen?: boolean
   modelValue?: string | number | (string | number)[]
   /** Initial uncontrolled selection and native form reset target. */
   defaultValue?: string | number | (string | number)[]
@@ -45,6 +48,7 @@ export interface SelectProps {
 }
 
 export interface SelectEmits {
+  'update:open': [value: boolean]
   'update:modelValue': [value: string | number | (string | number)[] | undefined]
   'update:searchTerm': [value: string]
 }
