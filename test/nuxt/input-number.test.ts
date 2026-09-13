@@ -188,4 +188,14 @@ describe('inputNumber', () => {
     expect(input.attributes('aria-invalid')).toBe('true')
     expect(input.attributes('aria-describedby')).toBe(error.attributes('id'))
   })
+
+  it('exposes spinbutton semantics and numeric bounds', async () => {
+    const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, min: 1, max: 10, step: 2 } })
+
+    const input = wrapper.find('input')
+    expect(input.attributes('role')).toBe('spinbutton')
+    expect(input.attributes('aria-valuemin')).toBe('1')
+    expect(input.attributes('aria-valuemax')).toBe('10')
+    expect(input.attributes('aria-valuenow')).toBe('5')
+  })
 })
