@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants'
 export const collapsibleTheme = tv({
   slots: {
     root: 'w-full',
-    trigger: 'group flex w-full items-center justify-between gap-2 text-start font-medium text-[var(--ui-text)] transition-colors hover:text-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'group flex w-full items-center justify-between gap-2 text-start font-medium text-[var(--ui-text)] transition-colors hover:text-[var(--_selaras-color-text-hover)] disabled:opacity-50 disabled:pointer-events-none',
     chevron: 'size-4 shrink-0 text-[var(--ui-text-muted)] transition-transform group-data-[state=open]:rotate-180',
     // overflow-hidden clips the panel to its own animated height (without
     // it, content would visibly spill out mid-animation); the two
@@ -18,6 +18,15 @@ export const collapsibleTheme = tv({
     contentInner: 'pt-2',
   },
   variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
     size: {
       sm: { trigger: 'text-sm', content: 'text-sm' },
       md: { trigger: 'text-sm', content: 'text-sm' },

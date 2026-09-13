@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { CollapsibleThemeSlots } from '../theme/collapsible'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { collapsibleTheme } from '../theme/collapsible'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -28,6 +30,8 @@ export interface CollapsibleProps {
   size?: CollapsibleVariants['size']
   /** Which way the content reveals - `down` expands below the trigger, `up` above it. Flips the chevron's rest/open rotation to match. @default 'down' */
   direction?: CollapsibleVariants['direction']
+  /** The trigger hover accent. @default 'primary' */
+  color?: ColorRole
   ui?: UiProp<CollapsibleThemeSlots>
 }
 
@@ -46,7 +50,8 @@ export interface CollapsibleSlots {
 const icons = useIcons()
 
 const theme = useComponentTheme('collapsible', collapsibleTheme)
-const ui = computed(() => theme.value({ size: props.size, direction: props.direction }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ size: props.size, direction: props.direction, color: effectiveColor.value as CollapsibleVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
@@ -69,7 +74,7 @@ function onUpdateOpen(value: boolean) {
 </script>
 
 <template>
-  <CollapsibleRoot :open="internalOpen" :disabled="disabled" v-bind="rootProps" @update:open="onUpdateOpen">
+  <CollapsibleRoot :open="internalOpen" :disabled="disabled" :data-selaras-color="effectiveColor" v-bind="rootProps" @update:open="onUpdateOpen">
     <CollapsibleTrigger v-bind="triggerProps">
       <slot name="trigger" :open="internalOpen" />
       <slot name="chevron-icon" :open="internalOpen">

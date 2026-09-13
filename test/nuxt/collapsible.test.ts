@@ -4,6 +4,16 @@ import { nextTick } from 'vue'
 import Collapsible from '../../src/runtime/components/Collapsible.vue'
 
 describe('collapsible', () => {
+  it('binds a custom semantic role to trigger hover styling', async () => {
+    const wrapper = await mountSuspended(Collapsible, {
+      props: { color: 'premium' as any },
+      slots: { trigger: () => 'Toggle' },
+    })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('button').classes()).toContain('hover:text-[var(--_selaras-color-text-hover)]')
+  })
+
   it('starts closed by default', async () => {
     const wrapper = await mountSuspended(Collapsible, {
       slots: { trigger: () => 'Toggle', default: () => 'Content' },
