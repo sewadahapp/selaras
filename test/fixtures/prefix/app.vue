@@ -36,6 +36,9 @@ function updateNestedTokens() {
     <SRadioGroup id="radio-invalid" :items="['one', 'two']" model-value="one" color="enterprise" invalid />
     <SCheckbox id="checkbox-invalid" :model-value="true" color="enterprise" invalid label="Invalid" />
     <SSwitch id="switch-invalid" :model-value="true" color="enterprise" invalid label="Invalid switch" />
+    <SToggle id="toggle-invalid" default-value color="enterprise">
+      Invalid toggle
+    </SToggle>
     <SButton id="enterprise-button" color="enterprise">
       Enterprise
     </SButton>
@@ -199,6 +202,9 @@ function updateNestedTokens() {
       <div v-for="role in ['primary', 'enterprise']" :key="role">
         <SCheckbox :id="`checkbox-${role}`" :model-value="true" :color="role" variant="card" label="Checked" />
         <SSwitch :id="`switch-${role}`" :model-value="true" :color="role" label="On" />
+        <SToggle :id="`toggle-${role}`" default-value :color="role">
+          On
+        </SToggle>
         <SRadioGroup :id="`radio-${role}`" v-model="radioValues[role]" :items="['one', 'two']" :color="role" variant="card" />
         <SBadge
           v-for="variant in ['solid', 'soft', 'outline']"

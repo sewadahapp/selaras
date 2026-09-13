@@ -6,7 +6,6 @@ import type { UiProp } from '../utils/ui'
 import { Toggle } from 'reka-ui'
 import { computed, useSlots } from 'vue'
 import { toggleTheme } from '../theme/toggle'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -55,10 +54,8 @@ const iconOnly = computed(() => !slots.default)
 
 const theme = useComponentTheme('toggle', toggleTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ToggleVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
-  color: recipeColor.value,
+  color: effectiveColor.value as ToggleVariants['color'],
   size: props.size,
   square: props.square ?? iconOnly.value,
 }))
@@ -71,8 +68,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
     :model-value="modelValue"
     :default-value="defaultValue"
     :disabled="disabled"
-    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
-    :style="colorRoleStyle"
+    :data-selaras-color="effectiveColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as boolean)"
   >
