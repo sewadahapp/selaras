@@ -4,6 +4,15 @@ import { nextTick } from 'vue'
 import Accordion from '../../src/runtime/components/Accordion.vue'
 
 describe('accordion', () => {
+  it('binds a custom semantic role to trigger hover styling', async () => {
+    const wrapper = await mountSuspended(Accordion, {
+      props: { items: [{ value: 'a', label: 'Question one' }], color: 'premium' as any },
+    })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('button').classes()).toContain('hover:text-[var(--_selaras-color-text-hover)]')
+  })
+
   it('shows a slotted item\'s content when it is open by default', async () => {
     const wrapper = await mountSuspended(Accordion, {
       props: {

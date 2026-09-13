@@ -9,7 +9,7 @@ export const accordionTheme = tv({
     root: 'w-full flex flex-col',
     item: '',
     header: '',
-    trigger: 'group flex w-full items-center gap-2 text-start font-medium text-[var(--ui-text)] transition-colors hover:text-[var(--ui-primary)] disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'group flex w-full items-center gap-2 text-start font-medium text-[var(--ui-text)] transition-colors hover:text-[var(--_selaras-color-text-hover)] disabled:opacity-50 disabled:pointer-events-none',
     label: '',
     chevron: 'size-4 shrink-0 text-[var(--ui-text-muted)] transition-transform group-data-[state=open]:rotate-180',
     // overflow-hidden clips the panel to its own animated height (without
@@ -25,6 +25,15 @@ export const accordionTheme = tv({
     contentInner: 'pb-3',
   },
   variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
     size: {
       sm: { trigger: 'py-2 text-sm', content: 'text-sm' },
       md: { trigger: 'py-3 text-sm', content: 'text-sm' },

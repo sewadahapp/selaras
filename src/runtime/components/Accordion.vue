@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { AccordionThemeSlots } from '../theme/accordion'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { AccordionContent, AccordionHeader, AccordionItem, AccordionRoot, AccordionTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { accordionTheme } from '../theme/accordion'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -41,6 +43,8 @@ export interface AccordionProps {
   variant?: AccordionVariants['variant']
   /** @default 'end' */
   chevronPosition?: AccordionVariants['chevronPosition']
+  /** The trigger hover accent. @default 'primary' */
+  color?: ColorRole
   ui?: UiProp<AccordionThemeSlots>
 }
 
@@ -50,13 +54,15 @@ export interface AccordionEmits {
 
 const icons = useIcons()
 const theme = useComponentTheme('accordion', accordionTheme)
-const ui = computed(() => theme.value({ size: props.size, variant: props.variant, chevronPosition: props.chevronPosition }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ size: props.size, variant: props.variant, chevronPosition: props.chevronPosition, color: effectiveColor.value as AccordionVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 </script>
 
 <template>
   <AccordionRoot
+    :data-selaras-color="effectiveColor"
     :type="(type as any)"
     :default-value="(defaultValue as any)"
     :model-value="(modelValue as any)"
