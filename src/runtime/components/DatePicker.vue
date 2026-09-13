@@ -146,7 +146,7 @@ const instance = getCurrentInstance()!
 type DatePickerValue = DateValue | DateRange | Time | undefined
 const initialValue = props.defaultValue
 const localValue = shallowRef<DatePickerValue>(initialValue)
-const isModelControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue')
+const isModelControlled = () => props.modelValue !== undefined
 const modelValue = computed<DatePickerValue>(() => isModelControlled() ? props.modelValue : localValue.value)
 function updateModelValue(value: DatePickerValue) {
   if (!isModelControlled())
@@ -305,7 +305,6 @@ watch(open, (open) => {
   if (!open)
     setView(defaultView.value)
 })
-
 const isMobile = useIsMobile()
 // Overrides Modal's own default rounded-lg down to rounded-md, matching
 // every other floating panel here (the desktop popover's own `content`
@@ -672,7 +671,9 @@ const buttonTriggerUi = computed(() => ({
   <DateRangePickerRoot
     v-if="range"
     :id="datePickerId"
+    :default-open="defaultOpen"
     :open="open"
+    v-bind="rootProps"
     :name="undefined"
     :model-value="rangeModelValue"
     :min-value="minValue"
@@ -694,7 +695,6 @@ const buttonTriggerUi = computed(() => ({
     :readonly="readonly"
     :prevent-deselect="preventDeselect"
     :data-selaras-color="fieldColor"
-    v-bind="rootProps"
     @update:open="onUpdateOpen"
     @update:model-value="(value) => updateModelValue(value)"
   >
@@ -929,8 +929,10 @@ const buttonTriggerUi = computed(() => ({
   <DatePickerRoot
     v-else
     :id="datePickerId"
+    :default-open="defaultOpen"
     v-model:placeholder="placeholder"
     :open="open"
+    v-bind="rootProps"
     :name="undefined"
     :model-value="singleModelValue"
     :min-value="minValue"
@@ -949,7 +951,6 @@ const buttonTriggerUi = computed(() => ({
     :readonly="readonly"
     :prevent-deselect="preventDeselect"
     :data-selaras-color="fieldColor"
-    v-bind="rootProps"
     @update:open="onUpdateOpen"
     @update:model-value="(value) => updateModelValue(normalizeForGranularity(value as DateValue | undefined))"
   >
