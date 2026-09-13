@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
+import FormField from '../../src/runtime/components/FormField.vue'
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },
@@ -41,6 +42,18 @@ describe('autocomplete', () => {
     expect(input.attributes('inputmode')).toBe('email')
     expect(input.attributes('readonly')).toBeDefined()
     expect(wrapper.find('[data-selaras-color]').attributes('readonly')).toBeUndefined()
+  })
+
+  it('associates a FormField label with the actual editable input', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { label: 'Fruit' },
+      slots: { default: () => h(Autocomplete, { items: fruitItems }) },
+    })
+    const input = wrapper.find('input[role="combobox"]')
+
+    expect(input.attributes('id')).toBeTruthy()
+    expect(wrapper.find('label').attributes('for')).toBe(input.attributes('id'))
+    expect(input.attributes('aria-describedby')).toBeUndefined()
   })
 
   it('displays the label for numeric zero without treating it as empty', async () => {

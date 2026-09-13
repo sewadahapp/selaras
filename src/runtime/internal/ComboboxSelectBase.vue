@@ -445,11 +445,7 @@ const bodyProps = computed(() => ({
       -->
       <div
         v-if="creatable"
-        :id="selectId"
         data-ui-group-item
-        :aria-invalid="selectInvalid || undefined"
-        :aria-describedby="describedBy"
-        :aria-busy="loading || undefined"
         v-bind="triggerProps"
       >
         <!--
@@ -504,8 +500,12 @@ const bodyProps = computed(() => ({
           </TagsInputItem>
           <ComboboxInput v-model="searchText" as-child>
             <TagsInputInput
+              :id="selectId"
               :display-value="displayValue"
               :placeholder="placeholder"
+              :aria-invalid="selectInvalid || undefined"
+              :aria-describedby="describedBy"
+              :aria-busy="loading || undefined"
               v-bind="searchInputProps"
               @keydown="onSearchKeydown"
               @blur="onSearchBlur"
@@ -514,9 +514,13 @@ const bodyProps = computed(() => ({
         </TagsInputRoot>
         <ComboboxInput
           v-else
+          :id="selectId"
           v-model="searchText"
           :display-value="displayValue"
           :placeholder="placeholder"
+          :aria-invalid="selectInvalid || undefined"
+          :aria-describedby="describedBy"
+          :aria-busy="loading || undefined"
           v-bind="searchInputProps"
           @keydown="onSearchKeydown"
           @blur="onSearchBlur"
