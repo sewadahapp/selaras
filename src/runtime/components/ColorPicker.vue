@@ -4,7 +4,7 @@ import type { ColorPickerThemeSlots } from '../theme/color-picker'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { ColorSwatch } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
@@ -26,6 +26,9 @@ const emit = defineEmits<ColorPickerEmits>()
 export interface ColorPickerProps {
   modelValue?: string
   defaultValue?: string
+  open?: boolean
+  /** Initial uncontrolled open state. */
+  defaultOpen?: boolean
   disabled?: boolean
   /** Shows an alpha (opacity) slider alongside hue. Reka's own hex output already extends to 8-digit hex (`#RRGGBBAA`) once alpha drops below 1, so this only toggles whether that channel is reachable in the UI - not a format change. @default true */
   alpha?: boolean
@@ -40,6 +43,7 @@ export interface ColorPickerProps {
 }
 
 export interface ColorPickerEmits {
+  'update:open': [value: boolean]
   'update:modelValue': [value: string]
 }
 
@@ -72,9 +76,14 @@ function onUpdateColor(value: string) {
 // swap below on a live resize - neither wrapper owns any state of its
 // own that the swap would otherwise lose, since none of the five color
 // primitives depend on either one's context.
-const internalOpen = ref(false)
+const instance = getCurrentInstance()!
+const localOpen = ref(props.defaultOpen ?? false)
+const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
+const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
 function onUpdateOpen(value: boolean) {
-  internalOpen.value = value
+  if (!isOpenControlled())
+    localOpen.value = value
+  emit('update:open', value)
 }
 
 const isMobile = useIsMobile()
@@ -82,7 +91,7 @@ const isMobile = useIsMobile()
 // must not swap Popover and Modal while their focus ownership is active; the
 // next opening samples the current breakpoint again.
 const mobilePresentation = ref(false)
-watch(internalOpen, (open) => {
+watch(open, (open) => {
   mobilePresentation.value = open && !!props.mobileModal && isMobile.value
 })
 const showMobileModal = computed(() => mobilePresentation.value)
@@ -139,7 +148,7 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
 </script>
 
 <template>
-  <Popover v-if="!showMobileModal" :open="internalOpen" :ui="popoverUi" @update:open="onUpdateOpen">
+  <Popover v-if="!showMobileModal" :open="open" :ui="popoverUi" @update:open="onUpdateOpen">
     <button
       type="button"
       :disabled="disabled"
@@ -157,7 +166,7 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
   </Popover>
 
   <Modal
-    v-else :open="internalOpen" :title="messages.colorPicker" :description="messages.colorPickerDescription"
+    v-else :open="open" :title="messages.colorPicker" :description="messages.colorPickerDescription"
     :ui="mobileModalUi" @update:open="onUpdateOpen"
   >
     <button

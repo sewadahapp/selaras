@@ -13,6 +13,20 @@ async function open(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
 }
 
 describe('colorPicker', () => {
+  it('supports defaultOpen and lets a controlled parent veto closing', async () => {
+    const uncontrolled = await mountSuspended(ColorPicker, { props: { defaultOpen: true } })
+    expect(trigger(uncontrolled).attributes('aria-expanded')).toBe('true')
+    uncontrolled.unmount()
+
+    const controlled = await mountSuspended(ColorPicker, { props: { open: true } })
+    const controlledTrigger = trigger(controlled)
+    expect(controlledTrigger.attributes('aria-expanded')).toBe('true')
+    await controlledTrigger.trigger('click')
+    expect(controlled.emitted('update:open')?.[0]).toEqual([false])
+    expect(controlledTrigger.attributes('aria-expanded')).toBe('true')
+    controlled.unmount()
+  })
+
   it('binds a custom semantic role to the trigger', async () => {
     const wrapper = await mountSuspended(ColorPicker, { props: { color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
