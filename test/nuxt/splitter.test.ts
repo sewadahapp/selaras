@@ -6,6 +6,22 @@ import SplitterPanel from '../../src/runtime/components/SplitterPanel.vue'
 import SplitterResizeHandle from '../../src/runtime/components/SplitterResizeHandle.vue'
 
 describe('splitter', () => {
+  it('binds a custom semantic role to a resize handle', async () => {
+    const wrapper = await mountSuspended(Splitter, {
+      slots: {
+        default: () => [
+          h(SplitterPanel, {}, () => 'Panel one'),
+          h(SplitterResizeHandle, { color: 'premium' }),
+          h(SplitterPanel, {}, () => 'Panel two'),
+        ],
+      },
+    })
+
+    const handle = wrapper.find('[data-selaras-color="premium"]')
+    expect(handle.exists()).toBe(true)
+    expect(handle.find('div').classes()).toContain('group-hover:bg-[var(--_selaras-color-fill)]')
+  })
+
   it('renders every panel\'s own content', async () => {
     const wrapper = await mountSuspended(Splitter, {
       slots: {
