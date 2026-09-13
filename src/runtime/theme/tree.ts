@@ -9,7 +9,7 @@ export const treeTheme = tv({
     // other component here keys off Reka's own data-* state, rather than
     // a JS-computed variant like FileTree.vue's own hand-rolled one (it
     // has no Reka data-attribute of its own to key off).
-    item: 'flex w-full items-center gap-1.5 rounded-[var(--ui-radius-sm)] px-1.5 py-1 text-[var(--ui-text)] outline-none cursor-pointer select-none data-[selected]:bg-[var(--ui-primary-soft)] data-[selected]:text-[var(--ui-primary)] not-data-[selected]:hover:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--ui-primary)]',
+    item: 'flex w-full items-center gap-1.5 rounded-[var(--ui-radius-sm)] px-1.5 py-1 text-[var(--ui-text)] outline-none cursor-pointer select-none data-[selected]:bg-[var(--_selaras-color-subtle)] data-[selected]:text-[var(--_selaras-color-text)] not-data-[selected]:hover:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)]',
     // Same rotate-on-expand convention as Accordion/FileTree's own
     // chevron. A leaf row (no children) renders `spacer` instead, sized
     // identically, so labels still align into one column regardless of
@@ -21,6 +21,15 @@ export const treeTheme = tv({
     label: 'truncate',
   },
   variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
     size: {
       sm: { item: 'text-xs', icon: 'size-3.5', toggle: 'size-3.5', spacer: 'size-3.5' },
       md: { item: 'text-sm' },
@@ -28,6 +37,7 @@ export const treeTheme = tv({
     },
   },
   defaultVariants: {
+    color: 'primary',
     size: 'md',
   },
 })

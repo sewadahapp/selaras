@@ -35,6 +35,13 @@ function findRow(wrapper: Awaited<ReturnType<typeof mountSuspended>>, label: str
 }
 
 describe('tree', () => {
+  it('binds a custom semantic role to selected rows', async () => {
+    const wrapper = await mountSuspended(Tree, { props: { items, color: 'premium' as any } })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('[role="treeitem"]').classes()).toContain('data-[selected]:bg-[var(--_selaras-color-subtle)]')
+  })
+
   it('renders top-level items with children collapsed by default', async () => {
     const wrapper = await mountSuspended(Tree, { props: { items } })
     await nextTick()

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { TreeThemeSlots } from '../theme/tree'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { TreeItem, TreeRoot } from 'reka-ui'
 import { computed, mergeProps, ref, watch } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { treeTheme } from '../theme/tree'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Checkbox from './Checkbox.vue'
 import Icon from './Icon.vue'
@@ -46,6 +48,8 @@ export interface TreeProps {
   /** @default item => item.children */
   getChildren?: (item: TreeItemType) => TreeItemType[] | undefined
   size?: TreeVariants['size']
+  /** The selected-row and keyboard-focus accent. @default 'primary' */
+  color?: ColorRole
   ui?: UiProp<TreeThemeSlots>
 }
 
@@ -114,7 +118,8 @@ function onUpdateExpanded(value: unknown) {
 }
 
 const theme = useComponentTheme('tree', treeTheme)
-const ui = computed(() => theme.value({ size: props.size }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ size: props.size, color: effectiveColor.value as TreeVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
@@ -149,6 +154,7 @@ function treeItemProps(entry: { bind: Record<string, unknown> }, level: number) 
     :propagate-select="propagateSelect"
     :bubble-select="bubbleSelect"
     :disabled="disabled"
+    :data-selaras-color="effectiveColor"
     v-bind="rootProps"
     @update:model-value="onUpdateModelValue"
     @update:expanded="onUpdateExpanded"
