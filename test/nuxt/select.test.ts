@@ -19,6 +19,66 @@ function withTooltipProvider(children: any) {
 }
 
 describe('select', () => {
+  it('serializes repeated fields and resets an uncontrolled default selection', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(Select, {
+          name: 'choice',
+          items: [{ label: 'Numeric', value: 1 }, { label: 'Text', value: '1' }],
+          defaultValue: [1, '1'],
+          multiple: true,
+          displayMode: 'chip',
+        }),
+      ]),
+    }))
+    const form = wrapper.find('form').element
+    expect(new FormData(form).getAll('choice')).toEqual(['1', '1'])
+    await wrapper.find('[aria-label="Remove Numeric"]').trigger('click')
+    expect(new FormData(form).getAll('choice')).toEqual(['1'])
+    form.reset()
+    await nextTick()
+    await nextTick()
+    expect(new FormData(form).getAll('choice')).toEqual(['1', '1'])
+    expect(wrapper.text()).toContain('Numeric')
+  })
+
+  it('keeps controlled selection when the parent ignores removal', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: [{ label: 'Zero', value: 0 }], modelValue: 0, clearable: true },
+    })
+    await wrapper.find('[aria-label="Clear"]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([undefined])
+    expect(wrapper.text()).toContain('Zero')
+  })
+
+  it('keeps numeric and string identities distinct when removing a chip', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: {
+        items: [{ label: 'Numeric', value: 1 }, { label: 'Text', value: '1' }],
+        modelValue: [1, '1'],
+        multiple: true,
+        displayMode: 'chip',
+      },
+    })
+    expect(wrapper.text()).toContain('Numeric')
+    expect(wrapper.text()).toContain('Text')
+    await wrapper.find('[aria-label="Remove Numeric"]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['1']])
+  })
+
+  it('emits the original numeric identity from a Reka option', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: [{ label: 'Numeric zero', value: 0 }, { label: 'Text zero', value: '0' }] },
+    })
+    await wrapper.find('button').trigger('click')
+    await nextTick()
+    const option = Array.from(document.querySelectorAll('[role="option"]')).find(el => el.textContent?.includes('Numeric zero'))
+    expect(option).toBeTruthy()
+    ;(option as HTMLElement).click()
+    await nextTick()
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([0])
+  })
+
   it('binds a custom semantic role to the trigger and portal roots', async () => {
     const wrapper = await mountSuspended(Select, { props: { items: [{ label: 'One', value: 'one' }], color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)

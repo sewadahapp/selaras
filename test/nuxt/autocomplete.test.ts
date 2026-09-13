@@ -9,6 +9,14 @@ const fruitItems = [
 ]
 
 describe('autocomplete', () => {
+  it('displays the label for numeric zero without treating it as empty', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: [{ label: 'Numeric zero', value: 0 }, { label: 'Text zero', value: '0' }], modelValue: 0 },
+    })
+    await nextTick()
+    expect(wrapper.find('input').element.value).toBe('Numeric zero')
+  })
+
   it('binds a custom semantic role to the trigger root', async () => {
     const wrapper = await mountSuspended(Autocomplete, { props: { items: [{ label: 'One', value: 'one' }], color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)

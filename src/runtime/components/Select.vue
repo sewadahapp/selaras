@@ -12,10 +12,14 @@ type SelectVariants = VariantProps<typeof selectTheme>
 export interface SelectProps {
   id?: string
   name?: string
+  /** ID of an associated form outside the component's ancestors. */
+  form?: string
   items: SelectItems
   valueKey?: string
   labelKey?: string
-  modelValue?: string | string[]
+  modelValue?: string | number | (string | number)[]
+  /** Initial uncontrolled selection and native form reset target. */
+  defaultValue?: string | number | (string | number)[]
   multiple?: boolean
   searchable?: boolean
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
@@ -40,7 +44,7 @@ export interface SelectProps {
 }
 
 export interface SelectEmits {
-  'update:modelValue': [value: string | string[] | undefined]
+  'update:modelValue': [value: string | number | (string | number)[] | undefined]
   'update:searchTerm': [value: string]
 }
 

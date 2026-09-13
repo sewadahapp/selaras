@@ -19,7 +19,7 @@ import {
   TagsInputRoot,
   useDirection,
 } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
@@ -51,13 +51,36 @@ const props = withDefaults(defineProps<ComboboxSelectBaseProps>(), {
 
 const emit = defineEmits<ComboboxSelectBaseEmits>()
 
+const instance = getCurrentInstance()!
+const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue] : props.defaultValue
+const localValue = ref(initialValue ?? (props.multiple ? [] : undefined))
+const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue')
+const selection = computed(() => isControlled() ? props.modelValue : localValue.value)
+function updateSelection(event: 'update:modelValue', value: string | number | (string | number)[] | undefined) {
+  if (!isControlled())
+    localValue.value = value
+  emit(event, value)
+}
+
+const formAnchor = ref<HTMLInputElement>()
+let ownerForm: HTMLFormElement | null = null
+onMounted(() => {
+  ownerForm = formAnchor.value?.form ?? null
+  ownerForm?.addEventListener('reset', resetSelection)
+})
+onUnmounted(() => ownerForm?.removeEventListener('reset', resetSelection))
+
 export interface ComboboxSelectBaseProps {
   id?: string
   name?: string
+  /** ID of an associated form outside the component's ancestors. */
+  form?: string
   items: SelectItems
   valueKey?: string
   labelKey?: string
-  modelValue?: string | string[]
+  modelValue?: string | number | (string | number)[]
+  /** Initial uncontrolled selection and native form reset target. */
+  defaultValue?: string | number | (string | number)[]
   multiple?: boolean
   searchable?: boolean
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
@@ -85,12 +108,13 @@ export interface ComboboxSelectBaseProps {
 }
 
 export interface ComboboxSelectBaseEmits {
-  'update:modelValue': [value: string | string[] | undefined]
+  'update:modelValue': [value: string | number | (string | number)[] | undefined]
   'update:searchTerm': [value: string]
 }
 
 const {
   flatOptions,
+  selectedValues,
   selectedOptions,
   visibleOptions,
   overflowOptions,
@@ -101,7 +125,9 @@ const {
   removeValue,
   hasMatchingOption,
   commitCreatableText,
-} = useComboboxSelect(props, emit, { creatable: props.creatable })
+} = useComboboxSelect(new Proxy(props, {
+  get: (target, key) => key === 'modelValue' ? selection.value : Reflect.get(target, key),
+}), updateSelection, { creatable: props.creatable })
 
 function clear() {
   setValue(props.multiple ? [] : undefined)
@@ -118,7 +144,7 @@ function clear() {
 // that ArrowLeft/Right moves between, and Backspace/Delete removes,
 // selecting the last chip on a first Backspace rather than removing
 // immediately (matching Reka's own two-step convention).
-const selectedChipValue = ref<string>()
+const selectedChipValue = ref<string | number>()
 const dir = useDirection()
 
 function onTriggerKeydown(event: KeyboardEvent) {
@@ -160,7 +186,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
       else if (event.key === 'End') {
         selectedChipValue.value = lastValue
       }
-      else if (!selectedChipValue.value) {
+      else if (selectedChipValue.value === undefined) {
         // Only the "backward" arrow key starts a selection from nothing -
         // moving "back into" the chips, same as TagsInputRoot's own rule.
         if (!isNext)
@@ -242,9 +268,9 @@ function onDropdownClick() {
 // single-select should echo the selected label; multi-select clears after
 // each commit and shows chips separately instead.
 function displayValue(value: unknown) {
-  if (!props.creatable || props.multiple || !value || Array.isArray(value))
+  if (!props.creatable || props.multiple || value == null || Array.isArray(value))
     return ''
-  return resolveOption(value as string).label
+  return resolveOption(value as string | number).label
 }
 
 const virtualizeConfig = computed(() => {
@@ -333,6 +359,18 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
 // pattern exists to avoid (see that file's own comment on it).
 const internalOpen = ref(false)
 
+function resetSelection(event: Event) {
+  // Respect canceled resets and let the browser finish resetting native controls.
+  queueMicrotask(() => {
+    if (event.defaultPrevented)
+      return
+    setValue(Array.isArray(initialValue) ? [...initialValue] : initialValue ?? (props.multiple ? [] : undefined))
+    searchText.value = ''
+    selectedChipValue.value = undefined
+    internalOpen.value = false
+  })
+}
+
 const isMobile = useIsMobile()
 const showMobileModal = computed(() => props.mobileModal && isMobile.value)
 
@@ -365,17 +403,16 @@ const bodyProps = computed(() => ({
 <template>
   <ComboboxRoot
     :open="internalOpen"
-    :model-value="modelValue"
+    :model-value="selection"
     :multiple="multiple"
     :disabled="disabled"
-    :name="name ?? field?.name"
     :ignore-filter="!searchable"
     :reset-search-term-on-blur="resetSearchTermOnBlur"
     :reset-search-term-on-select="resetSearchTermOnSelect"
     :data-selaras-color="colorRoleMarker"
     v-bind="rootProps"
     @update:open="internalOpen = $event"
-    @update:model-value="(value) => emit('update:modelValue', value as string | string[] | undefined)"
+    @update:model-value="(value) => setValue(value as string | number | (string | number)[] | undefined)"
   >
     <ComboboxAnchor>
       <!--
@@ -705,5 +742,15 @@ const bodyProps = computed(() => ({
         </ComboboxContent>
       </template>
     </Modal>
+    <input ref="formAnchor" type="hidden" :form="form">
+    <input
+      v-for="(value, index) in selectedValues"
+      :key="index"
+      type="hidden"
+      :name="name ?? field?.name"
+      :form="form"
+      :value="String(value)"
+      :disabled="disabled"
+    >
   </ComboboxRoot>
 </template>

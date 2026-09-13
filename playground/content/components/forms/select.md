@@ -6,6 +6,16 @@ order: 22
 
 ## Usage
 
+Option values may be strings or finite numbers. Numeric `1` and string `"1"`
+are distinct selections. Missing values and objects are rejected.
+
+Use `modelValue` for parent-controlled selection or `defaultValue` for an
+uncontrolled initial selection. A form reset restores `defaultValue` (or the
+empty selection) and emits an update; a controlled parent decides whether to
+accept it. Pass `name` to submit one string-valued field per selected value.
+An empty selection submits no fields; disabled controls submit none. Use
+`form` to associate the control with an external form ID.
+
 ::component-example{name="select-basic"}
 ::
 

@@ -1,6 +1,14 @@
 import type { ComputedRef } from 'vue'
 import { computed } from 'vue'
 
+export type SelectValue = string | number
+
+function optionValue(value: unknown): SelectValue {
+  if (typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value)))
+    return value
+  throw new TypeError('[selaras] Select option values must be strings or finite numbers.')
+}
+
 export interface SelectOption {
   [key: string]: unknown
   disabled?: boolean
@@ -26,14 +34,14 @@ interface SelectLikeProps {
   items: SelectItems
   valueKey?: string
   labelKey?: string
-  modelValue?: string | string[]
+  modelValue?: SelectValue | SelectValue[]
   multiple?: boolean
   displayMode?: 'comma' | 'chip'
   maxChips?: number
 }
 
 export interface ResolvedOption {
-  value: string
+  value: SelectValue
   label: string
   disabled: boolean
   raw: SelectOption
@@ -41,33 +49,33 @@ export interface ResolvedOption {
 
 export function useComboboxSelect(
   props: SelectLikeProps,
-  emit: (event: 'update:modelValue', value: string | string[] | undefined) => void,
+  emit: (event: 'update:modelValue', value: SelectValue | SelectValue[] | undefined) => void,
   { creatable = false }: { creatable?: boolean } = {},
 ) {
   const valueKey = computed(() => props.valueKey ?? 'value')
   const labelKey = computed(() => props.labelKey ?? 'label')
 
   const flatOptions: ComputedRef<ResolvedOption[]> = computed(() => flattenItems(props.items).map(raw => ({
-    value: String(raw[valueKey.value] ?? ''),
+    value: optionValue(raw[valueKey.value]),
     label: String(raw[labelKey.value] ?? raw[valueKey.value] ?? ''),
     disabled: !!raw.disabled,
     raw,
   })))
 
-  const selectedValues = computed<string[]>(() => {
+  const selectedValues = computed<SelectValue[]>(() => {
     const v = props.modelValue
     if (v === undefined)
       return []
     return Array.isArray(v) ? v : [v]
   })
 
-  function resolveOption(value: string): ResolvedOption {
-    return flatOptions.value.find(o => o.value === value) ?? { value, label: value, disabled: false, raw: { [valueKey.value]: value, [labelKey.value]: value } }
+  function resolveOption(value: SelectValue): ResolvedOption {
+    return flatOptions.value.find(o => o.value === value) ?? { value, label: String(value), disabled: false, raw: { [valueKey.value]: value, [labelKey.value]: value } }
   }
 
   function toOption(raw: SelectOption): ResolvedOption {
     return {
-      value: String(raw[valueKey.value] ?? ''),
+      value: optionValue(raw[valueKey.value]),
       label: String(raw[labelKey.value] ?? raw[valueKey.value] ?? ''),
       disabled: !!raw.disabled,
       raw,
@@ -85,11 +93,11 @@ export function useComboboxSelect(
   const overflowOptions = computed(() => selectedOptions.value.slice(maxChips.value))
   const commaText = computed(() => visibleOptions.value.map(o => o.label).join(', '))
 
-  function setValue(value: string | string[] | undefined) {
+  function setValue(value: SelectValue | SelectValue[] | undefined) {
     emit('update:modelValue', value)
   }
 
-  function removeValue(value: string) {
+  function removeValue(value: SelectValue) {
     if (!props.multiple) {
       setValue(undefined)
       return
@@ -107,7 +115,7 @@ export function useComboboxSelect(
    */
   function hasMatchingOption(text: string) {
     const lower = text.toLowerCase()
-    return flatOptions.value.some(o => o.value.toLowerCase().includes(lower) || o.label.toLowerCase().includes(lower))
+    return flatOptions.value.some(o => String(o.value).toLowerCase().includes(lower) || o.label.toLowerCase().includes(lower))
   }
 
   /** Commits raw typed text as a new value when it doesn't match an existing option. Only used by creatable (autocomplete) mode. Returns true if it committed. */
@@ -117,7 +125,7 @@ export function useComboboxSelect(
       return false
 
     if (props.multiple) {
-      if (selectedValues.value.some(v => v.toLowerCase() === text.toLowerCase()))
+      if (selectedValues.value.some(v => typeof v === 'string' && v.toLowerCase() === text.toLowerCase()))
         return false
       setValue([...selectedValues.value, text])
     }

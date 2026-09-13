@@ -1,3 +1,5 @@
+export type * from '../components/Accordion.vue'
+
 // Re-exports every public component's Props/Emits/Slots types (and
 // any other already-exported data-shape type, e.g. DropdownItem), so
 // a consumer can `import type { ModalProps } from '@sewadah/selaras/types'`
@@ -25,7 +27,6 @@
 // New components need a line added here too - nothing auto-discovers
 // this list.
 
-export type * from '../components/Accordion.vue'
 export type * from '../components/Alert.vue'
 export type * from '../components/App.vue'
 export type * from '../components/Autocomplete.vue'
@@ -102,6 +103,7 @@ export type * from '../components/Toast.vue'
 export type * from '../components/Toggle.vue'
 export type * from '../components/ToggleGroup.vue'
 export type * from '../components/Tooltip.vue'
+export type { SelectValue } from '../composables/use-combobox-select'
 
 // The two global override registries (useMessages()/useIcons(), see their
 // own composables) - exported so a consumer can type their own partial

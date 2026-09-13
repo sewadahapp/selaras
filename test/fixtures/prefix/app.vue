@@ -237,4 +237,14 @@ function updateNestedTokens() {
       </div>
     </STheme>
   </div>
+  <form id="identity-form">
+    <SSelect
+      name="identity" multiple display-mode="chip"
+      :items="[{ label: 'Numeric identity', value: 1 }, { label: 'String identity', value: '1' }]"
+      :default-value="[1, '1']"
+    />
+    <button type="reset">
+      Reset identities
+    </button>
+  </form>
 </template>
