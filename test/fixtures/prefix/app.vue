@@ -1,6 +1,7 @@
 <script setup>
 import { CalendarDate } from '@internationalized/date'
 import { ref } from 'vue'
+import VeeValidateForm from '../../nuxt/fixtures/VeeValidateForm.vue'
 
 const unknownRole = /** @type {any} */ ('not-registered')
 const scopedDate = new CalendarDate(2024, 1, 15)
@@ -258,4 +259,7 @@ function updateNestedTokens() {
       Reset native values
     </button>
   </form>
+  <section id="form-library-fixture">
+    <VeeValidateForm />
+  </section>
 </template>

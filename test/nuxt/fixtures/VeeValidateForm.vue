@@ -2,6 +2,7 @@
 import type { DateValue } from '@internationalized/date'
 import { CalendarDate } from '@internationalized/date'
 import { useField, useForm } from 'vee-validate'
+import { ref } from 'vue'
 import DatePicker from '../../../src/runtime/components/DatePicker.vue'
 import FileUpload from '../../../src/runtime/components/FileUpload.vue'
 import FormField from '../../../src/runtime/components/FormField.vue'
@@ -26,7 +27,19 @@ const plan = useField<number | undefined>('plan', value => typeof value === 'num
 const files = useField<File[]>('files', value => value.length > 0 || 'Attach a file')
 const date = useField<DateValue | undefined>('date', value => value !== undefined || 'Choose a date')
 const quantity = useField<number | undefined>('quantity', value => (typeof value === 'number' && value > 0) || 'Enter a positive quantity')
-const onSubmit = handleSubmit(values => emit('submitted', values))
+const submitted = ref<string>()
+const onSubmit = handleSubmit((values) => {
+  submitted.value = JSON.stringify({
+    email: values.email,
+    plan: values.plan,
+    files: values.files.map(file => file.name),
+    date: values.date?.toString(),
+    calendarDate: values.date instanceof CalendarDate,
+    quantity: values.quantity,
+    quantityType: typeof values.quantity,
+  })
+  emit('submitted', values)
+})
 function onReset(event: Event) {
   event.preventDefault()
   resetForm()
@@ -38,13 +51,13 @@ function onReset(event: Event) {
     <FormField id="integration-email" name="email" label="Email" hint="Your contact address" :error="email.errorMessage.value">
       <Input v-model="email.value.value" type="email" @blur="email.handleBlur($event, true)" />
     </FormField>
-    <FormField id="integration-plan" name="plan" label="Plan" :error="plan.errorMessage.value">
+    <FormField id="integration-plan" data-test="plan-field" name="plan" label="Plan" :error="plan.errorMessage.value">
       <Select v-model="plan.value.value" :items="[{ label: 'Free', value: 0 }, { label: 'Paid', value: 1 }]" clearable />
     </FormField>
     <FormField id="integration-files" name="files" label="Attachments" :error="files.errorMessage.value">
       <FileUpload v-model="files.value.value" />
     </FormField>
-    <FormField id="integration-date" name="date" label="Date" :error="date.errorMessage.value">
+    <FormField id="integration-date" data-test="date-field" name="date" label="Date" :error="date.errorMessage.value">
       <DatePicker v-model="date.value.value" clearable />
     </FormField>
     <FormField id="integration-quantity" name="quantity" label="Quantity" :error="quantity.errorMessage.value">
@@ -57,5 +70,6 @@ function onReset(event: Event) {
       Reset
     </button>
     <output data-test="state">{{ JSON.stringify({ email: email.value.value, plan: plan.value.value, files: files.value.value.map(file => file.name), date: date.value.value?.toString(), quantity: quantity.value.value, touched: email.meta.touched, quantityTouched: quantity.meta.touched }) }}</output>
+    <output data-test="submitted">{{ submitted }}</output>
   </form>
 </template>
