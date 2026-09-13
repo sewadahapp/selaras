@@ -22,7 +22,7 @@ const notifications = ref(true)
 ### States
 
 `disabled` prevents interaction and dims it, and `invalid` switches the
-track's outline to `--ui-danger`:
+track to the danger semantic role:
 
 ::component-example{name="switch-states"}
 ::

@@ -8,7 +8,6 @@ import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { switchTheme } from '../theme/switch'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -55,9 +54,7 @@ const describedBy = computed(() => field?.describedBy.value)
 
 const theme = useComponentTheme('switch', switchTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SwitchVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
-const ui = computed(() => theme.value({ invalid: switchInvalid.value, size: effectiveSize.value, color: recipeColor.value }))
+const ui = computed(() => theme.value({ invalid: switchInvalid.value, size: effectiveSize.value, color: effectiveColor.value as SwitchVariants['color'] }))
 
 // A description pushes the label onto a second line, so the track top-
 // aligns with the label's first line instead of centering against the
@@ -75,7 +72,7 @@ const icons = useIcons()
 </script>
 
 <template>
-  <label :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <label :data-selaras-color="switchInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
     <SwitchRoot
       :id="switchId"
       :model-value="modelValue"

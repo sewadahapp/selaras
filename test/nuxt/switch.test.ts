@@ -3,11 +3,11 @@ import { describe, expect, it } from 'vitest'
 import Switch from '../../src/runtime/components/Switch.vue'
 
 describe('switch', () => {
-  it('binds a custom semantic role to the label bridge', async () => {
+  it('binds a custom semantic role to the semantic recipe', async () => {
     const wrapper = await mountSuspended(Switch, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
-    expect(wrapper.find('button').attributes('class')).toContain('data-[state=checked]:bg-[var(--ui-primary)]')
+    expect(wrapper.attributes('style')).toBeUndefined()
+    expect(wrapper.find('button').attributes('class')).toContain('data-[state=checked]:bg-[var(--_selaras-color-fill)]')
   })
 
   it('emits update:modelValue with the toggled value when clicked', async () => {
@@ -53,13 +53,13 @@ describe('switch', () => {
   it('applies the color prop to the checked-state track/thumb classes', async () => {
     const wrapper = await mountSuspended(Switch, { props: { color: 'danger' } })
     const classes = wrapper.find('button').classes().join(' ')
-    expect(classes).toContain('data-[state=checked]:bg-[var(--ui-danger)]')
+    expect(classes).toContain('data-[state=checked]:bg-[var(--_selaras-color-fill)]')
   })
 
   it('invalid wins over a custom color for the checked-state track, not the other way around', async () => {
     const wrapper = await mountSuspended(Switch, { props: { invalid: true, color: 'success', modelValue: true } })
     const classes = wrapper.find('button').classes().join(' ')
-    expect(classes).toContain('data-[state=checked]:bg-[var(--ui-danger)]')
+    expect(classes).toContain('ring-[var(--_selaras-color-fill)]')
     expect(classes).not.toContain('data-[state=checked]:bg-[var(--ui-success)]')
   })
 
