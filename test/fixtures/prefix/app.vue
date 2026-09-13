@@ -3,6 +3,7 @@ import { CalendarDate } from '@internationalized/date'
 import { ref } from 'vue'
 import VeeValidateForm from '../../nuxt/fixtures/VeeValidateForm.vue'
 
+const route = useRoute()
 const unknownRole = /** @type {any} */ ('not-registered')
 const scopedDate = new CalendarDate(2024, 1, 15)
 const nativeFormDate = new CalendarDate(2024, 2, 20)
@@ -261,5 +262,13 @@ function updateNestedTokens() {
   </form>
   <section id="form-library-fixture">
     <VeeValidateForm />
+  </section>
+  <section v-if="route.query.accessibility" id="datepicker-accessibility-fixture">
+    <SFormField id="accessibility-range" label="Booking window" description="Select the arrival and departure dates.">
+      <SDatePicker range />
+    </SFormField>
+    <SFormField id="accessibility-time" label="Reminder time" hint="Use local time.">
+      <SDatePicker time-only clearable />
+    </SFormField>
   </section>
 </template>

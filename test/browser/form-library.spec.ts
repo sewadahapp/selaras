@@ -76,3 +76,12 @@ test('submits typed user selections and synchronizes native controls on library 
   await expect(fixture.locator('#integration-files').locator('..').locator('li')).toHaveCount(0)
   await expect(quantity).toHaveValue('1')
 })
+
+test('labels range and time-only DatePicker groups in the browser accessibility tree', async ({ page, goto }) => {
+  await goto('/?accessibility=1', { waitUntil: 'hydration' })
+  const fixture = page.locator('#datepicker-accessibility-fixture')
+  await expect(fixture.getByRole('group', { name: 'Booking window', exact: true })).toBeVisible()
+  await expect(fixture.getByRole('group', { name: 'Reminder time', exact: true })).toBeVisible()
+  await expect(fixture.getByRole('group', { name: 'Booking window', exact: true })).toHaveAccessibleDescription('Select the arrival and departure dates.')
+  await expect(fixture.getByRole('group', { name: 'Reminder time', exact: true })).toHaveAccessibleDescription('Use local time.')
+})
