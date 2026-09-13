@@ -42,6 +42,31 @@ describe('select', () => {
     expect(wrapper.text()).toContain('Numeric')
   })
 
+  it('uses native required validity without adding a synthetic submitted value', async () => {
+    const empty = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(Select, { name: 'choice', items: fruitItems, required: true }),
+      ]),
+    }))
+    const form = empty.find('form').element
+    const emptyField = empty.find('input[required]')
+    expect(emptyField.attributes('required')).toBe('')
+    expect(emptyField.attributes('name')).toBe('choice')
+    expect(emptyField.attributes('value')).toBeUndefined()
+    expect(form.checkValidity()).toBe(false)
+
+    const selected = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(Select, { name: 'choice', items: fruitItems, required: true, defaultValue: 'apple' }),
+      ]),
+    }))
+    const selectedForm = selected.find('form').element
+    const selectedFields = selected.findAll('input[type="hidden"][name="choice"]')
+    expect(selectedFields).toHaveLength(1)
+    expect(selectedFields[0]!.attributes('required')).toBe('')
+    expect(selectedForm.checkValidity()).toBe(true)
+  })
+
   it('keeps controlled selection when the parent ignores removal', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: [{ label: 'Zero', value: 0 }], modelValue: 0, clearable: true },

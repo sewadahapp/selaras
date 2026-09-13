@@ -27,6 +27,7 @@ export interface AutocompleteProps {
   loading?: boolean
   placeholder?: string
   disabled?: boolean
+  required?: boolean
   size?: SelectVariants['size']
   invalid?: boolean
   /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */

@@ -89,6 +89,7 @@ export interface ComboboxSelectBaseProps {
   loading?: boolean
   placeholder?: string
   disabled?: boolean
+  required?: boolean
   size?: SelectVariants['size']
   invalid?: boolean
   /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
@@ -742,7 +743,18 @@ const bodyProps = computed(() => ({
         </ComboboxContent>
       </template>
     </Modal>
-    <input ref="formAnchor" type="hidden" :form="form">
+    <input
+      ref="formAnchor"
+      :type="required ? 'text' : 'hidden'"
+      :class="required ? 'sr-only' : undefined"
+      :name="required && !selectedValues.length ? name ?? field?.name : undefined"
+      :form="form"
+      :required="required && !disabled && !selectedValues.length"
+      :disabled="disabled || !!selectedValues.length"
+      aria-hidden="true"
+      tabindex="-1"
+      autocomplete="off"
+    >
     <input
       v-for="(value, index) in selectedValues"
       :key="index"
@@ -751,6 +763,7 @@ const bodyProps = computed(() => ({
       :form="form"
       :value="String(value)"
       :disabled="disabled"
+      :required="required && !disabled && index === 0"
     >
   </ComboboxRoot>
 </template>

@@ -1,6 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 
 const fruitItems = [
@@ -9,6 +9,17 @@ const fruitItems = [
 ]
 
 describe('autocomplete', () => {
+  it('uses native required validity for an empty selection', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(Autocomplete, { name: 'query', items: fruitItems, required: true }),
+      ]),
+    }))
+    const field = wrapper.find('input[required]')
+    expect(field.attributes('required')).toBe('')
+    expect(wrapper.find('form').element.checkValidity()).toBe(false)
+  })
+
   it('displays the label for numeric zero without treating it as empty', async () => {
     const wrapper = await mountSuspended(Autocomplete, {
       props: { items: [{ label: 'Numeric zero', value: 0 }, { label: 'Text zero', value: '0' }], modelValue: 0 },
