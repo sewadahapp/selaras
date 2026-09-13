@@ -32,6 +32,7 @@ import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
 import { isBuiltinColorRole } from '../utils/color-registry'
+import { isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeScope } from '../utils/ui'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
@@ -322,23 +323,8 @@ const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? ef
 const colorRoleMarker = computed(() => effectiveColor.value)
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: selectInvalid.value }))
 
-function isNativeSearchInputAttr(key: string) {
-  return [
-    'autocomplete',
-    'autocapitalize',
-    'autocorrect',
-    'inputmode',
-    'list',
-    'maxlength',
-    'minlength',
-    'pattern',
-    'readonly',
-    'spellcheck',
-  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
-}
-
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeSearchInputAttr })
-const nativeSearchInputAttrs = useFallthroughAttrs(isNativeSearchInputAttr)
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
+const nativeSearchInputAttrs = useFallthroughAttrs(isNativeInputAttr)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const valueProps = computed(() => resolveSlot(ui.value.value, props.ui?.value))
 // The value slot's own flex-1 is right for the single-select case (it's

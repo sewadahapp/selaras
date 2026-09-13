@@ -9,6 +9,7 @@ import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
+import { isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -142,24 +143,6 @@ const messages = useMessages()
 const theme = useComponentTheme('inputNumber', inputNumberTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: effectiveColor.value as InputNumberVariants['color'], invalid: inputInvalid.value, orientation: props.orientation }))
-
-function isNativeInputAttr(key: string) {
-  return [
-    'autocomplete',
-    'autocapitalize',
-    'autocorrect',
-    'form',
-    'inputmode',
-    'list',
-    'maxlength',
-    'minlength',
-    'pattern',
-    'readonly',
-    'required',
-    'spellcheck',
-    'step',
-  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
-}
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
 const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)

@@ -8,6 +8,7 @@ import { computed, mergeProps, useAttrs } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { pinInputTheme } from '../theme/pin-input'
 import { isBuiltinColorRole } from '../utils/color-registry'
+import { isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 
@@ -65,23 +66,6 @@ const ui = computed(() => theme.value({
   color: recipeColor.value,
   invalid: pinInputInvalid.value,
 }))
-
-function isNativeInputAttr(key: string) {
-  return [
-    'autocomplete',
-    'autocapitalize',
-    'autocorrect',
-    'form',
-    'inputmode',
-    'list',
-    'maxlength',
-    'minlength',
-    'pattern',
-    'readonly',
-    'required',
-    'spellcheck',
-  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
-}
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
 const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)

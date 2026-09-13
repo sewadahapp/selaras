@@ -8,6 +8,7 @@ import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { inputTheme } from '../theme/input'
+import { isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -77,24 +78,6 @@ const ui = computed(() => theme.value({
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
 }))
-
-function isNativeInputAttr(key: string) {
-  return [
-    'autocomplete',
-    'autocapitalize',
-    'autocorrect',
-    'form',
-    'inputmode',
-    'list',
-    'maxlength',
-    'minlength',
-    'pattern',
-    'readonly',
-    'required',
-    'spellcheck',
-    'step',
-  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
-}
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
 const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)
