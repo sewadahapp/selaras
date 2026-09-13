@@ -16,7 +16,7 @@ const statusItems = [
     </template>
     <template #value="{ selected }">
       <span v-if="selected" class="inline-flex items-center gap-2">
-        <span class="size-2 rounded-full" :class="selected.raw.color" />
+        <span class="size-2 rounded-full" :class="selected.raw?.color" />
         {{ selected.label }}
       </span>
     </template>

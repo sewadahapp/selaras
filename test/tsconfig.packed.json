@@ -1,4 +1,5 @@
 {
+  "extends": "../.nuxt/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
     "module": "preserve",
@@ -9,6 +10,7 @@
   },
   "include": [
     "packed-types.ts",
-    "packed-table.vue"
+    "packed-table.vue",
+    "packed-select.vue"
   ]
 }

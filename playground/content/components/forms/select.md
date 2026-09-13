@@ -127,7 +127,7 @@ more than plain text end to end:
   </template>
   <template #value="{ selected }">
     <span v-if="selected" class="inline-flex items-center gap-2">
-      <span class="size-2 rounded-full" :class="selected.raw.color" />
+      <span class="size-2 rounded-full" :class="selected.raw?.color" />
       {{ selected.label }}
     </span>
   </template>
@@ -135,6 +135,28 @@ more than plain text end to end:
 ```
 
 ### Custom objects
+
+Select infers its model and update event from the option identity field. A
+required string or number field can be used as `valueKey`; `labelKey` names a
+top-level option field. Single selection emits that identity or `undefined`,
+`multiple` emits an array, and a dynamic boolean accepts either shape. Readonly
+arrays and groups are supported. Keep identities unique within the whole list;
+numeric `1` and string `'1'` are distinct identities.
+Records with both a string `label` and an `items` array represent groups; avoid
+that reserved combination on individual options.
+
+For async options, declare the item type even when the array starts empty.
+Missing selected identities retain their value and display its text until the
+option loads. The `value` slot receives `selected.raw` as `undefined` during that
+time; use optional chaining when reading metadata. The `item` slot receives a
+complete option, and unresolved chips use the identity's text as their fallback.
+
+The exported types now take an option entry type: replace `SelectProps<number>`
+with `SelectProps<{ value: number, label: string }>`. Custom keys and multiple
+mode can be declared as `SelectProps<Row, 'id', true>`; `SelectEmits` uses the
+same parameters. Render functions can specialize the component directly with
+`h(Select<Row, 'id', true>, props)`. Template consumers normally need no explicit
+generic parameters.
 
 `items` doesn't have to be `{ label, value }` - point `labelKey`/`valueKey` at
 whatever fields your data already has:

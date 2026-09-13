@@ -10,6 +10,37 @@ const fruitItems = [
 ]
 
 describe('autocomplete', () => {
+  it('routes accessible naming and descriptions to the editable input', async () => {
+    const attrs = { 'aria-label': 'Search fruit', 'aria-labelledby': 'fruit-label', 'aria-describedby': 'fruit-help', 'aria-errormessage': 'fruit-error', 'aria-details': 'fruit-details' }
+    const wrapper = await mountSuspended(Autocomplete, { attrs, props: { items: fruitItems } })
+    try {
+      const input = wrapper.find('input[role="combobox"]')
+      for (const [key, value] of Object.entries(attrs)) {
+        expect(input.attributes(key)).toBe(value)
+        expect(wrapper.attributes(key)).toBeUndefined()
+      }
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('renders created chips without passing fabricated records to the item slot', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: [{ value: 1, label: 'One', title: 'Suggestion' }], defaultValue: [1, 'Created text'], multiple: true, displayMode: 'chip' },
+      slots: { item: ({ item }: { item: { title: string } }) => item.title.toUpperCase() },
+    })
+    try {
+      expect(wrapper.text()).toContain('SUGGESTION')
+      expect(wrapper.text()).toContain('Created text')
+      await wrapper.find('[aria-label="Remove Created text"]').trigger('click')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([[1]])
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
   it('supports a controlled open state and emits close requests', async () => {
     const wrapper = await mountSuspended(Autocomplete, { props: { items: fruitItems, open: true, dropdown: true } })
     const trigger = wrapper.find('[aria-haspopup="listbox"]')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ResolvedOption, SelectItems, SelectOption } from '../composables/use-combobox-select'
+import type { ResolvedItemOption, SelectItems, SelectOption } from '../composables/use-combobox-select'
 import {
   ComboboxEmpty,
   ComboboxGroup,
@@ -36,11 +36,11 @@ export interface ComboboxSelectBodyProps {
   searchText: string
   displayValue: (value: unknown) => string
   items: SelectItems
-  flatOptions: ResolvedOption[]
+  flatOptions: ResolvedItemOption[]
   virtualizeConfig: { estimateSize: number, overscan: number } | null
-  virtualizedOptions: ResolvedOption[]
-  toOption: (entry: SelectOption) => ResolvedOption
-  groupOptions: (group: { items: SelectOption[] }) => ResolvedOption[]
+  virtualizedOptions: ResolvedItemOption[]
+  toOption: (entry: SelectOption) => ResolvedItemOption
+  groupOptions: (group: { items: readonly SelectOption[] }) => ResolvedItemOption[]
   onSearchKeydown: (event: KeyboardEvent) => void
   onSearchBlur: () => void
   searchWrapperProps?: Record<string, unknown>

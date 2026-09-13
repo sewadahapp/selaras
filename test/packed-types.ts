@@ -3,7 +3,9 @@ import type {
   AutocompleteProps,
   ButtonProps,
   ColorRole,
+  SelectEmits,
   SelectProps,
+  SelectSlots,
   TableColumnDef,
   TableEmits,
   TableProps,
@@ -21,7 +23,7 @@ interface PackedUser {
 }
 
 const packedButton: ButtonProps = { color: 'primary' }
-const numericSelect: SelectProps<number> = {
+const numericSelect: SelectProps<{ label: string, value: number }> = {
   items: [{ label: 'One', value: 1 }],
   modelValue: 1,
 }
@@ -29,10 +31,25 @@ const stringAutocomplete: AutocompleteProps<string> = {
   items: [{ label: 'One', value: 'one' }],
   modelValue: 'one',
 }
-const invalidNumericSelect: SelectProps<number> = {
+const invalidNumericSelect: SelectProps<{ label: string, value: number }> = {
   items: [{ label: 'One', value: 1 }],
   // @ts-expect-error typed props keep numeric and string value contracts distinct
   modelValue: 'one',
+}
+const customSelect: SelectProps<{ id: number, title: string }, 'id', true> = {
+  items: [{ id: 1, title: 'One' }],
+  valueKey: 'id',
+  labelKey: 'title',
+  multiple: true,
+  modelValue: [1],
+}
+const numericSelectUpdate: SelectEmits<{ value: number }>['update:modelValue'] = [1]
+const multipleSelectUpdate: SelectEmits<{ id: number }, 'id', true>['update:modelValue'] = [[]]
+// @ts-expect-error single mode updates never contain arrays
+const invalidSelectUpdate: SelectEmits<{ value: number }>['update:modelValue'] = [[1]]
+const selectSlots: SelectSlots<{ id: number, title: string }, 'id'> = {
+  item: ({ item }) => item.title.toUpperCase(),
+  value: ({ selected }) => selected?.raw?.title.toUpperCase(),
 }
 const numericAutocomplete: AutocompleteProps<number> = {
   items: [{ label: 'One', value: 1 }],
@@ -96,6 +113,11 @@ const packedRowEventShape: TableRowClickEvent extends [PackedUser, MouseEvent] ?
 
 void packedButton
 void numericSelect
+void customSelect
+void numericSelectUpdate
+void multipleSelectUpdate
+void invalidSelectUpdate
+void selectSlots
 void stringAutocomplete
 void invalidNumericSelect
 void numericAutocomplete

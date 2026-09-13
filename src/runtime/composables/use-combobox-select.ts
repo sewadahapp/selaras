@@ -18,13 +18,13 @@ export interface SelectOption<Value extends SelectValue = SelectValue> {
 
 export interface SelectOptionGroup<Value extends SelectValue = SelectValue> {
   label: string
-  items: SelectOption<Value>[]
+  items: readonly SelectOption<Value>[]
 }
 
-export type SelectItems<Value extends SelectValue = SelectValue> = (SelectOption<Value> | SelectOptionGroup<Value>)[]
+export type SelectItems<Value extends SelectValue = SelectValue> = readonly (SelectOption<Value> | SelectOptionGroup<Value>)[]
 
 export function isOptionGroup<Value extends SelectValue = SelectValue>(entry: SelectOption<Value> | SelectOptionGroup<Value>): entry is SelectOptionGroup<Value> {
-  return 'items' in entry && Array.isArray((entry as SelectOptionGroup).items)
+  return typeof entry.label === 'string' && 'items' in entry && Array.isArray((entry as SelectOptionGroup).items)
 }
 
 /** Flattens groups into a plain option list - groups lose their header when virtualized. */
@@ -46,6 +46,10 @@ export interface ResolvedOption {
   value: SelectValue
   label: string
   disabled: boolean
+  raw: SelectOption | undefined
+}
+
+export interface ResolvedItemOption extends ResolvedOption {
   raw: SelectOption
 }
 
@@ -57,7 +61,7 @@ export function useComboboxSelect(
   const valueKey = computed(() => props.valueKey ?? 'value')
   const labelKey = computed(() => props.labelKey ?? 'label')
 
-  const flatOptions: ComputedRef<ResolvedOption[]> = computed(() => flattenItems(props.items).map(raw => ({
+  const flatOptions: ComputedRef<ResolvedItemOption[]> = computed(() => flattenItems(props.items).map(raw => ({
     value: optionValue(raw[valueKey.value]),
     label: String(raw[labelKey.value] ?? raw[valueKey.value] ?? ''),
     disabled: !!raw.disabled,
@@ -72,10 +76,10 @@ export function useComboboxSelect(
   })
 
   function resolveOption(value: SelectValue): ResolvedOption {
-    return flatOptions.value.find(o => o.value === value) ?? { value, label: String(value), disabled: false, raw: { [valueKey.value]: value, [labelKey.value]: value } }
+    return flatOptions.value.find(o => o.value === value) ?? { value, label: String(value), disabled: false, raw: undefined }
   }
 
-  function toOption(raw: SelectOption): ResolvedOption {
+  function toOption(raw: SelectOption): ResolvedItemOption {
     return {
       value: optionValue(raw[valueKey.value]),
       label: String(raw[labelKey.value] ?? raw[valueKey.value] ?? ''),

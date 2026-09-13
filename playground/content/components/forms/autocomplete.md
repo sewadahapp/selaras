@@ -124,6 +124,11 @@ identically to Select's - see
 [Custom objects](/components/forms/select#custom-objects), and
 [Grouped options](/components/forms/select#grouped-options).
 
+Created text and async selections can be absent from `items`. Their chips use
+the selected text until a complete option exists; the `item` slot receives only
+real option records. The `value` slot's `selected.raw` is `undefined` for an
+unresolved selection.
+
 ### Virtualization
 
 Also identical to [Select's](/components/forms/select#virtualization) -

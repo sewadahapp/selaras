@@ -104,16 +104,17 @@ export type * from '../components/Toggle.vue'
 export type * from '../components/ToggleGroup.vue'
 export type * from '../components/Tooltip.vue'
 export type { SelectItems, SelectOption, SelectOptionGroup, SelectValue } from '../composables/use-combobox-select'
-
 // The two global override registries (useMessages()/useIcons(), see their
 // own composables) - exported so a consumer can type their own partial
 // override object (e.g. a shared `const messages: Partial<MessageRegistry> = {...}`)
 // instead of relying on inference alone.
 export type { TableColumnDef, TableColumnVisibilityState, TableExpandedState, TableGetRowId, TableRowSelectionState, TableSortingState } from '../composables/use-table'
+
 export type { ToastOptions } from '../composables/use-toast'
 export type { BuiltinColorName, ColorRecipe, ColorRecipeInput, ColorRole, RuntimeColorOverrides, RuntimeTokenOverrides } from '../utils/color-registry'
 export type { IconRegistry } from '../utils/icons'
 export { defaultIcons } from '../utils/icons'
 export type { MessageRegistry } from '../utils/messages'
 export { defaultMessages } from '../utils/messages'
+export type { SelectEntryGroup, SelectEntryItem, SelectGroup, SelectIdentity, SelectIdentityKeys, SelectModel, SelectResolvedOption } from '../utils/select-contracts'
 export type { TableEmits, TableProps, TableSlots } from '../utils/table-contracts'

@@ -8,6 +8,7 @@ const button: ButtonProps = { color: role }
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
 const helper = createTableColumnHelper<{ id: string }>()
 const column = helper.accessor('id', { header: 'ID' })
+const choices = [{ id: 1, title: 'Published select' }]
 const config: NonNullable<AppConfig['selaras']> = { tokens: { light: { colors: { published: { fill: '#123456' } } } } }
 // @ts-expect-error generated AppConfig augmentation must reject unknown token roles
 const invalidConfig: NonNullable<AppConfig['selaras']> = { tokens: { light: { colors: { 'not-published': { fill: '#123456' } } } } }
@@ -40,5 +41,7 @@ void invalidConfig
     </STheme>
     <SBadge id="packed-dot" dot aria-label="Offline" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
+    <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" aria-label="Published selection" />
+    <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />
   </SApp>
 </template>

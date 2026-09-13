@@ -243,9 +243,13 @@ function updateNestedTokens() {
   <form id="identity-form">
     <SSelect
       name="identity" multiple display-mode="chip"
+      aria-label="Choose identities" aria-describedby="identity-help"
       :items="[{ label: 'Numeric identity', value: 1 }, { label: 'String identity', value: '1' }]"
       :default-value="[1, '1']"
     />
+    <p id="identity-help">
+      Choose numeric or string identities.
+    </p>
     <button type="reset">
       Reset identities
     </button>

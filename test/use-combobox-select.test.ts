@@ -6,6 +6,22 @@ const fruitItems = [
   { label: 'Banana', value: 'banana' },
 ]
 
+describe('useComboboxSelect - option records', () => {
+  it('keeps an option with nested items when it has no group label', () => {
+    const row = { id: 1, title: 'Parent option', items: [{ id: 2 }] }
+    const { selectedOptions } = useComboboxSelect({ items: [row], valueKey: 'id', labelKey: 'title', modelValue: 1 }, vi.fn())
+    expect(selectedOptions.value[0]?.raw).toBe(row)
+    expect(selectedOptions.value[0]?.label).toBe('Parent option')
+  })
+
+  it('rejects non-finite identities even though their static type is number', () => {
+    for (const value of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+      const { flatOptions } = useComboboxSelect({ items: [{ value }] }, vi.fn())
+      expect(() => flatOptions.value).toThrow('strings or finite numbers')
+    }
+  })
+})
+
 describe('useComboboxSelect - commitCreatableText', () => {
   it('does nothing when not creatable', () => {
     const emit = vi.fn()

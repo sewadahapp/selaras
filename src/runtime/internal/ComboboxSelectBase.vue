@@ -32,7 +32,7 @@ import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
 import { isBuiltinColorRole } from '../utils/color-registry'
-import { isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
+import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeScope } from '../utils/ui'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
@@ -297,7 +297,7 @@ const virtualizedOptions = computed(() => {
   return flatOptions.value.filter(option => option.label.toLowerCase().includes(needle))
 })
 
-function groupOptions(group: { items: SelectOption[] }) {
+function groupOptions(group: { items: readonly SelectOption[] }) {
   return group.items.map(toOption)
 }
 
@@ -323,12 +323,12 @@ const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? ef
 const colorRoleMarker = computed(() => effectiveColor.value)
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: selectInvalid.value }))
 
-const nativeTriggerAttrs = useFallthroughAttrs(isNativeInputEvent)
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: key => isNativeInputEvent(key) || ((props.creatable || props.searchable) && isNativeInputAttr(key)) })
-const nativeSearchInputAttrs = useFallthroughAttrs(isNativeInputAttr)
+const nativeTriggerAttrs = useFallthroughAttrs(key => !props.creatable && (isNativeInputA11yAttr(key) || (!props.searchable && isNativeInputEvent(key))))
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: key => isNativeInputA11yAttr(key) || isNativeInputEvent(key) || ((props.creatable || props.searchable) && isNativeInputAttr(key)) })
+const nativeSearchInputAttrs = useFallthroughAttrs(key => isNativeInputAttr(key) || (props.creatable && isNativeInputA11yAttr(key)))
 const triggerProps = computed(() => mergeProps(
   resolveSlot(ui.value.trigger, props.ui?.trigger),
-  !props.creatable && !props.searchable ? nativeTriggerAttrs.value : {},
+  !props.creatable ? nativeTriggerAttrs.value : {},
 ))
 const valueProps = computed(() => resolveSlot(ui.value.value, props.ui?.value))
 // The value slot's own flex-1 is right for the single-select case (it's
@@ -487,9 +487,12 @@ const bodyProps = computed(() => ({
               :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--_selaras-color-fill)]' }"
             >
               <TagsInputItemText as="span">
-                <slot name="item" :item="option.raw">
+                <slot v-if="option.raw" name="item" :item="option.raw">
                   {{ option.label }}
                 </slot>
+                <template v-else>
+                  {{ option.label }}
+                </template>
               </TagsInputItemText>
               <template #remove="{ class: removeClass }">
                 <TagsInputItemDelete :class="removeClass" :aria-label="messages.removeItem(option.label)">
@@ -597,9 +600,12 @@ const bodyProps = computed(() => ({
               :aria-current="option.value === selectedChipValue || undefined"
               :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--_selaras-color-fill)]' }"
             >
-              <slot name="item" :item="option.raw">
+              <slot v-if="option.raw" name="item" :item="option.raw">
                 {{ option.label }}
               </slot>
+              <template v-else>
+                {{ option.label }}
+              </template>
               <!-- role="button", not a real <button> - this trigger already IS a <button> (ComboboxTrigger), see the clear button below for why. -->
               <template #remove="{ class: removeClass }">
                 <span role="button" tabindex="-1" :class="removeClass" :aria-label="messages.removeItem(option.label)" @click.stop="removeValue(option.value)">

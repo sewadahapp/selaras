@@ -1,3 +1,4 @@
+import type { SelectGroup, SelectResolvedOption } from '../../src/runtime/utils/select-contracts'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { TooltipProvider } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
@@ -19,10 +20,91 @@ function withTooltipProvider(children: any) {
 }
 
 describe('select', () => {
+  it('preserves controlled empty ownership through the forwarding boundary', async () => {
+    const wrapper = await mountSuspended(Select, {
+      props: { items: fruitItems, modelValue: undefined, defaultValue: 'apple', placeholder: 'Pick a fruit' },
+    })
+    try {
+      expect(wrapper.find('[aria-haspopup="listbox"]').text()).toContain('Pick a fruit')
+      await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+      await nextTick()
+      const option = Array.from(document.body.querySelectorAll<HTMLElement>('[role="option"]')).find(el => el.textContent?.includes('Banana'))
+      expect(option).toBeTruthy()
+      option!.click()
+      await nextTick()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['banana'])
+      expect(wrapper.find('[aria-haspopup="listbox"]').text()).toContain('Pick a fruit')
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('routes accessible naming and descriptions to the selection trigger in both search modes', async () => {
+    for (const searchable of [false, true]) {
+      const attrs = { 'aria-label': 'Choose fruit', 'aria-labelledby': 'fruit-label', 'aria-describedby': 'fruit-help', 'aria-errormessage': 'fruit-error', 'aria-details': 'fruit-details' }
+      const wrapper = await mountSuspended(Select, { attrs, props: { items: fruitItems, searchable } })
+      try {
+        const trigger = wrapper.find('[aria-haspopup="listbox"]')
+        for (const [key, value] of Object.entries(attrs)) {
+          expect(trigger.attributes(key)).toBe(value)
+          expect(wrapper.attributes(key)).toBeUndefined()
+        }
+      }
+      finally {
+        wrapper.unmount()
+      }
+    }
+  })
+
+  it('exposes an unresolved selection honestly and resolves readonly async groups', async () => {
+    interface Row { id: number, title: string }
+    const row = Object.freeze({ id: 7, title: 'Loaded option' })
+    const wrapper = await mountSuspended(Select<Row | SelectGroup<Row>, 'id'>, {
+      props: { items: [] as Row[], valueKey: 'id', labelKey: 'title', modelValue: 7, name: 'choice' },
+      slots: {
+        value: ({ selected }: { selected: SelectResolvedOption<Row | SelectGroup<Row>, 'id'> | undefined }) => h('span', {
+          'data-testid': 'selected',
+        }, selected?.raw?.title ?? `Waiting: ${selected?.value}`),
+      },
+    })
+    try {
+      expect(wrapper.find('[data-testid="selected"]').text()).toBe('Waiting: 7')
+      expect(wrapper.find('input[name="choice"]').attributes('value')).toBe('7')
+      await wrapper.setProps({ items: Object.freeze([Object.freeze({ label: 'Async', items: Object.freeze([row]) })]) })
+      expect(wrapper.find('[data-testid="selected"]').text()).toBe('Loaded option')
+      expect(wrapper.find('input[name="choice"]').attributes('value')).toBe('7')
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('uses labels for unresolved chips until a complete option can reach the item slot', async () => {
+    for (const searchable of [false, true]) {
+      const wrapper = await mountSuspended(Select<{ id: number, title: string }, 'id', true>, {
+        props: { items: [], valueKey: 'id', labelKey: 'title', defaultValue: [7], multiple: true, searchable, displayMode: 'chip' },
+        slots: { item: ({ item }: { item: { id: number, title: string } }) => item.title.toUpperCase() },
+      })
+      try {
+        expect(wrapper.text()).toContain('7')
+        const items = Object.freeze([Object.freeze({ id: 7, title: 'Loaded' })])
+        await wrapper.setProps({ items })
+        expect(wrapper.text()).toContain('LOADED')
+        await wrapper.find('[aria-label="Remove Loaded"]').trigger('click')
+        expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([[]])
+      }
+      finally {
+        wrapper.unmount()
+      }
+    }
+  })
+
   it('serializes repeated fields and resets an uncontrolled default selection', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => h('form', {}, [
-        h(Select, {
+        h(Select<{ label: string, value: string | number }, 'value', true>, {
           name: 'choice',
           items: [{ label: 'Numeric', value: 1 }, { label: 'Text', value: '1' }],
           defaultValue: [1, '1'],
@@ -45,7 +127,7 @@ describe('select', () => {
   it('uses native required validity without adding a synthetic submitted value', async () => {
     const empty = await mountSuspended(defineComponent({
       render: () => h('form', {}, [
-        h(Select, { name: 'choice', items: fruitItems, required: true }),
+        h(Select<(typeof fruitItems)[number]>, { name: 'choice', items: fruitItems, required: true }),
       ]),
     }))
     const form = empty.find('form').element
@@ -57,7 +139,7 @@ describe('select', () => {
 
     const selected = await mountSuspended(defineComponent({
       render: () => h('form', {}, [
-        h(Select, { name: 'choice', items: fruitItems, required: true, defaultValue: 'apple' }),
+        h(Select<(typeof fruitItems)[number]>, { name: 'choice', items: fruitItems, required: true, defaultValue: 'apple' }),
       ]),
     }))
     const selectedForm = selected.find('form').element
@@ -224,7 +306,7 @@ describe('select', () => {
     // next to the visible chips rather than also being shoved all the way
     // to the end - so both live inside that same flex-1 wrapper, not after it.
     const wrapper = await mountSuspended(withTooltipProvider(
-      h(Select, { items: fruitItems, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip', maxChips: 2 }),
+      h(Select<(typeof fruitItems)[number], 'value', true>, { items: fruitItems, modelValue: ['apple', 'banana', 'cherry'], multiple: true, displayMode: 'chip', maxChips: 2 }),
     ))
     const chip = wrapper.find('[aria-label="Remove Apple"]').element.parentElement!
     const wrapperEl = chip.parentElement!
@@ -240,7 +322,7 @@ describe('select', () => {
     // flex-initial (still shrinks for its own truncation, just doesn't
     // grow and push the tooltip away from it).
     const wrapper = await mountSuspended(withTooltipProvider(
-      h(Select, { items: fruitItems, modelValue: ['apple', 'banana', 'cherry'], multiple: true, maxChips: 2 }),
+      h(Select<(typeof fruitItems)[number], 'value', true>, { items: fruitItems, modelValue: ['apple', 'banana', 'cherry'], multiple: true, maxChips: 2 }),
     ))
     // data-placeholder is only present when empty - not the case here (3
     // selected) - so find the value span by its known text content instead.

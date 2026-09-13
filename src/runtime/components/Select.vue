@@ -1,69 +1,67 @@
-<script setup lang="ts">
-import type { VariantProps } from 'tailwind-variants'
-import type { SelectItems, SelectValue } from '../composables/use-combobox-select'
-import type { selectTheme, SelectThemeSlots } from '../theme/select'
-import type { ColorRole } from '../utils/color-registry'
-import type { UiProp } from '../utils/ui'
-import { useForwardPropsEmits } from 'reka-ui'
+<script setup lang="ts" generic="Entry extends object, Key extends string = 'value', Multiple extends boolean = false">
+import type { ResolvedOption, SelectItems, SelectOption, SelectOptionGroup, SelectValue } from '../composables/use-combobox-select'
+import type { SelectEmits, SelectEntryGroup, SelectEntryItem, SelectIdentity, SelectModel, SelectProps, SelectResolvedOption, SelectSlots } from '../utils/select-contracts'
+import { useForwardProps } from 'reka-ui'
+import { getCurrentInstance } from 'vue'
 import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
 
-type SelectVariants = VariantProps<typeof selectTheme>
+export type { SelectEmits, SelectProps, SelectSlots } from '../utils/select-contracts'
 
-export interface SelectProps<Value extends SelectValue = SelectValue> {
-  id?: string
-  name?: string
-  /** ID of an associated form outside the component's ancestors. */
-  form?: string
-  items: SelectItems<Value>
-  valueKey?: string
-  labelKey?: string
-  open?: boolean
-  /** Initial uncontrolled open state. */
-  defaultOpen?: boolean
-  modelValue?: Value | Value[]
-  /** Initial uncontrolled selection and native form reset target. */
-  defaultValue?: Value | Value[]
-  multiple?: boolean
-  searchable?: boolean
-  virtualize?: boolean | { estimateSize?: number, overscan?: number }
-  displayMode?: 'comma' | 'chip'
-  maxChips?: number
-  loading?: boolean
-  placeholder?: string
-  disabled?: boolean
-  required?: boolean
-  size?: SelectVariants['size']
-  invalid?: boolean
-  /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
-  color?: ColorRole
-  clearable?: boolean
-  searchTerm?: string
-  resetSearchTermOnBlur?: boolean
-  resetSearchTermOnSelect?: boolean
-  /** Shows a small pointer triangle connecting the panel to its trigger. */
-  arrow?: boolean
-  /** Below 768px viewport width, presents the dropdown as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`) rather than automatic, so an existing usage's look never changes without asking for it. */
-  mobileModal?: boolean
-  ui?: UiProp<SelectThemeSlots>
+const props = defineProps<SelectProps<Entry, Key, Multiple>>()
+const emit = defineEmits<SelectEmits<Entry, Key, Multiple>>()
+const slots = defineSlots<SelectSlots<Entry, Key>>()
+const forwarded = useForwardProps(props)
+const instance = getCurrentInstance()!
+
+// The shared Reka implementation erases option metadata. These adapters restore
+// the public contract at that boundary without copying consumer-owned arrays.
+function baseProps() {
+  const controlled = Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
+  return {
+    ...forwarded.value,
+    items: props.items as SelectItems,
+    // useForwardProps omits undefined values; presence still owns selection.
+    ...(controlled ? { modelValue: props.modelValue } : {}),
+  }
 }
-
-export interface SelectEmits<Value extends SelectValue = SelectValue> {
-  'update:open': [value: boolean]
-  'update:modelValue': [value: Value | Value[] | undefined]
-  'update:searchTerm': [value: string]
+function updateValue(value: SelectValue | SelectValue[] | undefined) {
+  emit('update:modelValue', value as SelectModel<SelectIdentity<Entry, Key>, Multiple>)
 }
-
-const props = defineProps<SelectProps>()
-
-const emit = defineEmits<SelectEmits>()
-
-const forwarded = useForwardPropsEmits(props, emit)
+function itemData(item: SelectOption) {
+  return item as SelectEntryItem<Entry>
+}
+function groupData(group: SelectOptionGroup) {
+  return group as SelectEntryGroup<Entry>
+}
+function selectedData(selected: ResolvedOption | undefined): SelectResolvedOption<Entry, Key> | undefined {
+  return selected && {
+    ...selected,
+    value: selected.value as SelectIdentity<Entry, Key>,
+    raw: selected.raw === undefined ? undefined : itemData(selected.raw),
+  }
+}
+const unscopedSlots = ['header', 'footer', 'empty', 'empty-filter', 'filter-icon', 'clear-icon', 'loading-icon', 'dropdown-icon'] as const
 </script>
 
 <template>
-  <ComboboxSelectBase v-bind="forwarded" :creatable="false">
-    <template v-for="(_, slotName) in $slots" #[slotName]="slotProps">
-      <slot :name="slotName" v-bind="slotProps ?? {}" />
+  <ComboboxSelectBase
+    v-bind="baseProps()"
+    :creatable="false"
+    @update:open="emit('update:open', $event)"
+    @update:model-value="updateValue"
+    @update:search-term="emit('update:searchTerm', $event)"
+  >
+    <template v-if="slots.item" #item="{ item }">
+      <slot name="item" :item="itemData(item)" />
+    </template>
+    <template v-if="slots.group" #group="{ group }">
+      <slot name="group" :group="groupData(group)" />
+    </template>
+    <template v-if="slots.value" #value="{ selected }">
+      <slot name="value" :selected="selectedData(selected)" />
+    </template>
+    <template v-for="slotName in unscopedSlots.filter(name => slots[name])" :key="slotName" #[slotName]>
+      <slot :name="slotName" />
     </template>
   </ComboboxSelectBase>
 </template>
