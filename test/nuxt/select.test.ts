@@ -293,6 +293,11 @@ describe('select', () => {
     await nextTick()
 
     expect(document.body.textContent).toContain('Category: Fruits')
+    const group = document.body.querySelector('[role="group"]')
+    expect(group).toBeTruthy()
+    const labelId = group?.getAttribute('aria-labelledby')
+    expect(labelId).toBeTruthy()
+    expect(document.getElementById(labelId!)?.textContent).toContain('Category: Fruits')
   })
 
   it('renders no arrow element by default', async () => {
