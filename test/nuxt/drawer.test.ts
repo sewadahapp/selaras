@@ -21,6 +21,26 @@ afterEach(() => {
 })
 
 describe('drawer', () => {
+  it('closing the drawer returns focus to its trigger', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    wrapper = await mountSuspended(Drawer, {
+      attachTo: container,
+      props: { open: false, title: 'Filters', description: 'Filters' },
+      slots: { default: () => h('button', { id: 'drawer-trigger-slot' }, 'Open') },
+    })
+    const trigger = wrapper.find('#drawer-trigger-slot').element as HTMLButtonElement
+    trigger.focus()
+    await wrapper.setProps({ open: true })
+    await macrotask()
+    await wrapper.setProps({ open: false })
+    await macrotask()
+
+    expect(document.activeElement?.id).toBe('drawer-trigger-slot')
+    container.remove()
+  })
+
   it('renders the close button as a real, focusable button with an accessible label', async () => {
     wrapper = await mountSuspended(Drawer, { props: { open: true, title: 'Filters', description: 'Filters' } })
 

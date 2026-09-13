@@ -20,6 +20,26 @@ afterEach(() => {
 })
 
 describe('slideover', () => {
+  it('closing the slideover returns focus to its trigger', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    wrapper = await mountSuspended(Slideover, {
+      attachTo: container,
+      props: { open: false, title: 'Filters', description: 'Filters' },
+      slots: { default: () => h('button', { id: 'slideover-trigger-slot' }, 'Open') },
+    })
+    const trigger = wrapper.find('#slideover-trigger-slot').element as HTMLButtonElement
+    trigger.focus()
+    await wrapper.setProps({ open: true })
+    await macrotask()
+    await wrapper.setProps({ open: false })
+    await macrotask()
+
+    expect(document.activeElement?.id).toBe('slideover-trigger-slot')
+    container.remove()
+  })
+
   it('renders the close button as a real, focusable button with an accessible label', async () => {
     wrapper = await mountSuspended(Slideover, { props: { open: true, title: 'Filters', description: 'Filters' } })
 
