@@ -23,6 +23,13 @@ describe('input', () => {
     expect(onFocus).toHaveBeenCalled()
   })
 
+  it('forwards a public class to the editable input while keeping the wrapper target explicit', async () => {
+    const wrapper = await mountSuspended(Input, { attrs: { class: 'w-48 custom-input' } })
+
+    expect(wrapper.find('input').classes()).toEqual(expect.arrayContaining(['w-48', 'custom-input']))
+    expect(wrapper.classes()).not.toContain('custom-input')
+  })
+
   it('renders the leading and trailing icons when given', async () => {
     const wrapper = await mountSuspended(Input, { props: { icon: 'lucide:search', trailingIcon: 'lucide:mic' } })
     const icons = wrapper.findAll('.iconify').map(el => el.classes().find(c => c.startsWith('i-')))

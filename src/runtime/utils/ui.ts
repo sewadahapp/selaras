@@ -147,7 +147,7 @@ export function withFallthroughClass(fallthroughClass: string | undefined, overr
  * component. Bind the result with a single `v-bind` (Vue's template compiler
  * rejects two bare v-bind spreads on the same element).
  */
-export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () => UiSlotValue | undefined, options?: { exclude?: (key: string) => boolean }) {
+export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () => UiSlotValue | undefined, options?: { exclude?: (key: string) => boolean, includeClass?: boolean }) {
   const { fallthroughClass, attrsWithoutClass } = useRootFallthrough()
   const rootAttrs = computed(() => {
     if (!options?.exclude)
@@ -156,7 +156,7 @@ export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () 
   })
   return computed(() => mergeProps(
     rootAttrs.value,
-    resolveSlot(slotFn(), withFallthroughClass(fallthroughClass.value, override())),
+    resolveSlot(slotFn(), withFallthroughClass(options?.includeClass === false ? undefined : fallthroughClass.value, override())),
   ))
 }
 

@@ -3,7 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { InputThemeSlots } from '../theme/input'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, mergeProps } from 'vue'
+import { computed, mergeProps, useAttrs } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -46,6 +46,7 @@ export interface InputEmits {
 }
 
 const field = useFormField()
+const attrs = useAttrs()
 
 const inputId = computed(() => props.id ?? field?.id)
 const inputInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
@@ -79,10 +80,10 @@ const ui = computed(() => theme.value({
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
 }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr, includeClass: false })
 const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)
 const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
-const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.value))
+const inputProps = computed(() => mergeProps(baseProps.value, { class: attrs.class }, nativeInputAttrs.value))
 </script>
 
 <template>
