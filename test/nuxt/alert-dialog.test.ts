@@ -41,7 +41,7 @@ describe('alertDialog', () => {
   it('actionColor reaches the default action button', async () => {
     wrapper = await mountSuspended(AlertDialog, { props: { open: true, title: 'Delete item', description: 'Delete item', actionColor: 'danger' } })
 
-    expect(findButton('Continue')!.className).toContain('danger')
+    expect(findButton('Continue')!.getAttribute('data-selaras-color')).toBe('danger')
   })
 
   it('clicking Cancel emits cancel and closes', async () => {

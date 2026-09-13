@@ -35,8 +35,8 @@ and `isCollapsed` state the built-in Button uses internally, rather than
 just swapping props on it:
 
 ```vue-html
-<SDashboardSidebarToggle v-slot="{ toggle, isCollapsed }">
-  <button type="button" @click="toggle">
+<SDashboardSidebarToggle v-slot="{ toggle, isCollapsed, attrs }">
+  <button v-bind="attrs" type="button" @click="toggle">
     {{ isCollapsed ? 'Show' : 'Hide' }} sidebar
   </button>
 </SDashboardSidebarToggle>
@@ -67,4 +67,4 @@ flipped.
 
 | Slot | Description |
 | --- | --- |
-| default | Replaces the themed Button entirely - scoped to `{ toggle, isCollapsed }` |
+| default | Replaces the themed Button entirely - scoped to `{ toggle, isCollapsed, attrs }`; bind `attrs` to forward caller attributes |

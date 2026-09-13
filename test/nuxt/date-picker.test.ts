@@ -214,12 +214,13 @@ describe('datePicker', () => {
     await openRangeCalendar(wrapper)
 
     const middleDay = dayButton('15')
-    expect(middleDay.className).toContain('bg-[var(--ui-primary-soft)]')
+    expect(middleDay.className).toContain('bg-[var(--_selaras-color-subtle)]')
+    expect(middleDay.getAttribute('data-selaras-color')).toBe('primary')
 
     const start = dayButton('10')
     const end = dayButton('20')
-    expect(start.className).toContain('bg-[var(--ui-primary)]')
-    expect(end.className).toContain('bg-[var(--ui-primary)]')
+    expect(start.className).toContain('bg-[var(--_selaras-color-fill)]')
+    expect(end.className).toContain('bg-[var(--_selaras-color-fill)]')
   })
 
   it('range mode disables days outside a minValue/maxValue range', async () => {
@@ -840,8 +841,10 @@ describe('datePicker', () => {
     })
     await openCalendar(wrapper)
 
-    expect(dayButton('10').className).toContain('text-[var(--ui-primary)]')
-    expect(dayButton('15').className).toContain('bg-[var(--ui-danger)]')
+    expect(dayButton('10').getAttribute('data-selaras-color')).toBe('primary')
+    expect(dayButton('10').className).toContain('text-[var(--_selaras-color-text)]')
+    expect(dayButton('15').getAttribute('data-selaras-color')).toBe('danger')
+    expect(dayButton('15').className).toContain('bg-[var(--_selaras-color-fill)]')
   })
 
   it('applies color to chrome (nav arrows) regardless of selection', async () => {
@@ -851,7 +854,8 @@ describe('datePicker', () => {
     await openCalendar(wrapper)
 
     const nextButton = document.body.querySelector('button[aria-label="Next month"]')!
-    expect(nextButton.className).toContain('text-[var(--ui-danger)]')
+    expect(nextButton.getAttribute('data-selaras-color')).toBe('danger')
+    expect(nextButton.className).toContain('text-[var(--_selaras-color-text)]')
   })
 
   it('renders no arrow element by default', async () => {

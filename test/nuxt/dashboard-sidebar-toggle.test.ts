@@ -40,23 +40,35 @@ describe('dashboardSidebarToggle', () => {
     expect(icon.classes()).toContain('i-lucide:menu')
   })
 
-  // Deliberately undeclared as a prop of its own - Vue's automatic attrs
-  // fallthrough on this single-root Button wrapper already forwards
-  // anything else a consumer passes (color, variant, size, ui, an extra
-  // class, ...) straight onto Button's own root, the same way
-  // ColorModeToggle does. This just confirms that actually holds.
-  it('forwards extra Button props via attrs fallthrough', async () => {
+  it('explicitly forwards extra Button and native props across the slot root', async () => {
     const wrapper = await mountSuspended(DashboardGroup, {
       slots: {
         default: () => [
           h(DashboardSidebar, {}, { default: () => 'Nav' }),
-          h(DashboardSidebarToggle, { color: 'primary' }),
+          h(DashboardSidebarToggle, { color: 'danger', size: 'lg', type: 'submit', name: 'sidebar-action' }),
         ],
       },
     })
 
     const button = wrapper.find('button[aria-label="Toggle sidebar"]')
-    expect(button.classes().join(' ')).toContain('primary')
+    expect(button.attributes('data-selaras-color')).toBe('danger')
+    expect(button.classes()).toContain('h-11')
+    expect(button.attributes('type')).toBe('submit')
+    expect(button.attributes('name')).toBe('sidebar-action')
+  })
+
+  it('exposes native attrs to custom trigger slots', async () => {
+    const wrapper = await mountSuspended(DashboardGroup, {
+      slots: { default: () => [
+        h(DashboardSidebar, {}, { default: () => 'Nav' }),
+        h(DashboardSidebarToggle, { name: 'custom-sidebar-action', type: 'button' }, {
+          default: ({ attrs, toggle }: any) => h('button', { ...attrs, onClick: toggle }, 'Custom trigger'),
+        }),
+      ] },
+    })
+    const button = wrapper.find('button[name="custom-sidebar-action"]')
+    expect(button.exists()).toBe(true)
+    expect(button.attributes('type')).toBe('button')
   })
 
   // Same class of Suspense/template-ref quirk as the toggle-click test in

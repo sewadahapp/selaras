@@ -11,7 +11,6 @@ import { useMessages } from '../composables/use-messages'
 import { useRippleEnabled } from '../composables/use-ripple'
 import { vRipple } from '../directives/ripple'
 import { buttonTheme } from '../theme/button'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -75,11 +74,9 @@ const theme = useComponentTheme('button', buttonTheme)
 const themeProps = useThemeProps('button')
 
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color as ButtonVariants['color'] ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ButtonVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const ui = computed(() => theme.value({
-  color: recipeColor.value,
+  color: effectiveColor.value as ButtonVariants['color'],
   variant: props.variant,
   size: props.size ?? themeProps.value.size as ButtonVariants['size'],
   block: props.block,
@@ -91,7 +88,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>
-  <Primitive v-ripple="rippleEnabled" :as="as" :type="as === 'button' ? type : undefined" :disabled="disabled" :aria-busy="loading || undefined" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <Primitive v-ripple="rippleEnabled" :as="as" :type="as === 'button' ? type : undefined" :disabled="disabled" :aria-busy="loading || undefined" :data-selaras-color="effectiveColor" v-bind="rootProps">
     <Icon v-if="loading" :name="icons.loading" :class="applyClassPrefix('animate-spin')" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <!--
       A named slot (not just the `icon` prop) so a consumer building a

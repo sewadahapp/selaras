@@ -89,6 +89,13 @@ describe('theme', () => {
     expect(wrapper.find('button').classes()).toContain('rounded-full')
   })
 
+  it('passes the registered custom role to recipe extension conditions', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: { button: {
+      compoundVariants: [{ color: 'premium', variant: 'outline', class: { base: 'tracking-widest' } }],
+    } } }, h(Button, { color: 'premium', variant: 'outline' }, () => 'Upgrade')))
+    expect(wrapper.find('button').classes()).toContain('tracking-widest')
+  })
+
   it('does not affect a button outside the Theme boundary', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => [
@@ -129,6 +136,6 @@ describe('theme', () => {
     const classes = wrapper.find('button').classes()
     expect(classes).toContain('rounded-full') // inherited from the outer Theme
     expect(classes).toContain('h-11') // set by the inner Theme (size=lg)
-    expect(classes.some(c => c.includes('danger'))).toBe(true) // inherited color=danger
+    expect(wrapper.find('button').attributes('data-selaras-color')).toBe('danger') // inherited color=danger
   })
 })

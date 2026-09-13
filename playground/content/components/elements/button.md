@@ -199,7 +199,7 @@ shown above.
 | Prop | Type | Default |
 | --- | --- | --- |
 | `as` | `string \| Component` | `'button'` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | `ColorRole` (built-in and registered roles) | `primary` |
 | `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'text'` | `solid` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `block` | `boolean` | `false` |

@@ -18,17 +18,17 @@ describe('button', () => {
     expect(reset.attributes('type')).toBe('reset')
   })
 
-  it('binds a custom semantic role to the existing recipe bridge', async () => {
+  it('binds custom semantic leaves directly without remapping legacy variables', async () => {
     const wrapper = await mountSuspended(Button, { props: { color: 'premium' }, slots: { default: () => 'Upgrade' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
-    expect(wrapper.classes()).toContain('bg-[var(--ui-primary)]')
+    expect(wrapper.attributes('style')).toBeUndefined()
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-fill)]')
   })
 
   it('falls back to primary for an unknown runtime role instead of emitting unresolved variables', async () => {
     const wrapper = await mountSuspended(Button, { props: { color: 'not-registered' as never }, slots: { default: () => 'Fallback' } })
-    expect(wrapper.attributes('data-selaras-color')).toBeUndefined()
-    expect(wrapper.classes()).toContain('bg-[var(--ui-primary)]')
+    expect(wrapper.attributes('data-selaras-color')).toBe('primary')
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-fill)]')
   })
 
   it('accepts a component reference for `as`, not just a tag-name string - e.g. NuxtLink via resolveComponent', async () => {
@@ -125,7 +125,7 @@ describe('button', () => {
   it('the `text` variant never adds a background class, only a hover text-color shift', async () => {
     const wrapper = await mountSuspended(Button, { props: { variant: 'text', color: 'neutral' }, slots: { default: () => 'Clear' } })
     expect(wrapper.classes().some(c => c.includes('bg-'))).toBe(false)
-    expect(wrapper.classes()).toContain('hover:text-[var(--ui-text)]')
+    expect(wrapper.classes()).toContain('hover:text-[var(--_selaras-color-text-hover)]')
   })
 
   it('does not spawn a ripple for the `text` variant, since it would reintroduce a background fill', async () => {

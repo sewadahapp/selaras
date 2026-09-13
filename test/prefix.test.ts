@@ -39,8 +39,7 @@ describe('classPrefix', async () => {
     const html = await $fetch('/')
     const button = html.match(/<button[^>]*id="unknown-role-button"[^>]*>/)?.[0]
     expect(button).toBeTruthy()
-    expect(button).not.toContain('data-selaras-color=')
-    expect(button).not.toContain('data-selaras-color="')
+    expect(button).toContain('data-selaras-color="primary"')
     expect(button).toContain('bg-')
   })
 
@@ -101,10 +100,10 @@ describe('classPrefix', async () => {
     const overrideButton = html.match(/<button[^>]*id="override-button"[^>]*class="([^"]+)"/)?.[1]
     expect(overrideButton).toBeTruthy()
     expect(overrideButton).toContain('tw:bg-purple-700')
-    // The base (non-variant) `bg-[var(--ui-primary)]`-derived class must be
+    // The base (non-variant) selected-fill class must be
     // gone, not just co-present alongside the override - the hover:/active:
     // variants of it are a separate conflict group and correctly remain.
-    expect(overrideButton).not.toContain('tw:bg-[var(--ui-primary)]')
-    expect(overrideButton).toContain('tw:hover:bg-[var(--ui-primary-hover)]')
+    expect(overrideButton).not.toContain('tw:bg-[var(--_selaras-color-fill)]')
+    expect(overrideButton).toContain('tw:hover:bg-[var(--_selaras-color-fill-hover)]')
   })
 })

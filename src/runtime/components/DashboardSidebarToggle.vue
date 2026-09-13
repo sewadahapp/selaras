@@ -7,6 +7,8 @@ import { applyClassPrefix } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
+defineOptions({ inheritAttrs: false })
+
 const props = defineProps<DashboardSidebarToggleProps>()
 
 defineSlots<DashboardSidebarToggleSlots>()
@@ -18,7 +20,7 @@ export interface DashboardSidebarToggleProps {
 
 export interface DashboardSidebarToggleSlots {
   /** Replaces the themed Button entirely with a fully custom trigger - `toggle`/`isCollapsed` are the exact values the default Button already wires up internally, so a replacement still behaves correctly (call `toggle` on click, style off `isCollapsed`). Not rendered at all outside a DashboardGroup/DashboardSidebar, same as the default. */
-  default?: (props: { toggle: () => void, isCollapsed: boolean }) => any
+  default?: (props: { toggle: () => void, isCollapsed: boolean, attrs: Record<string, unknown> }) => any
 }
 
 // dashboard.toggleSidebar is populated by DashboardSidebar itself, once it
@@ -30,13 +32,8 @@ const dashboard = inject(DASHBOARD_INJECTION_KEY, null)
 const icons = useIcons()
 const messages = useMessages()
 
-// No `ui` prop, no theme file of its own, and deliberately no
-// `defineOptions({ inheritAttrs: false })` - with nothing else here to
-// intercept them, Vue's own automatic attrs fallthrough already forwards
-// anything a consumer passes (`color`, `variant`, `size`, `ui`, `class`,
-// `as`, an extra `@click`, ...) straight onto whichever single root ends
-// up rendered - the default Button below, or a consumer's own slot
-// content replacing it - the same way ColorModeToggle does.
+// A slot root cannot forward attributes automatically. Bind them to the
+// default Button explicitly and expose them to custom trigger slots.
 </script>
 
 <template>
@@ -44,8 +41,9 @@ const messages = useMessages()
     v-if="dashboard?.toggleSidebar.value"
     :toggle="dashboard.toggleSidebar.value"
     :is-collapsed="dashboard.isSidebarCollapsed.value"
+    :attrs="$attrs"
   >
-    <Button variant="ghost" color="neutral" :aria-label="messages.toggleSidebar" @click="dashboard.toggleSidebar.value?.()">
+    <Button variant="ghost" color="neutral" :aria-label="messages.toggleSidebar" v-bind="$attrs" @click="dashboard.toggleSidebar.value?.()">
       <!--
         A slot override (not Button's own `icon` prop + `:ui.leadingIcon`) -
         that `:ui` object would collide with a consumer's own fallthrough

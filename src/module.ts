@@ -2,6 +2,7 @@ import type { ColorModePair, ColorRecipeInput } from './runtime/utils/color-regi
 import { addComponentsDir, addImports, addImportsDir, addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import { Scanner } from '@tailwindcss/oxide'
 import tailwindcss from '@tailwindcss/vite'
+import { createBuiltinColorRegistry } from './builtin-colors'
 import { createColorRegistry, generateColorRoleCss } from './runtime/utils/color-registry'
 
 export interface ModuleOptions {
@@ -173,7 +174,10 @@ export default defineNuxtModule<ModuleOptions>({
       getContents: () => `export const classPrefix = ${JSON.stringify(options.classPrefix ?? null)}\n`,
     })
 
-    const colorRegistry = createColorRegistry(options.theme?.colors ?? {})
+    const colorRegistry = {
+      ...createBuiltinColorRegistry(options.classPrefix),
+      ...createColorRegistry(options.theme?.colors ?? {}),
+    }
     addTemplate({
       filename: 'selaras-color-roles.mjs',
       getContents: () => `export const colorRoles = ${JSON.stringify(Object.keys(colorRegistry).sort())}\n`,

@@ -4,6 +4,21 @@ import { ref } from 'vue'
 
 const unknownRole = /** @type {any} */ ('not-registered')
 const scopedDate = new CalendarDate(2024, 1, 15)
+const semanticRecipe = {
+  fill: 'rgb(10 20 30)',
+  onFill: 'white',
+  fillHover: 'rgb(20 30 40)',
+  fillPressed: 'rgb(30 40 50)',
+  subtle: 'rgb(40 50 60)',
+  onSubtle: 'rgb(230 240 250)',
+  subtleHover: 'rgb(50 60 70)',
+  subtlePressed: 'rgb(60 70 80)',
+  text: 'rgb(70 80 90)',
+  textHover: 'rgb(80 90 100)',
+  textPressed: 'rgb(90 100 110)',
+  border: 'rgb(100 110 120)',
+  focus: 'rgb(130 140 150)',
+}
 const nestedTokens = ref({
   light: { enterprise: { fill: 'rgb(60 61 62)', subtle: 'rgb(63 64 65)', text: 'rgb(60 61 62)' } },
   dark: { enterprise: { subtle: 'rgb(103 104 105)' } },
@@ -148,5 +163,25 @@ function updateNestedTokens() {
     <SButton id="override-button" :ui="{ base: 'tw:bg-purple-700' }">
       Overridden
     </SButton>
+    <div style="--ui-primary: rgb(1 2 3);">
+      <SButton id="builtin-foundation-button">
+        Independent built-in default
+      </SButton>
+      <span id="builtin-foundation-probe" style="color: var(--tw-color-primary-500);">Foundation probe</span>
+    </div>
+    <STheme
+      as="section"
+      :tokens="{ light: { primary: semanticRecipe, enterprise: semanticRecipe }, dark: { primary: semanticRecipe, enterprise: semanticRecipe } }"
+      style="position: relative; z-index: 999999;"
+    >
+      <div v-for="role in ['primary', 'enterprise']" :key="role">
+        <SButton
+          v-for="variant in ['solid', 'soft', 'outline', 'ghost', 'text']"
+          :id="`semantic-${role}-${variant}`" :key="variant" :color="role" :variant="variant"
+        >
+          {{ role }} {{ variant }}
+        </SButton>
+      </div>
+    </STheme>
   </div>
 </template>

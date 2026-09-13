@@ -97,7 +97,9 @@ describe('pagination', () => {
       },
     })
     const [page1, page2] = wrapper.findAll('[data-type="page"]')
-    expect(page1!.classes().join(' ')).toContain('ring-[var(--ui-primary)]')
-    expect(page2!.classes().join(' ')).toContain('bg-[var(--ui-danger)]')
+    expect(page1!.attributes('data-selaras-color')).toBe('primary')
+    expect(page1!.classes()).toContain('ring-[var(--_selaras-color-border)]')
+    expect(page2!.attributes('data-selaras-color')).toBe('danger')
+    expect(page2!.classes()).toContain('bg-[var(--_selaras-color-fill)]')
   })
 })

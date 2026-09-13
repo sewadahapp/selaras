@@ -26,6 +26,12 @@ void invalidConfig
     <SButton id="packed-default" v-bind="button">
       Published default
     </SButton>
+    <SButton id="packed-registered-builtin" color="secondary">
+      Registered built-in recipe
+    </SButton>
+    <SButton id="packed-runtime-builtin" color="primary">
+      Runtime built-in override
+    </SButton>
     <STheme as="section" v-bind="theme" :tokens="{ light: { published: { fill: '#56789a' } } }">
       <SButton id="packed-scoped" :color="role">
         Published scoped

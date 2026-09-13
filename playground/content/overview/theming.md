@@ -135,8 +135,12 @@ these names on `:root`. This keeps default expressions referencing local
 company variables usable. Explicit managed token overrides take precedence
 over inherited CSS inputs. Override related interaction leaves explicitly
 when changing them; overriding `fill` alone does not update `fillHover`.
-Built-in roles still use the `--ui-*` variables described above while their
-semantic migration is in progress.
+Button now uses these inputs for built-in roles too, for example
+`--selaras-color-primary-fill`. Built-in defaults read the palette foundations,
+so a local `--ui-primary` override no longer recolors Button. Module
+`theme.colors.primary` can replace the complete built-in recipe; runtime
+`selaras.tokens` and explicit `STheme` scopes can override its leaves.
+Other components still use the legacy bridge during their semantic migration.
 
 Tailwind v4 only keeps a theme variable in the compiled CSS if it detects
 the variable actually being used somewhere - normally that means a
