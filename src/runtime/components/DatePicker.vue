@@ -263,7 +263,6 @@ watch(isOpen, (open) => {
 const isRangeOpen = ref(false)
 
 const isMobile = useIsMobile()
-const showMobileModal = computed(() => props.mobileModal && isMobile.value)
 // Overrides Modal's own default rounded-lg down to rounded-md, matching
 // every other floating panel here (the desktop popover's own `content`
 // slot, shared by all three branches, is already rounded-md) - rounded-lg
@@ -405,6 +404,19 @@ const timePlaceholder = shallowRef<Time>(timeOnlyValue.value ?? (() => {
 // date-time-granularity branch: adjusting hour vs minute are still two
 // independent things with no single click that means "done."
 const timeIsOpen = ref(false)
+
+// DatePicker has three mutually exclusive open roots (single date, range,
+// and time-only). Sample the adaptive presentation when whichever root opens
+// and hold it until that root closes; a resize must not swap focus ownership
+// between Popover and Modal during an active calendar interaction.
+const mobilePresentation = ref(false)
+function syncMobilePresentation(open: boolean) {
+  mobilePresentation.value = open && !!props.mobileModal && isMobile.value
+}
+watch(isOpen, syncMobilePresentation)
+watch(isRangeOpen, syncMobilePresentation)
+watch(timeIsOpen, syncMobilePresentation)
+const showMobileModal = computed(() => mobilePresentation.value)
 
 function normalizeTimeOnly(value: Time) {
   return timeOnlyGranularity.value === 'hour' ? value.set({ minute: 0, second: 0, millisecond: 0 }) : value.set({ second: 0, millisecond: 0 })
