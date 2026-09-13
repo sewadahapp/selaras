@@ -5,7 +5,6 @@ import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, useSlots } from 'vue'
 import { badgeTheme } from '../theme/badge'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -20,7 +19,7 @@ export interface BadgeProps {
   label?: string
   icon?: string
   trailingIcon?: string
-  /** A small solid-colored circle - a status indicator (online/offline, etc), shown alongside the label or alone without one. Always uses the color's solid shade, regardless of `variant`. */
+  /** A status circle. Inline dots use the badge foreground; standalone dots use the role text color. Supply an accessible name when no label is visible. */
   dot?: boolean
   color?: ColorRole
   variant?: BadgeVariants['variant']
@@ -33,7 +32,7 @@ const slots = useSlots()
 const hasLabel = computed(() => !!(props.label || slots.default))
 // dot with nothing else - just the bare circle, no padded pill around it.
 // A bare dot conveys nothing to screen readers on its own; pass a plain
-// aria-label (it flows through via the fallthrough attrs below) when
+// aria-label (on its img role, through the fallthrough attrs below) when
 // there's no visible label to describe what it means.
 const dotOnly = computed(() => !!props.dot && !hasLabel.value)
 // icon with nothing else - see the theme's iconOnly comment for why.
@@ -43,14 +42,13 @@ const theme = useComponentTheme('badge', badgeTheme)
 const themeProps = useThemeProps('badge')
 
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color as BadgeVariants['color'] ?? 'neutral', 'neutral'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as BadgeVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const ui = computed(() => theme.value({
-  color: recipeColor.value,
+  color: effectiveColor.value as BadgeVariants['color'],
   variant: props.variant,
   size: props.size ?? themeProps.value.size as BadgeVariants['size'],
   iconOnly: iconOnly.value,
+  dotOnly: dotOnly.value,
 }))
 
 const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
@@ -58,9 +56,9 @@ const dotOnlyProps = useRootProps(() => ui.value.dot, () => props.ui?.dot)
 </script>
 
 <template>
-  <span v-if="dotOnly" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="dotOnlyProps" />
-  <span v-else :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
-    <span v-if="dot" v-bind="resolveSlot(ui.dot, props.ui?.dot)" />
+  <span v-if="dotOnly" role="img" :data-selaras-color="effectiveColor" v-bind="dotOnlyProps" />
+  <span v-else :data-selaras-color="effectiveColor" v-bind="rootProps">
+    <span v-if="dot" aria-hidden="true" v-bind="resolveSlot(ui.dot, props.ui?.dot)" />
     <slot name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
       <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     </slot>

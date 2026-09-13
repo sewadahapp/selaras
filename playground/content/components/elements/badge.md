@@ -52,9 +52,11 @@ is a deliberately different shape for a deliberately different role.
 
 `dot` adds a small solid-colored circle - the classic online/offline/away
 indicator. Paired with a label, it sits in front of the text; alone, the
-whole badge collapses to just the bare dot. The dot always uses the
-color's solid shade, regardless of `variant` - a pale "soft" dot barely
-reads as a status indicator at this size.
+whole badge collapses to just the bare dot. Inline dots use the badge
+foreground so they remain visible on solid pills; standalone dots use the
+role text color regardless of `variant` for contrast against the stock surface.
+Inline dots are decorative. A standalone
+dot has an image role and needs an accessible name such as `aria-label`.
 
 ::component-example{name="badge-dot"}
 ::
@@ -96,7 +98,7 @@ every slot and variant - here's `Badge`'s own theme file:
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
 | `dot` | `boolean` | `false` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
+| `color` | `ColorRole` (built-in or registered semantic role) | `'neutral'` |
 | `variant` | `'solid' \| 'soft' \| 'outline'` | `'soft'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `ui` | `Partial<Record<BadgeSlot, string \| object>>` | - |

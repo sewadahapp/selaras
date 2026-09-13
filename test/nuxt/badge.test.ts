@@ -3,14 +3,29 @@ import { describe, expect, it } from 'vitest'
 import Badge from '../../src/runtime/components/Badge.vue'
 
 describe('badge', () => {
-  it('binds a custom semantic role to the existing recipe bridge', async () => {
+  it('binds a custom semantic role directly', async () => {
     const wrapper = await mountSuspended(Badge, { props: { color: 'premium', label: 'Pro' } })
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
-    expect(wrapper.classes()).toContain('bg-[var(--ui-primary-soft)]')
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).toBeUndefined()
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-subtle)]')
+    expect(wrapper.classes()).toContain('text-[var(--_selaras-color-on-subtle)]')
   })
   it('renders the label prop by default', async () => {
     const wrapper = await mountSuspended(Badge, { props: { label: 'New' } })
     expect(wrapper.text()).toBe('New')
+    expect(wrapper.element.tagName).toBe('SPAN')
+    expect(wrapper.attributes('data-selaras-color')).toBe('neutral')
+  })
+
+  it('falls back to neutral for an unknown runtime role', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { color: 'unknown-role' as never, label: 'Fallback' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('neutral')
+  })
+
+  it('keeps inline dots visible on solid pills through the foreground', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { color: 'success', variant: 'solid', dot: true, label: 'Online' } })
+    expect(wrapper.find('span > span').classes()).toContain('bg-current')
+    expect(wrapper.find('span > span').attributes('aria-hidden')).toBe('true')
   })
 
   it('renders default slot content, overriding the label prop', async () => {
@@ -111,7 +126,7 @@ describe('badge', () => {
     const wrapper = await mountSuspended(Badge, { props: { label: 'Online', dot: true, color: 'success' } })
     const dot = wrapper.find('span > span')
     expect(dot.classes()).toContain('rounded-full')
-    expect(dot.classes()).toContain('bg-[var(--ui-success)]')
+    expect(dot.classes()).toContain('bg-current')
     expect(wrapper.text()).toBe('Online')
   })
 
@@ -119,12 +134,12 @@ describe('badge', () => {
     const wrapper = await mountSuspended(Badge, { props: { dot: true, color: 'success' } })
     expect(wrapper.text()).toBe('')
     expect(wrapper.classes()).toContain('rounded-full')
-    expect(wrapper.classes()).toContain('bg-[var(--ui-success)]')
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-text)]')
   })
 
-  it('always uses the solid color for the dot, regardless of variant', async () => {
+  it('uses the role text color for a standalone dot, regardless of variant', async () => {
     const wrapper = await mountSuspended(Badge, { props: { dot: true, color: 'success', variant: 'outline' } })
-    expect(wrapper.classes()).toContain('bg-[var(--ui-success)]')
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-text)]')
   })
 
   it('forwards a plain aria-label onto the bare dot for accessibility', async () => {
@@ -133,5 +148,6 @@ describe('badge', () => {
       attrs: { 'aria-label': 'Online' },
     })
     expect(wrapper.attributes('aria-label')).toBe('Online')
+    expect(wrapper.attributes('role')).toBe('img')
   })
 })

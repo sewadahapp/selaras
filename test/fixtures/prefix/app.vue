@@ -65,6 +65,7 @@ function updateNestedTokens() {
           <SButton id="scoped-popover-button" color="enterprise">
             Scoped portal
           </SButton>
+          <SBadge id="scoped-popover-badge" color="enterprise" variant="solid" label="Scoped badge" />
         </template>
       </SPopover>
     </STheme>
@@ -192,6 +193,12 @@ function updateNestedTokens() {
       style="position: relative; z-index: 999999;"
     >
       <div v-for="role in ['primary', 'enterprise']" :key="role">
+        <SBadge
+          v-for="variant in ['solid', 'soft', 'outline']"
+          :id="`semantic-badge-${role}-${variant}`" :key="`badge-${variant}`" :color="role" :variant="variant" dot
+          :label="`${role} ${variant}`"
+        />
+        <SBadge :id="`semantic-dot-${role}`" :color="role" variant="solid" dot :aria-label="`${role} status`" />
         <SButton
           v-for="variant in ['solid', 'soft', 'outline', 'ghost', 'text']"
           :id="`semantic-${role}-${variant}`" :key="variant" :color="role" :variant="variant"

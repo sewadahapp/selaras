@@ -36,7 +36,9 @@ void invalidConfig
       <SButton id="packed-scoped" :color="role">
         Published scoped
       </SButton>
+      <SBadge id="packed-badge" :color="role" variant="soft" label="Published badge" />
     </STheme>
+    <SBadge id="packed-dot" dot aria-label="Offline" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
   </SApp>
 </template>

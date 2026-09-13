@@ -1,6 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
+import Badge from '../../src/runtime/components/Badge.vue'
 import Button from '../../src/runtime/components/Button.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
@@ -94,6 +95,13 @@ describe('theme', () => {
       compoundVariants: [{ color: 'premium', variant: 'outline', class: { base: 'tracking-widest' } }],
     } } }, h(Button, { color: 'premium', variant: 'outline' }, () => 'Upgrade')))
     expect(wrapper.find('button').classes()).toContain('tracking-widest')
+  })
+
+  it('passes Badge custom roles to recipe extension conditions', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: { badge: {
+      compoundVariants: [{ color: 'premium', variant: 'outline', class: { base: 'tracking-widest' } }],
+    } } }, h(Badge, { color: 'premium', variant: 'outline', label: 'Upgrade' })))
+    expect(wrapper.find('[data-selaras-color="premium"]').classes()).toContain('tracking-widest')
   })
 
   it('does not affect a button outside the Theme boundary', async () => {

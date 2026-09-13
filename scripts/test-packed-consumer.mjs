@@ -71,6 +71,8 @@ async function inspectSsr() {
     assert.match(html, /<button(?=[^>]*id="packed-scoped")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:h-8)/)
     assert.match(html, /<button(?=[^>]*id="packed-registered-builtin")(?=[^>]*data-selaras-color="secondary")/)
     assert.match(html, /<button(?=[^>]*id="packed-runtime-builtin")(?=[^>]*data-selaras-color="primary")/)
+    assert.match(html, /<span(?=[^>]*id="packed-badge")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:bg-\[var\(--_selaras-color-subtle\)\])/)
+    assert.match(html, /<span(?=[^>]*id="packed-dot")(?=[^>]*role="img")(?=[^>]*aria-label="Offline")(?=[^>]*data-selaras-color="neutral")/)
     assert.ok(html.includes('--selaras-color-primary-fill: #6789ab;'), 'built-in runtime tokens must appear in SSR head')
     assert.ok(html.includes('--selaras-color-published-fill: #456789;'), 'runtime app-config CSS must appear in SSR head')
     assert.ok(html.includes('--selaras-color-published-fill: #56789a;'), 'scoped token CSS must appear in SSR head')

@@ -43,6 +43,7 @@ test('measures stock semantic text contrast in both modes', async ({ page, goto 
         ['ghost:hover', 'text', 'subtle-hover'],
         ['ghost:active', 'text', 'subtle-pressed'],
         ['focus', 'focus', null],
+        ['status-dot', 'text', null],
       ] as const
       return Array.from(section.querySelectorAll('button')).flatMap((button) => {
         const probe = document.createElement('span')
@@ -56,7 +57,7 @@ test('measures stock semantic text contrast in both modes', async ({ page, goto 
           const first = luminance(foregroundColor)
           const second = luminance(backgroundColor)
           const ratio = (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05)
-          const threshold = state === 'focus' ? 3 : 4.5
+          const threshold = state === 'focus' || state === 'status-dot' ? 3 : 4.5
           return { role: button.dataset.selarasColor, state, foregroundColor, backgroundColor, ratio, threshold, passes: ratio >= threshold }
         })
         probe.remove()
@@ -65,7 +66,7 @@ test('measures stock semantic text contrast in both modes', async ({ page, goto 
     })
     measurements.push(...results.map(result => ({ mode, ...result })))
   }
-  expect(measurements).toHaveLength(224)
+  expect(measurements).toHaveLength(238)
   expect(measurements.every(result => Number.isFinite(result.ratio) && result.ratio >= 1 && result.ratio <= 21)).toBe(true)
   const report = testInfo.outputPath('stock-text-contrast.json')
   await writeFile(report, JSON.stringify({ measurements }, null, 2))

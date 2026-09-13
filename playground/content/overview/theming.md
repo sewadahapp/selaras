@@ -63,8 +63,8 @@ uses):
 }
 ```
 
-The built-in Button recipes select separate filled, subtle and text colors
-from these scales in each mode. Their hover and pressed states preserve
+The built-in Button and Badge recipes select separate filled, subtle and text
+colors from these scales in each mode. Button hover and pressed states preserve
 contrast against the stock `--ui-bg` surface. Warning uses a dark foreground
 and brighter filled interaction shades; dark-mode text uses lighter shades.
 Changing a palette or surface requires checking the resulting contrast again.
@@ -138,9 +138,9 @@ over inherited CSS inputs. Changing `fill` updates an omitted `fillHover` and
 its omitted pressed state. Override authored interaction leaves explicitly
 when you want to change them. Built-in recipes author all their state leaves,
 so changing only their fill does not retheme their interactions.
-Button now uses these inputs for built-in roles too, for example
+Button and Badge use these inputs for built-in roles too, for example
 `--selaras-color-primary-fill`. Built-in defaults read the palette foundations,
-so a local `--ui-primary` override no longer recolors Button. Module
+so a local `--ui-primary` override no longer recolors Button or Badge. Module
 `theme.colors.primary` can replace the complete built-in recipe; runtime
 `selaras.tokens` and explicit `STheme` scopes can override its leaves.
 Other components still use the legacy bridge during their semantic migration.
