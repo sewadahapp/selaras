@@ -33,21 +33,9 @@ export const alertTheme = tv({
     // so title/description have to flip to that color's own
     // `-foreground` token to stay legible, the same pairing Button's
     // own solid variant already uses.
-    { color: 'success', variant: 'soft', class: { root: 'bg-[var(--ui-success-soft)]', icon: 'text-[var(--ui-success)]' } },
-    { color: 'success', variant: 'outline', class: { root: 'bg-[var(--ui-bg)] ring-1 ring-[var(--ui-success)]', icon: 'text-[var(--ui-success)]' } },
-    { color: 'success', variant: 'solid', class: { root: 'bg-[var(--ui-success)]', icon: 'text-[var(--ui-success-foreground)]', title: 'text-[var(--ui-success-foreground)]', description: 'text-[var(--ui-success-foreground)] opacity-80' } },
-
-    { color: 'danger', variant: 'soft', class: { root: 'bg-[var(--ui-danger-soft)]', icon: 'text-[var(--ui-danger)]' } },
-    { color: 'danger', variant: 'outline', class: { root: 'bg-[var(--ui-bg)] ring-1 ring-[var(--ui-danger)]', icon: 'text-[var(--ui-danger)]' } },
-    { color: 'danger', variant: 'solid', class: { root: 'bg-[var(--ui-danger)]', icon: 'text-[var(--ui-danger-foreground)]', title: 'text-[var(--ui-danger-foreground)]', description: 'text-[var(--ui-danger-foreground)] opacity-80' } },
-
-    { color: 'warning', variant: 'soft', class: { root: 'bg-[var(--ui-warning-soft)]', icon: 'text-[var(--ui-warning)]' } },
-    { color: 'warning', variant: 'outline', class: { root: 'bg-[var(--ui-bg)] ring-1 ring-[var(--ui-warning)]', icon: 'text-[var(--ui-warning)]' } },
-    { color: 'warning', variant: 'solid', class: { root: 'bg-[var(--ui-warning)]', icon: 'text-[var(--ui-warning-foreground)]', title: 'text-[var(--ui-warning-foreground)]', description: 'text-[var(--ui-warning-foreground)] opacity-80' } },
-
-    { color: 'info', variant: 'soft', class: { root: 'bg-[var(--ui-info-soft)]', icon: 'text-[var(--ui-info)]' } },
-    { color: 'info', variant: 'outline', class: { root: 'bg-[var(--ui-bg)] ring-1 ring-[var(--ui-info)]', icon: 'text-[var(--ui-info)]' } },
-    { color: 'info', variant: 'solid', class: { root: 'bg-[var(--ui-info)]', icon: 'text-[var(--ui-info-foreground)]', title: 'text-[var(--ui-info-foreground)]', description: 'text-[var(--ui-info-foreground)] opacity-80' } },
+    { variant: 'soft', class: { root: 'bg-[var(--_selaras-color-subtle)]', icon: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'outline', class: { root: 'bg-[var(--ui-bg)] ring-1 ring-[var(--_selaras-color-border)]', icon: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'solid', class: { root: 'bg-[var(--_selaras-color-fill)]', icon: 'text-[var(--_selaras-color-on-fill)]', title: 'text-[var(--_selaras-color-on-fill)]', description: 'text-[var(--_selaras-color-on-fill)] opacity-80' } },
   ],
   defaultVariants: {
     color: 'info',

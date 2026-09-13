@@ -7,7 +7,6 @@ import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { alertTheme } from '../theme/alert'
-import { customStatusColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -50,8 +49,7 @@ const icons = useIcons()
 const messages = useMessages()
 
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'info', 'info'))
-const recipeColor = computed<AlertVariants['color']>(() => isBuiltinColorRole(effectiveColor.value) && ['success', 'danger', 'warning', 'info'].includes(effectiveColor.value) ? effectiveColor.value as AlertVariants['color'] : 'info')
-const colorRoleStyle = computed(() => customStatusColorRoleStyle(effectiveColor.value))
+const recipeColor = computed<AlertVariants['color']>(() => ['success', 'danger', 'warning', 'info'].includes(effectiveColor.value) ? effectiveColor.value as AlertVariants['color'] : 'info')
 const iconName = computed(() => props.icon ?? (props.color ? icons.value[recipeColor.value ?? 'info'] : undefined))
 
 const theme = useComponentTheme('alert', alertTheme)
@@ -67,7 +65,7 @@ const closeProps = computed(() => resolveSlot(ui.value.close, props.ui?.close))
 </script>
 
 <template>
-  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <div :data-selaras-color="effectiveColor" v-bind="rootProps">
     <Icon v-if="iconName" :name="iconName" v-bind="iconProps" />
     <div v-bind="contentProps">
       <p v-if="title || $slots.title" v-bind="titleProps">
