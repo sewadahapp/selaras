@@ -32,7 +32,7 @@ export const colorPickerTheme = tv({
     // slider track's own gradient) - a colored ring here would fight
     // that surface instead of marking a position on it, the same reason
     // Slider.vue's own thumb stays neutral against its colored range.
-    thumb: 'block size-4 shrink-0 rounded-full border-2 border-white shadow-[var(--ui-shadow-sm)] ring-1 ring-[var(--ui-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ui-primary)]',
+    thumb: 'block size-4 shrink-0 rounded-full border-2 border-white shadow-[var(--ui-shadow-sm)] ring-1 ring-[var(--ui-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)]',
     // ColorSliderRoot itself (bound onto directly, no dedicated slot of
     // its own since nothing else needs to reach it) - Reka's own default
     // `as` for it is a bare inline `span` (confirmed in Slider/SliderRoot.js,
@@ -46,9 +46,9 @@ export const colorPickerTheme = tv({
     // (ColorSliderTrack.js), not this class. Same inline-`span`-by-default
     // reasoning as sliderRoot above applies here too - `block` first.
     track: 'relative block h-3 w-full cursor-pointer rounded-full ring-1 ring-inset ring-black/10',
-    field: 'w-full rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg)] px-2 py-1.5 text-sm font-mono text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] focus:ring-2 focus:ring-[var(--ui-primary)]',
+    field: 'w-full rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg)] px-2 py-1.5 text-sm font-mono text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)]',
     swatchList: 'flex flex-wrap gap-1.5',
-    swatch: 'relative size-6 shrink-0 rounded-[var(--ui-radius-sm)] ring-1 ring-inset ring-black/10 cursor-pointer data-[highlighted]:ring-2 data-[highlighted]:ring-[var(--ui-border-hover)] data-[state=checked]:ring-2 data-[state=checked]:ring-[var(--ui-primary)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
+    swatch: 'relative size-6 shrink-0 rounded-[var(--ui-radius-sm)] ring-1 ring-inset ring-black/10 cursor-pointer data-[highlighted]:ring-2 data-[highlighted]:ring-[var(--ui-border-hover)] data-[state=checked]:ring-2 data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
     // The preset item's own color fill - same --reka-color-swatch-color
     // var as triggerSwatch, sized to fill its parent `swatch` item
     // (rounded-[inherit] so it doesn't poke past that item's own corners).
@@ -68,13 +68,13 @@ export const colorPickerTheme = tv({
     // Focus-ring color only, same scope as Select's own `color` variant -
     // the resting ring stays --ui-border regardless.
     color: {
-      primary: { trigger: 'focus:ring-[var(--ui-primary)] data-[state=open]:ring-[var(--ui-primary)]' },
+      primary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
       neutral: { trigger: 'focus:ring-[var(--ui-bg-inverted)] data-[state=open]:ring-[var(--ui-bg-inverted)]' },
-      secondary: { trigger: 'focus:ring-[var(--ui-secondary)] data-[state=open]:ring-[var(--ui-secondary)]' },
-      success: { trigger: 'focus:ring-[var(--ui-success)] data-[state=open]:ring-[var(--ui-success)]' },
-      danger: { trigger: 'focus:ring-[var(--ui-danger)] data-[state=open]:ring-[var(--ui-danger)]' },
-      info: { trigger: 'focus:ring-[var(--ui-info)] data-[state=open]:ring-[var(--ui-info)]' },
-      warning: { trigger: 'focus:ring-[var(--ui-warning)] data-[state=open]:ring-[var(--ui-warning)]' },
+      secondary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      success: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      danger: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      info: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      warning: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
     },
   },
   defaultVariants: {

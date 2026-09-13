@@ -9,7 +9,7 @@ import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Modal from './Modal.vue'
@@ -83,8 +83,7 @@ const showMobileModal = computed(() => props.mobileModal && isMobile.value)
 const theme = useComponentTheme('colorPicker', colorPickerTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ColorPickerVariants['color'] : 'primary')
-const colorRoleMarker = computed(() => isBuiltinColorRole(effectiveColor.value) ? undefined : effectiveColor.value)
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
+const colorRoleMarker = computed(() => effectiveColor.value)
 const ui = computed(() => theme.value({ size: props.size, color: recipeColor.value }))
 
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
@@ -116,7 +115,6 @@ const bodyProps = computed(() => ({
   swatchFillProps: swatchFillProps.value,
   swatchIndicatorProps: swatchIndicatorProps.value,
   colorRoleMarker: colorRoleMarker.value,
-  colorRoleStyle: colorRoleStyle.value,
 }))
 
 // Passed to Popover's own `ui.content` override - none of Popover's own
@@ -140,7 +138,6 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
       :disabled="disabled"
       :aria-label="messages.colorPicker"
       :data-selaras-color="colorRoleMarker"
-      :style="colorRoleStyle"
       v-bind="triggerProps"
     >
       <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
@@ -161,7 +158,6 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
       :disabled="disabled"
       :aria-label="messages.colorPicker"
       :data-selaras-color="colorRoleMarker"
-      :style="colorRoleStyle"
       v-bind="triggerProps"
     >
       <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
