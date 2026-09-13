@@ -58,33 +58,9 @@ export const chipTheme = tv({
     { size: 'md', removable: true, class: { root: 'pe-1.5' } },
     { size: 'lg', removable: true, class: { root: 'pe-2' } },
 
-    { color: 'primary', variant: 'solid', class: { root: 'bg-[var(--ui-primary)] text-[var(--ui-primary-foreground)]' } },
-    { color: 'primary', variant: 'soft', class: { root: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]' } },
-    { color: 'primary', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-primary)] text-[var(--ui-primary)]' } },
-
-    { color: 'neutral', variant: 'solid', class: { root: 'bg-[var(--ui-neutral)] text-[var(--ui-neutral-foreground)]' } },
-    { color: 'neutral', variant: 'soft', class: { root: 'bg-[var(--ui-neutral-soft)] text-[var(--ui-text)]' } },
-    { color: 'neutral', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-border)] text-[var(--ui-text)]' } },
-
-    { color: 'secondary', variant: 'solid', class: { root: 'bg-[var(--ui-secondary)] text-[var(--ui-secondary-foreground)]' } },
-    { color: 'secondary', variant: 'soft', class: { root: 'bg-[var(--ui-secondary-soft)] text-[var(--ui-secondary)]' } },
-    { color: 'secondary', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-secondary)] text-[var(--ui-secondary)]' } },
-
-    { color: 'success', variant: 'solid', class: { root: 'bg-[var(--ui-success)] text-[var(--ui-success-foreground)]' } },
-    { color: 'success', variant: 'soft', class: { root: 'bg-[var(--ui-success-soft)] text-[var(--ui-success)]' } },
-    { color: 'success', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-success)] text-[var(--ui-success)]' } },
-
-    { color: 'danger', variant: 'solid', class: { root: 'bg-[var(--ui-danger)] text-[var(--ui-danger-foreground)]' } },
-    { color: 'danger', variant: 'soft', class: { root: 'bg-[var(--ui-danger-soft)] text-[var(--ui-danger)]' } },
-    { color: 'danger', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-danger)] text-[var(--ui-danger)]' } },
-
-    { color: 'info', variant: 'solid', class: { root: 'bg-[var(--ui-info)] text-[var(--ui-info-foreground)]' } },
-    { color: 'info', variant: 'soft', class: { root: 'bg-[var(--ui-info-soft)] text-[var(--ui-info)]' } },
-    { color: 'info', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-info)] text-[var(--ui-info)]' } },
-
-    { color: 'warning', variant: 'solid', class: { root: 'bg-[var(--ui-warning)] text-[var(--ui-warning-foreground)]' } },
-    { color: 'warning', variant: 'soft', class: { root: 'bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]' } },
-    { color: 'warning', variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--ui-warning)] text-[var(--ui-warning)]' } },
+    { variant: 'solid', class: { root: 'bg-[var(--_selaras-color-fill)] text-[var(--_selaras-color-on-fill)]' } },
+    { variant: 'soft', class: { root: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
+    { variant: 'outline', class: { root: 'ring-1 ring-inset ring-[var(--_selaras-color-border)] text-[var(--_selaras-color-text)]' } },
   ],
   defaultVariants: {
     color: 'neutral',

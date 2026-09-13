@@ -7,7 +7,6 @@ import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { chipTheme } from '../theme/chip'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -45,11 +44,9 @@ const theme = useComponentTheme('chip', chipTheme)
 const themeProps = useThemeProps('chip')
 
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color as ChipVariants['color'] ?? 'neutral', 'neutral'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ChipVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const ui = computed(() => theme.value({
-  color: recipeColor.value,
+  color: effectiveColor.value as ChipVariants['color'],
   variant: props.variant,
   size: props.size ?? themeProps.value.size as ChipVariants['size'],
   disabled: props.disabled,
@@ -63,7 +60,7 @@ const effectiveRemoveLabel = computed(() => props.removeLabel ?? messages.value.
 </script>
 
 <template>
-  <span :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <span :data-selaras-color="effectiveColor" v-bind="rootProps">
     <slot name="icon" :class="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon).class">
       <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     </slot>

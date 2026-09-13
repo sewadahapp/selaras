@@ -40,6 +40,7 @@ function updateNestedTokens() {
       Invalid toggle
     </SToggle>
     <SToggleGroup id="toggle-group-invalid" :items="['One', 'Two']" default-value="One" color="enterprise" />
+    <SChip id="chip-invalid" label="Invalid chip" color="enterprise" variant="solid" />
     <SButton id="enterprise-button" color="enterprise">
       Enterprise
     </SButton>
@@ -207,6 +208,7 @@ function updateNestedTokens() {
           On
         </SToggle>
         <SToggleGroup :id="`toggle-group-${role}`" :items="['One', 'Two']" default-value="One" :color="role" />
+        <SChip v-for="variant in ['solid', 'soft', 'outline']" :id="`chip-${role}-${variant}`" :key="`chip-${variant}`" :label="variant" :color="role" :variant="variant" />
         <SRadioGroup :id="`radio-${role}`" v-model="radioValues[role]" :items="['one', 'two']" :color="role" variant="card" />
         <SBadge
           v-for="variant in ['solid', 'soft', 'outline']"
