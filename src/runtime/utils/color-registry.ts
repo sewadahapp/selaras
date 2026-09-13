@@ -117,36 +117,6 @@ export function isBuiltinColorRole(role: string): role is BuiltinColorName {
   return builtinRoleSet.has(role)
 }
 
-/**
- * Maps a custom role onto the existing primary recipe's CSS variables. This
- * is the first vertical-slice bridge; generated private role variables will
- * replace it once the Nuxt registry emits CSS for every registered role.
- */
-export function customColorRoleStyle(role: string): Record<string, string> | undefined {
-  if (isBuiltinColorRole(role))
-    return undefined
-  assertColorRoleName(role)
-  return {
-    '--ui-primary': 'var(--_selaras-color-fill)',
-    '--ui-primary-hover': 'var(--_selaras-color-fill-hover)',
-    '--ui-primary-active': 'var(--_selaras-color-fill-pressed)',
-    '--ui-primary-foreground': 'var(--_selaras-color-on-fill)',
-    '--ui-primary-soft': 'var(--_selaras-color-subtle)',
-  }
-}
-
-/** Maps a custom role onto the static info branch used by status-only recipes. */
-export function customStatusColorRoleStyle(role: string): Record<string, string> | undefined {
-  if (isBuiltinColorRole(role))
-    return undefined
-  assertColorRoleName(role)
-  return {
-    '--ui-info': 'var(--_selaras-color-fill)',
-    '--ui-info-foreground': 'var(--_selaras-color-on-fill)',
-    '--ui-info-soft': 'var(--_selaras-color-subtle)',
-  }
-}
-
 const generatedRoleFields = [
   'fill',
   'fill-hover',
