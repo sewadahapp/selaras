@@ -118,6 +118,17 @@ describe('datePicker', () => {
     expect(value.toString()).toBe('2024-01-10')
   })
 
+  it('keeps an explicitly controlled empty value parent-authoritative', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: undefined } })
+    await openCalendar(wrapper)
+
+    dayButton('10').dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(1)
+    expect(wrapper.find('input[type="hidden"]').element.value).toBe('')
+  })
+
   it('navigates to the next month via the header button', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
     await openCalendar(wrapper)
