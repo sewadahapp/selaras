@@ -408,6 +408,9 @@ every slot and variant - here's `DatePicker`'s own theme file:
 | --- | --- | --- |
 | `id` | `string` | - |
 | `name` | `string` | - |
+| `form` | `string` | - |
+| `open` | `boolean` | - |
+| `defaultOpen` | `boolean` | `false` |
 | `modelValue` | `DateValue \| DateRange \| Time` (`DateRange` when `range` is set, `Time` when `timeOnly` is set) | - |
 | `range` | `boolean` | `false` |
 | `timeOnly` | `boolean` | `false` |
@@ -459,5 +462,6 @@ every slot and variant - here's `DatePicker`'s own theme file:
 
 | Emit | Payload | Description |
 | --- | --- | --- |
+| `update:open` | `boolean` | Fires when the picker requests opening or closing |
 | `update:modelValue` | `DateValue \| DateRange \| undefined` | Fires when a day is picked, typed into the field's segments, or cleared |
 | `update:view` | `'date' \| 'month' \| 'year'` | Fires when the heading or a month/year cell drills the popover to a different view |

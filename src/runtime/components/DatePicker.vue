@@ -66,6 +66,8 @@ const themeScope = useThemeScope()
 export interface DatePickerProps {
   id?: string
   name?: string
+  /** ID of an associated form outside the component's ancestors. */
+  form?: string
   open?: boolean
   /** Initial uncontrolled open state. */
   defaultOpen?: boolean
@@ -138,6 +140,15 @@ export interface DatePickerEmits {
 }
 
 const field = useFormField()
+const formName = computed(() => props.name ?? field?.name)
+const nativeFormValue = computed(() => {
+  const value = props.modelValue as DateValue | DateRange | Time | undefined
+  if (!value)
+    return ''
+  if ('start' in value)
+    return `${value.start?.toString() ?? ''} - ${value.end?.toString() ?? ''}`
+  return value.toString()
+})
 
 const datePickerId = computed(() => props.id ?? field?.id)
 // Hour/minute granularity only - neither SInputNumber nor SInput forward a
@@ -635,7 +646,7 @@ const buttonTriggerUi = computed(() => ({
     v-if="range"
     :id="datePickerId"
     :open="open"
-    :name="name ?? field?.name"
+    :name="undefined"
     :model-value="rangeModelValue"
     :min-value="minValue"
     :max-value="maxValue"
@@ -784,7 +795,7 @@ const buttonTriggerUi = computed(() => ({
           v-slot="{ segments }"
           v-model:placeholder="timePlaceholder"
           :model-value="timeOnlyValue"
-          :name="name ?? field?.name"
+          :name="undefined"
           :locale="effectiveLocale"
           :hour-cycle="hourCycle"
           :granularity="timeOnlyGranularity"
@@ -893,7 +904,7 @@ const buttonTriggerUi = computed(() => ({
     :id="datePickerId"
     v-model:placeholder="placeholder"
     :open="open"
-    :name="name ?? field?.name"
+    :name="undefined"
     :model-value="singleModelValue"
     :min-value="minValue"
     :max-value="maxValue"
@@ -1024,4 +1035,5 @@ const buttonTriggerUi = computed(() => ({
       </template>
     </Modal>
   </DatePickerRoot>
+  <input type="hidden" :name="formName" :form="form" :value="nativeFormValue">
 </template>

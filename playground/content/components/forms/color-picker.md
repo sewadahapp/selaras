@@ -96,8 +96,12 @@ every slot and variant - here's `ColorPicker`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `name` | `string` | - |
+| `form` | `string` | - |
 | `modelValue` | `string` | - |
 | `defaultValue` | `string` | - |
+| `open` | `boolean` | - |
+| `defaultOpen` | `boolean` | `false` |
 | `disabled` | `boolean` | `false` |
 | `alpha` | `boolean` | `true` |
 | `swatches` | `string[]` | - |
@@ -111,4 +115,5 @@ every slot and variant - here's `ColorPicker`'s own theme file:
 
 | Event | Payload | Description |
 | --- | --- | --- |
+| `update:open` | `boolean` | Fires when the picker requests opening or closing |
 | `update:modelValue` | `string` | Fires whenever the color changes - dragging the area/sliders, typing (and committing) the hex field, or picking a swatch |

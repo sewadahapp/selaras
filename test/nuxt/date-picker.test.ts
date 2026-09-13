@@ -3,6 +3,7 @@ import type { DOMWrapper } from '@vue/test-utils'
 import { CalendarDate, CalendarDateTime, Time } from '@internationalized/date'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import DatePicker from '../../src/runtime/components/DatePicker.vue'
 
 // DatePickerContent teleports into document.body once opened, same as
@@ -46,6 +47,16 @@ async function clickAndWait(el: HTMLElement) {
 }
 
 describe('datePicker', () => {
+  it('submits one persistent native value and supports external form association', async () => {
+    wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', { id: 'booking-form' }, [
+        h(DatePicker, { name: 'date', form: 'booking-form', modelValue: new CalendarDate(2024, 1, 15) }),
+      ]),
+    }))
+    const form = wrapper.find('form').element
+    expect(new FormData(form).get('date')).toBe('2024-01-15')
+  })
+
   it('supports defaultOpen and lets a controlled parent veto closing', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { defaultOpen: true } })
     const uncontrolledTrigger = wrapper.find('button[aria-label="Date picker"]')
