@@ -929,8 +929,8 @@ const buttonTriggerUi = computed(() => ({
   <DatePickerRoot
     v-else
     :id="datePickerId"
-    :default-open="defaultOpen"
     v-model:placeholder="placeholder"
+    :default-open="defaultOpen"
     :open="open"
     v-bind="rootProps"
     :name="undefined"
