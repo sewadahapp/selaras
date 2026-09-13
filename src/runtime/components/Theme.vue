@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import type { RuntimeTokenOverrides } from '../utils/color-registry'
-import { computed, inject, provide } from 'vue'
+import { computed, inject, provide, useId } from 'vue'
 import { useHead } from '#imports'
-import { generateRuntimeColorOverrideCss } from '../utils/color-registry'
+import { generateRuntimeColorOverrideCss, mergeRuntimeTokenOverrides } from '../utils/color-registry'
 import { THEME_INJECTION_KEY } from '../utils/injection-keys'
 
 // Headless by default; `as` gives runtime tokens a DOM boundary.
@@ -30,24 +30,22 @@ export interface ThemeProps {
 // nesting two STheme components inherit an outer one's unset
 // slots/defaults rather than an inner one wholesale replacing it.
 const parent = inject(THEME_INJECTION_KEY, undefined)
-const scopeId = computed(() => {
-  const source = JSON.stringify(props.tokens ?? {})
-  let hash = 5381
-  for (const character of source)
-    hash = (hash * 33) ^ character.charCodeAt(0)
-  return `s${(hash >>> 0).toString(36)}`
-})
+const scopeId = `s${useId()}`
+const effectiveTokens = computed(() => props.as
+  ? mergeRuntimeTokenOverrides(parent?.value.tokens, props.tokens)
+  : parent?.value.tokens)
 provide(THEME_INJECTION_KEY, computed(() => ({
   ui: props.ui,
   defaults: props.defaults,
-  scopeId: props.as ? scopeId.value : parent?.value?.scopeId,
+  scopeId: props.as ? scopeId : parent?.value?.scopeId,
+  tokens: effectiveTokens.value,
   parent: parent?.value,
 })))
 
-const scopeSelector = computed(() => `[data-selaras-theme="${scopeId.value}"] `)
-const scopedTokenCss = computed(() => props.as ? generateRuntimeColorOverrideCss(props.tokens ?? {}, scopeSelector.value) : '')
+const scopeSelector = `[data-selaras-theme="${scopeId}"] `
+const scopedTokenCss = computed(() => props.as ? generateRuntimeColorOverrideCss(effectiveTokens.value ?? {}, scopeSelector) : '')
 useHead({
-  style: [{ key: `selaras-theme-${scopeId.value}`, textContent: () => scopedTokenCss.value || undefined }],
+  style: [{ key: `selaras-theme-${scopeId}`, textContent: () => scopedTokenCss.value || undefined }],
 })
 </script>
 

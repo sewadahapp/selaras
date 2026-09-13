@@ -59,6 +59,26 @@ inheriting whatever an outer one set and it didn't touch:
 </STheme>
 ```
 
+### Scoped tokens and portals
+
+Use `as` to create a DOM boundary for semantic token overrides:
+
+```vue-html
+<STheme as="section" :tokens="{ light: { premium: { fill: '#5134a8' } } }">
+  <!-- nested token scopes inherit untouched modes, roles and leaves -->
+</STheme>
+```
+
+This example assumes a registered `premium` role. Managed overrides are
+carried into supported overlay portals. An inner scope
+can override one leaf and retain its outer scope's other values, including
+after reactive updates. A headless `STheme` passes the existing token scope
+through; its own `tokens` require an explicit `as` root.
+
+External CSS variables still follow DOM inheritance. If a token references
+a variable declared on a local ancestor, use a portal target within that
+ancestor; the theme marker does not copy arbitrary CSS variables.
+
 ## Props
 
 | Prop | Type | Default |

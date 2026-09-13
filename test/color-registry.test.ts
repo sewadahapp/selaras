@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assertColorRoleName, createColorRegistry, customStatusColorRoleStyle, generateColorRoleCss, generateRuntimeColorOverrideCss, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
+import { assertColorRoleName, createColorRegistry, customStatusColorRoleStyle, generateColorRoleCss, generateRuntimeColorOverrideCss, mergeRuntimeTokenOverrides, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
 
 describe('color registry', () => {
   it('normalizes omitted interaction states from the nearest authored state', () => {
@@ -127,6 +127,21 @@ describe('color registry', () => {
     expect(css).toContain('--selaras-color-role-fill-hover: var(--brand-hover);')
     expect(css).toContain('.dark [data-selaras-color="premium"]')
     expect(() => generateRuntimeColorOverrideCss({ light: { premium: { fill: 'red; color: blue' } } })).toThrow()
+  })
+
+  it('inherits untouched modes, roles and leaves without mutating or resolving authored values', () => {
+    const parent = {
+      light: { premium: { fill: '#123456', subtle: 'var(--local-subtle)' }, primary: { text: '#654321' } },
+      dark: { premium: { subtle: '#112233' } },
+    }
+    const local = { light: { premium: { fill: '#abcdef', subtle: undefined } } }
+    const merged = mergeRuntimeTokenOverrides(parent, local)
+    expect(merged).toEqual({
+      light: { premium: { fill: '#abcdef', subtle: 'var(--local-subtle)' }, primary: { text: '#654321' } },
+      dark: { premium: { subtle: '#112233' } },
+    })
+    expect(parent.light.premium.fill).toBe('#123456')
+    expect(merged.light?.premium).not.toBe(parent.light.premium)
   })
 
   it('supports a scoped color marker on the scope root itself or a descendant', () => {

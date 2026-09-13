@@ -41,6 +41,27 @@ export interface RuntimeTokenOverrides {
   dark?: RuntimeColorOverrides
 }
 
+/** Composes managed scope leaves without resolving authored CSS expressions. */
+export function mergeRuntimeTokenOverrides(parent: RuntimeTokenOverrides = {}, local: RuntimeTokenOverrides = {}): RuntimeTokenOverrides {
+  const result: RuntimeTokenOverrides = {}
+  for (const mode of ['light', 'dark'] as const) {
+    const roles = new Set([...Object.keys(parent[mode] ?? {}), ...Object.keys(local[mode] ?? {})])
+    if (roles.size === 0)
+      continue
+    const colors: RuntimeColorOverrides = {}
+    for (const role of roles) {
+      assertColorRoleName(role)
+      const key = role as ColorRole
+      colors[key] = Object.fromEntries(
+        [...Object.entries(parent[mode]?.[key] ?? {}), ...Object.entries(local[mode]?.[key] ?? {})]
+          .filter(([, value]) => value !== undefined),
+      )
+    }
+    result[mode] = colors
+  }
+  return result
+}
+
 export interface ColorModePair<T> {
   light: T
   dark: T

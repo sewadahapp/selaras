@@ -1,8 +1,17 @@
 <script setup>
 import { CalendarDate } from '@internationalized/date'
+import { ref } from 'vue'
 
 const unknownRole = /** @type {any} */ ('not-registered')
 const scopedDate = new CalendarDate(2024, 1, 15)
+const nestedTokens = ref({
+  light: { enterprise: { fill: 'rgb(60 61 62)', subtle: 'rgb(63 64 65)', text: 'rgb(60 61 62)' } },
+  dark: { enterprise: { subtle: 'rgb(103 104 105)' } },
+})
+
+function updateNestedTokens() {
+  nestedTokens.value.light.enterprise.subtle = 'rgb(83 84 85)'
+}
 </script>
 
 <template>
@@ -88,8 +97,11 @@ const scopedDate = new CalendarDate(2024, 1, 15)
     </STheme>
     <STheme
       as="section"
-      :tokens="{ light: { enterprise: { fill: 'rgb(60 61 62)', onFill: 'white', subtle: 'rgb(63 64 65)', onSubtle: 'white', text: 'rgb(60 61 62)', border: 'rgb(60 61 62)' } } }"
+      :tokens="nestedTokens"
     >
+      <button id="nested-tokens-update" type="button" @click="updateNestedTokens">
+        Update outer tokens
+      </button>
       <SPopover :open="true">
         <template #default>
           <button id="nested-overlay-trigger">
@@ -99,8 +111,11 @@ const scopedDate = new CalendarDate(2024, 1, 15)
         <template #content>
           <STheme
             as="div"
-            :tokens="{ light: { enterprise: { fill: 'rgb(70 71 72)', onFill: 'white', subtle: 'rgb(73 74 75)', onSubtle: 'white', text: 'rgb(70 71 72)', border: 'rgb(70 71 72)' } } }"
+            :tokens="{ light: { enterprise: { fill: 'rgb(70 71 72)' } }, dark: { enterprise: { fill: 'rgb(110 111 112)' } } }"
           >
+            <SButton id="nested-inner-inline-subtle" color="enterprise" variant="soft">
+              Inline inherited subtle color
+            </SButton>
             <SPopover :open="true">
               <template #default>
                 <button id="nested-inner-overlay-trigger">
@@ -111,6 +126,11 @@ const scopedDate = new CalendarDate(2024, 1, 15)
                 <SButton id="nested-inner-overlay-button" color="enterprise">
                   Inner nested portal
                 </SButton>
+                <STheme>
+                  <SButton id="nested-inner-overlay-subtle" color="enterprise" variant="soft">
+                    Inherited subtle color through a headless scope
+                  </SButton>
+                </STheme>
               </template>
             </SPopover>
           </STheme>

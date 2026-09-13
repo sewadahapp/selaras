@@ -104,6 +104,18 @@ test('isolates nested scoped overlays across two portal layers', async ({ page, 
   await expect(innerPortal).toHaveAttribute('data-selaras-color', 'enterprise')
   await expect.poll(async () => innerPortal.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme') ?? '')).not.toBe('')
   await expect.poll(async () => innerPortal.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(70, 71, 72)')
+  await expect.poll(async () => page.locator('#nested-inner-overlay-subtle').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(63, 64, 65)')
+  await expect.poll(async () => page.locator('#nested-inner-inline-subtle').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(63, 64, 65)')
+
+  const marker = await innerPortal.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme'))
+  await page.locator('#nested-tokens-update').evaluate((element: HTMLButtonElement) => element.click())
+  await expect.poll(async () => page.locator('#nested-inner-overlay-subtle').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(83, 84, 85)')
+  await expect.poll(async () => page.locator('#nested-inner-inline-subtle').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(83, 84, 85)')
+  expect(await innerPortal.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme'))).toBe(marker)
+
+  await page.locator('html').evaluate(element => element.classList.add('dark'))
+  await expect.poll(async () => innerPortal.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(110, 111, 112)')
+  await expect.poll(async () => page.locator('#nested-inner-overlay-subtle').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(103, 104, 105)')
 })
 
 test('honors reduced-motion media preferences in compiled consumer CSS', async ({ page, goto }) => {

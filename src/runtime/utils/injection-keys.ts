@@ -1,4 +1,5 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
+import type { RuntimeTokenOverrides } from './color-registry'
 
 export const AVATAR_SIZE_INJECTION_KEY: InjectionKey<ComputedRef<'sm' | 'md' | 'lg' | undefined>> = Symbol('selaras-avatar-size')
 
@@ -69,6 +70,8 @@ export interface ThemeContext {
   ui?: Partial<Record<string, object>>
   defaults?: Partial<Record<string, Record<string, unknown>>>
   scopeId?: string
+  /** Effective managed tokens from explicit DOM scopes only. */
+  tokens?: RuntimeTokenOverrides
   parent?: ThemeContext
 }
 export const THEME_INJECTION_KEY: InjectionKey<ComputedRef<ThemeContext>> = Symbol('selaras-theme')
