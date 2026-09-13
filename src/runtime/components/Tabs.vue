@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { TabsThemeSlots } from '../theme/tabs'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { tabsTheme } from '../theme/tabs'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -28,6 +30,8 @@ export interface TabsProps {
   variant?: TabsVariants['variant']
   defaultValue?: string
   modelValue?: string
+  /** The active tab's text and underline accent. @default 'primary' */
+  color?: ColorRole
   ui?: UiProp<TabsThemeSlots>
 }
 
@@ -36,7 +40,8 @@ export interface TabsEmits {
 }
 
 const theme = useComponentTheme('tabs', tabsTheme)
-const ui = computed(() => theme.value({ variant: props.variant }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ variant: props.variant, color: effectiveColor.value as TabsVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
@@ -54,6 +59,7 @@ function itemValue(item: TabItem, index: number) {
   <TabsRoot
     :default-value="defaultValue"
     :model-value="modelValue"
+    :data-selaras-color="effectiveColor"
     v-bind="rootProps"
     @update:model-value="(value) => $emit('update:modelValue', value as string)"
   >

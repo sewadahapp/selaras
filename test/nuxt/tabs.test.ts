@@ -4,6 +4,14 @@ import { nextTick } from 'vue'
 import Tabs from '../../src/runtime/components/Tabs.vue'
 
 describe('tabs', () => {
+  it('binds a custom semantic role to active tab styling', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: { items: [{ label: 'One' }], color: 'premium' as any, defaultValue: '0' },
+    })
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('[role="tab"]').classes()).toContain('data-[state=active]:text-[var(--_selaras-color-text)]')
+  })
+
   it('marks no trigger active when modelValue is unset - a fully controlled component has no default tab', async () => {
     const wrapper = await mountSuspended(Tabs, {
       props: { items: [{ label: 'One' }, { label: 'Two' }] },

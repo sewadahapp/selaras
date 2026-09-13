@@ -9,7 +9,7 @@ export const tabsTheme = tv({
     // z-10 unconditionally (not just for `pill`) - harmless for `underline`
     // (its indicator never overlaps the trigger's own text anyway) and
     // keeps this one class instead of a compound variant.
-    trigger: 'relative z-10 inline-flex items-center gap-1.5 px-1 py-2 text-sm font-medium text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] disabled:opacity-50 disabled:pointer-events-none data-[state=active]:text-[var(--ui-primary)]',
+    trigger: 'relative z-10 inline-flex items-center gap-1.5 px-1 py-2 text-sm font-medium text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] disabled:opacity-50 disabled:pointer-events-none data-[state=active]:text-[var(--_selaras-color-text)]',
     icon: 'size-4 shrink-0',
     // Positioned via Reka's own TabsIndicator - it measures the active
     // trigger's offsetLeft/offsetWidth itself (ResizeObserver-driven, and
@@ -30,7 +30,7 @@ export const tabsTheme = tv({
     variant: {
       underline: {
         list: 'gap-4',
-        indicator: 'inset-x-0 bottom-0 h-0.5 rounded-full bg-[var(--ui-primary)]',
+        indicator: 'inset-x-0 bottom-0 h-0.5 rounded-full bg-[var(--_selaras-color-fill)]',
       },
       pill: {
         list: 'gap-1 rounded-[var(--ui-radius-md)] border-0 bg-[var(--ui-bg-elevated)] p-1',
@@ -38,9 +38,19 @@ export const tabsTheme = tv({
         indicator: 'inset-y-1 rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-sm)]',
       },
     },
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
   },
   defaultVariants: {
     variant: 'underline',
+    color: 'primary',
   },
 })
 
