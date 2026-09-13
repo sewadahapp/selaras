@@ -321,4 +321,24 @@ describe('modal', () => {
 
     container.remove()
   })
+
+  it('closing the dialog returns focus to its trigger', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    wrapper = await mountSuspended(Modal, {
+      attachTo: container,
+      props: { open: false, title: 'A', description: 'A' },
+      slots: { default: () => h('button', { id: 'modal-trigger-slot' }, 'Open') },
+    })
+    const trigger = wrapper.find('#modal-trigger-slot').element as HTMLButtonElement
+    trigger.focus()
+    await wrapper.setProps({ open: true })
+    await macrotask()
+    await wrapper.setProps({ open: false })
+    await macrotask()
+
+    expect(document.activeElement?.id).toBe('modal-trigger-slot')
+    container.remove()
+  })
 })
