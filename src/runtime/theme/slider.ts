@@ -29,13 +29,13 @@ export const sliderTheme = tv({
       lg: { track: 'h-2', thumb: 'size-5', tick: 'top-1/2 -translate-y-1/2' },
     },
     color: {
-      primary: { range: 'bg-[var(--ui-primary)]', thumb: 'ring-[var(--ui-primary)]' },
+      primary: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
       neutral: { range: 'bg-[var(--ui-bg-inverted)]', thumb: 'ring-[var(--ui-bg-inverted)]' },
-      secondary: { range: 'bg-[var(--ui-secondary)]', thumb: 'ring-[var(--ui-secondary)]' },
-      success: { range: 'bg-[var(--ui-success)]', thumb: 'ring-[var(--ui-success)]' },
-      danger: { range: 'bg-[var(--ui-danger)]', thumb: 'ring-[var(--ui-danger)]' },
-      info: { range: 'bg-[var(--ui-info)]', thumb: 'ring-[var(--ui-info)]' },
-      warning: { range: 'bg-[var(--ui-warning)]', thumb: 'ring-[var(--ui-warning)]' },
+      secondary: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
+      success: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
+      danger: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
+      info: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
+      warning: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
     },
     // Vertical needs a real, non-zero height to size against - unlike
     // horizontal, which sizes off its own intrinsic full width.

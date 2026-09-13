@@ -8,7 +8,7 @@ import { computed, ref, watch } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { sliderTheme } from '../theme/slider'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -157,7 +157,6 @@ const ticks = computed(() => {
 const theme = useComponentTheme('slider', sliderTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SliderVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   size: props.size,
   color: recipeColor.value,
@@ -186,7 +185,6 @@ const endProps = computed(() => resolveSlot(ui.value.end, props.ui?.end))
     :inverted="inverted"
     :name="name"
     :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
-    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:model-value="onUpdateModelValue"
     @value-commit="onValueCommit"
