@@ -54,7 +54,7 @@ describe('toast', () => {
 
     const root = document.body.querySelector('[data-selaras-color="premium"]')
     expect(root).toBeTruthy()
-    expect(root?.getAttribute('style')).toContain('--ui-info: var(--_selaras-color-fill)')
+    expect(root?.getAttribute('style')).not.toContain('--ui-info')
   })
 
   it('captures the nearest explicit theme scope when the composable is created', async () => {

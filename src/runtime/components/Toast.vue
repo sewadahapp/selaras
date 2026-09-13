@@ -8,7 +8,6 @@ import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { useToast } from '../composables/use-toast'
 import { toastTheme } from '../theme/toast'
-import { customStatusColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Button from './Button.vue'
@@ -50,10 +49,7 @@ function effectiveColorFor(toast: ToastItem) {
 }
 function recipeColorFor(toast: ToastItem): 'success' | 'danger' | 'warning' | 'info' | undefined {
   const color = effectiveColorFor(toast)
-  return isBuiltinColorRole(color) && ['success', 'danger', 'warning', 'info'].includes(color) ? color as 'success' | 'danger' | 'warning' | 'info' : 'info'
-}
-function colorRoleStyleFor(toast: ToastItem) {
-  return customStatusColorRoleStyle(effectiveColorFor(toast))
+  return ['success', 'danger', 'warning', 'info'].includes(color) ? color as 'success' | 'danger' | 'warning' | 'info' : 'info'
 }
 </script>
 
@@ -63,8 +59,7 @@ function colorRoleStyleFor(toast: ToastItem) {
     :key="toast.id"
     :duration="toast.duration ?? 5000"
     :data-selaras-theme="toast._themeScope"
-    :data-selaras-color="isBuiltinColorRole(effectiveColorFor(toast)) ? undefined : effectiveColorFor(toast)"
-    :style="colorRoleStyleFor(toast)"
+    :data-selaras-color="effectiveColorFor(toast)"
     v-bind="rootPropsFor(toast)"
     @update:open="(open) => !open && remove(toast.id)"
   >
