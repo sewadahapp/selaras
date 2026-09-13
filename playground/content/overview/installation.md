@@ -4,10 +4,18 @@ description: Add Selaras to a Nuxt project.
 order: 20
 ---
 
+## Requirements
+
+Selaras supports Nuxt `^4.5.2`, Tailwind CSS `^4.3.0`, and Node.js
+`^22.19.0 || ^24.11.0 || >=26.0.0`. Nuxt provides the Vue runtime and SFC
+compiler, so they are not installed or versioned separately. Type checking is
+verified with TypeScript `>=5.9.3`; TypeScript is a build-time tool, not a
+Selaras runtime dependency.
+
 ## Install the package
 
-Tailwind CSS is a peer dependency - install it alongside Selaras so your
-own project owns its version directly:
+Nuxt and Tailwind CSS are peer dependencies - install Selaras in an existing
+Nuxt project and keep Tailwind under your project's direct control:
 
 ::code-group
 

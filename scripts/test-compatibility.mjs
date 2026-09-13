@@ -26,6 +26,16 @@ function run(label, script, args) {
 
 console.log(`[compat] Node ${process.version}`)
 
+if (process.env.SELARAS_TYPESCRIPT_VERSION) {
+  const manifest = JSON.parse(readFileSync(join(rootDir, 'node_modules', 'typescript', 'package.json'), 'utf8'))
+  if (manifest.version !== process.env.SELARAS_TYPESCRIPT_VERSION) {
+    console.error(`[compat] Expected typescript@${process.env.SELARAS_TYPESCRIPT_VERSION}, resolved ${manifest.version}`)
+    process.exit(1)
+  }
+
+  console.log(`[compat] TypeScript ${process.env.SELARAS_TYPESCRIPT_VERSION}`)
+}
+
 if (process.env.SELARAS_TAILWIND_VERSION) {
   for (const packageName of ['tailwindcss', '@tailwindcss/vite', '@tailwindcss/oxide']) {
     const manifest = JSON.parse(readFileSync(join(rootDir, 'node_modules', packageName, 'package.json'), 'utf8'))
