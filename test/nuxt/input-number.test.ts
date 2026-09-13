@@ -21,6 +21,24 @@ describe('inputNumber', () => {
     expect(wrapper.find('input').element.value).toBe('5')
   })
 
+  it('forwards native input attributes to the editable control', async () => {
+    const wrapper = await mountSuspended(InputNumber, {
+      attrs: {
+        autocomplete: 'off',
+        maxlength: '4',
+        readonly: true,
+        spellcheck: 'false',
+      },
+    })
+    const input = wrapper.find('input')
+
+    expect(input.attributes('autocomplete')).toBe('off')
+    expect(input.attributes('maxlength')).toBe('4')
+    expect(input.attributes('readonly')).toBeDefined()
+    expect(input.attributes('spellcheck')).toBe('false')
+    expect(wrapper.find('div').attributes('readonly')).toBeUndefined()
+  })
+
   it('increments and decrements by step on button click', async () => {
     const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, step: 2 } })
     const { decrement, increment } = buttons(wrapper)

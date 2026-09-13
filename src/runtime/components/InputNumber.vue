@@ -3,14 +3,14 @@ import type { VariantProps } from 'tailwind-variants'
 import type { InputNumberThemeSlots } from '../theme/input-number'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, ref } from 'vue'
+import { computed, mergeProps, ref } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -143,8 +143,27 @@ const theme = useComponentTheme('inputNumber', inputNumberTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: effectiveColor.value as InputNumberVariants['color'], invalid: inputInvalid.value, orientation: props.orientation }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
-const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
+function isNativeInputAttr(key: string) {
+  return [
+    'autocomplete',
+    'autocapitalize',
+    'autocorrect',
+    'form',
+    'inputmode',
+    'list',
+    'maxlength',
+    'minlength',
+    'pattern',
+    'readonly',
+    'required',
+    'spellcheck',
+    'step',
+  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
+}
+
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
+const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)
+const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.ui?.input), nativeInputAttrs.value))
 const stepperProps = computed(() => resolveSlot(ui.value.stepper, props.ui?.stepper))
 const stepperButtonProps = computed(() => resolveSlot(ui.value.stepperButton, props.ui?.stepperButton))
 
