@@ -19,19 +19,19 @@ export const pinInputTheme = tv({
     // Focus-ring color only - the resting ring stays --ui-border
     // regardless, matching Input's own `color` variant exactly.
     color: {
-      primary: { input: 'focus:ring-[var(--ui-primary)]' },
+      primary: { input: 'focus:ring-[var(--_selaras-color-focus)]' },
       neutral: { input: 'focus:ring-[var(--ui-bg-inverted)]' },
-      secondary: { input: 'focus:ring-[var(--ui-secondary)]' },
-      success: { input: 'focus:ring-[var(--ui-success)]' },
-      danger: { input: 'focus:ring-[var(--ui-danger)]' },
-      info: { input: 'focus:ring-[var(--ui-info)]' },
-      warning: { input: 'focus:ring-[var(--ui-warning)]' },
+      secondary: { input: 'focus:ring-[var(--_selaras-color-focus)]' },
+      success: { input: 'focus:ring-[var(--_selaras-color-focus)]' },
+      danger: { input: 'focus:ring-[var(--_selaras-color-focus)]' },
+      info: { input: 'focus:ring-[var(--_selaras-color-focus)]' },
+      warning: { input: 'focus:ring-[var(--_selaras-color-focus)]' },
     },
     // Declared last (after color) so tailwind-merge lets its own
     // focus:ring override win over color's - matches Input's own
     // documented reasoning for this order.
     invalid: {
-      true: { input: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)]' },
+      true: { input: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus:ring-[var(--_selaras-color-fill)]' },
     },
   },
   defaultVariants: {

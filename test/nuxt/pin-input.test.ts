@@ -21,10 +21,11 @@ function attachedContainer() {
 }
 
 describe('pinInput', () => {
-  it('binds a custom semantic role to the pin input root', async () => {
+  it('binds a custom semantic role to semantic color variables', async () => {
     wrapper = await mountSuspended(PinInput, { props: { color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
   })
 
   it('renders 5 boxes by default', async () => {
@@ -109,6 +110,12 @@ describe('pinInput', () => {
   it('blocks input while disabled', async () => {
     wrapper = await mountSuspended(PinInput, { props: { disabled: true } })
     expect(wrapper.find('input[aria-label^="pin input"]').attributes('disabled')).toBeDefined()
+  })
+
+  it('uses the semantic fill color for invalid boxes', async () => {
+    wrapper = await mountSuspended(PinInput, { props: { invalid: true } })
+    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('input').classes()).toContain('ring-[var(--_selaras-color-fill)]')
   })
 
   it('merges a string :ui.input override with the theme classes', async () => {

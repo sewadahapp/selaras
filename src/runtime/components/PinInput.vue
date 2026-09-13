@@ -7,7 +7,7 @@ import { PinInputInput, PinInputRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { pinInputTheme } from '../theme/pin-input'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -59,7 +59,6 @@ const describedBy = computed(() => field?.describedBy.value)
 const theme = useComponentTheme('pinInput', pinInputTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as PinInputVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
   color: recipeColor.value,
@@ -85,7 +84,6 @@ const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
     :aria-invalid="pinInputInvalid || undefined"
     :aria-describedby="describedBy"
     :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
-    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as (string | number)[])"
     @complete="(value) => emit('complete', value as (string | number)[])"
