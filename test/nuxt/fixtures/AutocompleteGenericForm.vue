@@ -7,10 +7,11 @@ const asyncOptions = ref<readonly Row[]>([])
 const options: readonly Row[] = [{ id: 0, title: 'Numeric zero' }]
 const forced = ref<number | undefined>(7)
 const created = ref<(number | string)[]>([0, 'Initial text'])
+const submissions = ref(0)
 </script>
 
 <template>
-  <form id="autocomplete-generic-form">
+  <form id="autocomplete-generic-form" @submit.prevent="submissions++">
     <Autocomplete
       v-model="forced" name="forced-choice" :items="asyncOptions"
       value-key="id" label-key="title" force-selection clearable :default-value="7"
@@ -30,5 +31,9 @@ const created = ref<(number | string)[]>([0, 'Initial text'])
     <button type="reset">
       Reset suggestions
     </button>
+    <button type="submit">
+      Submit suggestions
+    </button>
+    <output aria-label="Suggestion submissions">{{ submissions }}</output>
   </form>
 </template>

@@ -333,6 +333,58 @@ describe('autocomplete', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['zzz'])
   })
 
+  it('leaves Enter to IME composition, then consumes creation and forced rejection', async () => {
+    const wrapper = await mountSuspended(Autocomplete, { props: { items: fruitItems } })
+    try {
+      const input = wrapper.find('input')
+      await input.setValue('created')
+
+      // Safari can issue the IME commit Enter after compositionend with
+      // isComposing false. Dispatch synchronously so it remains in the
+      // compositionend grace tick.
+      input.element.dispatchEvent(new Event('compositionstart', { bubbles: true }))
+      input.element.dispatchEvent(new Event('compositionend', { bubbles: true }))
+      const imeEnter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+      input.element.dispatchEvent(imeEnter)
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      expect(imeEnter.defaultPrevented).toBe(false)
+
+      await nextTick()
+      const finalImeEnter = new KeyboardEvent('keydown', { key: 'Enter', keyCode: 229, bubbles: true, cancelable: true })
+      input.element.dispatchEvent(finalImeEnter)
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      expect(finalImeEnter.defaultPrevented).toBe(false)
+
+      const createEnter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+      input.element.dispatchEvent(createEnter)
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['created'])
+      expect(createEnter.defaultPrevented).toBe(true)
+    }
+    finally {
+      wrapper.unmount()
+    }
+
+    const forced = await mountSuspended(Autocomplete, { props: { items: fruitItems, forceSelection: true } })
+    try {
+      const input = forced.find('input')
+      await input.setValue('rejected')
+      const searchUpdatesBeforeComposition = forced.emitted('update:searchTerm')?.length ?? 0
+      const composingEnter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, isComposing: true })
+      input.element.dispatchEvent(composingEnter)
+      expect(forced.emitted('update:searchTerm')).toHaveLength(searchUpdatesBeforeComposition)
+      expect(composingEnter.defaultPrevented).toBe(false)
+
+      const rejectEnter = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })
+      input.element.dispatchEvent(rejectEnter)
+      expect(forced.emitted('update:modelValue')).toBeUndefined()
+      expect(forced.emitted('update:searchTerm')?.at(-1)).toEqual([''])
+      expect(rejectEnter.defaultPrevented).toBe(true)
+    }
+    finally {
+      forced.unmount()
+    }
+  })
+
   it('creates strings alongside numeric suggestions in single and multiple modes', async () => {
     for (const multiple of [false, true]) {
       const wrapper = await mountSuspended(Autocomplete, {

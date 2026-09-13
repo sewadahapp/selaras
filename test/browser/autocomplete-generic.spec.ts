@@ -30,6 +30,67 @@ test('keeps forced async numeric selections through hydration, rejection, cleari
   expect(issues).toEqual([])
 })
 
+test('consumes creation and rejection Enter while preserving idle native submission', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  const form = page.locator('#autocomplete-generic-form')
+  const created = form.getByRole('combobox', { name: 'Create suggestions', exact: true })
+  const forced = form.getByRole('combobox', { name: 'Choose a suggestion', exact: true })
+  const submissions = form.getByLabel('Suggestion submissions', { exact: true })
+  const values = () => form.evaluate(el => new FormData(el as HTMLFormElement).getAll('created-choices'))
+  await created.fill('Entered text')
+  await created.press('Enter')
+  await expect.poll(values).toEqual(['0', 'Initial text', 'Entered text'])
+  await expect(submissions).toHaveText('0')
+  await forced.fill('Rejected text')
+  await forced.press('Enter')
+  await expect(forced).toHaveValue('')
+  await expect(submissions).toHaveText('0')
+  // Empty text with no highlighted suggestion leaves Enter to the native form.
+  await forced.fill('')
+  await forced.press('Enter')
+  await expect(submissions).toHaveText('1')
+})
+
+test('preserves composing text and selections until a later explicit Enter', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  const form = page.locator('#autocomplete-generic-form')
+  const created = form.getByRole('combobox', { name: 'Create suggestions', exact: true })
+  const forced = form.getByRole('combobox', { name: 'Choose a suggestion', exact: true })
+  const values = (name: string) => form.evaluate((el, key) => new FormData(el as HTMLFormElement).getAll(key), name)
+  for (const input of [created, forced]) {
+    await input.focus()
+    await input.dispatchEvent('compositionstart', { data: '' })
+    await input.fill('編集中')
+    // Synthetic lifecycle coverage, rather than an OS/native IME session.
+    await input.evaluate((el) => {
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, isComposing: true }))
+    })
+    await expect(input).toHaveValue('編集中')
+    await expect.poll(() => values('created-choices')).toEqual(['0', 'Initial text'])
+    await expect.poll(() => values('forced-choice')).toEqual(['7'])
+    await input.evaluate((el) => {
+      el.dispatchEvent(new CompositionEvent('compositionend', { bubbles: true, data: '編集中' }))
+      // End-of-composition Enter may report false in the same event turn.
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true, isComposing: false }))
+    })
+    await expect(input).toHaveValue('編集中')
+    await expect.poll(() => values('created-choices')).toEqual(['0', 'Initial text'])
+    await expect.poll(() => values('forced-choice')).toEqual(['7'])
+    await input.evaluate((el) => {
+      el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', keyCode: 229, bubbles: true, cancelable: true, isComposing: false }))
+    })
+    await expect(input).toHaveValue('編集中')
+    await expect.poll(() => values('created-choices')).toEqual(['0', 'Initial text'])
+    await expect.poll(() => values('forced-choice')).toEqual(['7'])
+    // Avoid blur creation while moving to the other field.
+    await input.fill('')
+  }
+  await created.fill('確定した文字')
+  await created.press('Enter')
+  await expect.poll(() => values('created-choices')).toEqual(['0', 'Initial text', '確定した文字'])
+  await expect(form.getByLabel('Suggestion submissions', { exact: true })).toHaveText('0')
+})
+
 test('creates text alongside numeric chips and restores the captured mixed default', async ({ page, goto }) => {
   const issues: string[] = []
   page.on('pageerror', error => issues.push(error.message))

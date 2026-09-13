@@ -19,7 +19,7 @@ import {
   TagsInputRoot,
   useDirection,
 } from 'reka-ui'
-import { computed, getCurrentInstance, mergeProps, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, getCurrentInstance, mergeProps, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
@@ -238,6 +238,20 @@ const searchText = computed({
   },
 })
 
+// Reka protects its own highlighted-item selection while composing, but this
+// component also handles Enter to create or reject free text. Keep the state
+// through the tick after compositionend: Safari can dispatch the IME commit
+// Enter after compositionend with event.isComposing already false.
+const isSearchComposing = ref(false)
+function onSearchCompositionStart() {
+  isSearchComposing.value = true
+}
+function onSearchCompositionEnd() {
+  nextTick(() => {
+    isSearchComposing.value = false
+  })
+}
+
 // forceSelection wins over creatable's own free-text commit: if what's typed
 // doesn't match any option, revert instead of accepting it as a new value.
 function revertUnmatchedText(): boolean {
@@ -248,12 +262,22 @@ function revertUnmatchedText(): boolean {
 }
 
 function onSearchKeydown(event: KeyboardEvent) {
-  if (event.key !== 'Enter')
+  // The final IME Enter can follow compositionend with isComposing false.
+  // Limit the legacy 229 fallback to Enter so directly typed keys still work.
+  if (event.key !== 'Enter' || event.isComposing || isSearchComposing.value || event.keyCode === 229)
     return
-  if (revertUnmatchedText())
+  if (revertUnmatchedText()) {
+    // The rejected value was handled here, so Enter must not submit a parent
+    // form as a side effect.
+    event.preventDefault()
     return
-  if (commitCreatableText(searchText.value))
+  }
+  if (commitCreatableText(searchText.value)) {
     searchText.value = ''
+    // Creating a value is this input's Enter action, matching Reka's own
+    // TagsInput behavior for values it adds from a form field.
+    event.preventDefault()
+  }
 }
 
 function onSearchBlur() {
@@ -357,7 +381,11 @@ const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const clearProps = computed(() => resolveSlot(ui.value.clear, props.ui?.clear))
 const dropdownProps = computed(() => resolveSlot(ui.value.dropdown, props.ui?.dropdown))
 const searchWrapperProps = computed(() => resolveSlot(ui.value.searchWrapper, props.ui?.searchWrapper))
-const searchInputProps = computed(() => mergeProps(resolveSlot(ui.value.searchInput, props.ui?.searchInput), nativeSearchInputAttrs.value))
+const searchInputProps = computed(() => mergeProps(
+  resolveSlot(ui.value.searchInput, props.ui?.searchInput),
+  nativeSearchInputAttrs.value,
+  { onCompositionstart: onSearchCompositionStart, onCompositionend: onSearchCompositionEnd },
+))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 const viewportProps = computed(() => resolveSlot(ui.value.viewport, props.ui?.viewport))
