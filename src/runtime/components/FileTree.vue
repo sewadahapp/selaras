@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import type { VariantProps } from 'tailwind-variants'
 import type { FileTreeThemeSlots } from '../theme/file-tree'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, ref } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { fileTreeTheme } from '../theme/file-tree'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
+
+type FileTreeVariants = VariantProps<typeof fileTreeTheme>
 
 export interface FileTreeNode {
   name: string
@@ -29,6 +34,8 @@ export interface FileTreeProps {
   selected?: FileTreeNode
   /** Whether a directory starts expanded. @default true */
   defaultExpanded?: boolean
+  /** The selected-file accent. @default 'primary' */
+  color?: ColorRole
   /** Internal - true for a recursive call rendering a directory's children, skipping the outer box. */
   isNested?: boolean
   ui?: UiProp<FileTreeThemeSlots>
@@ -77,7 +84,8 @@ function iconFor(node: FileTreeNode, index: number) {
 }
 
 const theme = useComponentTheme('fileTree', fileTreeTheme)
-const ui = computed(() => theme.value({ isNested: props.isNested }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ isNested: props.isNested, color: effectiveColor.value as FileTreeVariants['color'] }))
 
 // A nested call renders `list`, not `root` (see the comment above), so its
 // own override has to come from `ui.list` too - passing `ui.root`
@@ -92,12 +100,12 @@ const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 
 function rowProps(node: FileTreeNode) {
-  return resolveSlot(theme.value({ selected: props.selected === node }).row, props.ui?.row)
+  return resolveSlot(theme.value({ selected: props.selected === node, color: effectiveColor.value as FileTreeVariants['color'] }).row, props.ui?.row)
 }
 </script>
 
 <template>
-  <ul v-bind="rootProps">
+  <ul :data-selaras-color="effectiveColor" v-bind="rootProps">
     <li v-for="(node, index) in items" :key="node.name" v-bind="itemProps">
       <button type="button" v-bind="rowProps(node)" @click="node.children ? toggle(index) : selectFile(node)">
         <Icon :name="iconFor(node, index)" v-bind="iconProps" />
@@ -108,6 +116,7 @@ function rowProps(node: FileTreeNode) {
         :items="node.children"
         is-nested
         :selected="selected"
+        :color="color"
         :default-expanded="defaultExpanded"
         :ui="props.ui"
         @update:selected="emit('update:selected', $event)"

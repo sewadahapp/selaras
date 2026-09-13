@@ -19,7 +19,16 @@ export const fileTreeTheme = tv({
   },
   variants: {
     selected: {
-      true: { row: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)] hover:bg-[var(--ui-primary-soft)] hover:text-[var(--ui-primary)]' },
+      true: { row: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle)] hover:text-[var(--_selaras-color-text)]' },
+    },
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
     // FileTree.vue recurses into itself for every directory's own
     // children, reusing this exact same `item` slot at every depth -

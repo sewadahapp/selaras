@@ -15,6 +15,13 @@ const items = [
 ]
 
 describe('fileTree', () => {
+  it('binds a custom semantic role to selected file rows', async () => {
+    const wrapper = await mountSuspended(FileTree, { props: { items, selected: items[1], color: 'premium' as any } })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.findAll('button').find(b => b.text() === 'package.json')!.classes()).toContain('bg-[var(--_selaras-color-subtle)]')
+  })
+
   it('renders a row per top-level node', async () => {
     const wrapper = await mountSuspended(FileTree, { props: { items } })
 
@@ -79,8 +86,8 @@ describe('fileTree', () => {
 
     const selectedRow = wrapper.findAll('button').find(b => b.text() === 'package.json')!
     const otherRow = wrapper.findAll('button').find(b => b.text() === 'src')!
-    expect(selectedRow.classes().join(' ')).toContain('text-[var(--ui-primary)]')
-    expect(otherRow.classes().join(' ')).not.toContain('text-[var(--ui-primary)]')
+    expect(selectedRow.classes().join(' ')).toContain('text-[var(--_selaras-color-text)]')
+    expect(otherRow.classes().join(' ')).not.toContain('text-[var(--_selaras-color-text)]')
   })
 
   it('a `ui.root` override touching padding doesn\'t strip nested levels\' indentation', async () => {
