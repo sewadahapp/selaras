@@ -11,10 +11,51 @@ function makeFile(name: string, size: number, type = 'text/plain') {
 function setInputFiles(input: HTMLInputElement, files: File[]) {
   const dataTransfer = new DataTransfer()
   files.forEach(file => dataTransfer.items.add(file))
-  Object.defineProperty(input, 'files', { value: dataTransfer.files, configurable: true })
+  Object.defineProperty(input, 'files', { value: dataTransfer.files, configurable: true, writable: true })
 }
 
 describe('fileUpload', () => {
+  it('restores controlled files when the parent ignores native form reset', async () => {
+    const file = makeFile('keep.txt', 10)
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [h(FileUpload, { modelValue: [file] })]),
+    }))
+    wrapper.find('form').element.reset()
+    await nextTick()
+    expect(wrapper.find('li').text()).toContain('keep.txt')
+    expect(Array.from((wrapper.find('input').element as HTMLInputElement).files!, file => file.name)).toEqual(['keep.txt'])
+    wrapper.unmount()
+  })
+
+  it('restores native submission when a controlled parent vetoes selection', async () => {
+    const wrapper = await mountSuspended(FileUpload, { props: { modelValue: [] } })
+    const input = wrapper.find('input[type="file"]')
+    setInputFiles(input.element as HTMLInputElement, [makeFile('veto.txt', 10)])
+    await input.trigger('change')
+    expect((input.element as HTMLInputElement).files).toHaveLength(0)
+    wrapper.unmount()
+  })
+
+  it('synchronizes native files when the controlled parent replaces its model', async () => {
+    const wrapper = await mountSuspended(FileUpload, { props: { modelValue: [makeFile('first.txt', 10)] } })
+    await wrapper.setProps({ modelValue: [makeFile('second.txt', 10)] })
+    const files = (wrapper.find('input').element as HTMLInputElement).files!
+    expect(Array.from(files, file => file.name)).toEqual(['second.txt'])
+    wrapper.unmount()
+  })
+
+  it('preserves files when native form reset is canceled', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', { onReset: (event: Event) => event.preventDefault() }, [h(FileUpload)]),
+    }))
+    await wrapper.find('button').trigger('drop', { dataTransfer: { files: [makeFile('keep.txt', 10)] } })
+    wrapper.find('form').element.reset()
+    await nextTick()
+    expect(wrapper.find('li').text()).toContain('keep.txt')
+    expect((wrapper.find('input').element as HTMLInputElement).files).toHaveLength(1)
+    wrapper.unmount()
+  })
+
   it('keeps template-style controlled files when the parent ignores a drop', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => h(FileUpload, { 'model-value': [] }),
@@ -61,17 +102,21 @@ describe('fileUpload', () => {
   })
 
   it('clears uncontrolled files when the containing form resets', async () => {
-    const wrapper = await mountSuspended(FileUpload)
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [h(FileUpload)]),
+    }))
     const file = makeFile('a.txt', 100)
 
     await wrapper.find('button').trigger('drop', { dataTransfer: { files: [file] } })
     await nextTick()
     expect(wrapper.find('li').exists()).toBe(true)
 
-    await wrapper.find('div').trigger('reset')
+    wrapper.find('form').element.reset()
+    await nextTick()
     await nextTick()
 
     expect(wrapper.find('li').exists()).toBe(false)
+    wrapper.unmount()
   })
 
   it('forwards native file input attributes to the actual file control', async () => {

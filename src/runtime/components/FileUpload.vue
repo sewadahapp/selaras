@@ -3,7 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { FileUploadThemeSlots } from '../theme/file-upload'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, getCurrentInstance, mergeProps, ref, watch } from 'vue'
+import { computed, getCurrentInstance, mergeProps, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
@@ -103,6 +103,26 @@ const isDragging = ref(false)
 const dropzoneEl = ref<HTMLElement>()
 const inputEl = ref<HTMLInputElement>()
 
+function syncNativeFiles() {
+  if (!inputEl.value || typeof DataTransfer === 'undefined')
+    return
+  const transfer = new DataTransfer()
+  internalFiles.value.forEach(file => transfer.items.add(file))
+  inputEl.value.files = transfer.files
+}
+
+watch(internalFiles, syncNativeFiles, { deep: true, flush: 'post' })
+let ownerForm: HTMLFormElement | null = null
+onMounted(() => {
+  syncNativeFiles()
+  ownerForm = inputEl.value?.form ?? null
+  ownerForm?.addEventListener('reset', onFormReset)
+})
+onUnmounted(() => {
+  ownerForm?.removeEventListener('reset', onFormReset)
+  internalFiles.value.forEach(revokePreview)
+})
+
 // object URL per file (by identity), revoked once that file leaves the
 // list (removed, or the whole model replaced) so the browser doesn't
 // keep every ever-selected image alive for the page's own lifetime.
@@ -177,12 +197,16 @@ function onInputChange(event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files?.length)
     processFiles(target.files)
+  syncNativeFiles()
 }
 
-function onFormReset() {
-  if (!isControlled())
-    internalFiles.value.forEach(revokePreview)
-  updateFiles([])
+function onFormReset(event: Event) {
+  queueMicrotask(() => {
+    if (event.defaultPrevented)
+      return
+    updateFiles([])
+    syncNativeFiles()
+  })
 }
 
 function onDragEnter(event: DragEvent) {
@@ -213,12 +237,16 @@ function onDrop(event: DragEvent) {
 }
 
 function removeFile(index: number) {
-  const file = internalFiles.value[index]
-  if (file)
-    revokePreview(file)
   const next = internalFiles.value.filter((_, i) => i !== index)
   updateFiles(next)
 }
+
+watch(internalFiles, (files, previous) => {
+  previous.forEach((file) => {
+    if (!files.includes(file))
+      revokePreview(file)
+  })
+})
 
 const theme = useComponentTheme('fileUpload', fileUploadTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
@@ -254,7 +282,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
 </script>
 
 <template>
-  <div :data-selaras-color="effectiveColor" v-bind="rootProps" @reset="onFormReset">
+  <div :data-selaras-color="effectiveColor" v-bind="rootProps">
     <button
       ref="dropzoneEl"
       type="button"

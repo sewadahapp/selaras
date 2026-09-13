@@ -51,4 +51,21 @@ test('submits selected FileUpload files and resets native validity', async ({ pa
     const file = form.elements.namedItem('attachments') as HTMLInputElement
     return { valid: form.checkValidity(), fileCount: file.files?.length ?? 0 }
   })).toEqual({ valid: false, fileCount: 0 })
+  await expect(page.locator('#native-file-upload').locator('..').locator('li')).toHaveCount(0)
+})
+
+test('submits dropped FileUpload files and clears submission on removal', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  await page.locator('#native-file-upload').locator('..').locator('button').first().evaluate((button) => {
+    const transfer = new DataTransfer()
+    transfer.items.add(new File(['dropped'], 'drop.txt', { type: 'text/plain' }))
+    button.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: transfer }))
+  })
+  const names = () => page.evaluate(() => {
+    const input = document.querySelector<HTMLInputElement>('#native-file-upload')!
+    return Array.from(new FormData(input.form!).getAll('attachments'), file => (file as File).name)
+  })
+  await expect.poll(names).toEqual(['drop.txt'])
+  await page.getByRole('button', { name: 'Remove drop.txt', exact: true }).click()
+  await expect.poll(names).toEqual([''])
 })
