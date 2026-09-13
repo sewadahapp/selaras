@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import type { VariantProps } from 'tailwind-variants'
 import type { ContentNavigationThemeSlots } from '../theme/content-navigation'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { useRoute } from '#imports'
 import { contentNavigationTheme } from '../theme/content-navigation'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Accordion from './Accordion.vue'
 import Icon from './Icon.vue'
+
+type ContentNavigationVariants = VariantProps<typeof contentNavigationTheme>
 
 export interface ContentNavigationLink {
   title: string
@@ -23,6 +28,8 @@ defineSlots<ContentNavigationSlots>()
 
 export interface ContentNavigationProps {
   navigation: ContentNavigationLink[]
+  /** The active-link accent. @default 'primary' */
+  color?: ColorRole
   /** Set only by this component's own recursive self-call, one level down for each nested group - gates the tree-connector rail (see `content-navigation.ts`'s own `isNested` variant), since a root-level entry has no parent trunk to its left to branch off of. */
   isNested?: boolean
   ui?: UiProp<ContentNavigationThemeSlots>
@@ -40,7 +47,8 @@ function isActive(link: ContentNavigationLink) {
 }
 
 const theme = useComponentTheme('contentNavigation', contentNavigationTheme)
-const ui = computed(() => theme.value({ isNested: props.isNested }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ isNested: props.isNested, color: effectiveColor.value as ContentNavigationVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 
@@ -60,7 +68,7 @@ const groupUi = computed(() => ({
 </script>
 
 <template>
-  <ul v-bind="rootProps">
+  <ul :data-selaras-color="effectiveColor" v-bind="rootProps">
     <li v-for="link in navigation" :key="link.path" v-bind="resolveSlot(ui.item, props.ui?.item)">
       <Accordion
         v-if="link.children?.length"
@@ -77,7 +85,7 @@ const groupUi = computed(() => ({
         <template #[link.path]>
           <!-- Vue's SFC self-recursion resolves by this file's own bare name -
                keep it unprefixed even though the public component is SContentNavigation. -->
-          <ContentNavigation :navigation="link.children!" is-nested :ui="props.ui">
+          <ContentNavigation :navigation="link.children!" is-nested :color="color" :ui="props.ui">
             <template #link="scope">
               <slot name="link" v-bind="scope" />
             </template>

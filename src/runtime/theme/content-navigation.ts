@@ -8,7 +8,7 @@ export const contentNavigationTheme = tv({
     // target guideline without doubling the sidebar's height the way a
     // literal py-3 would across ~40 entries.
     link: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] px-2 py-2.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)]',
-    linkActive: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] bg-[var(--ui-primary-soft)] px-2 py-2.5 text-[var(--ui-primary)]',
+    linkActive: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] bg-[var(--_selaras-color-subtle)] px-2 py-2.5 text-[var(--_selaras-color-text)]',
     trigger: 'group flex w-full items-center justify-between gap-2 rounded-[var(--ui-radius-sm)] px-2 py-2.5 text-start font-medium text-[var(--ui-text)] transition-colors hover:bg-[var(--ui-bg-elevated)]',
     // A separate slot from label - this styles the icon a link/group-header
     // shows before its title, not the title text itself.
@@ -21,6 +21,15 @@ export const contentNavigationTheme = tv({
     content: 'ms-3 flex flex-col gap-0.5 ps-4',
   },
   variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
     // ContentNavigation.vue recurses into itself for every nested group,
     // reusing this exact same `item` slot at every depth - unlike
     // NavigationMenu's own `item`/`childItem` (genuinely different slot

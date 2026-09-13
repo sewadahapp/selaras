@@ -20,6 +20,16 @@ const navigation: ContentNavigationLink[] = [
 ]
 
 describe('contentNavigation', () => {
+  it('binds a custom semantic role to the active link', async () => {
+    const wrapper = await mountSuspended(ContentNavigation, {
+      props: { navigation, color: 'premium' as any },
+      route: '/components/button',
+    })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('a[href="/components/button"]').classes()).toContain('bg-[var(--_selaras-color-subtle)]')
+  })
+
   it('renders a leaf link as a NuxtLink to its path', async () => {
     const wrapper = await mountSuspended(ContentNavigation, {
       props: { navigation },
