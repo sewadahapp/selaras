@@ -48,6 +48,21 @@ describe('fileUpload', () => {
     await nextTick()
 
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[file]])
+    expect((input.element as HTMLInputElement).files).toHaveLength(1)
+  })
+
+  it('clears uncontrolled files when the containing form resets', async () => {
+    const wrapper = await mountSuspended(FileUpload)
+    const file = makeFile('a.txt', 100)
+
+    await wrapper.find('button').trigger('drop', { dataTransfer: { files: [file] } })
+    await nextTick()
+    expect(wrapper.find('li').exists()).toBe(true)
+
+    await wrapper.find('div').trigger('reset')
+    await nextTick()
+
+    expect(wrapper.find('li').exists()).toBe(false)
   })
 
   it('forwards native file input attributes to the actual file control', async () => {

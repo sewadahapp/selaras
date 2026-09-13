@@ -177,7 +177,12 @@ function onInputChange(event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files?.length)
     processFiles(target.files)
-  target.value = ''
+}
+
+function onFormReset() {
+  if (!isControlled())
+    internalFiles.value.forEach(revokePreview)
+  updateFiles([])
 }
 
 function onDragEnter(event: DragEvent) {
@@ -249,7 +254,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
 </script>
 
 <template>
-  <div :data-selaras-color="effectiveColor" v-bind="rootProps">
+  <div :data-selaras-color="effectiveColor" v-bind="rootProps" @reset="onFormReset">
     <button
       ref="dropzoneEl"
       type="button"
@@ -271,23 +276,22 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
           <template v-if="maxSize">{{ messages.upToSize(formatBytes(maxSize, effectiveLocale)) }}</template>
         </span>
       </slot>
-      <input
-        :id="fileUploadId"
-        ref="inputEl"
-        type="file"
-        :accept="accept"
-        :multiple="multiple"
-        :disabled="disabled"
-        :name="name ?? field?.name"
-        :required="required"
-        :aria-invalid="fileUploadInvalid || undefined"
-        :aria-describedby="describedBy"
-        tabindex="-1"
-        v-bind="inputProps"
-        @click.stop
-        @change="onInputChange"
-      >
     </button>
+    <input
+      :id="fileUploadId"
+      ref="inputEl"
+      type="file"
+      :accept="accept"
+      :multiple="multiple"
+      :disabled="disabled"
+      :name="name ?? field?.name"
+      :required="required"
+      :aria-invalid="fileUploadInvalid || undefined"
+      :aria-describedby="describedBy"
+      tabindex="-1"
+      v-bind="inputProps"
+      @change="onInputChange"
+    >
     <ul v-if="internalFiles.length" v-bind="fileListProps">
       <li v-for="(file, index) in internalFiles" :key="index" v-bind="fileProps">
         <slot name="file" :file="file" :index="index" :remove="() => removeFile(index)">
