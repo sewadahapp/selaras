@@ -169,6 +169,15 @@ function updateNestedTokens() {
       </SButton>
       <span id="builtin-foundation-probe" style="color: var(--tw-color-primary-500);">Foundation probe</span>
     </div>
+    <!-- Restore the stock primary shade changed by this fixture's @theme override. -->
+    <section id="stock-colors" style="--tw-color-primary-500: oklch(0.4755 0.2026 279.99); background: var(--ui-bg);">
+      <SButton
+        v-for="role in ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'neutral']"
+        :id="`stock-${role}`" :key="role" :color="role"
+      >
+        {{ role }}
+      </SButton>
+    </section>
     <STheme
       as="section"
       :tokens="{ light: { primary: semanticRecipe, enterprise: semanticRecipe }, dark: { primary: semanticRecipe, enterprise: semanticRecipe } }"
