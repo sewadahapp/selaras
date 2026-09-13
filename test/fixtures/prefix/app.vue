@@ -23,7 +23,15 @@ function updateNestedTokens() {
     <SButton id="unknown-role-button" :color="unknownRole">
       Unknown role
     </SButton>
-    <div style="--company-brand-fill: rgb(17 34 51); --company-brand-on-fill: white; --company-brand-subtle: rgb(34 51 68); --company-brand-on-subtle: white; --company-brand-text: rgb(17 34 51); --company-brand-border: rgb(17 34 51);">
+    <div style="--selaras-color-enterprise-fill: rgb(30 31 32); --company-brand-fill: rgb(17 34 51); --company-brand-on-fill: white; --company-brand-subtle: rgb(34 51 68); --company-brand-on-subtle: white; --company-brand-text: rgb(17 34 51); --company-brand-border: rgb(17 34 51);">
+      <SButton id="local-role-input-button" color="enterprise">
+        Local role input
+      </SButton>
+      <div style="--selaras-color-enterprise-fill: rgb(33 34 35);">
+        <SButton id="nested-role-input-button" color="enterprise">
+          Nested role input
+        </SButton>
+      </div>
       <SButton id="brand-vars-button" color="brand-vars">
         Brand variables
       </SButton>

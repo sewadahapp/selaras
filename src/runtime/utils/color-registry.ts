@@ -172,13 +172,13 @@ function assertCssValue(value: string): void {
     throw new Error('Invalid Selaras token value: declaration delimiters are not allowed.')
 }
 
-function overrideRule(selector: string, overrides: Partial<ColorRecipeInput>): string | undefined {
+function overrideRule(selector: string, role: string, overrides: Partial<ColorRecipeInput>): string | undefined {
   const declarations = Object.entries(overrides).map(([field, value]) => {
     if (value === undefined)
       return undefined
     assertCssValue(value)
     const kebab = field.replace(/[A-Z]/g, character => `-${character.toLowerCase()}`)
-    return `  --selaras-color-role-${kebab}: ${value};`
+    return `  --selaras-color-${role}-${kebab}: ${value};`
   }).filter(Boolean)
   return declarations.length > 0 ? `${selector} {\n${declarations.join('\n')}\n}` : undefined
 }
@@ -195,8 +195,10 @@ export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides
       const colorSelector = `[data-selaras-color="${role}"]`
       const scope = scopeSelector.trim()
       const selectors = scope ? [`${scope}${colorSelector}`, `${scope} ${colorSelector}`] : [colorSelector]
-      const selector = selectors.map(value => `${mode === 'dark' ? '.dark ' : ''}${value}`).join(',\n')
-      const rule = overrideRule(selector, colors[role as ColorRole] ?? {})
+      const selector = selectors.map(value => mode === 'dark'
+        ? `.dark ${value}`
+        : `${value}:not(:where(.dark, .dark *))`).join(',\n')
+      const rule = overrideRule(selector, role, colors[role as ColorRole] ?? {})
       if (rule)
         rules.push(rule)
     }
@@ -204,14 +206,11 @@ export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides
   return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
 }
 
-function roleRule(selector: string, recipe: ColorRecipe): string {
+function roleRule(selector: string, role: string, recipe: ColorRecipe): string {
   const declarations = generatedRoleFields
-    .flatMap((field) => {
+    .map((field) => {
       const value = roleFieldValue(recipe, field)
-      return [
-        `  --selaras-color-role-${field}: ${value};`,
-        `  --_selaras-color-${field}: var(--selaras-color-role-${field});`,
-      ]
+      return `  --_selaras-color-${field}: var(--selaras-color-${role}-${field}, ${value});`
     })
     .join('\n')
   return `${selector} {\n${declarations}\n}`
@@ -219,7 +218,9 @@ function roleRule(selector: string, recipe: ColorRecipe): string {
 
 /**
  * Serializes normalized role recipes into the private CSS bindings consumed by
- * role-capable components. The output is deterministic so Nuxt template
+ * role-capable components. Role-specific public inputs inherit from the DOM;
+ * authored defaults resolve here so local external variables remain usable.
+ * The output is deterministic so Nuxt template
  * hashes and HMR invalidation do not change with object insertion order.
  */
 export function generateColorRoleCss(registry: Record<string, ColorModePair<ColorRecipe>>): string {
@@ -230,8 +231,8 @@ export function generateColorRoleCss(registry: Record<string, ColorModePair<Colo
   const rules: string[] = []
   for (const role of roles) {
     const modes = registry[role]!
-    rules.push(roleRule(`[data-selaras-color="${role}"]`, modes.light))
-    rules.push(roleRule(`.dark [data-selaras-color="${role}"]`, modes.dark))
+    rules.push(roleRule(`[data-selaras-color="${role}"]`, role, modes.light))
+    rules.push(roleRule(`.dark [data-selaras-color="${role}"]`, role, modes.dark))
   }
   return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
 }

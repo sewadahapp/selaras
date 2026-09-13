@@ -102,10 +102,11 @@ describe('color registry', () => {
     })
     const css = generateColorRoleCss(registry)
     expect(css).toContain('[data-selaras-color="premium"]')
-    expect(css).toContain('--selaras-color-role-fill: light-fill;')
-    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-role-fill);')
+    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, light-fill);')
+    expect(css).not.toContain('--selaras-color-premium-fill:')
+    expect(css).not.toContain('--selaras-color-role-')
     expect(css).toContain('.dark [data-selaras-color="premium"]')
-    expect(css).toContain('--selaras-color-role-fill: dark-fill;')
+    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, dark-fill);')
     expect(css.endsWith('\n')).toBe(true)
   })
 
@@ -124,7 +125,8 @@ describe('color registry', () => {
       dark: { premium: { fill: '#a78bfa' } },
     })
     expect(css).toContain('[data-selaras-color="premium"]')
-    expect(css).toContain('--selaras-color-role-fill-hover: var(--brand-hover);')
+    expect(css).toContain('--selaras-color-premium-fill-hover: var(--brand-hover);')
+    expect(css).toContain('[data-selaras-color="premium"]:not(:where(.dark, .dark *))')
     expect(css).toContain('.dark [data-selaras-color="premium"]')
     expect(() => generateRuntimeColorOverrideCss({ light: { premium: { fill: 'red; color: blue' } } })).toThrow()
   })
@@ -146,7 +148,7 @@ describe('color registry', () => {
 
   it('supports a scoped color marker on the scope root itself or a descendant', () => {
     const css = generateRuntimeColorOverrideCss({ light: { premium: { fill: '#5134a8' } } }, '[data-selaras-theme="scope"] ')
-    expect(css).toContain('[data-selaras-theme="scope"][data-selaras-color="premium"],')
+    expect(css).toContain('[data-selaras-theme="scope"][data-selaras-color="premium"]:not(:where(.dark, .dark *)),')
     expect(css).toContain('[data-selaras-theme="scope"] [data-selaras-color="premium"]')
   })
 

@@ -37,6 +37,24 @@ test('resolves CSS-variable-backed semantic colors in a real browser', async ({ 
   await expect.poll(async () => page.locator('#brand-vars-button').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(17, 34, 51)')
 })
 
+test('inherits role-specific CSS overrides from document and local ancestors', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  const background = (id: string) => page.locator(`#${id}`).evaluate(element => getComputedStyle(element).backgroundColor)
+  await expect.poll(() => background('local-role-input-button')).toBe('rgb(30, 31, 32)')
+  await expect.poll(() => background('nested-role-input-button')).toBe('rgb(33, 34, 35)')
+
+  await page.locator('html').evaluate(element => element.style.setProperty('--selaras-color-enterprise-fill', 'rgb(36 37 38)'))
+  await expect.poll(() => background('enterprise-button')).toBe('rgb(36, 37, 38)')
+  await expect.poll(() => background('local-role-input-button')).toBe('rgb(30, 31, 32)')
+  await expect.poll(() => background('nested-role-input-button')).toBe('rgb(33, 34, 35)')
+  await expect.poll(() => background('brand-vars-button')).toBe('rgb(17, 34, 51)')
+  await expect.poll(() => background('scoped-popover-button')).toBe('rgb(9, 8, 7)')
+
+  await page.locator('html').evaluate(element => element.classList.add('dark'))
+  await expect.poll(() => background('enterprise-button')).toBe('rgb(36, 37, 38)')
+  await expect.poll(() => background('local-role-input-button')).toBe('rgb(30, 31, 32)')
+})
+
 test('resolves scoped theme colors on portalled content in a real browser', async ({ page, goto }) => {
   await goto('/', { waitUntil: 'hydration' })
 

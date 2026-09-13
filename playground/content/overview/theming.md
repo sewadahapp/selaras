@@ -118,6 +118,26 @@ Hover, pressed, and focus leaves are optional and fall back to their related
 base value. New roles require both modes. A runtime `app.config` override can
 change leaves of a registered role, but cannot introduce a new role name.
 
+Custom roles accept role-specific CSS overrides such as
+`--selaras-color-premium-fill`. Set them on `:root` for the document or on
+a local ancestor for a subtree:
+
+```css
+.premium-panel {
+  --selaras-color-premium-fill: #5134a8;
+  --selaras-color-premium-on-fill: #fff;
+}
+```
+
+These variables are override inputs. Selaras resolves registered defaults
+at each role element; it does not declare a complete default palette under
+these names on `:root`. This keeps default expressions referencing local
+company variables usable. Explicit managed token overrides take precedence
+over inherited CSS inputs. Override related interaction leaves explicitly
+when changing them; overriding `fill` alone does not update `fillHover`.
+Built-in roles still use the `--ui-*` variables described above while their
+semantic migration is in progress.
+
 Tailwind v4 only keeps a theme variable in the compiled CSS if it detects
 the variable actually being used somewhere - normally that means a
 utility class like `bg-primary-500` appearing literally in a scanned
