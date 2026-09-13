@@ -30,7 +30,7 @@ export const navigationMenuTheme = tv({
     // `childLink` used from 2nd level down, `ps-0`/gap fixes chasing each
     // new place the two silently drifted apart) - genuinely not worth it;
     // one style everywhere is both simpler and correct by construction.
-    link: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    link: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     linkIcon: 'size-4 shrink-0',
     // Collapsed-rail fallback for a top-level item with no icon (see the
     // `collapsed` variant below) - same box size as `linkIcon` so it
@@ -55,7 +55,7 @@ export const navigationMenuTheme = tv({
     viewport: 'absolute inset-x-0 top-full z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-full overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[height] duration-200',
     childList: 'grid gap-1',
     childItem: '',
-    childLink: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    childLink: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     childLinkLabel: 'truncate',
     // `type: 'label'`/`'separator'` items (see NavigationMenuItem's own
     // doc comment) - non-interactive, so neither gets `link`'s own
@@ -192,32 +192,32 @@ export const navigationMenuTheme = tv({
   },
   compoundVariants: [
     { variant: 'pill', active: false, class: { link: 'hover:bg-[var(--ui-bg-elevated)]', childLink: 'hover:bg-[var(--ui-bg-elevated)]' } },
-    { variant: 'pill', active: true, color: 'primary', class: { link: 'bg-[var(--ui-primary-soft)] text-[var(--ui-primary)]' } },
+    { variant: 'pill', active: true, color: 'primary', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
     { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--ui-neutral-soft)] text-[var(--ui-text)]' } },
-    { variant: 'pill', active: true, color: 'secondary', class: { link: 'bg-[var(--ui-secondary-soft)] text-[var(--ui-secondary)]' } },
-    { variant: 'pill', active: true, color: 'success', class: { link: 'bg-[var(--ui-success-soft)] text-[var(--ui-success)]' } },
-    { variant: 'pill', active: true, color: 'danger', class: { link: 'bg-[var(--ui-danger-soft)] text-[var(--ui-danger)]' } },
-    { variant: 'pill', active: true, color: 'info', class: { link: 'bg-[var(--ui-info-soft)] text-[var(--ui-info)]' } },
-    { variant: 'pill', active: true, color: 'warning', class: { link: 'bg-[var(--ui-warning-soft)] text-[var(--ui-warning)]' } },
+    { variant: 'pill', active: true, color: 'secondary', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
+    { variant: 'pill', active: true, color: 'success', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
+    { variant: 'pill', active: true, color: 'danger', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
+    { variant: 'pill', active: true, color: 'info', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
+    { variant: 'pill', active: true, color: 'warning', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
 
-    { variant: 'link', active: true, color: 'primary', class: { link: 'text-[var(--ui-primary)]' } },
+    { variant: 'link', active: true, color: 'primary', class: { link: 'text-[var(--_selaras-color-text)]' } },
     { variant: 'link', active: true, color: 'neutral', class: { link: 'text-[var(--ui-text)]' } },
-    { variant: 'link', active: true, color: 'secondary', class: { link: 'text-[var(--ui-secondary)]' } },
-    { variant: 'link', active: true, color: 'success', class: { link: 'text-[var(--ui-success)]' } },
-    { variant: 'link', active: true, color: 'danger', class: { link: 'text-[var(--ui-danger)]' } },
-    { variant: 'link', active: true, color: 'info', class: { link: 'text-[var(--ui-info)]' } },
-    { variant: 'link', active: true, color: 'warning', class: { link: 'text-[var(--ui-warning)]' } },
+    { variant: 'link', active: true, color: 'secondary', class: { link: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'link', active: true, color: 'success', class: { link: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'link', active: true, color: 'danger', class: { link: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'link', active: true, color: 'info', class: { link: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'link', active: true, color: 'warning', class: { link: 'text-[var(--_selaras-color-text)]' } },
 
     // Child links (inside horizontal's own dropdown panel) always get the
     // "active" text-color treatment regardless of `variant` - a pill-style
     // background on every list row in a dropdown would be visual noise.
-    { active: true, color: 'primary', class: { childLink: 'text-[var(--ui-primary)]' } },
+    { active: true, color: 'primary', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
     { active: true, color: 'neutral', class: { childLink: 'text-[var(--ui-text)]' } },
-    { active: true, color: 'secondary', class: { childLink: 'text-[var(--ui-secondary)]' } },
-    { active: true, color: 'success', class: { childLink: 'text-[var(--ui-success)]' } },
-    { active: true, color: 'danger', class: { childLink: 'text-[var(--ui-danger)]' } },
-    { active: true, color: 'info', class: { childLink: 'text-[var(--ui-info)]' } },
-    { active: true, color: 'warning', class: { childLink: 'text-[var(--ui-warning)]' } },
+    { active: true, color: 'secondary', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
+    { active: true, color: 'success', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
+    { active: true, color: 'danger', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
+    { active: true, color: 'info', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
+    { active: true, color: 'warning', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
 
     // The highlight bar reuses whatever text color `active` already set via
     // the compound variants above (`after:bg-current`) instead of a second,

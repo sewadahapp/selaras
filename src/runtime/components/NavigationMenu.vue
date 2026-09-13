@@ -17,7 +17,7 @@ import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -61,7 +61,6 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({ orientation: props.orientation, color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed }))
 
 const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
@@ -125,7 +124,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
 </script>
 
 <template>
-  <NavigationMenuRoot :orientation="orientation" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <NavigationMenuRoot :orientation="orientation" :data-selaras-color="effectiveColor" v-bind="rootProps">
     <slot name="list-leading" />
     <NavigationMenuList v-bind="listProps">
       <template v-for="item in items" :key="item.label">

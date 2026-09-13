@@ -5,7 +5,7 @@ import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed, ref, useSlots } from 'vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -91,7 +91,6 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: true, active: false, disabled: props.item.disabled }))
 
 let closeTimer: ReturnType<typeof setTimeout> | undefined
@@ -202,8 +201,7 @@ function onContentKeydown(event: KeyboardEvent) {
       ref="triggerRef"
       type="button"
       :disabled="item.disabled"
-      :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
-      :style="colorRoleStyle"
+      :data-selaras-color="effectiveColor"
       v-bind="resolveSlot(ui.link, props.ui?.link)"
       @mouseenter="openNow"
       @mouseleave="scheduleClose"

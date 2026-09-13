@@ -7,7 +7,7 @@ import { computed, useId, useSlots } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -66,7 +66,6 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight }))
 
 const accordionValue = useId()
@@ -113,7 +112,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
 </script>
 
 <template>
-  <Accordion :items="accordionItems" :default-value="[]" :ui="groupUi" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle">
+  <Accordion :items="accordionItems" :default-value="[]" :ui="groupUi" :data-selaras-color="effectiveColor">
     <template #label>
       <slot :name="slotName(item, '')" :item="item" :active="false">
         <slot :name="slotName(item, '-leading')" :item="item" :active="false">

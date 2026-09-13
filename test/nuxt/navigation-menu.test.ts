@@ -85,7 +85,7 @@ describe('navigationMenu (horizontal)', () => {
     })
 
     const link = wrapper.find('a[href="/docs"]')
-    expect(link.classes()).toContain('text-[var(--ui-danger)]')
+    expect(link.classes()).toContain('text-[var(--_selaras-color-text)]')
     expect(link.classes().some(c => c.includes('after:'))).toBe(true)
   })
 

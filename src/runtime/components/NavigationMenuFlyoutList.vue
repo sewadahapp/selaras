@@ -7,7 +7,7 @@ import { computed } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -51,7 +51,6 @@ function isActive(item: NavigationMenuItem) {
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
 
 function linkProps(item: NavigationMenuItem) {
@@ -60,7 +59,7 @@ function linkProps(item: NavigationMenuItem) {
 </script>
 
 <template>
-  <ul :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="resolveSlot(ui.childList, props.ui?.childList)">
+  <ul :data-selaras-color="effectiveColor" v-bind="resolveSlot(ui.childList, props.ui?.childList)">
     <li v-for="item in items" :key="item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
       <NavigationMenuAccordionItem v-if="item.children?.length" :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui" />
       <component
