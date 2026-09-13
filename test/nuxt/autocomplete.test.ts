@@ -128,6 +128,23 @@ describe('autocomplete', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['zzz'])
   })
 
+  it('creates strings alongside numeric suggestions in single and multiple modes', async () => {
+    for (const multiple of [false, true]) {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: [{ label: 'One', value: 1 }], multiple, defaultValue: multiple ? [1] : 1 },
+      })
+      try {
+        const input = wrapper.find('input')
+        await input.setValue('new entry')
+        await input.trigger('blur')
+        expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([multiple ? [1, 'new entry'] : 'new entry'])
+      }
+      finally {
+        wrapper.unmount()
+      }
+    }
+  })
+
   it('reverts unmatched typed text on blur instead of committing it when forceSelection is on', async () => {
     const wrapper = await mountSuspended(Autocomplete, {
       props: { items: fruitItems, forceSelection: true },

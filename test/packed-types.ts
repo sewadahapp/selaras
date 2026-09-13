@@ -1,4 +1,5 @@
 import type {
+  AutocompleteEmits,
   AutocompleteProps,
   ButtonProps,
   ColorRole,
@@ -32,6 +33,20 @@ const invalidNumericSelect: SelectProps<number> = {
   items: [{ label: 'One', value: 1 }],
   // @ts-expect-error typed props keep numeric and string value contracts distinct
   modelValue: 'one',
+}
+const numericAutocomplete: AutocompleteProps<number> = {
+  items: [{ label: 'One', value: 1 }],
+  modelValue: [1, 'new entry'],
+  defaultValue: 'initial text',
+}
+const createdAutocompleteText: AutocompleteEmits<number>['update:modelValue'] = ['new entry']
+const selectedAutocompleteNumber: AutocompleteEmits<number>['update:modelValue'] = [1]
+const mixedAutocompleteValues: AutocompleteEmits<number>['update:modelValue'] = [[1, 'new entry']]
+// @ts-expect-error free text does not permit non-primitive values
+const invalidAutocompleteValue: AutocompleteEmits<number>['update:modelValue'] = [true]
+const invalidAutocompleteSuggestion: AutocompleteProps<number> = {
+  // @ts-expect-error suggestion identities remain numeric even though new text is allowed
+  items: [{ value: 'one' }],
 }
 const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
 // @ts-expect-error scoped defaults replace the pre-1.0 props namespace
@@ -83,6 +98,12 @@ void packedButton
 void numericSelect
 void stringAutocomplete
 void invalidNumericSelect
+void numericAutocomplete
+void createdAutocompleteText
+void selectedAutocompleteNumber
+void mixedAutocompleteValues
+void invalidAutocompleteValue
+void invalidAutocompleteSuggestion
 void packedTheme
 void legacyTheme
 void packedRole

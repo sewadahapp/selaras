@@ -20,9 +20,10 @@ export interface AutocompleteProps<Value extends SelectValue = SelectValue> {
   open?: boolean
   /** Initial uncontrolled open state. */
   defaultOpen?: boolean
-  modelValue?: Value | Value[]
+  /** Suggestions preserve Value; unmatched text can also create a string. */
+  modelValue?: Value | string | (Value | string)[]
   /** Initial uncontrolled selection and native form reset target. */
-  defaultValue?: Value | Value[]
+  defaultValue?: Value | string | (Value | string)[]
   multiple?: boolean
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
   displayMode?: 'comma' | 'chip'
@@ -50,7 +51,7 @@ export interface AutocompleteProps<Value extends SelectValue = SelectValue> {
 
 export interface AutocompleteEmits<Value extends SelectValue = SelectValue> {
   'update:open': [value: boolean]
-  'update:modelValue': [value: Value | Value[] | undefined]
+  'update:modelValue': [value: Value | string | (Value | string)[] | undefined]
   'update:searchTerm': [value: string]
 }
 

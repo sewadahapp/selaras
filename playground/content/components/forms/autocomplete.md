@@ -11,6 +11,11 @@ the distinction between numeric `1` and string `"1"`. Newly created free text
 is always a string; numeric suggestions do not cause typed text to be coerced.
 Use `forceSelection` to disallow creating values.
 
+For typed configuration, `AutocompleteProps<number>` describes numeric
+suggestions; its model and update-event types also include strings for created
+text. These exported interfaces remain conservative when `forceSelection` is
+enabled and do not yet provide template-level value inference.
+
 `defaultValue` initializes uncontrolled selection and is the native form reset
 target. `modelValue` remains parent-controlled. With `name`, selected values
 submit as repeated string-valued fields; empty or disabled selections submit
