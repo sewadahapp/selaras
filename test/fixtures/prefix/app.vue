@@ -1,6 +1,7 @@
 <script setup>
 import { CalendarDate } from '@internationalized/date'
 import { ref } from 'vue'
+import AutocompleteGenericForm from '../../nuxt/fixtures/AutocompleteGenericForm.vue'
 import VeeValidateForm from '../../nuxt/fixtures/VeeValidateForm.vue'
 
 const route = useRoute()
@@ -240,6 +241,7 @@ function updateNestedTokens() {
       </div>
     </STheme>
   </div>
+  <AutocompleteGenericForm />
   <form id="identity-form">
     <SSelect
       name="identity" multiple display-mode="chip"

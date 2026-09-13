@@ -57,6 +57,10 @@ const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue]
 const localValue = ref(initialValue ?? (props.multiple ? [] : undefined))
 const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
 const selection = computed(() => isControlled() ? props.modelValue : localValue.value)
+// Reka treats undefined as uncontrolled, even when the prop is supplied. Keep
+// its internal selection controlled by Selaras so rejected proposals cannot
+// become selected ARIA state. Null is only the internal single-empty sentinel.
+const rekaSelection = computed(() => selection.value ?? (props.multiple ? [] : null))
 function updateSelection(event: 'update:modelValue', value: string | number | (string | number)[] | undefined) {
   if (!isControlled())
     localValue.value = value
@@ -223,7 +227,9 @@ function onTriggerKeydown(event: KeyboardEvent) {
   }
 }
 
-const internalSearchText = ref(props.searchTerm ?? '')
+// Child setup emissions cannot update props already passed during SSR. Seed
+// the selected label here so the first server render agrees with hydration.
+const internalSearchText = ref(props.searchTerm ?? (props.creatable && !props.multiple && props.resetSearchTermOnSelect ? selectedOptions.value[0]?.label ?? '' : ''))
 const searchText = computed({
   get: () => props.searchTerm ?? internalSearchText.value,
   set: (value: string) => {
@@ -367,6 +373,19 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
 const localOpen = ref(props.defaultOpen ?? false)
 const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
 const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
+
+// Reka refreshes displayValue when selection changes, not when async option
+// metadata changes. Update an idle selected label without replacing a query.
+watch(flatOptions, (options, previousOptions) => {
+  const value = selection.value
+  if (!props.creatable || props.multiple || open.value || props.searchTerm !== undefined || !props.resetSearchTermOnSelect || value === undefined || Array.isArray(value))
+    return
+  const previousLabel = previousOptions.find(option => option.value === value)?.label ?? String(value)
+  const nextLabel = options.find(option => option.value === value)?.label ?? String(value)
+  if (previousLabel !== nextLabel && searchText.value === previousLabel)
+    searchText.value = nextLabel
+})
+
 function updateOpen(value: boolean) {
   if (!isOpenControlled())
     localOpen.value = value
@@ -425,7 +444,7 @@ const bodyProps = computed(() => ({
 <template>
   <ComboboxRoot
     :open="open"
-    :model-value="selection"
+    :model-value="rekaSelection"
     :multiple="multiple"
     :disabled="disabled"
     :ignore-filter="!searchable"
@@ -434,7 +453,7 @@ const bodyProps = computed(() => ({
     :data-selaras-color="colorRoleMarker"
     v-bind="rootProps"
     @update:open="updateOpen($event)"
-    @update:model-value="(value) => setValue(value as string | number | (string | number)[] | undefined)"
+    @update:model-value="(value) => setValue(value == null ? (multiple ? [] : undefined) : value as string | number | (string | number)[])"
   >
     <ComboboxAnchor>
       <!--
@@ -495,7 +514,7 @@ const bodyProps = computed(() => ({
                 </template>
               </TagsInputItemText>
               <template #remove="{ class: removeClass }">
-                <TagsInputItemDelete :class="removeClass" :aria-label="messages.removeItem(option.label)">
+                <TagsInputItemDelete :class="removeClass" :aria-labelledby="undefined" :aria-label="messages.removeItem(option.label)">
                   <Icon :name="icons.close" class="size-3" />
                 </TagsInputItemDelete>
               </template>

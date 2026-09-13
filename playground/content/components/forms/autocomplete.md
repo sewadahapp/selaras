@@ -11,10 +11,26 @@ the distinction between numeric `1` and string `"1"`. Newly created free text
 is always a string; numeric suggestions do not cause typed text to be coerced.
 Use `forceSelection` to disallow creating values.
 
-For typed configuration, `AutocompleteProps<number>` describes numeric
-suggestions; its model and update-event types also include strings for created
-text. These exported interfaces remain conservative when `forceSelection` is
-enabled and do not yet provide template-level value inference.
+Autocomplete infers models and update events from its suggestion identity field.
+Numeric suggestions allow `number | string | undefined` in single mode and
+`(number | string)[]` in multiple mode. A literal `forceSelection` narrows those
+types to the suggestion identity; a dynamic boolean retains the string union.
+Readonly option/group arrays and custom top-level `valueKey`/`labelKey` fields
+are supported. Declare the item type for initially empty async arrays.
+
+The exported types use option entries: replace `AutocompleteProps<number>` with
+`AutocompleteProps<{ value: number, label: string }>`. The parameters are entry,
+identity key, multiple mode and forced mode. For example,
+`AutocompleteProps<Row, 'id', true, true>` describes forced multiple selection.
+`AutocompleteEmits` uses the same parameters. Render functions can specialize
+`Autocomplete<Row, 'id', true, true>` directly; templates normally infer it.
+
+`forceSelection` blocks new unmatched text. It does not erase existing values
+when toggled dynamically or require that a selected async identity already be
+in the current options. Native reset restores the captured default, including
+strings created before a dynamic switch. Idle inputs refresh their selected
+label when options load; active queries and parent-controlled `searchTerm`
+retain their text.
 
 `defaultValue` initializes uncontrolled selection and is the native form reset
 target. `modelValue` remains parent-controlled. With `name`, selected values
@@ -118,7 +134,7 @@ small pointer triangle connecting the panel to its trigger:
 
 ### Custom option rendering, objects, and groups
 
-The `item`/`value`/`group` slots and `labelKey`/`valueKey` mapping all work
+The `item`/`group` slots and `labelKey`/`valueKey` mapping all work
 identically to Select's - see
 [Custom option rendering](/components/forms/select#custom-option-rendering),
 [Custom objects](/components/forms/select#custom-objects), and
@@ -126,8 +142,8 @@ identically to Select's - see
 
 Created text and async selections can be absent from `items`. Their chips use
 the selected text until a complete option exists; the `item` slot receives only
-real option records. The `value` slot's `selected.raw` is `undefined` for an
-unresolved selection.
+real option records. Autocomplete's selection display is its editable input;
+it has no `value` slot.
 
 ### Virtualization
 
@@ -199,6 +215,7 @@ on), plus these Autocomplete-only additions:
 
 ## Slots
 
-Same as [Select](/components/forms/select#slots), minus `filter-icon` - that
-one only renders in Select's separate popover search field, and
-Autocomplete's own input already doubles as the trigger.
+Autocomplete supports `item`, `group`, `header`, `footer`, `empty`,
+`empty-filter`, `clear-icon`, `loading-icon` and `dropdown-icon`. Its input
+displays the selected label directly. Select's `value` and `filter-icon` slots
+are specific to Select's trigger display and separate filter field.

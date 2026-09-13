@@ -11,6 +11,7 @@
   "include": [
     "packed-types.ts",
     "packed-table.vue",
-    "packed-select.vue"
+    "packed-select.vue",
+    "packed-autocomplete.vue"
   ]
 }

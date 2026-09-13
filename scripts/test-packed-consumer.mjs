@@ -80,6 +80,9 @@ async function inspectSsr() {
     assert.match(html, /<button(?=[^>]*id="packed-select")(?=[^>]*aria-label="Published selection")/)
     assert.ok(html.includes('Published select'), 'published generic Select must display its custom-key default')
     assert.match(html, /<input(?=[^>]*name="packed-choices")(?=[^>]*value="1")/, 'bare multiple must preserve the numeric array default')
+    assert.match(html, /<input(?=[^>]*id="packed-autocomplete-forced")(?=[^>]*aria-label="Published suggestion")(?=[^>]*value="Published select")/)
+    assert.match(html, /<input(?=[^>]*name="packed-forced-choice")(?=[^>]*value="1")/)
+    assert.match(html, /<input(?=[^>]*id="packed-autocomplete-created")(?=[^>]*aria-label="Published free text")(?=[^>]*value="Created text")/)
     const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
       .filter(([tag]) => tag.includes('rel="stylesheet"'))
       .map(([tag]) => tag.match(/href="([^"]+)"/)?.[1])
@@ -121,6 +124,11 @@ try {
   writeFileSync(join(consumerDir, 'select-direct.vue'), selectContract)
   writeFileSync(join(consumerDir, 'select-generated.vue'), generatedSelectContract)
   cpSync(join(rootDir, 'test/packed-types.ts'), join(consumerDir, 'public-contracts.ts'))
+  const autocompleteContract = readFileSync(join(rootDir, 'test/packed-autocomplete.vue'), 'utf8')
+  const generatedAutocompleteContract = autocompleteContract.replace('import SAutocomplete from \'@sewadah/selaras/components/Autocomplete.vue\'\n', '')
+  assert.notEqual(generatedAutocompleteContract, autocompleteContract, 'generated component checks must remove the direct Autocomplete import')
+  writeFileSync(join(consumerDir, 'autocomplete-direct.vue'), autocompleteContract)
+  writeFileSync(join(consumerDir, 'autocomplete-generated.vue'), generatedAutocompleteContract)
   const sourceManifest = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'))
   const dependencies = Object.fromEntries(
     ['nuxt', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']

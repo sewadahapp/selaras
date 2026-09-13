@@ -22,11 +22,10 @@ function withTooltipProvider(children: any) {
 describe('select', () => {
   it('preserves controlled empty ownership through the forwarding boundary', async () => {
     const wrapper = await mountSuspended(Select, {
-      props: { items: fruitItems, modelValue: undefined, defaultValue: 'apple', placeholder: 'Pick a fruit' },
+      props: { items: fruitItems, modelValue: undefined, defaultValue: 'apple', open: true, placeholder: 'Pick a fruit' },
     })
     try {
       expect(wrapper.find('[aria-haspopup="listbox"]').text()).toContain('Pick a fruit')
-      await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
       await nextTick()
       const option = Array.from(document.body.querySelectorAll<HTMLElement>('[role="option"]')).find(el => el.textContent?.includes('Banana'))
       expect(option).toBeTruthy()
@@ -34,6 +33,7 @@ describe('select', () => {
       await nextTick()
       expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['banana'])
       expect(wrapper.find('[aria-haspopup="listbox"]').text()).toContain('Pick a fruit')
+      expect(option?.getAttribute('aria-selected')).toBe('false')
     }
     finally {
       wrapper.unmount()

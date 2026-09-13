@@ -111,6 +111,7 @@ export type { SelectItems, SelectOption, SelectOptionGroup, SelectValue } from '
 export type { TableColumnDef, TableColumnVisibilityState, TableExpandedState, TableGetRowId, TableRowSelectionState, TableSortingState } from '../composables/use-table'
 
 export type { ToastOptions } from '../composables/use-toast'
+export type { AutocompleteValue } from '../utils/autocomplete-contracts'
 export type { BuiltinColorName, ColorRecipe, ColorRecipeInput, ColorRole, RuntimeColorOverrides, RuntimeTokenOverrides } from '../utils/color-registry'
 export type { IconRegistry } from '../utils/icons'
 export { defaultIcons } from '../utils/icons'

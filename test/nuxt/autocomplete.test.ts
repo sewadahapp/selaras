@@ -1,6 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, nextTick } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import FormField from '../../src/runtime/components/FormField.vue'
 
@@ -10,6 +10,180 @@ const fruitItems = [
 ]
 
 describe('autocomplete', () => {
+  it('preserves controlled empty ownership when the parent vetoes created text', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: [{ value: 1, label: 'One' }], modelValue: undefined, defaultValue: 1, name: 'query', clearable: true },
+    })
+    try {
+      await nextTick()
+      const input = wrapper.find('input[role="combobox"]')
+      expect((input.element as HTMLInputElement).value).toBe('')
+      await input.setValue('Created text')
+      await input.trigger('blur')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Created text'])
+      expect(wrapper.find('input[type="hidden"][name="query"]').exists()).toBe(false)
+      expect(wrapper.find('[aria-label="Clear"]').exists()).toBe(false)
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('blocks unmatched numeric-suggestion text on Enter and blur in both selection modes', async () => {
+    for (const multiple of [false, true]) {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: [{ value: 1, label: 'One' }], defaultValue: multiple ? [1] : 1, multiple, forceSelection: true, name: 'query' },
+      })
+      try {
+        const input = wrapper.find('input[role="combobox"]')
+        for (const action of ['keydown', 'blur']) {
+          await input.setValue('Unmatched text')
+          await input.trigger(action, action === 'keydown' ? { key: 'Enter' } : {})
+          expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+          expect(wrapper.findAll('input[type="hidden"][name="query"]').map(field => field.attributes('value'))).toEqual(['1'])
+        }
+      }
+      finally {
+        wrapper.unmount()
+      }
+    }
+  })
+
+  it('proposes the numeric custom-key identity while an empty controlled parent vetoes selection', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: [{ id: 0, title: 'Zero' }], valueKey: 'id', labelKey: 'title', forceSelection: true, modelValue: undefined, open: true, name: 'query' },
+    })
+    try {
+      const input = wrapper.find('input[role="combobox"]')
+      await input.setValue('Zero')
+      await nextTick()
+      await nextTick()
+      await input.trigger('keydown', { key: 'Enter' })
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([0])
+      expect(wrapper.find('input[type="hidden"][name="query"]').exists()).toBe(false)
+      expect(document.body.querySelector('[role="option"]')?.getAttribute('aria-selected')).toBe('false')
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('keeps forced clear and native reset proposals numeric in both selection modes', async () => {
+    interface Row { id: number, title: string }
+    for (const multiple of [false, true]) {
+      const proposals: (number | number[] | undefined)[] = []
+      const wrapper = await mountSuspended(defineComponent({
+        render: () => h('form', {}, [h(Autocomplete<Row, 'id', boolean, true>, {
+          'items': [{ id: 1, title: 'One' }],
+          'valueKey': 'id',
+          'labelKey': 'title',
+          'multiple': multiple,
+          'forceSelection': true,
+          'defaultValue': multiple ? [1] : 1,
+          'name': 'query',
+          'clearable': true,
+          'onUpdate:modelValue': value => proposals.push(value),
+        })]),
+      }))
+      try {
+        const form = wrapper.find('form').element
+        expect(new FormData(form).getAll('query')).toEqual(['1'])
+        await wrapper.find('[aria-label="Clear"]').trigger('click')
+        expect(proposals.at(-1)).toEqual(multiple ? [] : undefined)
+        expect(new FormData(form).getAll('query')).toEqual([])
+        form.reset()
+        await nextTick()
+        await nextTick()
+        expect(proposals.at(-1)).toEqual(multiple ? [1] : 1)
+        expect(new FormData(form).getAll('query')).toEqual(['1'])
+      }
+      finally {
+        wrapper.unmount()
+      }
+    }
+  })
+
+  it('retains forced async identities and blocks creation after a dynamic mode change', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: [], valueKey: 'id', labelKey: 'title', modelValue: 7, forceSelection: true, name: 'query' },
+    })
+    try {
+      await nextTick()
+      expect((wrapper.find('input[role="combobox"]').element as HTMLInputElement).value).toBe('7')
+      const row = Object.freeze({ id: 7, title: 'Loaded' })
+      await wrapper.setProps({ items: Object.freeze([Object.freeze({ label: 'Async', items: Object.freeze([row]) })]) })
+      await nextTick()
+      expect((wrapper.find('input[role="combobox"]').element as HTMLInputElement).value).toBe('Loaded')
+      expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      await wrapper.setProps({ forceSelection: false })
+      const input = wrapper.find('input[role="combobox"]')
+      await input.setValue('Created text')
+      await input.trigger('blur')
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Created text'])
+      await wrapper.setProps({ forceSelection: true })
+      const previousCount = wrapper.emitted('update:modelValue')?.length
+      await input.setValue('Other text')
+      await input.trigger('blur')
+      expect(wrapper.emitted('update:modelValue')).toHaveLength(previousCount!)
+      expect(wrapper.find('input[type="hidden"][name="query"]').attributes('value')).toBe('7')
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('keeps active and parent-controlled queries when async labels arrive', async () => {
+    for (const controlled of [false, true]) {
+      const wrapper = await mountSuspended(Autocomplete, {
+        props: { items: [], valueKey: 'id', labelKey: 'title', modelValue: 7, ...(controlled ? { searchTerm: 'Parent query' } : { open: true }) },
+      })
+      try {
+        const input = wrapper.find('input[role="combobox"]')
+        if (!controlled)
+          await input.setValue('7')
+        await wrapper.setProps({ items: [{ id: 7, title: 'Loaded' }] })
+        await nextTick()
+        expect((input.element as HTMLInputElement).value).toBe(controlled ? 'Parent query' : '7')
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+      }
+      finally {
+        wrapper.unmount()
+      }
+    }
+  })
+
+  it('retains previously created strings and their reset target when forcing selection dynamically', async () => {
+    const forced = ref(false)
+    const proposals: (number | string | undefined)[] = []
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [h(Autocomplete<{ value: number, label: string }, 'value', false, boolean>, {
+        'items': [{ value: 1, label: 'One' }],
+        'forceSelection': forced.value,
+        'defaultValue': 'Existing text',
+        'name': 'query',
+        'clearable': true,
+        'onUpdate:modelValue': value => proposals.push(value),
+      })]),
+    }))
+    try {
+      const form = wrapper.find('form').element
+      forced.value = true
+      await nextTick()
+      expect(new FormData(form).getAll('query')).toEqual(['Existing text'])
+      expect(proposals).toEqual([])
+      await wrapper.find('[aria-label="Clear"]').trigger('click')
+      expect(proposals.at(-1)).toBeUndefined()
+      form.reset()
+      await nextTick()
+      await nextTick()
+      expect(proposals.at(-1)).toBe('Existing text')
+      expect(new FormData(form).getAll('query')).toEqual(['Existing text'])
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
   it('routes accessible naming and descriptions to the editable input', async () => {
     const attrs = { 'aria-label': 'Search fruit', 'aria-labelledby': 'fruit-label', 'aria-describedby': 'fruit-help', 'aria-errormessage': 'fruit-error', 'aria-details': 'fruit-details' }
     const wrapper = await mountSuspended(Autocomplete, { attrs, props: { items: fruitItems } })
@@ -26,7 +200,7 @@ describe('autocomplete', () => {
   })
 
   it('renders created chips without passing fabricated records to the item slot', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mountSuspended(Autocomplete<{ value: number, label: string, title: string }, 'value', true>, {
       props: { items: [{ value: 1, label: 'One', title: 'Suggestion' }], defaultValue: [1, 'Created text'], multiple: true, displayMode: 'chip' },
       slots: { item: ({ item }: { item: { title: string } }) => item.title.toUpperCase() },
     })
@@ -54,7 +228,7 @@ describe('autocomplete', () => {
   it('uses native required validity for an empty selection', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => h('form', {}, [
-        h(Autocomplete, { name: 'query', items: fruitItems, required: true }),
+        h(Autocomplete<(typeof fruitItems)[number]>, { name: 'query', items: fruitItems, required: true }),
       ]),
     }))
     const field = wrapper.find('input[required]')
@@ -78,7 +252,7 @@ describe('autocomplete', () => {
   it('associates a FormField label with the actual editable input', async () => {
     const wrapper = await mountSuspended(FormField, {
       props: { label: 'Fruit' },
-      slots: { default: () => h(Autocomplete, { items: fruitItems }) },
+      slots: { default: () => h(Autocomplete<(typeof fruitItems)[number]>, { items: fruitItems }) },
     })
     const input = wrapper.find('input[role="combobox"]')
 
@@ -225,6 +399,7 @@ describe('autocomplete', () => {
       })
       const removeButtons = wrapper.findAll('button').filter(b => b.attributes('aria-label')?.startsWith('Remove'))
       expect(removeButtons.map(b => b.attributes('aria-label'))).toEqual(['Remove Apple', 'Remove Banana'])
+      expect(removeButtons.every(button => button.attributes('aria-labelledby') === undefined)).toBe(true)
     })
 
     it('removes a chip via its delete button and emits the remaining values', async () => {
@@ -239,7 +414,7 @@ describe('autocomplete', () => {
   })
 
   // Confirms `arrow` actually reaches ComboboxSelectBase through
-  // Autocomplete's own separate useForwardPropsEmits call - Select has the
+  // Autocomplete's own forwarding boundary - Select has the
   // same coverage, but that doesn't prove this component's own forwarding
   // wires it up too.
   it('arrow renders the pointer triangle', async () => {

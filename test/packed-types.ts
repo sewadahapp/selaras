@@ -1,6 +1,7 @@
 import type {
   AutocompleteEmits,
   AutocompleteProps,
+  AutocompleteSlots,
   ButtonProps,
   ColorRole,
   SelectEmits,
@@ -27,7 +28,7 @@ const numericSelect: SelectProps<{ label: string, value: number }> = {
   items: [{ label: 'One', value: 1 }],
   modelValue: 1,
 }
-const stringAutocomplete: AutocompleteProps<string> = {
+const stringAutocomplete: AutocompleteProps<{ label: string, value: string }> = {
   items: [{ label: 'One', value: 'one' }],
   modelValue: 'one',
 }
@@ -51,20 +52,31 @@ const selectSlots: SelectSlots<{ id: number, title: string }, 'id'> = {
   item: ({ item }) => item.title.toUpperCase(),
   value: ({ selected }) => selected?.raw?.title.toUpperCase(),
 }
-const numericAutocomplete: AutocompleteProps<number> = {
+const numericAutocomplete: AutocompleteProps<{ label: string, value: number }, 'value', true> = {
   items: [{ label: 'One', value: 1 }],
   modelValue: [1, 'new entry'],
-  defaultValue: 'initial text',
+  defaultValue: ['initial text'],
 }
-const createdAutocompleteText: AutocompleteEmits<number>['update:modelValue'] = ['new entry']
-const selectedAutocompleteNumber: AutocompleteEmits<number>['update:modelValue'] = [1]
-const mixedAutocompleteValues: AutocompleteEmits<number>['update:modelValue'] = [[1, 'new entry']]
+const createdAutocompleteText: AutocompleteEmits<{ value: number }>['update:modelValue'] = ['new entry']
+const selectedAutocompleteNumber: AutocompleteEmits<{ value: number }>['update:modelValue'] = [1]
+const mixedAutocompleteValues: AutocompleteEmits<{ value: number }, 'value', true>['update:modelValue'] = [[1, 'new entry']]
 // @ts-expect-error free text does not permit non-primitive values
-const invalidAutocompleteValue: AutocompleteEmits<number>['update:modelValue'] = [true]
-const invalidAutocompleteSuggestion: AutocompleteProps<number> = {
+const invalidAutocompleteValue: AutocompleteEmits<{ value: number }>['update:modelValue'] = [true]
+const invalidAutocompleteSuggestion: AutocompleteProps<{ value: number }> = {
   // @ts-expect-error suggestion identities remain numeric even though new text is allowed
   items: [{ value: 'one' }],
 }
+const forcedAutocomplete: AutocompleteProps<{ id: number, title: string }, 'id', false, true> = {
+  items: [{ id: 1, title: 'One' }],
+  valueKey: 'id',
+  labelKey: 'title',
+  forceSelection: true,
+  defaultValue: 1,
+}
+const forcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, true>['update:modelValue'] = [1]
+// @ts-expect-error literal forced selection cannot create arbitrary text
+const invalidForcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, true>['update:modelValue'] = ['new entry']
+const autocompleteSlots: AutocompleteSlots<{ id: number, title: string }> = { item: ({ item }) => item.title.toUpperCase() }
 const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
 // @ts-expect-error scoped defaults replace the pre-1.0 props namespace
 const legacyTheme: ThemeProps = { props: { button: { size: 'lg' } } }
@@ -121,6 +133,10 @@ void selectSlots
 void stringAutocomplete
 void invalidNumericSelect
 void numericAutocomplete
+void forcedAutocomplete
+void forcedAutocompleteUpdate
+void invalidForcedAutocompleteUpdate
+void autocompleteSlots
 void createdAutocompleteText
 void selectedAutocompleteNumber
 void mixedAutocompleteValues

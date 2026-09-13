@@ -8,6 +8,7 @@
     "test/packed-types.ts",
     "test/packed-table.vue",
     "test/packed-select.vue",
+    "test/packed-autocomplete.vue",
     "test/fixtures/packed"
   ]
 }
