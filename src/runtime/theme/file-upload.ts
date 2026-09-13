@@ -15,9 +15,10 @@ export const fileUploadTheme = tv({
     // Purely an implementation detail - visually hidden and (via
     // tabindex="-1" in FileUpload.vue) not independently tab-reachable
     // either.
-    // The dropzone <button> wrapping it is the real focusable, Enter/
+    // The sibling dropzone <button> is the visible focusable, Enter/
     // Space-activatable control (free native semantics); this input just
-    // gets programmatically .click()'d to open the OS file dialog.
+    // gets programmatically .click()'d to open the OS file dialog. Native
+    // label/validation focus on the input is forwarded to the dropzone.
     input: 'sr-only',
     fileList: 'flex w-full flex-col gap-2',
     file: 'flex items-center gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] p-2',

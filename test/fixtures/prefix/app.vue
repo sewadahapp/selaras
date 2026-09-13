@@ -251,7 +251,9 @@ function updateNestedTokens() {
   <form id="native-form">
     <SDatePicker name="bookingDate" :default-value="nativeFormDate" clearable />
     <SColorPicker name="accent" default-value="#00ff00" />
-    <SFileUpload id="native-file-upload" name="attachments" required capture="environment" form="native-form" />
+    <SFormField id="native-file-upload" label="Supporting files" description="Attach your supporting document." hint="Choose a text file.">
+      <SFileUpload name="attachments" required capture="environment" form="native-form" />
+    </SFormField>
     <button id="native-form-reset" type="reset">
       Reset native values
     </button>

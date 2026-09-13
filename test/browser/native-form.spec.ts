@@ -69,3 +69,21 @@ test('submits dropped FileUpload files and clears submission on removal', async 
   await page.getByRole('button', { name: 'Remove drop.txt', exact: true }).click()
   await expect.poll(names).toEqual([''])
 })
+
+test('focuses the labelled FileUpload trigger when required submission fails', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  const input = page.locator('#native-file-upload')
+  const trigger = input.locator('..').locator('button').first()
+
+  await page.locator('#native-form').evaluate((form: HTMLFormElement) => form.requestSubmit())
+  await expect(trigger).toBeFocused()
+  await expect(trigger).toHaveAccessibleName('Supporting files')
+  await expect(trigger).toHaveAccessibleDescription('Attach your supporting document. Choose a text file.')
+  await expect(input).toHaveAccessibleName('Supporting files')
+
+  const chooserPromise = page.waitForEvent('filechooser')
+  await trigger.press('Enter')
+  const chooser = await chooserPromise
+  await chooser.setFiles({ name: 'keyboard.txt', mimeType: 'text/plain', buffer: Buffer.from('proof') })
+  await expect(input.locator('..').locator('li')).toContainText('keyboard.txt')
+})

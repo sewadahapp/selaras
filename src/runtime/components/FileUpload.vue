@@ -288,6 +288,9 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
       type="button"
       :disabled="disabled"
       :data-dragging="isDragging ? '' : undefined"
+      :aria-labelledby="field?.labelId"
+      :aria-describedby="describedBy"
+      :aria-invalid="fileUploadInvalid || undefined"
       v-bind="dropzoneProps"
       @click="openDialog"
       @dragenter="onDragEnter"
@@ -318,6 +321,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
       :aria-describedby="describedBy"
       tabindex="-1"
       v-bind="inputProps"
+      @focus="dropzoneEl?.focus()"
       @change="onInputChange"
     >
     <ul v-if="internalFiles.length" v-bind="fileListProps">
