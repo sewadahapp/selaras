@@ -8,7 +8,7 @@ import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { inputTheme } from '../theme/input'
-import { isNativeInputAttr } from '../utils/native-input'
+import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -80,8 +80,9 @@ const ui = computed(() => theme.value({
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
 }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr, includeClass: false })
-const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)
+const isInputAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA11yAttr(key)
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isInputAttr, includeClass: false })
+const nativeInputAttrs = useFallthroughAttrs(isInputAttr)
 const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
 const inputProps = computed(() => mergeProps(baseProps.value, { class: attrs.class }, nativeInputAttrs.value))
 </script>

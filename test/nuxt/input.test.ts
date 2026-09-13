@@ -23,6 +23,15 @@ describe('input', () => {
     expect(onFocus).toHaveBeenCalled()
   })
 
+  it('forwards accessible naming attributes to the actual input', async () => {
+    const wrapper = await mountSuspended(Input, { attrs: { 'aria-label': 'Email address', 'aria-labelledby': 'email-label' } })
+    const input = wrapper.find('input')
+    expect(input.attributes('aria-label')).toBe('Email address')
+    expect(input.attributes('aria-labelledby')).toBe('email-label')
+    expect(wrapper.attributes('aria-label')).toBeUndefined()
+    expect(wrapper.attributes('aria-labelledby')).toBeUndefined()
+  })
+
   it('forwards a public class to the editable input while keeping the wrapper target explicit', async () => {
     const wrapper = await mountSuspended(Input, { attrs: { class: 'w-48 custom-input' } })
 

@@ -9,7 +9,7 @@ import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { inputNumberTheme } from '../theme/input-number'
-import { isNativeInputAttr } from '../utils/native-input'
+import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -148,8 +148,9 @@ const theme = useComponentTheme('inputNumber', inputNumberTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: effectiveColor.value as InputNumberVariants['color'], invalid: inputInvalid.value, orientation: props.orientation }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
-const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)
+const isInputAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA11yAttr(key)
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isInputAttr })
+const nativeInputAttrs = useFallthroughAttrs(isInputAttr)
 const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.ui?.input), nativeInputAttrs.value))
 const stepperProps = computed(() => resolveSlot(ui.value.stepper, props.ui?.stepper))
 const stepperButtonProps = computed(() => resolveSlot(ui.value.stepperButton, props.ui?.stepperButton))

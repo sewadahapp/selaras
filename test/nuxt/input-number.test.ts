@@ -39,6 +39,15 @@ describe('inputNumber', () => {
     expect(wrapper.find('div').attributes('readonly')).toBeUndefined()
   })
 
+  it('forwards accessible naming attributes to the editable control', async () => {
+    const wrapper = await mountSuspended(InputNumber, { attrs: { 'aria-label': 'Quantity', 'aria-describedby': 'quantity-help' } })
+    const input = wrapper.find('input')
+    expect(input.attributes('aria-label')).toBe('Quantity')
+    expect(input.attributes('aria-describedby')).toBe('quantity-help')
+    expect(wrapper.find('div').attributes('aria-label')).toBeUndefined()
+    expect(wrapper.find('div').attributes('aria-describedby')).toBeUndefined()
+  })
+
   it('increments and decrements by step on button click', async () => {
     const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, step: 2 } })
     const { decrement, increment } = buttons(wrapper)
