@@ -25,7 +25,8 @@ const accepted = ref(true)
 whose children are only partially selected - it renders a dash instead of
 a checkmark and isn't a real toggle state a click can land on (clicking an
 indeterminate checkbox goes straight to checked). `disabled` prevents
-interaction and dims it, and `invalid` switches the ring to `--ui-danger`:
+interaction and dims it, and `invalid` switches the ring and checked fill to
+the semantic danger role:
 
 ::component-example{name="checkbox-states"}
 ::
@@ -133,7 +134,7 @@ every slot and variant - here's `Checkbox`'s own theme file:
 | `invalid` | `boolean` | `false` |
 | `required` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
+| `color` | `ColorRole` (built-in or registered semantic role) | `'primary'` |
 | `variant` | `'default' \| 'card'` | `'default'` |
 | `ui` | `Partial<Record<'root' \| 'box' \| 'indicator' \| 'checkIcon' \| 'indeterminateIcon' \| 'label' \| 'description' \| 'labelGroup', string \| object>>` | - |
 

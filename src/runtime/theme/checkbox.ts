@@ -20,8 +20,8 @@ export const checkboxTheme = tv({
     // (transparent instead of --ui-bg), the same reason radio's item is
     // hollow - an opaque fill there would block the halo from showing as
     // a full disc instead of a ring cut off by the box's own edge.
-    box: 'relative isolate flex shrink-0 items-center justify-center rounded-[var(--ui-radius-sm)] ring-[1.5px] ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-border-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)]',
-    indicator: 'flex items-center justify-center',
+    box: 'relative isolate flex shrink-0 items-center justify-center rounded-[var(--ui-radius-sm)] ring-[1.5px] ring-inset ring-[var(--_selaras-color-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--_selaras-color-subtle-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:bg-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)] data-[state=indeterminate]:bg-[var(--_selaras-color-fill)] data-[state=indeterminate]:ring-[var(--_selaras-color-fill)] data-[state=indeterminate]:before:bg-[var(--_selaras-color-fill-hover)]',
+    indicator: 'flex items-center justify-center text-[var(--_selaras-color-on-fill)]',
     // A hand-drawn stroke path (not an Icon/icon-registry glyph, unlike
     // every other icon in this library) animated via stroke-dasharray/
     // stroke-dashoffset - the classic "self-drawing" checkmark technique,
@@ -35,8 +35,8 @@ export const checkboxTheme = tv({
     // at the stroke's own end with no visible overshoot or gap.
     checkIcon: '[stroke-dasharray:20px] [stroke-dashoffset:20px] transition-[stroke-dashoffset] duration-200 data-[state=checked]:[stroke-dashoffset:0]',
     indeterminateIcon: '[stroke-dasharray:14px] [stroke-dashoffset:14px] transition-[stroke-dashoffset] duration-200 data-[state=indeterminate]:[stroke-dashoffset:0]',
-    label: 'select-none text-sm text-[var(--ui-text)]',
-    description: 'block select-none text-xs text-[var(--ui-text-muted)]',
+    label: 'select-none text-sm text-[var(--_selaras-color-text)]',
+    description: 'block select-none text-xs text-[var(--_selaras-color-text-hover)]',
     // Only rendered when there's a description (wrapping the label and
     // description together so they stack under one another) - same font-
     // baseline correction as RadioGroup's own labelGroup slot (see its
@@ -52,34 +52,13 @@ export const checkboxTheme = tv({
     // pairing Button's own `solid` variant already uses. Unchecked always
     // stays the same neutral ring regardless of `color`.
     color: {
-      primary: {
-        box: 'data-[state=checked]:bg-[var(--ui-primary)] data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)] data-[state=indeterminate]:bg-[var(--ui-primary)] data-[state=indeterminate]:ring-[var(--ui-primary)] data-[state=indeterminate]:before:bg-[var(--ui-primary)]',
-        indicator: 'text-[var(--ui-primary-foreground)]',
-      },
-      neutral: {
-        box: 'data-[state=checked]:bg-[var(--ui-bg-inverted)] data-[state=checked]:ring-[var(--ui-bg-inverted)] data-[state=checked]:before:bg-[var(--ui-bg-inverted)] data-[state=indeterminate]:bg-[var(--ui-bg-inverted)] data-[state=indeterminate]:ring-[var(--ui-bg-inverted)] data-[state=indeterminate]:before:bg-[var(--ui-bg-inverted)]',
-        indicator: 'text-[var(--ui-text-inverted)]',
-      },
-      secondary: {
-        box: 'data-[state=checked]:bg-[var(--ui-secondary)] data-[state=checked]:ring-[var(--ui-secondary)] data-[state=checked]:before:bg-[var(--ui-secondary)] data-[state=indeterminate]:bg-[var(--ui-secondary)] data-[state=indeterminate]:ring-[var(--ui-secondary)] data-[state=indeterminate]:before:bg-[var(--ui-secondary)]',
-        indicator: 'text-[var(--ui-secondary-foreground)]',
-      },
-      success: {
-        box: 'data-[state=checked]:bg-[var(--ui-success)] data-[state=checked]:ring-[var(--ui-success)] data-[state=checked]:before:bg-[var(--ui-success)] data-[state=indeterminate]:bg-[var(--ui-success)] data-[state=indeterminate]:ring-[var(--ui-success)] data-[state=indeterminate]:before:bg-[var(--ui-success)]',
-        indicator: 'text-[var(--ui-success-foreground)]',
-      },
-      danger: {
-        box: 'data-[state=checked]:bg-[var(--ui-danger)] data-[state=checked]:ring-[var(--ui-danger)] data-[state=checked]:before:bg-[var(--ui-danger)] data-[state=indeterminate]:bg-[var(--ui-danger)] data-[state=indeterminate]:ring-[var(--ui-danger)] data-[state=indeterminate]:before:bg-[var(--ui-danger)]',
-        indicator: 'text-[var(--ui-danger-foreground)]',
-      },
-      info: {
-        box: 'data-[state=checked]:bg-[var(--ui-info)] data-[state=checked]:ring-[var(--ui-info)] data-[state=checked]:before:bg-[var(--ui-info)] data-[state=indeterminate]:bg-[var(--ui-info)] data-[state=indeterminate]:ring-[var(--ui-info)] data-[state=indeterminate]:before:bg-[var(--ui-info)]',
-        indicator: 'text-[var(--ui-info-foreground)]',
-      },
-      warning: {
-        box: 'data-[state=checked]:bg-[var(--ui-warning)] data-[state=checked]:ring-[var(--ui-warning)] data-[state=checked]:before:bg-[var(--ui-warning)] data-[state=indeterminate]:bg-[var(--ui-warning)] data-[state=indeterminate]:ring-[var(--ui-warning)] data-[state=indeterminate]:before:bg-[var(--ui-warning)]',
-        indicator: 'text-[var(--ui-warning-foreground)]',
-      },
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
     // Same +4px-per-step scale RadioGroup's own `size` variant uses.
     size: {
@@ -94,7 +73,7 @@ export const checkboxTheme = tv({
     variant: {
       default: {},
       card: {
-        root: 'w-full items-start gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] px-3.5 py-3 transition-colors has-[[data-state=checked]]:border-[var(--ui-primary)] has-[[data-state=checked]]:bg-[var(--ui-primary-soft)]',
+        root: 'w-full items-start gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] px-3.5 py-3 transition-colors has-[[data-state=checked]]:border-[var(--_selaras-color-fill)] has-[[data-state=checked]]:bg-[var(--_selaras-color-subtle)]',
         box: 'mt-0.5',
       },
     },
@@ -104,7 +83,7 @@ export const checkboxTheme = tv({
     // requested, not whichever variant happens to compose later. See
     // RadioGroup's own theme file, which already has this order right.
     invalid: {
-      true: { box: 'ring-[var(--ui-danger)] data-[state=checked]:ring-[var(--ui-danger)] data-[state=indeterminate]:ring-[var(--ui-danger)]' },
+      true: { box: 'ring-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=indeterminate]:ring-[var(--_selaras-color-fill)]' },
     },
   },
   defaultVariants: {

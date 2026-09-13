@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 import Badge from '../../src/runtime/components/Badge.vue'
 import Button from '../../src/runtime/components/Button.vue'
+import Checkbox from '../../src/runtime/components/Checkbox.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
@@ -101,6 +102,13 @@ describe('theme', () => {
     const wrapper = await mountSuspended(withTheme({ ui: { badge: {
       compoundVariants: [{ color: 'premium', variant: 'outline', class: { base: 'tracking-widest' } }],
     } } }, h(Badge, { color: 'premium', variant: 'outline', label: 'Upgrade' })))
+    expect(wrapper.find('[data-selaras-color="premium"]').classes()).toContain('tracking-widest')
+  })
+
+  it('passes Checkbox custom roles to recipe extension conditions', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: { checkbox: {
+      compoundVariants: [{ color: 'premium', variant: 'card', class: { root: 'tracking-widest' } }],
+    } } }, h(Checkbox, { color: 'premium', variant: 'card', modelValue: true, label: 'Upgrade' })))
     expect(wrapper.find('[data-selaras-color="premium"]').classes()).toContain('tracking-widest')
   })
 

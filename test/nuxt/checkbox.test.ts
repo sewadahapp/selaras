@@ -6,8 +6,8 @@ describe('checkbox', () => {
   it('binds a custom semantic role to the label bridge', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
-    expect(wrapper.find('button').attributes('class')).toContain('data-[state=checked]:bg-[var(--ui-primary)]')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary')
+    expect(wrapper.find('button').attributes('class')).toContain('data-[state=checked]:bg-[var(--_selaras-color-fill)]')
   })
 
   it('emits update:modelValue with true when clicked from unchecked', async () => {
@@ -55,13 +55,13 @@ describe('checkbox', () => {
   it('applies the color prop to the checked-state box classes', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { color: 'danger' } })
     const classes = wrapper.find('button').classes().join(' ')
-    expect(classes).toContain('data-[state=checked]:bg-[var(--ui-danger)]')
+    expect(classes).toContain('data-[state=checked]:bg-[var(--_selaras-color-fill)]')
   })
 
   it('invalid wins over a custom color for the checked-state ring, not the other way around', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { invalid: true, color: 'success', modelValue: true } })
     const classes = wrapper.find('button').classes().join(' ')
-    expect(classes).toContain('data-[state=checked]:ring-[var(--ui-danger)]')
+    expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
     expect(classes).not.toContain('data-[state=checked]:ring-[var(--ui-success)]')
   })
 
@@ -87,6 +87,6 @@ describe('checkbox', () => {
     const wrapper = await mountSuspended(Checkbox, { props: { variant: 'card', modelValue: true } })
     const classes = wrapper.find('label').classes().join(' ')
     expect(classes).toContain('border')
-    expect(classes).toContain('has-[[data-state=checked]]:border-[var(--ui-primary)]')
+    expect(classes).toContain('has-[[data-state=checked]]:border-[var(--_selaras-color-fill)]')
   })
 })
