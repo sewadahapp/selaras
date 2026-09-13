@@ -30,6 +30,19 @@ describe('autocomplete', () => {
     expect(wrapper.find('form').element.checkValidity()).toBe(false)
   })
 
+  it('forwards native search input attributes to the editable field', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      attrs: { autocomplete: 'email', inputmode: 'email', readonly: true },
+      props: { items: fruitItems },
+    })
+    const input = wrapper.find('input[role="combobox"]')
+
+    expect(input.attributes('autocomplete')).toBe('email')
+    expect(input.attributes('inputmode')).toBe('email')
+    expect(input.attributes('readonly')).toBeDefined()
+    expect(wrapper.find('[data-selaras-color]').attributes('readonly')).toBeUndefined()
+  })
+
   it('displays the label for numeric zero without treating it as empty', async () => {
     const wrapper = await mountSuspended(Autocomplete, {
       props: { items: [{ label: 'Numeric zero', value: 0 }, { label: 'Text zero', value: '0' }], modelValue: 0 },

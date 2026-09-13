@@ -19,7 +19,7 @@ import {
   TagsInputRoot,
   useDirection,
 } from 'reka-ui'
-import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, getCurrentInstance, mergeProps, onMounted, onUnmounted, ref, watch } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
@@ -33,7 +33,7 @@ import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
 import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useRootProps, useThemeScope } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeScope } from '../utils/ui'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>
@@ -322,7 +322,23 @@ const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? ef
 const colorRoleMarker = computed(() => effectiveColor.value)
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: selectInvalid.value }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
+function isNativeSearchInputAttr(key: string) {
+  return [
+    'autocomplete',
+    'autocapitalize',
+    'autocorrect',
+    'inputmode',
+    'list',
+    'maxlength',
+    'minlength',
+    'pattern',
+    'readonly',
+    'spellcheck',
+  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
+}
+
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeSearchInputAttr })
+const nativeSearchInputAttrs = useFallthroughAttrs(isNativeSearchInputAttr)
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const valueProps = computed(() => resolveSlot(ui.value.value, props.ui?.value))
 // The value slot's own flex-1 is right for the single-select case (it's
@@ -345,7 +361,7 @@ const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const clearProps = computed(() => resolveSlot(ui.value.clear, props.ui?.clear))
 const dropdownProps = computed(() => resolveSlot(ui.value.dropdown, props.ui?.dropdown))
 const searchWrapperProps = computed(() => resolveSlot(ui.value.searchWrapper, props.ui?.searchWrapper))
-const searchInputProps = computed(() => resolveSlot(ui.value.searchInput, props.ui?.searchInput))
+const searchInputProps = computed(() => mergeProps(resolveSlot(ui.value.searchInput, props.ui?.searchInput), nativeSearchInputAttrs.value))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
 const viewportProps = computed(() => resolveSlot(ui.value.viewport, props.ui?.viewport))
