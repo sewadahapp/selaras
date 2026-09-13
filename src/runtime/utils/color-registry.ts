@@ -206,8 +206,8 @@ export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides
   return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
 }
 
-function roleRule(selector: string, role: string, recipe: ColorRecipe): string {
-  const declarations = generatedRoleFields
+function roleRule(selector: string, role: string, recipe: ColorRecipe, fields: readonly (typeof generatedRoleFields)[number][] = generatedRoleFields): string {
+  const declarations = fields
     .map((field) => {
       const value = roleFieldValue(recipe, field)
       return `  --_selaras-color-${field}: var(--selaras-color-${role}-${field}, ${value});`
@@ -232,7 +232,9 @@ export function generateColorRoleCss(registry: Record<string, ColorModePair<Colo
   for (const role of roles) {
     const modes = registry[role]!
     rules.push(roleRule(`[data-selaras-color="${role}"]`, role, modes.light))
-    rules.push(roleRule(`.dark [data-selaras-color="${role}"]`, role, modes.dark))
+    const changedFields = generatedRoleFields.filter(field => roleFieldValue(modes.light, field) !== roleFieldValue(modes.dark, field))
+    if (changedFields.length)
+      rules.push(roleRule(`.dark [data-selaras-color="${role}"]`, role, modes.dark, changedFields))
   }
   return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
 }

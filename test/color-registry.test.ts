@@ -110,6 +110,17 @@ describe('color registry', () => {
     expect(css.endsWith('\n')).toBe(true)
   })
 
+  it('keeps shared bindings on the role element and emits only changed dark defaults', () => {
+    const light = { fill: 'shared-fill', onFill: 'shared-on', subtle: 'light-subtle', onSubtle: 'shared-text', text: 'shared-text', border: 'shared-border' }
+    const css = generateColorRoleCss(createColorRegistry({ premium: { light, dark: { ...light, subtle: 'dark-subtle' } } }))
+    const [base, dark] = css.split('\n\n')
+    expect(base).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, shared-fill);')
+    expect(dark).toContain('--_selaras-color-subtle: var(--selaras-color-premium-subtle, dark-subtle);')
+    expect(dark).not.toContain('--_selaras-color-fill:')
+    expect(dark).toContain('--_selaras-color-subtle-hover:')
+    expect(generateColorRoleCss(createColorRegistry({ premium: { light, dark: light } }))).not.toContain('.dark')
+  })
+
   it('sorts role output and rejects unsafe generated selectors', () => {
     const make = (fill: string) => ({ light: { fill, onFill: 'on', subtle: 'subtle', onSubtle: 'on-subtle', text: 'text', border: 'border' }, dark: { fill, onFill: 'on', subtle: 'subtle', onSubtle: 'on-subtle', text: 'text', border: 'border' } })
     const css = generateColorRoleCss(createColorRegistry({ zebra: make('z'), alpha: make('a') }))

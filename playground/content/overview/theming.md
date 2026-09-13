@@ -63,16 +63,14 @@ uses):
 }
 ```
 
-`--ui-primary`/`-hover`/`-active` read from `--color-primary-500`/`-600`/
-`-700` (`-soft` reads from the scale too - `-100` in light mode, a
-computed blend against the current background in dark mode, so it stays
-legible on either) - overriding the full scale, not the semantic tokens
-directly, is what keeps all of these in sync (`-foreground` is the one
-exception - it's a fixed near-white constant in both light and dark mode,
-since a solid-variant button/badge stays readable with white text against
-any of these role colors regardless of theme). The same shape applies to
-`secondary`/`success`/`danger`/`info`/`warning` - just swap the color
-name.
+The built-in Button recipes select separate filled, subtle and text colors
+from these scales in each mode. Their hover and pressed states preserve
+contrast against the stock `--ui-bg` surface. Warning uses a dark foreground
+and brighter filled interaction shades; dark-mode text uses lighter shades.
+Changing a palette or surface requires checking the resulting contrast again.
+Use a complete semantic recipe when your brand needs different foregrounds
+or interaction choices. Other components still use the legacy `--ui-*`
+bridges while their semantic recipe migration is in progress.
 
 ### Custom semantic roles
 

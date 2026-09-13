@@ -271,7 +271,9 @@
 
 
 
-@theme {
+/* Semantic recipes are generated separately from utility detection. Retain the
+ * owned foundations even when no named utility references a particular shade. */
+@theme static {
 
     /* ---------------------------------------------------------
    * Primary — Indigo/Violet
