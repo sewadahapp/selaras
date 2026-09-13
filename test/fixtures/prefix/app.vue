@@ -271,4 +271,9 @@ function updateNestedTokens() {
       <SDatePicker time-only clearable />
     </SFormField>
   </section>
+  <section v-if="route.query.mobile" id="datepicker-mobile-fixture">
+    <SFormField id="mobile-date" label="Mobile date" description="Choose a date on a small screen.">
+      <SDatePicker mobile-modal />
+    </SFormField>
+  </section>
 </template>

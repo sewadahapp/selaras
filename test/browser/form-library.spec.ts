@@ -85,3 +85,18 @@ test('labels range and time-only DatePicker groups in the browser accessibility 
   await expect(fixture.getByRole('group', { name: 'Booking window', exact: true })).toHaveAccessibleDescription('Select the arrival and departure dates.')
   await expect(fixture.getByRole('group', { name: 'Reminder time', exact: true })).toHaveAccessibleDescription('Use local time.')
 })
+
+test('uses the opt-in DatePicker modal presentation on a narrow viewport', async ({ page, goto }) => {
+  await page.setViewportSize({ width: 600, height: 800 })
+  await goto('/?mobile=1', { waitUntil: 'hydration' })
+  const fixture = page.locator('#datepicker-mobile-fixture')
+  const trigger = fixture.getByRole('button', { name: 'Date picker', exact: true })
+  await expect(trigger).toBeVisible()
+  await trigger.click()
+  const dialog = page.getByRole('dialog', { name: 'Date picker', exact: true })
+  await expect(dialog).toBeVisible()
+  await expect(dialog).toHaveAccessibleName('Date picker')
+  await expect(dialog.getByRole('button', { name: 'Choose month', exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden()
+})
