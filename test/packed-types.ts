@@ -5,8 +5,13 @@ import type {
   ButtonProps,
   ColorRole,
   SelectEmits,
+  SelectGroup,
+  SelectIdentity,
+  SelectModel,
   SelectProps,
+  SelectResolvedOption,
   SelectSlots,
+  SelectValue,
   TableColumnDef,
   TableEmits,
   TableProps,
@@ -14,6 +19,7 @@ import type {
   ThemeProps,
   ToastOptions,
 } from '@sewadah/selaras/types'
+import type * as PublicTypes from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
 import { defineColor } from '@sewadah/selaras/theme'
 
@@ -24,6 +30,30 @@ interface PackedUser {
 }
 
 const packedButton: ButtonProps = { color: 'primary' }
+interface PackedOption { id: number, title: string }
+type PackedEntry = PackedOption | SelectGroup<PackedOption>
+const authoredItems: SelectProps<PackedEntry, 'id'>['items'] = [
+  { id: 1, title: 'One' },
+  { label: 'Group', items: [{ id: 2, title: 'Two' }] },
+]
+const authoredSelect: SelectProps<PackedEntry, 'id'> = { items: authoredItems, valueKey: 'id', modelValue: 2 }
+const authoredIdentity: SelectIdentity<PackedEntry, 'id'> = 1
+const authoredModel: SelectModel<typeof authoredIdentity, true> = [1]
+const authoredResolved: SelectResolvedOption<PackedEntry, 'id'> = { value: 1, label: 'One', disabled: false, raw: undefined }
+const primitiveIdentity: SelectValue = 'one'
+// @ts-expect-error erased internal option records are not a public authoring API
+type RemovedSelectOption = PublicTypes.SelectOption
+// @ts-expect-error use ordinary readonly entry arrays or SelectProps['items']
+type RemovedSelectItems = PublicTypes.SelectItems
+// @ts-expect-error SelectGroup is the single public group shape
+type RemovedSelectOptionGroup = PublicTypes.SelectOptionGroup
+// @ts-expect-error derive slot data through the public SelectSlots contract
+type RemovedSelectEntryItem = PublicTypes.SelectEntryItem
+// @ts-expect-error entry unwrapping is internal type machinery
+type RemovedSelectEntryGroup = PublicTypes.SelectEntryGroup
+// @ts-expect-error key validation is part of SelectProps
+type RemovedSelectIdentityKeys = PublicTypes.SelectIdentityKeys
+const removedTypes: [RemovedSelectOption, RemovedSelectItems, RemovedSelectOptionGroup, RemovedSelectEntryItem, RemovedSelectEntryGroup, RemovedSelectIdentityKeys] | undefined = undefined
 const numericSelect: SelectProps<{ label: string, value: number }> = {
   items: [{ label: 'One', value: 1 }],
   modelValue: 1,
@@ -124,6 +154,12 @@ const packedTableEventShape: TableSortingEvent extends [any[]] ? true : false = 
 const packedRowEventShape: TableRowClickEvent extends [PackedUser, MouseEvent] ? true : false = true
 
 void packedButton
+void authoredSelect
+void authoredIdentity
+void authoredModel
+void authoredResolved
+void primitiveIdentity
+void removedTypes
 void numericSelect
 void customSelect
 void numericSelectUpdate

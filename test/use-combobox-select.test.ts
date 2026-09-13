@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { useComboboxSelect } from '../src/runtime/composables/use-combobox-select'
+import { reactive } from 'vue'
+import { useComboboxSelect } from '../src/runtime/internal/combobox-select'
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },
@@ -19,6 +20,39 @@ describe('useComboboxSelect - option records', () => {
       const { flatOptions } = useComboboxSelect({ items: [{ value }] }, vi.fn())
       expect(() => flatOptions.value).toThrow('strings or finite numbers')
     }
+  })
+
+  it('rejects duplicate identities within and across groups, including disabled options', () => {
+    const first = { id: 1, title: 'First' }
+    const duplicate = { id: 1, title: 'Other label', disabled: true }
+    for (const items of [
+      [first, duplicate],
+      [{ label: 'Group', items: [first, duplicate] }],
+      [{ label: 'First group', items: [first] }, { label: 'Second group', items: [duplicate] }],
+      [first, { label: 'Group', items: [duplicate] }],
+    ]) {
+      const { flatOptions } = useComboboxSelect({ items, valueKey: 'id', labelKey: 'title' }, vi.fn())
+      expect(() => flatOptions.value).toThrow('Duplicate id: number 1')
+    }
+  })
+
+  it('retains distinct numeric and string identities without mutating readonly input', () => {
+    const numeric = Object.freeze({ value: 1, label: 'Number' })
+    const text = Object.freeze({ value: '1', label: 'String' })
+    const items = Object.freeze([numeric, Object.freeze({ label: 'Group', items: Object.freeze([text]) })])
+    const { flatOptions, selectedOptions } = useComboboxSelect({ items, modelValue: [1, '1'] }, vi.fn())
+    expect(flatOptions.value.map(option => option.value)).toEqual([1, '1'])
+    expect(selectedOptions.value.map(option => option.raw)).toEqual([numeric, text])
+  })
+
+  it('validates duplicate identities again after async option replacement', () => {
+    const props = reactive({ items: [{ value: 'one' }] })
+    const { flatOptions } = useComboboxSelect(props, vi.fn())
+    expect(flatOptions.value).toHaveLength(1)
+    props.items = [{ value: 'one' }, { value: 'one' }]
+    expect(() => flatOptions.value).toThrow('Duplicate value: string "one"')
+    props.items = [{ value: 'two' }]
+    expect(flatOptions.value[0]?.value).toBe('two')
   })
 })
 

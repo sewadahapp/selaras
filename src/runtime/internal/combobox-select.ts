@@ -1,7 +1,6 @@
 import type { ComputedRef } from 'vue'
+import type { SelectValue } from '../utils/select-contracts'
 import { computed } from 'vue'
-
-export type SelectValue = string | number
 
 function optionValue(value: unknown): SelectValue {
   if (typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value)))
@@ -9,6 +8,7 @@ function optionValue(value: unknown): SelectValue {
   throw new TypeError('[selaras] Select option values must be strings or finite numbers.')
 }
 
+/** Erased runtime records for the shared implementation, not authoring types. */
 export interface SelectOption<Value extends SelectValue = SelectValue> {
   [key: string]: unknown
   /** The default option key. Custom `valueKey` fields use the same primitive contract. */
@@ -61,12 +61,22 @@ export function useComboboxSelect(
   const valueKey = computed(() => props.valueKey ?? 'value')
   const labelKey = computed(() => props.labelKey ?? 'label')
 
-  const flatOptions: ComputedRef<ResolvedItemOption[]> = computed(() => flattenItems(props.items).map(raw => ({
-    value: optionValue(raw[valueKey.value]),
-    label: String(raw[labelKey.value] ?? raw[valueKey.value] ?? ''),
-    disabled: !!raw.disabled,
-    raw,
-  })))
+  const flatOptions: ComputedRef<ResolvedItemOption[]> = computed(() => {
+    const identities = new Set<SelectValue>()
+    return flattenItems(props.items).map((raw) => {
+      const value = optionValue(raw[valueKey.value])
+      if (identities.has(value)) {
+        throw new TypeError(`[selaras] Select option identities must be unique across all groups. Duplicate ${valueKey.value}: ${typeof value} ${JSON.stringify(value)}.`)
+      }
+      identities.add(value)
+      return {
+        value,
+        label: String(raw[labelKey.value] ?? value),
+        disabled: !!raw.disabled,
+        raw,
+      }
+    })
+  })
 
   const selectedValues = computed<SelectValue[]>(() => {
     const v = props.modelValue

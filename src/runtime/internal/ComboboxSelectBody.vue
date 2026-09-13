@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ResolvedItemOption, SelectItems, SelectOption } from '../composables/use-combobox-select'
+import type { ResolvedItemOption, SelectItems, SelectOption } from './combobox-select'
 import {
   ComboboxEmpty,
   ComboboxGroup,
@@ -11,9 +11,9 @@ import {
   ComboboxVirtualizer,
 } from 'reka-ui'
 import Icon from '../components/Icon.vue'
-import { isOptionGroup } from '../composables/use-combobox-select'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
+import { isOptionGroup } from './combobox-select'
 
 defineOptions({ inheritAttrs: false })
 

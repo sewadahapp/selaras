@@ -16,14 +16,24 @@ Numeric suggestions allow `number | string | undefined` in single mode and
 `(number | string)[]` in multiple mode. A literal `forceSelection` narrows those
 types to the suggestion identity; a dynamic boolean retains the string union.
 Readonly option/group arrays and custom top-level `valueKey`/`labelKey` fields
-are supported. Declare the item type for initially empty async arrays.
+are supported. Every suggestion identity must be unique across the whole list,
+including disabled suggestions and suggestions in different groups; a duplicate
+throws when Autocomplete reads the options. Numeric `1` and string `'1'` remain
+distinct. Declare the item type for initially empty async arrays.
 
 The exported types use option entries: replace `AutocompleteProps<number>` with
 `AutocompleteProps<{ value: number, label: string }>`. The parameters are entry,
-identity key, multiple mode and forced mode. For example,
+identity key, multiple mode and forced mode.
+
+Author suggestions as a readonly `Row[]`, or as `readonly (Row | SelectGroup<Row>)[]`
+when mixing suggestions and groups; there are no separate `SelectItems`,
+`SelectOption`, or `SelectOptionGroup` authoring aliases. A wrapper that needs
+the exact validated items type can use `AutocompleteProps<Row, 'id'>['items']`. For example,
 `AutocompleteProps<Row, 'id', true, true>` describes forced multiple selection.
 `AutocompleteEmits` uses the same parameters. Render functions can specialize
 `Autocomplete<Row, 'id', true, true>` directly; templates normally infer it.
+Import public helpers from `@sewadah/selaras/types`; derive slot types through
+`AutocompleteSlots`.
 
 `forceSelection` blocks new unmatched text. It does not erase existing values
 when toggled dynamically or require that a selected async identity already be
@@ -112,6 +122,11 @@ to blank on blur or Enter, instead of accepting it as a new value. It exists
 for consumers who want Autocomplete's UX (input-as-trigger, inline filtering)
 without actually allowing arbitrary values - if that's the goal from the
 start, [Select](/components/forms/select) does the same job more directly.
+
+Pressing <kbd>Enter</kbd> on unmatched text creates it (or rejects it with
+`forceSelection`) and consumes the key. A matching highlighted suggestion is
+selected by the combobox first. With an empty, idle input and no highlighted
+suggestion, Enter keeps its normal native form-submission behavior.
 
 ::component-example{name="autocomplete-force-selection"}
 ::

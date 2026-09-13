@@ -1,5 +1,4 @@
-import type { SelectValue } from '../composables/use-combobox-select'
-import type { SelectIdentity, SelectModel, SelectProps, SelectSlots } from './select-contracts'
+import type { SelectIdentity, SelectModel, SelectProps, SelectSlots, SelectValue } from './select-contracts'
 
 export type AutocompleteValue<Entry, Key extends string = 'value', Forced extends boolean = false> = Forced extends true
   ? SelectIdentity<Entry, Key>

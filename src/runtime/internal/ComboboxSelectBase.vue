@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { SelectItems, SelectOption } from '../composables/use-combobox-select'
 import type { SelectThemeSlots } from '../theme/select'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
+import type { SelectItems, SelectOption } from './combobox-select'
 import {
   ComboboxAnchor,
   ComboboxArrow,
@@ -25,7 +25,6 @@ import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
 import Modal from '../components/Modal.vue'
 import Tooltip from '../components/Tooltip.vue'
-import { useComboboxSelect } from '../composables/use-combobox-select'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useIsMobile } from '../composables/use-media-query'
@@ -35,6 +34,7 @@ import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeScope } from '../utils/ui'
+import { useComboboxSelect } from './combobox-select'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>

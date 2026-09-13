@@ -7,7 +7,7 @@ order: 22
 ## Usage
 
 Option values may be strings or finite numbers. Numeric `1` and string `"1"`
-are distinct selections. Missing values and objects are rejected.
+are distinct selections. Missing option identities and object values are rejected.
 
 Use `modelValue` for parent-controlled selection or `defaultValue` for an
 uncontrolled initial selection. A form reset restores `defaultValue` (or the
@@ -19,7 +19,10 @@ An empty selection submits no fields; disabled controls submit none. Use
 ::component-example{name="select-basic"}
 ::
 
-Values must come from `items` - for free text with suggestions, use [Autocomplete](/components/forms/autocomplete) instead.
+New selections come from `items`; for free text with suggestions, use
+[Autocomplete](/components/forms/autocomplete) instead. An async or
+parent-controlled selection may temporarily name an identity whose option has
+not loaded yet; Select retains that identity and uses its text as a fallback.
 
 ```vue
 <script setup lang="ts">
@@ -55,11 +58,12 @@ is set, the filter input lives inside the popover, not in the trigger itself.
 
 ### Multiple selection
 
-`multiple` turns `modelValue` into a string array. `displayMode` controls how
-selected values render in the trigger - `comma` (default) joins labels as
-text, `chip` renders removable pills. Both modes truncate at `maxChips`
-(default 3) and show a "+N more" summary - hovering it reveals the rest in a
-tooltip, and clicking it still opens the popover like the rest of the trigger.
+`multiple` turns `modelValue` into an array of option identities, preserving
+string and numeric values. `displayMode` controls how selected values render
+in the trigger - `comma` (default) joins labels as text, `chip` renders
+removable pills. Both modes truncate at `maxChips` (default 3) and show a "+N
+more" summary - hovering it reveals the rest in a tooltip, and clicking it
+still opens the popover like the rest of the trigger.
 
 ::component-example{name="select-multiple-comma"}
 ::
@@ -140,8 +144,10 @@ Select infers its model and update event from the option identity field. A
 required string or number field can be used as `valueKey`; `labelKey` names a
 top-level option field. Single selection emits that identity or `undefined`,
 `multiple` emits an array, and a dynamic boolean accepts either shape. Readonly
-arrays and groups are supported. Keep identities unique within the whole list;
-numeric `1` and string `'1'` are distinct identities.
+arrays and groups are supported. Every identity must be unique across the
+whole list, including disabled options and options in different groups; a
+duplicate throws when Select reads the options. Numeric `1` and string `'1'`
+are distinct identities.
 Records with both a string `label` and an `items` array represent groups; avoid
 that reserved combination on individual options.
 
@@ -151,12 +157,22 @@ option loads. The `value` slot receives `selected.raw` as `undefined` during tha
 time; use optional chaining when reading metadata. The `item` slot receives a
 complete option, and unresolved chips use the identity's text as their fallback.
 
-The exported types now take an option entry type: replace `SelectProps<number>`
-with `SelectProps<{ value: number, label: string }>`. Custom keys and multiple
+The exported types take an option entry type: replace `SelectProps<number>`
+with `SelectProps<{ value: number, label: string }>`. Author items as a
+readonly `Row[]`, or as `readonly (Row | SelectGroup<Row>)[]` when mixing
+options and groups; there are no separate `SelectItems`, `SelectOption`, or
+`SelectOptionGroup` authoring aliases. A wrapper that needs the exact validated
+items type can use `SelectProps<Row, 'id'>['items']`. Custom keys and multiple
 mode can be declared as `SelectProps<Row, 'id', true>`; `SelectEmits` uses the
 same parameters. Render functions can specialize the component directly with
 `h(Select<Row, 'id', true>, props)`. Template consumers normally need no explicit
 generic parameters.
+
+Import public helpers from `@sewadah/selaras/types`. `SelectEntryItem`,
+`SelectEntryGroup`, and `SelectIdentityKeys` are removed internal mechanics;
+derive slot types through `SelectSlots` (or `AutocompleteSlots`). The internal
+normalization functions `useComboboxSelect`, `flattenItems`, and `isOptionGroup`
+are no longer auto-imported.
 
 `items` doesn't have to be `{ label, value }` - point `labelKey`/`valueKey` at
 whatever fields your data already has:
@@ -321,9 +337,9 @@ every slot and variant - here's `Select`'s own theme file:
 | --- | --- | --- |
 | `id` | `string` | - |
 | `name` | `string` | - |
-| `items` | `(Option \| { label: string; items: Option[] })[]` | - |
+| `items` | `readonly Entry[]` | - |
 | `valueKey` / `labelKey` | `string` | `'value'` / `'label'` |
-| `modelValue` | `string \| string[]` | - |
+| `modelValue` | identity, identity array, or `undefined` | - |
 | `multiple` | `boolean` | `false` |
 | `searchable` | `boolean` | `false` |
 | `searchTerm` | `string` | - |

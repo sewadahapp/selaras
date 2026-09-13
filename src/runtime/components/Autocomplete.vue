@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="Entry extends object, Key extends string = 'value', Multiple extends boolean = false, Forced extends boolean = false">
-import type { SelectItems, SelectOption, SelectOptionGroup, SelectValue } from '../composables/use-combobox-select'
+import type { SelectItems, SelectOption, SelectOptionGroup } from '../internal/combobox-select'
 import type { AutocompleteEmits, AutocompleteProps, AutocompleteSlots, AutocompleteValue } from '../utils/autocomplete-contracts'
-import type { SelectEntryGroup, SelectEntryItem, SelectModel } from '../utils/select-contracts'
+import type { SelectEntryGroup, SelectEntryItem, SelectModel, SelectValue } from '../utils/select-contracts'
 import { useForwardProps } from 'reka-ui'
 import { getCurrentInstance } from 'vue'
 import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'

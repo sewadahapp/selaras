@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { SelectGroup, SelectProps } from '@sewadah/selaras/types'
 import SSelect from '@sewadah/selaras/components/Select.vue'
 import { ref } from 'vue'
 
 interface Row { id: number, title: string, disabled: boolean }
 const rows: Row[] = [{ id: 1, title: 'One', disabled: false }]
 const emptyRows: Row[] = []
+const authoredEntries: SelectProps<Row | SelectGroup<Row>, 'id'>['items'] = [{ label: 'Authored group', items: rows }]
 const nestedRows = [{ id: 1, title: 'Parent option', items: [{ id: 2 }] }]
 const options = [{ value: 1, label: 'One' }]
 const groups = [{ label: 'Group', items: rows, description: 'Metadata' }]
@@ -34,6 +36,7 @@ const expectNumbers = (value: number[]) => value
     </template>
   </SSelect>
   <SSelect v-model="selected" :items="emptyRows" value-key="id" @update:model-value="expectNumber" />
+  <SSelect v-model="selected" :items="authoredEntries" value-key="id" @update:model-value="expectNumber" />
   <SSelect v-model="selected" :items="nestedRows" value-key="id" label-key="title" @update:model-value="expectNumber" />
   <SSelect v-model="selected" :items="groups" value-key="id" @update:model-value="expectNumber">
     <template #group="{ group }">

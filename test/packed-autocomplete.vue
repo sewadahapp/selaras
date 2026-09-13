@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import type { AutocompleteProps, SelectGroup } from '@sewadah/selaras/types'
 import SAutocomplete from '@sewadah/selaras/components/Autocomplete.vue'
 import { ref } from 'vue'
 
 interface Row { id: number, title: string, disabled: boolean }
 const rows: Row[] = [{ id: 1, title: 'One', disabled: false }]
 const emptyRows: Row[] = []
+const authoredEntries: AutocompleteProps<Row | SelectGroup<Row>, 'id'>['items'] = [{ label: 'Authored group', items: rows }]
 const options = [{ value: 1, label: 'One' }]
 const groups = [{ label: 'Group', items: rows, description: 'Metadata' }]
 const mixed = [rows[0]!, groups[0]!]
@@ -32,6 +34,7 @@ const expectNumbers = (value: number[]) => value
     </template>
   </SAutocomplete>
   <SAutocomplete v-model="created" :items="emptyRows" value-key="id" @update:model-value="expectCreated" />
+  <SAutocomplete v-model="created" :items="authoredEntries" value-key="id" @update:model-value="expectCreated" />
   <SAutocomplete v-model="created" :items="groups" value-key="id" @update:model-value="expectCreated">
     <template #group="{ group }">
       {{ group.description.toUpperCase() }} {{ group.items[0]?.id.toFixed() }}

@@ -1,8 +1,9 @@
 import type { VariantProps } from 'tailwind-variants'
-import type { SelectValue } from '../composables/use-combobox-select'
 import type { selectTheme, SelectThemeSlots } from '../theme/select'
 import type { ColorRole } from './color-registry'
 import type { UiProp } from './ui'
+
+export type SelectValue = string | number
 
 export interface SelectGroup<Item extends object> {
   label: string
