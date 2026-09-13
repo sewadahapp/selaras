@@ -9,24 +9,26 @@ function optionValue(value: unknown): SelectValue {
   throw new TypeError('[selaras] Select option values must be strings or finite numbers.')
 }
 
-export interface SelectOption {
+export interface SelectOption<Value extends SelectValue = SelectValue> {
   [key: string]: unknown
+  /** The default option key. Custom `valueKey` fields use the same primitive contract. */
+  value?: Value
   disabled?: boolean
 }
 
-export interface SelectOptionGroup {
+export interface SelectOptionGroup<Value extends SelectValue = SelectValue> {
   label: string
-  items: SelectOption[]
+  items: SelectOption<Value>[]
 }
 
-export type SelectItems = (SelectOption | SelectOptionGroup)[]
+export type SelectItems<Value extends SelectValue = SelectValue> = (SelectOption<Value> | SelectOptionGroup<Value>)[]
 
-export function isOptionGroup(entry: SelectOption | SelectOptionGroup): entry is SelectOptionGroup {
+export function isOptionGroup<Value extends SelectValue = SelectValue>(entry: SelectOption<Value> | SelectOptionGroup<Value>): entry is SelectOptionGroup<Value> {
   return 'items' in entry && Array.isArray((entry as SelectOptionGroup).items)
 }
 
 /** Flattens groups into a plain option list - groups lose their header when virtualized. */
-export function flattenItems(items: SelectItems): SelectOption[] {
+export function flattenItems<Value extends SelectValue = SelectValue>(items: SelectItems<Value>): SelectOption<Value>[] {
   return items.flatMap(entry => isOptionGroup(entry) ? entry.items : [entry])
 }
 

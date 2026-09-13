@@ -103,7 +103,7 @@ export type * from '../components/Toast.vue'
 export type * from '../components/Toggle.vue'
 export type * from '../components/ToggleGroup.vue'
 export type * from '../components/Tooltip.vue'
-export type { SelectValue } from '../composables/use-combobox-select'
+export type { SelectItems, SelectOption, SelectOptionGroup, SelectValue } from '../composables/use-combobox-select'
 
 // The two global override registries (useMessages()/useIcons(), see their
 // own composables) - exported so a consumer can type their own partial
