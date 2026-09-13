@@ -45,6 +45,7 @@ function updateNestedTokens() {
     <SStepper id="stepper-invalid" :items="[{ title: 'One' }, { title: 'Two' }]" :default-value="2" color="enterprise" />
     <SAlert id="alert-invalid" color="enterprise" variant="solid" title="Alert" />
     <SInput id="input-invalid" color="enterprise" invalid model-value="value" />
+    <STextarea id="textarea-invalid" color="enterprise" invalid model-value="value" />
     <SButton id="enterprise-button" color="enterprise">
       Enterprise
     </SButton>
@@ -217,6 +218,7 @@ function updateNestedTokens() {
         <SStepper :id="`stepper-${role}`" :items="[{ title: 'One' }, { title: 'Two' }]" :default-value="2" :color="role" />
         <SAlert v-for="variant in ['solid', 'soft', 'outline']" :id="`alert-${role}-${variant}`" :key="`alert-${variant}`" :color="role" :variant="variant" title="Alert" />
         <SInput :id="`input-${role}`" :color="role" model-value="value" />
+        <STextarea :id="`textarea-${role}`" :color="role" model-value="value" />
         <SRadioGroup :id="`radio-${role}`" v-model="radioValues[role]" :items="['one', 'two']" :color="role" variant="card" />
         <SBadge
           v-for="variant in ['solid', 'soft', 'outline']"

@@ -8,7 +8,6 @@ import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { textareaTheme } from '../theme/textarea'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -72,12 +71,10 @@ const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('textarea', textareaTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as TextareaVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
-  color: recipeColor.value,
+  color: effectiveColor.value as TextareaVariants['color'],
   invalid: textareaInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
@@ -120,7 +117,7 @@ watch(() => props.modelValue, resize)
 </script>
 
 <template>
-  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <div :data-selaras-color="textareaInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
     <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <textarea
       :id="textareaId"
