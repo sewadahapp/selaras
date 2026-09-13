@@ -4,6 +4,7 @@ import { ref } from 'vue'
 
 const unknownRole = /** @type {any} */ ('not-registered')
 const scopedDate = new CalendarDate(2024, 1, 15)
+const nativeFormDate = new CalendarDate(2024, 2, 20)
 const semanticRecipe = {
   fill: 'rgb(10 20 30)',
   onFill: 'white',
@@ -245,6 +246,13 @@ function updateNestedTokens() {
     />
     <button type="reset">
       Reset identities
+    </button>
+  </form>
+  <form id="native-form">
+    <SDatePicker name="bookingDate" :default-value="nativeFormDate" clearable />
+    <SColorPicker name="accent" default-value="#00ff00" />
+    <button id="native-form-reset" type="reset">
+      Reset native values
     </button>
   </form>
 </template>
