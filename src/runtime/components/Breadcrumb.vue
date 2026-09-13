@@ -1,14 +1,19 @@
 <script setup lang="ts">
+import type { VariantProps } from 'tailwind-variants'
 import type { BreadcrumbThemeSlots } from '../theme/breadcrumb'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { navigateTo } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { breadcrumbTheme } from '../theme/breadcrumb'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Dropdown from './Dropdown.vue'
 import Icon from './Icon.vue'
+
+type BreadcrumbVariants = VariantProps<typeof breadcrumbTheme>
 
 defineOptions({ inheritAttrs: false })
 
@@ -25,6 +30,8 @@ export interface BreadcrumbItem {
 
 export interface BreadcrumbProps {
   items: BreadcrumbItem[]
+  /** The keyboard-focus accent for breadcrumb links. @default 'primary' */
+  color?: ColorRole
   /** Collapses the middle items behind an overflow menu once items.length exceeds this - the first item plus the last (maxItems - 1) stay visible. */
   maxItems?: number
   /** Truncates each item's label with an ellipsis. `true` caps at 12rem; a string sets a custom CSS max-width (e.g. '20rem', '300px'). @default false */
@@ -44,7 +51,8 @@ const icons = useIcons()
 const messages = useMessages()
 
 const theme = useComponentTheme('breadcrumb', breadcrumbTheme)
-const ui = computed(() => theme.value())
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ color: effectiveColor.value as BreadcrumbVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
@@ -110,7 +118,7 @@ function realIndex(item: BreadcrumbItem) {
 </script>
 
 <template>
-  <nav :aria-label="messages.breadcrumb" v-bind="rootProps">
+  <nav :aria-label="messages.breadcrumb" :data-selaras-color="effectiveColor" v-bind="rootProps">
     <ol v-bind="listProps">
       <template v-for="(item, index) in visibleItems" :key="realIndex(item)">
         <li v-bind="itemProps">

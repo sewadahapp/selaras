@@ -15,6 +15,13 @@ const items = [
 ]
 
 describe('breadcrumb', () => {
+  it('binds a custom semantic role to breadcrumb link focus styling', async () => {
+    const wrapper = await mountSuspended(Breadcrumb, { props: { items, color: 'premium' as any } })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('a').classes()).toContain('focus-visible:outline-[var(--_selaras-color-focus)]')
+  })
+
   it('renders one link per item except the last', async () => {
     const wrapper = await mountSuspended(Breadcrumb, { props: { items } })
 

@@ -5,7 +5,7 @@ export const breadcrumbTheme = tv({
     root: '',
     list: 'flex items-center gap-1.5 text-sm',
     item: 'flex items-center',
-    link: 'flex items-center gap-1 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    link: 'flex items-center gap-1 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     // The trail's last item - "you are here", visually emphasized
     // rather than muted like the earlier, clickable steps.
     current: 'flex items-center gap-1 font-medium text-[var(--ui-text)]',
@@ -19,6 +19,17 @@ export const breadcrumbTheme = tv({
     separator: 'flex items-center text-[var(--ui-text-muted)]',
     separatorIcon: 'size-4 shrink-0 rtl:rotate-180',
     ellipsis: 'flex items-center text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)]',
+  },
+  variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
   },
 })
 
