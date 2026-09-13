@@ -11,10 +11,19 @@ export const readMoreTheme = tv({
     // visible seam at the truncation line. Reads from --ui-bg since it
     // needs to blend into whatever's directly behind it, not a fixed color.
     fade: 'pointer-events-none absolute inset-x-0 bottom-8 h-16 bg-gradient-to-t from-[var(--ui-bg)] to-transparent',
-    trigger: 'relative mt-2 inline-flex items-center gap-1 text-sm font-medium text-[var(--ui-primary)] transition-colors hover:text-[var(--ui-primary-hover)]',
+    trigger: 'relative mt-2 inline-flex items-center gap-1 text-sm font-medium text-[var(--_selaras-color-text)] transition-colors hover:text-[var(--_selaras-color-text-hover)]',
     triggerIcon: 'size-4 transition-transform duration-200',
   },
   variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
     open: {
       true: { triggerIcon: 'rotate-180' },
     },

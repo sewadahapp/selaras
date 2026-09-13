@@ -9,6 +9,13 @@ import ReadMore from '../../src/runtime/components/ReadMore.vue'
 // (contentHeight === 0, see ReadMore.vue's own comment) and the toggle
 // behavior once truncated, which is real, DOM-independent component logic.
 describe('readMore', () => {
+  it('binds a custom semantic role to the disclosure trigger', async () => {
+    const wrapper = await mountSuspended(ReadMore, { props: { color: 'premium' as any } })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('button').classes()).toContain('text-[var(--_selaras-color-text)]')
+  })
+
   it('renders its default slot content', async () => {
     const wrapper = await mountSuspended(ReadMore, {
       slots: { default: () => 'The full body text.' },

@@ -1,12 +1,17 @@
 <script setup lang="ts">
+import type { VariantProps } from 'tailwind-variants'
 import type { ReadMoreThemeSlots } from '../theme/read-more'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { readMoreTheme } from '../theme/read-more'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
+
+type ReadMoreVariants = VariantProps<typeof readMoreTheme>
 
 defineOptions({ inheritAttrs: false })
 
@@ -17,6 +22,8 @@ const props = withDefaults(defineProps<ReadMoreProps>(), {
 export interface ReadMoreProps {
   /** Collapsed height in pixels - content shorter than this renders with no truncation UI at all. @default 200 */
   previewHeight?: number
+  /** The disclosure trigger accent. @default 'primary' */
+  color?: ColorRole
   ui?: UiProp<ReadMoreThemeSlots>
 }
 
@@ -62,7 +69,8 @@ function toggle() {
 }
 
 const theme = useComponentTheme('readMore', readMoreTheme)
-const ui = computed(() => theme.value({ open: open.value }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ open: open.value, color: effectiveColor.value as ReadMoreVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -72,7 +80,7 @@ const triggerIconProps = computed(() => resolveSlot(ui.value.triggerIcon, props.
 </script>
 
 <template>
-  <div v-bind="rootProps">
+  <div :data-selaras-color="effectiveColor" v-bind="rootProps">
     <div ref="contentEl" :style="{ maxHeight }" v-bind="contentProps">
       <slot />
     </div>
