@@ -141,6 +141,30 @@ describe('inputNumber', () => {
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([0])
   })
 
+  it('keeps readonly fields focusable but blocks keyboard and button stepping', async () => {
+    const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, readonly: true } })
+    const input = wrapper.find('input')
+    const all = wrapper.findAll('button')
+
+    expect(input.attributes('readonly')).toBeDefined()
+    await input.trigger('focus')
+    await input.trigger('keydown', { key: 'ArrowUp' })
+    await all[1]!.trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(all.every(button => button.attributes('disabled') !== undefined)).toBe(true)
+  })
+
+  it('blocks readonly stepping in the vertical layout too', async () => {
+    const wrapper = await mountSuspended(InputNumber, { props: { modelValue: 5, orientation: 'vertical', readonly: true } })
+
+    await wrapper.find('input').trigger('keydown', { key: 'ArrowDown' })
+    await wrapper.findAll('button')[0]!.trigger('click')
+
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect(wrapper.findAll('button').every(button => button.attributes('disabled') !== undefined)).toBe(true)
+  })
+
   it('formats the blurred display via formatOptions but shows the raw value while editing', async () => {
     const wrapper = await mountSuspended(InputNumber, {
       props: { modelValue: 5, formatOptions: { minimumIntegerDigits: 2 } },

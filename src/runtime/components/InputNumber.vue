@@ -41,6 +41,8 @@ export interface InputNumberProps {
   formatOptions?: Intl.NumberFormatOptions
   locale?: string
   disabled?: boolean
+  /** Keeps the field focusable and readable while preventing typing and stepping. */
+  readonly?: boolean
   invalid?: boolean
   /** The focus-ring color - the resting (unfocused) ring stays neutral regardless. */
   color?: ColorRole
@@ -129,14 +131,16 @@ function keydown(event: KeyboardEvent) {
 }
 
 function stepBy(delta: number) {
+  if (props.disabled || props.readonly)
+    return
   const base = props.modelValue ?? props.min ?? 0
   commit(base + delta)
   if (isFocused.value)
     editingValue.value = String(clamp(base + delta))
 }
 
-const canDecrement = computed(() => !props.disabled && (props.wrap || props.min === undefined || props.modelValue === undefined || props.modelValue > props.min))
-const canIncrement = computed(() => !props.disabled && (props.wrap || props.max === undefined || props.modelValue === undefined || props.modelValue < props.max))
+const canDecrement = computed(() => !props.disabled && !props.readonly && (props.wrap || props.min === undefined || props.modelValue === undefined || props.modelValue > props.min))
+const canIncrement = computed(() => !props.disabled && !props.readonly && (props.wrap || props.max === undefined || props.modelValue === undefined || props.modelValue < props.max))
 
 const icons = useIcons()
 const messages = useMessages()
@@ -178,6 +182,7 @@ const stepButtonUi = { base: 'shrink-0' }
       :name="name ?? field?.name"
       :placeholder="placeholder"
       :disabled="disabled"
+      :readonly="readonly"
       role="spinbutton"
       :aria-valuemin="min"
       :aria-valuemax="max"
