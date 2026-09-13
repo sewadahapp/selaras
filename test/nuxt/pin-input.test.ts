@@ -1,6 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
+import FormField from '../../src/runtime/components/FormField.vue'
 import PinInput from '../../src/runtime/components/PinInput.vue'
 
 // Focus/backspace-navigation assertions need a real document.activeElement,
@@ -31,6 +32,19 @@ describe('pinInput', () => {
   it('renders 5 boxes by default', async () => {
     wrapper = await mountSuspended(PinInput)
     expect(wrapper.findAll('input[aria-label^="pin input"]')).toHaveLength(5)
+  })
+
+  it('exposes group semantics and associates a FormField label with the group', async () => {
+    wrapper = await mountSuspended(FormField, {
+      props: { label: 'Verification code' },
+      slots: { default: () => h(PinInput) },
+    })
+    const group = wrapper.find('[role="group"]')
+    const label = wrapper.find('label')
+    const labelledControl = wrapper.find(`#${label.attributes('for')}`)
+
+    expect(group.attributes('aria-labelledby')).toBe(label.attributes('id'))
+    expect(labelledControl.exists()).toBe(true)
   })
 
   it('renders `length` boxes', async () => {

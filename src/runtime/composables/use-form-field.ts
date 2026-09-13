@@ -3,6 +3,7 @@ import { inject, provide } from 'vue'
 
 export interface FormFieldContext {
   id: string
+  labelId?: string
   name?: string
   size?: 'sm' | 'md' | 'lg'
   invalid: ComputedRef<boolean>

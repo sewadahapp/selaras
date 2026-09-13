@@ -57,6 +57,7 @@ const pinInputId = computed(() => props.id ?? field?.id)
 const pinInputInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 const describedBy = computed(() => attrs['aria-describedby'] ?? field?.describedBy.value)
+const labelledBy = computed(() => attrs['aria-labelledby'] ?? field?.labelId)
 
 const theme = useComponentTheme('pinInput', pinInputTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
@@ -75,6 +76,7 @@ const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.u
 <template>
   <PinInputRoot
     :id="pinInputId"
+    role="group"
     :model-value="(modelValue as any)"
     :default-value="(defaultValue as any)"
     :placeholder="placeholder"
@@ -86,6 +88,7 @@ const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.u
     :required="required"
     :aria-invalid="pinInputInvalid || undefined"
     :aria-describedby="describedBy"
+    :aria-labelledby="labelledBy"
     :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as (string | number)[])"

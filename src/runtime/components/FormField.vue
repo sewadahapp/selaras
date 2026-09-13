@@ -46,6 +46,7 @@ const describedBy = computed(() => {
 
 provideFormField({
   id,
+  labelId: props.label ? `${id}-label` : undefined,
   name: props.name,
   size: props.size,
   invalid,
@@ -70,7 +71,7 @@ const errorProps = computed(() => resolveSlot(ui.value.error, props.ui?.error))
   <div v-bind="rootProps">
     <div v-bind="bodyProps">
       <div v-bind="headerProps">
-        <label v-if="label" :for="id" v-bind="labelProps">
+        <label v-if="label" :id="`${id}-label`" :for="id" v-bind="labelProps">
           {{ label }}<span v-if="required" v-bind="requiredProps">*</span>
         </label>
         <p v-if="description" :id="`${id}-description`" v-bind="descriptionProps">
