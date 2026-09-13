@@ -29,7 +29,7 @@ const emit = defineEmits<FileUploadEmits>()
 defineSlots<FileUploadSlots>()
 
 const instance = getCurrentInstance()!
-const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue')
+const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
 
 export interface FileUploadProps {
   id?: string

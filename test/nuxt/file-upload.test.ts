@@ -1,6 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import FileUpload from '../../src/runtime/components/FileUpload.vue'
 
 function makeFile(name: string, size: number, type = 'text/plain') {
@@ -15,6 +15,15 @@ function setInputFiles(input: HTMLInputElement, files: File[]) {
 }
 
 describe('fileUpload', () => {
+  it('keeps template-style controlled files when the parent ignores a drop', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(FileUpload, { 'model-value': [] }),
+    }))
+    await wrapper.find('button').trigger('drop', { dataTransfer: { files: [makeFile('a.txt', 10)] } })
+    expect(wrapper.find('li').exists()).toBe(false)
+    wrapper.unmount()
+  })
+
   it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(FileUpload, { props: { color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')

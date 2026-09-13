@@ -47,6 +47,19 @@ async function clickAndWait(el: HTMLElement) {
 }
 
 describe('datePicker', () => {
+  it('preserves a template-style controlled value when the parent ignores clearing', async () => {
+    wrapper = await mountSuspended(defineComponent({
+      render: () => h(DatePicker, {
+        'name': 'date',
+        'model-value': new CalendarDate(2024, 1, 15),
+        'clearable': true,
+      }),
+    }))
+    expect(wrapper.find('input[name="date"]').element.getAttribute('value')).toBe('2024-01-15')
+    await wrapper.find('[aria-label="Clear"]').trigger('click')
+    expect(wrapper.find('input[name="date"]').element.getAttribute('value')).toBe('2024-01-15')
+  })
+
   it('submits one persistent native value and supports external form association', async () => {
     wrapper = await mountSuspended(defineComponent({
       render: () => h('form', { id: 'booking-form' }, [

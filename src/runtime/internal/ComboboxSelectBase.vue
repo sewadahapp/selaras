@@ -55,7 +55,7 @@ const emit = defineEmits<ComboboxSelectBaseEmits>()
 const instance = getCurrentInstance()!
 const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue] : props.defaultValue
 const localValue = ref(initialValue ?? (props.multiple ? [] : undefined))
-const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue')
+const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
 const selection = computed(() => isControlled() ? props.modelValue : localValue.value)
 function updateSelection(event: 'update:modelValue', value: string | number | (string | number)[] | undefined) {
   if (!isControlled())

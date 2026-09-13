@@ -13,6 +13,18 @@ async function open(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
 }
 
 describe('colorPicker', () => {
+  it('preserves a template-style controlled color on native form reset', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [h(ColorPicker, { 'name': 'color', 'model-value': '#ff0000', 'defaultValue': '#00ff00' })]),
+    }))
+    const form = wrapper.find('form').element
+    form.reset()
+    await nextTick()
+    await nextTick()
+    expect(new FormData(form).get('color')).toBe('#ff0000')
+    wrapper.unmount()
+  })
+
   it('submits a persistent native value and resets an uncontrolled default', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => h('form', {}, [

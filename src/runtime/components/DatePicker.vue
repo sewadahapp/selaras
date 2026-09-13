@@ -146,7 +146,7 @@ const instance = getCurrentInstance()!
 type DatePickerValue = DateValue | DateRange | Time | undefined
 const initialValue = props.defaultValue
 const localValue = shallowRef<DatePickerValue>(initialValue)
-const isModelControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue')
+const isModelControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
 const modelValue = computed<DatePickerValue>(() => isModelControlled() ? props.modelValue : localValue.value)
 function updateModelValue(value: DatePickerValue) {
   if (!isModelControlled())

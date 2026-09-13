@@ -79,7 +79,7 @@ function onUpdateColor(value: string) {
 
 function resetColor(event: Event) {
   queueMicrotask(() => {
-    if (event.defaultPrevented || Object.hasOwn(instance.vnode.props ?? {}, 'modelValue'))
+    if (event.defaultPrevented || Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value'))
       return
     internalColor.value = initialColor
   })
