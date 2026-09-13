@@ -2,7 +2,7 @@
 import type { DropdownThemeSlots } from '../theme/dropdown'
 import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { dropdownTheme } from '../theme/dropdown'
 import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -20,14 +20,35 @@ export interface DropdownItem {
 
 export interface DropdownProps {
   items: DropdownItem[][]
+  open?: boolean
+  /** Initial visibility for an uncontrolled dropdown. Supplying `open` makes the parent authoritative. */
+  defaultOpen?: boolean
   /** Shows a small pointer triangle connecting the menu to its trigger. */
   arrow?: boolean
   ui?: UiProp<DropdownThemeSlots>
 }
 
+export interface DropdownEmits {
+  'update:open': [value: boolean]
+}
+
 const props = withDefaults(defineProps<DropdownProps>(), {
+  open: undefined,
   arrow: false,
 })
+
+const emit = defineEmits<DropdownEmits>()
+const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
+const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
+watch(() => props.open, (value) => {
+  if (isControlled)
+    internalOpen.value = value ?? false
+})
+function onUpdateOpen(value: boolean) {
+  if (!isControlled)
+    internalOpen.value = value
+  emit('update:open', value)
+}
 
 const theme = useComponentTheme('dropdown', dropdownTheme)
 const themeScope = useThemeScope()
@@ -48,7 +69,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
 </script>
 
 <template>
-  <DropdownMenuRoot>
+  <DropdownMenuRoot :open="internalOpen" @update:open="onUpdateOpen">
     <DropdownMenuTrigger as-child>
       <slot />
     </DropdownMenuTrigger>

@@ -20,6 +20,29 @@ async function openMenu() {
 }
 
 describe('dropdown', () => {
+  it('supports defaultOpen for uncontrolled menus', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { defaultOpen: true, items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+
+    expect(wrapper.find('button').attributes('aria-expanded')).toBe('true')
+  })
+
+  it('lets a controlled parent veto a close request', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+
+    const trigger = wrapper.find('button')
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    await trigger.trigger('click')
+
+    expect(wrapper.emitted('update:open')?.[0]).toEqual([false])
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+  })
+
   it('opens the menu and lists every item across all groups when the trigger is clicked', async () => {
     wrapper = await mountSuspended(Dropdown, {
       props: {
