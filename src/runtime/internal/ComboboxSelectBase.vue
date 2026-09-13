@@ -19,7 +19,7 @@ import {
   TagsInputRoot,
   useDirection,
 } from 'reka-ui'
-import { computed, getCurrentInstance, onMounted, onUnmounted, ref } from 'vue'
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
@@ -373,7 +373,15 @@ function resetSelection(event: Event) {
 }
 
 const isMobile = useIsMobile()
-const showMobileModal = computed(() => props.mobileModal && isMobile.value)
+// Choose the presentation when opening and hold it until close. Swapping a
+// live focus trap between Popover and Modal during a resize can lose focus and
+// leave two interaction trees competing for the same Reka root. The next open
+// samples the current breakpoint again.
+const mobilePresentation = ref(false)
+watch(internalOpen, (open) => {
+  mobilePresentation.value = open && !!props.mobileModal && isMobile.value
+})
+const showMobileModal = computed(() => mobilePresentation.value)
 
 // Single source of truth for ComboboxSelectBody's own (large) prop
 // surface, so the desktop and mobileModal template branches below each

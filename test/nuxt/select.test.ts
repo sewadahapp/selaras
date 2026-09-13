@@ -433,6 +433,32 @@ function mockMatchMedia(matches: boolean) {
   }
 }
 
+function mockResponsiveMatchMedia(matches: boolean) {
+  const original = window.matchMedia
+  let current = matches
+  const listeners = new Set<(event: MediaQueryListEvent) => void>()
+  const mediaQuery = {
+    get matches() { return current },
+    media: '(max-width: 767px)',
+    onchange: null,
+    addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.add(listener),
+    removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.delete(listener),
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  } as unknown as MediaQueryList
+  window.matchMedia = (() => mediaQuery) as unknown as typeof window.matchMedia
+  return {
+    setMatches(value: boolean) {
+      current = value
+      listeners.forEach(listener => listener({ matches: value } as MediaQueryListEvent))
+    },
+    restore() {
+      window.matchMedia = original
+    },
+  }
+}
+
 describe('select (mobileModal)', () => {
   it('mobileModal unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
     const restore = mockMatchMedia(true)
@@ -481,6 +507,22 @@ describe('select (mobileModal)', () => {
 
     wrapper.unmount()
     restore()
+  })
+
+  it('holds the chosen presentation while open when the viewport crosses the breakpoint', async () => {
+    const media = mockResponsiveMatchMedia(true)
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await nextTick()
+    expect(document.body.querySelector('[role=dialog]')).toBeTruthy()
+
+    media.setMatches(false)
+    await nextTick()
+    expect(document.body.querySelector('[role=dialog]')).toBeTruthy()
+
+    wrapper.unmount()
+    media.restore()
   })
 
   // Select's own trigger is a one-off tap (a button, not something typed
