@@ -3,6 +3,15 @@ import { describe, expect, it } from 'vitest'
 import ContentSurround from '../../src/runtime/components/ContentSurround.vue'
 
 describe('contentSurround', () => {
+  it('binds a custom semantic role to navigation-card accents', async () => {
+    const wrapper = await mountSuspended(ContentSurround, {
+      props: { color: 'premium' as any, next: { title: 'Next', path: '/next' } },
+    })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('a').classes()).toContain('focus-visible:outline-[var(--_selaras-color-focus)]')
+  })
+
   it('renders nothing when neither prev nor next is given', async () => {
     const wrapper = await mountSuspended(ContentSurround, { props: {} })
     expect(wrapper.find('nav').exists()).toBe(false)
