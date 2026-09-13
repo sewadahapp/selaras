@@ -1,6 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
 
 function trigger(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
@@ -13,6 +13,30 @@ async function open(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
 }
 
 describe('colorPicker', () => {
+  it('submits a persistent native value and resets an uncontrolled default', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(ColorPicker, { name: 'color', defaultValue: '#00ff00' }),
+      ]),
+    }))
+    const form = wrapper.find('form').element
+    expect(new FormData(form).get('color')).toBe('#00ff00')
+
+    await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
+    const field = document.body.querySelector('input[type="text"]') as HTMLInputElement
+    field.value = '#ff0000'
+    field.dispatchEvent(new Event('input', { bubbles: true }))
+    field.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    await nextTick()
+    expect(new FormData(form).get('color')).toBe('#ff0000')
+
+    form.reset()
+    await nextTick()
+    await nextTick()
+    expect(new FormData(form).get('color')).toBe('#00ff00')
+    wrapper.unmount()
+  })
+
   it('supports defaultOpen and lets a controlled parent veto closing', async () => {
     const uncontrolled = await mountSuspended(ColorPicker, { props: { defaultOpen: true } })
     expect(trigger(uncontrolled).attributes('aria-expanded')).toBe('true')

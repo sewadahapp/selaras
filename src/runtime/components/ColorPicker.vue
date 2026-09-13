@@ -4,7 +4,7 @@ import type { ColorPickerThemeSlots } from '../theme/color-picker'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { ColorSwatch } from 'reka-ui'
-import { computed, getCurrentInstance, ref, watch } from 'vue'
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
@@ -24,6 +24,9 @@ const props = withDefaults(defineProps<ColorPickerProps>(), {
 const emit = defineEmits<ColorPickerEmits>()
 
 export interface ColorPickerProps {
+  name?: string
+  /** ID of an associated form outside the component's ancestors. */
+  form?: string
   modelValue?: string
   defaultValue?: string
   open?: boolean
@@ -48,6 +51,10 @@ export interface ColorPickerEmits {
 }
 
 const messages = useMessages()
+const instance = getCurrentInstance()!
+const formAnchor = ref<HTMLInputElement>()
+const initialColor = props.defaultValue ?? '#000000'
+let ownerForm: HTMLFormElement | null = null
 
 // Mirrors Slider.vue's own internalValue / Popover.vue's own internalOpen
 // pattern - an always-concrete local ref synced with an optional external
@@ -59,7 +66,7 @@ const messages = useMessages()
 // field, swatch picker - in sync: every one of them binds the exact same
 // ref, and every one of them already normalizes/re-emits a hex string on
 // its own, so no manual channel math is needed here.
-const internalColor = ref(props.modelValue ?? props.defaultValue ?? '#000000')
+const internalColor = ref(props.modelValue ?? initialColor)
 watch(() => props.modelValue, (value) => {
   if (value !== undefined)
     internalColor.value = value
@@ -70,13 +77,26 @@ function onUpdateColor(value: string) {
   emit('update:modelValue', value)
 }
 
+function resetColor(event: Event) {
+  queueMicrotask(() => {
+    if (event.defaultPrevented || Object.hasOwn(instance.vnode.props ?? {}, 'modelValue'))
+      return
+    internalColor.value = initialColor
+  })
+}
+
+onMounted(() => {
+  ownerForm = formAnchor.value?.form ?? null
+  ownerForm?.addEventListener('reset', resetColor)
+})
+onUnmounted(() => ownerForm?.removeEventListener('reset', resetColor))
+
 // Same reasoning as Popover.vue's own internalOpen - always a concrete
 // boolean, never left undefined. Needed here (unlike a plain Popover
 // consumer) so open state survives the Popover<->Modal presentation
 // swap below on a live resize - neither wrapper owns any state of its
 // own that the swap would otherwise lose, since none of the five color
 // primitives depend on either one's context.
-const instance = getCurrentInstance()!
 const localOpen = ref(props.defaultOpen ?? false)
 const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
 const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
@@ -186,4 +206,5 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
       </div>
     </template>
   </Modal>
+  <input ref="formAnchor" type="hidden" :name="name" :form="form" :value="internalColor">
 </template>
