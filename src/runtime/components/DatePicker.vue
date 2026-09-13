@@ -30,7 +30,7 @@ import {
   TimeFieldInput,
   TimeFieldRoot,
 } from 'reka-ui'
-import { computed, getCurrentInstance, ref, shallowRef, useId, watch } from 'vue'
+import { computed, getCurrentInstance, onMounted, onUnmounted, ref, shallowRef, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
@@ -73,6 +73,8 @@ export interface DatePickerProps {
   defaultOpen?: boolean
   /** A single DateValue, Reka's own `{ start?, end? }` DateRange shape when `range` is set, or a bare date-less Time when `timeOnly` is set - Vue props can't express a type that depends on a sibling prop's value, so this stays a plain union documented here rather than enforced by the type checker. */
   modelValue?: DateValue | DateRange | Time
+  /** Initial uncontrolled value and native form-reset target. */
+  defaultValue?: DateValue | DateRange | Time
   /** Switches to picking a start+end pair instead of one date - a real fork in which Reka primitive family renders (RangeCalendar/DateRangePicker vs Calendar/DatePicker), not just a different modelValue shape. */
   range?: boolean
   /** Drops the date entirely - just a time-of-day picker. modelValue becomes a bare `Time` (no date component at all, not a DateValue). A third top-level mode alongside `range`; every date-grid-specific prop below (minValue/maxValue/isDateUnavailable/isDateDisabled/numberOfMonths/pagedNavigation/weekStartsOn/weekdayFormat/fixedWeeks/view) is simply inert here. `granularity` still applies ('hour'/'minute' only - defaults to 'minute' for a dedicated time picker). */
@@ -140,15 +142,41 @@ export interface DatePickerEmits {
 }
 
 const field = useFormField()
+const instance = getCurrentInstance()!
+type DatePickerValue = DateValue | DateRange | Time | undefined
+const initialValue = props.defaultValue
+const localValue = shallowRef<DatePickerValue>(initialValue)
+const isModelControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue')
+const modelValue = computed<DatePickerValue>(() => isModelControlled() ? props.modelValue : localValue.value)
+function updateModelValue(value: DatePickerValue) {
+  if (!isModelControlled())
+    localValue.value = value
+  emit('update:modelValue', value)
+}
 const formName = computed(() => props.name ?? field?.name)
 const nativeFormValue = computed(() => {
-  const value = props.modelValue as DateValue | DateRange | Time | undefined
+  const value = modelValue.value
   if (!value)
     return ''
   if ('start' in value)
     return `${value.start?.toString() ?? ''} - ${value.end?.toString() ?? ''}`
   return value.toString()
 })
+const formAnchor = ref<HTMLInputElement>()
+let ownerForm: HTMLFormElement | null = null
+function resetDatePicker(event: Event) {
+  queueMicrotask(() => {
+    if (event.defaultPrevented || isModelControlled())
+      return
+    updateModelValue(initialValue)
+    onUpdateOpen(false)
+  })
+}
+onMounted(() => {
+  ownerForm = formAnchor.value?.form ?? null
+  ownerForm?.addEventListener('reset', resetDatePicker)
+})
+onUnmounted(() => ownerForm?.removeEventListener('reset', resetDatePicker))
 
 const datePickerId = computed(() => props.id ?? field?.id)
 // Hour/minute granularity only - neither SInputNumber nor SInput forward a
@@ -174,18 +202,18 @@ const effectiveNumberOfMonths = computed(() => props.numberOfMonths ?? (props.ra
 // vue-tsc doesn't narrow a bare union prop across a v-if/v-else split the
 // way TS narrows a local variable, so this does it explicitly instead of
 // scattering `as` casts through the template.
-const singleModelValue = computed(() => (props.range ? undefined : (props.modelValue as DateValue | undefined)))
+const singleModelValue = computed(() => (props.range ? undefined : (modelValue.value as DateValue | undefined)))
 // Left as genuine `undefined` (not defaulted to an empty {start,end} object)
 // when the consumer hasn't passed one - Reka's own useVModel only treats a
 // Root as uncontrolled when its modelValue prop is literally undefined; an
 // always-present object here would silently force controlled mode even for
 // a consumer using `range` with no v-model at all, and internal selection
 // would never visibly progress since nothing ever feeds the change back in.
-const rangeModelValue = computed(() => (props.range ? (props.modelValue as DateRange | undefined) : undefined))
-const hasValue = computed(() => props.range ? !!(props.modelValue as DateRange | undefined)?.start : !!props.modelValue)
+const rangeModelValue = computed(() => (props.range ? (modelValue.value as DateRange | undefined) : undefined))
+const hasValue = computed(() => props.range ? !!(modelValue.value as DateRange | undefined)?.start : !!modelValue.value)
 
 function clear() {
-  emit('update:modelValue', props.range ? { start: undefined, end: undefined } : undefined)
+  updateModelValue(props.range ? { start: undefined, end: undefined } : undefined)
 }
 
 // Month/year view drill-down - single-date mode only (see the plan's scope
@@ -265,7 +293,6 @@ const placeholder = shallowRef<DateValue>((() => {
 })())
 // All three rendering branches are mutually exclusive, so one public open
 // state can drive the date, range, and time-only roots consistently.
-const instance = getCurrentInstance()!
 const localOpen = ref(props.defaultOpen ?? false)
 const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
 const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
@@ -344,7 +371,7 @@ function isYearDisabled(year: number) {
 function selectMonth(date: DateValue) {
   placeholder.value = date
   if (props.granularity === 'month') {
-    emit('update:modelValue', normalizeForGranularity(date))
+    updateModelValue(normalizeForGranularity(date))
     if (props.closeOnSelect)
       onUpdateOpen(false)
     return
@@ -355,7 +382,7 @@ function selectYear(year: number) {
   const value = placeholder.value.set({ year })
   placeholder.value = value
   if (props.granularity === 'year') {
-    emit('update:modelValue', normalizeForGranularity(value))
+    updateModelValue(normalizeForGranularity(value))
     if (props.closeOnSelect)
       onUpdateOpen(false)
     return
@@ -391,12 +418,12 @@ const placeholderMinute = computed(() => ('minute' in placeholder.value ? placeh
 function setHour(hour24: number) {
   const value = ensureTimeCapable(placeholder.value).set({ hour: hour24 })
   placeholder.value = value
-  emit('update:modelValue', normalizeForGranularity(value))
+  updateModelValue(normalizeForGranularity(value))
 }
 function setMinute(minute: number) {
   const value = ensureTimeCapable(placeholder.value).set({ minute })
   placeholder.value = value
-  emit('update:modelValue', normalizeForGranularity(value))
+  updateModelValue(normalizeForGranularity(value))
 }
 
 // Time-only mode - a third top-level branch (see the template), not a
@@ -408,7 +435,7 @@ function setMinute(minute: number) {
 // which reads better as a dedicated time picker's own default than a bare
 // hour would.
 const timeOnlyGranularity = computed<'hour' | 'minute'>(() => (props.granularity === 'hour' ? 'hour' : 'minute'))
-const timeOnlyValue = computed(() => (props.timeOnly ? (props.modelValue as Time | undefined) : undefined))
+const timeOnlyValue = computed(() => (props.timeOnly ? (modelValue.value as Time | undefined) : undefined))
 // shallowRef, not ref - same reasoning as `placeholder` above (Time is
 // replaced wholesale, and a plain ref's type would strip its private fields).
 const timePlaceholder = shallowRef<Time>(timeOnlyValue.value ?? (() => {
@@ -436,12 +463,12 @@ function normalizeTimeOnly(value: Time) {
 function setTimeOnlyHour(hour24: number) {
   const value = timePlaceholder.value.set({ hour: hour24 })
   timePlaceholder.value = value
-  emit('update:modelValue', normalizeTimeOnly(value))
+  updateModelValue(normalizeTimeOnly(value))
 }
 function setTimeOnlyMinute(minute: number) {
   const value = timePlaceholder.value.set({ minute })
   timePlaceholder.value = value
-  emit('update:modelValue', normalizeTimeOnly(value))
+  updateModelValue(normalizeTimeOnly(value))
 }
 
 const timeOnlyFormatter = computed(() => new DateFormatter(effectiveLocale.value, props.format ?? (timeOnlyGranularity.value === 'hour' ? { hour: 'numeric' } : { timeStyle: 'short' })))
@@ -502,7 +529,7 @@ const defaultFormat = computed<Intl.DateTimeFormatOptions>(() => {
 const dateFormatter = computed(() => new DateFormatter(effectiveLocale.value, props.format ?? defaultFormat.value))
 const formattedValue = computed(() => {
   if (props.range) {
-    const range = props.modelValue as DateRange | undefined
+    const range = modelValue.value as DateRange | undefined
     if (!range?.start)
       return ''
     const startDate = range.start.toDate(getLocalTimeZone())
@@ -510,7 +537,7 @@ const formattedValue = computed(() => {
       ? dateFormatter.value.formatRange(startDate, range.end.toDate(getLocalTimeZone()))
       : dateFormatter.value.format(startDate)
   }
-  const value = props.modelValue as DateValue | undefined
+  const value = modelValue.value as DateValue | undefined
   return value ? dateFormatter.value.format(value.toDate(getLocalTimeZone())) : ''
 })
 
@@ -669,7 +696,7 @@ const buttonTriggerUi = computed(() => ({
     :data-selaras-color="fieldColor"
     v-bind="rootProps"
     @update:open="onUpdateOpen"
-    @update:model-value="(value) => emit('update:modelValue', value)"
+    @update:model-value="(value) => updateModelValue(value)"
   >
     <DateRangePickerAnchor as-child>
       <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
@@ -801,7 +828,7 @@ const buttonTriggerUi = computed(() => ({
           :granularity="timeOnlyGranularity"
           :disabled="disabled"
           :readonly="readonly"
-          @update:model-value="(value) => emit('update:modelValue', value ? normalizeTimeOnly(value as Time) : undefined)"
+          @update:model-value="(value) => updateModelValue(value ? normalizeTimeOnly(value as Time) : undefined)"
         >
           <template v-for="segment in segments" :key="segment.part">
             <TimeFieldInput as="span" :part="segment.part" v-bind="segmentProps">
@@ -924,7 +951,7 @@ const buttonTriggerUi = computed(() => ({
     :data-selaras-color="fieldColor"
     v-bind="rootProps"
     @update:open="onUpdateOpen"
-    @update:model-value="(value) => emit('update:modelValue', normalizeForGranularity(value as DateValue | undefined))"
+    @update:model-value="(value) => updateModelValue(normalizeForGranularity(value as DateValue | undefined))"
   >
     <DatePickerAnchor as-child>
       <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
@@ -1035,5 +1062,5 @@ const buttonTriggerUi = computed(() => ({
       </template>
     </Modal>
   </DatePickerRoot>
-  <input type="hidden" :name="formName" :form="form" :value="nativeFormValue">
+  <input ref="formAnchor" type="hidden" :name="formName" :form="form" :value="nativeFormValue">
 </template>

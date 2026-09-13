@@ -412,6 +412,7 @@ every slot and variant - here's `DatePicker`'s own theme file:
 | `open` | `boolean` | - |
 | `defaultOpen` | `boolean` | `false` |
 | `modelValue` | `DateValue \| DateRange \| Time` (`DateRange` when `range` is set, `Time` when `timeOnly` is set) | - |
+| `defaultValue` | `DateValue \| DateRange \| Time` | - |
 | `range` | `boolean` | `false` |
 | `timeOnly` | `boolean` | `false` |
 | `minValue` | `DateValue` | - |

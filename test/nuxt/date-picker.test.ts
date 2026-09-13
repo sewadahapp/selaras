@@ -57,6 +57,25 @@ describe('datePicker', () => {
     expect(new FormData(form).get('date')).toBe('2024-01-15')
   })
 
+  it('restores an uncontrolled default value on native form reset', async () => {
+    wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(DatePicker, {
+          name: 'date',
+          defaultValue: new CalendarDate(2024, 1, 15),
+          clearable: true,
+        }),
+      ]),
+    }))
+    const form = wrapper.find('form').element
+    expect(new FormData(form).get('date')).toBe('2024-01-15')
+    await wrapper.find('[aria-label="Clear"]').trigger('click')
+    expect(new FormData(form).get('date')).toBe('')
+    form.reset()
+    await new Promise(resolve => setTimeout(resolve, 0))
+    expect(new FormData(form).get('date')).toBe('2024-01-15')
+  })
+
   it('supports defaultOpen and lets a controlled parent veto closing', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { defaultOpen: true } })
     const uncontrolledTrigger = wrapper.find('button[aria-label="Date picker"]')
