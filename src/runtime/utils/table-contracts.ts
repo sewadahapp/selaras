@@ -8,6 +8,7 @@ import type {
   TableSortingState,
 } from '../composables/use-table'
 import type { TableThemeSlots } from '../theme/table'
+import type { ColorRole } from './color-registry'
 import type { UiProp } from './ui'
 
 export interface TableProps<TData extends RowData = RowData> {
@@ -22,6 +23,8 @@ export interface TableProps<TData extends RowData = RowData> {
   globalFilter?: string
   pageIndex?: number
   size?: 'sm' | 'md' | 'lg'
+  /** The sortable-header focus ring and loading indicator accent. @default 'primary' */
+  color?: ColorRole
   gridlines?: boolean
   striped?: boolean
   expandable?: boolean

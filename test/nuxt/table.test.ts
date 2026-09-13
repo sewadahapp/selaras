@@ -10,6 +10,20 @@ function findButton(wrapper: Awaited<ReturnType<typeof mountSuspended>>, text: s
 }
 
 describe('table', () => {
+  it('binds a custom semantic role to its sorting and loading affordances', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [],
+        columns: [{ accessorKey: 'name', header: 'Name', enableSorting: true }],
+        color: 'premium' as any,
+        loading: true,
+      },
+    })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('th').classes()).toContain('focus-visible:outline-[var(--_selaras-color-focus)]')
+  })
+
   it('renders one row per data item, one cell per column', async () => {
     const wrapper = await mountSuspended(Table, {
       props: {

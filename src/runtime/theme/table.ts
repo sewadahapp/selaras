@@ -8,7 +8,7 @@ export const tableTheme = tv({
     thead: 'bg-[var(--ui-bg-elevated)]',
     tr: 'border-b border-[var(--ui-border)] last:border-b-0',
     th: 'text-start font-medium text-[var(--ui-text-muted)] whitespace-nowrap data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--ui-bg-elevated)]',
-    thSortable: 'cursor-pointer select-none hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--ui-primary)]',
+    thSortable: 'cursor-pointer select-none hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)]',
     sortIcon: 'ms-1 inline-block size-3.5 align-text-bottom text-[var(--ui-text-muted)]',
     td: 'text-[var(--ui-text)] data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--ui-bg)]',
     tfoot: 'bg-[var(--ui-bg-elevated)] font-medium',
@@ -18,7 +18,7 @@ export const tableTheme = tv({
     paginationInfo: 'text-sm text-[var(--ui-text-muted)]',
     paginationButtons: 'flex items-center gap-2',
     loadingOverlay: 'absolute inset-0 z-10 flex items-center justify-center bg-[var(--ui-bg)]/60',
-    loadingIcon: 'size-6 animate-spin text-[var(--ui-primary)]',
+    loadingIcon: 'size-6 animate-spin text-[var(--_selaras-color-text)]',
     expandButton: 'flex size-5 shrink-0 items-center justify-center text-[var(--ui-text-muted)]',
     // Points toward the reading-start direction while collapsed - 0deg
     // (right) under LTR, 180deg (left) under RTL - then always rotates to
@@ -35,6 +35,15 @@ export const tableTheme = tv({
     columnToggleItem: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] px-2 py-1.5 text-sm text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)]',
   },
   variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
     size: {
       sm: { th: 'px-2 py-1.5 text-xs', td: 'px-2 py-1.5 text-xs' },
       md: { th: 'px-3 py-2 text-sm', td: 'px-3 py-2 text-sm' },
@@ -55,6 +64,7 @@ export const tableTheme = tv({
     },
   },
   defaultVariants: {
+    color: 'primary',
     size: 'md',
   },
 })

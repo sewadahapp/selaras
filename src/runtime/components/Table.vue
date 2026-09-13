@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="TData extends RowData = RowData">
 import type { RowData } from '@tanstack/vue-table'
+import type { VariantProps } from 'tailwind-variants'
 import type { TableColumnDef } from '../composables/use-table'
 import type { TableEmits, TableProps, TableSlots } from '../utils/table-contracts'
 import { FlexRender } from '@tanstack/vue-table'
@@ -9,6 +10,7 @@ import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { useTable } from '../composables/use-table'
 import { tableTheme } from '../theme/table'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { collectColumnPinning, convertChildrenToColumns } from '../utils/table-columns'
 import { exportTableToCsv } from '../utils/table-export'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
@@ -17,6 +19,8 @@ import Checkbox from './Checkbox.vue'
 import Icon from './Icon.vue'
 import Input from './Input.vue'
 import Pagination from './Pagination.vue'
+
+type TableVariants = VariantProps<typeof tableTheme>
 
 defineOptions({ inheritAttrs: false })
 
@@ -30,7 +34,14 @@ const slots = defineSlots<TableSlots<TData>>()
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('table', tableTheme)
-const ui = computed(() => theme.value({ size: props.size, gridlines: props.gridlines, striped: props.striped, scrollable: !!props.scrollHeight }))
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({
+  size: props.size,
+  color: effectiveColor.value as TableVariants['color'],
+  gridlines: props.gridlines,
+  striped: props.striped,
+  scrollable: !!props.scrollHeight,
+}))
 
 const selectColumn = {
   id: '__select__',
@@ -237,7 +248,7 @@ defineExpose({
 </script>
 
 <template>
-  <div v-bind="rootProps">
+  <div :data-selaras-color="effectiveColor" v-bind="rootProps">
     <div v-if="columnToggle" :class="applyClassPrefix('mb-2 flex justify-end')">
       <div data-column-toggle v-bind="columnToggleProps">
         <Button variant="outline" size="sm" :icon="icons.columns" @click="showColumnTogglePanel = !showColumnTogglePanel">
