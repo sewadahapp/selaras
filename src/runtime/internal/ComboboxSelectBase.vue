@@ -31,7 +31,7 @@ import { useIcons } from '../composables/use-icons'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeScope } from '../utils/ui'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
@@ -288,8 +288,7 @@ const theme = useComponentTheme('select', selectTheme)
 const themeScope = useThemeScope()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SelectVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
-const colorRoleMarker = computed(() => isBuiltinColorRole(effectiveColor.value) ? undefined : effectiveColor.value)
+const colorRoleMarker = computed(() => effectiveColor.value)
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: selectInvalid.value }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -374,7 +373,6 @@ const bodyProps = computed(() => ({
     :reset-search-term-on-blur="resetSearchTermOnBlur"
     :reset-search-term-on-select="resetSearchTermOnSelect"
     :data-selaras-color="colorRoleMarker"
-    :style="colorRoleStyle"
     v-bind="rootProps"
     @update:open="internalOpen = $event"
     @update:model-value="(value) => emit('update:modelValue', value as string | string[] | undefined)"
@@ -611,7 +609,7 @@ const bodyProps = computed(() => ({
     </ComboboxAnchor>
 
     <ComboboxPortal v-if="!showMobileModal">
-      <ComboboxContent position="popper" :side-offset="4" :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" :style="colorRoleStyle" v-bind="contentProps">
+      <ComboboxContent position="popper" :side-offset="4" :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="contentProps">
         <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
           <template #header>
             <slot name="header" />
@@ -680,7 +678,7 @@ const bodyProps = computed(() => ({
       @update:open="internalOpen = $event"
     >
       <template #content>
-        <ComboboxContent :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" :style="colorRoleStyle" v-bind="mobileContentProps">
+        <ComboboxContent :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps">
           <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
             <template #header>
               <slot name="header" />

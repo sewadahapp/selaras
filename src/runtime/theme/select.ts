@@ -20,13 +20,13 @@ export const selectTheme = tv({
     // matches the chips' own primary too, not text-muted - muted-on-
     // primary-soft measures 4.46:1, just under AA; primary-on-primary-
     // soft (the same pairing Chip's own soft variant uses) clears 6.5:1.
-    chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--ui-primary-soft)] px-2 py-0.5 text-xs text-[var(--ui-primary)]',
+    chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--_selaras-color-subtle)] px-2 py-0.5 text-xs text-[var(--_selaras-color-text)]',
     icon: 'shrink-0 text-[var(--ui-text-muted)]',
     // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
     // and touch target come from Button's own theme; only rounded-full
     // (this dismiss-glyph family reads better circular) stays here.
     clear: 'shrink-0 rounded-full',
-    dropdown: 'shrink-0 rounded-[var(--ui-radius-sm)] p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    dropdown: 'shrink-0 rounded-[var(--ui-radius-sm)] p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     searchWrapper: 'flex items-center gap-2 border-b border-[var(--ui-border)] px-2',
     searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--ui-text)] outline-none placeholder:text-[var(--ui-text-muted)]',
     content: 'z-[var(--ui-z-dropdown)] max-h-72 min-w-[var(--reka-combobox-trigger-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
@@ -40,7 +40,7 @@ export const selectTheme = tv({
     viewport: 'max-h-72 overflow-y-auto p-1',
     group: 'px-2 pt-2 pb-1 text-xs font-medium text-[var(--ui-text-muted)]',
     item: 'relative flex items-center gap-2 rounded-[var(--ui-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--ui-text)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
-    itemIndicator: 'absolute end-2 flex items-center text-[var(--ui-primary)]',
+    itemIndicator: 'absolute end-2 flex items-center text-[var(--_selaras-color-fill)]',
     empty: 'px-2 py-6 text-center text-sm text-[var(--ui-text-muted)]',
     arrow: 'fill-[var(--ui-bg)] stroke-[var(--ui-border)] stroke-1',
   },
@@ -53,19 +53,19 @@ export const selectTheme = tv({
     // Focus-ring color only - the resting ring stays --ui-border regardless
     // of `color`, matching Input's own scope (see input.ts).
     color: {
-      primary: { trigger: 'focus:ring-[var(--ui-primary)] focus-within:ring-[var(--ui-primary)] data-[state=open]:ring-[var(--ui-primary)]' },
+      primary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
       neutral: { trigger: 'focus:ring-[var(--ui-bg-inverted)] focus-within:ring-[var(--ui-bg-inverted)] data-[state=open]:ring-[var(--ui-bg-inverted)]' },
-      secondary: { trigger: 'focus:ring-[var(--ui-secondary)] focus-within:ring-[var(--ui-secondary)] data-[state=open]:ring-[var(--ui-secondary)]' },
-      success: { trigger: 'focus:ring-[var(--ui-success)] focus-within:ring-[var(--ui-success)] data-[state=open]:ring-[var(--ui-success)]' },
-      danger: { trigger: 'focus:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)] data-[state=open]:ring-[var(--ui-danger)]' },
-      info: { trigger: 'focus:ring-[var(--ui-info)] focus-within:ring-[var(--ui-info)] data-[state=open]:ring-[var(--ui-info)]' },
-      warning: { trigger: 'focus:ring-[var(--ui-warning)] focus-within:ring-[var(--ui-warning)] data-[state=open]:ring-[var(--ui-warning)]' },
+      secondary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      success: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      danger: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      info: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      warning: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
     },
     // Declared last (after color) so tailwind-merge lets its own ring
     // overrides win over color's - see input.ts for why declaration order
     // (not runtime call order) is what decides this.
     invalid: {
-      true: { trigger: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)] data-[state=open]:ring-[var(--ui-danger)]' },
+      true: { trigger: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus:ring-[var(--_selaras-color-fill)] focus-within:ring-[var(--_selaras-color-fill)] data-[state=open]:ring-[var(--_selaras-color-fill)]' },
     },
   },
   defaultVariants: {
