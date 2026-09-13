@@ -4,12 +4,12 @@ import type { PinInputThemeSlots } from '../theme/pin-input'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { PinInputInput, PinInputRoot } from 'reka-ui'
-import { computed, useAttrs } from 'vue'
+import { computed, mergeProps, useAttrs } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { pinInputTheme } from '../theme/pin-input'
 import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 
 type PinInputVariants = VariantProps<typeof pinInputTheme>
 
@@ -66,8 +66,26 @@ const ui = computed(() => theme.value({
   invalid: pinInputInvalid.value,
 }))
 
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
-const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
+function isNativeInputAttr(key: string) {
+  return [
+    'autocomplete',
+    'autocapitalize',
+    'autocorrect',
+    'form',
+    'inputmode',
+    'list',
+    'maxlength',
+    'minlength',
+    'pattern',
+    'readonly',
+    'required',
+    'spellcheck',
+  ].includes(key) || /^on(?:BeforeInput|Change|CompositionEnd|CompositionStart|CompositionUpdate|Focus|Input|KeyDown|KeyUp|Paste|Select|Blur)$/.test(key)
+}
+
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputAttr })
+const nativeInputAttrs = useFallthroughAttrs(isNativeInputAttr)
+const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.ui?.input), nativeInputAttrs.value))
 </script>
 
 <template>

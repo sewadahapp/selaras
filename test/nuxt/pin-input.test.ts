@@ -124,6 +124,22 @@ describe('pinInput', () => {
     expect(inputs.every((input: { attributes: (name: string) => string | undefined }) => input.attributes('aria-describedby') === 'pin-help')).toBe(true)
   })
 
+  it('forwards native input attributes to every segment', async () => {
+    wrapper = await mountSuspended(PinInput, {
+      attrs: {
+        autocomplete: 'one-time-code',
+        inputmode: 'numeric',
+        readonly: true,
+      },
+    })
+    const inputs = wrapper.findAll('input[aria-label^="pin input"]')
+
+    expect(inputs.every((input: { attributes: (name: string) => string | undefined }) => input.attributes('autocomplete') === 'one-time-code')).toBe(true)
+    expect(inputs.every((input: { attributes: (name: string) => string | undefined }) => input.attributes('inputmode') === 'numeric')).toBe(true)
+    expect(inputs.every((input: { attributes: (name: string) => string | undefined }) => input.attributes('readonly') !== undefined)).toBe(true)
+    expect(wrapper.find('div').attributes('readonly')).toBeUndefined()
+  })
+
   it('uses the semantic fill color for invalid boxes', async () => {
     wrapper = await mountSuspended(PinInput, { props: { invalid: true } })
     expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-fill)]')
