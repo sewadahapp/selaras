@@ -7,7 +7,6 @@ import { StepperDescription, StepperIndicator, StepperItem, StepperRoot, Stepper
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { stepperTheme } from '../theme/stepper'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -63,12 +62,10 @@ const icons = useIcons()
 
 const theme = useComponentTheme('stepper', stepperTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as StepperVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   orientation: props.orientation,
   size: props.size,
-  color: recipeColor.value,
+  color: effectiveColor.value as StepperVariants['color'],
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -89,8 +86,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
     :default-value="defaultValue"
     :linear="linear"
     :orientation="orientation"
-    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
-    :style="colorRoleStyle"
+    :data-selaras-color="effectiveColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as number)"
   >

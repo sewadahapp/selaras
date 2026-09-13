@@ -42,6 +42,7 @@ function updateNestedTokens() {
     <SToggleGroup id="toggle-group-invalid" :items="['One', 'Two']" default-value="One" color="enterprise" />
     <SChip id="chip-invalid" label="Invalid chip" color="enterprise" variant="solid" />
     <SProgress id="progress-invalid" :model-value="50" color="enterprise" />
+    <SStepper id="stepper-invalid" :items="[{ title: 'One' }, { title: 'Two' }]" :default-value="2" color="enterprise" />
     <SButton id="enterprise-button" color="enterprise">
       Enterprise
     </SButton>
@@ -211,6 +212,7 @@ function updateNestedTokens() {
         <SToggleGroup :id="`toggle-group-${role}`" :items="['One', 'Two']" default-value="One" :color="role" />
         <SChip v-for="variant in ['solid', 'soft', 'outline']" :id="`chip-${role}-${variant}`" :key="`chip-${variant}`" :label="variant" :color="role" :variant="variant" />
         <SProgress :id="`progress-${role}`" :model-value="50" :color="role" />
+        <SStepper :id="`stepper-${role}`" :items="[{ title: 'One' }, { title: 'Two' }]" :default-value="2" :color="role" />
         <SRadioGroup :id="`radio-${role}`" v-model="radioValues[role]" :items="['one', 'two']" :color="role" variant="card" />
         <SBadge
           v-for="variant in ['solid', 'soft', 'outline']"

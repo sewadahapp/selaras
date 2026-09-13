@@ -10,7 +10,7 @@ describe('stepper', () => {
     })
 
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style')).toBeUndefined()
   })
 
   it('marks step 1 active by default when neither modelValue nor defaultValue is given', async () => {

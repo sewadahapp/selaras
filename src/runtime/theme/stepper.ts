@@ -16,8 +16,8 @@ export const stepperTheme = tv({
     // flow entirely (see its own comment) rather than laid out as a flex
     // sibling here, precisely so it can't push the indicator off-center.
     connector: 'relative flex items-center',
-    trigger: 'shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ui-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ui-bg)] disabled:opacity-50 disabled:pointer-events-none',
-    indicator: 'relative z-10 flex shrink-0 items-center justify-center rounded-full bg-[var(--ui-bg)] font-medium text-[var(--ui-text-muted)] ring-2 ring-[var(--ui-border)] transition-colors',
+    trigger: 'shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ui-bg)] disabled:opacity-50 disabled:pointer-events-none',
+    indicator: 'relative z-10 flex shrink-0 items-center justify-center rounded-full bg-[var(--ui-bg)] font-medium text-[var(--ui-text-muted)] ring-2 ring-[var(--ui-border)] transition-colors data-[state=active]:ring-[var(--_selaras-color-focus)] data-[state=active]:text-[var(--_selaras-color-text)] data-[state=completed]:bg-[var(--_selaras-color-fill)] data-[state=completed]:ring-[var(--_selaras-color-fill)] data-[state=completed]:text-[var(--_selaras-color-on-fill)]',
     icon: 'shrink-0',
     labels: 'flex flex-col',
     title: 'text-sm font-medium text-[var(--ui-text)]',
@@ -25,7 +25,7 @@ export const stepperTheme = tv({
     // bg-border by default, switching to the color's own solid shade via
     // data-[state=completed] (set by Reka from the *preceding* item's own
     // state) - that's what makes the line "fill in" as steps complete.
-    separator: 'absolute bg-[var(--ui-border)] transition-colors',
+    separator: 'absolute bg-[var(--ui-border)] transition-colors data-[state=completed]:bg-[var(--_selaras-color-fill)]',
   },
   variants: {
     orientation: {
@@ -69,34 +69,13 @@ export const stepperTheme = tv({
       lg: { indicator: 'size-10 text-base', title: 'text-base', description: 'text-sm' },
     },
     color: {
-      primary: {
-        indicator: 'data-[state=active]:ring-[var(--ui-primary)] data-[state=active]:text-[var(--ui-primary)] data-[state=completed]:bg-[var(--ui-primary)] data-[state=completed]:ring-[var(--ui-primary)] data-[state=completed]:text-[var(--ui-primary-foreground)]',
-        separator: 'data-[state=completed]:bg-[var(--ui-primary)]',
-      },
-      neutral: {
-        indicator: 'data-[state=active]:ring-[var(--ui-bg-inverted)] data-[state=active]:text-[var(--ui-text)] data-[state=completed]:bg-[var(--ui-bg-inverted)] data-[state=completed]:ring-[var(--ui-bg-inverted)] data-[state=completed]:text-[var(--ui-text-inverted)]',
-        separator: 'data-[state=completed]:bg-[var(--ui-bg-inverted)]',
-      },
-      secondary: {
-        indicator: 'data-[state=active]:ring-[var(--ui-secondary)] data-[state=active]:text-[var(--ui-secondary)] data-[state=completed]:bg-[var(--ui-secondary)] data-[state=completed]:ring-[var(--ui-secondary)] data-[state=completed]:text-[var(--ui-secondary-foreground)]',
-        separator: 'data-[state=completed]:bg-[var(--ui-secondary)]',
-      },
-      success: {
-        indicator: 'data-[state=active]:ring-[var(--ui-success)] data-[state=active]:text-[var(--ui-success)] data-[state=completed]:bg-[var(--ui-success)] data-[state=completed]:ring-[var(--ui-success)] data-[state=completed]:text-[var(--ui-success-foreground)]',
-        separator: 'data-[state=completed]:bg-[var(--ui-success)]',
-      },
-      danger: {
-        indicator: 'data-[state=active]:ring-[var(--ui-danger)] data-[state=active]:text-[var(--ui-danger)] data-[state=completed]:bg-[var(--ui-danger)] data-[state=completed]:ring-[var(--ui-danger)] data-[state=completed]:text-[var(--ui-danger-foreground)]',
-        separator: 'data-[state=completed]:bg-[var(--ui-danger)]',
-      },
-      info: {
-        indicator: 'data-[state=active]:ring-[var(--ui-info)] data-[state=active]:text-[var(--ui-info)] data-[state=completed]:bg-[var(--ui-info)] data-[state=completed]:ring-[var(--ui-info)] data-[state=completed]:text-[var(--ui-info-foreground)]',
-        separator: 'data-[state=completed]:bg-[var(--ui-info)]',
-      },
-      warning: {
-        indicator: 'data-[state=active]:ring-[var(--ui-warning)] data-[state=active]:text-[var(--ui-warning)] data-[state=completed]:bg-[var(--ui-warning)] data-[state=completed]:ring-[var(--ui-warning)] data-[state=completed]:text-[var(--ui-warning-foreground)]',
-        separator: 'data-[state=completed]:bg-[var(--ui-warning)]',
-      },
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
   },
   defaultVariants: {
