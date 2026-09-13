@@ -4,7 +4,7 @@ import type { PinInputThemeSlots } from '../theme/pin-input'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { PinInputInput, PinInputRoot } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, useAttrs } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { pinInputTheme } from '../theme/pin-input'
 import { isBuiltinColorRole } from '../utils/color-registry'
@@ -50,11 +50,12 @@ export interface PinInputEmits {
 }
 
 const field = useFormField()
+const attrs = useAttrs()
 
 const pinInputId = computed(() => props.id ?? field?.id)
 const pinInputInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
-const describedBy = computed(() => field?.describedBy.value)
+const describedBy = computed(() => attrs['aria-describedby'] ?? field?.describedBy.value)
 
 const theme = useComponentTheme('pinInput', pinInputTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
@@ -92,6 +93,8 @@ const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
       v-for="i in (length ?? 5)"
       :key="i"
       :index="i - 1"
+      :aria-invalid="pinInputInvalid || undefined"
+      :aria-describedby="describedBy"
       v-bind="inputProps"
     />
   </PinInputRoot>

@@ -112,6 +112,18 @@ describe('pinInput', () => {
     expect(wrapper.find('input[aria-label^="pin input"]').attributes('disabled')).toBeDefined()
   })
 
+  it('exposes validation metadata on every focusable segment', async () => {
+    wrapper = await mountSuspended(PinInput, {
+      attrs: { 'aria-describedby': 'pin-help' },
+      props: { invalid: true },
+    })
+    const inputs = wrapper.findAll('input[aria-label^="pin input"]')
+
+    expect(inputs).toHaveLength(5)
+    expect(inputs.every((input: { attributes: (name: string) => string | undefined }) => input.attributes('aria-invalid') === 'true')).toBe(true)
+    expect(inputs.every((input: { attributes: (name: string) => string | undefined }) => input.attributes('aria-describedby') === 'pin-help')).toBe(true)
+  })
+
   it('uses the semantic fill color for invalid boxes', async () => {
     wrapper = await mountSuspended(PinInput, { props: { invalid: true } })
     expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-fill)]')
