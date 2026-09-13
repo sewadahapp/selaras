@@ -2,6 +2,7 @@
 import { CalendarDate } from '@internationalized/date'
 import { ref } from 'vue'
 import AutocompleteGenericForm from '../../nuxt/fixtures/AutocompleteGenericForm.vue'
+import ComboboxModeForm from '../../nuxt/fixtures/ComboboxModeForm.vue'
 import VeeValidateForm from '../../nuxt/fixtures/VeeValidateForm.vue'
 
 const route = useRoute()
@@ -242,6 +243,8 @@ function updateNestedTokens() {
     </STheme>
   </div>
   <AutocompleteGenericForm />
+  <ComboboxModeForm kind="select" />
+  <ComboboxModeForm kind="autocomplete" />
   <form id="identity-form">
     <SSelect
       name="identity" multiple display-mode="chip"

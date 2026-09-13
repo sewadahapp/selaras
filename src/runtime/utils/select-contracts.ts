@@ -43,8 +43,9 @@ export interface SelectProps<Entry extends object = { value: SelectValue, label?
   /** Initial uncontrolled open state. */
   defaultOpen?: boolean
   modelValue?: NoInfer<SelectModel<SelectIdentity<Entry, Key>, Multiple>>
-  /** Initial uncontrolled selection and native form reset target. */
+  /** Mount-captured selection/reset target, adapted to the current multiple mode. */
   defaultValue?: NoInfer<SelectModel<SelectIdentity<Entry, Key>, Multiple>>
+  /** Controlled parents must update selection shape and mode together. */
   multiple?: Multiple
   searchable?: boolean
   virtualize?: boolean | { estimateSize?: number, overscan?: number }

@@ -79,6 +79,26 @@ still opens the popover like the rest of the trigger.
 <SSelect v-model="fruits" multiple display-mode="chip" :max-chips="2" :items="fruitItems" />
 ```
 
+### Changing selection mode
+
+For an uncontrolled Select, changing `multiple` converts its local selection
+once: single `value` becomes `[value]`, single `undefined` becomes `[]`, a
+multiple selection becomes its first value, and an empty array becomes
+`undefined`. Switching to single mode drops later active selections. That
+conversion emits one `update:modelValue` event.
+
+`defaultValue` is captured at mount and is not retargeted by later prop
+changes. A native reset projects that captured default into the current mode:
+with `defaultValue: [0, 1]`, reset in single mode yields `0`; after changing
+back to multiple mode, reset yields `[0, 1]` again.
+
+A controlled parent must change `modelValue` and `multiple` in the same render:
+an array when `multiple` is true, and a scalar or `undefined` when it is false.
+`undefined` is allowed as the empty multiple value. A scalar value in
+multiple mode, or any array in single mode, throws a descriptive error. Select
+does not convert controlled values or emit an update solely because the mode
+changed.
+
 ### Checkbox selection
 
 There's no separate "checkbox mode" prop - the `item` slot already gives you

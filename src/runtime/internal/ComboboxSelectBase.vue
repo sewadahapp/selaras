@@ -54,9 +54,38 @@ const emit = defineEmits<ComboboxSelectBaseEmits>()
 
 const instance = getCurrentInstance()!
 const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue] : props.defaultValue
-const localValue = ref(initialValue ?? (props.multiple ? [] : undefined))
 const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
-const selection = computed(() => isControlled() ? props.modelValue : localValue.value)
+type ComboboxSelection = string | number | (string | number)[] | undefined
+
+function selectionForMode(value: ComboboxSelection, multiple: boolean): ComboboxSelection {
+  if (multiple) {
+    if (value === undefined)
+      return []
+    return Array.isArray(value) ? [...value] : [value]
+  }
+  return Array.isArray(value) ? value[0] : value
+}
+
+function assertControlledSelectionShape(value: ComboboxSelection, multiple: boolean) {
+  // An explicitly supplied `undefined` is the controlled empty selection in
+  // either mode. Every non-empty controlled value must match the active mode:
+  // Reka otherwise drops a scalar while adding in multiple mode, or silently
+  // projects an array to a scalar in single mode.
+  if (value === undefined)
+    return
+  if (multiple && !Array.isArray(value))
+    throw new TypeError('[selaras] A controlled Select or Autocomplete with multiple=true requires modelValue to be an array.')
+  if (!multiple && Array.isArray(value))
+    throw new TypeError('[selaras] A controlled Select or Autocomplete with multiple=false requires modelValue to be a scalar or undefined.')
+}
+
+const localValue = ref<ComboboxSelection>(selectionForMode(initialValue, !!props.multiple))
+const selection = computed(() => {
+  const value = isControlled() ? props.modelValue : localValue.value
+  if (isControlled())
+    assertControlledSelectionShape(value, !!props.multiple)
+  return value
+})
 // Reka treats undefined as uncontrolled, even when the prop is supplied. Keep
 // its internal selection controlled by Selaras so rejected proposals cannot
 // become selected ARIA state. Null is only the internal single-empty sentinel.
@@ -66,6 +95,23 @@ function updateSelection(event: 'update:modelValue', value: string | number | (s
     localValue.value = value
   emit(event, value)
 }
+
+// Capture the editable Autocomplete input itself, rather than its wrapper:
+// switching multiple changes ComboboxInput into TagsInputInput and replaces
+// that input node. Reka exposes the rendered element through `$el` here.
+const editableInput = ref<HTMLInputElement>()
+const comboboxRootKey = ref(0)
+function setEditableInput(element: unknown) {
+  const candidate = typeof HTMLInputElement !== 'undefined' && element instanceof HTMLInputElement
+    ? element
+    : (element as { $el?: unknown } | null)?.$el
+  editableInput.value = typeof HTMLInputElement !== 'undefined' && candidate instanceof HTMLInputElement ? candidate : undefined
+}
+
+// Fail during setup for an invalid initial controlled contract, before the
+// value reaches Reka's ListboxRoot.
+if (isControlled())
+  assertControlledSelectionShape(props.modelValue, !!props.multiple)
 
 const formAnchor = ref<HTMLInputElement>()
 let ownerForm: HTMLFormElement | null = null
@@ -230,9 +276,14 @@ function onTriggerKeydown(event: KeyboardEvent) {
 // Child setup emissions cannot update props already passed during SSR. Seed
 // the selected label here so the first server render agrees with hydration.
 const internalSearchText = ref(props.searchTerm ?? (props.creatable && !props.multiple && props.resetSearchTermOnSelect ? selectedOptions.value[0]?.label ?? '' : ''))
+// Reka synchronizes search text from its root selection. During mode changes,
+// preserve the chosen query/display text through that synchronization flush.
+const modeSearchLock = ref(false)
 const searchText = computed({
   get: () => props.searchTerm ?? internalSearchText.value,
   set: (value: string) => {
+    if (modeSearchLock.value)
+      return
     internalSearchText.value = value
     emit('update:searchTerm', value)
   },
@@ -308,6 +359,92 @@ function displayValue(value: unknown) {
     return ''
   return resolveOption(value as string | number).label
 }
+
+function singleSelectionLabel(value: ComboboxSelection) {
+  return value === undefined || Array.isArray(value) ? '' : resolveOption(value).label
+}
+
+// `multiple` is a mode, not a lossy display preference. For uncontrolled
+// state, carry the existing selection across modes and make that one state
+// transition observable. For controlled state, mode and modelValue are an
+// atomic parent contract; the shape assertion above rejects an intermediate or
+// stale value rather than manufacturing a value the parent did not provide.
+watch(
+  [() => !!props.multiple, selection],
+  ([multiple, currentValue], [previousMultiple, previousValue]) => {
+    if (multiple === previousMultiple)
+      return
+
+    const wasEditableFocused = props.creatable
+      && typeof document !== 'undefined'
+      && document.activeElement === editableInput.value
+    const abortingComposition = !!props.creatable && isSearchComposing.value
+    const previouslyIdle = props.creatable && props.searchTerm === undefined
+      && searchText.value === (previousMultiple || !props.resetSearchTermOnSelect ? '' : singleSelectionLabel(previousValue))
+    const savedSearchText = searchText.value
+
+    let nextValue = currentValue
+    if (isControlled()) {
+      assertControlledSelectionShape(currentValue, multiple)
+    }
+    else {
+      nextValue = selectionForMode(currentValue, multiple)
+      updateSelection('update:modelValue', nextValue)
+    }
+    selectedChipValue.value = undefined
+    // The replaced input might never dispatch compositionend. We do not carry
+    // an in-progress native composition across mode changes, but must allow a
+    // later ordinary Enter to work in the replacement input.
+    if (props.creatable)
+      isSearchComposing.value = false
+
+    // Reka's root also retains IME composition state. Rebuild it only for an
+    // aborted composition so the replacement input can accept ordinary keys;
+    // do not claim to continue a native composition across different inputs.
+    if (abortingComposition) {
+      searchText.value = ''
+      updateOpen(false)
+      comboboxRootKey.value++
+    }
+
+    // A label is an idle single-value display, while multiple mode displays
+    // its selection in chips. Keep real queries (and a parent-owned query)
+    // across the input replacement instead of mistaking them for display text.
+    const nextSearchText = abortingComposition
+      ? ''
+      : previouslyIdle
+        ? (multiple || !props.resetSearchTermOnSelect ? '' : singleSelectionLabel(nextValue))
+        : savedSearchText
+    if (props.creatable || props.searchable) {
+      modeSearchLock.value = true
+      if (props.searchTerm === undefined)
+        internalSearchText.value = nextSearchText
+    }
+
+    const priorInput = editableInput.value
+    nextTick(() => {
+      if (props.creatable || props.searchable) {
+        // Win over the newly mounted Reka input's selection-display sync, then
+        // reopen ordinary user input on the following interaction.
+        if (props.searchTerm === undefined)
+          internalSearchText.value = nextSearchText
+        nextTick(() => {
+          modeSearchLock.value = false
+        })
+      }
+      if (!wasEditableFocused)
+        return
+      if (typeof document === 'undefined')
+        return
+      // Do not steal focus if another caller moved it while Vue replaced the
+      // input. A detached old input normally leaves focus on document.body.
+      if (document.activeElement !== document.body && document.activeElement !== priorInput)
+        return
+      editableInput.value?.focus()
+    })
+  },
+  { flush: 'pre' },
+)
 
 const virtualizeConfig = computed(() => {
   if (!props.virtualize)
@@ -425,8 +562,8 @@ function resetSelection(event: Event) {
   queueMicrotask(() => {
     if (event.defaultPrevented)
       return
-    setValue(Array.isArray(initialValue) ? [...initialValue] : initialValue ?? (props.multiple ? [] : undefined))
-    searchText.value = ''
+    setValue(selectionForMode(initialValue, !!props.multiple))
+    searchText.value = props.creatable && !props.multiple && props.resetSearchTermOnSelect ? singleSelectionLabel(selection.value) : ''
     selectedChipValue.value = undefined
     updateOpen(false)
   })
@@ -471,6 +608,7 @@ const bodyProps = computed(() => ({
 
 <template>
   <ComboboxRoot
+    :key="comboboxRootKey"
     :open="open"
     :model-value="rekaSelection"
     :multiple="multiple"
@@ -551,6 +689,7 @@ const bodyProps = computed(() => ({
           <ComboboxInput v-model="searchText" as-child>
             <TagsInputInput
               :id="selectId"
+              :ref="setEditableInput"
               :display-value="displayValue"
               :placeholder="placeholder"
               :aria-invalid="selectInvalid || undefined"
@@ -565,6 +704,7 @@ const bodyProps = computed(() => ({
         <ComboboxInput
           v-else
           :id="selectId"
+          :ref="setEditableInput"
           v-model="searchText"
           :display-value="displayValue"
           :placeholder="placeholder"

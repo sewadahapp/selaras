@@ -100,6 +100,30 @@ each becomes its own chip.
 <SAutocomplete v-model="tags" multiple display-mode="chip" :items="fruitItems" />
 ```
 
+### Changing selection mode
+
+For an uncontrolled Autocomplete, changing `multiple` converts its local
+selection once: single `value` becomes `[value]`, single `undefined` becomes
+`[]`, a multiple selection becomes its first value, and an empty array becomes
+`undefined`. Switching to single mode drops later active selections. That
+conversion emits one `update:modelValue` event. The captured
+`defaultValue` does not change after mount; reset projects it into the current
+mode. For example, `defaultValue: [0, 1]` resets to `0` in single mode and to
+`[0, 1]` after changing back to multiple mode.
+
+A controlled parent must change `modelValue` and `multiple` in the same render:
+an array when `multiple` is true, and a scalar or `undefined` when it is false.
+`undefined` is allowed as the empty multiple value. A scalar value in
+multiple mode, or any array in single mode, throws a descriptive error.
+Autocomplete does not convert controlled values or emit an update solely
+because the mode changed. Changing modes also preserves an active query, open
+popover, and focus when the input was focused. It does not take focus from a
+mode button or another control. A parent-controlled `searchTerm` retains its
+text; idle input labels follow `resetSearchTermOnSelect`.
+Changing mode during IME composition cancels editing and requests that the
+query and popup be cleared. Complete composition before changing mode to retain
+the query.
+
 ### Clear
 
 `clearable` works the same as [Select's](/components/forms/select#clear) - a
