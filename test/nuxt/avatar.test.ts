@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest'
 import Avatar from '../../src/runtime/components/Avatar.vue'
 
 describe('avatar', () => {
-  it('binds a custom semantic role to the avatar root', async () => {
+  it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
   })
 
   it('renders text fallback when no image is given', async () => {
@@ -75,9 +75,9 @@ describe('avatar', () => {
 
   it('applies the color to the placeholder background and the text fallback', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', color: 'primary' } })
-    expect(wrapper.classes()).toContain('bg-[var(--ui-primary-soft)]')
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-subtle)]')
     const fallback = wrapper.findAll('span').find(sp => sp.text() === 'JD' && sp.classes().includes('h-full'))
-    expect(fallback?.classes()).toContain('text-[var(--ui-primary)]')
+    expect(fallback?.classes()).toContain('text-[var(--_selaras-color-text)]')
     expect(fallback?.classes()).toContain('text-xs')
   })
 
@@ -96,7 +96,7 @@ describe('avatar', () => {
   it('renders a status dot with the given statusColor', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', status: true, statusColor: 'success' } })
     const status = wrapper.findAll('span').find(sp => sp.classes().includes('absolute'))
-    expect(status?.classes()).toContain('bg-[var(--ui-success)]')
+    expect(status?.classes()).toContain('bg-[var(--_selaras-color-fill)]')
   })
 
   it('clips content but not the status dot', async () => {

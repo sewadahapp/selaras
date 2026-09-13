@@ -32,13 +32,13 @@ export const avatarTheme = tv({
     // (online, offline, ...) rarely match the avatar's own identity color, so
     // it gets its own variant rather than tracking the avatar's.
     statusColor: {
-      primary: { status: 'bg-[var(--ui-primary)]' },
+      primary: { status: 'bg-[var(--_selaras-color-fill)]' },
       neutral: { status: 'bg-[var(--ui-text-muted)]' },
-      secondary: { status: 'bg-[var(--ui-secondary)]' },
-      success: { status: 'bg-[var(--ui-success)]' },
-      danger: { status: 'bg-[var(--ui-danger)]' },
-      info: { status: 'bg-[var(--ui-info)]' },
-      warning: { status: 'bg-[var(--ui-warning)]' },
+      secondary: { status: 'bg-[var(--_selaras-color-fill)]' },
+      success: { status: 'bg-[var(--_selaras-color-fill)]' },
+      danger: { status: 'bg-[var(--_selaras-color-fill)]' },
+      info: { status: 'bg-[var(--_selaras-color-fill)]' },
+      warning: { status: 'bg-[var(--_selaras-color-fill)]' },
     },
     size: {
       sm: { base: 'size-6', fallback: 'text-[10px]', icon: 'size-3', status: 'size-1.5' },
@@ -51,13 +51,13 @@ export const avatarTheme = tv({
     },
   },
   compoundVariants: [
-    { color: 'primary', class: { base: 'bg-[var(--ui-primary-soft)]', fallback: 'text-[var(--ui-primary)]' } },
+    { color: 'primary', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
     { color: 'neutral', class: { base: 'bg-[var(--ui-neutral-soft)]', fallback: 'text-[var(--ui-text-muted)]' } },
-    { color: 'secondary', class: { base: 'bg-[var(--ui-secondary-soft)]', fallback: 'text-[var(--ui-secondary)]' } },
-    { color: 'success', class: { base: 'bg-[var(--ui-success-soft)]', fallback: 'text-[var(--ui-success)]' } },
-    { color: 'danger', class: { base: 'bg-[var(--ui-danger-soft)]', fallback: 'text-[var(--ui-danger)]' } },
-    { color: 'info', class: { base: 'bg-[var(--ui-info-soft)]', fallback: 'text-[var(--ui-info)]' } },
-    { color: 'warning', class: { base: 'bg-[var(--ui-warning-soft)]', fallback: 'text-[var(--ui-warning)]' } },
+    { color: 'secondary', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
+    { color: 'success', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
+    { color: 'danger', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
+    { color: 'info', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
+    { color: 'warning', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
   ],
   defaultVariants: {
     color: 'neutral',
