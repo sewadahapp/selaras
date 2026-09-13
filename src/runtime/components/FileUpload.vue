@@ -3,7 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { FileUploadThemeSlots } from '../theme/file-upload'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, mergeProps, ref, watch } from 'vue'
+import { computed, getCurrentInstance, mergeProps, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
@@ -27,6 +27,9 @@ const props = withDefaults(defineProps<FileUploadProps>(), {
 const emit = defineEmits<FileUploadEmits>()
 
 defineSlots<FileUploadSlots>()
+
+const instance = getCurrentInstance()!
+const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue')
 
 export interface FileUploadProps {
   id?: string
@@ -86,9 +89,15 @@ const effectiveLocale = useLocale()
 // here.
 const internalFiles = ref<File[]>(props.modelValue ?? [])
 watch(() => props.modelValue, (value) => {
-  if (value !== undefined)
-    internalFiles.value = value
+  if (isControlled())
+    internalFiles.value = value ?? []
 })
+
+function updateFiles(next: File[]) {
+  if (!isControlled())
+    internalFiles.value = next
+  emit('update:modelValue', next)
+}
 
 const isDragging = ref(false)
 const dropzoneEl = ref<HTMLElement>()
@@ -153,8 +162,7 @@ function processFiles(fileList: FileList | File[]) {
 
   if (accepted.length) {
     const next = props.multiple ? [...internalFiles.value, ...accepted] : accepted.slice(0, 1)
-    internalFiles.value = next
-    emit('update:modelValue', next)
+    updateFiles(next)
   }
   if (errors.length)
     emit('error', errors)
@@ -204,8 +212,7 @@ function removeFile(index: number) {
   if (file)
     revokePreview(file)
   const next = internalFiles.value.filter((_, i) => i !== index)
-  internalFiles.value = next
-  emit('update:modelValue', next)
+  updateFiles(next)
 }
 
 const theme = useComponentTheme('fileUpload', fileUploadTheme)

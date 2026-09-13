@@ -73,6 +73,28 @@ describe('fileUpload', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[file]])
   })
 
+  it('keeps a controlled empty file list when the parent ignores selection', async () => {
+    const wrapper = await mountSuspended(FileUpload, { props: { modelValue: [] } })
+    const file = makeFile('a.txt', 100)
+
+    await wrapper.find('button').trigger('drop', { dataTransfer: { files: [file] } })
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[file]])
+    expect(wrapper.find('li').exists()).toBe(false)
+  })
+
+  it('keeps a controlled file list when the parent ignores removal', async () => {
+    const file = makeFile('a.txt', 100)
+    const wrapper = await mountSuspended(FileUpload, { props: { modelValue: [file] } })
+
+    await wrapper.find('li button').trigger('click')
+    await nextTick()
+
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[]])
+    expect(wrapper.find('li').text()).toContain('a.txt')
+  })
+
   it('replaces the current file (not appends) when multiple is false', async () => {
     const first = makeFile('a.txt', 10)
     const second = makeFile('b.txt', 10)
