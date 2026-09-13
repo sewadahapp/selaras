@@ -63,7 +63,13 @@ run(
 )
 
 run(
-  'exercise basic and prefixed packed consumers',
+  'exercise source-backed basic and prefixed consumers',
   'node_modules/vitest/vitest.mjs',
   ['run', 'test/basic.test.ts', 'test/prefix.test.ts'],
+)
+
+run(
+  'exercise an isolated installed-tarball consumer',
+  'scripts/test-packed-consumer.mjs',
+  [],
 )

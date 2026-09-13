@@ -5,6 +5,8 @@
     "node_modules",
     "playground",
     "src/runtime/types",
-    "test/packed-types.ts"
+    "test/packed-types.ts",
+    "test/packed-table.vue",
+    "test/fixtures/packed"
   ]
 }

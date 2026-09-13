@@ -110,6 +110,10 @@ Every component is now auto-imported and ready to use:
   npm run test
   npm run test:watch
 
+  # Build and test source consumers plus an isolated installed tarball
+  # Requires Bun for the temporary consumer's dependency installation
+  npm run test:compat
+
   # Release new version
   npm run release
   ```

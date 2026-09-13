@@ -212,7 +212,7 @@ export default defineNuxtModule<ModuleOptions>({
       // Selaras's own classes now also exists in `${classPrefix}:`-prefixed
       // form - `@tailwindcss/oxide`'s `Scanner` is Tailwind's own native
       // candidate scanner (the exact code path a real Tailwind build uses
-      // to turn `@source` globs into candidates), scanning the same three
+      // to turn `@source` globs into candidates), scanning the same four
       // globs theme.css's own `@source` directives already declare so this
       // stays in sync with that list by construction rather than a second
       // hand-maintained copy.
@@ -220,8 +220,11 @@ export default defineNuxtModule<ModuleOptions>({
       const scanner = new Scanner({
         sources: [
           { base: runtimeBase, pattern: './components/**/*.vue', negated: false },
-          { base: runtimeBase, pattern: './theme/**/*.ts', negated: false },
-          { base: runtimeBase, pattern: './utils/**/*.ts', negated: false },
+          { base: runtimeBase, pattern: './internal/**/*.vue', negated: false },
+          // Published recipes/utilities are JS; directory globs cover both
+          // source TS and built files, matching theme.css's @source entries.
+          { base: runtimeBase, pattern: './theme/**/*', negated: false },
+          { base: runtimeBase, pattern: './utils/**/*', negated: false },
         ],
       })
       const candidates = scanner.scan().filter((candidate) => {
