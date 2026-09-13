@@ -30,7 +30,7 @@ import {
   TimeFieldInput,
   TimeFieldRoot,
 } from 'reka-ui'
-import { computed, ref, shallowRef, useId, watch } from 'vue'
+import { computed, getCurrentInstance, ref, shallowRef, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
@@ -66,6 +66,9 @@ const themeScope = useThemeScope()
 export interface DatePickerProps {
   id?: string
   name?: string
+  open?: boolean
+  /** Initial uncontrolled open state. */
+  defaultOpen?: boolean
   /** A single DateValue, Reka's own `{ start?, end? }` DateRange shape when `range` is set, or a bare date-less Time when `timeOnly` is set - Vue props can't express a type that depends on a sibling prop's value, so this stays a plain union documented here rather than enforced by the type checker. */
   modelValue?: DateValue | DateRange | Time
   /** Switches to picking a start+end pair instead of one date - a real fork in which Reka primitive family renders (RangeCalendar/DateRangePicker vs Calendar/DatePicker), not just a different modelValue shape. */
@@ -129,6 +132,7 @@ export interface DatePickerProps {
 }
 
 export interface DatePickerEmits {
+  'update:open': [value: boolean]
   'update:modelValue': [value: DateValue | DateRange | Time | undefined]
   'update:view': [view: 'date' | 'month' | 'year']
 }
@@ -248,19 +252,21 @@ const placeholder = shallowRef<DateValue>((() => {
   const seed = singleModelValue.value ?? today(getLocalTimeZone())
   return isTimeGranularity.value ? ensureTimeCapable(seed) : seed
 })())
-// Bound via v-model:open, purely so the view resets to 'date' whenever the
-// popover closes - reopening into a stale month/year grid would be confusing.
-const isOpen = ref(false)
-watch(isOpen, (open) => {
+// All three rendering branches are mutually exclusive, so one public open
+// state can drive the date, range, and time-only roots consistently.
+const instance = getCurrentInstance()!
+const localOpen = ref(props.defaultOpen ?? false)
+const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
+const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
+function onUpdateOpen(value: boolean) {
+  if (!isOpenControlled())
+    localOpen.value = value
+  emit('update:open', value)
+}
+watch(open, (open) => {
   if (!open)
     setView(defaultView.value)
 })
-
-// Range mode's own popover was fully uncontrolled until now (no
-// mobileModal to also drive) - introduced only for that, but harmless
-// either way since it behaves identically to the old uncontrolled mode
-// when nothing else observes it.
-const isRangeOpen = ref(false)
 
 const isMobile = useIsMobile()
 // Overrides Modal's own default rounded-lg down to rounded-md, matching
@@ -329,7 +335,7 @@ function selectMonth(date: DateValue) {
   if (props.granularity === 'month') {
     emit('update:modelValue', normalizeForGranularity(date))
     if (props.closeOnSelect)
-      isOpen.value = false
+      onUpdateOpen(false)
     return
   }
   setView('date')
@@ -340,7 +346,7 @@ function selectYear(year: number) {
   if (props.granularity === 'year') {
     emit('update:modelValue', normalizeForGranularity(value))
     if (props.closeOnSelect)
-      isOpen.value = false
+      onUpdateOpen(false)
     return
   }
   setView('month')
@@ -403,19 +409,14 @@ const timePlaceholder = shallowRef<Time>(timeOnlyValue.value ?? (() => {
 // Popover's own outside-click/Escape handling, same reasoning as the
 // date-time-granularity branch: adjusting hour vs minute are still two
 // independent things with no single click that means "done."
-const timeIsOpen = ref(false)
-
 // DatePicker has three mutually exclusive open roots (single date, range,
 // and time-only). Sample the adaptive presentation when whichever root opens
 // and hold it until that root closes; a resize must not swap focus ownership
 // between Popover and Modal during an active calendar interaction.
 const mobilePresentation = ref(false)
-function syncMobilePresentation(open: boolean) {
-  mobilePresentation.value = open && !!props.mobileModal && isMobile.value
-}
-watch(isOpen, syncMobilePresentation)
-watch(isRangeOpen, syncMobilePresentation)
-watch(timeIsOpen, syncMobilePresentation)
+watch(open, (value) => {
+  mobilePresentation.value = value && !!props.mobileModal && isMobile.value
+})
 const showMobileModal = computed(() => mobilePresentation.value)
 
 function normalizeTimeOnly(value: Time) {
@@ -572,7 +573,7 @@ const calendarBodyProps = computed(() => ({
   setHour,
   setMinute,
   closeOnSelect: props.closeOnSelect,
-  close: () => { isOpen.value = false },
+  close: () => { onUpdateOpen(false) },
   headerProps: headerProps.value,
   headingProps: headingProps.value,
   gridsProps: gridsProps.value,
@@ -597,7 +598,7 @@ const timeBodyProps = computed(() => ({
   setMinute: setTimeOnlyMinute,
   closeOnSelect: props.closeOnSelect,
   activeColor: props.activeColor,
-  close: () => { timeIsOpen.value = false },
+  close: () => { onUpdateOpen(false) },
   timeSectionProps: timeSectionProps.value,
 }))
 
@@ -633,7 +634,7 @@ const buttonTriggerUi = computed(() => ({
   <DateRangePickerRoot
     v-if="range"
     :id="datePickerId"
-    v-model:open="isRangeOpen"
+    :open="open"
     :name="name ?? field?.name"
     :model-value="rangeModelValue"
     :min-value="minValue"
@@ -656,6 +657,7 @@ const buttonTriggerUi = computed(() => ({
     :prevent-deselect="preventDeselect"
     :data-selaras-color="fieldColor"
     v-bind="rootProps"
+    @update:open="onUpdateOpen"
     @update:model-value="(value) => emit('update:modelValue', value)"
   >
     <DateRangePickerAnchor as-child>
@@ -756,8 +758,8 @@ const buttonTriggerUi = computed(() => ({
       explicitly.
     -->
     <Modal
-      v-else :open="isRangeOpen" :title="messages.dateRangePicker" :description="messages.dateRangePickerDescription"
-      :ui="mobileModalUi" @update:open="isRangeOpen = $event"
+      v-else :open="open" :title="messages.dateRangePicker" :description="messages.dateRangePickerDescription"
+      :ui="mobileModalUi" @update:open="onUpdateOpen"
     >
       <template #content>
         <div v-bind="mobileContentProps">
@@ -774,7 +776,7 @@ const buttonTriggerUi = computed(() => ({
     </Modal>
   </DateRangePickerRoot>
 
-  <PopoverRoot v-else-if="timeOnly" v-model:open="timeIsOpen" :data-selaras-color="fieldColor">
+  <PopoverRoot v-else-if="timeOnly" :open="open" :data-selaras-color="fieldColor" @update:open="onUpdateOpen">
     <PopoverAnchor as-child>
       <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
         <TimeFieldRoot
@@ -871,8 +873,8 @@ const buttonTriggerUi = computed(() => ({
     </PopoverPortal>
     <!-- Below 768px - see the range branch's own identical note above. -->
     <Modal
-      v-else :open="timeIsOpen" :title="messages.timePicker" :description="messages.timePickerDescription"
-      :ui="mobileModalUi" @update:open="timeIsOpen = $event"
+      v-else :open="open" :title="messages.timePicker" :description="messages.timePickerDescription"
+      :ui="mobileModalUi" @update:open="onUpdateOpen"
     >
       <template #content>
         <div v-bind="mobileContentProps">
@@ -890,7 +892,7 @@ const buttonTriggerUi = computed(() => ({
     v-else
     :id="datePickerId"
     v-model:placeholder="placeholder"
-    v-model:open="isOpen"
+    :open="open"
     :name="name ?? field?.name"
     :model-value="singleModelValue"
     :min-value="minValue"
@@ -910,6 +912,7 @@ const buttonTriggerUi = computed(() => ({
     :prevent-deselect="preventDeselect"
     :data-selaras-color="fieldColor"
     v-bind="rootProps"
+    @update:open="onUpdateOpen"
     @update:model-value="(value) => emit('update:modelValue', normalizeForGranularity(value as DateValue | undefined))"
   >
     <DatePickerAnchor as-child>
@@ -1004,8 +1007,8 @@ const buttonTriggerUi = computed(() => ({
     </DatePickerContent>
     <!-- Below 768px - see the range branch's own identical note above. -->
     <Modal
-      v-else :open="isOpen" :title="messages.datePicker" :description="messages.datePickerDescription"
-      :ui="mobileModalUi" @update:open="isOpen = $event"
+      v-else :open="open" :title="messages.datePicker" :description="messages.datePickerDescription"
+      :ui="mobileModalUi" @update:open="onUpdateOpen"
     >
       <template #content>
         <div v-bind="mobileContentProps">

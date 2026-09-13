@@ -46,6 +46,21 @@ async function clickAndWait(el: HTMLElement) {
 }
 
 describe('datePicker', () => {
+  it('supports defaultOpen and lets a controlled parent veto closing', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { defaultOpen: true } })
+    const uncontrolledTrigger = wrapper.find('button[aria-label="Date picker"]')
+    expect(uncontrolledTrigger.attributes('aria-expanded')).toBe('true')
+    wrapper.unmount()
+    wrapper = undefined
+
+    wrapper = await mountSuspended(DatePicker, { props: { open: true } })
+    const controlledTrigger = wrapper.find('button[aria-label="Date picker"]')
+    expect(controlledTrigger.attributes('aria-expanded')).toBe('true')
+    await controlledTrigger.trigger('click')
+    expect(wrapper.emitted('update:open')?.[0]).toEqual([false])
+    expect(controlledTrigger.attributes('aria-expanded')).toBe('true')
+  })
+
   it('passes a custom semantic role to trigger chrome', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
