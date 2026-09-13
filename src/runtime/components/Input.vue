@@ -8,7 +8,6 @@ import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { inputTheme } from '../theme/input'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -70,12 +69,10 @@ const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('input', inputTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as InputVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
-  color: recipeColor.value,
+  color: effectiveColor.value as InputVariants['color'],
   invalid: inputInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
@@ -106,7 +103,7 @@ const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.v
 </script>
 
 <template>
-  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <div :data-selaras-color="inputInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
     <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <input
       :id="inputId"

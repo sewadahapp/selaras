@@ -6,7 +6,7 @@ describe('input', () => {
   it('binds a custom semantic role to the input root', async () => {
     const wrapper = await mountSuspended(Input, { props: { color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style')).toBeUndefined()
   })
 
   it('forwards native attributes and focus listeners to the actual input', async () => {
@@ -89,13 +89,13 @@ describe('input', () => {
 
   it('applies the color prop to the focus-ring class', async () => {
     const wrapper = await mountSuspended(Input, { props: { color: 'success' } })
-    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--ui-success)]')
+    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
   })
 
   it('invalid wins over a custom color for the focus ring, not the other way around', async () => {
     const wrapper = await mountSuspended(Input, { props: { color: 'success', invalid: true } })
     const classes = wrapper.find('input').classes()
-    expect(classes).toContain('focus:ring-[var(--ui-danger)]')
+    expect(classes).toContain('focus:ring-[var(--_selaras-color-fill)]')
     expect(classes).not.toContain('focus:ring-[var(--ui-success)]')
   })
 })

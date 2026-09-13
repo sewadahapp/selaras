@@ -10,7 +10,7 @@ export const inputTheme = tv({
     // focus ring's own color comes from the `color` variant below, not
     // hardcoded here - hover's own color stays neutral regardless of
     // `color`, matching every other component's own hover state.
-    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 disabled:opacity-50 disabled:pointer-events-none',
+    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
     leadingIcon: 'absolute start-2.5 shrink-0 text-[var(--ui-text-muted)]',
     trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--ui-text-muted)]',
     // A separate slot from trailingIcon (not reused) - that one is a
@@ -35,13 +35,13 @@ export const inputTheme = tv({
     // of `color`, matching a Nuxt-ecosystem component kit's own Input
     // (confirmed by reading its docs directly, not assumed).
     color: {
-      primary: { base: 'focus:ring-[var(--ui-primary)]' },
-      neutral: { base: 'focus:ring-[var(--ui-bg-inverted)]' },
-      secondary: { base: 'focus:ring-[var(--ui-secondary)]' },
-      success: { base: 'focus:ring-[var(--ui-success)]' },
-      danger: { base: 'focus:ring-[var(--ui-danger)]' },
-      info: { base: 'focus:ring-[var(--ui-info)]' },
-      warning: { base: 'focus:ring-[var(--ui-warning)]' },
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
     hasLeadingIcon: {
       true: {},
@@ -55,7 +55,7 @@ export const inputTheme = tv({
     // Checkbox/Switch fix for why declaration order (not runtime call
     // order) is what decides this.
     invalid: {
-      true: { base: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus:ring-[var(--ui-danger)]' },
+      true: { base: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus:ring-[var(--_selaras-color-fill)]' },
     },
   },
   compoundVariants: [
