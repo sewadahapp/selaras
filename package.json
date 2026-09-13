@@ -40,6 +40,10 @@
       "types": "./dist/runtime/table.d.ts",
       "import": "./dist/runtime/table.js"
     },
+    "./theme": {
+      "types": "./dist/runtime/theme-api.d.ts",
+      "import": "./dist/runtime/theme-api.js"
+    },
     "./components/*": "./dist/runtime/components/*",
     "./theme.css": "./dist/runtime/theme.css",
     "./prose.css": "./dist/runtime/prose.css"
@@ -59,6 +63,9 @@
       ],
       "table": [
         "./dist/runtime/table.d.ts"
+      ],
+      "theme": [
+        "./dist/runtime/theme-api.d.ts"
       ],
       "components/*": [
         "./dist/runtime/components/*"

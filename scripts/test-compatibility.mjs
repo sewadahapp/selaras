@@ -57,6 +57,12 @@ run(
 )
 
 run(
+  'exercise the published theme helper',
+  'test/packed-theme.mjs',
+  [],
+)
+
+run(
   'exercise basic and prefixed packed consumers',
   'node_modules/vitest/vitest.mjs',
   ['run', 'test/basic.test.ts', 'test/prefix.test.ts'],

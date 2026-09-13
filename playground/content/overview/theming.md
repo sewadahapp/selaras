@@ -74,6 +74,50 @@ any of these role colors regardless of theme). The same shape applies to
 `secondary`/`success`/`danger`/`info`/`warning` - just swap the color
 name.
 
+### Custom semantic roles
+
+Register an additional role in `nuxt.config.ts` when a named product color
+needs to work through component `color` props. Role names are build-time
+topology so Nuxt can generate their CSS and augment `ColorRole`; their values
+remain CSS expressions and can use company variables. `defineColor` validates
+the six required leaves in both modes without deriving or changing them:
+
+```ts
+import { defineColor } from '@sewadah/selaras/theme'
+
+export default defineNuxtConfig({
+  modules: ['@sewadah/selaras'],
+  selaras: {
+    theme: {
+      colors: {
+        premium: defineColor({
+          light: {
+            fill: 'var(--company-premium)',
+            onFill: '#fff',
+            subtle: 'var(--company-premium-soft)',
+            onSubtle: '#241344',
+            text: '#5134a8',
+            border: '#765fc0',
+          },
+          dark: {
+            fill: '#a895f0',
+            onFill: '#170b38',
+            subtle: '#2b2050',
+            onSubtle: '#eeeaff',
+            text: '#c9bcff',
+            border: '#8c78d4',
+          },
+        }),
+      },
+    },
+  },
+})
+```
+
+Hover, pressed, and focus leaves are optional and fall back to their related
+base value. New roles require both modes. A runtime `app.config` override can
+change leaves of a registered role, but cannot introduce a new role name.
+
 Tailwind v4 only keeps a theme variable in the compiled CSS if it detects
 the variable actually being used somewhere - normally that means a
 utility class like `bg-primary-500` appearing literally in a scanned

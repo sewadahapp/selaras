@@ -8,6 +8,7 @@ import type {
   ToastOptions,
 } from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
+import { defineColor } from '@sewadah/selaras/theme'
 
 interface PackedUser {
   id: string
@@ -35,6 +36,25 @@ const packedAccessor = packedColumnHelper.accessor('age', {
 // @ts-expect-error unknown row keys must fail at the authoring boundary
 const invalidAccessor = packedColumnHelper.accessor('missing', {})
 const packedSelection: TableRowSelectionState = { 'user-a': true }
+const packedColor = defineColor({
+  light: {
+    fill: '#5134a8',
+    onFill: '#ffffff',
+    subtle: '#eeeaff',
+    onSubtle: '#201050',
+    text: '#5134a8',
+    border: '#765fc0',
+  },
+  dark: {
+    fill: '#a895f0',
+    onFill: '#170b38',
+    subtle: '#2b2050',
+    onSubtle: '#eeeaff',
+    text: '#c9bcff',
+    border: '#8c78d4',
+  },
+})
+const packedColorLiteral: '#5134a8' = packedColor.light.fill
 type TableSortingEvent = TableEmits<PackedUser>['update:sorting']
 type TableRowClickEvent = TableEmits<PackedUser>['rowClick']
 const packedTableEventShape: TableSortingEvent extends [any[]] ? true : false = true
@@ -47,5 +67,6 @@ void packedToast
 void packedAccessor
 void invalidAccessor
 void packedSelection
+void packedColorLiteral
 void packedTableEventShape
 void packedRowEventShape
