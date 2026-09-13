@@ -1,6 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import Button from '../../src/runtime/components/Button.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
@@ -99,8 +99,8 @@ describe('theme', () => {
     expect(wrapper.find('#outside').classes()).not.toContain('rounded-full')
   })
 
-  it('applies a scoped props default to a button with no own size, but not to one with an explicit size', async () => {
-    const wrapper = await mountSuspended(withTheme({ props: { button: { size: 'lg' } } }, [
+  it('applies scoped defaults to a button with no own size, but not to one with an explicit size', async () => {
+    const wrapper = await mountSuspended(withTheme({ defaults: { button: { size: 'lg' } } }, [
       h(Button, { id: 'default-size' }, () => 'A'),
       h(Button, { id: 'explicit-size', size: 'sm' }, () => 'B'),
     ]))
@@ -108,10 +108,22 @@ describe('theme', () => {
     expect(wrapper.find('#explicit-size').classes()).toContain('h-8')
   })
 
+  it('updates descendant defaults when the scoped configuration changes', async () => {
+    const defaults = ref({ button: { size: 'lg' } })
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { defaults: defaults.value }, () => h(Button, () => 'A')),
+    }))
+    expect(wrapper.find('button').classes()).toContain('h-11')
+    defaults.value = { button: { size: 'sm' } }
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('button').classes()).toContain('h-8')
+    expect(wrapper.find('button').classes()).not.toContain('h-11')
+  })
+
   it('nested Theme components: the inner one wins for settings it sets, while inheriting the outer one\'s unset settings', async () => {
     const wrapper = await mountSuspended(defineComponent({
-      render: () => h(Theme, { ui: { button: { base: 'rounded-full' } }, props: { button: { color: 'danger' } } }, () =>
-        h(Theme, { props: { button: { size: 'lg' } } }, () =>
+      render: () => h(Theme, { ui: { button: { base: 'rounded-full' } }, defaults: { button: { color: 'danger' } } }, () =>
+        h(Theme, { defaults: { button: { size: 'lg' } } }, () =>
           h(Button, () => 'Click me'))),
     }))
     const classes = wrapper.find('button').classes()

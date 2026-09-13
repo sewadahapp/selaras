@@ -6,9 +6,9 @@ order: 69
 
 ## Usage
 
-`STheme` is headless - it renders no element of its own, just a `<slot />`
-- and applies `ui`/`props` overrides to every descendant component below
-it, however deeply nested, without touching each one individually.
+`STheme` applies `ui`/`defaults` overrides to descendant components.
+It is headless by default. Set `as` to give runtime token overrides an
+explicit DOM boundary.
 
 ::component-example{name="theme-basic"}
 ::
@@ -29,11 +29,11 @@ to this subtree instead of the whole app. See
 
 ### Prop defaults
 
-`props` sets a default value for a prop on every matching descendant,
+`defaults` sets a default value for a prop on every matching descendant,
 rather than a class override:
 
 ```vue-html
-<STheme :props="{ button: { size: 'lg' } }">
+<STheme :defaults="{ button: { size: 'lg' } }">
   <SButton>No own size - renders lg</SButton>
   <SButton size="sm">Explicit size - still sm</SButton>
 </STheme>
@@ -43,7 +43,7 @@ An explicit prop on the component itself always wins - `STheme` only
 fills in when a prop is left unset. **Only `size`/`color` are wired up to
 read this today**, and only on `Button`, `Badge`, `Avatar`, `Chip`, and
 `Input` - not every prop on every component. Unwired components ignore
-`props` entirely (their own `:ui`/`app.config.ui` overrides are
+`defaults` entirely (their own `:ui`/`app.config.ui` overrides are
 unaffected either way).
 
 ### Nesting
@@ -52,8 +52,8 @@ An inner `STheme` wins for the specific settings it sets, while still
 inheriting whatever an outer one set and it didn't touch:
 
 ```vue-html
-<STheme :ui="{ button: { base: 'rounded-full' } }" :props="{ button: { color: 'neutral' } }">
-  <STheme :props="{ button: { color: 'danger' } }">
+<STheme :ui="{ button: { base: 'rounded-full' } }" :defaults="{ button: { color: 'neutral' } }">
+  <STheme :defaults="{ button: { color: 'danger' } }">
     <SButton>Rounded (from the outer Theme) + danger (from the inner one)</SButton>
   </STheme>
 </STheme>
@@ -64,4 +64,6 @@ inheriting whatever an outer one set and it didn't touch:
 | Prop | Type | Default |
 | --- | --- | --- |
 | `ui` | `Partial<Record<string, object>>` | - |
-| `props` | `Partial<Record<string, Record<string, unknown>>>` | - |
+| `defaults` | `Partial<Record<string, Record<string, unknown>>>` | - |
+| `tokens` | `RuntimeTokenOverrides` | - |
+| `as` | `string \| Component` | - |

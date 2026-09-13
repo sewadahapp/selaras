@@ -62,12 +62,12 @@ export const DASHBOARD_INJECTION_KEY: InjectionKey<DashboardContext> = Symbol('s
  * a pre-merged bag: this lets the read side walk the *whole* ancestor
  * chain and compose overrides in the correct outermost-to-innermost
  * order (see useComponentTheme's own collectThemeChain), so nesting two
- * STheme components inherits an outer one's unset slots/props instead of
+ * STheme components inherits an outer one's unset slots/defaults instead of
  * an inner one wholesale replacing it.
  */
 export interface ThemeContext {
   ui?: Partial<Record<string, object>>
-  props?: Partial<Record<string, Record<string, unknown>>>
+  defaults?: Partial<Record<string, Record<string, unknown>>>
   scopeId?: string
   parent?: ThemeContext
 }

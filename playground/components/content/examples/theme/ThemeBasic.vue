@@ -7,7 +7,7 @@
       </STheme>
     </div>
 
-    <STheme :props="{ button: { size: 'lg' } }">
+    <STheme :defaults="{ button: { size: 'lg' } }">
       <div class="flex items-center gap-3">
         <SButton>No own size - defaults to lg</SButton>
         <SButton size="sm">
@@ -18,8 +18,8 @@
 
     <!-- Nesting: the inner Theme wins for what it sets (color), while
     still inheriting the outer one's unset setting (the rounded ui override). -->
-    <STheme :ui="{ button: { base: 'rounded-full' } }" :props="{ button: { color: 'neutral' } }">
-      <STheme :props="{ button: { color: 'danger' } }">
+    <STheme :ui="{ button: { base: 'rounded-full' } }" :defaults="{ button: { color: 'neutral' } }">
+      <STheme :defaults="{ button: { color: 'danger' } }">
         <SButton>Rounded (outer) + danger (inner)</SButton>
       </STheme>
     </STheme>

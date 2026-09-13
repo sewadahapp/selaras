@@ -177,7 +177,7 @@ export function useFallthroughAttrs(select: (key: string) => boolean) {
  * Walks an STheme ancestor chain (see injection-keys.ts's own ThemeContext
  * comment for why `parent` is a back-reference rather than a pre-merged
  * bag) collecting one component key's override - via `pick`, selecting
- * either `.ui` or `.props` - from each ancestor that set it, outermost
+ * either `.ui` or `.defaults` - from each ancestor that set it, outermost
  * first - the order useComponentTheme/useThemeProps below need so an
  * inner STheme's override composes on top of (rather than replacing) an
  * outer one's.
@@ -215,7 +215,7 @@ export function useComponentTheme<T extends (...args: any[]) => any>(key: string
 }
 
 /**
- * The nearest (chain-merged) STheme `props.<key>` override, if any - a
+ * The nearest (chain-merged) STheme `defaults.<key>` override, if any - a
  * component reads this as its own prop's fallback, one level below its
  * own explicit prop but above whatever hardcoded/tv() default it'd
  * otherwise use (`props.size ?? useThemeProps('button').value.size`),
@@ -226,7 +226,7 @@ export function useThemeProps(key: string): ComputedRef<Record<string, unknown>>
   const appConfig = useAppConfig() as { selaras?: { defaults?: Record<string, Record<string, unknown>> } }
   const themeContext = inject(THEME_INJECTION_KEY, undefined)
 
-  return computed(() => Object.assign({}, appConfig.selaras?.defaults?.[key], ...collectThemeChain(themeContext?.value, c => c.props, key)))
+  return computed(() => Object.assign({}, appConfig.selaras?.defaults?.[key], ...collectThemeChain(themeContext?.value, c => c.defaults, key)))
 }
 
 /** Returns the nearest explicit STheme DOM marker for portalled content roots. */

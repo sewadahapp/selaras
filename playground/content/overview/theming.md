@@ -198,7 +198,7 @@ sidebar - without making that a global default, wrap it in
 
 Same override shape as `app.config.ui` (below), and merged onto the
 component's theme the same way - just scoped to `STheme`'s own subtree
-instead of the whole app. It can also default a prop's value (`:props`)
+instead of the whole app. It can also default a prop's value (`:defaults`)
 for a component that opts into reading it - see its own doc page for
 which components currently do.
 

@@ -5,6 +5,7 @@ import type {
   TableEmits,
   TableProps,
   TableRowSelectionState,
+  ThemeProps,
   ToastOptions,
 } from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
@@ -17,6 +18,9 @@ interface PackedUser {
 }
 
 const packedButton: ButtonProps = { color: 'primary' }
+const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
+// @ts-expect-error scoped defaults replace the pre-1.0 props namespace
+const legacyTheme: ThemeProps = { props: { button: { size: 'lg' } } }
 const packedRole: ColorRole = 'danger'
 const packedColumns: TableColumnDef<PackedUser>[] = [
   { accessorKey: 'name', header: 'Name' },
@@ -61,6 +65,8 @@ const packedTableEventShape: TableSortingEvent extends [any[]] ? true : false = 
 const packedRowEventShape: TableRowClickEvent extends [PackedUser, MouseEvent] ? true : false = true
 
 void packedButton
+void packedTheme
+void legacyTheme
 void packedRole
 void packedTable
 void packedToast
