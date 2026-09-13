@@ -429,7 +429,7 @@ const bodyProps = computed(() => ({
               color="primary"
               variant="soft"
               removable
-              :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--ui-primary)]' }"
+              :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--_selaras-color-fill)]' }"
             >
               <TagsInputItemText as="span">
                 <slot name="item" :item="option.raw">
@@ -532,7 +532,7 @@ const bodyProps = computed(() => ({
               removable
               :data-state="option.value === selectedChipValue ? 'active' : 'inactive'"
               :aria-current="option.value === selectedChipValue || undefined"
-              :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--ui-primary)]' }"
+              :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--_selaras-color-fill)]' }"
             >
               <slot name="item" :item="option.raw">
                 {{ option.label }}
