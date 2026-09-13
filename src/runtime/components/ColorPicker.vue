@@ -78,7 +78,14 @@ function onUpdateOpen(value: boolean) {
 }
 
 const isMobile = useIsMobile()
-const showMobileModal = computed(() => props.mobileModal && isMobile.value)
+// Choose the presentation at opening and hold it until close. A live resize
+// must not swap Popover and Modal while their focus ownership is active; the
+// next opening samples the current breakpoint again.
+const mobilePresentation = ref(false)
+watch(internalOpen, (open) => {
+  mobilePresentation.value = open && !!props.mobileModal && isMobile.value
+})
+const showMobileModal = computed(() => mobilePresentation.value)
 
 const theme = useComponentTheme('colorPicker', colorPickerTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
