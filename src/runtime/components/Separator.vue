@@ -6,7 +6,7 @@ import type { UiProp } from '../utils/ui'
 import { Separator } from 'reka-ui'
 import { computed } from 'vue'
 import { separatorTheme } from '../theme/separator'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -35,7 +35,6 @@ export interface SeparatorSlots {
 const theme = useComponentTheme('separator', separatorTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'neutral', 'neutral'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SeparatorVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   orientation: props.orientation,
   variant: props.variant,
@@ -48,7 +47,7 @@ const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 </script>
 
 <template>
-  <Separator :orientation="orientation" :decorative="decorative" :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <Separator :orientation="orientation" :decorative="decorative" :data-selaras-color="effectiveColor" v-bind="rootProps">
     <span v-bind="lineProps" />
     <template v-if="$slots.default">
       <span v-bind="labelProps">

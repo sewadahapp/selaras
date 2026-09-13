@@ -44,12 +44,12 @@ export const separatorTheme = tv({
     // (Badge's own soft variant does the same with --ui-bg-elevated).
     color: {
       neutral: { line: 'border-[var(--ui-border)]' },
-      primary: { line: 'border-[var(--ui-primary)]' },
-      secondary: { line: 'border-[var(--ui-secondary)]' },
-      success: { line: 'border-[var(--ui-success)]' },
-      danger: { line: 'border-[var(--ui-danger)]' },
-      info: { line: 'border-[var(--ui-info)]' },
-      warning: { line: 'border-[var(--ui-warning)]' },
+      primary: { line: 'border-[var(--_selaras-color-fill)]' },
+      secondary: { line: 'border-[var(--_selaras-color-fill)]' },
+      success: { line: 'border-[var(--_selaras-color-fill)]' },
+      danger: { line: 'border-[var(--_selaras-color-fill)]' },
+      info: { line: 'border-[var(--_selaras-color-fill)]' },
+      warning: { line: 'border-[var(--_selaras-color-fill)]' },
     },
   },
   compoundVariants: [

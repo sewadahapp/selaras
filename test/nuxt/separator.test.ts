@@ -3,11 +3,11 @@ import { describe, expect, it } from 'vitest'
 import Separator from '../../src/runtime/components/Separator.vue'
 
 describe('separator', () => {
-  it('binds a custom semantic role to the existing recipe bridge', async () => {
+  it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(Separator, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
-    expect(wrapper.find('span').classes()).toContain('border-[var(--ui-primary)]')
+    expect(wrapper.attributes('style')).toBeUndefined()
+    expect(wrapper.find('span').classes()).toContain('border-[var(--_selaras-color-fill)]')
   })
 
   it('defaults to role="separator" with no aria-orientation (horizontal)', async () => {
@@ -80,6 +80,6 @@ describe('separator', () => {
   it('applies the color variant\'s border token', async () => {
     const wrapper = await mountSuspended(Separator, { props: { color: 'danger' } })
 
-    expect(wrapper.find('span').classes()).toContain('border-[var(--ui-danger)]')
+    expect(wrapper.find('span').classes()).toContain('border-[var(--_selaras-color-fill)]')
   })
 })
