@@ -249,12 +249,21 @@ describe('modal', () => {
 
     expect(document.body.querySelectorAll('[role=dialog]')).toHaveLength(1)
 
-    document.getElementById('open-inner')!.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    const openInner = document.getElementById('open-inner') as HTMLButtonElement
+    openInner.focus()
+    openInner.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
     await wrapper.vm.$nextTick()
 
     const dialogs = document.body.querySelectorAll('[role=dialog]')
     expect(dialogs).toHaveLength(2)
     expect(Array.from(dialogs).some(d => d.textContent?.includes('Inner'))).toBe(true)
+
+    const innerDialog = Array.from(dialogs).find(dialog => dialog.textContent?.includes('Inner'))!
+    innerDialog.querySelector<HTMLButtonElement>('button[aria-label="Close"]')!.click()
+    await wrapper.vm.$nextTick()
+    await macrotask()
+
+    expect(document.activeElement?.id).toBe('open-inner')
   })
 
   it('uncontrolled (no open prop) opens on trigger click and tracks its own state independently of a sibling instance', async () => {
