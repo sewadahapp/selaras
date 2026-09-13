@@ -65,6 +65,20 @@ describe('collapsible', () => {
     expect(wrapper.emitted('update:open')?.[0]).toEqual([true])
   })
 
+  it('keeps a controlled parent authoritative when it ignores a close request', async () => {
+    const wrapper = await mountSuspended(Collapsible, {
+      props: { open: true },
+      slots: { trigger: () => 'Toggle', default: () => 'Content' },
+    })
+    await nextTick()
+
+    await wrapper.find('button').trigger('click')
+    await nextTick()
+
+    expect(wrapper.find('button').attributes('data-state')).toBe('open')
+    expect(wrapper.emitted('update:open')?.[0]).toEqual([false])
+  })
+
   it('disabled blocks toggling', async () => {
     const wrapper = await mountSuspended(Collapsible, {
       props: { disabled: true },

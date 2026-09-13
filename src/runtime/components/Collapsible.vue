@@ -4,7 +4,7 @@ import type { CollapsibleThemeSlots } from '../theme/collapsible'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { CollapsibleContent, CollapsibleRoot, CollapsibleTrigger } from 'reka-ui'
-import { computed, ref, watch } from 'vue'
+import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { collapsibleTheme } from '../theme/collapsible'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
@@ -18,10 +18,9 @@ defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<CollapsibleProps>(), {
   open: undefined,
 })
-
 const emit = defineEmits<CollapsibleEmits>()
-
 defineSlots<CollapsibleSlots>()
+const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
 
 export interface CollapsibleProps {
   open?: boolean
@@ -64,11 +63,12 @@ const contentInnerProps = computed(() => resolveSlot(ui.value.contentInner, prop
 // ambiguity entirely (same pattern as Modal.vue's own internalOpen).
 const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
 watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
+  if (isControlled)
+    internalOpen.value = value ?? false
 })
 function onUpdateOpen(value: boolean) {
-  internalOpen.value = value
+  if (!isControlled)
+    internalOpen.value = value
   emit('update:open', value)
 }
 </script>
