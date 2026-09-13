@@ -5,7 +5,7 @@ import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { iconTheme } from '../theme/icon'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -25,12 +25,11 @@ export interface IconProps {
 const theme = useComponentTheme('icon', iconTheme)
 const effectiveColor = computed(() => props.color ? resolveRegisteredColorRole(props.color, 'primary') : undefined)
 const recipeColor = computed(() => effectiveColor.value && isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as IconVariants['color'] : effectiveColor.value ? 'primary' : undefined)
-const colorRoleStyle = computed(() => effectiveColor.value ? customColorRoleStyle(effectiveColor.value) : undefined)
 const ui = computed(() => theme.value({ color: recipeColor.value }))
 
 const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>
-  <Icon :name="name" :data-selaras-color="effectiveColor && !isBuiltinColorRole(effectiveColor) ? effectiveColor : undefined" :style="colorRoleStyle" v-bind="rootProps" />
+  <Icon :name="name" :data-selaras-color="effectiveColor" v-bind="rootProps" />
 </template>

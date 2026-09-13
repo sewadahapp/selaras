@@ -15,13 +15,13 @@ export const iconTheme = tv({
     // icon usage - a raw `class="text-*"` still overrides `color` too,
     // since both just flow through the same tailwind-merge below.
     color: {
-      primary: { base: 'text-[var(--ui-primary)]' },
+      primary: { base: 'text-[var(--_selaras-color-fill)]' },
       neutral: { base: 'text-[var(--ui-text)]' },
-      secondary: { base: 'text-[var(--ui-secondary)]' },
-      success: { base: 'text-[var(--ui-success)]' },
-      danger: { base: 'text-[var(--ui-danger)]' },
-      info: { base: 'text-[var(--ui-info)]' },
-      warning: { base: 'text-[var(--ui-warning)]' },
+      secondary: { base: 'text-[var(--_selaras-color-fill)]' },
+      success: { base: 'text-[var(--_selaras-color-fill)]' },
+      danger: { base: 'text-[var(--_selaras-color-fill)]' },
+      info: { base: 'text-[var(--_selaras-color-fill)]' },
+      warning: { base: 'text-[var(--_selaras-color-fill)]' },
     },
   },
 })
