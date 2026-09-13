@@ -134,7 +134,8 @@ one, e.g. a plan a consumer picked before it was discontinued:
 ```
 
 `disabled` on the group itself disables every item at once instead of just
-one, and `invalid` switches every item's ring to `--ui-danger`:
+one, and `invalid` switches every item's ring and card state to the semantic
+danger role:
 
 ```vue-html
 <SRadioGroup v-model="frozen" disabled :items="['one', 'two', 'three']" />
@@ -195,7 +196,7 @@ every slot and variant - here's `RadioGroup`'s own theme file:
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | `ColorRole` (built-in or registered semantic role) | `primary` |
 | `orientation` | `'vertical' \| 'horizontal'` | `vertical` |
 | `variant` | `'default' \| 'card'` | `default` |
 | `ui` | `Partial<Record<'root' \| 'itemWrapper' \| 'item' \| 'indicator' \| 'label' \| 'description' \| 'labelGroup', string \| object>>` | - |

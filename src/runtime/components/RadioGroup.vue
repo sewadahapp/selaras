@@ -7,7 +7,6 @@ import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from 'reka-ui'
 import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { radioGroupTheme } from '../theme/radio-group'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
 
@@ -64,14 +63,12 @@ const normalizedItems = computed<RadioItem[]>(() =>
 )
 
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as RadioGroupVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 
 const theme = useComponentTheme('radioGroup', radioGroupTheme)
 const ui = computed(() => theme.value({
   invalid: radioGroupInvalid.value,
   size: effectiveSize.value,
-  color: recipeColor.value,
+  color: effectiveColor.value as RadioGroupVariants['color'],
   orientation: props.orientation,
   variant: props.variant,
 }))
@@ -102,12 +99,11 @@ const labelGroupProps = computed(() => resolveSlot(ui.value.labelGroup, props.ui
     :orientation="orientation"
     :aria-invalid="radioGroupInvalid || undefined"
     :aria-describedby="describedBy"
-    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
-    :style="colorRoleStyle"
+    :data-selaras-color="effectiveColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as string)"
   >
-    <label v-for="item in normalizedItems" :key="item.value" v-bind="itemWrapperPropsFor(item)">
+    <label v-for="item in normalizedItems" :key="item.value" :data-selaras-color="radioGroupInvalid ? 'danger' : undefined" v-bind="itemWrapperPropsFor(item)">
       <RadioGroupItem :value="item.value" :disabled="item.disabled" v-bind="itemPropsFor(item)">
         <RadioGroupIndicator force-mount v-bind="indicatorProps" />
       </RadioGroupItem>

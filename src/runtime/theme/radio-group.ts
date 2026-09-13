@@ -48,7 +48,7 @@ export const radioGroupTheme = tv({
     // rendered visibly jagged at normal (non-zoomed) browser scale; the
     // fractional width needs the arbitrary-value form since Tailwind's
     // named ring scale only has integer steps.
-    item: 'relative isolate flex shrink-0 items-center justify-center rounded-full ring-[1.5px] ring-inset ring-[var(--ui-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--ui-border-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)]',
+    item: 'relative isolate flex shrink-0 items-center justify-center rounded-full ring-[1.5px] ring-inset ring-[var(--_selaras-color-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--_selaras-color-subtle-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)]',
     // force-mount (see RadioGroup.vue) keeps this in the DOM for every
     // item regardless of checked state, so switching the selection scales
     // the old dot out and the new one in instead of an abrupt pop -
@@ -57,9 +57,9 @@ export const radioGroupTheme = tv({
     // detects them via computed animation-name), not plain CSS
     // transitions, so a transition-only version without force-mount would
     // just vanish instantly.
-    indicator: 'rounded-full [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
-    label: 'select-none text-[var(--ui-text)]',
-    description: 'block select-none text-[var(--ui-text-muted)]',
+    indicator: 'rounded-full bg-[var(--_selaras-color-fill)] [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
+    label: 'select-none text-[var(--_selaras-color-text)]',
+    description: 'block select-none text-[var(--_selaras-color-text-hover)]',
     // Only rendered when an item has a description (wrapping the label and
     // description together so they stack under one another). The label
     // text visually sits a bit lower than its own line box's true center -
@@ -98,13 +98,13 @@ export const radioGroupTheme = tv({
     // neutral ring regardless of `color`, matching Checkbox's/Switch's own
     // `color` variant exactly (same reasoning, same token pattern).
     color: {
-      primary: { item: 'data-[state=checked]:ring-[var(--ui-primary)] data-[state=checked]:before:bg-[var(--ui-primary)]', indicator: 'bg-[var(--ui-primary)]' },
-      neutral: { item: 'data-[state=checked]:ring-[var(--ui-neutral)] data-[state=checked]:before:bg-[var(--ui-neutral)]', indicator: 'bg-[var(--ui-neutral)]' },
-      secondary: { item: 'data-[state=checked]:ring-[var(--ui-secondary)] data-[state=checked]:before:bg-[var(--ui-secondary)]', indicator: 'bg-[var(--ui-secondary)]' },
-      success: { item: 'data-[state=checked]:ring-[var(--ui-success)] data-[state=checked]:before:bg-[var(--ui-success)]', indicator: 'bg-[var(--ui-success)]' },
-      danger: { item: 'data-[state=checked]:ring-[var(--ui-danger)] data-[state=checked]:before:bg-[var(--ui-danger)]', indicator: 'bg-[var(--ui-danger)]' },
-      info: { item: 'data-[state=checked]:ring-[var(--ui-info)] data-[state=checked]:before:bg-[var(--ui-info)]', indicator: 'bg-[var(--ui-info)]' },
-      warning: { item: 'data-[state=checked]:ring-[var(--ui-warning)] data-[state=checked]:before:bg-[var(--ui-warning)]', indicator: 'bg-[var(--ui-warning)]' },
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
     // Recolors the existing ring rather than adding a second outline
     // outside it (an earlier version did that, which read as a double
@@ -113,18 +113,12 @@ export const radioGroupTheme = tv({
     // otherwise win the ring color back whenever an already-invalid group
     // has something selected.
     invalid: {
-      true: { item: 'ring-[var(--ui-danger)] data-[state=checked]:ring-[var(--ui-danger)]' },
+      true: { item: 'ring-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)]' },
     },
   },
   compoundVariants: [
     // The card variant's own checked-state highlight, following `color`.
-    { variant: 'card', color: 'primary', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-primary)] has-[[data-state=checked]]:bg-[var(--ui-primary-soft)]' } },
-    { variant: 'card', color: 'neutral', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-neutral)] has-[[data-state=checked]]:bg-[var(--ui-neutral-soft)]' } },
-    { variant: 'card', color: 'secondary', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-secondary)] has-[[data-state=checked]]:bg-[var(--ui-secondary-soft)]' } },
-    { variant: 'card', color: 'success', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-success)] has-[[data-state=checked]]:bg-[var(--ui-success-soft)]' } },
-    { variant: 'card', color: 'danger', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-danger)] has-[[data-state=checked]]:bg-[var(--ui-danger-soft)]' } },
-    { variant: 'card', color: 'info', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-info)] has-[[data-state=checked]]:bg-[var(--ui-info-soft)]' } },
-    { variant: 'card', color: 'warning', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--ui-warning)] has-[[data-state=checked]]:bg-[var(--ui-warning-soft)]' } },
+    { variant: 'card', class: { itemWrapper: 'has-[[data-state=checked]]:border-[var(--_selaras-color-fill)] has-[[data-state=checked]]:bg-[var(--_selaras-color-subtle)]' } },
   ],
   defaultVariants: {
     size: 'md',

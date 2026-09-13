@@ -3,10 +3,11 @@ import { describe, expect, it } from 'vitest'
 import RadioGroup from '../../src/runtime/components/RadioGroup.vue'
 
 describe('radioGroup', () => {
-  it('binds a custom semantic role to the existing primary recipe bridge', async () => {
+  it('binds a custom semantic role directly', async () => {
     const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one'], color: 'premium' } })
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
-    expect(wrapper.find('button').classes()).toContain('data-[state=checked]:ring-[var(--ui-primary)]')
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.attributes('style')).not.toContain('--ui-primary')
+    expect(wrapper.find('button').classes()).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
   })
 
   it('normalizes a plain string item into { label: value, value }', async () => {
@@ -68,7 +69,7 @@ describe('radioGroup', () => {
   it('applies the color prop to the checked-state item classes', async () => {
     const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one', 'two'], color: 'danger' } })
     const classes = wrapper.find('button').classes().join(' ')
-    expect(classes).toContain('data-[state=checked]:ring-[var(--ui-danger)]')
+    expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
   })
 
   it('invalid wins over a custom color for the checked-state ring, not the other way around', async () => {
@@ -76,14 +77,14 @@ describe('radioGroup', () => {
       props: { items: ['one'], color: 'success', invalid: true, modelValue: 'one' },
     })
     const classes = wrapper.find('button').classes().join(' ')
-    expect(classes).toContain('data-[state=checked]:ring-[var(--ui-danger)]')
+    expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
     expect(classes).not.toContain('data-[state=checked]:ring-[var(--ui-success)]')
   })
 
   it('applies the matching card-highlight compound variant for color + variant="card"', async () => {
     const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one', 'two'], color: 'danger', variant: 'card' } })
     const classes = wrapper.find('label').classes().join(' ')
-    expect(classes).toContain('has-[[data-state=checked]]:border-[var(--ui-danger)]')
-    expect(classes).toContain('has-[[data-state=checked]]:bg-[var(--ui-danger-soft)]')
+    expect(classes).toContain('has-[[data-state=checked]]:border-[var(--_selaras-color-fill)]')
+    expect(classes).toContain('has-[[data-state=checked]]:bg-[var(--_selaras-color-subtle)]')
   })
 })

@@ -23,6 +23,7 @@ const nestedTokens = ref({
   light: { enterprise: { fill: 'rgb(60 61 62)', subtle: 'rgb(63 64 65)', text: 'rgb(60 61 62)' } },
   dark: { enterprise: { subtle: 'rgb(103 104 105)' } },
 })
+const radioValues = ref({ primary: 'one', enterprise: 'one' })
 
 function updateNestedTokens() {
   nestedTokens.value.light.enterprise.subtle = 'rgb(83 84 85)'
@@ -32,6 +33,7 @@ function updateNestedTokens() {
 <template>
   <div>
     <SButton>Click me</SButton>
+    <SRadioGroup id="radio-invalid" :items="['one', 'two']" model-value="one" color="enterprise" invalid />
     <SButton id="enterprise-button" color="enterprise">
       Enterprise
     </SButton>
@@ -193,6 +195,7 @@ function updateNestedTokens() {
       style="position: relative; z-index: 999999;"
     >
       <div v-for="role in ['primary', 'enterprise']" :key="role">
+        <SRadioGroup :id="`radio-${role}`" v-model="radioValues[role]" :items="['one', 'two']" :color="role" variant="card" />
         <SBadge
           v-for="variant in ['solid', 'soft', 'outline']"
           :id="`semantic-badge-${role}-${variant}`" :key="`badge-${variant}`" :color="role" :variant="variant" dot
