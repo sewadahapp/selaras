@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import type { VariantProps } from 'tailwind-variants'
 import type { ContentTocThemeSlots } from '../theme/content-toc'
+import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useMessages } from '../composables/use-messages'
 import { contentTocTheme } from '../theme/content-toc'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+
+type ContentTocVariants = VariantProps<typeof contentTocTheme>
 
 export interface TocLink {
   id: string
@@ -29,6 +34,8 @@ defineSlots<ContentTocSlots>()
 export interface ContentTocProps {
   links: TocLink[]
   title?: string
+  /** The active-heading link and rail accent. @default 'primary' */
+  color?: ColorRole
   /** Internal: set by recursive self-calls, omit when using this component directly. */
   isNested?: boolean
   /** Internal: set by recursive self-calls, omit when using this component directly. */
@@ -128,7 +135,8 @@ onUnmounted(() => {
 
 const messages = useMessages()
 const theme = useComponentTheme('contentToc', contentTocTheme)
-const ui = computed(() => theme.value())
+const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
+const ui = computed(() => theme.value({ color: effectiveColor.value as ContentTocVariants['color'] }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 
@@ -285,7 +293,7 @@ if (isRoot) {
 function linkProps(link: TocLink) {
   const active = activeIds.value.has(link.id)
   return {
-    ...resolveSlot(theme.value({ active }).link, props.ui?.link),
+    ...resolveSlot(theme.value({ active, color: effectiveColor.value as ContentTocVariants['color'] }).link, props.ui?.link),
     'data-toc-link': 'true',
     'data-depth': link.depth,
     'data-active': active || undefined,
@@ -300,7 +308,7 @@ function linkProps(link: TocLink) {
 </script>
 
 <template>
-  <component :is="isRoot ? 'nav' : 'div'" v-bind="isRoot ? rootProps : undefined">
+  <component :is="isRoot ? 'nav' : 'div'" :data-selaras-color="effectiveColor" v-bind="isRoot ? rootProps : undefined">
     <p v-if="isRoot" v-bind="resolveSlot(ui.title, props.ui?.title)">
       <slot name="title">
         {{ title ?? messages.onThisPage }}
@@ -333,7 +341,7 @@ function linkProps(link: TocLink) {
           <div v-if="link.children?.length" v-bind="resolveSlot(ui.content, props.ui?.content)">
             <!-- Vue's SFC self-recursion resolves by this file's own bare name -
                  keep it unprefixed even though the public component is SContentToc. -->
-            <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui">
+            <ContentToc :links="link.children" is-nested :active-ids="activeIds" :color="color" :ui="props.ui">
               <template #link="scope">
                 <slot name="link" v-bind="scope" />
               </template>
@@ -349,7 +357,7 @@ function linkProps(link: TocLink) {
           <slot name="link" :link="link" :active="activeIds.has(link.id)">{{ link.text }}</slot>
         </a>
         <div v-if="link.children?.length" v-bind="resolveSlot(ui.content, props.ui?.content)">
-          <ContentToc :links="link.children" is-nested :active-ids="activeIds" :ui="props.ui">
+          <ContentToc :links="link.children" is-nested :active-ids="activeIds" :color="color" :ui="props.ui">
             <template #link="scope">
               <slot name="link" v-bind="scope" />
             </template>

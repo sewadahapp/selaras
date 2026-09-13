@@ -15,7 +15,7 @@ export const contentTocTheme = tv({
     // supplementary "on this page" list, not primary navigation - but
     // still meaningfully bigger than the original py-0.5. No left
     // border/padding for the indicator anymore - the rail owns that job.
-    link: 'block py-1.5 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ui-primary)]',
+    link: 'block py-1.5 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     content: 'ms-3 flex flex-col gap-1',
     // The rail is a single continuous "wire" connecting every heading
     // (not just the active one), drawn as an SVG path and applied as a
@@ -32,11 +32,20 @@ export const contentTocTheme = tv({
     //   only paint where they fall within the path - so the "lit"
     //   portion follows the same curves as the track under it.
     railSegments: 'absolute inset-0',
-    railSegment: 'absolute w-full bg-[var(--ui-primary)] transition-[top,height] duration-200 ease-out',
+    railSegment: 'absolute w-full bg-[var(--_selaras-color-fill)] transition-[top,height] duration-200 ease-out',
   },
   variants: {
+    color: {
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
     active: {
-      true: { link: 'text-[var(--ui-primary)]' },
+      true: { link: 'text-[var(--_selaras-color-text)]' },
     },
   },
 })

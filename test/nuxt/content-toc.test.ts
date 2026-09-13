@@ -11,6 +11,15 @@ import ContentToc from '../../src/runtime/components/ContentToc.vue'
 // nested recursive calls use, which is plain prop-in/class-out with no
 // layout dependency of its own.
 describe('contentToc', () => {
+  it('binds a custom semantic role to active links', async () => {
+    const wrapper = await mountSuspended(ContentToc, {
+      props: { links: [{ id: 'intro', text: 'Introduction', depth: 2 }], isNested: true, activeIds: new Set(['intro']), color: 'premium' as any },
+    })
+
+    expect(wrapper.attributes('data-selaras-color')).toBe('premium')
+    expect(wrapper.find('a').classes()).toContain('text-[var(--_selaras-color-text)]')
+  })
+
   it('renders a link per top-level heading, defaulting the title to "On this page"', async () => {
     const wrapper = await mountSuspended(ContentToc, {
       props: { links: [{ id: 'intro', text: 'Introduction', depth: 2 }, { id: 'usage', text: 'Usage', depth: 2 }] },
@@ -52,7 +61,7 @@ describe('contentToc', () => {
       },
     })
     const link = wrapper.find('a')
-    expect(link.classes().join(' ')).toContain('text-[var(--ui-primary)]')
+    expect(link.classes().join(' ')).toContain('text-[var(--_selaras-color-text)]')
   })
 
   it('does not apply the active class to a link whose id is absent from activeIds', async () => {
@@ -63,7 +72,7 @@ describe('contentToc', () => {
         activeIds: new Set(['other']),
       },
     })
-    expect(wrapper.find('a').classes().join(' ')).not.toContain('text-[var(--ui-primary)]')
+    expect(wrapper.find('a').classes().join(' ')).not.toContain('text-[var(--_selaras-color-text)]')
   })
 
   it('renders a nested instance as a plain div rather than a nav, with no title', async () => {
