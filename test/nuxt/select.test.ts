@@ -81,6 +81,18 @@ describe('select', () => {
     wrapper.unmount()
   })
 
+  it('routes native focus listeners to a non-searchable Select trigger', async () => {
+    let focused = 0
+    const wrapper = await mountSuspended(Select, {
+      attrs: { onFocus: () => focused++ },
+      props: { items: fruitItems },
+    })
+
+    await wrapper.find('[aria-haspopup="listbox"]').trigger('focus')
+
+    expect(focused).toBe(1)
+  })
+
   it('keeps controlled selection when the parent ignores removal', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: [{ label: 'Zero', value: 0 }], modelValue: 0, clearable: true },

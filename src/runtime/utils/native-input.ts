@@ -20,3 +20,7 @@ const nativeInputEvents = /^on(?:BeforeInput|Change|CompositionEnd|CompositionSt
 export function isNativeInputAttr(key: string) {
   return nativeInputAttributes.has(key) || nativeInputEvents.test(key)
 }
+
+export function isNativeInputEvent(key: string) {
+  return nativeInputEvents.test(key)
+}
