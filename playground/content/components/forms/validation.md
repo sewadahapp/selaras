@@ -13,39 +13,49 @@ message straight into `error`.
 
 ## VeeValidate
 
-[VeeValidate](https://vee-validate.logaretm.com) is the most established
-Vue-specific form-validation library, with first-class Zod/Yup schema
-adapters.
+[VeeValidate v4](https://vee-validate.logaretm.com/v4/guide/composition-api/custom-inputs/)
+connects to Selaras through field values, blur handlers, and per-field errors.
 
 ```vue
 <script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
-import { z } from 'zod'
 
-const schema = toTypedSchema(z.object({
-  email: z.string().email('Enter a valid email address'),
-}))
-
-const { handleSubmit } = useForm({ validationSchema: schema })
-const { value: email, errorMessage } = useField<string>('email')
+const { handleSubmit, resetForm } = useForm({ initialValues: { email: '' } })
+const { value: email, errorMessage, handleBlur } = useField<string>(
+  'email',
+  value => value.includes('@') || 'Enter a valid email address',
+)
 
 const onSubmit = handleSubmit((values) => {
   // values.email is validated and fully typed
 })
+
+function onReset(event: Event) {
+  event.preventDefault()
+  resetForm()
+}
 </script>
 
 <template>
-  <form @submit="onSubmit">
-    <SFormField label="Email" :error="errorMessage">
-      <SInput v-model="email" type="email" />
+  <form novalidate @submit="onSubmit" @reset="onReset">
+    <SFormField name="email" label="Email" :error="errorMessage">
+      <SInput v-model="email" type="email" @blur="handleBlur($event, true)" />
     </SFormField>
     <SButton type="submit">
       Submit
     </SButton>
+    <SButton type="reset">
+      Reset
+    </SButton>
   </form>
 </template>
 ```
+
+`novalidate` lets this example's validation library handle submission errors.
+Canceling the native reset lets `resetForm()` restore field values, errors and
+touched state together. This also keeps controlled file/date fields aligned
+with the library's initial values instead of applying a second native reset.
+Without a validation library, native `required` validation remains available.
 
 ## TanStack Form
 
