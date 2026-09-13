@@ -67,6 +67,20 @@ describe('select', () => {
     expect(selectedForm.checkValidity()).toBe(true)
   })
 
+  it('forwards native attributes to a searchable Select input', async () => {
+    const wrapper = await mountSuspended(Select, {
+      attrs: { autocomplete: 'off', inputmode: 'search', readonly: true },
+      props: { items: fruitItems, searchable: true, open: true },
+    })
+    await nextTick()
+    const input = document.body.querySelector<HTMLInputElement>('input[role="combobox"]')
+
+    expect(input?.getAttribute('autocomplete')).toBe('off')
+    expect(input?.getAttribute('inputmode')).toBe('search')
+    expect(input?.hasAttribute('readonly')).toBe(true)
+    wrapper.unmount()
+  })
+
   it('keeps controlled selection when the parent ignores removal', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: [{ label: 'Zero', value: 0 }], modelValue: 0, clearable: true },
