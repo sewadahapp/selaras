@@ -11,11 +11,11 @@ export const datePickerTheme = tv({
     // slot for why (same fix, same reasoning: hovering while focused is
     // unavoidable here, and would otherwise let the plain gray hover ring
     // beat the primary focus-within ring).
-    field: 'inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--ui-primary)] has-[[data-disabled]]:opacity-50 has-[[data-disabled]]:pointer-events-none',
+    field: 'inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] has-[[data-disabled]]:opacity-50 has-[[data-disabled]]:pointer-events-none',
     // rounded-sm + tabular-nums keeps digit width stable as a segment's
     // value changes; the segment itself is the contenteditable element
     // Reka renders, so focus state is real :focus, not a data-attribute.
-    segment: 'rounded-[var(--ui-radius-sm)] px-0.5 text-[var(--ui-text)] tabular-nums outline-none focus:bg-[var(--ui-primary)]/15 data-[reka-date-field-segment=literal]:px-0 data-[reka-date-field-segment=literal]:text-[var(--ui-text-muted)]',
+    segment: 'rounded-[var(--ui-radius-sm)] px-0.5 text-[var(--ui-text)] tabular-nums outline-none focus:bg-[var(--_selaras-color-subtle)]/15 data-[reka-date-field-segment=literal]:px-0 data-[reka-date-field-segment=literal]:text-[var(--ui-text-muted)]',
     // Between the two segment groups in range mode - a plain en dash, not an
     // arrow glyph, so there's nothing directional to mirror under RTL.
     separator: 'px-0.5 text-[var(--ui-text-muted)]',
@@ -60,7 +60,7 @@ export const datePickerTheme = tv({
       lg: { field: 'h-11 px-3.5 text-base' },
     },
     invalid: {
-      true: { field: 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)] focus-within:ring-[var(--ui-danger)]' },
+      true: { field: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus-within:ring-[var(--_selaras-color-fill)]' },
     },
     // Range mode's day cells butt up against each other with no horizontal
     // gap, so a highlighted run of days reads as one continuous connected

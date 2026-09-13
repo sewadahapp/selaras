@@ -40,6 +40,7 @@ import DatePickerCalendarBody from '../internal/DatePickerCalendarBody.vue'
 import DatePickerRangeCalendarBody from '../internal/DatePickerRangeCalendarBody.vue'
 import DatePickerTimeBody from '../internal/DatePickerTimeBody.vue'
 import { datePickerTheme } from '../theme/date-picker'
+import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeScope } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
@@ -493,6 +494,9 @@ const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('datePicker', datePickerTheme)
 const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: datePickerInvalid.value, range: props.range }))
+const fieldColor = computed(() => datePickerInvalid.value
+  ? 'danger'
+  : resolveRegisteredColorRole(props.color, 'neutral'))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const fieldProps = computed(() => resolveSlot(ui.value.field, props.ui?.field))
@@ -594,7 +598,7 @@ const timeBodyProps = computed(() => ({
 const buttonTriggerUi = computed(() => ({
   base: [
     'w-full justify-start rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)]',
-    datePickerInvalid.value ? 'ring-[var(--ui-danger)] hover:ring-[var(--ui-danger)]' : undefined,
+    datePickerInvalid.value ? 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)]' : undefined,
     // Room for the clear button, which sits absolutely positioned on top of
     // this same end edge - without it, a long formatted date can run under it.
     props.clearable && hasValue.value ? 'pe-8' : undefined,
@@ -638,6 +642,7 @@ const buttonTriggerUi = computed(() => ({
     :disabled="disabled"
     :readonly="readonly"
     :prevent-deselect="preventDeselect"
+    :data-selaras-color="fieldColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value)"
   >
@@ -757,7 +762,7 @@ const buttonTriggerUi = computed(() => ({
     </Modal>
   </DateRangePickerRoot>
 
-  <PopoverRoot v-else-if="timeOnly" v-model:open="timeIsOpen">
+  <PopoverRoot v-else-if="timeOnly" v-model:open="timeIsOpen" :data-selaras-color="fieldColor">
     <PopoverAnchor as-child>
       <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps">
         <TimeFieldRoot
@@ -891,6 +896,7 @@ const buttonTriggerUi = computed(() => ({
     :disabled="disabled"
     :readonly="readonly"
     :prevent-deselect="preventDeselect"
+    :data-selaras-color="fieldColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', normalizeForGranularity(value as DateValue | undefined))"
   >
