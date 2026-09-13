@@ -42,19 +42,19 @@ export const fileUploadTheme = tv({
     // actually demonstrating anything - confirmed as a real problem via
     // direct user feedback, not just a style preference.
     color: {
-      primary: { icon: 'text-[var(--ui-primary)]', dropzone: 'focus-visible:ring-[var(--ui-primary)] data-[dragging]:border-[var(--ui-primary)] data-[dragging]:bg-[var(--ui-primary-soft)]' },
+      primary: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
       neutral: { icon: 'text-[var(--ui-bg-inverted)]', dropzone: 'focus-visible:ring-[var(--ui-bg-inverted)] data-[dragging]:border-[var(--ui-bg-inverted)] data-[dragging]:bg-[var(--ui-bg-elevated)]' },
-      secondary: { icon: 'text-[var(--ui-secondary)]', dropzone: 'focus-visible:ring-[var(--ui-secondary)] data-[dragging]:border-[var(--ui-secondary)] data-[dragging]:bg-[var(--ui-secondary-soft)]' },
-      success: { icon: 'text-[var(--ui-success)]', dropzone: 'focus-visible:ring-[var(--ui-success)] data-[dragging]:border-[var(--ui-success)] data-[dragging]:bg-[var(--ui-success-soft)]' },
-      danger: { icon: 'text-[var(--ui-danger)]', dropzone: 'focus-visible:ring-[var(--ui-danger)] data-[dragging]:border-[var(--ui-danger)] data-[dragging]:bg-[var(--ui-danger-soft)]' },
-      info: { icon: 'text-[var(--ui-info)]', dropzone: 'focus-visible:ring-[var(--ui-info)] data-[dragging]:border-[var(--ui-info)] data-[dragging]:bg-[var(--ui-info-soft)]' },
-      warning: { icon: 'text-[var(--ui-warning)]', dropzone: 'focus-visible:ring-[var(--ui-warning)] data-[dragging]:border-[var(--ui-warning)] data-[dragging]:bg-[var(--ui-warning-soft)]' },
+      secondary: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
+      success: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
+      danger: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
+      info: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
+      warning: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
     },
     // Declared last (after color) so tailwind-merge lets its own border
     // override win over color's - matches Input's own documented
     // reasoning for this order.
     invalid: {
-      true: { dropzone: 'border-[var(--ui-danger)] focus-visible:ring-[var(--ui-danger)]' },
+      true: { dropzone: 'border-[var(--_selaras-color-fill)] focus-visible:ring-[var(--_selaras-color-fill)]' },
     },
   },
   defaultVariants: {

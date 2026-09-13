@@ -9,7 +9,7 @@ import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { fileUploadTheme } from '../theme/file-upload'
-import { customColorRoleStyle, isBuiltinColorRole } from '../utils/color-registry'
+import { isBuiltinColorRole } from '../utils/color-registry'
 import { formatBytes } from '../utils/format-bytes'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
@@ -211,7 +211,6 @@ function removeFile(index: number) {
 const theme = useComponentTheme('fileUpload', fileUploadTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as FileUploadVariants['color'] : 'primary')
-const colorRoleStyle = computed(() => customColorRoleStyle(effectiveColor.value))
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
   color: recipeColor.value,
@@ -237,7 +236,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
 </script>
 
 <template>
-  <div :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor" :style="colorRoleStyle" v-bind="rootProps">
+  <div :data-selaras-color="effectiveColor" v-bind="rootProps">
     <button
       ref="dropzoneEl"
       type="button"

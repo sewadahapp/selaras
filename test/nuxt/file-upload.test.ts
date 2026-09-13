@@ -15,10 +15,11 @@ function setInputFiles(input: HTMLInputElement, files: File[]) {
 }
 
 describe('fileUpload', () => {
-  it('binds a custom semantic role to the upload root', async () => {
+  it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(FileUpload, { props: { color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.find('button').classes()).toContain('focus-visible:ring-[var(--_selaras-color-focus)]')
   })
 
   it('shows a dropped file in the list even with no v-model bound (uncontrolled)', async () => {
@@ -144,6 +145,12 @@ describe('fileUpload', () => {
 
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
     expect(wrapper.find('input[type="file"]').attributes('disabled')).toBeDefined()
+  })
+
+  it('uses semantic fill color for invalid dropzones', async () => {
+    const wrapper = await mountSuspended(FileUpload, { props: { invalid: true } })
+    expect(wrapper.find('button').classes()).toContain('border-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('button').classes()).toContain('focus-visible:ring-[var(--_selaras-color-fill)]')
   })
 
   it('sets a dragging state on dragenter and clears it on drop', async () => {
