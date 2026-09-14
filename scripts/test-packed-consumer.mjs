@@ -124,6 +124,11 @@ async function inspectSsr(prefixed = true) {
         await page.setViewportSize({ width: 960, height: 800 })
         await page.waitForFunction(() => document.querySelector('#packed-narrow')?.textContent === 'false')
         assert.equal(await page.locator('#packed-responsive').isVisible(), true)
+        await page.locator('#packed-toast').evaluate(element => element.click())
+        await page.waitForFunction(() => {
+          const toast = [...document.querySelectorAll('[data-selaras-color="published"]')].find(element => element.textContent.includes('Published global toast'))
+          return toast && getComputedStyle(toast).borderInlineStartColor === 'rgb(69, 103, 137)'
+        })
         assert.deepEqual(issues, [])
         console.log(`[packed] ${prefixed ? 'prefixed' : 'normal'} hydration and adaptive/CSS agreement passed`)
       }

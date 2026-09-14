@@ -5,6 +5,7 @@ import { createTableColumnHelper } from '@sewadah/selaras/table'
 
 const role: ColorRole = 'published'
 const narrow = useIsMobile()
+const { add: addPublishedToast } = useToast()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
@@ -29,6 +30,10 @@ void hyphenatedRole
   <SApp>
     <output id="packed-narrow">{{ narrow }}</output>
     <span id="packed-responsive" class="tw:hidden tw:tablet:block">Wide viewport</span>
+    <button id="packed-toast" @click="addPublishedToast({ title: 'Published global toast', color: 'published' })">
+      Show published toast
+    </button>
+    <SToast />
     <SButton id="packed-default" v-bind="button">
       Published default
     </SButton>
@@ -38,7 +43,7 @@ void hyphenatedRole
     <SButton id="packed-runtime-builtin" color="primary">
       Runtime built-in override
     </SButton>
-    <STheme as="section" v-bind="theme" :tokens="{ light: { published: { fill: '#56789a' } } }">
+    <STheme as="section" v-bind="theme" :tokens="{ light: { colors: { published: { fill: '#56789a' } } } }">
       <SButton id="packed-scoped" :color="role">
         Published scoped
       </SButton>

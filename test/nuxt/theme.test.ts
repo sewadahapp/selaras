@@ -15,6 +15,22 @@ function withTheme(themeProps: Record<string, unknown>, children: any) {
 }
 
 describe('theme', () => {
+  it('inherits explicit mode and ownership through headless presentation providers', async () => {
+    const mode = ref<'light' | 'dark'>('dark')
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { as: 'section', mode: mode.value }, () =>
+        h(Theme, { defaults: { button: { size: 'lg' } } }, () => h(Button, () => 'Inherited'))),
+    }))
+    const button = wrapper.find('button')
+    expect(button.attributes('data-selaras-theme')).toBe(wrapper.attributes('data-selaras-theme'))
+    expect(button.attributes('data-selaras-mode')).toBe('dark')
+    mode.value = 'light'
+    await wrapper.vm.$nextTick()
+    expect(button.attributes('data-selaras-mode')).toBe('light')
+    expect(button.classes()).toContain('h-11')
+    wrapper.unmount()
+  })
+
   it('renders no DOM element of its own', async () => {
     const wrapper = await mountSuspended(Theme, { slots: { default: () => 'content' } })
     expect(wrapper.html()).toBe('content')
@@ -22,7 +38,7 @@ describe('theme', () => {
 
   it('requires an explicit root to scope token overrides and isolates the descendant role', async () => {
     const wrapper = await mountSuspended(Theme, {
-      props: { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } },
+      props: { as: 'section', tokens: { light: { colors: { premium: { fill: '#5134a8' } } } } },
       slots: { default: () => h(Button, { color: 'premium' }, () => 'Scoped') },
     })
     expect(wrapper.element.tagName).toBe('SECTION')
@@ -36,7 +52,7 @@ describe('theme', () => {
 
   it('transports the theme marker onto portalled popover content', async () => {
     const wrapper = await mountSuspended(defineComponent({
-      render: () => h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () =>
+      render: () => h(Theme, { as: 'section', tokens: { light: { colors: { premium: { fill: '#5134a8' } } } } }, () =>
         h(Popover, { open: true }, {
           default: () => h('button', 'Open'),
           content: () => h('span', { 'data-testid': 'popover-content' }, 'Content'),
@@ -52,7 +68,7 @@ describe('theme', () => {
 
   it('transports the theme marker onto context-menu content', async () => {
     const wrapper = await mountSuspended(defineComponent({
-      render: () => h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () =>
+      render: () => h(Theme, { as: 'section', tokens: { light: { colors: { premium: { fill: '#5134a8' } } } } }, () =>
         h(ContextMenu, { items: [[{ label: 'Inspect' }]] }, {
           default: () => h('button', { 'data-testid': 'context-target' }, 'Open'),
         })),
@@ -68,12 +84,12 @@ describe('theme', () => {
   it('isolates nested explicit scopes with distinct role selectors', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => h('div', [
-        h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () => h(Button, { color: 'premium' }, () => 'Outer')),
-        h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#0f766e' } } } }, () => h(Button, { color: 'premium' }, () => 'Inner')),
+        h(Theme, { as: 'section', tokens: { light: { colors: { premium: { fill: '#5134a8' } } } } }, () => h(Button, { color: 'premium' }, () => 'Outer')),
+        h(Theme, { as: 'section', tokens: { light: { colors: { premium: { fill: '#0f766e' } } } } }, () => h(Button, { color: 'premium' }, () => 'Inner')),
       ]),
     }))
     await new Promise(resolve => setTimeout(resolve, 50))
-    const scopes = wrapper.findAll('[data-selaras-theme]')
+    const scopes = wrapper.findAll('section[data-selaras-theme]')
     expect(scopes).toHaveLength(2)
     expect(scopes[0]!.attributes('data-selaras-theme')).not.toBe(scopes[1]!.attributes('data-selaras-theme'))
     const css = [...document.head.querySelectorAll('style')].map(node => node.textContent ?? '').join('\n')

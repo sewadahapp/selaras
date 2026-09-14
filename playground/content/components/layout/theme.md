@@ -64,7 +64,7 @@ inheriting whatever an outer one set and it didn't touch:
 Use `as` to create a DOM boundary for semantic token overrides:
 
 ```vue-html
-<STheme as="section" :tokens="{ light: { premium: { fill: '#5134a8' } } }">
+<STheme as="section" :tokens="{ light: { colors: { premium: { fill: '#5134a8' } } } }">
   <!-- nested token scopes inherit untouched modes, roles and leaves -->
 </STheme>
 ```

@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "../../../src/runtime/theme.css";
+@import "#selaras/tailwind.css";
+
+.consumer-override {
+  --selaras-color-primary-fill: rgb(70 80 90);
+}

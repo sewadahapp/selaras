@@ -37,15 +37,15 @@ export type ColorRecipeInput = Pick<ColorRecipe, 'fill' | 'onFill' | 'subtle' | 
 export type RuntimeColorOverrides = Partial<Record<ColorRole, Partial<ColorRecipeInput>>>
 
 export interface RuntimeTokenOverrides {
-  light?: RuntimeColorOverrides
-  dark?: RuntimeColorOverrides
+  light?: { colors?: RuntimeColorOverrides }
+  dark?: { colors?: RuntimeColorOverrides }
 }
 
 /** Composes managed scope leaves without resolving authored CSS expressions. */
 export function mergeRuntimeTokenOverrides(parent: RuntimeTokenOverrides = {}, local: RuntimeTokenOverrides = {}): RuntimeTokenOverrides {
   const result: RuntimeTokenOverrides = {}
   for (const mode of ['light', 'dark'] as const) {
-    const roles = new Set([...Object.keys(parent[mode] ?? {}), ...Object.keys(local[mode] ?? {})])
+    const roles = new Set([...Object.keys(parent[mode]?.colors ?? {}), ...Object.keys(local[mode]?.colors ?? {})])
     if (roles.size === 0)
       continue
     const colors: RuntimeColorOverrides = {}
@@ -53,11 +53,11 @@ export function mergeRuntimeTokenOverrides(parent: RuntimeTokenOverrides = {}, l
       assertColorRoleName(role)
       const key = role as ColorRole
       colors[key] = Object.fromEntries(
-        [...Object.entries(parent[mode]?.[key] ?? {}), ...Object.entries(local[mode]?.[key] ?? {})]
+        [...Object.entries(parent[mode]?.colors?.[key] ?? {}), ...Object.entries(local[mode]?.colors?.[key] ?? {})]
           .filter(([, value]) => value !== undefined),
       )
     }
-    result[mode] = colors
+    result[mode] = { colors }
   }
   return result
 }
@@ -156,27 +156,32 @@ function overrideRule(selector: string, role: string, overrides: Partial<ColorRe
   return declarations.length > 0 ? `${selector} {\n${declarations.join('\n')}\n}` : undefined
 }
 
-/** Serializes app-config color leaves into an SSR-safe light/dark CSS layer. */
-export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides, scopeSelector = ''): string {
+/** Exact owners rematerialize effective leaves, including across DOM portals. */
+export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides, scopeSelector = '[data-selaras-theme="global"]'): string {
   const rules: string[] = []
+  const owner = scopeSelector.trim()
+  const roles = new Set([...Object.keys(overrides.light?.colors ?? {}), ...Object.keys(overrides.dark?.colors ?? {})])
   for (const mode of ['light', 'dark'] as const) {
-    const colors = overrides[mode]
-    if (!colors)
-      continue
-    for (const role of Object.keys(colors).sort()) {
+    const colors = overrides[mode]?.colors
+    for (const role of [...roles].sort()) {
       assertColorRoleName(role)
-      const colorSelector = `[data-selaras-color="${role}"]`
-      const scope = scopeSelector.trim()
-      const selectors = scope ? [`${scope}${colorSelector}`, `${scope} ${colorSelector}`] : [colorSelector]
-      const selector = selectors.map(value => mode === 'dark'
-        ? `.dark ${value}`
-        : `${value}:not(:where(.dark, .dark *))`).join(',\n')
-      const rule = overrideRule(selector, role, colors[role as ColorRole] ?? {})
+      const key = role as ColorRole
+      // An opposite-mode-only managed leaf must not leak through DOM inheritance.
+      // `initial` is invalid for a custom property, restoring recipe fallbacks.
+      const fields = new Set([
+        ...Object.entries(overrides.light?.colors?.[key] ?? {}),
+        ...Object.entries(overrides.dark?.colors?.[key] ?? {}),
+      ].filter(([, value]) => value !== undefined).map(([field]) => field))
+      const effective = Object.fromEntries([...fields].map(field => [field, colors?.[key]?.[field as keyof ColorRecipeInput] ?? 'initial']))
+      const selector = mode === 'dark'
+        ? `:root.dark ${owner}:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),\n${owner}:where([data-selaras-mode="dark"])`
+        : `${owner}:where(:not([data-selaras-mode]), [data-selaras-mode="root"], [data-selaras-mode="light"])`
+      const rule = overrideRule(selector, role, effective)
       if (rule)
         rules.push(rule)
     }
   }
-  return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
+  return rules.length > 0 ? `@layer theme {\n${rules.join('\n\n')}\n}\n` : ''
 }
 
 function roleRule(selector: string, role: string, recipe: ColorRecipe, fields: readonly (typeof generatedRoleFields)[number][] = generatedRoleFields): string {
@@ -207,7 +212,7 @@ export function generateColorRoleCss(registry: Record<string, ColorModePair<Colo
     rules.push(roleRule(`[data-selaras-color="${role}"]`, role, modes.light))
     const changedFields = generatedRoleFields.filter(field => roleFieldValue(modes.light, field) !== roleFieldValue(modes.dark, field))
     if (changedFields.length)
-      rules.push(roleRule(`.dark [data-selaras-color="${role}"]`, role, modes.dark, changedFields))
+      rules.push(roleRule(`:root.dark [data-selaras-color="${role}"]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),\n[data-selaras-color="${role}"]:where([data-selaras-mode="dark"])`, role, modes.dark, changedFields))
   }
-  return rules.length > 0 ? `${rules.join('\n\n')}\n` : ''
+  return rules.length > 0 ? `@layer theme {\n${rules.join('\n\n')}\n}\n` : ''
 }

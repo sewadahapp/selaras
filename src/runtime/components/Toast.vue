@@ -58,7 +58,7 @@ function recipeColorFor(toast: ToastItem): 'success' | 'danger' | 'warning' | 'i
     v-for="toast in toasts"
     :key="toast.id"
     :duration="toast.duration ?? 5000"
-    :data-selaras-theme="toast._themeScope"
+    :data-selaras-theme="toast._themeScope ?? 'global'"
     :data-selaras-color="effectiveColorFor(toast)"
     v-bind="rootPropsFor(toast)"
     @update:open="(open) => !open && remove(toast.id)"

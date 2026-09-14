@@ -38,10 +38,7 @@ const props = withDefaults(defineProps<AppProps>(), {
 // rest of the library is already resolving text/date formatting against.
 const locale = useLocale()
 const appConfig = useAppConfig() as { selaras?: { tokens?: { light?: { colors?: Record<string, Record<string, string>> }, dark?: { colors?: Record<string, Record<string, string>> } } } }
-const runtimeTokenCss = computed(() => generateRuntimeColorOverrideCss({
-  light: appConfig.selaras?.tokens?.light?.colors,
-  dark: appConfig.selaras?.tokens?.dark?.colors,
-}))
+const runtimeTokenCss = computed(() => generateRuntimeColorOverrideCss(appConfig.selaras?.tokens ?? {}))
 useHead({
   htmlAttrs: { dir: () => props.dir, lang: () => locale.value },
   style: [{ key: 'selaras-runtime-tokens', textContent: () => runtimeTokenCss.value || undefined }],

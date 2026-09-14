@@ -35,7 +35,7 @@ function proposeValue(value) {
         Reset
       </button>
     </form>
-    <STheme as="section" :tokens="{ light: { enterprise: { fill: 'rgb(11 34 51)' } } }">
+    <STheme as="section" :tokens="{ light: { colors: { enterprise: { fill: 'rgb(11 34 51)' } } } }">
       <SAutocomplete
         id="autocomplete-input" aria-label="Find a number" name="number" form="autocomplete-form"
         :items="items" color="enterprise" mobile-modal

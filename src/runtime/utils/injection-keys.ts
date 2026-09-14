@@ -70,6 +70,8 @@ export interface ThemeContext {
   ui?: Partial<Record<string, object>>
   defaults?: Partial<Record<string, Record<string, unknown>>>
   scopeId?: string
+  /** `root` follows the document root; explicit modes inherit logically. */
+  mode?: 'root' | 'light' | 'dark'
   /** Effective managed tokens from explicit DOM scopes only. */
   tokens?: RuntimeTokenOverrides
   parent?: ThemeContext

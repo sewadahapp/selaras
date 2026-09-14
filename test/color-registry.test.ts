@@ -133,34 +133,35 @@ describe('color registry', () => {
 
   it('serializes runtime light/dark overrides without allowing declaration injection', () => {
     const css = generateRuntimeColorOverrideCss({
-      light: { premium: { fill: '#5134a8', fillHover: 'var(--brand-hover)' } },
-      dark: { premium: { fill: '#a78bfa' } },
+      light: { colors: { premium: { fill: '#5134a8', fillHover: 'var(--brand-hover)' } } },
+      dark: { colors: { premium: { fill: '#a78bfa' } } },
     })
-    expect(css).toContain('[data-selaras-color="premium"]')
+    expect(css).toContain('[data-selaras-theme="global"]')
     expect(css).toContain('--selaras-color-premium-fill-hover: var(--brand-hover);')
-    expect(css).toContain('[data-selaras-color="premium"]:not(:where(.dark, .dark *))')
-    expect(css).toContain('.dark [data-selaras-color="premium"]')
-    expect(() => generateRuntimeColorOverrideCss({ light: { premium: { fill: 'red; color: blue' } } })).toThrow()
+    expect(css).toContain('[data-selaras-mode="light"]')
+    expect(css).toContain(':root.dark [data-selaras-theme="global"]')
+    expect(() => generateRuntimeColorOverrideCss({ light: { colors: { premium: { fill: 'red; color: blue' } } } })).toThrow()
   })
 
   it('inherits untouched modes, roles and leaves without mutating or resolving authored values', () => {
     const parent = {
-      light: { premium: { fill: '#123456', subtle: 'var(--local-subtle)' }, primary: { text: '#654321' } },
-      dark: { premium: { subtle: '#112233' } },
+      light: { colors: { premium: { fill: '#123456', subtle: 'var(--local-subtle)' }, primary: { text: '#654321' } } },
+      dark: { colors: { premium: { subtle: '#112233' } } },
     }
-    const local = { light: { premium: { fill: '#abcdef', subtle: undefined } } }
+    const local = { light: { colors: { premium: { fill: '#abcdef', subtle: undefined } } } }
     const merged = mergeRuntimeTokenOverrides(parent, local)
     expect(merged).toEqual({
-      light: { premium: { fill: '#abcdef', subtle: 'var(--local-subtle)' }, primary: { text: '#654321' } },
-      dark: { premium: { subtle: '#112233' } },
+      light: { colors: { premium: { fill: '#abcdef', subtle: 'var(--local-subtle)' }, primary: { text: '#654321' } } },
+      dark: { colors: { premium: { subtle: '#112233' } } },
     })
-    expect(parent.light.premium.fill).toBe('#123456')
-    expect(merged.light?.premium).not.toBe(parent.light.premium)
+    expect(parent.light.colors.premium.fill).toBe('#123456')
+    expect(merged.light?.colors?.premium).not.toBe(parent.light.colors.premium)
   })
 
-  it('supports a scoped color marker on the scope root itself or a descendant', () => {
-    const css = generateRuntimeColorOverrideCss({ light: { premium: { fill: '#5134a8' } } }, '[data-selaras-theme="scope"] ')
-    expect(css).toContain('[data-selaras-theme="scope"][data-selaras-color="premium"]:not(:where(.dark, .dark *)),')
-    expect(css).toContain('[data-selaras-theme="scope"] [data-selaras-color="premium"]')
+  it('targets exact managed owners instead of broad descendants', () => {
+    const css = generateRuntimeColorOverrideCss({ light: { colors: { premium: { fill: '#5134a8' } } } }, '[data-selaras-theme="scope"] ')
+    expect(css).toContain('[data-selaras-theme="scope"]:where(')
+    expect(css).not.toContain('[data-selaras-theme="scope"] ')
+    expect(css).toContain('--selaras-color-premium-fill: initial;')
   })
 })

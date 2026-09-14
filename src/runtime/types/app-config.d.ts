@@ -1,14 +1,11 @@
-import type { RuntimeColorOverrides } from '../utils/color-registry'
+import type { RuntimeTokenOverrides } from '../utils/color-registry'
 import type { IconRegistry } from '../utils/icons'
 import type { MessageRegistry } from '../utils/messages'
 
 export interface SelarasRuntimeConfig {
   defaults?: Record<string, Record<string, unknown>>
   ui?: Record<string, object>
-  tokens?: {
-    light?: { colors?: RuntimeColorOverrides }
-    dark?: { colors?: RuntimeColorOverrides }
-  }
+  tokens?: RuntimeTokenOverrides
   ripple?: boolean
 }
 

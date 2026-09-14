@@ -4,7 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { popoverTheme } from '../theme/popover'
-import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 
 export interface PopoverProps {
   open?: boolean
@@ -87,7 +87,7 @@ function onOpenAutoFocus(event: Event) {
 }
 
 const theme = useComponentTheme('popover', popoverTheme)
-const themeScope = useThemeScope()
+const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -122,7 +122,9 @@ function onUpdateOpen(value: boolean) {
     </PopoverTrigger>
     <PopoverPortal>
       <PopoverContent
-        :data-selaras-theme="themeScope"
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
         :side="side"
         :align="align"
         :side-offset="8"

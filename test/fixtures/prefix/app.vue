@@ -25,13 +25,13 @@ const semanticRecipe = {
   focus: 'rgb(130 140 150)',
 }
 const nestedTokens = ref({
-  light: { enterprise: { fill: 'rgb(60 61 62)', subtle: 'rgb(63 64 65)', text: 'rgb(60 61 62)' } },
-  dark: { enterprise: { subtle: 'rgb(103 104 105)' } },
+  light: { colors: { enterprise: { fill: 'rgb(60 61 62)', subtle: 'rgb(63 64 65)', text: 'rgb(60 61 62)' } } },
+  dark: { colors: { enterprise: { subtle: 'rgb(103 104 105)' } } },
 })
 const radioValues = ref({ primary: 'one', enterprise: 'one' })
 
 function updateNestedTokens() {
-  nestedTokens.value.light.enterprise.subtle = 'rgb(83 84 85)'
+  nestedTokens.value.light.colors.enterprise.subtle = 'rgb(83 84 85)'
 }
 </script>
 
@@ -74,7 +74,7 @@ function updateNestedTokens() {
     </div>
     <STheme
       as="section"
-      :tokens="{ light: { enterprise: { fill: 'rgb(9 8 7)', onFill: 'white', subtle: 'rgb(20 19 18)', onSubtle: 'white', text: 'rgb(9 8 7)', border: 'rgb(9 8 7)' } } }"
+      :tokens="{ light: { colors: { enterprise: { fill: 'rgb(9 8 7)', onFill: 'white', subtle: 'rgb(20 19 18)', onSubtle: 'white', text: 'rgb(9 8 7)', border: 'rgb(9 8 7)' } } } }"
     >
       <SPopover :open="true">
         <template #default>
@@ -92,7 +92,7 @@ function updateNestedTokens() {
     </STheme>
     <STheme
       as="section"
-      :tokens="{ light: { enterprise: { fill: 'rgb(80 81 82)', onFill: 'white', subtle: 'rgb(83 84 85)', onSubtle: 'white', text: 'rgb(80 81 82)', border: 'rgb(80 81 82)' } } }"
+      :tokens="{ light: { colors: { enterprise: { fill: 'rgb(80 81 82)', onFill: 'white', subtle: 'rgb(83 84 85)', onSubtle: 'white', text: 'rgb(80 81 82)', border: 'rgb(80 81 82)' } } } }"
     >
       <div id="scoped-date-picker-fixture">
         <SDatePicker :model-value="scopedDate" active-color="enterprise" />
@@ -104,7 +104,7 @@ function updateNestedTokens() {
       </div>
       <STheme
         as="section"
-        :tokens="{ light: { enterprise: { fill: 'rgb(90 91 92)' } } }"
+        :tokens="{ light: { colors: { enterprise: { fill: 'rgb(90 91 92)' } } } }"
       >
         <ScopedToastTrigger />
       </STheme>
@@ -126,14 +126,14 @@ function updateNestedTokens() {
     </SPopover>
     <STheme
       as="section"
-      :tokens="{ light: { enterprise: { fill: 'rgb(40 41 42)', onFill: 'white', subtle: 'rgb(43 44 45)', onSubtle: 'white', text: 'rgb(40 41 42)', border: 'rgb(40 41 42)' } } }"
+      :tokens="{ light: { colors: { enterprise: { fill: 'rgb(40 41 42)', onFill: 'white', subtle: 'rgb(43 44 45)', onSubtle: 'white', text: 'rgb(40 41 42)', border: 'rgb(40 41 42)' } } } }"
     >
       <SButton id="nested-outer-button" color="enterprise">
         Outer scope
       </SButton>
       <STheme
         as="div"
-        :tokens="{ light: { enterprise: { fill: 'rgb(50 51 52)', onFill: 'white', subtle: 'rgb(53 54 55)', onSubtle: 'white', text: 'rgb(50 51 52)', border: 'rgb(50 51 52)' } } }"
+        :tokens="{ light: { colors: { enterprise: { fill: 'rgb(50 51 52)', onFill: 'white', subtle: 'rgb(53 54 55)', onSubtle: 'white', text: 'rgb(50 51 52)', border: 'rgb(50 51 52)' } } } }"
       >
         <SButton id="nested-inner-button" color="enterprise">
           Inner scope
@@ -156,7 +156,7 @@ function updateNestedTokens() {
         <template #content>
           <STheme
             as="div"
-            :tokens="{ light: { enterprise: { fill: 'rgb(70 71 72)' } }, dark: { enterprise: { fill: 'rgb(110 111 112)' } } }"
+            :tokens="{ light: { colors: { enterprise: { fill: 'rgb(70 71 72)' } } }, dark: { colors: { enterprise: { fill: 'rgb(110 111 112)' } } } }"
           >
             <SButton id="nested-inner-inline-subtle" color="enterprise" variant="soft">
               Inline inherited subtle color
@@ -193,7 +193,7 @@ function updateNestedTokens() {
     </div>
     <STheme
       as="section"
-      :tokens="{ light: { enterprise: { fill: 'rgb(20 21 22)', subtle: 'rgb(60 61 62)', text: 'rgb(100 101 102)' } }, dark: { enterprise: { fill: 'rgb(30 31 32)', subtle: 'rgb(70 71 72)', text: 'rgb(110 111 112)' } } }"
+      :tokens="{ light: { colors: { enterprise: { fill: 'rgb(20 21 22)', subtle: 'rgb(60 61 62)', text: 'rgb(100 101 102)' } } }, dark: { colors: { enterprise: { fill: 'rgb(30 31 32)', subtle: 'rgb(70 71 72)', text: 'rgb(110 111 112)' } } } }"
     >
       <SButton id="derived-states-button" color="enterprise">
         Derived states
@@ -210,7 +210,7 @@ function updateNestedTokens() {
     </section>
     <STheme
       as="section"
-      :tokens="{ light: { primary: semanticRecipe, enterprise: semanticRecipe }, dark: { primary: semanticRecipe, enterprise: semanticRecipe } }"
+      :tokens="{ light: { colors: { primary: semanticRecipe, enterprise: semanticRecipe } }, dark: { colors: { primary: semanticRecipe, enterprise: semanticRecipe } } }"
       style="position: relative; z-index: 999999;"
     >
       <div v-for="role in ['primary', 'enterprise']" :key="role">

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import type { RuntimeTokenOverrides } from '../utils/color-registry'
-import { computed, inject, provide, useId } from 'vue'
-import { useHead } from '#imports'
+import { computed, inject, provide, useId, watchEffect } from 'vue'
+import { useAppConfig, useHead } from '#imports'
 import { generateRuntimeColorOverrideCss, mergeRuntimeTokenOverrides } from '../utils/color-registry'
 import { THEME_INJECTION_KEY } from '../utils/injection-keys'
 
@@ -22,6 +22,8 @@ export interface ThemeProps {
   tokens?: RuntimeTokenOverrides
   /** Explicit DOM element/component that owns this theme scope. */
   as?: string | Component
+  /** Managed semantic mode. Explicit light/dark requires a DOM boundary. */
+  mode?: 'inherit' | 'light' | 'dark'
 }
 
 // A back-reference, not a merge here - see injection-keys.ts's own
@@ -30,19 +32,27 @@ export interface ThemeProps {
 // nesting two STheme components inherit an outer one's unset
 // slots/defaults rather than an inner one wholesale replacing it.
 const parent = inject(THEME_INJECTION_KEY, undefined)
+const appConfig = useAppConfig()
 const scopeId = `s${useId()}`
+const mode = computed(() => props.mode && props.mode !== 'inherit' ? props.mode : parent?.value.mode ?? 'root')
+const inheritedTokens = computed(() => parent?.value.tokens ?? appConfig.selaras?.tokens)
 const effectiveTokens = computed(() => props.as
-  ? mergeRuntimeTokenOverrides(parent?.value.tokens, props.tokens)
-  : parent?.value.tokens)
+  ? mergeRuntimeTokenOverrides(inheritedTokens.value, props.tokens)
+  : inheritedTokens.value)
+watchEffect(() => {
+  if (!props.as && (props.tokens || (props.mode && props.mode !== 'inherit')))
+    throw new Error('STheme tokens and explicit mode require a DOM boundary through the as prop.')
+})
 provide(THEME_INJECTION_KEY, computed(() => ({
   ui: props.ui,
   defaults: props.defaults,
   scopeId: props.as ? scopeId : parent?.value?.scopeId,
   tokens: effectiveTokens.value,
+  mode: mode.value,
   parent: parent?.value,
 })))
 
-const scopeSelector = `[data-selaras-theme="${scopeId}"] `
+const scopeSelector = `[data-selaras-theme="${scopeId}"]`
 const scopedTokenCss = computed(() => props.as ? generateRuntimeColorOverrideCss(effectiveTokens.value ?? {}, scopeSelector) : '')
 useHead({
   style: [{ key: `selaras-theme-${scopeId}`, textContent: () => scopedTokenCss.value || undefined }],
@@ -50,7 +60,7 @@ useHead({
 </script>
 
 <template>
-  <component :is="as" v-if="as" :data-selaras-theme="scopeId">
+  <component :is="as" v-if="as" :data-selaras-theme="scopeId" :data-selaras-mode="mode" :style="mode === 'root' ? undefined : { colorScheme: mode }">
     <slot />
   </component>
   <slot v-else />

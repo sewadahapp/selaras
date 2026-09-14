@@ -23,7 +23,7 @@ const ScopedToastTrigger = defineComponent({
 
 const ScopedToastHarness = defineComponent({
   render: () => h(ToastProvider, () => [
-    h(Theme, { as: 'section', tokens: { light: { premium: { fill: '#5134a8' } } } }, () => h(ScopedToastTrigger)),
+    h(Theme, { as: 'section', tokens: { light: { colors: { premium: { fill: '#5134a8' } } } } }, () => h(ScopedToastTrigger)),
     h(Toast),
   ]),
 })

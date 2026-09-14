@@ -149,12 +149,14 @@ export function withFallthroughClass(fallthroughClass: string | undefined, overr
  */
 export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () => UiSlotValue | undefined, options?: { exclude?: (key: string) => boolean, includeClass?: boolean }) {
   const { fallthroughClass, attrsWithoutClass } = useRootFallthrough()
+  const themeBindings = useThemeBindings()
   const rootAttrs = computed(() => {
     if (!options?.exclude)
       return attrsWithoutClass.value
     return Object.fromEntries(Object.entries(attrsWithoutClass.value).filter(([key]) => !options.exclude!(key)))
   })
   return computed(() => mergeProps(
+    themeBindings.value,
     rootAttrs.value,
     resolveSlot(slotFn(), withFallthroughClass(options?.includeClass === false ? undefined : fallthroughClass.value, override())),
   ))
@@ -233,4 +235,17 @@ export function useThemeProps(key: string): ComputedRef<Record<string, unknown>>
 export function useThemeScope(): ComputedRef<string | undefined> {
   const themeContext = inject(THEME_INJECTION_KEY, undefined)
   return computed(() => themeContext?.value.scopeId)
+}
+
+/** Managed ownership follows Vue ancestry, including through Teleport. */
+export function useThemeBindings() {
+  const context = inject(THEME_INJECTION_KEY, undefined)
+  return computed(() => {
+    const mode = context?.value.mode ?? 'root'
+    return {
+      'data-selaras-theme': context?.value.scopeId ?? 'global',
+      'data-selaras-mode': mode,
+      'style': mode === 'root' ? undefined : { colorScheme: mode },
+    }
+  })
 }
