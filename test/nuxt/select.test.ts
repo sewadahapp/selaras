@@ -618,7 +618,7 @@ describe('select (mobileModal)', () => {
     const restore = mockMatchMedia(true)
     const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
 
-    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()
 
     const dialog = document.body.querySelector('[role=dialog]')
@@ -639,7 +639,7 @@ describe('select (mobileModal)', () => {
     const media = mockResponsiveMatchMedia(true)
     const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
 
-    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()
     expect(document.body.querySelector('[role=dialog]')).toBeTruthy()
 
@@ -651,15 +651,11 @@ describe('select (mobileModal)', () => {
     media.restore()
   })
 
-  // Select's own trigger is a one-off tap (a button, not something typed
-  // into while the modal stays open) - unlike Autocomplete, it keeps
-  // Modal's default open-autofocus (see ComboboxSelectBase.vue's own
-  // `auto-focus="!creatable"` and autocomplete.test.ts's contrasting case).
-  it('mobileModal=true: still moves focus into the modal on open, unlike Autocomplete', async () => {
+  it('mobileModal=true: moves focus into the modal on open', async () => {
     const restore = mockMatchMedia(true)
     const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
 
-    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()
     await new Promise(resolve => setTimeout(resolve, 50))
 
@@ -673,7 +669,7 @@ describe('select (mobileModal)', () => {
     const restore = mockMatchMedia(true)
     const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
 
-    await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
+    await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()
 
     const dialog = document.body.querySelector('[role=dialog]')

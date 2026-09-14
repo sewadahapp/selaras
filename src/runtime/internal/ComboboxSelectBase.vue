@@ -12,6 +12,8 @@ import {
   ComboboxPortal,
   ComboboxRoot,
   ComboboxTrigger,
+  DialogClose,
+  ListboxRoot,
   TagsInputInput,
   TagsInputItem,
   TagsInputItemDelete,
@@ -19,7 +21,7 @@ import {
   TagsInputRoot,
   useDirection,
 } from 'reka-ui'
-import { computed, getCurrentInstance, mergeProps, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, getCurrentInstance, mergeProps, nextTick, onMounted, onUnmounted, ref, useId, watch } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
@@ -598,6 +600,8 @@ const isMobile = useIsMobile()
 // samples the current breakpoint again.
 const mobilePresentation = ref(false)
 watch(open, (open) => {
+  if (!open && mobilePresentation.value && !props.creatable && props.resetSearchTermOnBlur)
+    searchText.value = ''
   mobilePresentation.value = open && !!props.mobileModal && isMobile.value
 })
 // Keep server and first-client markup deterministic, then sample the actual
@@ -609,6 +613,37 @@ onMounted(() => {
   mobilePresentation.value = !!props.mobileModal && isMobile.value
 })
 const showMobileModal = computed(() => mobilePresentation.value)
+const modalId = `selaras-select-modal-${useId()}`
+const selectTrigger = ref<{ $el: HTMLElement }>()
+const modalBody = ref<InstanceType<typeof ComboboxSelectBody>>()
+const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showMobileModal.value : props.mobileModal && isMobile.value)
+  ? { 'aria-haspopup': 'dialog', 'aria-controls': modalId }
+  : {})
+function onModalSelection(value: unknown) {
+  setValue(value == null ? (props.multiple ? [] : undefined) : value as string | number | (string | number)[])
+  if (!props.multiple)
+    updateOpen(false)
+}
+const mobileModalUi = computed(() => ({
+  content: {
+    class: 'rounded-[var(--ui-radius-md)]',
+    ...(!props.creatable
+      ? {
+          'id': modalId,
+          'aria-modal': true,
+          'onOpenAutoFocus': (event: Event) => {
+            if (props.searchable && modalBody.value?.focusSearch())
+              event.preventDefault()
+          },
+          'onCloseAutoFocus': (event: Event) => {
+            event.preventDefault()
+            if (!props.disabled && selectTrigger.value?.$el?.isConnected)
+              selectTrigger.value.$el.focus()
+          },
+        }
+      : {}),
+  },
+}))
 
 // Single source of truth for ComboboxSelectBody's own (large) prop
 // surface, so the desktop and mobileModal template branches below each
@@ -788,11 +823,12 @@ const bodyProps = computed(() => ({
       <ComboboxTrigger
         v-else
         :id="selectId"
+        ref="selectTrigger"
         data-ui-group-item
         :aria-invalid="selectInvalid || undefined"
         :aria-describedby="describedBy"
         :aria-busy="loading || undefined"
-        v-bind="triggerProps"
+        v-bind="mergeProps(triggerProps, modalTriggerAttrs)"
         tabindex="0"
         @keydown="onTriggerKeydown"
         @blur="selectedChipValue = undefined"
@@ -923,48 +959,35 @@ const bodyProps = computed(() => ({
       </ComboboxContent>
     </ComboboxPortal>
     <!--
-      Below 768px, presents the exact same ComboboxSelectBody - the same
-      Root-injected filtering/selection/keyboard behavior, unchanged -
-      inside a centered Modal instead of the small anchored popover above.
-      No ComboboxPortal here: Modal's own DialogPortal already teleports
-      #content as a whole, nesting a second teleport inside it would be
-      redundant. ComboboxContent still wraps it (no `position` prop, so
-      Reka renders it as a plain unstyled box rather than applying its own
-      Floating-UI positioning - confirmed by reading ComboboxContentImpl
-      directly) since ComboboxViewport/ComboboxItem's own context still
-      expects a ComboboxContent ancestor. `title`/`description` are
-      passed explicitly here - Modal's own dev-mode a11y warning is
-      satisfied merely by the content slot existing, so it won't catch a
-      name-less dialog on its own; Modal registers both with Reka
-      (visually hidden) even though the content slot replaces its own
-      visible header.
-    -->
-    <!--
-      auto-focus="!creatable" - Select's own trigger is a one-off tap (a
-      button; once the modal opens, the next interaction is tapping an
-      item, or typing into a *different* search box that lives inside the
-      modal itself), so Reka's default open-autofocus is fine, even
-      helpful for a keyboard user. Autocomplete's trigger *is* the search
-      input itself, typed into continuously while the modal stays open -
-      Reka's default there stole focus away on the very first keystroke
-      (confirmed live: opening via typing immediately re-focused the
-      modal's own content, silently dropping every character typed
-      afterward) - the same class of bug DatePicker's own range-mode
-      autofocus interference was, just triggered by every keystroke
-      instead of a single click.
-      :ui content - overrides Modal's own default rounded-lg down to
-      rounded-md, matching every other floating panel in this library
-      (Select/Autocomplete/DatePicker's own desktop popovers all use
-      rounded-md) - rounded-lg reads noticeably heavier/rounder than the
-      desktop equivalent for what's otherwise the same surface.
+      Modal owns Select's focus/dismissal; Listbox only supplies selection.
+      The content slot retains Modal's registered title/description.
+      Autocomplete's legacy external-editor branch is corrected separately.
     -->
     <Modal
       v-else :open="open" :title="placeholder || messages.search" :description="messages.searchDescription"
-      :auto-focus="!creatable" :ui="{ content: 'rounded-[var(--ui-radius-md)]' }"
+      :auto-focus="!creatable" :ui="mobileModalUi"
       @update:open="updateOpen($event)"
     >
       <template #content>
-        <ComboboxContent :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps">
+        <ListboxRoot
+          v-if="!creatable"
+          :model-value="rekaSelection" :multiple="multiple" :disabled="disabled"
+          :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps"
+          @update:model-value="onModalSelection"
+        >
+          <ComboboxSelectBody ref="modalBody" v-bind="bodyProps" listbox @update:search-text="searchText = $event">
+            <template v-for="slotName in ['header', 'filter-icon', 'empty', 'empty-filter', 'footer'].filter(slotName => $slots[slotName])" #[slotName]>
+              <slot :name="slotName" />
+            </template>
+            <template v-if="$slots.item" #item="scope">
+              <slot name="item" v-bind="scope" />
+            </template>
+            <template v-if="$slots.group" #group="scope">
+              <slot name="group" v-bind="scope" />
+            </template>
+          </ComboboxSelectBody>
+        </ListboxRoot>
+        <ComboboxContent v-else :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps">
           <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
             <template #header>
               <slot name="header" />
@@ -989,6 +1012,13 @@ const bodyProps = computed(() => ({
             </template>
           </ComboboxSelectBody>
         </ComboboxContent>
+        <div v-if="!creatable" class="flex justify-end p-2">
+          <DialogClose as-child>
+            <Button variant="ghost" color="neutral">
+              {{ multiple ? messages.done : messages.cancel }}
+            </Button>
+          </DialogClose>
+        </div>
       </template>
     </Modal>
     <input

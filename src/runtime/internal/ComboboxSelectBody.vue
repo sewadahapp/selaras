@@ -9,7 +9,16 @@ import {
   ComboboxLabel,
   ComboboxViewport,
   ComboboxVirtualizer,
+  ListboxContent,
+  ListboxFilter,
+  ListboxGroup,
+  ListboxGroupLabel,
+  ListboxItem,
+  ListboxItemIndicator,
+  ListboxVirtualizer,
+  useFilter,
 } from 'reka-ui'
+import { computed, mergeProps, ref, useId } from 'vue'
 import Icon from '../components/Icon.vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -17,20 +26,14 @@ import { isOptionGroup } from './combobox-select'
 
 defineOptions({ inheritAttrs: false })
 
-defineProps<ComboboxSelectBodyProps>()
+const props = defineProps<ComboboxSelectBodyProps>()
 
 const emit = defineEmits<ComboboxSelectBodyEmits>()
 
-// Everything ComboboxSelectBase.vue's own popover used to render inside
-// <ComboboxContent> (search box, empty state, item list) - split out so
-// the exact same markup, closing over ComboboxRoot's own injected
-// context, can be instantiated once inside the desktop floating popover
-// and once inside the mobile Modal's own content slot, without
-// duplicating the list/virtualizer/group rendering between them. Deliberately
-// excludes ComboboxContent/ComboboxArrow themselves and their
-// side-offset/arrow chrome - those are desktop-anchoring-only concerns
-// that stay in ComboboxSelectBase.vue's own two branches.
+// Share option/slot rendering while letting each surface own interaction:
+// ComboboxContent owns a popup; Dialog owns a modal Listbox surface.
 export interface ComboboxSelectBodyProps {
+  listbox?: boolean
   searchable?: boolean
   creatable?: boolean
   searchText: string
@@ -58,6 +61,31 @@ export interface ComboboxSelectBodyEmits {
 
 const icons = useIcons()
 const messages = useMessages()
+const listboxId = `selaras-select-options-${useId()}`
+const searchInput = ref<{ $el: HTMLElement }>()
+const { contains } = useFilter({ sensitivity: 'base' })
+const primitives = computed(() => props.listbox
+  ? { input: ListboxFilter, viewport: ListboxContent, group: ListboxGroup, label: ListboxGroupLabel, item: ListboxItem, indicator: ListboxItemIndicator, virtualizer: ListboxVirtualizer }
+  : { input: ComboboxInput, viewport: ComboboxViewport, group: ComboboxGroup, label: ComboboxLabel, item: ComboboxItem, indicator: ComboboxItemIndicator, virtualizer: ComboboxVirtualizer })
+function matches(option: ResolvedItemOption) {
+  return !props.listbox || !props.searchable || contains(option.label, props.searchText)
+}
+const visibleOptions = computed(() => props.flatOptions.filter(matches))
+const virtualOptions = computed(() => props.listbox ? visibleOptions.value : props.virtualizedOptions)
+const filterInputProps = computed(() => mergeProps(
+  props.listbox
+    ? { 'role': 'combobox', 'aria-autocomplete': 'list', 'aria-expanded': true, 'aria-controls': listboxId, 'aria-label': messages.value.search }
+    : { displayValue: props.displayValue },
+  props.searchInputProps ?? {},
+))
+function focusSearch() {
+  const element = searchInput.value?.$el
+  if (!element)
+    return false
+  element.focus()
+  return true
+}
+defineExpose({ focusSearch })
 </script>
 
 <template>
@@ -67,11 +95,12 @@ const messages = useMessages()
     <slot name="filter-icon">
       <Icon :name="icons.search" class="size-4 text-[var(--ui-text-muted)]" />
     </slot>
-    <ComboboxInput
+    <component
+      :is="primitives.input"
+      ref="searchInput"
       :model-value="searchText"
-      :display-value="displayValue"
       :placeholder="messages.search"
-      v-bind="searchInputProps"
+      v-bind="filterInputProps"
       @update:model-value="(value) => emit('update:searchText', String(value ?? ''))"
       @keydown="onSearchKeydown"
       @blur="onSearchBlur"
@@ -83,29 +112,29 @@ const messages = useMessages()
       {{ messages.noOptions }}
     </slot>
   </div>
-  <ComboboxViewport v-else v-bind="viewportProps">
-    <ComboboxEmpty v-bind="emptyProps">
+  <component :is="primitives.viewport" v-else :id="listbox ? listboxId : undefined" v-bind="viewportProps">
+    <div v-if="listbox && visibleOptions.length === 0" v-bind="emptyProps">
+      <slot name="empty-filter">
+        {{ messages.noResultsFound }}
+      </slot>
+    </div>
+    <ComboboxEmpty v-else-if="!listbox" v-bind="emptyProps">
       <slot name="empty-filter">
         {{ messages.noResultsFound }}
       </slot>
     </ComboboxEmpty>
 
-    <!--
-      @tanstack/vue-virtual measures real DOM/scroll state, so it can't
-      render identically during SSR - forcing it through anyway causes a
-      hydration mismatch that (confirmed empirically) breaks click
-      interactivity page-wide, not just on this component. Client-only
-      sidesteps it; the popover is closed at SSR time anyway, so there's
-      nothing meaningful to show real users in the fallback.
-    -->
+    <!-- Virtual row measurement needs client DOM, including default-open surfaces. -->
     <ClientOnly v-if="virtualizeConfig">
-      <ComboboxVirtualizer
+      <component
+        :is="primitives.virtualizer"
         v-slot="{ option, virtualItem }"
-        :options="virtualizedOptions"
+        :options="virtualOptions"
         :estimate-size="virtualizeConfig.estimateSize"
         :overscan="virtualizeConfig.overscan"
       >
-        <ComboboxItem
+        <component
+          :is="primitives.item"
           :key="String(virtualItem.key)"
           :value="option.value"
           :disabled="option.disabled"
@@ -115,23 +144,24 @@ const messages = useMessages()
           <slot name="item" :item="option.raw">
             {{ option.label }}
           </slot>
-          <ComboboxItemIndicator v-bind="itemIndicatorProps">
+          <component :is="primitives.indicator" v-bind="itemIndicatorProps">
             <Icon :name="icons.check" class="size-4" />
-          </ComboboxItemIndicator>
-        </ComboboxItem>
-      </ComboboxVirtualizer>
+          </component>
+        </component>
+      </component>
     </ClientOnly>
 
     <template v-else>
       <template v-for="(entry, index) in items" :key="index">
-        <ComboboxGroup v-if="isOptionGroup(entry)">
-          <ComboboxLabel v-bind="groupProps">
+        <component :is="primitives.group" v-if="isOptionGroup(entry) && groupOptions(entry).some(matches)">
+          <component :is="primitives.label" v-bind="groupProps">
             <slot name="group" :group="entry">
               {{ entry.label }}
             </slot>
-          </ComboboxLabel>
-          <ComboboxItem
-            v-for="option in groupOptions(entry)"
+          </component>
+          <component
+            :is="primitives.item"
+            v-for="option in groupOptions(entry).filter(matches)"
             :key="option.value"
             :value="option.value"
             :disabled="option.disabled"
@@ -140,13 +170,14 @@ const messages = useMessages()
             <slot name="item" :item="option.raw">
               {{ option.label }}
             </slot>
-            <ComboboxItemIndicator v-bind="itemIndicatorProps">
+            <component :is="primitives.indicator" v-bind="itemIndicatorProps">
               <Icon :name="icons.check" class="size-4" />
-            </ComboboxItemIndicator>
-          </ComboboxItem>
-        </ComboboxGroup>
-        <ComboboxItem
-          v-else
+            </component>
+          </component>
+        </component>
+        <component
+          :is="primitives.item"
+          v-else-if="!isOptionGroup(entry) && matches(toOption(entry))"
           :value="toOption(entry).value"
           :disabled="toOption(entry).disabled"
           v-bind="itemProps"
@@ -154,13 +185,13 @@ const messages = useMessages()
           <slot name="item" :item="entry">
             {{ toOption(entry).label }}
           </slot>
-          <ComboboxItemIndicator v-bind="itemIndicatorProps">
+          <component :is="primitives.indicator" v-bind="itemIndicatorProps">
             <Icon :name="icons.check" class="size-4" />
-          </ComboboxItemIndicator>
-        </ComboboxItem>
+          </component>
+        </component>
       </template>
     </template>
-  </ComboboxViewport>
+  </component>
 
   <slot name="footer" />
 </template>
