@@ -483,6 +483,12 @@ const formattedTimeValue = computed(() => {
   return timeOnlyFormatter.value.format(asDateTime.toDate(getLocalTimeZone()))
 })
 
+function segmentText(segment: { part: SegmentPart, value: string }) {
+  // ICU versions can disagree on the space before a day period. Keep literal
+  // spacing stable across SSR and hydration without changing editable text.
+  return segment.part === 'literal' ? segment.value.replace(/[\u00A0\u202F]/g, ' ') : segment.value
+}
+
 // Reka's own field-segment granularity only spans 'day'|'hour'|'minute'|
 // 'second' (confirmed by reading its type) - there's no primitive-level
 // "month+year only" segment set to ask for, so the rendered list is
@@ -703,13 +709,13 @@ const buttonTriggerUi = computed(() => ({
         <DateRangePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="segment in segments.start" :key="`start-${segment.part}`">
             <DateRangePickerInput as="span" type="start" :part="segment.part" v-bind="segmentProps">
-              {{ segment.value }}
+              {{ segmentText(segment) }}
             </DateRangePickerInput>
           </template>
           <span v-bind="separatorProps">&ndash;</span>
           <template v-for="segment in segments.end" :key="`end-${segment.part}`">
             <DateRangePickerInput as="span" type="end" :part="segment.part" v-bind="segmentProps">
-              {{ segment.value }}
+              {{ segmentText(segment) }}
             </DateRangePickerInput>
           </template>
         </DateRangePickerField>
@@ -836,7 +842,7 @@ const buttonTriggerUi = computed(() => ({
         >
           <template v-for="segment in segments" :key="segment.part">
             <TimeFieldInput as="span" :part="segment.part" v-bind="segmentProps">
-              {{ segment.value }}
+              {{ segmentText(segment) }}
             </TimeFieldInput>
           </template>
         </TimeFieldRoot>
@@ -964,7 +970,7 @@ const buttonTriggerUi = computed(() => ({
         <DatePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="(segment, index) in visibleSegments(segments)" :key="`${segment.part}-${index}`">
             <DatePickerInput as="span" :part="segment.part" v-bind="segmentProps">
-              {{ segment.value }}
+              {{ segmentText(segment) }}
             </DatePickerInput>
           </template>
         </DatePickerField>

@@ -1,6 +1,10 @@
 import MyModule from '../../../src/module'
 
 export default defineNuxtConfig({
+  vite: {
+    // Make production hydration failures identify the mismatched element/text.
+    define: { __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: true },
+  },
   modules: [
     MyModule,
   ],

@@ -1,5 +1,5 @@
 <script setup>
-import { CalendarDate } from '@internationalized/date'
+import { CalendarDate, CalendarDateTime, Time } from '@internationalized/date'
 import { ref } from 'vue'
 import AutocompleteGenericForm from '../../nuxt/fixtures/AutocompleteGenericForm.vue'
 import ComboboxModeForm from '../../nuxt/fixtures/ComboboxModeForm.vue'
@@ -278,6 +278,12 @@ function updateNestedTokens() {
     </SFormField>
     <SFormField id="accessibility-time" label="Reminder time" hint="Use local time.">
       <SDatePicker time-only clearable />
+    </SFormField>
+    <SFormField id="accessibility-selected-time" label="Selected reminder">
+      <SDatePicker time-only name="selected-time" :default-value="new Time(14, 30)" />
+    </SFormField>
+    <SFormField id="accessibility-date-time" label="Appointment">
+      <SDatePicker granularity="minute" name="appointment" :default-value="new CalendarDateTime(2024, 1, 15, 14, 30)" />
     </SFormField>
   </section>
   <section v-if="route.query.mobile" id="datepicker-mobile-fixture">

@@ -77,16 +77,37 @@ test('submits typed user selections and synchronizes native controls on library 
   await expect(quantity).toHaveValue('1')
 })
 
-test('labels range and time-only DatePicker groups in the browser accessibility tree', async ({ page, goto }) => {
+test('hydrates and edits accessible range, time-only and date-time fields with a different client clock', async ({ page, goto }) => {
+  const issues: string[] = []
+  page.on('console', (message) => {
+    if (/hydration|mismatch/i.test(message.text()))
+      issues.push(message.text())
+  })
+  page.on('pageerror', error => issues.push(error.message))
+  await page.clock.setFixedTime(new Date(2035, 5, 7, 13, 42))
   await goto('/?accessibility=1', { waitUntil: 'hydration' })
   const fixture = page.locator('#datepicker-accessibility-fixture')
   await expect(fixture.getByRole('group', { name: 'Booking window', exact: true })).toBeVisible()
   await expect(fixture.getByRole('group', { name: 'Reminder time', exact: true })).toBeVisible()
   await expect(fixture.getByRole('group', { name: 'Booking window', exact: true })).toHaveAccessibleDescription('Select the arrival and departure dates.')
   await expect(fixture.getByRole('group', { name: 'Reminder time', exact: true })).toHaveAccessibleDescription('Use local time.')
+  const reminder = fixture.getByRole('group', { name: 'Selected reminder', exact: true })
+  const appointment = fixture.getByRole('group', { name: 'Appointment', exact: true })
+  await expect(reminder.getByRole('spinbutton', { name: 'minute', exact: false })).toHaveText('30')
+  await expect(appointment.getByRole('spinbutton', { name: 'minute', exact: false })).toHaveText('30')
+  await reminder.getByRole('spinbutton', { name: 'minute', exact: false }).press('ArrowUp')
+  await expect(fixture.locator('input[name="selected-time"]')).toHaveValue('14:31:00')
+  await expect(fixture.locator('input[name="appointment"]')).toHaveValue('2024-01-15T14:30:00')
+  expect(issues).toEqual([])
 })
 
 test('uses the opt-in DatePicker modal presentation on a narrow viewport', async ({ page, goto }) => {
+  const issues: string[] = []
+  page.on('console', (message) => {
+    if (/hydration|mismatch/i.test(message.text()))
+      issues.push(message.text())
+  })
+  page.on('pageerror', error => issues.push(error.message))
   await page.setViewportSize({ width: 600, height: 800 })
   await goto('/?mobile=1', { waitUntil: 'hydration' })
   const fixture = page.locator('#datepicker-mobile-fixture')
@@ -115,4 +136,5 @@ test('uses the opt-in DatePicker modal presentation on a narrow viewport', async
   await expect(timeDialog.getByRole('button', { name: 'Increment', exact: true }).first()).toBeVisible()
   await page.keyboard.press('Escape')
   await expect(timeDialog).toBeHidden()
+  expect(issues).toEqual([])
 })
