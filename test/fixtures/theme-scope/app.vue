@@ -72,6 +72,32 @@ const outerTokens = {
               <input id="portal-native" aria-label="Portalled native input">
             </template>
           </SPopover>
+          <SSelect
+            id="portal-select"
+            :open="true"
+            :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]"
+            model-value="one"
+          />
+          <SRadioGroup
+            id="invalid-radio"
+            invalid
+            model-value="one"
+            :items="['one', 'two']"
+          />
+          <SColorPicker
+            :open="true"
+            model-value="#112233"
+          />
+          <SModal
+            :open="true"
+            title="Scoped modal"
+            description="Verifies portalled native control mode."
+            @open-auto-focus="event => event.preventDefault()"
+          >
+            <template #content>
+              <input id="modal-native" aria-label="Portalled modal native input">
+            </template>
+          </SModal>
         </STheme>
       </STheme>
     </STheme>

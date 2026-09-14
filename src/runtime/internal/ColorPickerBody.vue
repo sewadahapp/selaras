@@ -16,6 +16,7 @@ import {
 } from 'reka-ui'
 import Icon from '../components/Icon.vue'
 import { useIcons } from '../composables/use-icons'
+import { useThemeBindings } from '../utils/ui'
 
 // ColorPicker.vue's own popover/mobile-modal-shared content - everything
 // that used to sit inside its <Popover>'s #content slot, split out so the
@@ -53,6 +54,7 @@ defineProps<ColorPickerBodyProps>()
 const emit = defineEmits<ColorPickerBodyEmits>()
 
 const icons = useIcons()
+const themeBindings = useThemeBindings()
 
 // ColorAreaRoot/ColorSliderRoot/ColorSwatchPickerRoot's own emitted type is
 // broader than what they actually produce here (string | Color |
@@ -68,6 +70,9 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
 
 <template>
   <ColorAreaRoot
+    :data-selaras-theme="themeBindings['data-selaras-theme']"
+    :data-selaras-mode="themeBindings['data-selaras-mode']"
+    :style="themeBindings.style"
     :data-selaras-color="colorRoleMarker"
     :model-value="modelValue"
     color-space="hsb"
@@ -84,6 +89,9 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
   </ColorAreaRoot>
 
   <ColorSliderRoot
+    :data-selaras-theme="themeBindings['data-selaras-theme']"
+    :data-selaras-mode="themeBindings['data-selaras-mode']"
+    :style="themeBindings.style"
     :data-selaras-color="colorRoleMarker"
     :model-value="modelValue"
     channel="hue"
@@ -98,6 +106,9 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
 
   <ColorSliderRoot
     v-if="alpha"
+    :data-selaras-theme="themeBindings['data-selaras-theme']"
+    :data-selaras-mode="themeBindings['data-selaras-mode']"
+    :style="themeBindings.style"
     :data-selaras-color="colorRoleMarker"
     :model-value="modelValue"
     channel="alpha"
@@ -111,6 +122,9 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
   </ColorSliderRoot>
 
   <ColorFieldRoot
+    :data-selaras-theme="themeBindings['data-selaras-theme']"
+    :data-selaras-mode="themeBindings['data-selaras-mode']"
+    :style="themeBindings.style"
     :data-selaras-color="colorRoleMarker"
     :model-value="modelValue"
     :placeholder="placeholder"
@@ -122,6 +136,9 @@ function onUpdateColor(value: string | Color | AcceptableValue) {
 
   <ColorSwatchPickerRoot
     v-if="swatches?.length"
+    :data-selaras-theme="themeBindings['data-selaras-theme']"
+    :data-selaras-mode="themeBindings['data-selaras-mode']"
+    :style="themeBindings.style"
     :data-selaras-color="colorRoleMarker"
     :model-value="modelValue"
     :disabled="disabled"

@@ -4,11 +4,11 @@ import type { RadioGroupThemeSlots } from '../theme/radio-group'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, mergeProps } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { radioGroupTheme } from '../theme/radio-group'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useRootProps, withFallthroughClass } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeBindings, withFallthroughClass } from '../utils/ui'
 
 export interface RadioItem {
   label: string
@@ -74,12 +74,13 @@ const ui = computed(() => theme.value({
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
+const themeBindings = useThemeBindings()
 // A description pushes the label onto a second line, so its item top-aligns
 // with the label's first line instead of centering against the whole
 // two-line block - applied per item (not a static theme variant) since
 // items within the same group can freely mix having a description or not.
 function itemWrapperPropsFor(item: RadioItem) {
-  return resolveSlot(ui.value.itemWrapper, withFallthroughClass(item.description ? 'items-start' : undefined, props.ui?.itemWrapper))
+  return mergeProps(themeBindings.value, resolveSlot(ui.value.itemWrapper, withFallthroughClass(item.description ? 'items-start' : undefined, props.ui?.itemWrapper)))
 }
 function itemPropsFor(item: RadioItem) {
   return resolveSlot(ui.value.item, withFallthroughClass(item.description ? 'mt-0.5' : undefined, props.ui?.item))

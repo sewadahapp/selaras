@@ -4,7 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { TooltipArrow, TooltipContent, TooltipPortal, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { tooltipTheme } from '../theme/tooltip'
-import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 
 export interface TooltipProps {
   text?: string
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<TooltipProps>(), {
 })
 
 const theme = useComponentTheme('tooltip', tooltipTheme)
-const themeScope = useThemeScope()
+const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -40,7 +40,7 @@ const kbdProps = computed(() => resolveSlot(ui.value.kbd, props.ui?.kbd))
       <slot />
     </TooltipTrigger>
     <TooltipPortal>
-      <TooltipContent :side="side" :side-offset="6" :data-selaras-theme="themeScope" v-bind="contentProps">
+      <TooltipContent :side="side" :side-offset="6" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
         <slot name="content">
           {{ text }}
         </slot>

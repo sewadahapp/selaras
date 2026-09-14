@@ -35,7 +35,7 @@ import { selectTheme } from '../theme/select'
 import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeScope } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeBindings } from '../utils/ui'
 import { useComboboxSelect } from './combobox-select'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
 
@@ -512,7 +512,7 @@ const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[eff
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
-const themeScope = useThemeScope()
+const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SelectVariants['color'] : 'primary')
 const colorRoleMarker = computed(() => effectiveColor.value)
@@ -957,7 +957,7 @@ const bodyProps = computed(() => ({
     <ComboboxPortal v-if="!showMobileSelectModal">
       <ComboboxContent
         position="popper" :side-offset="4"
-        :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker"
+        :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="colorRoleMarker"
         v-bind="showMobileAutocompletePanel ? mergeProps(contentProps, mobilePanelProps) : contentProps"
       >
         <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
@@ -1001,7 +1001,7 @@ const bodyProps = computed(() => ({
         <ListboxRoot
           v-if="!creatable"
           :model-value="rekaSelection" :multiple="multiple" :disabled="disabled"
-          :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps"
+          :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps"
           @update:model-value="onModalSelection"
         >
           <ComboboxSelectBody ref="modalBody" v-bind="bodyProps" listbox @update:search-text="searchText = $event">

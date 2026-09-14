@@ -4,7 +4,7 @@ import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { dropdownTheme } from '../theme/dropdown'
-import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 
 export interface DropdownItem {
@@ -51,7 +51,7 @@ function onUpdateOpen(value: boolean) {
 }
 
 const theme = useComponentTheme('dropdown', dropdownTheme)
-const themeScope = useThemeScope()
+const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
@@ -74,7 +74,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
       <slot />
     </DropdownMenuTrigger>
     <DropdownMenuPortal>
-      <DropdownMenuContent :side-offset="6" align="start" :data-selaras-theme="themeScope" v-bind="contentProps">
+      <DropdownMenuContent :side-offset="6" align="start" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
         <template v-for="(group, groupIndex) in items" :key="groupIndex">
           <DropdownMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />
           <DropdownMenuItem

@@ -6,7 +6,7 @@ import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDe
 import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 'vue'
 import { useMessages } from '../composables/use-messages'
 import { alertDialogTheme } from '../theme/alert-dialog'
-import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Button from './Button.vue'
 
 export interface AlertDialogProps {
@@ -125,7 +125,7 @@ if (import.meta.dev) {
 
 const messages = useMessages()
 const theme = useComponentTheme('alertDialog', alertDialogTheme)
-const themeScope = useThemeScope()
+const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value({ transition: props.transition }))
 
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
@@ -145,7 +145,9 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
     <AlertDialogPortal>
       <AlertDialogOverlay v-if="overlay" v-bind="overlayProps" />
       <AlertDialogContent
-        :data-selaras-theme="themeScope"
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
         v-bind="contentProps"
         @escape-key-down="onEscapeKeyDown"
         @pointer-down-outside="onPointerDownOutside"

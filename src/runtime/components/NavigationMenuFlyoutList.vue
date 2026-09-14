@@ -10,7 +10,7 @@ import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
 
@@ -49,6 +49,7 @@ function isActive(item: NavigationMenuItem) {
 // Deliberately `collapsed: false` - same reasoning as NavigationMenu.vue's
 // own flyoutUi, this content has room to show real labels.
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
+const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
 const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
@@ -59,7 +60,7 @@ function linkProps(item: NavigationMenuItem) {
 </script>
 
 <template>
-  <ul :data-selaras-color="effectiveColor" v-bind="resolveSlot(ui.childList, props.ui?.childList)">
+  <ul :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="effectiveColor" v-bind="resolveSlot(ui.childList, props.ui?.childList)">
     <li v-for="item in items" :key="item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
       <NavigationMenuAccordionItem v-if="item.children?.length" :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui" />
       <component

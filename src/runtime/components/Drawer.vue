@@ -7,7 +7,7 @@ import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { drawerTheme } from '../theme/drawer'
-import { resolveSlot, useComponentTheme, useThemeScope } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -145,7 +145,7 @@ if (import.meta.dev) {
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('drawer', drawerTheme)
-const themeScope = useThemeScope()
+const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value({ side: props.side, transition: props.transition }))
 
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
@@ -176,7 +176,9 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
     <DrawerPortal>
       <DrawerOverlay v-if="overlay" v-bind="overlayProps" />
       <DrawerContent
-        :data-selaras-theme="themeScope"
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
         v-bind="contentProps"
         @escape-key-down="onEscapeKeyDown"
         @pointer-down-outside="onPointerDownOutside"

@@ -8,7 +8,7 @@ import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { commandPaletteTheme } from '../theme/command-palette'
 import { fuzzyScore } from '../utils/fuzzy-match'
-import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeScope } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 import Kbd from './Kbd.vue'
 
@@ -212,7 +212,7 @@ onMounted(() => window.addEventListener('keydown', onGlobalKeydown))
 onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown))
 
 const theme = useComponentTheme('commandPalette', commandPaletteTheme)
-const themeScope = useThemeScope()
+const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
 const overlayProps = useRootProps(() => ui.value.overlay, () => props.ui?.overlay)
@@ -240,7 +240,7 @@ function itemId(index: number) {
   <DialogRoot :open="isOpen" @update:open="(value) => value ? undefined : close()">
     <DialogPortal>
       <DialogOverlay v-bind="overlayProps" />
-      <DialogContent :data-selaras-theme="themeScope" v-bind="contentProps" @open-auto-focus="onOpenAutoFocus">
+      <DialogContent :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps" @open-auto-focus="onOpenAutoFocus">
         <DialogTitle :class="applyClassPrefix('sr-only')">
           {{ messages.commandPalette }}
         </DialogTitle>

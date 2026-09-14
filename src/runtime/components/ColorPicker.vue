@@ -11,7 +11,7 @@ import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
 import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Modal from './Modal.vue'
 import Popover from './Popover.vue'
 
@@ -124,6 +124,7 @@ onMounted(() => {
 const showMobileModal = computed(() => mobilePresentation.value)
 
 const theme = useComponentTheme('colorPicker', colorPickerTheme)
+const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ColorPickerVariants['color'] : 'primary')
 const colorRoleMarker = computed(() => effectiveColor.value)
@@ -181,6 +182,9 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
       :disabled="disabled"
       :aria-label="messages.colorPicker"
       :data-selaras-color="colorRoleMarker"
+      :data-selaras-theme="themeBindings['data-selaras-theme']"
+      :data-selaras-mode="themeBindings['data-selaras-mode']"
+      :style="themeBindings.style"
       v-bind="triggerProps"
     >
       <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
@@ -201,6 +205,9 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
       :disabled="disabled"
       :aria-label="messages.colorPicker"
       :data-selaras-color="colorRoleMarker"
+      :data-selaras-theme="themeBindings['data-selaras-theme']"
+      :data-selaras-mode="themeBindings['data-selaras-mode']"
+      :style="themeBindings.style"
       v-bind="triggerProps"
     >
       <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
