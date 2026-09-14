@@ -7,7 +7,6 @@ import { PinInputInput, PinInputRoot } from 'reka-ui'
 import { computed, mergeProps, useAttrs } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { pinInputTheme } from '../theme/pin-input'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
@@ -61,10 +60,9 @@ const labelledBy = computed(() => attrs['aria-labelledby'] ?? field?.labelId)
 
 const theme = useComponentTheme('pinInput', pinInputTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as PinInputVariants['color'] : 'primary')
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
-  color: recipeColor.value,
+  color: effectiveColor.value as PinInputVariants['color'],
   invalid: pinInputInvalid.value,
 }))
 
@@ -89,7 +87,7 @@ const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.u
     :aria-invalid="pinInputInvalid || undefined"
     :aria-describedby="describedBy"
     :aria-labelledby="labelledBy"
-    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
+    :data-selaras-color="effectiveColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as (string | number)[])"
     @complete="(value) => emit('complete', value as (string | number)[])"

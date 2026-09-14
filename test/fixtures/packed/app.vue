@@ -4,6 +4,7 @@ import type { ButtonProps, ColorRole, ThemeProps } from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
 
 const role: ColorRole = 'published'
+const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
 const helper = createTableColumnHelper<{ id: string }>()
@@ -20,6 +21,7 @@ void unknownRole
 void oldTheme
 void config
 void invalidConfig
+void hyphenatedRole
 </script>
 
 <template>

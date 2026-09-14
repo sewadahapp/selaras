@@ -11,8 +11,8 @@ export const sliderTheme = tv({
     // positioned element with no top/bottom of its own collapses to 0
     // height. inset-y-0/inset-x-0 below (in the orientation variant)
     // supply that missing cross-axis size.
-    range: 'absolute rounded-full',
-    thumb: 'block shrink-0 rounded-full bg-[var(--ui-bg)] shadow-[var(--ui-shadow-sm)] ring-2 transition-shadow focus-visible:outline-none focus-visible:ring-4',
+    range: 'absolute rounded-full bg-[var(--_selaras-color-fill)]',
+    thumb: 'block shrink-0 rounded-full bg-[var(--ui-bg)] shadow-[var(--ui-shadow-sm)] ring-2 ring-[var(--_selaras-color-fill)] transition-shadow focus-visible:outline-none focus-visible:ring-4',
     // Own addition - Reka's Slider has no tick/mark concept of its own.
     // Positioned via an inline style (percent along the track), not a
     // variant - see Slider.vue's own `ticks` computed.
@@ -29,13 +29,13 @@ export const sliderTheme = tv({
       lg: { track: 'h-2', thumb: 'size-5', tick: 'top-1/2 -translate-y-1/2' },
     },
     color: {
-      primary: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
-      neutral: { range: 'bg-[var(--ui-bg-inverted)]', thumb: 'ring-[var(--ui-bg-inverted)]' },
-      secondary: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
-      success: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
-      danger: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
-      info: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
-      warning: { range: 'bg-[var(--_selaras-color-fill)]', thumb: 'ring-[var(--_selaras-color-fill)]' },
+      primary: {},
+      neutral: {},
+      secondary: {},
+      success: {},
+      danger: {},
+      info: {},
+      warning: {},
     },
     // Vertical needs a real, non-zero height to size against - unlike
     // horizontal, which sizes off its own intrinsic full width.

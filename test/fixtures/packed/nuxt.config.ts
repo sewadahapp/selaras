@@ -8,6 +8,6 @@ const color = defineColor({
 export default defineNuxtConfig({
   modules: ['@sewadah/selaras'],
   compatibilityDate: '2026-09-13',
-  selaras: { classPrefix: 'tw', theme: { colors: { published: color, secondary: color } } },
+  selaras: { classPrefix: 'tw', theme: { colors: { 'published': color, 'published-accent': color, 'secondary': color } } },
   css: ['~/main.css'],
 })

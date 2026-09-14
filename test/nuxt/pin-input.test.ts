@@ -29,6 +29,12 @@ describe('pinInput', () => {
     expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
   })
 
+  it('binds its built-in role too, so the selected recipe is always available', async () => {
+    wrapper = await mountSuspended(PinInput, { props: { color: 'danger' } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('danger')
+    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
+  })
+
   it('renders 5 boxes by default', async () => {
     wrapper = await mountSuspended(PinInput)
     expect(wrapper.findAll('input[aria-label^="pin input"]')).toHaveLength(5)

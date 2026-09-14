@@ -8,7 +8,6 @@ import { computed } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { ratingTheme } from '../theme/rating'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -66,11 +65,10 @@ const icons = useIcons()
 
 const theme = useComponentTheme('rating', ratingTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as RatingVariants['color'] : 'primary')
 const ui = computed(() => theme.value({
   orientation: props.orientation,
   size: effectiveSize.value,
-  color: recipeColor.value,
+  color: effectiveColor.value as RatingVariants['color'],
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
@@ -83,7 +81,7 @@ const fillIconProps = computed(() => resolveSlot(ui.value.fillIcon, props.ui?.fi
 <template>
   <RatingRoot
     :id="ratingId"
-    :data-selaras-color="isBuiltinColorRole(effectiveColor) ? undefined : effectiveColor"
+    :data-selaras-color="effectiveColor"
     :model-value="modelValue"
     :default-value="defaultValue"
     :length="length"

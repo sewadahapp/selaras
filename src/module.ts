@@ -186,7 +186,11 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'selaras-color-roles.d.ts',
       getContents: () => {
         const roles = Object.keys(colorRegistry).sort()
-        const declarations = roles.map(role => `    ${role}: true`).join('\n')
+        // Roles intentionally allow kebab-case (`brand-accent`). Interface
+        // members must be quoted when their name is not a TypeScript
+        // identifier; JSON.stringify also safely handles every other legal
+        // role name without maintaining a second naming grammar here.
+        const declarations = roles.map(role => `    ${JSON.stringify(role)}: true`).join('\n')
         return `declare global {\n  interface SelarasColorRegistry {\n${declarations}\n  }\n}\n\nexport {}\n`
       },
       write: true,

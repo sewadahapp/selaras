@@ -22,6 +22,12 @@ describe('slider', () => {
     expect(wrapper.html()).toContain('bg-[var(--_selaras-color-fill)]')
   })
 
+  it('binds its built-in role too, so the selected recipe is always available', async () => {
+    const wrapper = await mountSuspended(Slider, { props: { color: 'danger', modelValue: 30 } })
+    expect(wrapper.attributes('data-selaras-color')).toBe('danger')
+    expect(wrapper.find('[role="slider"]').classes()).toContain('ring-[var(--_selaras-color-fill)]')
+  })
+
   it('renders a single thumb reflecting a plain number modelValue', async () => {
     const wrapper = await mountSuspended(Slider, { props: { modelValue: 30 } })
 
