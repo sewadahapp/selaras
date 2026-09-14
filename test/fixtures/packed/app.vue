@@ -68,6 +68,7 @@ void hyphenatedRole
         Published scoped
       </SButton>
       <SBadge id="packed-badge" :color="role" variant="soft" label="Published badge" />
+      <SInput id="packed-functional-input" model-value="Scoped functional input" readonly />
     </STheme>
     <SBadge id="packed-dot" dot aria-label="Offline" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />

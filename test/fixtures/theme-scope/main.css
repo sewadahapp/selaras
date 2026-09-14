@@ -5,3 +5,21 @@
 .consumer-override {
   --selaras-color-primary-fill: rgb(70 80 90);
 }
+
+.functional-sample {
+  background-color: var(--ui-bg);
+  color: var(--ui-text);
+  border: 1px solid var(--ui-border);
+}
+
+.functional-consumer {
+  --selaras-surface-default: rgb(71 72 73);
+}
+
+.functional-muted {
+  color: var(--ui-text-muted);
+}
+
+.functional-elevated {
+  background-color: var(--ui-bg-elevated);
+}

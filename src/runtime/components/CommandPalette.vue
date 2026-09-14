@@ -239,7 +239,12 @@ function itemId(index: number) {
 <template>
   <DialogRoot :open="isOpen" @update:open="(value) => value ? undefined : close()">
     <DialogPortal>
-      <DialogOverlay v-bind="overlayProps" />
+      <DialogOverlay
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
+        v-bind="overlayProps"
+      />
       <DialogContent :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps" @open-auto-focus="onOpenAutoFocus">
         <DialogTitle :class="applyClassPrefix('sr-only')">
           {{ messages.commandPalette }}

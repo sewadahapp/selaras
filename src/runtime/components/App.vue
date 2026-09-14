@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { RuntimeTokenOverrides } from '../utils/color-registry'
 import { ConfigProvider, ToastProvider, TooltipProvider } from 'reka-ui'
 import { computed } from 'vue'
 import { useAppConfig, useHead } from '#imports'
 import { useLocale } from '../composables/use-locale'
-import { generateRuntimeColorOverrideCss } from '../utils/color-registry'
+import { generateRuntimeTokenOverrideCss } from '../utils/color-registry'
 import DrawerRenderer from './DrawerRenderer.vue'
 import ModalRenderer from './ModalRenderer.vue'
 import SlideoverRenderer from './SlideoverRenderer.vue'
@@ -37,8 +38,8 @@ const props = withDefaults(defineProps<AppProps>(), {
 // per-app layout choice, while lang should just track whatever locale the
 // rest of the library is already resolving text/date formatting against.
 const locale = useLocale()
-const appConfig = useAppConfig() as { selaras?: { tokens?: { light?: { colors?: Record<string, Record<string, string>> }, dark?: { colors?: Record<string, Record<string, string>> } } } }
-const runtimeTokenCss = computed(() => generateRuntimeColorOverrideCss(appConfig.selaras?.tokens ?? {}))
+const appConfig = useAppConfig() as { selaras?: { tokens?: RuntimeTokenOverrides } }
+const runtimeTokenCss = computed(() => generateRuntimeTokenOverrideCss(appConfig.selaras?.tokens ?? {}))
 useHead({
   htmlAttrs: { dir: () => props.dir, lang: () => locale.value },
   style: [{ key: 'selaras-runtime-tokens', textContent: () => runtimeTokenCss.value || undefined }],

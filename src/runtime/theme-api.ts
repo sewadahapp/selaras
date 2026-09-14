@@ -9,8 +9,10 @@ export type {
   ColorRecipeInput,
   ColorRole,
   RuntimeColorOverrides,
+  RuntimeThemeMode,
   RuntimeTokenOverrides,
 } from './utils/color-registry'
+export type { FunctionalTokenOverrides } from './utils/functional-tokens'
 
 /**
  * Validates a build-time semantic color while preserving its literal types.

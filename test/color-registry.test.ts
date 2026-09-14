@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { assertColorRoleName, createColorRegistry, generateColorRoleCss, generateRuntimeColorOverrideCss, mergeRuntimeTokenOverrides, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
+import { assertColorRoleName, createColorRegistry, generateColorRoleCss, generateRuntimeTokenOverrideCss, mergeRuntimeTokenOverrides, normalizeColorRecipe } from '../src/runtime/utils/color-registry'
 
 describe('color registry', () => {
   it('normalizes omitted interaction states from the nearest authored state', () => {
@@ -132,7 +132,7 @@ describe('color registry', () => {
   })
 
   it('serializes runtime light/dark overrides without allowing declaration injection', () => {
-    const css = generateRuntimeColorOverrideCss({
+    const css = generateRuntimeTokenOverrideCss({
       light: { colors: { premium: { fill: '#5134a8', fillHover: 'var(--brand-hover)' } } },
       dark: { colors: { premium: { fill: '#a78bfa' } } },
     })
@@ -140,7 +140,7 @@ describe('color registry', () => {
     expect(css).toContain('--selaras-color-premium-fill-hover: var(--brand-hover);')
     expect(css).toContain('[data-selaras-mode="light"]')
     expect(css).toContain(':root.dark [data-selaras-theme="global"]')
-    expect(() => generateRuntimeColorOverrideCss({ light: { colors: { premium: { fill: 'red; color: blue' } } } })).toThrow()
+    expect(() => generateRuntimeTokenOverrideCss({ light: { colors: { premium: { fill: 'red; color: blue' } } } })).toThrow()
   })
 
   it('inherits untouched modes, roles and leaves without mutating or resolving authored values', () => {
@@ -159,9 +159,39 @@ describe('color registry', () => {
   })
 
   it('targets exact managed owners instead of broad descendants', () => {
-    const css = generateRuntimeColorOverrideCss({ light: { colors: { premium: { fill: '#5134a8' } } } }, '[data-selaras-theme="scope"] ')
+    const css = generateRuntimeTokenOverrideCss({ light: { colors: { premium: { fill: '#5134a8' } } } }, '[data-selaras-theme="scope"] ')
     expect(css).toContain('[data-selaras-theme="scope"]:where(')
     expect(css).not.toContain('[data-selaras-theme="scope"] ')
     expect(css).toContain('--selaras-color-premium-fill: initial;')
+  })
+
+  it('inherits functional leaves independently of roles and preserves opposite-mode values', () => {
+    const parent = {
+      light: { surface: { default: 'var(--company-surface)', elevated: '#eeeeee' }, text: { muted: '#555555' } },
+      dark: { surface: { default: '#111111' }, border: { default: '#777777' }, scrim: 'rgb(1 2 3 / .6)' },
+    }
+    const merged = mergeRuntimeTokenOverrides(parent, {
+      light: { surface: { default: undefined, elevated: '#dddddd' }, colors: { primary: { fill: '#123456' } } },
+    })
+    expect(merged).toEqual({
+      light: { surface: { default: 'var(--company-surface)', elevated: '#dddddd' }, text: { muted: '#555555' }, colors: { primary: { fill: '#123456' } } },
+      dark: parent.dark,
+    })
+    expect(parent.light.surface.elevated).toBe('#eeeeee')
+    expect(merged.dark?.surface).not.toBe(parent.dark.surface)
+  })
+
+  it('rematerializes functional inputs and invalidates opposite-mode-only inherited leaves', () => {
+    const css = generateRuntimeTokenOverrideCss({
+      light: { surface: { default: 'var(--company-surface)' }, border: { hover: '#123456' } },
+      dark: { text: { muted: '#eeeeee' }, scrim: 'rgb(1 2 3 / .6)' },
+    }, '[data-selaras-theme="scope"]')
+    const [light, dark] = css.split('\n\n')
+    expect(light).toContain('--selaras-surface-default: var(--company-surface);')
+    expect(light).toContain('--selaras-text-muted: initial;')
+    expect(dark).toContain('--selaras-surface-default: initial;')
+    expect(dark).toContain('--selaras-scrim: rgb(1 2 3 / .6);')
+    expect(() => generateRuntimeTokenOverrideCss({ dark: { surface: { default: 'red; color: blue' } } })).toThrow()
+    expect(() => generateRuntimeTokenOverrideCss({ light: { scrim: '' } })).toThrow(/non-empty/)
   })
 })

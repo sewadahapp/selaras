@@ -242,10 +242,11 @@ function mockResponsiveMatchMedia(matches: boolean) {
 // reading the rendered DOM directly - Reka's PopoverContent sets it by
 // default, same reason date-picker.test.ts's own hasModalOverlay exists
 // rather than a [role=dialog] check), so the reliable discriminator
-// between the two presentations is Modal's own backdrop overlay
-// (bg-black/50, see modal.test.ts), not the ARIA role.
+// between the two presentations is Modal's sibling backdrop overlay,
+// as in modal.test.ts. Its configured color is irrelevant to presentation.
 function hasModalOverlay() {
-  return !!document.body.querySelector('.bg-black\\/50')
+  return [...document.body.querySelectorAll('[role="dialog"]')]
+    .some(dialog => dialog.previousElementSibling?.getAttribute('data-state') === 'open')
 }
 
 describe('colorPicker (mobileModal)', () => {

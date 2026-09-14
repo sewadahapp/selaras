@@ -149,7 +149,13 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
       <slot />
     </DialogTrigger>
     <DialogPortal>
-      <DialogOverlay v-if="overlay" v-bind="overlayProps" />
+      <DialogOverlay
+        v-if="overlay"
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
+        v-bind="overlayProps"
+      />
       <DialogContent
         :data-selaras-theme="themeBindings['data-selaras-theme']"
         :data-selaras-mode="themeBindings['data-selaras-mode']"

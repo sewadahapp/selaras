@@ -4,7 +4,7 @@ import type { ThemeDefaults, ThemeUiOverrides } from '../theme-config'
 import type { RuntimeTokenOverrides } from '../utils/color-registry'
 import { computed, inject, provide, useId, watchEffect } from 'vue'
 import { useAppConfig, useHead } from '#imports'
-import { generateRuntimeColorOverrideCss, mergeRuntimeTokenOverrides } from '../utils/color-registry'
+import { generateRuntimeTokenOverrideCss, mergeRuntimeTokenOverrides } from '../utils/color-registry'
 import { THEME_INJECTION_KEY } from '../utils/injection-keys'
 
 // Headless by default; `as` gives runtime tokens a DOM boundary.
@@ -19,7 +19,7 @@ export interface ThemeProps {
   ui?: ThemeUiOverrides
   /** Component-name-keyed prop-default overrides - e.g. `{ button: { size: 'lg' } }`. Only respected by components that opt into reading useThemeProps for a given prop (see theming.md's "STheme" section for which ones currently do); an explicit prop on the component itself always wins. */
   defaults?: ThemeDefaults
-  /** Runtime semantic color overrides. Requires `as` so the scope has a DOM boundary. */
+  /** Runtime role and functional token overrides by mode. Requires a DOM boundary through `as`. */
   tokens?: RuntimeTokenOverrides
   /** Explicit DOM element/component that owns this theme scope. */
   as?: string | Component
@@ -54,7 +54,7 @@ provide(THEME_INJECTION_KEY, computed(() => ({
 })))
 
 const scopeSelector = `[data-selaras-theme="${scopeId}"]`
-const scopedTokenCss = computed(() => props.as ? generateRuntimeColorOverrideCss(effectiveTokens.value ?? {}, scopeSelector) : '')
+const scopedTokenCss = computed(() => props.as ? generateRuntimeTokenOverrideCss(effectiveTokens.value ?? {}, scopeSelector) : '')
 useHead({
   style: [{ key: `selaras-theme-${scopeId}`, textContent: () => scopedTokenCss.value || undefined }],
 })

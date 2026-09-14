@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const slideoverTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-black/50',
+    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-[var(--ui-scrim)]',
     content: 'fixed z-[var(--ui-z-modal)] flex flex-col bg-[var(--ui-bg)] shadow-[var(--ui-shadow-lg)] focus:outline-none',
     header: 'flex items-start justify-between gap-4 p-4 sm:px-6',
     title: 'text-base font-semibold text-[var(--ui-text)]',

@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const commandPaletteTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-black/50 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
+    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-[var(--ui-scrim)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
     // Top-anchored (not vertically centered like Modal) - the conventional
     // command-palette position, and it means the dialog doesn't visibly
     // jump up and down as the result list grows/shrinks while typing.

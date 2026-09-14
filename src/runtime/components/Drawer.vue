@@ -174,7 +174,13 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
       <slot />
     </DrawerTrigger>
     <DrawerPortal>
-      <DrawerOverlay v-if="overlay" v-bind="overlayProps" />
+      <DrawerOverlay
+        v-if="overlay"
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
+        v-bind="overlayProps"
+      />
       <DrawerContent
         :data-selaras-theme="themeBindings['data-selaras-theme']"
         :data-selaras-mode="themeBindings['data-selaras-mode']"

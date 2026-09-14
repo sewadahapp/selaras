@@ -206,11 +206,11 @@ describe('drawer', () => {
 
   it('renders no overlay element when overlay is false', async () => {
     const withOverlay = await mountSuspended(Drawer, { props: { open: true, title: 'A', description: 'A' } })
-    expect(document.body.querySelector('[data-state="open"].bg-black\\/50')).toBeTruthy()
+    expect(document.body.querySelector('[role=dialog], [role=alertdialog]')?.previousElementSibling?.getAttribute('data-state')).toBe('open')
     withOverlay.unmount()
 
     wrapper = await mountSuspended(Drawer, { props: { open: true, title: 'B', description: 'B', overlay: false } })
-    expect(document.body.querySelector('.bg-black\\/50')).toBeFalsy()
+    expect(document.body.querySelector('[role=dialog], [role=alertdialog]')?.previousElementSibling?.getAttribute('data-state')).not.toBe('open')
   })
 
   it('strips the animation classes entirely when transition is false', async () => {

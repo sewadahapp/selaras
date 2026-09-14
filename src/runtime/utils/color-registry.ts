@@ -1,3 +1,6 @@
+import type { FunctionalTokenOverrides } from './functional-tokens'
+import { functionalTokenEntries, mergeFunctionalTokenOverrides } from './functional-tokens'
+
 /**
  * Framework-independent semantic color contracts.
  *
@@ -36,17 +39,22 @@ export type ColorRecipeInput = Pick<ColorRecipe, 'fill' | 'onFill' | 'subtle' | 
 
 export type RuntimeColorOverrides = Partial<Record<ColorRole, Partial<ColorRecipeInput>>>
 
+export interface RuntimeThemeMode extends FunctionalTokenOverrides {
+  colors?: RuntimeColorOverrides
+}
+
 export interface RuntimeTokenOverrides {
-  light?: { colors?: RuntimeColorOverrides }
-  dark?: { colors?: RuntimeColorOverrides }
+  light?: RuntimeThemeMode
+  dark?: RuntimeThemeMode
 }
 
 /** Composes managed scope leaves without resolving authored CSS expressions. */
 export function mergeRuntimeTokenOverrides(parent: RuntimeTokenOverrides = {}, local: RuntimeTokenOverrides = {}): RuntimeTokenOverrides {
   const result: RuntimeTokenOverrides = {}
   for (const mode of ['light', 'dark'] as const) {
+    const functional = mergeFunctionalTokenOverrides(parent[mode], local[mode])
     const roles = new Set([...Object.keys(parent[mode]?.colors ?? {}), ...Object.keys(local[mode]?.colors ?? {})])
-    if (roles.size === 0)
+    if (roles.size === 0 && Object.keys(functional).length === 0)
       continue
     const colors: RuntimeColorOverrides = {}
     for (const role of roles) {
@@ -57,7 +65,7 @@ export function mergeRuntimeTokenOverrides(parent: RuntimeTokenOverrides = {}, l
           .filter(([, value]) => value !== undefined),
       )
     }
-    result[mode] = { colors }
+    result[mode] = { ...functional, ...(roles.size ? { colors } : {}) }
   }
   return result
 }
@@ -141,6 +149,8 @@ function roleFieldValue(recipe: ColorRecipe, field: GeneratedRoleField): string 
 }
 
 function assertCssValue(value: string): void {
+  if (typeof value !== 'string' || value.trim().length === 0)
+    throw new Error('Invalid Selaras token value: expected a non-empty CSS string.')
   if (/[;{}\r\n]/.test(value))
     throw new Error('Invalid Selaras token value: declaration delimiters are not allowed.')
 }
@@ -157,11 +167,32 @@ function overrideRule(selector: string, role: string, overrides: Partial<ColorRe
 }
 
 /** Exact owners rematerialize effective leaves, including across DOM portals. */
-export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides, scopeSelector = '[data-selaras-theme="global"]'): string {
+export function generateRuntimeTokenOverrideCss(overrides: RuntimeTokenOverrides, scopeSelector = '[data-selaras-theme="global"]'): string {
   const rules: string[] = []
   const owner = scopeSelector.trim()
   const roles = new Set([...Object.keys(overrides.light?.colors ?? {}), ...Object.keys(overrides.dark?.colors ?? {})])
+  const functional = {
+    light: Object.fromEntries(functionalTokenEntries(overrides.light)),
+    dark: Object.fromEntries(functionalTokenEntries(overrides.dark)),
+  }
+  const functionalFields = [...new Set([...Object.keys(functional.light), ...Object.keys(functional.dark)])].sort()
   for (const mode of ['light', 'dark'] as const) {
+    const selector = mode === 'dark'
+      ? `:root.dark ${owner}:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),\n${owner}:where([data-selaras-mode="dark"])`
+      : `${owner}:where(:not([data-selaras-mode]), [data-selaras-mode="root"], [data-selaras-mode="light"])`
+    const functionalDeclarations = functionalFields.map((field) => {
+      const value = functional[mode][field] ?? 'initial'
+      assertCssValue(value)
+      return `  ${field}: ${value};`
+    })
+    if (functionalDeclarations.length) {
+      // SApp is headless. Its functional contract also serves ordinary page
+      // content, while explicit scopes rematerialize values at their owners.
+      const functionalSelector = owner === '[data-selaras-theme="global"]'
+        ? `${selector},\n${mode === 'dark' ? ':root.dark' : ':root'}`
+        : selector
+      rules.push(`${functionalSelector} {\n${functionalDeclarations.join('\n')}\n}`)
+    }
     const colors = overrides[mode]?.colors
     for (const role of [...roles].sort()) {
       assertColorRoleName(role)
@@ -173,9 +204,6 @@ export function generateRuntimeColorOverrideCss(overrides: RuntimeTokenOverrides
         ...Object.entries(overrides.dark?.colors?.[key] ?? {}),
       ].filter(([, value]) => value !== undefined).map(([field]) => field))
       const effective = Object.fromEntries([...fields].map(field => [field, colors?.[key]?.[field as keyof ColorRecipeInput] ?? 'initial']))
-      const selector = mode === 'dark'
-        ? `:root.dark ${owner}:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),\n${owner}:where([data-selaras-mode="dark"])`
-        : `${owner}:where(:not([data-selaras-mode]), [data-selaras-mode="root"], [data-selaras-mode="light"])`
       const rule = overrideRule(selector, role, effective)
       if (rule)
         rules.push(rule)

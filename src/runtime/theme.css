@@ -436,23 +436,6 @@
   --ui-z-toast: 80;
 
   /* =========================================================
-   * SURFACES — LIGHT
-   * ========================================================= */
-
-  --ui-bg: --theme(--color-neutral-25);
-  --ui-bg-elevated: --theme(--color-neutral-50);
-  --ui-bg-inverted: --theme(--color-neutral-950);
-
-  --ui-border: --theme(--color-neutral-200);
-  --ui-border-hover: --theme(--color-neutral-300);
-  --ui-border-muted: --theme(--color-neutral-100);
-
-  --ui-text: --theme(--color-neutral-950);
-  --ui-text-muted: --theme(--color-neutral-600);
-  --ui-text-inverted: --theme(--color-neutral-50);
-
-
-  /* =========================================================
    * SOLID SEMANTIC COLORS
    *
    * This mapping is intentionally theme-independent:
@@ -531,23 +514,6 @@
 
 .dark {
   /* =========================================================
-   * SURFACES — DARK
-   * ========================================================= */
-
-  --ui-bg: --theme(--color-neutral-950);
-  --ui-bg-elevated: --theme(--color-neutral-900);
-  --ui-bg-inverted: --theme(--color-neutral-50);
-
-  --ui-border: --theme(--color-neutral-800);
-  --ui-border-hover: --theme(--color-neutral-700);
-  --ui-border-muted: --theme(--color-neutral-900);
-
-  --ui-text: --theme(--color-neutral-50);
-  --ui-text-muted: --theme(--color-neutral-400);
-  --ui-text-inverted: --theme(--color-neutral-950);
-
-
-  /* =========================================================
    * SOLID COLORS
    *
    * 500 / 600 / 700 and foregrounds are inherited from :root.
@@ -595,4 +561,40 @@
   --ui-neutral-active: --theme(--color-neutral-200);
   --ui-neutral-foreground: --theme(--color-neutral-950);
   --ui-neutral-soft: --theme(--color-neutral-900);
+}
+
+/*
+ * Public --selaras-* inputs inherit without bundled defaults. Resolve them
+ * at each managed owner so explicit modes and local external variables work
+ * in components and portals alike. --ui-* remain the current recipe bindings;
+ * they are not an additional input API or a permanent compatibility layer.
+ */
+@layer theme {
+  :root,
+  [data-selaras-theme] {
+    --ui-bg: var(--selaras-surface-default, --theme(--color-neutral-25));
+    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-neutral-50));
+    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-neutral-950));
+    --ui-text: var(--selaras-text-default, --theme(--color-neutral-950));
+    --ui-text-muted: var(--selaras-text-muted, --theme(--color-neutral-600));
+    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-neutral-50));
+    --ui-border: var(--selaras-border-default, --theme(--color-neutral-200));
+    --ui-border-muted: var(--selaras-border-muted, --theme(--color-neutral-100));
+    --ui-border-hover: var(--selaras-border-hover, --theme(--color-neutral-300));
+    --ui-scrim: var(--selaras-scrim, rgb(0 0 0 / 0.5));
+  }
+
+  :root.dark,
+  :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),
+  [data-selaras-theme]:where([data-selaras-mode="dark"]) {
+    --ui-bg: var(--selaras-surface-default, --theme(--color-neutral-950));
+    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-neutral-900));
+    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-neutral-50));
+    --ui-text: var(--selaras-text-default, --theme(--color-neutral-50));
+    --ui-text-muted: var(--selaras-text-muted, --theme(--color-neutral-400));
+    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-neutral-950));
+    --ui-border: var(--selaras-border-default, --theme(--color-neutral-800));
+    --ui-border-muted: var(--selaras-border-muted, --theme(--color-neutral-900));
+    --ui-border-hover: var(--selaras-border-hover, --theme(--color-neutral-700));
+  }
 }

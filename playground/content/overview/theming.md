@@ -229,6 +229,61 @@ instead of the whole app. It can also default a prop's value (`:defaults`)
 for a component that opts into reading it - see its own doc page for
 which components currently do.
 
+### Functional colors and explicit modes
+
+Role colors are separate from general surfaces, text, borders and the modal
+scrim. Configure these functional values per mode through `selaras.tokens` in
+`app.config.ts`, or through the same `tokens` shape on an explicit `STheme`:
+
+```vue-html
+<STheme
+  as="section"
+  mode="light"
+  :tokens="{
+    light: {
+      surface: { default: 'var(--company-surface)', elevated: '#f5f5f5' },
+      text: { default: '#202020', muted: '#555555' },
+      border: { default: '#808080' },
+      scrim: 'rgb(0 0 0 / .6)',
+    },
+  }"
+>
+  <!-- Descendants and declarative portals inherit this managed contract. -->
+</STheme>
+```
+
+`surface` supports `default`, `elevated` and `inverted`; `text` supports
+`default`, `muted` and `inverted`; `border` supports `default`, `muted` and
+`hover`. `scrim` is a separate CSS color. Values are partial and inherit by
+mode and leaf. A parent's dark-only value does not become a light override.
+Explicit `light`/`dark` governs functional and role colors independently of
+the document mode; omitted mode inherits, and unscoped components follow the
+document root. Runtime tokens and explicit modes require a DOM boundary
+through `as`.
+
+CSS authors can use inherited inputs such as `--selaras-surface-default`,
+`--selaras-text-muted`, `--selaras-border-hover` and `--selaras-scrim`. For
+example, a root declaration changes the default surface without supplying a
+palette:
+
+```css
+:root {
+  --selaras-surface-default: #fafafa;
+}
+```
+
+An unqualified CSS input applies in both modes; use per-mode runtime tokens
+when mode-dependent ownership is needed. Consumer CSS on a theme owner and
+inline inputs can override managed values. External variables referenced by a
+managed token must exist at its destination, including the portal target.
+Selaras does not copy DOM-local variables into body portals or certify contrast
+for arbitrary CSS expressions.
+
+Use the `--selaras-*` inputs for functional customization. The current
+`--ui-bg`/`--ui-text`/`--ui-border` aliases are resolved recipe bindings and are
+rebound at theme owners; overriding those aliases only on an ancestor is no
+longer a scoped customization contract.
+
 ## 4. Global overrides
 
 To retheme a component everywhere instead of one instance at a time,

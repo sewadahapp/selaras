@@ -983,11 +983,11 @@ function mockMatchMedia(matches: boolean) {
 // DatePicker.vue's own comment on this), which - like Modal's own
 // DialogContent - resolves to role="dialog" too, so that role alone can't
 // tell the two apart the way it could for Select's own combobox popover.
-// Modal's own backdrop overlay (bg-black/50, see modal.test.ts's
-// identical selector) has no popover equivalent, so it's the reliable
-// discriminator here instead.
+// Modal's sibling backdrop overlay has no popover equivalent, so its open
+// state is the discriminator, independently of the configured scrim color.
 function hasModalOverlay() {
-  return !!document.body.querySelector('.bg-black\\/50')
+  return [...document.body.querySelectorAll('[role="dialog"]')]
+    .some(dialog => dialog.previousElementSibling?.getAttribute('data-state') === 'open')
 }
 
 describe('datePicker (mobileModal)', () => {

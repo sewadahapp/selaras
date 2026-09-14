@@ -112,7 +112,11 @@ const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
 const packedThemeConfiguration: ThemeConfiguration = {
   defaults: { button: { color: 'primary', size: 'lg' } },
   ui: { button: { slots: { base: 'rounded-full' } } },
+  tokens: { light: { surface: { elevated: 'var(--company-raised)' }, text: { muted: '#555555' }, border: { hover: '#777777' }, scrim: 'rgb(0 0 0 / .5)' } },
 }
+// @ts-expect-error functional groups have a finite semantic vocabulary
+const invalidFunctionalTokens: ThemeConfiguration = { tokens: { dark: { surface: { hover: '#111111' } } } }
+void invalidFunctionalTokens
 // @ts-expect-error behavioral props are intentionally excluded from theme defaults
 const invalidPackedThemeConfiguration: ThemeConfiguration = { defaults: { button: { disabled: true } } }
 // @ts-expect-error scoped defaults replace the pre-1.0 props namespace
