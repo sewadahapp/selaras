@@ -119,6 +119,24 @@ in these chains. Explicitly authored leaves remain independent, even if their
 expression initially matches the base. New roles require both modes. A runtime `app.config` override can
 change leaves of a registered role, but cannot introduce a new role name.
 
+For an existing DTCG token system, resolve aliases and select its context in
+your token pipeline, then map each resolved color value into the recipe. The
+`dtcgColorToCss` helper accepts structured `srgb`, `srgb-linear`, and `oklch`
+values. It deliberately does not parse token documents or resolve references:
+
+```ts
+import { defineColor, dtcgColorToCss } from '@sewadah/selaras/theme'
+
+const fill = dtcgColorToCss(tokens.brand.fill.$value, {
+  path: 'semantic.brand.fill.$value',
+})
+
+const brand = defineColor({
+  light: { fill, onFill: '#fff', subtle: fill, onSubtle: '#111', text: fill, border: fill },
+  dark: { fill, onFill: '#111', subtle: fill, onSubtle: '#fff', text: fill, border: fill },
+})
+```
+
 Custom roles accept role-specific CSS overrides such as
 `--selaras-color-premium-fill`. Set them on `:root` for the document or on
 a local ancestor for a subtree:

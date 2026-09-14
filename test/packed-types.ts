@@ -1,3 +1,4 @@
+import type { DtcgResolvedColor } from '@sewadah/selaras/theme'
 import type {
   AutocompleteEmits,
   AutocompleteProps,
@@ -22,7 +23,7 @@ import type {
 } from '@sewadah/selaras/types'
 import type * as PublicTypes from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
-import { defineColor } from '@sewadah/selaras/theme'
+import { defineColor, dtcgColorToCss } from '@sewadah/selaras/theme'
 
 interface PackedUser {
   id: string
@@ -109,6 +110,12 @@ const forcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, t
 const invalidForcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, true>['update:modelValue'] = ['new entry']
 const autocompleteSlots: AutocompleteSlots<{ id: number, title: string }> = { item: ({ item }) => item.title.toUpperCase() }
 const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
+const packedDtcgColor = { colorSpace: 'srgb', components: [0.1, 0.2, 0.3] } satisfies DtcgResolvedColor
+const packedDtcgCss = dtcgColorToCss(packedDtcgColor)
+// @ts-expect-error only the documented resolved color spaces are supported
+const invalidPackedDtcgColor: DtcgResolvedColor = { colorSpace: 'display-p3', components: [1, 0, 1] }
+void packedDtcgCss
+void invalidPackedDtcgColor
 const packedThemeConfiguration: ThemeConfiguration = {
   defaults: { button: { color: 'primary', size: 'lg' } },
   ui: { button: { slots: { base: 'rounded-full' } } },

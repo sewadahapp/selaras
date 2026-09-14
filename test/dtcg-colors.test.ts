@@ -1,38 +1,25 @@
-import type { DtcgColorRoleGroup, DtcgColorToken } from '../src/runtime/utils/dtcg-colors'
+import type { DtcgResolvedColor } from '../src/runtime/utils/dtcg-colors'
 import { describe, expect, it } from 'vitest'
-import { createColorRegistryFromDtcg } from '../src/runtime/utils/dtcg-colors'
+import { dtcgColorToCss } from '../src/runtime/utils/dtcg-colors'
 
-function role(fill: string): DtcgColorRoleGroup {
-  return {
-    '$type': 'color',
-    'fill': { $value: fill },
-    'on-fill': { $value: '#fff' },
-    'subtle': { $value: '#eee' },
-    'on-subtle': { $value: '#111' },
-    'text': { $value: '#123' },
-    'border': { $value: '#456' },
-  }
-}
-
-describe('dtcg color adapter', () => {
-  it('imports explicit light/dark semantic groups and normalizes states', () => {
-    const registry = createColorRegistryFromDtcg({ light: { premium: role('#5134a8') }, dark: { premium: role('#a78bfa') } })
-    expect(registry.premium!.light.fill).toBe('#5134a8')
-    expect(registry.premium!.dark.fillHover).toBe('var(--_selaras-color-fill)')
+describe('resolved DTCG color converter', () => {
+  it('serializes supported sRGB and linear sRGB values without changing their components', () => {
+    expect(dtcgColorToCss({ colorSpace: 'srgb', components: [0.1, 0.2, 0.3], alpha: 0.8, hex: '#1a334d' })).toBe('color(srgb 0.1 0.2 0.3 / 0.8)')
+    expect(dtcgColorToCss({ colorSpace: 'srgb-linear', components: [0, 0.5, 1] })).toBe('color(srgb-linear 0 0.5 1)')
   })
 
-  it('serializes supported structured sRGB values to CSS color()', () => {
-    const structured = role('#5134a8')
-    const fillToken = structured.fill as DtcgColorToken
-    fillToken.$value = { colorSpace: 'srgb', components: [0.1, 0.2, 0.3], alpha: 0.8 }
-    const registry = createColorRegistryFromDtcg({ light: { premium: structured }, dark: { premium: role('#a78bfa') } })
-    expect(registry.premium!.light.fill).toBe('color(srgb 0.1 0.2 0.3 / 0.8)')
+  it('serializes the owned OKLCH representation with CSS OKLCH syntax', () => {
+    const value = { colorSpace: 'oklch', components: [0.7016, 0.3225, 328.363], alpha: 1, hex: '#ff00ff' } satisfies DtcgResolvedColor
+    expect(dtcgColorToCss(value)).toBe('oklch(0.7016 0.3225 328.363 / 1)')
+    expect(dtcgColorToCss({ colorSpace: 'oklch', components: [0.7, 'none', 'none'] })).toBe('oklch(0.7 none none)')
   })
 
-  it('rejects aliases and missing dark roles instead of pretending to resolve them', () => {
-    expect(() => createColorRegistryFromDtcg({ light: { premium: role('{palette.purple}') }, dark: { premium: role('#a78bfa') } })).toThrow(/alias/)
-    expect(() => createColorRegistryFromDtcg({ light: { premium: role('#5134a8') }, dark: {} })).toThrow(/both light and dark/)
-    const invalidGroup = { ...role('#5134a8'), $type: 'dimension' } as unknown as DtcgColorRoleGroup
-    expect(() => createColorRegistryFromDtcg({ light: { premium: invalidGroup }, dark: { premium: role('#a78bfa') } })).toThrow(/group type/)
+  it('rejects unresolved forms, malformed payloads and unsupported spaces with source paths', () => {
+    expect(() => dtcgColorToCss('{palette.purple}', { path: 'semantic.fill.$value' })).toThrow('semantic.fill.$value')
+    expect(() => dtcgColorToCss({ colorSpace: 'display-p3', components: [1, 0, 1] }, { path: 'palette.brand' })).toThrow(/palette\.brand.*unsupported colorSpace/)
+    expect(() => dtcgColorToCss({ colorSpace: 'srgb', components: [1, 0, 1], alpha: 'none' }, { path: 'palette.brand' })).toThrow(/palette\.brand\.alpha/)
+    expect(() => dtcgColorToCss({ colorSpace: 'srgb', components: [1, 0, 1], hex: '#fff' })).toThrow(/\.hex/)
+    expect(() => dtcgColorToCss({ colorSpace: 'oklch', components: [1.1, 0.2, 20] })).toThrow(/components\[0\]/)
+    expect(() => dtcgColorToCss({ colorSpace: 'oklch', components: [0.7, 0.2, 360] })).toThrow(/components\[2\]/)
   })
 })

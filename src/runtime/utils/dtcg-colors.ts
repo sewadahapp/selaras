@@ -1,83 +1,77 @@
-import type { ColorModePair, ColorRecipe, ColorRecipeInput } from './color-registry'
-import { assertColorRoleName, createColorRegistry } from './color-registry'
+/**
+ * The structured, already-resolved DTCG color subset Selaras can serialize
+ * today. Resolution, alias traversal and context selection belong to the
+ * caller's DTCG processor, not the component runtime.
+ */
+export type DtcgColorSpace = 'srgb' | 'srgb-linear' | 'oklch'
+export type DtcgColorComponent = number | 'none'
 
-/** Supported DTCG color value subset for the first build-time adapter. */
-export interface DtcgColorValue {
-  colorSpace: 'srgb' | 'srgb-linear'
-  components: [number | 'none', number | 'none', number | 'none']
-  alpha?: number | 'none'
+export interface DtcgResolvedColor {
+  colorSpace: DtcgColorSpace
+  components: readonly [DtcgColorComponent, DtcgColorComponent, DtcgColorComponent]
+  /** Omitted alpha means fully opaque; DTCG does not permit `none` here. */
+  alpha?: number
+  /** Optional six-digit fallback required by DTCG when provided. */
+  hex?: string
 }
 
-export interface DtcgColorToken {
-  $type?: 'color'
-  $value: string | DtcgColorValue
+export interface DtcgColorConversionOptions {
+  /** Source path included in validation errors. @default '$value' */
+  path?: string
 }
 
-export interface DtcgColorRoleGroup {
-  $type?: 'color'
-  [key: string]: DtcgColorToken | 'color' | undefined
-}
-export type DtcgColorModes = ColorModePair<Record<string, DtcgColorRoleGroup>>
-
-const fieldMap = {
-  'fill': 'fill',
-  'fill-hover': 'fillHover',
-  'fill-pressed': 'fillPressed',
-  'on-fill': 'onFill',
-  'subtle': 'subtle',
-  'subtle-hover': 'subtleHover',
-  'subtle-pressed': 'subtlePressed',
-  'on-subtle': 'onSubtle',
-  'text': 'text',
-  'text-hover': 'textHover',
-  'text-pressed': 'textPressed',
-  'border': 'border',
-  'focus': 'focus',
-} as const
-
-const requiredFields = ['fill', 'on-fill', 'subtle', 'on-subtle', 'text', 'border'] as const
-
-function cssColor(value: string | DtcgColorValue, path: string): string {
-  if (typeof value === 'string') {
-    if (/\{[^}]+\}/.test(value))
-      throw new Error(`Unsupported DTCG color alias at ${path}; resolve references before the web CSS adapter.`)
-    return value
-  }
-  const alpha = value.alpha === undefined || value.alpha === 'none' ? '' : ` / ${value.alpha}`
-  return `color(${value.colorSpace} ${value.components.join(' ')}${alpha})`
+function invalid(path: string, message: string): never {
+  throw new Error(`Invalid resolved DTCG color at ${path}: ${message}`)
 }
 
-function readRole(role: string, group: DtcgColorRoleGroup, mode: keyof DtcgColorModes): ColorRecipeInput {
-  assertColorRoleName(role)
-  if (group.$type && group.$type !== 'color')
-    throw new Error(`Unsupported DTCG group type at "${mode}.colors.${role}"; expected color.`)
-  for (const field of requiredFields) {
-    const token = group[field]
-    if (!token)
-      throw new Error(`Missing DTCG color token "${mode}.colors.${role}.${field}".`)
-    if (typeof token !== 'object' || (token.$type && token.$type !== 'color') || !token.$value)
-      throw new Error(`Unsupported DTCG token type at "${mode}.colors.${role}.${field}"; expected color.`)
-  }
-  const values = Object.fromEntries(Object.entries(fieldMap).flatMap(([field, property]) => {
-    const token = group[field] as DtcgColorToken | undefined
-    return token ? [[property, cssColor(token.$value, `${mode}.colors.${role}.${field}`)]] : []
-  }))
-  return values as ColorRecipeInput
+function assertComponent(value: unknown, path: string): asserts value is DtcgColorComponent {
+  if (value !== 'none' && (typeof value !== 'number' || !Number.isFinite(value)))
+    invalid(path, 'components must be finite numbers or "none".')
+}
+
+function assertRange(value: DtcgColorComponent, path: string, minimum: number, maximum: number, inclusiveMaximum = true): void {
+  if (value === 'none')
+    return
+  if (value < minimum || value > maximum || (!inclusiveMaximum && value === maximum))
+    invalid(path, `must be within ${inclusiveMaximum ? `[${minimum}, ${maximum}]` : `[${minimum}, ${maximum})`}.`)
 }
 
 /**
- * Imports the supported DTCG semantic-color subset into Selaras recipes.
- * This is a build-time adapter, not a general DTCG resolver.
+ * Converts a resolved structured DTCG color to a browser CSS value.
+ * It deliberately accepts no CSS strings, aliases, token groups or Resolver
+ * documents: pass a resolved `$value` at the semantic mapping boundary.
  */
-export function createColorRegistryFromDtcg(source: DtcgColorModes): Record<string, ColorModePair<ColorRecipe>> {
-  const roles = new Set([...Object.keys(source.light), ...Object.keys(source.dark)])
-  const input: Record<string, ColorModePair<ColorRecipeInput>> = {}
-  for (const role of [...roles].sort()) {
-    const light = source.light[role]
-    const dark = source.dark[role]
-    if (!light || !dark)
-      throw new Error(`DTCG color role "${role}" must define both light and dark modes.`)
-    input[role] = { light: readRole(role, light, 'light'), dark: readRole(role, dark, 'dark') }
+export function dtcgColorToCss(value: unknown, options: DtcgColorConversionOptions = {}): string {
+  const path = options.path ?? '$value'
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    invalid(path, 'expected a structured color value after reference resolution.')
+
+  const color = value as Partial<DtcgResolvedColor>
+  if (color.colorSpace !== 'srgb' && color.colorSpace !== 'srgb-linear' && color.colorSpace !== 'oklch')
+    invalid(path, 'unsupported colorSpace; supported values are "srgb", "srgb-linear" and "oklch".')
+  if (!Array.isArray(color.components) || color.components.length !== 3)
+    invalid(path, 'components must contain exactly three values.')
+  for (const [index, component] of color.components.entries())
+    assertComponent(component, `${path}.components[${index}]`)
+
+  if (color.colorSpace === 'srgb' || color.colorSpace === 'srgb-linear') {
+    for (const [index, component] of color.components.entries())
+      assertRange(component, `${path}.components[${index}]`, 0, 1)
   }
-  return createColorRegistry(input)
+  else {
+    assertRange(color.components[0], `${path}.components[0]`, 0, 1)
+    assertRange(color.components[1], `${path}.components[1]`, 0, Number.POSITIVE_INFINITY)
+    assertRange(color.components[2], `${path}.components[2]`, 0, 360, false)
+  }
+
+  if (color.alpha !== undefined && (typeof color.alpha !== 'number' || !Number.isFinite(color.alpha) || color.alpha < 0 || color.alpha > 1))
+    invalid(`${path}.alpha`, 'must be a number within [0, 1].')
+  if (color.hex !== undefined && (typeof color.hex !== 'string' || !/^#[0-9a-f]{6}$/i.test(color.hex)))
+    invalid(`${path}.hex`, 'must be a six-digit CSS hex fallback.')
+
+  const alpha = color.alpha === undefined ? '' : ` / ${color.alpha}`
+  const components = color.components.join(' ')
+  return color.colorSpace === 'oklch'
+    ? `oklch(${components}${alpha})`
+    : `color(${color.colorSpace} ${components}${alpha})`
 }
