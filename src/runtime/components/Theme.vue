@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
+import type { ThemeDefaults, ThemeUiOverrides } from '../theme-config'
 import type { RuntimeTokenOverrides } from '../utils/color-registry'
 import { computed, inject, provide, useId, watchEffect } from 'vue'
 import { useAppConfig, useHead } from '#imports'
@@ -15,9 +16,9 @@ const props = defineProps<ThemeProps>()
 
 export interface ThemeProps {
   /** Component-name-keyed slot-class overrides, same shape as app.config.ui but scoped to this subtree instead of the whole app - e.g. `{ button: { slots: { base: 'rounded-full' } } }`. */
-  ui?: Partial<Record<string, object>>
+  ui?: ThemeUiOverrides
   /** Component-name-keyed prop-default overrides - e.g. `{ button: { size: 'lg' } }`. Only respected by components that opt into reading useThemeProps for a given prop (see theming.md's "STheme" section for which ones currently do); an explicit prop on the component itself always wins. */
-  defaults?: Partial<Record<string, Record<string, unknown>>>
+  defaults?: ThemeDefaults
   /** Runtime semantic color overrides. Requires `as` so the scope has a DOM boundary. */
   tokens?: RuntimeTokenOverrides
   /** Explicit DOM element/component that owns this theme scope. */

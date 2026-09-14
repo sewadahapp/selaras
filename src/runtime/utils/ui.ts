@@ -209,9 +209,9 @@ export function useComponentTheme<T extends (...args: any[]) => any>(key: string
     let result: any = base
     const globalOverride = appConfig.selaras?.ui?.[key] ?? appConfig.ui?.[key]
     if (globalOverride)
-      result = tv({ extend: result, ...globalOverride })
+      result = tv({ extend: result, ...globalOverride } as any)
     for (const override of collectThemeChain(themeContext?.value, c => c.ui, key))
-      result = tv({ extend: result, ...override })
+      result = tv({ extend: result, ...override } as any)
     return result as T
   })
 }

@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4">
     <div class="flex items-center gap-3">
       <SButton>Default</SButton>
-      <STheme :ui="{ button: { base: 'rounded-full' } }">
+      <STheme :ui="{ button: { slots: { base: 'rounded-full' } } }">
         <SButton>Rounded, scoped</SButton>
       </STheme>
     </div>
@@ -18,7 +18,7 @@
 
     <!-- Nesting: the inner Theme wins for what it sets (color), while
     still inheriting the outer one's unset setting (the rounded ui override). -->
-    <STheme :ui="{ button: { base: 'rounded-full' } }" :defaults="{ button: { color: 'neutral' } }">
+    <STheme :ui="{ button: { slots: { base: 'rounded-full' } } }" :defaults="{ button: { color: 'neutral' } }">
       <STheme :defaults="{ button: { color: 'danger' } }">
         <SButton>Rounded (outer) + danger (inner)</SButton>
       </STheme>

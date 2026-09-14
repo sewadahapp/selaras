@@ -1,6 +1,7 @@
 import type { ColorModePair, ColorRecipeInput } from './utils/color-registry'
 import { normalizeColorRecipe } from './utils/color-registry'
 
+export type { ThemeComponentRegistry, ThemeConfiguration, ThemeDefaults, ThemeUiOverrides } from './theme-config'
 export type {
   BuiltinColorName,
   ColorModePair,

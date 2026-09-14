@@ -16,6 +16,7 @@ import type {
   TableEmits,
   TableProps,
   TableRowSelectionState,
+  ThemeConfiguration,
   ThemeProps,
   ToastOptions,
 } from '@sewadah/selaras/types'
@@ -108,6 +109,12 @@ const forcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, t
 const invalidForcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, true>['update:modelValue'] = ['new entry']
 const autocompleteSlots: AutocompleteSlots<{ id: number, title: string }> = { item: ({ item }) => item.title.toUpperCase() }
 const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
+const packedThemeConfiguration: ThemeConfiguration = {
+  defaults: { button: { color: 'primary', size: 'lg' } },
+  ui: { button: { slots: { base: 'rounded-full' } } },
+}
+// @ts-expect-error behavioral props are intentionally excluded from theme defaults
+const invalidPackedThemeConfiguration: ThemeConfiguration = { defaults: { button: { disabled: true } } }
 // @ts-expect-error scoped defaults replace the pre-1.0 props namespace
 const legacyTheme: ThemeProps = { props: { button: { size: 'lg' } } }
 const packedRole: ColorRole = 'danger'
@@ -179,6 +186,8 @@ void mixedAutocompleteValues
 void invalidAutocompleteValue
 void invalidAutocompleteSuggestion
 void packedTheme
+void packedThemeConfiguration
+void invalidPackedThemeConfiguration
 void legacyTheme
 void packedRole
 void packedTable

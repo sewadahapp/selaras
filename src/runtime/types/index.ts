@@ -110,6 +110,7 @@ export type * from '../components/Tooltip.vue'
 export type { TableColumnDef, TableColumnVisibilityState, TableExpandedState, TableGetRowId, TableRowSelectionState, TableSortingState } from '../composables/use-table'
 
 export type { ToastOptions } from '../composables/use-toast'
+export type { ThemeComponentRegistry, ThemeConfiguration, ThemeDefaults, ThemeUiOverrides } from '../theme-config'
 export type { AutocompleteValue } from '../utils/autocomplete-contracts'
 export type { BuiltinColorName, ColorRecipe, ColorRecipeInput, ColorRole, RuntimeColorOverrides, RuntimeTokenOverrides } from '../utils/color-registry'
 export type { IconRegistry } from '../utils/icons'

@@ -101,7 +101,7 @@ describe('theme', () => {
   })
 
   it('applies a scoped ui override to a descendant button, regardless of nesting depth', async () => {
-    const wrapper = await mountSuspended(withTheme({ ui: { button: { base: 'rounded-full' } } }, [
+    const wrapper = await mountSuspended(withTheme({ ui: { button: { slots: { base: 'rounded-full' } } } }, [
       h('div', [h(Button, () => 'Click me')]),
     ]))
     expect(wrapper.find('button').classes()).toContain('rounded-full')
@@ -131,7 +131,7 @@ describe('theme', () => {
   it('does not affect a button outside the Theme boundary', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => [
-        h(Theme, { ui: { button: { base: 'rounded-full' } } }, () => h('div', { id: 'inside' })),
+        h(Theme, { ui: { button: { slots: { base: 'rounded-full' } } } }, () => h('div', { id: 'inside' })),
         h(Button, { id: 'outside' }, () => 'Click me'),
       ],
     }))
@@ -148,7 +148,7 @@ describe('theme', () => {
   })
 
   it('updates descendant defaults when the scoped configuration changes', async () => {
-    const defaults = ref({ button: { size: 'lg' } })
+    const defaults = ref<{ button: { size: 'sm' | 'lg' } }>({ button: { size: 'lg' } })
     const wrapper = await mountSuspended(defineComponent({
       render: () => h(Theme, { defaults: defaults.value }, () => h(Button, () => 'A')),
     }))
@@ -161,7 +161,7 @@ describe('theme', () => {
 
   it('nested Theme components: the inner one wins for settings it sets, while inheriting the outer one\'s unset settings', async () => {
     const wrapper = await mountSuspended(defineComponent({
-      render: () => h(Theme, { ui: { button: { base: 'rounded-full' } }, defaults: { button: { color: 'danger' } } }, () =>
+      render: () => h(Theme, { ui: { button: { slots: { base: 'rounded-full' } } }, defaults: { button: { color: 'danger' } } }, () =>
         h(Theme, { defaults: { button: { size: 'lg' } } }, () =>
           h(Button, () => 'Click me'))),
     }))

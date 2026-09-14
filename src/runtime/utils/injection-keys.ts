@@ -1,4 +1,5 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue'
+import type { ThemeDefaults, ThemeUiOverrides } from '../theme-config'
 import type { RuntimeTokenOverrides } from './color-registry'
 
 export const AVATAR_SIZE_INJECTION_KEY: InjectionKey<ComputedRef<'sm' | 'md' | 'lg' | undefined>> = Symbol('selaras-avatar-size')
@@ -67,8 +68,8 @@ export const DASHBOARD_INJECTION_KEY: InjectionKey<DashboardContext> = Symbol('s
  * an inner one wholesale replacing it.
  */
 export interface ThemeContext {
-  ui?: Partial<Record<string, object>>
-  defaults?: Partial<Record<string, Record<string, unknown>>>
+  ui?: ThemeUiOverrides
+  defaults?: ThemeDefaults
   scopeId?: string
   /** `root` follows the document root; explicit modes inherit logically. */
   mode?: 'root' | 'light' | 'dark'

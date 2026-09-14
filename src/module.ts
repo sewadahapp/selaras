@@ -1,5 +1,5 @@
 import type { ColorModePair, ColorRecipeInput } from './runtime/utils/color-registry'
-import { addComponentsDir, addImports, addImportsDir, addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addComponentsDir, addImports, addImportsDir, addTemplate, addTypeTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import { Scanner } from '@tailwindcss/oxide'
 import tailwindcss from '@tailwindcss/vite'
 import { createBuiltinColorRegistry } from './builtin-colors'
@@ -179,7 +179,7 @@ export default defineNuxtModule<ModuleOptions>({
       filename: 'selaras-color-roles.mjs',
       getContents: () => `export const colorRoles = ${JSON.stringify(Object.keys(colorRegistry).sort())}\n`,
     })
-    const colorRoleTypesTemplate = addTemplate({
+    addTypeTemplate({
       filename: 'selaras-color-roles.d.ts',
       getContents: () => {
         const roles = Object.keys(colorRegistry).sort()
@@ -191,10 +191,6 @@ export default defineNuxtModule<ModuleOptions>({
         return `declare global {\n  interface SelarasColorRegistry {\n${declarations}\n  }\n}\n\nexport {}\n`
       },
       write: true,
-    })
-
-    nuxt.hook('prepare:types', ({ references }) => {
-      references.push({ path: colorRoleTypesTemplate.dst })
     })
 
     if (Object.keys(colorRegistry).length > 0) {

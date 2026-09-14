@@ -1,11 +1,8 @@
-import type { RuntimeTokenOverrides } from '../utils/color-registry'
+import type { ThemeConfiguration } from '../theme-config'
 import type { IconRegistry } from '../utils/icons'
 import type { MessageRegistry } from '../utils/messages'
 
-export interface SelarasRuntimeConfig {
-  defaults?: Record<string, Record<string, unknown>>
-  ui?: Record<string, object>
-  tokens?: RuntimeTokenOverrides
+export interface SelarasRuntimeConfig extends ThemeConfiguration {
   ripple?: boolean
 }
 
