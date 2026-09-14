@@ -70,6 +70,7 @@ async function inspectSsr(prefixed = true) {
     const html = await response.text()
     const pattern = value => new RegExp(value.source.replaceAll('tw:', prefixed ? 'tw:' : ''), value.flags)
     assert.match(html, pattern(/<button(?=[^>]*id="packed-default")(?=[^>]*data-selaras-color="published")(?=[^>]*type="button")(?=[^>]*tw:h-11)/))
+    assert.match(html, pattern(/<button(?=[^>]*id="packed-default")(?=[^>]*tw:font-bold)/), 'registered roles must match typed application compound variants')
     assert.match(html, pattern(/<button(?=[^>]*id="packed-scoped")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:h-8)/))
     assert.match(html, /<button(?=[^>]*id="packed-registered-builtin")(?=[^>]*data-selaras-color="secondary")/)
     assert.match(html, /<button(?=[^>]*id="packed-runtime-builtin")(?=[^>]*data-selaras-color="primary")/)

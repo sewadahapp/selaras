@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { AppConfig } from '@nuxt/schema'
-import type { ButtonProps, ColorRole, ThemeProps } from '@sewadah/selaras/types'
+import type { ButtonProps, ColorRole, ThemeConfiguration, ThemeProps } from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
 
 const role: ColorRole = 'published'
@@ -9,6 +9,26 @@ const { add: addPublishedToast } = useToast()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
+const registeredDefaults = {
+  defaults: {
+    avatar: { color: role },
+    badge: { color: role },
+    button: { color: hyphenatedRole },
+    chip: { color: role },
+    input: { color: role },
+  },
+} satisfies ThemeConfiguration
+const invalidDefaults: ThemeConfiguration = {
+  // @ts-expect-error imported configuration must reject unregistered roles
+  defaults: { button: { color: 'not-published' } },
+}
+const invalidConditions: ThemeConfiguration = {
+  // @ts-expect-error imported compound conditions must reject unregistered roles
+  ui: { button: { compoundVariants: [{ color: 'not-published', class: { base: 'font-bold' } }] } },
+}
+void registeredDefaults
+void invalidDefaults
+void invalidConditions
 const helper = createTableColumnHelper<{ id: string }>()
 const column = helper.accessor('id', { header: 'ID' })
 const choices = [{ id: 1, title: 'Published select' }]

@@ -12,6 +12,10 @@ type ButtonVariants = VariantProps<typeof buttonTheme>
 type ChipVariants = VariantProps<typeof chipTheme>
 type InputVariants = VariantProps<typeof inputTheme>
 
+// Replace the library recipe's finite color union rather than intersecting it:
+// an intersection would discard every application-registered role.
+type WithRegisteredColor<T> = Omit<T, 'color'> & { color?: ColorRole }
+
 /**
  * The finite component configuration contract. An entry exists only when its
  * component consumes scoped defaults today; behavioral props never belong
@@ -20,28 +24,28 @@ type InputVariants = VariantProps<typeof inputTheme>
 export interface ThemeComponentRegistry {
   avatar: {
     slots: AvatarThemeSlots
-    conditions: Pick<AvatarVariants, 'color' | 'statusColor' | 'size' | 'shape'>
-    defaults: Pick<AvatarVariants, 'color' | 'size'> & { color?: ColorRole }
+    conditions: WithRegisteredColor<Pick<AvatarVariants, 'color' | 'statusColor' | 'size' | 'shape'>>
+    defaults: WithRegisteredColor<Pick<AvatarVariants, 'color' | 'size'>>
   }
   badge: {
     slots: BadgeThemeSlots
-    conditions: Pick<BadgeVariants, 'color' | 'variant' | 'size' | 'dotOnly' | 'iconOnly'>
-    defaults: Pick<BadgeVariants, 'color' | 'size'> & { color?: ColorRole }
+    conditions: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'variant' | 'size' | 'dotOnly' | 'iconOnly'>>
+    defaults: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'size'>>
   }
   button: {
     slots: ButtonThemeSlots
-    conditions: Pick<ButtonVariants, 'color' | 'variant' | 'size' | 'block' | 'raised' | 'square'>
-    defaults: Pick<ButtonVariants, 'color' | 'size'> & { color?: ColorRole }
+    conditions: WithRegisteredColor<Pick<ButtonVariants, 'color' | 'variant' | 'size' | 'block' | 'raised' | 'square'>>
+    defaults: WithRegisteredColor<Pick<ButtonVariants, 'color' | 'size'>>
   }
   chip: {
     slots: ChipThemeSlots
-    conditions: Pick<ChipVariants, 'color' | 'size'>
-    defaults: Pick<ChipVariants, 'color' | 'size'> & { color?: ColorRole }
+    conditions: WithRegisteredColor<Pick<ChipVariants, 'color' | 'size'>>
+    defaults: WithRegisteredColor<Pick<ChipVariants, 'color' | 'size'>>
   }
   input: {
     slots: InputThemeSlots
-    conditions: Pick<InputVariants, 'color' | 'size' | 'hasLeadingIcon' | 'hasTrailingIcon' | 'invalid'>
-    defaults: Pick<InputVariants, 'color' | 'size'> & { color?: ColorRole }
+    conditions: WithRegisteredColor<Pick<InputVariants, 'color' | 'size' | 'hasLeadingIcon' | 'hasTrailingIcon' | 'invalid'>>
+    defaults: WithRegisteredColor<Pick<InputVariants, 'color' | 'size'>>
   }
 }
 
