@@ -299,5 +299,8 @@ function updateNestedTokens() {
     <SFormField v-if="route.query.initialOpen" id="mobile-initial-date" label="Initially open mobile date">
       <SDatePicker mobile-modal default-open />
     </SFormField>
+    <SSelect v-if="route.query.initialSelect" :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]" mobile-modal default-open :ui="{ mobileContent: { 'data-test': 'initial-select-modal-content' } }" />
+    <SAutocomplete v-if="route.query.initialAutocomplete" :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]" mobile-modal :open="true" :ui="{ mobileContent: { 'data-test': 'initial-autocomplete-modal-content' } }" />
+    <SColorPicker v-if="route.query.initialColorPicker" mobile-modal default-open :ui="{ mobileContent: { 'data-test': 'initial-color-picker-modal-content' } }" />
   </section>
 </template>

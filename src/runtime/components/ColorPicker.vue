@@ -114,6 +114,13 @@ const mobilePresentation = ref(false)
 watch(open, (open) => {
   mobilePresentation.value = open && !!props.mobileModal && isMobile.value
 })
+// SSR and the first client render intentionally retain the desktop popover:
+// the viewport only exists after mount. An already-open uncontrolled or
+// controlled picker still needs to sample that viewport once it is available.
+onMounted(() => {
+  if (open.value)
+    mobilePresentation.value = !!props.mobileModal && isMobile.value
+})
 const showMobileModal = computed(() => mobilePresentation.value)
 
 const theme = useComponentTheme('colorPicker', colorPickerTheme)

@@ -600,6 +600,14 @@ const mobilePresentation = ref(false)
 watch(open, (open) => {
   mobilePresentation.value = open && !!props.mobileModal && isMobile.value
 })
+// Keep server and first-client markup deterministic, then sample the actual
+// viewport for a picker that was already open through defaultOpen or open.
+// Later viewport changes remain deferred until the next opening.
+onMounted(() => {
+  if (!open.value)
+    return
+  mobilePresentation.value = !!props.mobileModal && isMobile.value
+})
 const showMobileModal = computed(() => mobilePresentation.value)
 
 // Single source of truth for ComboboxSelectBody's own (large) prop
