@@ -138,3 +138,21 @@ test('uses the opt-in DatePicker modal presentation on a narrow viewport', async
   await expect(timeDialog).toBeHidden()
   expect(issues).toEqual([])
 })
+
+test('uses the mobile modal for an initially open DatePicker after hydration', async ({ page, goto }) => {
+  const issues: string[] = []
+  page.on('console', (message) => {
+    if (/hydration|mismatch/i.test(message.text()))
+      issues.push(message.text())
+  })
+  page.on('pageerror', error => issues.push(error.message))
+  await page.setViewportSize({ width: 600, height: 800 })
+  await goto('/?mobile=1&initialOpen=1', { waitUntil: 'hydration' })
+
+  const dialog = page.getByRole('dialog', { name: 'Date picker', exact: true })
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByRole('button', { name: 'Choose month', exact: true })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toBeHidden()
+  expect(issues).toEqual([])
+})

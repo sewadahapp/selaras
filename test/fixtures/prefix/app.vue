@@ -296,5 +296,8 @@ function updateNestedTokens() {
     <SFormField id="mobile-time" label="Mobile time">
       <SDatePicker mobile-modal time-only />
     </SFormField>
+    <SFormField v-if="route.query.initialOpen" id="mobile-initial-date" label="Initially open mobile date">
+      <SDatePicker mobile-modal default-open />
+    </SFormField>
   </section>
 </template>

@@ -454,6 +454,16 @@ const mobilePresentation = ref(false)
 watch(open, (value) => {
   mobilePresentation.value = value && !!props.mobileModal && isMobile.value
 })
+// `open` may already be true on the first render through `defaultOpen` or a
+// controlled prop. The watcher deliberately is not immediate: SSR and the
+// client's first render must agree on the desktop presentation because a
+// viewport is unavailable on the server. Once mounted, useIsMobile has
+// sampled the actual viewport and this initial open state can take the same
+// modal path as every later open request.
+onMounted(() => {
+  if (open.value)
+    mobilePresentation.value = !!props.mobileModal && isMobile.value
+})
 const showMobileModal = computed(() => mobilePresentation.value)
 
 function normalizeTimeOnly(value: Time) {
