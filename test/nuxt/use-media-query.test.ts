@@ -1,36 +1,49 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h } from 'vue'
 import { useIsMobile } from '../../src/runtime/composables/use-media-query'
 
 const TestComponent = defineComponent({
-  props: { breakpoint: { type: Number, default: 768 } },
-  setup(props) {
-    const isMobile = useIsMobile(props.breakpoint)
+  setup() {
+    const isMobile = useIsMobile()
     return () => h('span', { class: 'is-mobile' }, String(isMobile.value))
   },
 })
 
 describe('useIsMobile', () => {
-  it('defaults to false on mount - this test environment\'s matchMedia never matches, the same as dashboard-group.test.ts\'s own desktop-default case', async () => {
-    const wrapper = await mountSuspended(TestComponent)
-
-    expect(wrapper.find('.is-mobile').text()).toBe('false')
-
-    wrapper.unmount()
+  afterEach(() => {
+    vi.restoreAllMocks()
+    document.documentElement.style.removeProperty('--selaras-adaptive-breakpoint')
   })
 
-  it('accepts a custom breakpoint without throwing', async () => {
-    const wrapper = await mountSuspended(TestComponent, { props: { breakpoint: 1024 } })
-
-    expect(wrapper.find('.is-mobile').text()).toBe('false')
-
+  it.each(['60rem', '900.5px', '55em'])('uses the resolved %s condition and releases its live listener', async (length) => {
+    document.documentElement.style.setProperty('--selaras-adaptive-breakpoint', length)
+    let listener: (() => void) | undefined
+    const media = {
+      matches: true,
+      addEventListener: vi.fn((_event, callback) => { listener = callback }),
+      removeEventListener: vi.fn(),
+    }
+    const matchMedia = vi.spyOn(window, 'matchMedia').mockReturnValue(media as unknown as MediaQueryList)
+    const wrapper = await mountSuspended(TestComponent)
+    expect(matchMedia).toHaveBeenCalledWith(`(width < ${length})`)
+    expect(wrapper.text()).toBe('true')
+    media.matches = false
+    listener?.()
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toBe('false')
     wrapper.unmount()
+    expect(media.removeEventListener).toHaveBeenCalledWith('change', listener)
   })
 
-  it('cleans up its own matchMedia listener on unmount without throwing', async () => {
+  it.each(['', 'initial', 'calc(60rem + 1px)'])('diagnoses an unsupported bridge %j without assuming 768px', async (length) => {
+    document.documentElement.style.setProperty('--selaras-adaptive-breakpoint', length)
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const matchMedia = vi.spyOn(window, 'matchMedia')
     const wrapper = await mountSuspended(TestComponent)
-
-    expect(() => wrapper.unmount()).not.toThrow()
+    expect(wrapper.text()).toBe('false')
+    expect(matchMedia).not.toHaveBeenCalled()
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('#selaras/tailwind.css'))
+    wrapper.unmount()
   })
 })

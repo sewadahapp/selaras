@@ -1,5 +1,5 @@
-@import "tailwindcss" prefix(tw);
-@import "@sewadah/selaras/theme.css";
+@import "tailwindcss";
+@import "../../../src/runtime/theme.css";
 @import "#selaras/tailwind.css";
 
 @theme {

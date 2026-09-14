@@ -2,15 +2,13 @@ import type { Ref } from 'vue'
 import { onMounted, onUnmounted, ref } from 'vue'
 
 /**
- * Whether the viewport is currently at or below `breakpoint` px wide.
- * Defaults to `false` on SSR/first render (no `window` there) - corrected
- * once mounted, the same "safer default, corrected client-side" precedent
- * DashboardGroup's own inline version of this (and ReadMore's `truncated`
- * default) already use. Tracks a `matchMedia` `change` listener rather
- * than a one-off check, so a live resize across the breakpoint updates
- * reactively instead of only being read once at mount.
+ * Whether the viewport is below the consumer's selected Tailwind breakpoint.
+ * False during SSR/first render; samples the generated CSS bridge on mount.
+ * Relative units stay in the native media query, whose font-size basis is
+ * different from an authored root font-size. Breakpoints are build-time theme
+ * conditions: runtime CSS changes do not rewrite compiled responsive utilities.
  */
-export function useIsMobile(breakpoint = 768): Ref<boolean> {
+export function useIsMobile(): Ref<boolean> {
   const isMobile = ref(false)
   let mediaQuery: MediaQueryList | undefined
 
@@ -19,7 +17,14 @@ export function useIsMobile(breakpoint = 768): Ref<boolean> {
   }
 
   onMounted(() => {
-    mediaQuery = window.matchMedia(`(max-width: ${breakpoint - 1}px)`)
+    const breakpoint = getComputedStyle(document.documentElement)
+      .getPropertyValue('--selaras-adaptive-breakpoint')
+      .trim()
+    if (!/^(?:\d+(?:\.\d+)?|\.\d+)(?:px|rem|em)$/.test(breakpoint)) {
+      console.warn('[Selaras] Adaptive presentation requires a Tailwind breakpoint in px, rem or em. Import "#selaras/tailwind.css" in your Tailwind entry and define the selected --breakpoint-* token in @theme.')
+      return
+    }
+    mediaQuery = window.matchMedia(`(width < ${breakpoint})`)
     update()
     mediaQuery.addEventListener('change', update)
   })

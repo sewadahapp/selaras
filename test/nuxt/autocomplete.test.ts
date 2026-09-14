@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import FormField from '../../src/runtime/components/FormField.vue'
+import './helpers/adaptive-breakpoint'
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },

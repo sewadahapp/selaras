@@ -4,6 +4,7 @@ import { TooltipProvider } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import Select from '../../src/runtime/components/Select.vue'
+import './helpers/adaptive-breakpoint'
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },

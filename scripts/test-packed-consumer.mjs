@@ -8,6 +8,7 @@ import { dirname, join, relative } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
+import { chromium } from '@playwright/test'
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url))
 const rootRequire = createRequire(join(rootDir, 'package.json'))
@@ -35,7 +36,7 @@ function installedManifest(name) {
   throw new Error(`Cannot find installed manifest for ${name}`)
 }
 
-async function inspectSsr() {
+async function inspectSsr(prefixed = true) {
   const server = spawn(process.execPath, ['.output/server/index.mjs'], {
     cwd: consumerDir,
     env: { ...process.env, NITRO_HOST: '127.0.0.1', NITRO_PORT: '0' },
@@ -67,11 +68,12 @@ async function inspectSsr() {
     const response = await fetch(url)
     assert.equal(response.status, 200)
     const html = await response.text()
-    assert.match(html, /<button(?=[^>]*id="packed-default")(?=[^>]*data-selaras-color="published")(?=[^>]*type="button")(?=[^>]*tw:h-11)/)
-    assert.match(html, /<button(?=[^>]*id="packed-scoped")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:h-8)/)
+    const pattern = value => new RegExp(value.source.replaceAll('tw:', prefixed ? 'tw:' : ''), value.flags)
+    assert.match(html, pattern(/<button(?=[^>]*id="packed-default")(?=[^>]*data-selaras-color="published")(?=[^>]*type="button")(?=[^>]*tw:h-11)/))
+    assert.match(html, pattern(/<button(?=[^>]*id="packed-scoped")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:h-8)/))
     assert.match(html, /<button(?=[^>]*id="packed-registered-builtin")(?=[^>]*data-selaras-color="secondary")/)
     assert.match(html, /<button(?=[^>]*id="packed-runtime-builtin")(?=[^>]*data-selaras-color="primary")/)
-    assert.match(html, /<span(?=[^>]*id="packed-badge")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:bg-\[var\(--_selaras-color-subtle\)\])/)
+    assert.match(html, pattern(/<span(?=[^>]*id="packed-badge")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:bg-\[var\(--_selaras-color-subtle\)\])/))
     assert.match(html, /<span(?=[^>]*id="packed-dot")(?=[^>]*role="img")(?=[^>]*aria-label="Offline")(?=[^>]*data-selaras-color="neutral")/)
     assert.ok(html.includes('--selaras-color-primary-fill: #6789ab;'), 'built-in runtime tokens must appear in SSR head')
     assert.ok(html.includes('--selaras-color-published-fill: #456789;'), 'runtime app-config CSS must appear in SSR head')
@@ -93,14 +95,42 @@ async function inspectSsr() {
       assert.equal(result.status, 200)
       return result.text()
     }))).join('\n')
-    assert.ok(css.includes('.tw\\:inline-flex'), 'published JS/Vue recipes must be scanned')
-    assert.ok(css.includes('.tw\\:animate-in'), 'published animation candidates must be compiled')
+    const cssPrefix = prefixed ? 'tw\\:' : ''
+    const breakpoint = prefixed ? 'tablet' : 'laptop'
+    assert.ok(css.includes(`.${cssPrefix}inline-flex`), 'published JS/Vue recipes must be scanned')
+    assert.ok(css.includes(`.${cssPrefix}animate-in`), 'published animation candidates must be compiled')
+    assert.ok(css.includes(`--${prefixed ? 'tw-' : ''}breakpoint-${breakpoint}:60rem`), 'host breakpoint must be emitted')
+    assert.ok(css.includes(`--selaras-adaptive-breakpoint:var(--${prefixed ? 'tw-' : ''}breakpoint-${breakpoint})`), 'generated inputs must use current consumer options')
     assert.ok(css.includes('--_selaras-color-fill:var(--selaras-color-published-fill,#123456)'), 'generated CSS must contain the registered default')
     assert.ok(css.includes('--_selaras-color-fill:var(--selaras-color-secondary-fill,#123456)'), 'module options must replace a built-in default recipe')
     assert.ok(css.includes('.dark [data-selaras-color=published]'), 'generated CSS must contain the dark role binding')
     assert.ok(Buffer.byteLength(css) <= 125_000)
     assert.ok(gzipSync(css).byteLength <= 18_000)
     console.log(`[packed] SSR, generated defaults/tokens, Table and CSS passed (${Buffer.byteLength(css)} bytes / ${gzipSync(css).byteLength} gzip)`)
+    if (process.env.SELARAS_PACKED_BROWSER) {
+      const browser = await chromium.launch()
+      try {
+        const page = await browser.newPage({ viewport: { width: 959, height: 800 } })
+        const issues = []
+        page.on('pageerror', error => issues.push(error.message))
+        page.on('console', (message) => {
+          if (/hydration|mismatch|\[Selaras\]/i.test(message.text()))
+            issues.push(message.text())
+        })
+        await page.goto(url)
+        await page.waitForFunction(() => document.querySelector('#packed-narrow')?.textContent === 'true')
+        await page.addStyleTag({ content: 'html { font-size: 32px; }' })
+        assert.equal(await page.locator('#packed-responsive').isVisible(), false)
+        await page.setViewportSize({ width: 960, height: 800 })
+        await page.waitForFunction(() => document.querySelector('#packed-narrow')?.textContent === 'false')
+        assert.equal(await page.locator('#packed-responsive').isVisible(), true)
+        assert.deepEqual(issues, [])
+        console.log(`[packed] ${prefixed ? 'prefixed' : 'normal'} hydration and adaptive/CSS agreement passed`)
+      }
+      finally {
+        await browser.close()
+      }
+    }
   }
   finally {
     if (server.exitCode === null) {
@@ -148,7 +178,7 @@ try {
   assert.ok(!existsSync(join(consumerDir, 'node_modules', sourceManifest.name, 'src')))
   console.log(`[packed] Nuxt ${dependencies.nuxt}, Vue ${dependencies.vue}, Tailwind ${dependencies.tailwindcss}`)
   const nuxtCli = join(dirname(consumerRequire.resolve('nuxt/package.json')), 'bin/nuxt.mjs')
-  run('prepare generated module config and types', process.execPath, [nuxtCli, 'prepare'])
+  run('build a fresh consumer without a separate prepare step', process.execPath, [nuxtCli, 'build'])
   const generatedImports = readFileSync(join(consumerDir, '.nuxt/imports.d.ts'), 'utf8')
   for (const internalName of ['useComboboxSelect', 'flattenItems', 'isOptionGroup'])
     assert.doesNotMatch(generatedImports, new RegExp(`\\b${internalName}\\b`), `${internalName} must remain internal`)
@@ -158,8 +188,15 @@ try {
   assert.doesNotMatch(generatedRoles, /"(?:premium|enterprise)": true/, 'generated roles must belong to this consumer')
   const vueTsc = join(dirname(consumerRequire.resolve('vue-tsc/package.json')), 'bin/vue-tsc.js')
   run('type-check generated roles and published component contracts', process.execPath, [vueTsc, '--noEmit', '--project', 'tsconfig.json'])
-  run('build Nuxt using only public package and CSS imports', process.execPath, [nuxtCli, 'build'])
   await inspectSsr()
+  const configPath = join(consumerDir, 'nuxt.config.ts')
+  writeFileSync(configPath, readFileSync(configPath, 'utf8').replace('classPrefix: \'tw\'', 'classPrefix: undefined').replace('breakpoint: \'tablet\'', 'breakpoint: \'laptop\''))
+  const cssPath = join(consumerDir, 'main.css')
+  writeFileSync(cssPath, readFileSync(cssPath, 'utf8').replace(' prefix(tw)', '').replace('--breakpoint-tablet', '--breakpoint-laptop'))
+  const appPath = join(consumerDir, 'app.vue')
+  writeFileSync(appPath, readFileSync(appPath, 'utf8').replace('tw:hidden tw:tablet:block', 'hidden laptop:block'))
+  run('rebuild changed prefix and breakpoint options without prepare', process.execPath, [nuxtCli, 'build'])
+  await inspectSsr(false)
 }
 finally {
   rmSync(consumerDir, { recursive: true, force: true })

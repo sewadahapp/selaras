@@ -4,6 +4,7 @@ import type { ButtonProps, ColorRole, ThemeProps } from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
 
 const role: ColorRole = 'published'
+const narrow = useIsMobile()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
@@ -26,6 +27,8 @@ void hyphenatedRole
 
 <template>
   <SApp>
+    <output id="packed-narrow">{{ narrow }}</output>
+    <span id="packed-responsive" class="tw:hidden tw:tablet:block">Wide viewport</span>
     <SButton id="packed-default" v-bind="button">
       Published default
     </SButton>

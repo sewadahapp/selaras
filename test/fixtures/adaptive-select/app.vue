@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 const route = useRoute()
+const prefixed = useRuntimeConfig().public.adaptivePrefix !== false
 const multiple = route.query.multiple === 'true'
 const controlledOpen = route.query.ownership === 'controlled'
 const controlledModel = route.query.model === 'controlled'
@@ -33,6 +34,9 @@ function proposeValue(value) {
 
 <template>
   <SApp>
+    <span id="responsive-breakpoint" :class="prefixed ? 'tw:hidden tw:md:block' : 'hidden tablet:block'">
+      Wide viewport
+    </span>
     <form id="selection-form">
       <button id="reset-selection" type="reset">
         Reset selection

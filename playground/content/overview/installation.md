@@ -76,6 +76,7 @@ own stylesheet, after Tailwind itself:
 ```css [assets/css/main.css]
 @import "tailwindcss";
 @import "@sewadah/selaras";
+@import "#selaras/tailwind.css";
 ```
 
 Then point Nuxt at that file:
@@ -87,14 +88,17 @@ export default defineNuxtConfig({
 })
 ```
 
-`@import "@sewadah/selaras";` brings in every design token (`--ui-*` custom
-properties) and component-level base style - see [Theming](/overview/theming).
+`@import "@sewadah/selaras";` brings in the default theme and component base
+styles - see [Theming](/overview/theming). `#selaras/tailwind.css` is generated
+by the Nuxt module. Import it in this same entry so library class candidates
+and adaptive presentation use your app's final Tailwind theme.
 If your project also renders long-form markdown/CMS content, add
 [prose.css](/components/typography/prose) the same way:
 
 ```css [assets/css/main.css]
 @import "tailwindcss";
 @import "@sewadah/selaras";
+@import "#selaras/tailwind.css";
 @import "@sewadah/selaras/prose.css";
 ```
 
@@ -116,6 +120,30 @@ export default defineNuxtConfig({
 | --- | --- | --- | --- |
 | `prefix` | `string` | `'S'` | Prefix used for auto-imported components (`SButton`, `SModal`, ...). |
 | `classPrefix` | `string` | none | Namespaces every class Selaras's own components render - see below. |
+| `adaptive.breakpoint` | `string` | `'md'` | Selects a Tailwind `--breakpoint-*` token for adaptive presentation. |
+
+## Adaptive breakpoint
+
+CSS owns breakpoint values. Override the default condition in your stylesheet:
+
+```css
+@theme {
+  --breakpoint-md: 60rem;
+}
+```
+
+Or define your own `--breakpoint-tablet` token and select it with
+`selaras: { adaptive: { breakpoint: 'tablet' } }`. Supported values are simple
+lengths in `px`, `rem` or `em`. Keep breakpoint units consistent with your other
+Tailwind conditions. Selaras reads the resolved length after mount and uses the
+native `(width < …)` media query, including under a class prefix. Its initial
+SSR render uses desktop presentation; the existing adaptive controls hold their
+chosen presentation until they close.
+
+These are build-time `@theme` conditions. Changing a breakpoint CSS variable at
+runtime does not rewrite Tailwind's compiled responsive rules. A missing or
+unsupported binding produces a console diagnostic and disables mobile
+presentation; there is no implicit 768px fallback.
 
 ## Class prefix
 
@@ -137,8 +165,8 @@ export default defineNuxtConfig({
 
 This is a module option, not an `app.config.ts` value - Tailwind CSS
 generation happens at build time, so Selaras needs to know the prefix
-early enough to generate a small companion stylesheet that makes sure
-your Tailwind build actually produces the matching `tw:`-prefixed CSS
+early enough to generate the class candidates imported through
+`#selaras/tailwind.css`. Your own Tailwind entry produces the matching CSS
 (Tailwind never generates CSS for a class it can't find as literal text
 anywhere, whether that's your own templates or a safelist - an
 `app.config.ts` value alone, read only at render time, could never

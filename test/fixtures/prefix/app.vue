@@ -36,6 +36,7 @@ function updateNestedTokens() {
 </script>
 
 <template>
+  <span class="tw:hidden tw:md:block">Wide viewport</span>
   <div>
     <SButton>Click me</SButton>
     <SRadioGroup id="radio-invalid" :items="['one', 'two']" model-value="one" color="enterprise" invalid />

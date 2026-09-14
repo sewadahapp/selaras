@@ -57,7 +57,13 @@ Import the CSS in your own stylesheet, after Tailwind itself:
 ```css
 @import "tailwindcss";
 @import "@sewadah/selaras";
+@import "#selaras/tailwind.css";
 ```
+
+The Nuxt-generated import supplies library class candidates and the adaptive
+breakpoint binding to the same Tailwind compilation as your app. Breakpoint
+values come from your CSS (`@theme { --breakpoint-md: 60rem; }`); select another
+name with `selaras.adaptive.breakpoint` in `nuxt.config.ts`.
 
 Wrap your root `app.vue` in `<SApp>`, once - required for Tooltip's shared
 hover-delay behavior and the `useModal`/`useDrawer`/`useSlideover` composables

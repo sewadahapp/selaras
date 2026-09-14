@@ -48,6 +48,15 @@ describe('classPrefix', async () => {
     expect(css).toContain('.tw\\:inline-flex')
   })
 
+  it('uses the host breakpoint for prefixed library and application utilities', async () => {
+    const css = await fetchCss()
+    expect(css).toContain('--tw-breakpoint-md:60rem')
+    expect(css).toContain('--selaras-adaptive-breakpoint:var(--tw-breakpoint-md)')
+    expect(css).toContain('.tw\\:md\\:block')
+    expect(css).toMatch(/@media\s*\(width>=60rem\)/)
+    expect(css).not.toMatch(/@media\s*\(width>=48rem\)/)
+  })
+
   it('ships generated light/dark role CSS alongside the prefixed consumer stylesheet', async () => {
     const css = await fetchCss()
     expect(css).toContain('[data-selaras-color=enterprise]')

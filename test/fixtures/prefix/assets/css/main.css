@@ -1,5 +1,6 @@
 @import "tailwindcss" prefix(tw);
 @import "../../../../../src/runtime/theme.css";
+@import "#selaras/tailwind.css";
 
 /*
  * A consumer's own conventional @theme override, declared after Selaras's -
@@ -9,4 +10,5 @@
  */
 @theme {
   --color-primary-500: oklch(0.9 0.15 300);
+  --breakpoint-md: 60rem;
 }

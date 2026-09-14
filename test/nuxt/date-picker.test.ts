@@ -5,6 +5,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 import DatePicker from '../../src/runtime/components/DatePicker.vue'
+import './helpers/adaptive-breakpoint'
 
 // DatePickerContent teleports into document.body once opened, same as
 // Modal's DialogContent (see modal.test.ts) - query document.body directly

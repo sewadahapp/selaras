@@ -24,6 +24,7 @@
  * selaras symlink for that specifier to resolve against.
  */
 @import "../../../src/runtime/theme.css";
+@import "#selaras/tailwind.css";
 
 /*
  * The pipeline-agnostic prose typography class (src/runtime/prose.css) -

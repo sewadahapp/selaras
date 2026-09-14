@@ -20,6 +20,11 @@ export interface ModuleOptions {
    * installation docs before setting this.
    */
   classPrefix?: string
+  /** Adaptive presentation uses this Tailwind `--breakpoint-*` condition. */
+  adaptive?: {
+    /** Breakpoint name; its value is owned by the consumer's CSS. @default 'md' */
+    breakpoint?: string
+  }
   /** Build-time semantic color roles. Both light and dark recipes are required. */
   theme?: {
     colors?: Record<string, ColorModePair<ColorRecipeInput>>
@@ -61,16 +66,8 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.icon ||= {}
     nuxt.options.icon.cssLayer = 'components'
 
-    // theme.css is no longer auto-injected via nuxt.options.css - a
-    // consumer imports it explicitly instead (`@import "tailwindcss";
-    // @import "selaras";` in their own CSS entry point - package.json's
-    // own root export declares a `style` condition pointing at theme.css,
-    // the same mechanism a bare `@import "<package>";` commonly resolves
-    // through for other Nuxt component libraries' own CSS packages),
-    // matching that same current installation story and prose.css's
-    // existing opt-in pattern here. This still wires up the actual
-    // Tailwind build pipeline regardless of where the CSS import lives -
-    // only the CSS *file itself* moved to being explicit, not this.
+    // Consumers import the default theme and generated Tailwind inputs in
+    // their own CSS entry. All utilities must use that entry's final theme.
     addVitePlugin(tailwindcss())
 
     addComponentsDir({
@@ -209,6 +206,11 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt.options.css.push(colorsTemplate.dst)
     }
 
+    const breakpoint = options.adaptive?.breakpoint ?? 'md'
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(breakpoint))
+      throw new Error('Selaras adaptive.breakpoint must name a Tailwind breakpoint (for example "md" or "tablet").')
+
+    let safelist = ''
     if (options.classPrefix) {
       // Tailwind v4 only generates CSS for a class it can find as literal
       // text (via file scanning or an explicit `@source inline(...)`
@@ -253,39 +255,21 @@ export default defineNuxtModule<ModuleOptions>({
           return false
         return true
       })
-      const safelist = candidates.map(candidate => `${options.classPrefix}:${candidate}`).join(' ')
-
-      const safelistTemplate = addTemplate({
-        filename: 'selaras-prefix-safelist.css',
-        // Tailwind's split entry points (`tailwindcss/theme.css` +
-        // `tailwindcss/utilities.css`, each with their own `prefix(...)`)
-        // emit only the utilities layer for this file's own safelist
-        // candidates, instead of a second full copy of Preflight/theme
-        // output the plain `@import "tailwindcss" prefix(...)` form would
-        // otherwise duplicate (confirmed: ~3.4KB vs ~190KB for an
-        // equivalent safelist). `theme(reference)` on the theme import:
-        // this file only needs to *resolve* Tailwind's own theme values
-        // for candidate generation, not emit them again.
-        //
-        // `tw-animate-css` and `@custom-variant dark` are also imported/
-        // declared here, matching theme.css's own - both live only in
-        // theme.css's (separate) compilation otherwise, so without them
-        // every `${prefix}:animate-in`/`${prefix}:fade-in-0`/etc class
-        // (every Modal/Dropdown/Select/Toast/Tooltip/Drawer open-close
-        // transition) would silently generate no CSS at all under a
-        // configured prefix - confirmed empirically. `dark:` isn't used
-        // by any real component class yet, but costs nothing to close now.
-        getContents: () => [
-          `@import "tailwindcss/theme.css" theme(reference) prefix(${options.classPrefix});`,
-          `@import "tailwindcss/utilities.css" layer(utilities) prefix(${options.classPrefix});`,
-          `@import "tw-animate-css";`,
-          `@custom-variant dark (&:where(.dark, .dark *));`,
-          `@source inline("${safelist}");`,
-          '',
-        ].join('\n'),
-        write: true,
-      })
-      nuxt.options.css.push(safelistTemplate.dst)
+      safelist = candidates.map(candidate => `${options.classPrefix}:${candidate}`).join(' ')
     }
+
+    // Input only, never a second Tailwind compilation with its own defaults.
+    // The bridge reference also keeps the selected breakpoint variable from
+    // being pruned. Tailwind prefixes theme variables as well as utilities.
+    const tailwindTemplate = addTemplate({
+      filename: 'selaras-tailwind.css',
+      getContents: () => [
+        safelist ? `@source inline("${safelist}");` : '',
+        `:root { --selaras-adaptive-breakpoint: var(--${options.classPrefix ? `${options.classPrefix}-` : ''}breakpoint-${breakpoint}); }`,
+        '',
+      ].join('\n'),
+      write: true,
+    })
+    nuxt.options.alias['#selaras/tailwind.css'] = tailwindTemplate.dst
   },
 })

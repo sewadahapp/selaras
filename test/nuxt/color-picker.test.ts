@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
+import './helpers/adaptive-breakpoint'
 
 function trigger(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
   return wrapper.find('[aria-haspopup="dialog"]')
