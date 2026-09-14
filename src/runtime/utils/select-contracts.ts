@@ -64,7 +64,11 @@ export interface SelectProps<Entry extends object = { value: SelectValue, label?
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
   arrow?: boolean
-  /** Opts into centered modal presentation below 768px. */
+  /**
+   * Below 768px, Select uses a centered modal; Autocomplete uses a wider
+   * nonmodal panel so its editable input remains the combobox focus owner.
+   * The final shared presentation API remains provisional before 1.0.
+   */
   mobileModal?: boolean
   ui?: UiProp<SelectThemeSlots>
 }

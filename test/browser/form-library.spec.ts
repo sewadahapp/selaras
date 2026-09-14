@@ -157,15 +157,15 @@ test('uses the mobile modal for an initially open DatePicker after hydration', a
   expect(issues).toEqual([])
 })
 
-test('uses mobile modals for initially open Select, Autocomplete and ColorPicker controls', async ({ page, goto }) => {
+test('uses a mobile modal for Select/ColorPicker and a nonmodal panel for Autocomplete', async ({ page, goto }) => {
   const cases = [
-    ['initialSelect', 'initial-select-modal-content', true],
-    ['initialAutocomplete', 'initial-autocomplete-modal-content', false],
-    ['initialColorPicker', 'initial-color-picker-modal-content', true],
+    ['initialSelect', 'initial-select-modal-content', 'modal'],
+    ['initialAutocomplete', 'initial-autocomplete-mobile-panel', 'panel'],
+    ['initialColorPicker', 'initial-color-picker-modal-content', 'modal'],
   ] as const
 
   await page.setViewportSize({ width: 600, height: 800 })
-  for (const [query, contentTest, closesOnEscape] of cases) {
+  for (const [query, contentTest, presentation] of cases) {
     const issues: string[] = []
     page.on('console', (message) => {
       if (/hydration|mismatch/i.test(message.text()))
@@ -173,13 +173,13 @@ test('uses mobile modals for initially open Select, Autocomplete and ColorPicker
     })
     page.on('pageerror', error => issues.push(error.message))
     await goto(`/?mobile=1&${query}=1`, { waitUntil: 'hydration' })
-    const dialog = page.locator(`[data-test="${contentTest}"]`).locator('xpath=ancestor::*[@role="dialog"]')
-    await expect(dialog).toBeVisible()
+    const content = page.locator(`[data-test="${contentTest}"]`)
+    await expect(content).toBeVisible()
     await page.keyboard.press('Escape')
-    if (closesOnEscape)
-      await expect(dialog).toBeHidden()
+    if (presentation === 'modal')
+      await expect(content).toBeHidden()
     else
-      await expect(dialog).toBeVisible()
+      await expect(content).toBeVisible()
     expect(issues).toEqual([])
   }
 })

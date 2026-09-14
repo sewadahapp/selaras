@@ -37,6 +37,11 @@ export const selectTheme = tv({
     // since Modal's own card already provides that surface; this only
     // needs to fill Modal's content slot width.
     mobileContent: 'w-full',
+    // Autocomplete keeps its editable ComboboxInput outside its popup. Its
+    // mobile presentation is therefore a wider nonmodal panel, not Modal's
+    // content wrapper. Inline geometry avoids inheriting popper width from the
+    // trigger while leaving consumer `ui.mobilePanel` overrides available.
+    mobilePanel: '',
     viewport: 'max-h-72 overflow-y-auto p-1',
     group: 'px-2 pt-2 pb-1 text-xs font-medium text-[var(--ui-text-muted)]',
     item: 'relative flex items-center gap-2 rounded-[var(--ui-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--ui-text)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',

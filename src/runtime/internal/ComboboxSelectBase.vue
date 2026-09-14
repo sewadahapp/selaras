@@ -181,7 +181,11 @@ export interface ComboboxSelectBaseProps {
   resetSearchTermOnSelect?: boolean
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
-  /** Below 768px viewport width, presents the popover as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`) rather than automatic, so an existing usage's look never changes without asking for it. */
+  /**
+   * Below 768px, Select uses a centered Modal; Autocomplete uses a wider
+   * nonmodal panel so its editable input remains the focus owner. This
+   * compatibility spelling is provisional before the shared presentation API.
+   */
   mobileModal?: boolean
   ui?: UiProp<SelectThemeSlots>
 }
@@ -555,6 +559,16 @@ const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
 const itemIndicatorProps = computed(() => resolveSlot(ui.value.itemIndicator, props.ui?.itemIndicator))
 const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
 const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
+const mobilePanelProps = computed(() => mergeProps(
+  {
+    style: {
+      width: 'min(calc(100vw - 2rem), 36rem)',
+      minWidth: '0',
+      maxHeight: 'min(50vh, 28rem)',
+    },
+  },
+  resolveSlot(ui.value.mobilePanel, props.ui?.mobilePanel),
+))
 
 // One open state drives both the desktop Popover and mobile Modal branches.
 // When `open` is supplied, the parent owns the value and may veto a close by
@@ -611,12 +625,22 @@ onMounted(() => {
   if (!open.value)
     return
   mobilePresentation.value = !!props.mobileModal && isMobile.value
+  // An initially-open mobile Autocomplete has no trigger interaction to put
+  // focus in its editor. Once its client-only presentation is chosen, make
+  // that persistent editable combobox the active owner without issuing an
+  // open request or introducing a modal focus scope around it.
+  if (mobilePresentation.value && props.creatable && !props.disabled) {
+    nextTick(() => {
+      editableInput.value?.focus()
+    })
+  }
 })
-const showMobileModal = computed(() => mobilePresentation.value)
+const showMobileSelectModal = computed(() => mobilePresentation.value && !props.creatable)
+const showMobileAutocompletePanel = computed(() => mobilePresentation.value && !!props.creatable)
 const modalId = `selaras-select-modal-${useId()}`
 const selectTrigger = ref<{ $el: HTMLElement }>()
 const modalBody = ref<InstanceType<typeof ComboboxSelectBody>>()
-const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showMobileModal.value : props.mobileModal && isMobile.value)
+const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showMobileSelectModal.value : props.mobileModal && isMobile.value)
   ? { 'aria-haspopup': 'dialog', 'aria-controls': modalId }
   : {})
 function onModalSelection(value: unknown) {
@@ -645,9 +669,9 @@ const mobileModalUi = computed(() => ({
   },
 }))
 
-// Single source of truth for ComboboxSelectBody's own (large) prop
-// surface, so the desktop and mobileModal template branches below each
-// just `v-bind` this instead of repeating every prop twice.
+// Single source of truth for ComboboxSelectBody's own (large) prop surface,
+// shared by the desktop popup, the nonmodal Autocomplete panel, and Select's
+// modal Listbox adapter.
 const bodyProps = computed(() => ({
   searchable: props.searchable,
   creatable: props.creatable,
@@ -930,8 +954,12 @@ const bodyProps = computed(() => ({
       </ComboboxTrigger>
     </ComboboxAnchor>
 
-    <ComboboxPortal v-if="!showMobileModal">
-      <ComboboxContent position="popper" :side-offset="4" :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="contentProps">
+    <ComboboxPortal v-if="!showMobileSelectModal">
+      <ComboboxContent
+        position="popper" :side-offset="4"
+        :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker"
+        v-bind="showMobileAutocompletePanel ? mergeProps(contentProps, mobilePanelProps) : contentProps"
+      >
         <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
           <template #header>
             <slot name="header" />
@@ -961,11 +989,12 @@ const bodyProps = computed(() => ({
     <!--
       Modal owns Select's focus/dismissal; Listbox only supplies selection.
       The content slot retains Modal's registered title/description.
-      Autocomplete's legacy external-editor branch is corrected separately.
+      Autocomplete stays in the nonmodal ComboboxContent branch above: its
+      editable input is the one focus and dismissal owner for that surface.
     -->
     <Modal
       v-else :open="open" :title="placeholder || messages.search" :description="messages.searchDescription"
-      :auto-focus="!creatable" :ui="mobileModalUi"
+      :auto-focus="true" :ui="mobileModalUi"
       @update:open="updateOpen($event)"
     >
       <template #content>
@@ -987,31 +1016,6 @@ const bodyProps = computed(() => ({
             </template>
           </ComboboxSelectBody>
         </ListboxRoot>
-        <ComboboxContent v-else :data-selaras-theme="themeScope" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps">
-          <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
-            <template #header>
-              <slot name="header" />
-            </template>
-            <template #filter-icon>
-              <slot name="filter-icon" />
-            </template>
-            <template #empty>
-              <slot name="empty" />
-            </template>
-            <template #empty-filter>
-              <slot name="empty-filter" />
-            </template>
-            <template #item="scope">
-              <slot name="item" v-bind="scope" />
-            </template>
-            <template #group="scope">
-              <slot name="group" v-bind="scope" />
-            </template>
-            <template #footer>
-              <slot name="footer" />
-            </template>
-          </ComboboxSelectBody>
-        </ComboboxContent>
         <div v-if="!creatable" class="flex justify-end p-2">
           <DialogClose as-child>
             <Button variant="ghost" color="neutral">

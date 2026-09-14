@@ -507,15 +507,11 @@ function mockMatchMedia(matches: boolean) {
   }
 }
 
-// Regression: Autocomplete's own trigger *is* the search input, typed
-// into continuously while the mobile modal stays open - Reka's default
-// open-autofocus stole focus away from it the instant the modal opened
-// (confirmed live: the very first keystroke opened the modal, which then
-// immediately re-focused its own content, silently dropping every
-// character typed afterward). ComboboxSelectBase.vue now passes
-// `auto-focus="!creatable"` to Modal for exactly this reason.
+// Autocomplete's own trigger is the search input typed into continuously.
+// On mobile it remains the Combobox focus owner and opens a wider nonmodal
+// panel; putting that editor outside a modal would hide it from AT.
 describe('autocomplete (mobileModal)', () => {
-  it('mobileModal=true on a mobile-matching viewport: opening via typing does not steal focus away from the input', async () => {
+  it('mobileModal=true on a mobile-matching viewport keeps the editable combobox and opens a nonmodal panel', async () => {
     const restore = mockMatchMedia(true)
     const container = document.createElement('div')
     document.body.appendChild(container)
@@ -528,7 +524,8 @@ describe('autocomplete (mobileModal)', () => {
     await nextTick()
     await macrotask()
 
-    expect(document.body.querySelector('.bg-black\\/50')).toBeTruthy()
+    expect(document.body.querySelector('[role="dialog"]')).toBeFalsy()
+    expect(document.body.querySelector('[role="listbox"]')).toBeTruthy()
     expect(document.activeElement).toBe(input.element)
 
     wrapper.unmount()
