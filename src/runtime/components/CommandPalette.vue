@@ -2,7 +2,7 @@
 import type { CommandPaletteThemeSlots } from '../theme/command-palette'
 import type { UiProp } from '../utils/ui'
 import { DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui'
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, useId, watch } from 'vue'
 import { useCommandPalette } from '../composables/use-command-palette'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -65,22 +65,13 @@ export interface CommandPaletteEmits {
 
 const shared = useCommandPalette()
 const isControlled = computed(() => props.open !== undefined)
-// Mirrors Modal's own internalOpen pattern - an always-concrete local ref
-// synced with an *optional* external v-model. Only actually read/written
-// while this instance is controlled (see `isOpen`/`close`/`toggle` below) -
-// an uncontrolled instance keeps reacting to `useCommandPalette().open()`
-// called from anywhere, unchanged from before this prop existed.
-const internalOpen = ref(props.open ?? false)
-watch(() => props.open, (value) => {
-  if (value !== undefined)
-    internalOpen.value = value
-})
-
-const isOpen = computed(() => isControlled.value ? internalOpen.value : shared.isOpen.value)
+// Controlled ownership stays with the parent. A local mirror here would make
+// a request visibly open/close before the parent accepts it, so a parent that
+// deliberately vetoes an update would be ignored until its next render.
+const isOpen = computed(() => isControlled.value ? props.open! : shared.isOpen.value)
 
 function close() {
   if (isControlled.value) {
-    internalOpen.value = false
     emit('update:open', false)
   }
   else {
@@ -90,8 +81,7 @@ function close() {
 
 function toggle() {
   if (isControlled.value) {
-    internalOpen.value = !internalOpen.value
-    emit('update:open', internalOpen.value)
+    emit('update:open', !isOpen.value)
   }
   else {
     shared.toggle()
@@ -104,6 +94,7 @@ const messages = useMessages()
 const query = ref('')
 const highlightedIndex = ref(0)
 const inputRef = ref<HTMLInputElement>()
+const listboxId = `selaras-command-palette-list-${useId()}`
 
 watch(isOpen, (open) => {
   if (!open) {
@@ -232,7 +223,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
 const footerKeyProps = computed(() => resolveSlot(ui.value.footerKey, props.ui?.footerKey))
 
 function itemId(index: number) {
-  return `command-palette-item-${index}`
+  return `${listboxId}-item-${index}`
 }
 </script>
 
@@ -260,14 +251,14 @@ function itemId(index: number) {
             type="text"
             role="combobox"
             aria-expanded="true"
-            aria-controls="command-palette-list"
+            :aria-controls="listboxId"
             :aria-activedescendant="highlightedItemId"
             :placeholder="messages.search"
             v-bind="inputProps"
             @keydown="onInputKeydown"
           >
         </div>
-        <div id="command-palette-list" v-bind="listProps" role="listbox">
+        <div :id="listboxId" v-bind="listProps" role="listbox">
           <template v-if="filteredGroups.length">
             <div v-for="(group, groupIndex) in filteredGroups" :key="group.label ?? groupIndex" v-bind="groupProps">
               <p v-if="group.label" v-bind="groupLabelProps">

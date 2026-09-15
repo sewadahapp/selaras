@@ -45,6 +45,22 @@ describe('readMore', () => {
     expect(wrapper.find('button').text()).toBe('Show less')
   })
 
+  it('uses a real disclosure relationship and makes clipped content inert until expanded', async () => {
+    const wrapper = await mountSuspended(ReadMore, { props: {} })
+    const content = wrapper.find('[id^="selaras-read-more-content-"]')
+    const trigger = wrapper.find('button')
+    expect(trigger.attributes('aria-controls')).toBe(content.attributes('id'))
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    expect(content.attributes('aria-hidden')).toBe('true')
+    expect(content.attributes('inert')).toBeDefined()
+
+    await trigger.trigger('click')
+
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    expect(content.attributes('aria-hidden')).toBeUndefined()
+    expect(content.attributes('inert')).toBeUndefined()
+  })
+
   it('merges a string :ui.root override with the theme classes', async () => {
     const wrapper = await mountSuspended(ReadMore, { props: { ui: { root: 'custom-class' } } })
 

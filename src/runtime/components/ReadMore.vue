@@ -3,7 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { ReadMoreThemeSlots } from '../theme/read-more'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, useId } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { readMoreTheme } from '../theme/read-more'
@@ -33,6 +33,7 @@ const messages = useMessages()
 const contentEl = ref<HTMLElement>()
 const contentHeight = ref(0)
 const open = ref(false)
+const contentId = `selaras-read-more-content-${useId()}`
 
 // CSS can't transition to/from `height: auto` (no computable intermediate
 // value to animate through) - transitioning `max-height` to the content's
@@ -81,11 +82,25 @@ const triggerIconProps = computed(() => resolveSlot(ui.value.triggerIcon, props.
 
 <template>
   <div :data-selaras-color="effectiveColor" v-bind="rootProps">
-    <div ref="contentEl" :style="{ maxHeight }" v-bind="contentProps">
+    <div
+      :id="contentId"
+      ref="contentEl"
+      :style="{ maxHeight }"
+      :inert="truncated && !open"
+      :aria-hidden="truncated && !open ? 'true' : undefined"
+      v-bind="contentProps"
+    >
       <slot />
     </div>
     <div v-if="truncated && !open" v-bind="fadeProps" />
-    <button v-if="truncated" type="button" v-bind="triggerProps" @click="toggle">
+    <button
+      v-if="truncated"
+      type="button"
+      :aria-controls="contentId"
+      :aria-expanded="open"
+      v-bind="triggerProps"
+      @click="toggle"
+    >
       {{ open ? messages.showLess : messages.showMore }}
       <Icon :name="icons.chevronDown" v-bind="triggerIconProps" />
     </button>

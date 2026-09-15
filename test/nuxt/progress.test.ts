@@ -87,4 +87,15 @@ describe('progress', () => {
 
     expect(wrapper.find('[role="progressbar"]').classes()).toContain('custom-class')
   })
+
+  it('forwards native attributes and scoped circle-root UI to circular progress', async () => {
+    const wrapper = await mountSuspended(Progress, {
+      props: { type: 'circular', modelValue: 50, ui: { circleRoot: 'custom-circle-root' } },
+      attrs: { 'id': 'circular-progress', 'aria-label': 'Uploading' },
+    })
+    const root = wrapper.find('[role="progressbar"]')
+    expect(root.attributes('id')).toBe('circular-progress')
+    expect(root.attributes('aria-label')).toBe('Uploading')
+    expect(root.classes()).toContain('custom-circle-root')
+  })
 })

@@ -69,7 +69,7 @@ const ui = computed(() => theme.value({
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const indicatorProps = computed(() => resolveSlot(ui.value.indicator, props.ui?.indicator))
-const circleRootProps = computed(() => resolveSlot(ui.value.circleRoot, props.ui?.circleRoot))
+const circleRootProps = useRootProps(() => ui.value.circleRoot, () => props.ui?.circleRoot)
 const circleWrapperProps = computed(() => resolveSlot(ui.value.circleWrapper, props.ui?.circleWrapper))
 const circleTrackProps = computed(() => resolveSlot(ui.value.circleTrack, props.ui?.circleTrack))
 const circleIndicatorProps = computed(() => resolveSlot(ui.value.circleIndicator, props.ui?.circleIndicator))

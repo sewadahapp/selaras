@@ -1,5 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { defineComponent, h } from 'vue'
 import CommandPalette from '../../src/runtime/components/CommandPalette.vue'
 import { useCommandPalette } from '../../src/runtime/composables/use-command-palette'
 
@@ -195,6 +196,29 @@ describe('commandPalette', () => {
 
     expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
     expect(useCommandPalette().isOpen.value).toBe(false)
+    expect(document.body.querySelector('[role="dialog"][data-state="open"]')).toBeTruthy()
+  })
+
+  it('gives simultaneously mounted palettes distinct listbox and option ids', async () => {
+    const both = await mountSuspended(defineComponent({
+      render: () => h('div', [
+        h(CommandPalette, { groups: makeGroups(), open: true, shortcut: false }),
+        h(CommandPalette, { groups: makeGroups(), open: true, shortcut: false }),
+      ]),
+    }))
+    try {
+      await macrotask()
+      const lists = [...document.body.querySelectorAll<HTMLElement>('[role="listbox"]')]
+      const inputs = [...document.body.querySelectorAll<HTMLInputElement>('input[role="combobox"]')]
+      expect(lists).toHaveLength(2)
+      expect(inputs).toHaveLength(2)
+      expect(new Set(lists.map(list => list.id)).size).toBe(2)
+      expect(inputs.map(input => input.getAttribute('aria-controls')).sort()).toEqual(lists.map(list => list.id).sort())
+      expect(new Set([...document.body.querySelectorAll('[role="option"]')].map(option => option.id)).size).toBe(6)
+    }
+    finally {
+      both.unmount()
+    }
   })
 
   it('two simultaneously-mounted instances - one controlled, one on the shared singleton - stay independent', async () => {
