@@ -6,50 +6,41 @@ order: 30
 
 Every component reads its colors from a small set of semantic CSS custom
 properties, and its layout/variant classes from a `tailwind-variants`
-theme. There are four ways to customize a component, in increasing order
-of precedence.
+theme. The sections below cover token inputs, instance slots, scoped themes,
+and global recipes; their class merge order is listed under Precedence.
 
 ## 1. Design tokens
 
-`--ui-*` custom properties carry every component's colors, radius,
-shadow, and overlay stacking order - components never reference a raw
-Tailwind color/radius/shadow class directly:
+Use semantic color recipes for roles and functional inputs for general
+surfaces, text, borders, and scrims. Selaras's default palette is optional:
+your recipes can reference an existing design system's CSS variables without
+adopting its shade names. Radius, shadows, and overlay stacking also have CSS
+custom properties:
 
 | Token | Purpose |
 | --- | --- |
-| `--ui-bg`, `--ui-bg-elevated`, `--ui-bg-inverted` | Page/surface backgrounds |
-| `--ui-border`, `--ui-border-hover`, `--ui-border-muted` | Borders |
-| `--ui-text`, `--ui-text-muted`, `--ui-text-inverted` | Text |
-| `--ui-primary`, `--ui-secondary`, `--ui-success`, `--ui-danger`, `--ui-info`, `--ui-warning` | Role colors, each with a `-hover`, `-active`, `-foreground` and `-soft` variant |
+| `--selaras-surface-default`, `--selaras-surface-elevated`, `--selaras-surface-inverted` | Page/surface inputs |
+| `--selaras-border-default`, `--selaras-border-hover`, `--selaras-border-muted` | Border inputs |
+| `--selaras-text-default`, `--selaras-text-muted`, `--selaras-text-inverted` | Text inputs |
+| `--selaras-color-<role>-<leaf>` | Registered-role inputs, described below |
+| `--selaras-scrim` | Overlay backdrop input |
 | `--ui-radius` | Base corner radius - see below |
 | `--ui-shadow-sm`, `--ui-shadow-md`, `--ui-shadow-lg` | Overlay elevation (Modal, Dropdown, Popover, ...) |
 | `--ui-z-modal-overlay`, `--ui-z-modal`, `--ui-z-dropdown`, `--ui-z-tooltip`, `--ui-z-toast` | Overlay stacking order, reflecting real nesting (a Dropdown can open from inside a Modal, a Toast always stays on top) |
 
-Redefine any of these in your own CSS to retheme the whole library without
-touching a single component. Dark mode is just a second set of the same
-tokens, applied under a `.dark` class on `<html>` (flipped by
-`SColorModeToggle`, or your own `useColorMode()` logic).
+For document dark mode, Selaras follows the `.dark` class on `<html>` (set by
+`SColorModeToggle`, or your own `useColorMode()` logic). Explicit `STheme`
+modes can override that choice within a subtree, including managed portals.
+See Functional colors and explicit modes below for scoped ownership.
 
-**Recoloring a role (`primary`, `secondary`, `success`, `danger`, `info`,
-`warning`) takes more than just overriding `--ui-primary` itself.** Each
-`--ui-*` role token above is only the semantic *entry point* - `--ui-primary`,
-`--ui-primary-hover`, `--ui-primary-active`, and `--ui-primary-soft` each
-resolve to a different step of Selaras's owned 11-shade
-`--color-selaras-indigo-50` through `--color-selaras-indigo-950` default
-scale (defined in Selaras's own `@theme` block), not
-to each other. Overriding `--ui-primary` alone changes the base color but
-leaves hover/active/soft still pointing at the *old* scale's other shades -
-a visibly inconsistent result. Override the whole scale instead, in your
-own `@theme` block (same mechanism the breakpoints/spacing example below
-uses):
+You can also customize Selaras's owned default foundations in your own
+`@theme` block. This changes the default recipes that reference those shades;
+it does not change explicitly authored recipes. For example:
 
 ```css
 @theme {
-  /* Every shade shares one hue (the third oklch number) - only the
-     lightness/chroma (first two numbers) step from light to dark. Swap
-     the hue to recolor while keeping the same accessible contrast steps
-     Selaras's own scale was tuned with; only touch lightness/chroma too
-     if you want a fundamentally different saturation curve. */
+  /* An optional foundation override. Check contrast in both modes
+     after changing any palette or surface. */
   --color-selaras-indigo-50:  oklch(0.9700 0.0120 25);
   --color-selaras-indigo-100: oklch(0.9300 0.0280 25);
   --color-selaras-indigo-200: oklch(0.8600 0.0550 25);
@@ -275,7 +266,7 @@ sidebar - without making that a global default, wrap it in
 </STheme>
 ```
 
-Same override shape as `app.config.ui` (below), and merged onto the
+Same override shape as `app.config.selaras.ui` (below), and merged onto the
 component's theme the same way - just scoped to `STheme`'s own subtree
 instead of the whole app. It can also default a prop's value (`:defaults`)
 for a component that opts into reading it - see its own doc page for
@@ -339,15 +330,17 @@ longer a scoped customization contract.
 ## 4. Global overrides
 
 To retheme a component everywhere instead of one instance at a time,
-extend its theme from `app.config.ts` under `ui.<componentKey>` (the
+extend its theme from `app.config.ts` under `selaras.ui.<componentKey>` (the
 lowercase component name, e.g. `button`, `modal`):
 
 ```ts
 export default defineAppConfig({
-  ui: {
-    button: {
-      slots: {
-        base: 'font-mono',
+  selaras: {
+    ui: {
+      button: {
+        slots: {
+          base: 'font-mono',
+        },
       },
     },
   },
@@ -357,12 +350,48 @@ export default defineAppConfig({
 This is merged over the component's base theme with `tailwind-variants`'
 own `extend`, so you only need to specify what you're changing.
 
+### Typed recipe boundaries
+
+`ThemeConfiguration` (exported from `@sewadah/selaras/theme`) types both
+`selaras.ui` and `STheme` configuration. Each recipe accepts its own `slots`
+and `compoundVariants`. Registered roles are available in color conditions.
+Behavioral props such as `open`, selected data, pagination state, persistence,
+and callbacks stay on the component.
+
+The non-dashboard runtime recipes are covered. Dashboard recipe configuration
+is still provisional and excluded from this typed contract. Theme `defaults`
+remain limited to Avatar, Badge, Button, Chip, and Input.
+
+| Recipe | Conditions | Ownership |
+| --- | --- | --- |
+| `alertDialog` | `transition` | Alert surface; actions still use Button |
+| `commandPalette` | None | Palette surface/list; glyphs and shortcuts use Icon/Kbd |
+| `datePicker` | `size`, `invalid`, `range` | Field/calendar layout in desktop and mobile presentations |
+| `table` | `color`, `size`, `gridlines`, `striped`, `scrollable` | Table layout; controls retain their own recipes |
+| `tree` | `color`, `size` | Tree rows; Reka exposes selection/expansion through data attributes |
+| `fileTree` | `color`, `selected`, `isNested` | File rows and nested layout, including combined conditions |
+| `codeTree`, `codeButton` | None | Code viewer/copy-button layout; nested FileTree/Icon remain configurable |
+| `splitter` | `direction` | Group layout |
+| `splitterPanel` | None | Panel layout |
+| `splitterResizeHandle` | `color`, `direction` | Resize-handle presentation |
+| `prose` | `color` for headings | Shared H1–H6 and code-block recipe; ordinary prose uses `prose.css` |
+
+DatePicker's `color` and `activeColor` serve different controls. Set these on
+the component; there is no single `color` compound condition on its layout
+recipe. Its day/navigation controls still use `ui.button`, and its mobile
+surface uses `ui.modal` around `ui.datePicker.mobileContent`.
+
+Parent components apply local layout overrides after shared child recipes.
+For example, CodeTree removes FileTree's outer border to avoid double framing,
+while unrelated `ui.fileTree` styling remains active.
+
 ## Precedence
 
-Lowest to highest: the component's base `tv()` theme → your
-`app.config.ts` override → an ancestor `STheme`'s override → the
-instance's `:ui` prop/explicit prop → a native `class`/fallthrough
-attribute on the component's root element.
+For classes, lowest to highest: the component's base `tv()` theme →
+`app.config.selaras.ui` → ancestor `STheme` recipes (outer to inner) →
+the instance's root `class` → the instance's `:ui` slot class.
+Explicit component props take precedence over supported theme `defaults`;
+native attribute destinations are described by each component.
 
 ## Class prefix
 
@@ -374,7 +403,7 @@ regardless of which one produced the final class string.
 ## Localization
 
 Retheming covers color/layout - three separate mechanisms cover text and
-direction the same way `app.config.ui` covers a component's classes:
+direction the same way `app.config.selaras.ui` covers a component's classes:
 [`useMessages`](/utilities/composables/use-messages) overrides the text a
 component renders on its own, [`useLocale`](/utilities/composables/use-locale)
 sets the app-wide default for date/time formatting, and `SApp`'s `dir`

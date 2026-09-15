@@ -56,6 +56,7 @@ void hyphenatedRole
 
 <template>
   <SApp>
+    <RemainingThemes />
     <output id="packed-narrow">{{ narrow }}</output>
     <span id="packed-responsive" class="tw:hidden tw:tablet:block">Wide viewport</span>
     <button id="packed-toast" @click="addPublishedToast({ title: 'Published global toast', color: 'published' })">

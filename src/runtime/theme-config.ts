@@ -1,6 +1,7 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { accordionTheme, AccordionThemeSlots } from './theme/accordion'
 import type { alertTheme, AlertThemeSlots } from './theme/alert'
+import type { alertDialogTheme, AlertDialogThemeSlots } from './theme/alert-dialog'
 import type { avatarTheme, AvatarThemeSlots } from './theme/avatar'
 import type { avatarGroupTheme, AvatarGroupThemeSlots } from './theme/avatar-group'
 import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
@@ -12,15 +13,20 @@ import type { cardTheme, CardThemeSlots } from './theme/card'
 import type { cardGroupTheme, CardGroupThemeSlots } from './theme/card-group'
 import type { checkboxTheme, CheckboxThemeSlots } from './theme/checkbox'
 import type { chipTheme, ChipThemeSlots } from './theme/chip'
+import type { codeButtonTheme, CodeButtonThemeSlots } from './theme/code-button'
+import type { codeTreeTheme, CodeTreeThemeSlots } from './theme/code-tree'
 import type { collapsibleTheme, CollapsibleThemeSlots } from './theme/collapsible'
 import type { colorPickerTheme, ColorPickerThemeSlots } from './theme/color-picker'
+import type { commandPaletteTheme, CommandPaletteThemeSlots } from './theme/command-palette'
 import type { containerTheme, ContainerThemeSlots } from './theme/container'
 import type { contentNavigationTheme, ContentNavigationThemeSlots } from './theme/content-navigation'
 import type { contentSurroundTheme, ContentSurroundThemeSlots } from './theme/content-surround'
 import type { contentTocTheme, ContentTocThemeSlots } from './theme/content-toc'
 import type { contextMenuTheme, ContextMenuThemeSlots } from './theme/context-menu'
+import type { datePickerTheme, DatePickerThemeSlots } from './theme/date-picker'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
+import type { fileTreeTheme, FileTreeThemeSlots } from './theme/file-tree'
 import type { fileUploadTheme, FileUploadThemeSlots } from './theme/file-upload'
 import type { formFieldTheme, FormFieldThemeSlots } from './theme/form-field'
 import type { headerTheme, HeaderThemeSlots } from './theme/header'
@@ -37,6 +43,7 @@ import type { paginationTheme, PaginationThemeSlots } from './theme/pagination'
 import type { pinInputTheme, PinInputThemeSlots } from './theme/pin-input'
 import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
 import type { progressTheme, ProgressThemeSlots } from './theme/progress'
+import type { proseTheme, ProseThemeSlots } from './theme/prose'
 import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
 import type { ratingTheme, RatingThemeSlots } from './theme/rating'
 import type { readMoreTheme, ReadMoreThemeSlots } from './theme/read-more'
@@ -46,14 +53,19 @@ import type { separatorTheme, SeparatorThemeSlots } from './theme/separator'
 import type { skeletonTheme, SkeletonThemeSlots } from './theme/skeleton'
 import type { slideoverTheme, SlideoverThemeSlots } from './theme/slideover'
 import type { sliderTheme, SliderThemeSlots } from './theme/slider'
+import type { splitterTheme, SplitterThemeSlots } from './theme/splitter'
+import type { splitterPanelTheme, SplitterPanelThemeSlots } from './theme/splitter-panel'
+import type { splitterResizeHandleTheme, SplitterResizeHandleThemeSlots } from './theme/splitter-resize-handle'
 import type { stepperTheme, StepperThemeSlots } from './theme/stepper'
 import type { switchTheme, SwitchThemeSlots } from './theme/switch'
+import type { tableTheme, TableThemeSlots } from './theme/table'
 import type { tabsTheme, TabsThemeSlots } from './theme/tabs'
 import type { textareaTheme, TextareaThemeSlots } from './theme/textarea'
 import type { toastTheme, ToastThemeSlots } from './theme/toast'
 import type { toggleTheme, ToggleThemeSlots } from './theme/toggle'
 import type { toggleGroupTheme, ToggleGroupThemeSlots } from './theme/toggle-group'
 import type { tooltipTheme, TooltipThemeSlots } from './theme/tooltip'
+import type { treeTheme, TreeThemeSlots } from './theme/tree'
 import type { ColorRole, RuntimeTokenOverrides } from './utils/color-registry'
 
 type AccordionVariants = VariantProps<typeof accordionTheme>
@@ -120,6 +132,54 @@ type WithRegisteredColor<T> = Omit<T, 'color'> & { color?: ColorRole }
  * contract tests.
  */
 export interface ThemeComponentRegistry {
+  alertDialog: {
+    slots: AlertDialogThemeSlots
+    conditions: Pick<VariantProps<typeof alertDialogTheme>, 'transition'>
+  }
+  codeButton: {
+    slots: CodeButtonThemeSlots
+    conditions: Pick<VariantProps<typeof codeButtonTheme>, never>
+  }
+  codeTree: {
+    slots: CodeTreeThemeSlots
+    conditions: Pick<VariantProps<typeof codeTreeTheme>, never>
+  }
+  commandPalette: {
+    slots: CommandPaletteThemeSlots
+    conditions: Pick<VariantProps<typeof commandPaletteTheme>, never>
+  }
+  datePicker: {
+    slots: DatePickerThemeSlots
+    conditions: Pick<VariantProps<typeof datePickerTheme>, 'size' | 'invalid' | 'range'>
+  }
+  fileTree: {
+    slots: FileTreeThemeSlots
+    conditions: WithRegisteredColor<Pick<VariantProps<typeof fileTreeTheme>, 'color' | 'selected' | 'isNested'>>
+  }
+  prose: {
+    slots: ProseThemeSlots
+    conditions: WithRegisteredColor<Pick<VariantProps<typeof proseTheme>, 'color'>>
+  }
+  splitter: {
+    slots: SplitterThemeSlots
+    conditions: Pick<VariantProps<typeof splitterTheme>, 'direction'>
+  }
+  splitterPanel: {
+    slots: SplitterPanelThemeSlots
+    conditions: Pick<VariantProps<typeof splitterPanelTheme>, never>
+  }
+  splitterResizeHandle: {
+    slots: SplitterResizeHandleThemeSlots
+    conditions: WithRegisteredColor<Pick<VariantProps<typeof splitterResizeHandleTheme>, 'color' | 'direction'>>
+  }
+  table: {
+    slots: TableThemeSlots
+    conditions: WithRegisteredColor<Pick<VariantProps<typeof tableTheme>, 'color' | 'size' | 'gridlines' | 'striped' | 'scrollable'>>
+  }
+  tree: {
+    slots: TreeThemeSlots
+    conditions: WithRegisteredColor<Pick<VariantProps<typeof treeTheme>, 'color' | 'size'>>
+  }
   accordion: {
     slots: AccordionThemeSlots
     conditions: WithRegisteredColor<Pick<AccordionVariants, 'color' | 'size' | 'variant' | 'chevronPosition'>>

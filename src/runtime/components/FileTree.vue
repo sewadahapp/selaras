@@ -100,7 +100,7 @@ const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 
 function rowProps(node: FileTreeNode) {
-  return resolveSlot(theme.value({ selected: props.selected === node, color: effectiveColor.value as FileTreeVariants['color'] }).row, props.ui?.row)
+  return resolveSlot(theme.value({ isNested: props.isNested, selected: props.selected === node, color: effectiveColor.value as FileTreeVariants['color'] }).row, props.ui?.row)
 }
 </script>
 

@@ -1,9 +1,11 @@
 import type { ThemeConfiguration } from '@sewadah/selaras/theme'
+import { remainingTheme } from './remaining-theme'
 
 export default defineAppConfig({
   selaras: {
     defaults: { button: { size: 'lg', color: 'published' } },
     ui: {
+      ...remainingTheme.ui,
       accordion: { compoundVariants: [{ color: 'published', class: { root: 'outline-dashed' } }] },
       alert: { compoundVariants: [{ color: 'published', variant: 'outline', class: { root: 'tracking-normal' } }] },
       avatar: { compoundVariants: [{ color: 'published', class: { base: 'tracking-tight' } }] },

@@ -60,13 +60,15 @@ const selectColumn = {
 
 const expandColumn = {
   id: '__expand__',
-  header: '',
+  // An empty-string component root has no SSR text node to hydrate. Render
+  // no content explicitly so Vue preserves a stable comment anchor instead.
+  header: () => null,
   cell: ({ row }: any) => h('button', {
     'type': 'button',
-    'class': ui.value.expandButton(),
+    ...resolveSlot(ui.value.expandButton, props.ui?.expandButton),
     'aria-label': row.getIsExpanded() ? messages.value.collapseRow : messages.value.expandRow,
     'onClick': () => row.toggleExpanded(),
-  }, [h(Icon, { 'name': icons.value.chevronRight, 'class': ui.value.expandChevron(), 'data-expanded': row.getIsExpanded() || undefined })]),
+  }, [h(Icon, { 'name': icons.value.chevronRight, ...resolveSlot(ui.value.expandChevron, props.ui?.expandChevron), 'data-expanded': row.getIsExpanded() || undefined })]),
   enableSorting: false,
   enableColumnFilter: false,
 }
@@ -130,7 +132,7 @@ function onRowContextmenu(rowOriginal: TData, event: MouseEvent) {
 }
 
 const thProps = computed(() => resolveSlot(ui.value.th, props.ui?.th))
-const thSortableClass = computed(() => ui.value.thSortable())
+const thSortableClass = computed(() => resolveSlot(ui.value.thSortable, props.ui?.thSortable).class)
 const sortIconProps = computed(() => resolveSlot(ui.value.sortIcon, props.ui?.sortIcon))
 const tdProps = computed(() => resolveSlot(ui.value.td, props.ui?.td))
 const tfootProps = computed(() => resolveSlot(ui.value.tfoot, props.ui?.tfoot))

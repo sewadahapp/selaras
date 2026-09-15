@@ -84,6 +84,21 @@ async function inspectSsr(prefixed = true) {
     assert.equal(response.status, 200)
     const html = await response.text()
     const pattern = value => new RegExp(value.source.replaceAll('tw:', prefixed ? 'tw:' : ''), value.flags)
+    for (const [id, className] of [
+      ['remaining-code-button', 'outline-dotted'],
+      ['remaining-code-tree', 'outline-double'],
+      ['remaining-prose-heading', 'outline-dashed'],
+      ['remaining-prose-pre', 'tracking-tight'],
+      ['remaining-splitter', 'outline-dotted'],
+      ['remaining-panel', 'outline-double'],
+      ['remaining-handle', 'outline-solid'],
+      ['remaining-table', 'outline-offset-2'],
+      ['remaining-tree', 'outline-offset-4'],
+    ]) {
+      const tag = [...html.matchAll(/<[^/!][^>]+>/g)].find(([tag]) => tag.includes(` id="${id}"`) || tag.includes(` data-testid="${id}"`))?.[0]
+      assert.ok(tag, `${id} must render in the installed consumer`)
+      assert.ok(tag.includes(`${prefixed ? 'tw:' : ''}${className}`), `${id} must receive its public theme recipe`)
+    }
     assert.match(html, pattern(/<button(?=[^>]*id="packed-default")(?=[^>]*data-selaras-color="published")(?=[^>]*type="button")(?=[^>]*tw:h-11)/))
     assert.match(html, /<button(?=[^>]*id="packed-seed")(?=[^>]*data-selaras-color="seeded")/)
     assert.match(html, pattern(/<button(?=[^>]*id="packed-default")(?=[^>]*tw:font-bold)/), 'registered roles must match typed application compound variants')
@@ -172,6 +187,37 @@ async function inspectSsr(prefixed = true) {
             issues.push(message.text())
         })
         await page.goto(url)
+        await page.waitForFunction(() => document.querySelector('#packed-narrow')?.textContent === 'true')
+        const themedClass = value => `${prefixed ? 'tw:' : ''}${value}`
+        async function hasRecipe(selector, value) {
+          const element = page.locator(selector)
+          await element.waitFor({ state: 'visible' })
+          assert.ok(await element.evaluate((node, cls) => node.classList.contains(cls), themedClass(value)), `${selector} must receive ${value}`)
+        }
+        await hasRecipe('#remaining-file-tree li li button', 'tracking-widest')
+        await hasRecipe('#remaining-table button[aria-label="Expand row"]', 'outline-offset-4')
+        await hasRecipe('#remaining-table th[aria-sort]', 'tracking-widest')
+        await page.locator('#remaining-open-alert').click()
+        await hasRecipe('[data-testid="remaining-alert"]', 'outline-dashed')
+        await page.getByRole('button', { name: 'Cancel', exact: true }).click()
+        await page.locator('[data-testid="remaining-alert"]').waitFor({ state: 'hidden' })
+        await page.locator('#remaining-open-palette').click()
+        await hasRecipe('[data-testid="remaining-palette"]', 'outline-solid')
+        await page.keyboard.press('Escape')
+        await page.locator('[data-testid="remaining-palette"]').waitFor({ state: 'hidden' })
+        await page.locator('[data-testid="remaining-date-field"] button').last().click()
+        await hasRecipe('[data-testid="remaining-date-mobile"]', 'outline-offset-4')
+        await hasRecipe('[data-testid="remaining-date-heading"]', 'tracking-widest')
+        await page.keyboard.press('Escape')
+        await page.locator('[data-testid="remaining-date-mobile"]').waitFor({ state: 'hidden' })
+        await page.setViewportSize({ width: 1200, height: 800 })
+        await page.waitForFunction(() => document.querySelector('#packed-narrow')?.textContent === 'false')
+        await page.locator('[data-testid="remaining-date-field"] button').last().click()
+        await hasRecipe('[data-testid="remaining-date-heading"]', 'tracking-widest')
+        assert.equal(await page.locator('[data-testid="remaining-date-mobile"]').count(), 0)
+        await page.keyboard.press('Escape')
+        await page.locator('[data-testid="remaining-date-heading"]').waitFor({ state: 'hidden' })
+        await page.setViewportSize({ width: 959, height: 800 })
         await page.waitForFunction(() => document.querySelector('#packed-narrow')?.textContent === 'true')
         const functionalInput = page.locator('#packed-functional-input')
         assert.equal(await functionalInput.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(240, 241, 242)')
