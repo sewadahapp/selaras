@@ -158,5 +158,6 @@ void hyphenatedRole
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />
     <SAutocomplete id="packed-autocomplete-forced" name="packed-forced-choice" :items="choices" value-key="id" label-key="title" force-selection :default-value="1" :color="role" aria-label="Published suggestion" />
     <SAutocomplete id="packed-autocomplete-created" name="packed-created-choice" :items="choices" value-key="id" label-key="title" default-value="Created text" aria-label="Published free text" />
+    <ExternalForm />
   </SApp>
 </template>

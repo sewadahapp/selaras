@@ -158,6 +158,10 @@ async function inspectSsr(prefixed = true) {
     assert.match(html, /<div[^>]*class="[^"]*font-semibold[^"]*tracking-wide[^"]*"[^>]*><input(?=[^>]*id="packed-autocomplete-forced")(?=[^>]*aria-label="Published suggestion")(?=[^>]*value="Published select")/, 'ui.select must configure Autocomplete through the shared recipe')
     assert.match(html, /<input(?=[^>]*name="packed-forced-choice")(?=[^>]*value="1")/)
     assert.match(html, /<input(?=[^>]*id="packed-autocomplete-created")(?=[^>]*aria-label="Published free text")(?=[^>]*value="Created text")/)
+    assert.match(html, /<form[^>]*id="packed-external-form"/, 'an installed consumer must render a third-party form library fixture during SSR')
+    assert.match(html, /<input(?=[^>]*id="packed-external-email")(?=[^>]*name="email")/, 'generated Input must retain the form library field name')
+    assert.match(html, /<input(?=[^>]*name="plan")(?=[^>]*value="0")/, 'generated Select must retain numeric zero for a form library')
+    assert.match(html, /<input(?=[^>]*id="packed-external-quantity")(?=[^>]*name="quantity")(?=[^>]*value="1")/, 'generated InputNumber must render the library initial value')
     const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
       .filter(([tag]) => tag.includes('rel="stylesheet"'))
       .map(([tag]) => tag.match(/href="([^"]+)"/)?.[1])
@@ -246,6 +250,24 @@ async function inspectSsr(prefixed = true) {
           const toast = [...document.querySelectorAll('[data-selaras-color="published"]')].find(element => element.textContent.includes('Published global toast'))
           return toast && toast.classList.contains(expectedClass) && getComputedStyle(toast).borderInlineStartColor === 'rgb(69, 103, 137)'
         }, prefixed ? 'tw:tracking-widest' : 'tracking-widest')
+        const externalForm = page.locator('#packed-external-form')
+        const email = externalForm.getByLabel('Email', { exact: true })
+        await email.fill('invalid')
+        await email.press('Tab')
+        await page.waitForFunction(() => document.querySelector('#packed-external-email')?.getAttribute('aria-invalid') === 'true')
+        assert.equal(await email.getAttribute('aria-describedby'), 'packed-external-email-hint packed-external-email-error')
+        await email.fill('reader@example.com')
+        const quantity = externalForm.getByLabel('Quantity', { exact: true })
+        await quantity.fill('2.5')
+        await quantity.press('Tab')
+        await externalForm.getByRole('button', { name: 'Submit external form', exact: true }).click()
+        await page.waitForFunction(() => document.querySelector('[data-test="packed-external-submitted"]')?.textContent === '{"email":"reader@example.com","plan":0,"quantity":2.5}')
+        const nativeValues = await externalForm.evaluate(form => Object.fromEntries(new FormData(form).entries()))
+        assert.deepEqual(nativeValues, { email: 'reader@example.com', plan: '0', quantity: '2.5' })
+        await externalForm.getByRole('button', { name: 'Reset external form', exact: true }).click()
+        await page.waitForFunction(() => document.querySelector('#packed-external-quantity')?.value === '1')
+        assert.equal(await email.inputValue(), '')
+        assert.equal(await page.locator('#packed-external-email').getAttribute('aria-invalid'), null)
         assert.deepEqual(issues, [])
         console.log(`[packed] ${prefixed ? 'prefixed' : 'normal'} hydration and adaptive/CSS agreement passed`)
       }
@@ -283,7 +305,7 @@ try {
   writeFileSync(join(consumerDir, 'autocomplete-generated.vue'), generatedAutocompleteContract)
   const sourceManifest = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'))
   const dependencies = Object.fromEntries(
-    ['nuxt', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']
+    ['nuxt', 'vee-validate', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']
       .map(name => [name, installedManifest(name).version]),
   )
   const overrides = Object.fromEntries(Object.keys(sourceManifest.dependencies).map(name => [name, installedManifest(name).version]))
