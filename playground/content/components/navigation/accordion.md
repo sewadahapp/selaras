@@ -195,6 +195,8 @@ Content for the second item.
 
 ### Custom `:ui`
 
+Global and scoped recipe overrides use `ui.accordion`.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Accordion`'s own theme file:
 

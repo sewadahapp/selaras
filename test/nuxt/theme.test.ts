@@ -1,16 +1,20 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
+import Accordion from '../../src/runtime/components/Accordion.vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import Avatar from '../../src/runtime/components/Avatar.vue'
 import Badge from '../../src/runtime/components/Badge.vue'
 import Button from '../../src/runtime/components/Button.vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
+import Collapsible from '../../src/runtime/components/Collapsible.vue'
 import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import FileUpload from '../../src/runtime/components/FileUpload.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
 import Select from '../../src/runtime/components/Select.vue'
+import Stepper from '../../src/runtime/components/Stepper.vue'
+import Tabs from '../../src/runtime/components/Tabs.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 
 function withTheme(themeProps: Record<string, unknown>, children: any) {
@@ -142,6 +146,26 @@ describe('theme', () => {
       compoundVariants: [{ color: 'premium', variant: 'card', class: { root: 'tracking-widest' } }],
     } } }, h(Checkbox, { color: 'premium', variant: 'card', modelValue: true, label: 'Upgrade' })))
     expect(wrapper.find('[data-selaras-color="premium"]').classes()).toContain('tracking-widest')
+  })
+
+  it('passes custom roles to disclosure and navigation recipe conditions', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: {
+      accordion: { compoundVariants: [{ color: 'premium', variant: 'pill', class: { root: 'outline-dashed' } }] },
+      collapsible: { compoundVariants: [{ color: 'premium', direction: 'up', class: { root: 'outline-dotted' } }] },
+      stepper: { compoundVariants: [{ color: 'premium', orientation: 'vertical', class: { root: 'outline-double' } }] },
+      tabs: { compoundVariants: [{ color: 'premium', variant: 'pill', class: { root: 'outline-solid' } }] },
+    } }, [
+      h(Accordion, { items: [{ value: 'one', label: 'One' }], color: 'premium', variant: 'pill' }),
+      h(Collapsible, { color: 'premium', direction: 'up' }, { trigger: () => 'Toggle', default: () => 'Content' }),
+      h(Stepper, { items: [{ title: 'One' }], color: 'premium', orientation: 'vertical' }),
+      h(Tabs, { items: [{ label: 'One', value: 'one' }], color: 'premium', variant: 'pill', defaultValue: 'one' }),
+    ]))
+
+    const roots = wrapper.findAll('[data-selaras-color="premium"]')
+    expect(roots[0]?.classes()).toContain('outline-dashed')
+    expect(roots[1]?.classes()).toContain('outline-dotted')
+    expect(roots[2]?.classes()).toContain('outline-double')
+    expect(roots[3]?.classes()).toContain('outline-solid')
   })
 
   it('uses one Select recipe extension for Select and Autocomplete custom roles', async () => {

@@ -1,10 +1,12 @@
 import type { VariantProps } from 'tailwind-variants'
+import type { accordionTheme, AccordionThemeSlots } from './theme/accordion'
 import type { alertTheme, AlertThemeSlots } from './theme/alert'
 import type { avatarTheme, AvatarThemeSlots } from './theme/avatar'
 import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
 import type { buttonTheme, ButtonThemeSlots } from './theme/button'
 import type { checkboxTheme, CheckboxThemeSlots } from './theme/checkbox'
 import type { chipTheme, ChipThemeSlots } from './theme/chip'
+import type { collapsibleTheme, CollapsibleThemeSlots } from './theme/collapsible'
 import type { colorPickerTheme, ColorPickerThemeSlots } from './theme/color-picker'
 import type { contextMenuTheme, ContextMenuThemeSlots } from './theme/context-menu'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
@@ -24,7 +26,9 @@ import type { selectTheme, SelectThemeSlots } from './theme/select'
 import type { separatorTheme, SeparatorThemeSlots } from './theme/separator'
 import type { slideoverTheme, SlideoverThemeSlots } from './theme/slideover'
 import type { sliderTheme, SliderThemeSlots } from './theme/slider'
+import type { stepperTheme, StepperThemeSlots } from './theme/stepper'
 import type { switchTheme, SwitchThemeSlots } from './theme/switch'
+import type { tabsTheme, TabsThemeSlots } from './theme/tabs'
 import type { textareaTheme, TextareaThemeSlots } from './theme/textarea'
 import type { toastTheme, ToastThemeSlots } from './theme/toast'
 import type { toggleTheme, ToggleThemeSlots } from './theme/toggle'
@@ -32,12 +36,14 @@ import type { toggleGroupTheme, ToggleGroupThemeSlots } from './theme/toggle-gro
 import type { tooltipTheme, TooltipThemeSlots } from './theme/tooltip'
 import type { ColorRole, RuntimeTokenOverrides } from './utils/color-registry'
 
+type AccordionVariants = VariantProps<typeof accordionTheme>
 type AlertVariants = VariantProps<typeof alertTheme>
 type AvatarVariants = VariantProps<typeof avatarTheme>
 type BadgeVariants = VariantProps<typeof badgeTheme>
 type ButtonVariants = VariantProps<typeof buttonTheme>
 type CheckboxVariants = VariantProps<typeof checkboxTheme>
 type ChipVariants = VariantProps<typeof chipTheme>
+type CollapsibleVariants = VariantProps<typeof collapsibleTheme>
 type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
 type InputVariants = VariantProps<typeof inputTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
@@ -52,6 +58,8 @@ type SelectVariants = VariantProps<typeof selectTheme>
 type SeparatorVariants = VariantProps<typeof separatorTheme>
 type SliderVariants = VariantProps<typeof sliderTheme>
 type SwitchVariants = VariantProps<typeof switchTheme>
+type StepperVariants = VariantProps<typeof stepperTheme>
+type TabsVariants = VariantProps<typeof tabsTheme>
 type TextareaVariants = VariantProps<typeof textareaTheme>
 type ToastVariants = VariantProps<typeof toastTheme>
 type ToggleVariants = VariantProps<typeof toggleTheme>
@@ -76,6 +84,10 @@ type WithRegisteredColor<T> = Omit<T, 'color'> & { color?: ColorRole }
  * contract tests.
  */
 export interface ThemeComponentRegistry {
+  accordion: {
+    slots: AccordionThemeSlots
+    conditions: WithRegisteredColor<Pick<AccordionVariants, 'color' | 'size' | 'variant' | 'chevronPosition'>>
+  }
   alert: {
     slots: AlertThemeSlots
     conditions: WithRegisteredColor<Pick<AlertVariants, 'color' | 'variant'>>
@@ -99,6 +111,10 @@ export interface ThemeComponentRegistry {
     slots: ChipThemeSlots
     conditions: WithRegisteredColor<Pick<ChipVariants, 'color' | 'size'>>
     defaults: WithRegisteredColor<Pick<ChipVariants, 'color' | 'size'>>
+  }
+  collapsible: {
+    slots: CollapsibleThemeSlots
+    conditions: WithRegisteredColor<Pick<CollapsibleVariants, 'color' | 'size' | 'direction'>>
   }
   input: {
     slots: InputThemeSlots
@@ -163,6 +179,14 @@ export interface ThemeComponentRegistry {
   switch: {
     slots: SwitchThemeSlots
     conditions: WithRegisteredColor<Pick<SwitchVariants, 'color' | 'size' | 'invalid'>>
+  }
+  stepper: {
+    slots: StepperThemeSlots
+    conditions: WithRegisteredColor<Pick<StepperVariants, 'color' | 'size' | 'orientation'>>
+  }
+  tabs: {
+    slots: TabsThemeSlots
+    conditions: WithRegisteredColor<Pick<TabsVariants, 'color' | 'variant'>>
   }
   textarea: {
     slots: TextareaThemeSlots

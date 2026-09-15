@@ -124,11 +124,13 @@ void packedOverlayTheme
 const packedThemeConfiguration: ThemeConfiguration = {
   defaults: { button: { color: 'primary', size: 'lg' } },
   ui: {
+    accordion: { compoundVariants: [{ color: 'danger', size: 'lg', variant: 'pill', chevronPosition: 'start', class: { trigger: 'font-semibold' } }] },
     alert: { compoundVariants: [{ color: 'info', variant: 'outline', class: { root: 'shadow-sm' } }] },
     button: { slots: { base: 'rounded-full' } },
     contextMenu: { compoundVariants: [{ destructive: true, class: { item: 'font-bold' } }] },
     checkbox: { compoundVariants: [{ color: 'danger', variant: 'card', class: { root: 'shadow-sm' } }] },
     colorPicker: { compoundVariants: [{ color: 'success', size: 'lg', class: { trigger: 'rounded-full' } }] },
+    collapsible: { compoundVariants: [{ color: 'warning', size: 'sm', direction: 'up', class: { trigger: 'font-semibold' } }] },
     drawer: { compoundVariants: [{ side: 'left', transition: false, class: { content: 'w-96' } }] },
     dropdown: { compoundVariants: [{ destructive: true, class: { item: 'font-bold' } }] },
     fileUpload: { compoundVariants: [{ color: 'warning', invalid: true, class: { dropzone: 'border-dashed' } }] },
@@ -146,6 +148,8 @@ const packedThemeConfiguration: ThemeConfiguration = {
     slider: { compoundVariants: [{ color: 'secondary', thumbVariant: 'bar', class: { thumb: 'shadow-sm' } }] },
     slideover: { compoundVariants: [{ side: 'right', inset: true, class: { content: 'w-96' } }] },
     switch: { compoundVariants: [{ color: 'success', invalid: true, class: { track: 'shadow-sm' } }] },
+    stepper: { compoundVariants: [{ color: 'info', orientation: 'vertical', size: 'lg', class: { indicator: 'shadow-sm' } }] },
+    tabs: { compoundVariants: [{ color: 'primary', variant: 'pill', class: { trigger: 'font-semibold' } }] },
     textarea: { compoundVariants: [{ color: 'info', autoresize: true, class: { base: 'leading-6' } }] },
     toast: { compoundVariants: [{ color: 'success', class: { root: 'shadow-xl' } }] },
     toggle: { compoundVariants: [{ color: 'secondary', square: true, class: { base: 'rounded-full' } }] },

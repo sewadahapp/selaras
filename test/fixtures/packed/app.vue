@@ -10,6 +10,9 @@ const { add: addPublishedToast } = useToast()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
 const navigationItems = [{ label: 'Published navigation', to: '/', active: true }]
+const accordionItems = [{ value: 'published', label: 'Published accordion' }]
+const tabItems = [{ value: 'published', label: 'Published tab' }]
+const stepperItems = [{ title: 'Published step' }]
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
 const registeredDefaults = {
   defaults: {
@@ -82,8 +85,21 @@ void hyphenatedRole
     <SFileUpload :color="role" />
     <SIcon id="packed-icon" name="hugeicons:star" :color="role" />
     <SNavigationMenu :items="navigationItems" :color="role" />
+    <SAccordion id="packed-accordion" :items="accordionItems" :color="role" />
+    <SCollapsible id="packed-collapsible" :color="role">
+      <template #trigger>
+        Published collapsible
+      </template>
+      Published content
+    </SCollapsible>
     <SSeparator id="packed-separator" :color="role" />
+    <SStepper id="packed-stepper" :items="stepperItems" :color="role" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
+    <STabs id="packed-tabs" :items="tabItems" default-value="published" :color="role">
+      <template #published>
+        Published tab content
+      </template>
+    </STabs>
     <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" :color="role" aria-label="Published selection" />
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />
     <SAutocomplete id="packed-autocomplete-forced" name="packed-forced-choice" :items="choices" value-key="id" label-key="title" force-selection :default-value="1" :color="role" aria-label="Published suggestion" />

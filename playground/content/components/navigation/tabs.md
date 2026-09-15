@@ -101,6 +101,8 @@ Content for the second tab.
 
 ### Custom `:ui`
 
+Global and scoped recipe overrides use `ui.tabs`.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Tabs`'s own theme file:
 

@@ -76,6 +76,8 @@ pointing toward where the content will appear:
 
 ### Custom `:ui`
 
+Global and scoped recipe overrides use `ui.collapsible`.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Collapsible`'s own theme file:
 
