@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants'
 export const avatarTheme = tv({
   slots: {
     // `relative` anchors the absolutely-positioned status dot to the corner.
-    base: 'relative inline-flex shrink-0 select-none items-center justify-center align-middle',
+    base: 'relative inline-flex shrink-0 select-none items-center justify-center bg-[var(--_selaras-color-subtle)] align-middle',
     // `content` wraps image + fallback with overflow-hidden so text/images
     // can't escape the avatar bounds, while the status dot (a sibling, not
     // a child) stays unclipped outside this wrapper. items-center/
@@ -12,7 +12,7 @@ export const avatarTheme = tv({
     // fallback icon/text sits flush at the start corner instead of centered.
     content: 'flex size-full items-center justify-center overflow-hidden',
     image: 'h-full w-full object-cover',
-    fallback: 'flex h-full w-full items-center justify-center',
+    fallback: 'flex h-full w-full items-center justify-center text-[var(--_selaras-color-text)]',
     icon: 'shrink-0',
     // The ring separates the dot from the avatar itself, using the page
     // background so it reads as a clean offset indicator at any size.
@@ -51,13 +51,7 @@ export const avatarTheme = tv({
     },
   },
   compoundVariants: [
-    { color: 'primary', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
     { color: 'neutral', class: { base: 'bg-[var(--ui-neutral-soft)]', fallback: 'text-[var(--ui-text-muted)]' } },
-    { color: 'secondary', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
-    { color: 'success', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
-    { color: 'danger', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
-    { color: 'info', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
-    { color: 'warning', class: { base: 'bg-[var(--_selaras-color-subtle)]', fallback: 'text-[var(--_selaras-color-text)]' } },
   ],
   defaultVariants: {
     color: 'neutral',

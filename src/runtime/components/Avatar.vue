@@ -9,7 +9,6 @@ import { AvatarFallback, AvatarImage, AvatarRoot } from 'reka-ui'
 import { computed, inject } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { avatarTheme } from '../theme/avatar'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { AVATAR_SIZE_INJECTION_KEY } from '../utils/injection-keys'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps, useThemeProps } from '../utils/ui'
@@ -49,10 +48,9 @@ const theme = useComponentTheme('avatar', avatarTheme)
 const themeProps = useThemeProps('avatar')
 const groupSize = inject(AVATAR_SIZE_INJECTION_KEY, undefined)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color ?? 'neutral', 'neutral'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as AvatarVariants['color'] : 'primary')
 
 const ui = computed(() => theme.value({
-  color: recipeColor.value,
+  color: effectiveColor.value as AvatarVariants['color'],
   statusColor: props.statusColor,
   // AvatarGroup's own size (the more locally-specific ancestor) wins over
   // an STheme prop default before falling all the way back to tv()'s own

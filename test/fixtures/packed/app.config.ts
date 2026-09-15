@@ -4,7 +4,10 @@ export default defineAppConfig({
   selaras: {
     defaults: { button: { size: 'lg', color: 'published' } },
     ui: {
+      avatar: { compoundVariants: [{ color: 'published', class: { base: 'tracking-tight' } }] },
       button: { compoundVariants: [{ color: ['published', 'published-accent'], class: { base: 'font-bold' } }] },
+      colorPicker: { compoundVariants: [{ color: 'published', class: { trigger: 'tracking-wide' } }] },
+      fileUpload: { compoundVariants: [{ color: 'published', class: { dropzone: 'tracking-widest' } }] },
       modal: { slots: { content: 'max-w-xl' } },
       popover: { slots: { content: 'p-6' } },
       select: {

@@ -5,7 +5,7 @@ export const colorPickerTheme = tv({
     // Same chrome as Select's own trigger (select.ts) - both are a form
     // field that opens a popover, so they share the exact ring/hover/
     // focus/disabled treatment rather than reinventing it here.
-    trigger: 'inline-flex w-full min-h-10 items-center gap-2 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 data-[state=open]:ring-2 disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'inline-flex w-full min-h-10 items-center gap-2 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
     // Painted via ColorSwatch's own exposed --reka-color-swatch-color
     // custom property - ColorSwatch.js applies no background of its own,
     // only exposes that var, so every consumer of it (this trigger swatch
@@ -65,16 +65,17 @@ export const colorPickerTheme = tv({
       md: { trigger: 'min-h-10' },
       lg: { trigger: 'min-h-11 text-base' },
     },
-    // Focus-ring color only, same scope as Select's own `color` variant -
-    // the resting ring stays --ui-border regardless.
+    // Registered custom roles have no finite Tailwind Variants branch. The
+    // base trigger therefore owns semantic focus styling; neutral overrides
+    // it, while empty built-in branches retain the public recipe condition.
     color: {
-      primary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      primary: '',
       neutral: { trigger: 'focus:ring-[var(--ui-bg-inverted)] data-[state=open]:ring-[var(--ui-bg-inverted)]' },
-      secondary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      success: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      danger: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      info: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      warning: { trigger: 'focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
   },
   defaultVariants: {

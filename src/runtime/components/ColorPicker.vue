@@ -9,7 +9,6 @@ import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Modal from './Modal.vue'
@@ -126,9 +125,8 @@ const showMobileModal = computed(() => mobilePresentation.value)
 const theme = useComponentTheme('colorPicker', colorPickerTheme)
 const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as ColorPickerVariants['color'] : 'primary')
 const colorRoleMarker = computed(() => effectiveColor.value)
-const ui = computed(() => theme.value({ size: props.size, color: recipeColor.value }))
+const ui = computed(() => theme.value({ size: props.size, color: effectiveColor.value as ColorPickerVariants['color'] }))
 
 const triggerProps = computed(() => resolveSlot(ui.value.trigger, props.ui?.trigger))
 const triggerSwatchProps = computed(() => resolveSlot(ui.value.triggerSwatch, props.ui?.triggerSwatch))

@@ -2,10 +2,13 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
+import Avatar from '../../src/runtime/components/Avatar.vue'
 import Badge from '../../src/runtime/components/Badge.vue'
 import Button from '../../src/runtime/components/Button.vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
+import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
+import FileUpload from '../../src/runtime/components/FileUpload.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
 import Select from '../../src/runtime/components/Select.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
@@ -156,6 +159,23 @@ describe('theme', () => {
     expect(autocompleteTrigger?.classList).toContain('tracking-widest')
     expect(selectTrigger.classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
     expect(autocompleteTrigger?.classList).toContain('focus-within:ring-[var(--_selaras-color-focus)]')
+  })
+
+  it('passes custom roles to typed Avatar, ColorPicker, and FileUpload recipe conditions', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: {
+      avatar: { compoundVariants: [{ color: 'premium', class: { base: 'tracking-tight' } }] },
+      colorPicker: { compoundVariants: [{ color: 'premium', class: { trigger: 'tracking-wide' } }] },
+      fileUpload: { compoundVariants: [{ color: 'premium', class: { dropzone: 'tracking-widest' } }] },
+    } }, [
+      h(Avatar, { text: 'P', color: 'premium' }),
+      h(ColorPicker, { color: 'premium' }),
+      h(FileUpload, { color: 'premium' }),
+    ]))
+
+    const roleRoots = wrapper.findAll('[data-selaras-color="premium"]')
+    expect(roleRoots[0]?.classes()).toContain('tracking-tight')
+    expect(roleRoots[1]?.classes()).toContain('tracking-wide')
+    expect(roleRoots[2]?.find('button').classes()).toContain('tracking-widest')
   })
 
   it('does not affect a button outside the Theme boundary', async () => {

@@ -75,6 +75,9 @@ void hyphenatedRole
       <SInput id="packed-functional-input" model-value="Scoped functional input" readonly />
     </STheme>
     <SBadge id="packed-dot" dot aria-label="Offline" />
+    <SAvatar text="P" :color="role" />
+    <SColorPicker :color="role" />
+    <SFileUpload :color="role" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
     <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" :color="role" aria-label="Published selection" />
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />

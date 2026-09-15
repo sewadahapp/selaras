@@ -9,7 +9,6 @@ import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
 import { useMessages } from '../composables/use-messages'
 import { fileUploadTheme } from '../theme/file-upload'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { formatBytes } from '../utils/format-bytes'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
@@ -250,10 +249,9 @@ watch(internalFiles, (files, previous) => {
 
 const theme = useComponentTheme('fileUpload', fileUploadTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as FileUploadVariants['color'] : 'primary')
 const ui = computed(() => theme.value({
   size: effectiveSize.value,
-  color: recipeColor.value,
+  color: effectiveColor.value as FileUploadVariants['color'],
   invalid: fileUploadInvalid.value,
 }))
 

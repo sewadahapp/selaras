@@ -8,8 +8,8 @@ export const fileUploadTheme = tv({
     // instead of needing hand-rolled keydown handling. dragging (a
     // component-set data attribute, not a native one) recolors it
     // toward `color` - see the color variant below.
-    dropzone: 'flex w-full flex-col items-center justify-center gap-2 rounded-[var(--ui-radius-md)] border-2 border-dashed border-[var(--ui-border)] p-6 text-center transition-colors hover:border-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-visible:outline-none focus-visible:ring-2 disabled:opacity-50 disabled:pointer-events-none',
-    icon: 'text-[var(--ui-text-muted)]',
+    dropzone: 'flex w-full flex-col items-center justify-center gap-2 rounded-[var(--ui-radius-md)] border-2 border-dashed border-[var(--ui-border)] p-6 text-center transition-colors hover:border-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)] disabled:opacity-50 disabled:pointer-events-none',
+    icon: 'text-[var(--_selaras-color-fill)]',
     label: 'font-medium text-[var(--ui-text)]',
     description: 'text-[var(--ui-text-muted)]',
     // Purely an implementation detail - visually hidden and (via
@@ -43,13 +43,13 @@ export const fileUploadTheme = tv({
     // actually demonstrating anything - confirmed as a real problem via
     // direct user feedback, not just a style preference.
     color: {
-      primary: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
+      primary: '',
       neutral: { icon: 'text-[var(--ui-bg-inverted)]', dropzone: 'focus-visible:ring-[var(--ui-bg-inverted)] data-[dragging]:border-[var(--ui-bg-inverted)] data-[dragging]:bg-[var(--ui-bg-elevated)]' },
-      secondary: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
-      success: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
-      danger: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
-      info: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
-      warning: { icon: 'text-[var(--_selaras-color-fill)]', dropzone: 'focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)]' },
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
     // Declared last (after color) so tailwind-merge lets its own border
     // override win over color's - matches Input's own documented
