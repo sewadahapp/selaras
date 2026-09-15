@@ -45,6 +45,10 @@ one page.
 To see exactly what you'd be overriding - the current default classes for
 every slot - here's `PageAside`'s own theme file:
 
+Global and scoped theme recipes use `ui.pageAside`. Its `scrollArea` slot is
+the layout override for the composed scroll region; `ui.scrollArea` still
+configures `SScrollArea` independently.
+
 ::theme-source{name="page-aside"}
 ::
 

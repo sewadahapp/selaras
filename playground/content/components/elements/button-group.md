@@ -45,6 +45,8 @@ carry their own ring/radius one level deeper than a Button does.
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `ButtonGroup`'s own theme file:
 
+Global and scoped theme recipes use `ui.buttonGroup`.
+
 ::theme-source{name="button-group"}
 ::
 

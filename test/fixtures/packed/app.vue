@@ -84,6 +84,21 @@ void hyphenatedRole
     </SHeader>
     <SPageHeader id="packed-page-header" title="Published page header" />
     <SSkeleton id="packed-skeleton" animation="shimmer" />
+    <SAvatarGroup id="packed-avatar-group" size="lg">
+      <SAvatar text="A" />
+    </SAvatarGroup>
+    <SButtonGroup id="packed-button-group" orientation="vertical">
+      <SButton>Grouped button</SButton>
+    </SButtonGroup>
+    <SInputGroup id="packed-input-group" orientation="vertical">
+      <SInput model-value="Grouped input" />
+    </SInputGroup>
+    <SPageAside id="packed-page-aside">
+      Published aside
+    </SPageAside>
+    <SScrollArea id="packed-scroll-area">
+      Published scroll area
+    </SScrollArea>
     <STheme as="section" v-bind="theme" :tokens="{ light: { colors: { published: { fill: '#56789a' } } } }">
       <SButton id="packed-scoped" :color="role">
         Published scoped

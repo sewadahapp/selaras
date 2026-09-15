@@ -54,6 +54,9 @@ Wrap multiple `SAvatar` components inside `SAvatarGroup` to stack them with over
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `AvatarGroup`'s own theme file:
 
+Global and scoped theme recipes use `ui.avatarGroup`; child avatars retain
+their own `ui.avatar` recipe.
+
 ::theme-source{name="avatar-group"}
 ::
 

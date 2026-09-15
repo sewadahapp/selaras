@@ -4,9 +4,11 @@ import { defineComponent, h, ref } from 'vue'
 import Accordion from '../../src/runtime/components/Accordion.vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import Avatar from '../../src/runtime/components/Avatar.vue'
+import AvatarGroup from '../../src/runtime/components/AvatarGroup.vue'
 import Badge from '../../src/runtime/components/Badge.vue'
 import Breadcrumb from '../../src/runtime/components/Breadcrumb.vue'
 import Button from '../../src/runtime/components/Button.vue'
+import ButtonGroup from '../../src/runtime/components/ButtonGroup.vue'
 import Card from '../../src/runtime/components/Card.vue'
 import CardGroup from '../../src/runtime/components/CardGroup.vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
@@ -16,9 +18,12 @@ import Container from '../../src/runtime/components/Container.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import FileUpload from '../../src/runtime/components/FileUpload.vue'
 import Header from '../../src/runtime/components/Header.vue'
+import InputGroup from '../../src/runtime/components/InputGroup.vue'
+import PageAside from '../../src/runtime/components/PageAside.vue'
 import PageHeader from '../../src/runtime/components/PageHeader.vue'
 import Pagination from '../../src/runtime/components/Pagination.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
+import ScrollArea from '../../src/runtime/components/ScrollArea.vue'
 import Select from '../../src/runtime/components/Select.vue'
 import Skeleton from '../../src/runtime/components/Skeleton.vue'
 import Stepper from '../../src/runtime/components/Stepper.vue'
@@ -226,6 +231,33 @@ describe('theme', () => {
     expect(wrapper.find('#themed-header').classes()).toContain('outline-solid')
     expect(wrapper.find('#themed-page-header').classes()).toContain('outline-offset-2')
     expect(wrapper.find('#themed-skeleton').classes()).toContain('outline-offset-4')
+  })
+
+  it('keeps composition wrapper recipes separate from nested component recipes', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: {
+      avatar: { slots: { base: 'font-mono' } },
+      avatarGroup: { compoundVariants: [{ size: 'lg', class: { root: 'outline-dashed' } }] },
+      button: { slots: { base: 'font-mono' } },
+      buttonGroup: { compoundVariants: [{ orientation: 'vertical', class: { root: 'outline-dotted' } }] },
+      inputGroup: { compoundVariants: [{ orientation: 'vertical', class: { root: 'outline-double' } }] },
+      pageAside: { slots: { root: 'outline-solid', scrollArea: 'max-h-40' } },
+      scrollArea: { slots: { root: 'font-mono' } },
+    } }, [
+      h(AvatarGroup, { id: 'themed-avatar-group', size: 'lg' }, () => h(Avatar, { text: 'A' })),
+      h(ButtonGroup, { id: 'themed-button-group', orientation: 'vertical' }, () => h(Button, () => 'Button')),
+      h(InputGroup, { id: 'themed-input-group', orientation: 'vertical' }, () => h('input')),
+      h(PageAside, { id: 'themed-page-aside' }, () => 'Aside'),
+      h(ScrollArea, { id: 'themed-scroll-area' }, () => 'Area'),
+    ]))
+
+    expect(wrapper.find('#themed-avatar-group').classes()).toContain('outline-dashed')
+    expect(wrapper.find('#themed-avatar-group').find('[data-selaras-color]').classes()).toContain('font-mono')
+    expect(wrapper.find('#themed-button-group').classes()).toContain('outline-dotted')
+    expect(wrapper.find('#themed-button-group').find('button').classes()).toContain('font-mono')
+    expect(wrapper.find('#themed-input-group').classes()).toContain('outline-double')
+    expect(wrapper.find('#themed-page-aside').classes()).toContain('outline-solid')
+    expect(wrapper.find('#themed-page-aside').findComponent(ScrollArea).classes()).toContain('max-h-40')
+    expect(wrapper.find('#themed-scroll-area').classes()).toContain('font-mono')
   })
 
   it('uses one Select recipe extension for Select and Autocomplete custom roles', async () => {

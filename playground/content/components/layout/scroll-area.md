@@ -26,6 +26,8 @@ for its scrollable body.
 To see exactly what you'd be overriding - the current default classes for
 every slot - here's `ScrollArea`'s own theme file:
 
+Global and scoped theme recipes use `ui.scrollArea`.
+
 ::theme-source{name="scroll-area"}
 ::
 

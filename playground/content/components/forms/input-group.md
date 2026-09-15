@@ -62,6 +62,8 @@ Any groupable component works, not just Input and Button - here a
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `InputGroup`'s own theme file:
 
+Global and scoped theme recipes use `ui.inputGroup`.
+
 ::theme-source{name="input-group"}
 ::
 

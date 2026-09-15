@@ -2,9 +2,11 @@ import type { VariantProps } from 'tailwind-variants'
 import type { accordionTheme, AccordionThemeSlots } from './theme/accordion'
 import type { alertTheme, AlertThemeSlots } from './theme/alert'
 import type { avatarTheme, AvatarThemeSlots } from './theme/avatar'
+import type { avatarGroupTheme, AvatarGroupThemeSlots } from './theme/avatar-group'
 import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
 import type { breadcrumbTheme, BreadcrumbThemeSlots } from './theme/breadcrumb'
 import type { buttonTheme, ButtonThemeSlots } from './theme/button'
+import type { buttonGroupTheme, ButtonGroupThemeSlots } from './theme/button-group'
 import type { cardTheme, CardThemeSlots } from './theme/card'
 import type { cardGroupTheme, CardGroupThemeSlots } from './theme/card-group'
 import type { checkboxTheme, CheckboxThemeSlots } from './theme/checkbox'
@@ -20,15 +22,18 @@ import type { formFieldTheme, FormFieldThemeSlots } from './theme/form-field'
 import type { headerTheme, HeaderThemeSlots } from './theme/header'
 import type { iconTheme, IconThemeSlots } from './theme/icon'
 import type { inputTheme, InputThemeSlots } from './theme/input'
+import type { inputGroupTheme, InputGroupThemeSlots } from './theme/input-group'
 import type { inputNumberTheme, InputNumberThemeSlots } from './theme/input-number'
 import type { modalTheme, ModalThemeSlots } from './theme/modal'
 import type { navigationMenuTheme, NavigationMenuThemeSlots } from './theme/navigation-menu'
+import type { pageAsideTheme, PageAsideThemeSlots } from './theme/page-aside'
 import type { pageHeaderTheme, PageHeaderThemeSlots } from './theme/page-header'
 import type { paginationTheme, PaginationThemeSlots } from './theme/pagination'
 import type { pinInputTheme, PinInputThemeSlots } from './theme/pin-input'
 import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
 import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
 import type { ratingTheme, RatingThemeSlots } from './theme/rating'
+import type { scrollAreaTheme, ScrollAreaThemeSlots } from './theme/scroll-area'
 import type { selectTheme, SelectThemeSlots } from './theme/select'
 import type { separatorTheme, SeparatorThemeSlots } from './theme/separator'
 import type { skeletonTheme, SkeletonThemeSlots } from './theme/skeleton'
@@ -47,9 +52,11 @@ import type { ColorRole, RuntimeTokenOverrides } from './utils/color-registry'
 type AccordionVariants = VariantProps<typeof accordionTheme>
 type AlertVariants = VariantProps<typeof alertTheme>
 type AvatarVariants = VariantProps<typeof avatarTheme>
+type AvatarGroupVariants = VariantProps<typeof avatarGroupTheme>
 type BadgeVariants = VariantProps<typeof badgeTheme>
 type BreadcrumbVariants = VariantProps<typeof breadcrumbTheme>
 type ButtonVariants = VariantProps<typeof buttonTheme>
+type ButtonGroupVariants = VariantProps<typeof buttonGroupTheme>
 type CardVariants = VariantProps<typeof cardTheme>
 type CardGroupVariants = VariantProps<typeof cardGroupTheme>
 type CheckboxVariants = VariantProps<typeof checkboxTheme>
@@ -58,6 +65,7 @@ type CollapsibleVariants = VariantProps<typeof collapsibleTheme>
 type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
 type ContainerVariants = VariantProps<typeof containerTheme>
 type InputVariants = VariantProps<typeof inputTheme>
+type InputGroupVariants = VariantProps<typeof inputGroupTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
 type FileUploadVariants = VariantProps<typeof fileUploadTheme>
 type FormFieldVariants = VariantProps<typeof formFieldTheme>
@@ -111,6 +119,10 @@ export interface ThemeComponentRegistry {
     conditions: WithRegisteredColor<Pick<AvatarVariants, 'color' | 'statusColor' | 'size' | 'shape'>>
     defaults: WithRegisteredColor<Pick<AvatarVariants, 'color' | 'size'>>
   }
+  avatarGroup: {
+    slots: AvatarGroupThemeSlots
+    conditions: Pick<AvatarGroupVariants, 'size'>
+  }
   badge: {
     slots: BadgeThemeSlots
     conditions: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'variant' | 'size' | 'dotOnly' | 'iconOnly'>>
@@ -124,6 +136,10 @@ export interface ThemeComponentRegistry {
     slots: ButtonThemeSlots
     conditions: WithRegisteredColor<Pick<ButtonVariants, 'color' | 'variant' | 'size' | 'block' | 'raised' | 'square'>>
     defaults: WithRegisteredColor<Pick<ButtonVariants, 'color' | 'size'>>
+  }
+  buttonGroup: {
+    slots: ButtonGroupThemeSlots
+    conditions: Pick<ButtonGroupVariants, 'orientation'>
   }
   card: {
     slots: CardThemeSlots
@@ -146,6 +162,10 @@ export interface ThemeComponentRegistry {
     slots: InputThemeSlots
     conditions: WithRegisteredColor<Pick<InputVariants, 'color' | 'size' | 'hasLeadingIcon' | 'hasTrailingIcon' | 'invalid'>>
     defaults: WithRegisteredColor<Pick<InputVariants, 'color' | 'size'>>
+  }
+  inputGroup: {
+    slots: InputGroupThemeSlots
+    conditions: Pick<InputGroupVariants, 'orientation'>
   }
   checkbox: {
     slots: CheckboxThemeSlots
@@ -194,6 +214,11 @@ export interface ThemeComponentRegistry {
     slots: PageHeaderThemeSlots
     conditions: Pick<VariantProps<typeof pageHeaderTheme>, never>
   }
+  /** Owns PageAside layout; its nested ScrollArea remains independently configurable. */
+  pageAside: {
+    slots: PageAsideThemeSlots
+    conditions: Pick<VariantProps<typeof pageAsideTheme>, never>
+  }
   pinInput: {
     slots: PinInputThemeSlots
     conditions: WithRegisteredColor<Pick<PinInputVariants, 'color' | 'size' | 'invalid'>>
@@ -210,6 +235,10 @@ export interface ThemeComponentRegistry {
   select: {
     slots: SelectThemeSlots
     conditions: WithRegisteredColor<Pick<SelectVariants, 'color' | 'size' | 'invalid'>>
+  }
+  scrollArea: {
+    slots: ScrollAreaThemeSlots
+    conditions: Pick<VariantProps<typeof scrollAreaTheme>, never>
   }
   separator: {
     slots: SeparatorThemeSlots
