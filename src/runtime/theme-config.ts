@@ -5,20 +5,25 @@ import type { avatarTheme, AvatarThemeSlots } from './theme/avatar'
 import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
 import type { breadcrumbTheme, BreadcrumbThemeSlots } from './theme/breadcrumb'
 import type { buttonTheme, ButtonThemeSlots } from './theme/button'
+import type { cardTheme, CardThemeSlots } from './theme/card'
+import type { cardGroupTheme, CardGroupThemeSlots } from './theme/card-group'
 import type { checkboxTheme, CheckboxThemeSlots } from './theme/checkbox'
 import type { chipTheme, ChipThemeSlots } from './theme/chip'
 import type { collapsibleTheme, CollapsibleThemeSlots } from './theme/collapsible'
 import type { colorPickerTheme, ColorPickerThemeSlots } from './theme/color-picker'
+import type { containerTheme, ContainerThemeSlots } from './theme/container'
 import type { contextMenuTheme, ContextMenuThemeSlots } from './theme/context-menu'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
 import type { fileUploadTheme, FileUploadThemeSlots } from './theme/file-upload'
 import type { formFieldTheme, FormFieldThemeSlots } from './theme/form-field'
+import type { headerTheme, HeaderThemeSlots } from './theme/header'
 import type { iconTheme, IconThemeSlots } from './theme/icon'
 import type { inputTheme, InputThemeSlots } from './theme/input'
 import type { inputNumberTheme, InputNumberThemeSlots } from './theme/input-number'
 import type { modalTheme, ModalThemeSlots } from './theme/modal'
 import type { navigationMenuTheme, NavigationMenuThemeSlots } from './theme/navigation-menu'
+import type { pageHeaderTheme, PageHeaderThemeSlots } from './theme/page-header'
 import type { paginationTheme, PaginationThemeSlots } from './theme/pagination'
 import type { pinInputTheme, PinInputThemeSlots } from './theme/pin-input'
 import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
@@ -26,6 +31,7 @@ import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
 import type { ratingTheme, RatingThemeSlots } from './theme/rating'
 import type { selectTheme, SelectThemeSlots } from './theme/select'
 import type { separatorTheme, SeparatorThemeSlots } from './theme/separator'
+import type { skeletonTheme, SkeletonThemeSlots } from './theme/skeleton'
 import type { slideoverTheme, SlideoverThemeSlots } from './theme/slideover'
 import type { sliderTheme, SliderThemeSlots } from './theme/slider'
 import type { stepperTheme, StepperThemeSlots } from './theme/stepper'
@@ -44,10 +50,13 @@ type AvatarVariants = VariantProps<typeof avatarTheme>
 type BadgeVariants = VariantProps<typeof badgeTheme>
 type BreadcrumbVariants = VariantProps<typeof breadcrumbTheme>
 type ButtonVariants = VariantProps<typeof buttonTheme>
+type CardVariants = VariantProps<typeof cardTheme>
+type CardGroupVariants = VariantProps<typeof cardGroupTheme>
 type CheckboxVariants = VariantProps<typeof checkboxTheme>
 type ChipVariants = VariantProps<typeof chipTheme>
 type CollapsibleVariants = VariantProps<typeof collapsibleTheme>
 type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
+type ContainerVariants = VariantProps<typeof containerTheme>
 type InputVariants = VariantProps<typeof inputTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
 type FileUploadVariants = VariantProps<typeof fileUploadTheme>
@@ -60,6 +69,7 @@ type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
 type RatingVariants = VariantProps<typeof ratingTheme>
 type SelectVariants = VariantProps<typeof selectTheme>
 type SeparatorVariants = VariantProps<typeof separatorTheme>
+type SkeletonVariants = VariantProps<typeof skeletonTheme>
 type SliderVariants = VariantProps<typeof sliderTheme>
 type SwitchVariants = VariantProps<typeof switchTheme>
 type StepperVariants = VariantProps<typeof stepperTheme>
@@ -115,6 +125,14 @@ export interface ThemeComponentRegistry {
     conditions: WithRegisteredColor<Pick<ButtonVariants, 'color' | 'variant' | 'size' | 'block' | 'raised' | 'square'>>
     defaults: WithRegisteredColor<Pick<ButtonVariants, 'color' | 'size'>>
   }
+  card: {
+    slots: CardThemeSlots
+    conditions: Pick<CardVariants, 'variant'>
+  }
+  cardGroup: {
+    slots: CardGroupThemeSlots
+    conditions: Pick<CardGroupVariants, 'cols'>
+  }
   chip: {
     slots: ChipThemeSlots
     conditions: WithRegisteredColor<Pick<ChipVariants, 'color' | 'size'>>
@@ -137,6 +155,10 @@ export interface ThemeComponentRegistry {
     slots: ColorPickerThemeSlots
     conditions: WithRegisteredColor<Pick<ColorPickerVariants, 'color' | 'size'>>
   }
+  container: {
+    slots: ContainerThemeSlots
+    conditions: Pick<ContainerVariants, 'size'>
+  }
   fileUpload: {
     slots: FileUploadThemeSlots
     conditions: WithRegisteredColor<Pick<FileUploadVariants, 'color' | 'size' | 'invalid'>>
@@ -144,6 +166,10 @@ export interface ThemeComponentRegistry {
   formField: {
     slots: FormFieldThemeSlots
     conditions: Pick<FormFieldVariants, 'size' | 'orientation'>
+  }
+  header: {
+    slots: HeaderThemeSlots
+    conditions: Pick<VariantProps<typeof headerTheme>, never>
   }
   /** Shared primitive recipe used by direct SIcon and icons inside components. */
   icon: {
@@ -163,6 +189,10 @@ export interface ThemeComponentRegistry {
   pagination: {
     slots: PaginationThemeSlots
     conditions: Pick<PaginationVariants, 'size'>
+  }
+  pageHeader: {
+    slots: PageHeaderThemeSlots
+    conditions: Pick<VariantProps<typeof pageHeaderTheme>, never>
   }
   pinInput: {
     slots: PinInputThemeSlots
@@ -184,6 +214,10 @@ export interface ThemeComponentRegistry {
   separator: {
     slots: SeparatorThemeSlots
     conditions: WithRegisteredColor<Pick<SeparatorVariants, 'orientation' | 'variant' | 'color'>>
+  }
+  skeleton: {
+    slots: SkeletonThemeSlots
+    conditions: Pick<SkeletonVariants, 'animation'>
   }
   slider: {
     slots: SliderThemeSlots

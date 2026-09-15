@@ -23,6 +23,8 @@ inside it - any children work, not just [Card](/components/layout/card).
 
 ## Custom `:ui`
 
+Global and scoped recipe overrides use `ui.cardGroup`.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot - here's `CardGroup`'s own theme file:
 

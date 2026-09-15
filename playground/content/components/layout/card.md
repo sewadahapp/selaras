@@ -146,6 +146,8 @@ text.
 
 ## Custom `:ui`
 
+Global and scoped recipe overrides use `ui.card`.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Card`'s own theme file:
 

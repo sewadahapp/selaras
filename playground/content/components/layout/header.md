@@ -32,6 +32,8 @@ you override the header's height.)
 
 ## Custom `:ui`
 
+Global and scoped recipe overrides use `ui.header`.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot - here's `Header`'s own theme file:
 

@@ -72,6 +72,18 @@ void hyphenatedRole
     <SButton id="packed-runtime-builtin" color="primary">
       Runtime built-in override
     </SButton>
+    <SCard id="packed-card" variant="solid">
+      Published card
+    </SCard>
+    <SCardGroup id="packed-card-group" :cols="3" />
+    <SContainer id="packed-container" size="sm">
+      Published container
+    </SContainer>
+    <SHeader id="packed-header">
+      Published header
+    </SHeader>
+    <SPageHeader id="packed-page-header" title="Published page header" />
+    <SSkeleton id="packed-skeleton" animation="shimmer" />
     <STheme as="section" v-bind="theme" :tokens="{ light: { colors: { published: { fill: '#56789a' } } } }">
       <SButton id="packed-scoped" :color="role">
         Published scoped

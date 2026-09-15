@@ -17,6 +17,8 @@ order: 60
 
 ## Custom `:ui`
 
+Global and scoped recipe overrides use `ui.container`.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and size - here's `Container`'s own theme file:
 

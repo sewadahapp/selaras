@@ -7,14 +7,20 @@ import Avatar from '../../src/runtime/components/Avatar.vue'
 import Badge from '../../src/runtime/components/Badge.vue'
 import Breadcrumb from '../../src/runtime/components/Breadcrumb.vue'
 import Button from '../../src/runtime/components/Button.vue'
+import Card from '../../src/runtime/components/Card.vue'
+import CardGroup from '../../src/runtime/components/CardGroup.vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
 import Collapsible from '../../src/runtime/components/Collapsible.vue'
 import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
+import Container from '../../src/runtime/components/Container.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import FileUpload from '../../src/runtime/components/FileUpload.vue'
+import Header from '../../src/runtime/components/Header.vue'
+import PageHeader from '../../src/runtime/components/PageHeader.vue'
 import Pagination from '../../src/runtime/components/Pagination.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
 import Select from '../../src/runtime/components/Select.vue'
+import Skeleton from '../../src/runtime/components/Skeleton.vue'
 import Stepper from '../../src/runtime/components/Stepper.vue'
 import Tabs from '../../src/runtime/components/Tabs.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
@@ -195,6 +201,31 @@ describe('theme', () => {
     const pagination = wrapper.find('#themed-pagination')
     expect(pagination.classes()).toContain('outline-offset-4')
     expect(pagination.findAll('button').every(button => button.classes().includes('font-mono'))).toBe(true)
+  })
+
+  it('applies scoped recipes to foundation layout components', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: {
+      card: { compoundVariants: [{ variant: 'solid', class: { root: 'outline-dashed' } }] },
+      cardGroup: { compoundVariants: [{ cols: 3, class: { root: 'outline-dotted' } }] },
+      container: { compoundVariants: [{ size: 'sm', class: { base: 'outline-double' } }] },
+      header: { slots: { root: 'outline-solid' } },
+      pageHeader: { slots: { root: 'outline-offset-2' } },
+      skeleton: { compoundVariants: [{ animation: 'shimmer', class: { base: 'outline-offset-4' } }] },
+    } }, [
+      h(Card, { id: 'themed-card', variant: 'solid' }, () => 'Card'),
+      h(CardGroup, { id: 'themed-card-group', cols: 3 }),
+      h(Container, { id: 'themed-container', size: 'sm' }),
+      h(Header, { id: 'themed-header' }),
+      h(PageHeader, { id: 'themed-page-header', title: 'Heading' }),
+      h(Skeleton, { id: 'themed-skeleton', animation: 'shimmer' }),
+    ]))
+
+    expect(wrapper.find('#themed-card').classes()).toContain('outline-dashed')
+    expect(wrapper.find('#themed-card-group').classes()).toContain('outline-dotted')
+    expect(wrapper.find('#themed-container').classes()).toContain('outline-double')
+    expect(wrapper.find('#themed-header').classes()).toContain('outline-solid')
+    expect(wrapper.find('#themed-page-header').classes()).toContain('outline-offset-2')
+    expect(wrapper.find('#themed-skeleton').classes()).toContain('outline-offset-4')
   })
 
   it('uses one Select recipe extension for Select and Autocomplete custom roles', async () => {

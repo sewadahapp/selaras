@@ -3,6 +3,7 @@ import { Buffer } from 'node:buffer'
 import { spawn, spawnSync } from 'node:child_process'
 import { cpSync, existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
+import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
 import { dirname, join, relative } from 'node:path'
 import process from 'node:process'
@@ -36,10 +37,24 @@ function installedManifest(name) {
   throw new Error(`Cannot find installed manifest for ${name}`)
 }
 
+async function findFreePort() {
+  const reservation = createServer()
+  await new Promise((resolve, reject) => {
+    reservation.once('error', reject)
+    reservation.listen(0, '127.0.0.1', resolve)
+  })
+  const address = reservation.address()
+  assert.ok(address && typeof address !== 'string')
+  const { port } = address
+  await new Promise(resolve => reservation.close(resolve))
+  return port
+}
+
 async function inspectSsr(prefixed = true) {
+  const port = await findFreePort()
   const server = spawn(process.execPath, ['.output/server/index.mjs'], {
     cwd: consumerDir,
-    env: { ...process.env, NITRO_HOST: '127.0.0.1', NITRO_PORT: '0' },
+    env: { ...process.env, NITRO_HOST: '127.0.0.1', NITRO_PORT: String(port), PORT: String(port) },
     stdio: ['ignore', 'pipe', 'pipe'],
   })
   let output = ''
@@ -75,6 +90,12 @@ async function inspectSsr(prefixed = true) {
     assert.match(html, pattern(/<button(?=[^>]*id="packed-scoped")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:h-8)/))
     assert.match(html, /<button(?=[^>]*id="packed-registered-builtin")(?=[^>]*data-selaras-color="secondary")/)
     assert.match(html, /<button(?=[^>]*id="packed-runtime-builtin")(?=[^>]*data-selaras-color="primary")/)
+    assert.match(html, pattern(/<div(?=[^>]*id="packed-card")(?=[^>]*tw:outline-dashed)/), 'Card conditions must reach its recipe')
+    assert.match(html, pattern(/<div(?=[^>]*id="packed-card-group")(?=[^>]*tw:outline-dotted)/), 'CardGroup conditions must reach its recipe')
+    assert.match(html, pattern(/<div(?=[^>]*id="packed-container")(?=[^>]*tw:outline-double)/), 'Container conditions must reach its recipe')
+    assert.match(html, pattern(/<header(?=[^>]*id="packed-header")(?=[^>]*tw:outline-solid)/), 'Header must reach its recipe')
+    assert.match(html, pattern(/<div(?=[^>]*id="packed-page-header")(?=[^>]*tw:outline-offset-2)/), 'PageHeader must reach its recipe')
+    assert.match(html, pattern(/<div(?=[^>]*id="packed-skeleton")(?=[^>]*tw:outline-offset-4)/), 'Skeleton conditions must reach its recipe')
     assert.match(html, pattern(/<span(?=[^>]*id="packed-badge")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:bg-\[var\(--_selaras-color-subtle\)\])/))
     assert.match(html, /<span(?=[^>]*id="packed-dot")(?=[^>]*role="img")(?=[^>]*aria-label="Offline")(?=[^>]*data-selaras-color="neutral")/)
     assert.match(html, pattern(/<div(?=[^>]*data-selaras-color="published")(?=[^>]*tw:tracking-normal)/), 'registered roles must reach Alert recipe conditions')
