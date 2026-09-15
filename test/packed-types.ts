@@ -110,6 +110,7 @@ const forcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, t
 const invalidForcedAutocompleteUpdate: AutocompleteEmits<{ id: number }, 'id', false, true>['update:modelValue'] = ['new entry']
 const autocompleteSlots: AutocompleteSlots<{ id: number, title: string }> = { item: ({ item }) => item.title.toUpperCase() }
 const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
+const packedOverlayTheme: ThemeProps = { ui: { modal: { slots: { content: 'max-w-xl' } }, popover: { slots: { content: 'p-6' } } } }
 const packedDtcgColor = { colorSpace: 'srgb', components: [0.1, 0.2, 0.3] } satisfies DtcgResolvedColor
 const packedDtcgCss = dtcgColorToCss(packedDtcgColor)
 const packedSeedOptions: SeedColorOptions = { surfaces: { light: '#f4f0e8', dark: '#20242a' } }
@@ -119,9 +120,19 @@ const invalidPackedDtcgColor: DtcgResolvedColor = { colorSpace: 'display-p3', co
 void packedDtcgCss
 void packedSeedColor
 void invalidPackedDtcgColor
+void packedOverlayTheme
 const packedThemeConfiguration: ThemeConfiguration = {
   defaults: { button: { color: 'primary', size: 'lg' } },
-  ui: { button: { slots: { base: 'rounded-full' } } },
+  ui: {
+    button: { slots: { base: 'rounded-full' } },
+    contextMenu: { compoundVariants: [{ destructive: true, class: { item: 'font-bold' } }] },
+    drawer: { compoundVariants: [{ side: 'left', transition: false, class: { content: 'w-96' } }] },
+    dropdown: { compoundVariants: [{ destructive: true, class: { item: 'font-bold' } }] },
+    modal: { compoundVariants: [{ fullscreen: true, transition: false, class: { content: 'rounded-none' } }] },
+    popover: { slots: { content: 'max-w-sm' } },
+    slideover: { compoundVariants: [{ side: 'right', inset: true, class: { content: 'w-96' } }] },
+    tooltip: { slots: { content: 'font-medium' } },
+  },
   tokens: { light: { surface: { elevated: 'var(--company-raised)' }, text: { muted: '#555555' }, border: { hover: '#777777' }, scrim: 'rgb(0 0 0 / .5)' } },
 }
 // @ts-expect-error functional groups have a finite semantic vocabulary
@@ -129,6 +140,24 @@ const invalidFunctionalTokens: ThemeConfiguration = { tokens: { dark: { surface:
 void invalidFunctionalTokens
 // @ts-expect-error behavioral props are intentionally excluded from theme defaults
 const invalidPackedThemeConfiguration: ThemeConfiguration = { defaults: { button: { disabled: true } } }
+const invalidOverlayDefaults: ThemeConfiguration = {
+  defaults: {
+    // @ts-expect-error overlay components do not consume scoped prop defaults
+    modal: { fullscreen: true },
+  },
+}
+const invalidOverlayUi: ThemeConfiguration = {
+  ui: {
+    modal: {
+      slots: {
+        // @ts-expect-error modal's UI contract exposes real slots only
+        nonexistent: 'rounded-full',
+      },
+    },
+  },
+}
+void invalidOverlayDefaults
+void invalidOverlayUi
 // @ts-expect-error scoped defaults replace the pre-1.0 props namespace
 const legacyTheme: ThemeProps = { props: { button: { size: 'lg' } } }
 const packedRole: ColorRole = 'danger'

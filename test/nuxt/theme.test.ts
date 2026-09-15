@@ -107,6 +107,17 @@ describe('theme', () => {
     expect(wrapper.find('button').classes()).toContain('rounded-full')
   })
 
+  it('applies a scoped UI override to a portalled Popover without granting it prop defaults', async () => {
+    const popover = h(Popover, { open: true }, {
+      default: () => h('button', 'Open'),
+      content: () => h('span', { 'data-testid': 'typed-popover-content' }, 'Content'),
+    })
+    const wrapper = await mountSuspended(withTheme({ ui: { popover: { slots: { content: 'max-w-[17rem]' } } } }, popover))
+    await new Promise(resolve => setTimeout(resolve, 50))
+    expect(document.querySelector('[data-testid="typed-popover-content"]')?.parentElement?.classList).toContain('max-w-[17rem]')
+    wrapper.unmount()
+  })
+
   it('passes the registered custom role to recipe extension conditions', async () => {
     const wrapper = await mountSuspended(withTheme({ ui: { button: {
       compoundVariants: [{ color: 'premium', variant: 'outline', class: { base: 'tracking-widest' } }],
