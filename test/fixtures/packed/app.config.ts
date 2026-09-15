@@ -7,6 +7,7 @@ export default defineAppConfig({
       accordion: { compoundVariants: [{ color: 'published', class: { root: 'outline-dashed' } }] },
       alert: { compoundVariants: [{ color: 'published', variant: 'outline', class: { root: 'tracking-normal' } }] },
       avatar: { compoundVariants: [{ color: 'published', class: { base: 'tracking-tight' } }] },
+      breadcrumb: { compoundVariants: [{ color: 'published', class: { root: 'outline-offset-2' } }] },
       button: { compoundVariants: [{ color: ['published', 'published-accent'], class: { base: 'font-bold' } }] },
       colorPicker: { compoundVariants: [{ color: 'published', class: { trigger: 'tracking-wide' } }] },
       collapsible: { compoundVariants: [{ color: 'published', class: { root: 'outline-dotted' } }] },
@@ -14,6 +15,7 @@ export default defineAppConfig({
       icon: { compoundVariants: [{ color: 'published', class: { base: 'align-top' } }] },
       modal: { slots: { content: 'max-w-xl' } },
       navigationMenu: { compoundVariants: [{ color: 'published', active: true, class: { link: 'underline-offset-8' } }] },
+      pagination: { compoundVariants: [{ size: 'sm', class: { root: 'outline-offset-4' } }] },
       popover: { slots: { content: 'p-6' } },
       select: {
         slots: { trigger: 'font-semibold' },

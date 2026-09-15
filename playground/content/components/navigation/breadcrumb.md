@@ -90,6 +90,9 @@ label is still available on hover via the native `title` attribute:
 
 ### Custom `:ui`
 
+Global and scoped recipe overrides use `ui.breadcrumb`. Its collapsed overflow
+menu and icons remain ordinary nested `ui.dropdown` and `ui.icon` components.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Breadcrumb`'s own theme file:
 

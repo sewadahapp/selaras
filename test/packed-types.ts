@@ -126,6 +126,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
   ui: {
     accordion: { compoundVariants: [{ color: 'danger', size: 'lg', variant: 'pill', chevronPosition: 'start', class: { trigger: 'font-semibold' } }] },
     alert: { compoundVariants: [{ color: 'info', variant: 'outline', class: { root: 'shadow-sm' } }] },
+    breadcrumb: { compoundVariants: [{ color: 'secondary', class: { link: 'underline-offset-4' } }] },
     button: { slots: { base: 'rounded-full' } },
     contextMenu: { compoundVariants: [{ destructive: true, class: { item: 'font-bold' } }] },
     checkbox: { compoundVariants: [{ color: 'danger', variant: 'card', class: { root: 'shadow-sm' } }] },
@@ -139,6 +140,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
     inputNumber: { compoundVariants: [{ color: 'info', orientation: 'vertical', class: { input: 'tabular-nums' } }] },
     modal: { compoundVariants: [{ fullscreen: true, transition: false, class: { content: 'rounded-none' } }] },
     navigationMenu: { compoundVariants: [{ color: 'primary', active: true, variant: 'pill', class: { link: 'font-semibold' } }] },
+    pagination: { compoundVariants: [{ size: 'lg', class: { root: 'gap-3' } }] },
     pinInput: { compoundVariants: [{ color: 'secondary', invalid: true, class: { input: 'font-mono' } }] },
     popover: { slots: { content: 'max-w-sm' } },
     radioGroup: { compoundVariants: [{ color: 'success', variant: 'card', class: { itemWrapper: 'shadow-sm' } }] },

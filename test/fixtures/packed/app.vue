@@ -10,6 +10,7 @@ const { add: addPublishedToast } = useToast()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
 const navigationItems = [{ label: 'Published navigation', to: '/', active: true }]
+const breadcrumbItems = [{ label: 'Home', to: '/' }, { label: 'Published current' }]
 const accordionItems = [{ value: 'published', label: 'Published accordion' }]
 const tabItems = [{ value: 'published', label: 'Published tab' }]
 const stepperItems = [{ title: 'Published step' }]
@@ -85,6 +86,7 @@ void hyphenatedRole
     <SFileUpload :color="role" />
     <SIcon id="packed-icon" name="hugeicons:star" :color="role" />
     <SNavigationMenu :items="navigationItems" :color="role" />
+    <SBreadcrumb id="packed-breadcrumb" :items="breadcrumbItems" :color="role" />
     <SAccordion id="packed-accordion" :items="accordionItems" :color="role" />
     <SCollapsible id="packed-collapsible" :color="role">
       <template #trigger>
@@ -94,6 +96,7 @@ void hyphenatedRole
     </SCollapsible>
     <SSeparator id="packed-separator" :color="role" />
     <SStepper id="packed-stepper" :items="stepperItems" :color="role" />
+    <SPagination id="packed-pagination" :total="20" :items-per-page="10" size="sm" :color="role" :active-color="role" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
     <STabs id="packed-tabs" :items="tabItems" default-value="published" :color="role">
       <template #published>

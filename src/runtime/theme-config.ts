@@ -3,6 +3,7 @@ import type { accordionTheme, AccordionThemeSlots } from './theme/accordion'
 import type { alertTheme, AlertThemeSlots } from './theme/alert'
 import type { avatarTheme, AvatarThemeSlots } from './theme/avatar'
 import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
+import type { breadcrumbTheme, BreadcrumbThemeSlots } from './theme/breadcrumb'
 import type { buttonTheme, ButtonThemeSlots } from './theme/button'
 import type { checkboxTheme, CheckboxThemeSlots } from './theme/checkbox'
 import type { chipTheme, ChipThemeSlots } from './theme/chip'
@@ -18,6 +19,7 @@ import type { inputTheme, InputThemeSlots } from './theme/input'
 import type { inputNumberTheme, InputNumberThemeSlots } from './theme/input-number'
 import type { modalTheme, ModalThemeSlots } from './theme/modal'
 import type { navigationMenuTheme, NavigationMenuThemeSlots } from './theme/navigation-menu'
+import type { paginationTheme, PaginationThemeSlots } from './theme/pagination'
 import type { pinInputTheme, PinInputThemeSlots } from './theme/pin-input'
 import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
 import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
@@ -40,6 +42,7 @@ type AccordionVariants = VariantProps<typeof accordionTheme>
 type AlertVariants = VariantProps<typeof alertTheme>
 type AvatarVariants = VariantProps<typeof avatarTheme>
 type BadgeVariants = VariantProps<typeof badgeTheme>
+type BreadcrumbVariants = VariantProps<typeof breadcrumbTheme>
 type ButtonVariants = VariantProps<typeof buttonTheme>
 type CheckboxVariants = VariantProps<typeof checkboxTheme>
 type ChipVariants = VariantProps<typeof chipTheme>
@@ -51,6 +54,7 @@ type FileUploadVariants = VariantProps<typeof fileUploadTheme>
 type FormFieldVariants = VariantProps<typeof formFieldTheme>
 type IconVariants = VariantProps<typeof iconTheme>
 type NavigationMenuVariants = VariantProps<typeof navigationMenuTheme>
+type PaginationVariants = VariantProps<typeof paginationTheme>
 type PinInputVariants = VariantProps<typeof pinInputTheme>
 type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
 type RatingVariants = VariantProps<typeof ratingTheme>
@@ -102,6 +106,10 @@ export interface ThemeComponentRegistry {
     conditions: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'variant' | 'size' | 'dotOnly' | 'iconOnly'>>
     defaults: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'size'>>
   }
+  breadcrumb: {
+    slots: BreadcrumbThemeSlots
+    conditions: WithRegisteredColor<Pick<BreadcrumbVariants, 'color'>>
+  }
   button: {
     slots: ButtonThemeSlots
     conditions: WithRegisteredColor<Pick<ButtonVariants, 'color' | 'variant' | 'size' | 'block' | 'raised' | 'square'>>
@@ -150,6 +158,11 @@ export interface ThemeComponentRegistry {
   navigationMenu: {
     slots: NavigationMenuThemeSlots
     conditions: WithRegisteredColor<Pick<NavigationMenuVariants, 'orientation' | 'color' | 'variant' | 'active' | 'disabled' | 'highlight' | 'collapsed' | 'flyoutRoot'>>
+  }
+  /** Page controls are Button recipes; this key owns wrapper and ellipsis layout. */
+  pagination: {
+    slots: PaginationThemeSlots
+    conditions: Pick<PaginationVariants, 'size'>
   }
   pinInput: {
     slots: PinInputThemeSlots

@@ -5,12 +5,14 @@ import Accordion from '../../src/runtime/components/Accordion.vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import Avatar from '../../src/runtime/components/Avatar.vue'
 import Badge from '../../src/runtime/components/Badge.vue'
+import Breadcrumb from '../../src/runtime/components/Breadcrumb.vue'
 import Button from '../../src/runtime/components/Button.vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
 import Collapsible from '../../src/runtime/components/Collapsible.vue'
 import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import FileUpload from '../../src/runtime/components/FileUpload.vue'
+import Pagination from '../../src/runtime/components/Pagination.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
 import Select from '../../src/runtime/components/Select.vue'
 import Stepper from '../../src/runtime/components/Stepper.vue'
@@ -166,6 +168,33 @@ describe('theme', () => {
     expect(roots[1]?.classes()).toContain('outline-dotted')
     expect(roots[2]?.classes()).toContain('outline-double')
     expect(roots[3]?.classes()).toContain('outline-solid')
+  })
+
+  it('keeps Breadcrumb and Pagination recipes separate from their composed components', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: {
+      breadcrumb: { compoundVariants: [{ color: 'premium', class: { root: 'outline-offset-2' } }] },
+      pagination: { compoundVariants: [{ size: 'sm', class: { root: 'outline-offset-4' } }] },
+      button: { slots: { base: 'font-mono' } },
+    } }, [
+      h(Breadcrumb, {
+        id: 'themed-breadcrumb',
+        items: [{ label: 'Home', to: '/' }, { label: 'Current' }],
+        color: 'premium',
+      }),
+      h(Pagination, {
+        id: 'themed-pagination',
+        total: 20,
+        itemsPerPage: 10,
+        size: 'sm',
+        color: 'premium',
+        activeColor: 'premium',
+      }),
+    ]))
+
+    expect(wrapper.find('#themed-breadcrumb').classes()).toContain('outline-offset-2')
+    const pagination = wrapper.find('#themed-pagination')
+    expect(pagination.classes()).toContain('outline-offset-4')
+    expect(pagination.findAll('button').every(button => button.classes().includes('font-mono'))).toBe(true)
   })
 
   it('uses one Select recipe extension for Select and Autocomplete custom roles', async () => {

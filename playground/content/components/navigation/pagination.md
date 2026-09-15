@@ -136,6 +136,10 @@ underlying primitive, not something this component reimplements.
 
 ### Custom `:ui`
 
+Global and scoped `ui.pagination` overrides cover the root, page list, and
+ellipsis. Page controls are Button instances: use Pagination's color/variant
+props for their presentation and `ui.button` for shared Button recipe changes.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Pagination`'s own theme file:
 
