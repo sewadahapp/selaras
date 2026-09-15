@@ -46,7 +46,8 @@
     },
     "./components/*": "./dist/runtime/components/*",
     "./theme.css": "./dist/runtime/theme.css",
-    "./prose.css": "./dist/runtime/prose.css"
+    "./prose.css": "./dist/runtime/prose.css",
+    "./tokens/default-colors.tokens.json": "./dist/tokens/default-colors.tokens.json"
   },
   "main": "./dist/module.mjs",
   "style": "./dist/runtime/theme.css",
@@ -96,7 +97,9 @@
     "test:browser:install": "playwright install chromium",
     "test:compat": "node scripts/test-compatibility.mjs",
     "test:watch": "vitest watch",
-    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit",
+    "tokens:check": "node scripts/generate-default-colors.mjs --check",
+    "tokens:generate": "node scripts/generate-default-colors.mjs"
   },
   "peerDependencies": {
     "nuxt": "^4.5.2",

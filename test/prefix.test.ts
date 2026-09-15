@@ -72,22 +72,22 @@ describe('classPrefix', async () => {
     expect(css).toContain('--_selaras-color-fill:var(--selaras-color-brand-vars-fill,var(--company-brand-dark-fill))')
   })
 
-  it('actually declares a real color value under the renamed theme variable - not just a class name/rule that looks right (this is exactly what silently broke before: the class rule existed, but the CSS variable it referenced had been pruned)', async () => {
+  it('ships a real owned foundation value, rather than only a class rule that references a pruned variable', async () => {
     const css = await fetchCss()
-    const match = css.match(/--tw-color-primary-500:([^;]+);/)
+    const match = css.match(/--tw-color-selaras-indigo-500:([^;]+);/)
     expect(match?.[1]).toBeTruthy()
     expect(match![1]).not.toBe('initial')
   })
 
-  it('respects a consumer\'s own @theme override - Tailwind\'s own theme-merge-by-key semantics keep working under a configured prefix, not just Selaras\'s unprefixed default', async () => {
+  it('keeps host palette names independent from Selaras-owned foundations under a configured prefix', async () => {
     const css = await fetchCss()
-    const match = css.match(/--tw-color-primary-500:([^;]+);/)
-    // The fixture's own main.css declares a @theme override (oklch(0.9 0.15
-    // 300), which Tailwind normalizes to percentage form) after importing
-    // theme.css - only the override's value should survive, not Selaras's
-    // own default (oklch(0.4755 0.2026 279.99)).
-    expect(match?.[1]).toContain('90%')
-    expect(css).not.toContain('0.4755')
+    const host = css.match(/--tw-color-primary-500:([^;]+);/)
+    const selaras = css.match(/--tw-color-selaras-indigo-500:([^;]+);/)
+    // The host keeps its conventional `primary` namespace while Selaras
+    // retains its stock indigo foundation in its owned namespace.
+    expect(host?.[1]).toContain('90%')
+    expect(selaras?.[1]).toContain('47.55%')
+    expect(selaras?.[1]).not.toContain('90%')
   })
 
   it('generates real animation CSS for tw-animate-css\'s enter/exit utilities (Modal/Dropdown/Select/Toast/Tooltip/Drawer transitions) - these live in theme.css\'s own compilation, not the safelist\'s, so without importing tw-animate-css there too the safelist would generate an empty rule despite the class existing', async () => {

@@ -189,6 +189,13 @@ try {
   ]).trim()))
   assert.ok(!relative(consumerDir, packageEntry).startsWith('..'), 'package resolution must stay outside the repository')
   assert.ok(!existsSync(join(consumerDir, 'node_modules', sourceManifest.name, 'src')))
+  const defaultTokens = JSON.parse(run('load the published default DTCG token source', process.execPath, [
+    '--input-type=module',
+    '-e',
+    `import tokens from ${JSON.stringify(`${sourceManifest.name}/tokens/default-colors.tokens.json`)} with { type: 'json' }; console.log(JSON.stringify(tokens))`,
+  ]))
+  assert.equal(defaultTokens.color.$type, 'color')
+  assert.equal(defaultTokens.color.palette.indigo['500'].$value.colorSpace, 'oklch')
   console.log(`[packed] Nuxt ${dependencies.nuxt}, Vue ${dependencies.vue}, Tailwind ${dependencies.tailwindcss}`)
   const nuxtCli = join(dirname(consumerRequire.resolve('nuxt/package.json')), 'bin/nuxt.mjs')
   run('build a fresh consumer without a separate prepare step', process.execPath, [nuxtCli, 'build'])

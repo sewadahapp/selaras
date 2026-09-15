@@ -136,7 +136,7 @@ test('isolates nested scoped overlays across two portal layers', async ({ page, 
   await expect.poll(async () => page.locator('#nested-inner-overlay-subtle').evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(103, 104, 105)')
 })
 
-test('uses foundation defaults independently of inherited legacy color bridges', async ({ page, goto }) => {
+test('uses owned foundation defaults independently of inherited legacy color bridges', async ({ page, goto }) => {
   await goto('/', { waitUntil: 'hydration' })
   const foundation = await page.locator('#builtin-foundation-probe').evaluate(element => getComputedStyle(element).color)
   await expect(page.locator('#builtin-foundation-button')).toHaveAttribute('data-selaras-color', 'primary')

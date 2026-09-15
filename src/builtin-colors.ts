@@ -1,9 +1,19 @@
 import type { ColorModePair, ColorRecipeInput } from './runtime/utils/color-registry'
 import { builtinColorNames, createColorRegistry } from './runtime/utils/color-registry'
 
+const foundationPaletteByRole = {
+  primary: 'indigo',
+  secondary: 'plum',
+  success: 'emerald',
+  info: 'blue',
+  warning: 'amber',
+  danger: 'red',
+  neutral: 'gray',
+} as const satisfies Record<typeof builtinColorNames[number], string>
+
 /** Build-time default recipes read foundations, never a component's legacy bridge. */
 export function createBuiltinColorRegistry(classPrefix?: string | null) {
-  const foundation = (role: string, shade: number) => `var(--${classPrefix ? `${classPrefix}-` : ''}color-${role}-${shade})`
+  const foundation = (role: typeof builtinColorNames[number], shade: number) => `var(--${classPrefix ? `${classPrefix}-` : ''}color-selaras-${foundationPaletteByRole[role]}-${shade})`
   const recipes = Object.fromEntries(builtinColorNames.map((role) => {
     const mode = (dark: boolean): ColorRecipeInput => {
       const neutral = role === 'neutral'

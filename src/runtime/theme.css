@@ -15,6 +15,7 @@
  * consumer should need to know to import themselves.
  */
 @import "tw-animate-css";
+@import "./default-colors.css";
 
 /*
  * Tailwind's automatic content detection only scans the consuming app's own
@@ -271,124 +272,6 @@
 
 
 
-/* Semantic recipes are generated separately from utility detection. Retain the
- * owned foundations even when no named utility references a particular shade. */
-@theme static {
-
-    /* ---------------------------------------------------------
-   * Primary — Indigo/Violet
-   * Anchor: oklch(0.4755 0.2026 279.99)
-   * --------------------------------------------------------- */
-  --color-primary-50:  oklch(0.9700 0.0120 279.99);
-  --color-primary-100: oklch(0.9300 0.0280 279.99);
-  --color-primary-200: oklch(0.8600 0.0550 279.99);
-  --color-primary-300: oklch(0.7800 0.1000 279.99);
-  --color-primary-400: oklch(0.6400 0.1650 279.99);
-  --color-primary-500: oklch(0.4755 0.2026 279.99);
-  --color-primary-600: oklch(0.4150 0.1850 279.99);
-  --color-primary-700: oklch(0.3550 0.1580 279.99);
-  --color-primary-800: oklch(0.2950 0.1280 279.99);
-  --color-primary-900: oklch(0.2350 0.0950 279.99);
-  --color-primary-950: oklch(0.1700 0.0600 279.99);
-
-
-  /* ---------------------------------------------------------
-   * Secondary — Plum/Magenta
-   * --------------------------------------------------------- */
-  --color-secondary-50:  oklch(0.975 0.012 325);
-  --color-secondary-100: oklch(0.945 0.030 325);
-  --color-secondary-200: oklch(0.890 0.060 325);
-  --color-secondary-300: oklch(0.810 0.100 325);
-  --color-secondary-400: oklch(0.690 0.145 325);
-  --color-secondary-500: oklch(0.565 0.175 325);
-  --color-secondary-600: oklch(0.495 0.165 325);
-  --color-secondary-700: oklch(0.420 0.145 325);
-  --color-secondary-800: oklch(0.345 0.115 325);
-  --color-secondary-900: oklch(0.275 0.085 325);
-  --color-secondary-950: oklch(0.190 0.055 325);
-
-
-  /* ---------------------------------------------------------
-   * Neutral — Violet-tinted gray
-   * --------------------------------------------------------- */
-  --color-neutral-25:  oklch(0.995 0.0015 280);
-  --color-neutral-50:  oklch(0.980 0.0030 280);
-  --color-neutral-100: oklch(0.945 0.0065 280);
-  --color-neutral-200: oklch(0.900 0.0100 280);
-  --color-neutral-300: oklch(0.840 0.0140 280);
-  --color-neutral-400: oklch(0.700 0.0180 280);
-  --color-neutral-500: oklch(0.555 0.0200 280);
-  --color-neutral-600: oklch(0.445 0.0190 280);
-  --color-neutral-700: oklch(0.365 0.0170 280);
-  --color-neutral-800: oklch(0.275 0.0140 280);
-  --color-neutral-900: oklch(0.205 0.0110 280);
-  --color-neutral-950: oklch(0.145 0.0080 280);
-
-
-  /* ---------------------------------------------------------
-   * Success — Emerald green
-   * --------------------------------------------------------- */
-  --color-success-50:  oklch(0.980 0.020 148);
-  --color-success-100: oklch(0.950 0.045 148);
-  --color-success-200: oklch(0.895 0.080 148);
-  --color-success-300: oklch(0.820 0.120 148);
-  --color-success-400: oklch(0.735 0.155 148);
-  --color-success-500: oklch(0.640 0.175 148);
-  --color-success-600: oklch(0.555 0.160 148);
-  --color-success-700: oklch(0.470 0.140 148);
-  --color-success-800: oklch(0.390 0.115 148);
-  --color-success-900: oklch(0.315 0.085 148);
-  --color-success-950: oklch(0.225 0.055 148);
-
-
-  /* ---------------------------------------------------------
-   * Info — Blue
-   * --------------------------------------------------------- */
-  --color-info-50:  oklch(0.975 0.018 245);
-  --color-info-100: oklch(0.945 0.040 245);
-  --color-info-200: oklch(0.895 0.075 245);
-  --color-info-300: oklch(0.820 0.115 245);
-  --color-info-400: oklch(0.715 0.155 245);
-  --color-info-500: oklch(0.620 0.175 245);
-  --color-info-600: oklch(0.535 0.165 245);
-  --color-info-700: oklch(0.455 0.145 245);
-  --color-info-800: oklch(0.375 0.115 245);
-  --color-info-900: oklch(0.300 0.085 245);
-  --color-info-950: oklch(0.215 0.055 245);
-
-
-  /* ---------------------------------------------------------
-   * Warning — Amber
-   * --------------------------------------------------------- */
-  --color-warning-50:  oklch(0.985 0.022 88);
-  --color-warning-100: oklch(0.960 0.055 88);
-  --color-warning-200: oklch(0.915 0.105 88);
-  --color-warning-300: oklch(0.860 0.145 88);
-  --color-warning-400: oklch(0.810 0.165 88);
-  --color-warning-500: oklch(0.755 0.165 88);
-  --color-warning-600: oklch(0.665 0.155 88);
-  --color-warning-700: oklch(0.565 0.135 88);
-  --color-warning-800: oklch(0.465 0.110 88);
-  --color-warning-900: oklch(0.375 0.085 88);
-  --color-warning-950: oklch(0.255 0.055 88);
-
-
-  /* ---------------------------------------------------------
-   * Danger — Warm red
-   * --------------------------------------------------------- */
-  --color-danger-50:  oklch(0.975 0.015 28);
-  --color-danger-100: oklch(0.945 0.035 28);
-  --color-danger-200: oklch(0.890 0.070 28);
-  --color-danger-300: oklch(0.805 0.120 28);
-  --color-danger-400: oklch(0.700 0.175 28);
-  --color-danger-500: oklch(0.600 0.205 28);
-  --color-danger-600: oklch(0.525 0.195 28);
-  --color-danger-700: oklch(0.445 0.170 28);
-  --color-danger-800: oklch(0.365 0.135 28);
-  --color-danger-900: oklch(0.295 0.100 28);
-  --color-danger-950: oklch(0.205 0.065 28);
-}
-
 :root {
   /*
    * Plain CSS, deliberately not `@theme` - these aren't a Tailwind theme
@@ -445,50 +328,50 @@
    * 700 = active / pressed
    * ========================================================= */
 
-  --ui-primary: --theme(--color-primary-500);
-  --ui-primary-hover: --theme(--color-primary-600);
-  --ui-primary-active: --theme(--color-primary-700);
-  --ui-primary-foreground: --theme(--color-neutral-25);
-  --ui-primary-soft: --theme(--color-primary-100);
+  --ui-primary: --theme(--color-selaras-indigo-500);
+  --ui-primary-hover: --theme(--color-selaras-indigo-600);
+  --ui-primary-active: --theme(--color-selaras-indigo-700);
+  --ui-primary-foreground: --theme(--color-selaras-gray-25);
+  --ui-primary-soft: --theme(--color-selaras-indigo-100);
 
 
-  --ui-secondary: --theme(--color-secondary-500);
-  --ui-secondary-hover: --theme(--color-secondary-600);
-  --ui-secondary-active: --theme(--color-secondary-700);
-  --ui-secondary-foreground: --theme(--color-neutral-25);
-  --ui-secondary-soft: --theme(--color-secondary-100);
+  --ui-secondary: --theme(--color-selaras-plum-500);
+  --ui-secondary-hover: --theme(--color-selaras-plum-600);
+  --ui-secondary-active: --theme(--color-selaras-plum-700);
+  --ui-secondary-foreground: --theme(--color-selaras-gray-25);
+  --ui-secondary-soft: --theme(--color-selaras-plum-100);
 
 
-  --ui-success: --theme(--color-success-500);
-  --ui-success-hover: --theme(--color-success-600);
-  --ui-success-active: --theme(--color-success-700);
-  --ui-success-foreground: --theme(--color-neutral-25);
-  --ui-success-soft: --theme(--color-success-100);
+  --ui-success: --theme(--color-selaras-emerald-500);
+  --ui-success-hover: --theme(--color-selaras-emerald-600);
+  --ui-success-active: --theme(--color-selaras-emerald-700);
+  --ui-success-foreground: --theme(--color-selaras-gray-25);
+  --ui-success-soft: --theme(--color-selaras-emerald-100);
 
 
-  --ui-info: --theme(--color-info-500);
-  --ui-info-hover: --theme(--color-info-600);
-  --ui-info-active: --theme(--color-info-700);
-  --ui-info-foreground: --theme(--color-neutral-25);
-  --ui-info-soft: --theme(--color-info-100);
+  --ui-info: --theme(--color-selaras-blue-500);
+  --ui-info-hover: --theme(--color-selaras-blue-600);
+  --ui-info-active: --theme(--color-selaras-blue-700);
+  --ui-info-foreground: --theme(--color-selaras-gray-25);
+  --ui-info-soft: --theme(--color-selaras-blue-100);
 
 
-  --ui-danger: --theme(--color-danger-500);
-  --ui-danger-hover: --theme(--color-danger-600);
-  --ui-danger-active: --theme(--color-danger-700);
-  --ui-danger-foreground: --theme(--color-neutral-25);
-  --ui-danger-soft: --theme(--color-danger-100);
+  --ui-danger: --theme(--color-selaras-red-500);
+  --ui-danger-hover: --theme(--color-selaras-red-600);
+  --ui-danger-active: --theme(--color-selaras-red-700);
+  --ui-danger-foreground: --theme(--color-selaras-gray-25);
+  --ui-danger-soft: --theme(--color-selaras-red-100);
 
 
   /*
    * Warning is the intentional exception:
    * amber stays bright and therefore uses dark text.
    */
-  --ui-warning: --theme(--color-warning-500);
-  --ui-warning-hover: --theme(--color-warning-600);
-  --ui-warning-active: --theme(--color-warning-700);
-  --ui-warning-foreground: --theme(--color-neutral-950);
-  --ui-warning-soft: --theme(--color-warning-100);
+  --ui-warning: --theme(--color-selaras-amber-500);
+  --ui-warning-hover: --theme(--color-selaras-amber-600);
+  --ui-warning-active: --theme(--color-selaras-amber-700);
+  --ui-warning-foreground: --theme(--color-selaras-gray-950);
+  --ui-warning-soft: --theme(--color-selaras-amber-100);
 
   /*
    * Neutral gets the same 5-token shape every other color has - main/
@@ -504,11 +387,11 @@
    * one and two places back from that same extreme, replacing the
    * opacity-90/80 hack Button used to fake a hover/active state.
    */
-  --ui-neutral: --theme(--color-neutral-950);
-  --ui-neutral-hover: --theme(--color-neutral-900);
-  --ui-neutral-active: --theme(--color-neutral-800);
-  --ui-neutral-foreground: --theme(--color-neutral-25);
-  --ui-neutral-soft: --theme(--color-neutral-100);
+  --ui-neutral: --theme(--color-selaras-gray-950);
+  --ui-neutral-hover: --theme(--color-selaras-gray-900);
+  --ui-neutral-active: --theme(--color-selaras-gray-800);
+  --ui-neutral-foreground: --theme(--color-selaras-gray-25);
+  --ui-neutral-soft: --theme(--color-selaras-gray-100);
 }
 
 
@@ -533,22 +416,22 @@
      of reading as separate solid circles, since neither the ring nor
      the fill ever fully covers what's underneath. */
   --ui-primary-soft:
-    color-mix(in oklab, --theme(--color-primary-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-selaras-indigo-500) 24%, var(--ui-bg));
 
   --ui-secondary-soft:
-    color-mix(in oklab, --theme(--color-secondary-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-selaras-plum-500) 24%, var(--ui-bg));
 
   --ui-success-soft:
-    color-mix(in oklab, --theme(--color-success-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-selaras-emerald-500) 24%, var(--ui-bg));
 
   --ui-info-soft:
-    color-mix(in oklab, --theme(--color-info-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-selaras-blue-500) 24%, var(--ui-bg));
 
   --ui-warning-soft:
-    color-mix(in oklab, --theme(--color-warning-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-selaras-amber-500) 24%, var(--ui-bg));
 
   --ui-danger-soft:
-    color-mix(in oklab, --theme(--color-danger-500) 24%, var(--ui-bg));
+    color-mix(in oklab, --theme(--color-selaras-red-500) 24%, var(--ui-bg));
 
   /* main/foreground match what --ui-bg-inverted/--ui-text-inverted
      already resolved to here - unchanged appearance, just a dedicated
@@ -556,11 +439,11 @@
      what --ui-bg-elevated already resolved to here - the reported "too
      bright" problem is light-mode only (see :root's own comment on
      this token), so dark mode just keeps its existing look there. */
-  --ui-neutral: --theme(--color-neutral-50);
-  --ui-neutral-hover: --theme(--color-neutral-100);
-  --ui-neutral-active: --theme(--color-neutral-200);
-  --ui-neutral-foreground: --theme(--color-neutral-950);
-  --ui-neutral-soft: --theme(--color-neutral-900);
+  --ui-neutral: --theme(--color-selaras-gray-50);
+  --ui-neutral-hover: --theme(--color-selaras-gray-100);
+  --ui-neutral-active: --theme(--color-selaras-gray-200);
+  --ui-neutral-foreground: --theme(--color-selaras-gray-950);
+  --ui-neutral-soft: --theme(--color-selaras-gray-900);
 }
 
 /*
@@ -572,29 +455,29 @@
 @layer theme {
   :root,
   [data-selaras-theme] {
-    --ui-bg: var(--selaras-surface-default, --theme(--color-neutral-25));
-    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-neutral-50));
-    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-neutral-950));
-    --ui-text: var(--selaras-text-default, --theme(--color-neutral-950));
-    --ui-text-muted: var(--selaras-text-muted, --theme(--color-neutral-600));
-    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-neutral-50));
-    --ui-border: var(--selaras-border-default, --theme(--color-neutral-200));
-    --ui-border-muted: var(--selaras-border-muted, --theme(--color-neutral-100));
-    --ui-border-hover: var(--selaras-border-hover, --theme(--color-neutral-300));
+    --ui-bg: var(--selaras-surface-default, --theme(--color-selaras-gray-25));
+    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-selaras-gray-50));
+    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-selaras-gray-950));
+    --ui-text: var(--selaras-text-default, --theme(--color-selaras-gray-950));
+    --ui-text-muted: var(--selaras-text-muted, --theme(--color-selaras-gray-600));
+    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-selaras-gray-50));
+    --ui-border: var(--selaras-border-default, --theme(--color-selaras-gray-200));
+    --ui-border-muted: var(--selaras-border-muted, --theme(--color-selaras-gray-100));
+    --ui-border-hover: var(--selaras-border-hover, --theme(--color-selaras-gray-300));
     --ui-scrim: var(--selaras-scrim, rgb(0 0 0 / 0.5));
   }
 
   :root.dark,
   :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),
   [data-selaras-theme]:where([data-selaras-mode="dark"]) {
-    --ui-bg: var(--selaras-surface-default, --theme(--color-neutral-950));
-    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-neutral-900));
-    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-neutral-50));
-    --ui-text: var(--selaras-text-default, --theme(--color-neutral-50));
-    --ui-text-muted: var(--selaras-text-muted, --theme(--color-neutral-400));
-    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-neutral-950));
-    --ui-border: var(--selaras-border-default, --theme(--color-neutral-800));
-    --ui-border-muted: var(--selaras-border-muted, --theme(--color-neutral-900));
-    --ui-border-hover: var(--selaras-border-hover, --theme(--color-neutral-700));
+    --ui-bg: var(--selaras-surface-default, --theme(--color-selaras-gray-950));
+    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-selaras-gray-900));
+    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-selaras-gray-50));
+    --ui-text: var(--selaras-text-default, --theme(--color-selaras-gray-50));
+    --ui-text-muted: var(--selaras-text-muted, --theme(--color-selaras-gray-400));
+    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-selaras-gray-950));
+    --ui-border: var(--selaras-border-default, --theme(--color-selaras-gray-800));
+    --ui-border-muted: var(--selaras-border-muted, --theme(--color-selaras-gray-900));
+    --ui-border-hover: var(--selaras-border-hover, --theme(--color-selaras-gray-700));
   }
 }

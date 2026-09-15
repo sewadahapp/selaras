@@ -34,8 +34,9 @@ tokens, applied under a `.dark` class on `<html>` (flipped by
 `warning`) takes more than just overriding `--ui-primary` itself.** Each
 `--ui-*` role token above is only the semantic *entry point* - `--ui-primary`,
 `--ui-primary-hover`, `--ui-primary-active`, and `--ui-primary-soft` each
-resolve to a different step of an 11-shade `--color-primary-50` through
-`--color-primary-950` scale (defined in Selaras's own `@theme` block), not
+resolve to a different step of Selaras's owned 11-shade
+`--color-selaras-indigo-50` through `--color-selaras-indigo-950` default
+scale (defined in Selaras's own `@theme` block), not
 to each other. Overriding `--ui-primary` alone changes the base color but
 leaves hover/active/soft still pointing at the *old* scale's other shades -
 a visibly inconsistent result. Override the whole scale instead, in your
@@ -49,17 +50,17 @@ uses):
      the hue to recolor while keeping the same accessible contrast steps
      Selaras's own scale was tuned with; only touch lightness/chroma too
      if you want a fundamentally different saturation curve. */
-  --color-primary-50:  oklch(0.9700 0.0120 25);
-  --color-primary-100: oklch(0.9300 0.0280 25);
-  --color-primary-200: oklch(0.8600 0.0550 25);
-  --color-primary-300: oklch(0.7800 0.1000 25);
-  --color-primary-400: oklch(0.6400 0.1650 25);
-  --color-primary-500: oklch(0.4755 0.2026 25);
-  --color-primary-600: oklch(0.4150 0.1850 25);
-  --color-primary-700: oklch(0.3550 0.1580 25);
-  --color-primary-800: oklch(0.2950 0.1280 25);
-  --color-primary-900: oklch(0.2350 0.0950 25);
-  --color-primary-950: oklch(0.1700 0.0600 25);
+  --color-selaras-indigo-50:  oklch(0.9700 0.0120 25);
+  --color-selaras-indigo-100: oklch(0.9300 0.0280 25);
+  --color-selaras-indigo-200: oklch(0.8600 0.0550 25);
+  --color-selaras-indigo-300: oklch(0.7800 0.1000 25);
+  --color-selaras-indigo-400: oklch(0.6400 0.1650 25);
+  --color-selaras-indigo-500: oklch(0.4755 0.2026 25);
+  --color-selaras-indigo-600: oklch(0.4150 0.1850 25);
+  --color-selaras-indigo-700: oklch(0.3550 0.1580 25);
+  --color-selaras-indigo-800: oklch(0.2950 0.1280 25);
+  --color-selaras-indigo-900: oklch(0.2350 0.0950 25);
+  --color-selaras-indigo-950: oklch(0.1700 0.0600 25);
 }
 ```
 
@@ -165,7 +166,7 @@ Other components still use the legacy bridge during their semantic migration.
 
 Tailwind v4 only keeps a theme variable in the compiled CSS if it detects
 the variable actually being used somewhere - normally that means a
-utility class like `bg-primary-500` appearing literally in a scanned
+utility class like `bg-selaras-indigo-500` appearing literally in a scanned
 file. Overriding a color Selaras already ships (as above) works with a
 plain `@theme` block, since Selaras's own CSS already references the full
 scale internally. If a color you add still doesn't show up in your build

@@ -37,6 +37,7 @@ function updateNestedTokens() {
 
 <template>
   <span class="tw:hidden tw:md:block">Wide viewport</span>
+  <span class="tw:bg-primary-500">Host primary utility</span>
   <div>
     <SButton>Click me</SButton>
     <SRadioGroup id="radio-invalid" :items="['one', 'two']" model-value="one" color="enterprise" invalid />
@@ -189,7 +190,7 @@ function updateNestedTokens() {
       <SButton id="builtin-foundation-button">
         Independent built-in default
       </SButton>
-      <span id="builtin-foundation-probe" style="color: var(--tw-color-primary-500);">Foundation probe</span>
+      <span id="builtin-foundation-probe" style="color: var(--tw-color-selaras-indigo-500);">Foundation probe</span>
     </div>
     <STheme
       as="section"
@@ -199,8 +200,7 @@ function updateNestedTokens() {
         Derived states
       </SButton>
     </STheme>
-    <!-- Restore the stock primary shade changed by this fixture's @theme override. -->
-    <section id="stock-colors" style="--tw-color-primary-500: oklch(0.4755 0.2026 279.99); background: var(--ui-bg); position: relative; z-index: 999999;">
+    <section id="stock-colors" style="background: var(--ui-bg); position: relative; z-index: 999999;">
       <SButton
         v-for="role in ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'neutral']"
         :id="`stock-${role}`" :key="role" :color="role" variant="soft"
