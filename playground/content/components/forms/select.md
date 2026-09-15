@@ -351,6 +351,9 @@ not something to configure here.
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Select`'s own theme file:
 
+Global and scoped overrides use `ui.select`; Autocomplete intentionally reads
+the same key because both components use this recipe.
+
 ::theme-source{name="select"}
 ::
 

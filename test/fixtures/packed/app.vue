@@ -76,9 +76,9 @@ void hyphenatedRole
     </STheme>
     <SBadge id="packed-dot" dot aria-label="Offline" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
-    <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" aria-label="Published selection" />
+    <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" :color="role" aria-label="Published selection" />
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />
-    <SAutocomplete id="packed-autocomplete-forced" name="packed-forced-choice" :items="choices" value-key="id" label-key="title" force-selection :default-value="1" aria-label="Published suggestion" />
+    <SAutocomplete id="packed-autocomplete-forced" name="packed-forced-choice" :items="choices" value-key="id" label-key="title" force-selection :default-value="1" :color="role" aria-label="Published suggestion" />
     <SAutocomplete id="packed-autocomplete-created" name="packed-created-choice" :items="choices" value-key="id" label-key="title" default-value="Created text" aria-label="Published free text" />
   </SApp>
 </template>

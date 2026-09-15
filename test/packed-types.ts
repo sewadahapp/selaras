@@ -138,6 +138,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
     popover: { slots: { content: 'max-w-sm' } },
     radioGroup: { compoundVariants: [{ color: 'success', variant: 'card', class: { itemWrapper: 'shadow-sm' } }] },
     rating: { compoundVariants: [{ color: 'warning', orientation: 'vertical', class: { root: 'gap-2' } }] },
+    select: { compoundVariants: [{ color: 'primary', invalid: true, class: { trigger: 'font-semibold' } }] },
     slider: { compoundVariants: [{ color: 'secondary', thumbVariant: 'bar', class: { thumb: 'shadow-sm' } }] },
     slideover: { compoundVariants: [{ side: 'right', inset: true, class: { content: 'w-96' } }] },
     switch: { compoundVariants: [{ color: 'success', invalid: true, class: { track: 'shadow-sm' } }] },

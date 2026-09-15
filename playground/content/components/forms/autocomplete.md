@@ -242,6 +242,8 @@ suggestions as you type.
 Autocomplete renders the same internal combobox base as
 [Select](/components/forms/select#custom-ui), so they share one theme file:
 
+Global and scoped overrides use the `ui.select` key for both components.
+
 ::theme-source{name="select"}
 ::
 

@@ -17,6 +17,7 @@ import type { pinInputTheme, PinInputThemeSlots } from './theme/pin-input'
 import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
 import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
 import type { ratingTheme, RatingThemeSlots } from './theme/rating'
+import type { selectTheme, SelectThemeSlots } from './theme/select'
 import type { slideoverTheme, SlideoverThemeSlots } from './theme/slideover'
 import type { sliderTheme, SliderThemeSlots } from './theme/slider'
 import type { switchTheme, SwitchThemeSlots } from './theme/switch'
@@ -39,6 +40,7 @@ type FormFieldVariants = VariantProps<typeof formFieldTheme>
 type PinInputVariants = VariantProps<typeof pinInputTheme>
 type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
 type RatingVariants = VariantProps<typeof ratingTheme>
+type SelectVariants = VariantProps<typeof selectTheme>
 type SliderVariants = VariantProps<typeof sliderTheme>
 type SwitchVariants = VariantProps<typeof switchTheme>
 type TextareaVariants = VariantProps<typeof textareaTheme>
@@ -120,6 +122,11 @@ export interface ThemeComponentRegistry {
   rating: {
     slots: RatingThemeSlots
     conditions: WithRegisteredColor<Pick<RatingVariants, 'color' | 'size' | 'orientation'>>
+  }
+  /** Shared by Select and Autocomplete, which intentionally use one recipe. */
+  select: {
+    slots: SelectThemeSlots
+    conditions: WithRegisteredColor<Pick<SelectVariants, 'color' | 'size' | 'invalid'>>
   }
   slider: {
     slots: SliderThemeSlots

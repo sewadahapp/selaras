@@ -32,7 +32,6 @@ import { useIcons } from '../composables/use-icons'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeBindings } from '../utils/ui'
@@ -514,9 +513,8 @@ const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
 const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SelectVariants['color'] : 'primary')
 const colorRoleMarker = computed(() => effectiveColor.value)
-const ui = computed(() => theme.value({ size: effectiveSize.value, color: recipeColor.value, invalid: selectInvalid.value }))
+const ui = computed(() => theme.value({ size: effectiveSize.value, color: effectiveColor.value as SelectVariants['color'], invalid: selectInvalid.value }))
 
 const nativeTriggerAttrs = useFallthroughAttrs(key => !props.creatable && (isNativeInputA11yAttr(key) || (!props.searchable && isNativeInputEvent(key))))
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: key => isNativeInputA11yAttr(key) || isNativeInputEvent(key) || ((props.creatable || props.searchable) && isNativeInputAttr(key)) })

@@ -8,7 +8,7 @@ export const selectTheme = tv({
     // true (unavoidable while interacting with the trigger or its options)
     // let the plain gray hover ring beat the primary one in the cascade,
     // since they're all equal-specificity pseudo-class/attribute selectors.
-    trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-focus-within:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus-within:ring-2 data-[state=open]:ring-2 disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-focus-within:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
     value: 'flex-1 truncate text-start text-[var(--ui-text)] data-[placeholder]:text-[var(--ui-text-muted)]',
     // Both chip display branches render a real Chip (see
     // ComboboxSelectBase.vue) instead of hand-rolled markup, styled/
@@ -55,16 +55,19 @@ export const selectTheme = tv({
       md: { trigger: 'min-h-10' },
       lg: { trigger: 'min-h-11 text-base' },
     },
-    // Focus-ring color only - the resting ring stays --ui-border regardless
-    // of `color`, matching Input's own scope (see input.ts).
+    // Registered custom roles have no finite Tailwind Variants branch. Keep
+    // the semantic focus styling in the base slot so every registered role
+    // resolves through --_selaras-color-focus; neutral alone overrides it.
+    // Empty built-in branches preserve the public recipe condition used by
+    // consumer compound variants.
     color: {
-      primary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      primary: '',
       neutral: { trigger: 'focus:ring-[var(--ui-bg-inverted)] focus-within:ring-[var(--ui-bg-inverted)] data-[state=open]:ring-[var(--ui-bg-inverted)]' },
-      secondary: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      success: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      danger: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      info: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
-      warning: { trigger: 'focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
     // Declared last (after color) so tailwind-merge lets its own ring
     // overrides win over color's - see input.ts for why declaration order

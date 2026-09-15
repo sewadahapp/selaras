@@ -81,10 +81,14 @@ async function inspectSsr(prefixed = true) {
     assert.ok(html.includes('--selaras-color-published-fill: #456789;'), 'runtime app-config CSS must appear in SSR head')
     assert.ok(html.includes('--selaras-color-published-fill: #56789a;'), 'scoped token CSS must appear in SSR head')
     assert.ok(html.includes('published-row'), 'published generic Table must render its row')
-    assert.match(html, /<button(?=[^>]*id="packed-select")(?=[^>]*aria-label="Published selection")/)
+    const packedSelectTag = [...html.matchAll(/<button[^>]*>/g)].find(([tag]) => tag.includes('id="packed-select"'))?.[0]
+    assert.ok(packedSelectTag, 'published Select trigger must render during SSR')
+    assert.match(packedSelectTag, /aria-label="Published selection"/)
+    assert.match(packedSelectTag, pattern(/tw:font-semibold/), 'ui.select must configure Select')
+    assert.match(packedSelectTag, pattern(/tw:tracking-wide/), 'ui.select must receive Select\'s registered role')
     assert.ok(html.includes('Published select'), 'published generic Select must display its custom-key default')
     assert.match(html, /<input(?=[^>]*name="packed-choices")(?=[^>]*value="1")/, 'bare multiple must preserve the numeric array default')
-    assert.match(html, /<input(?=[^>]*id="packed-autocomplete-forced")(?=[^>]*aria-label="Published suggestion")(?=[^>]*value="Published select")/)
+    assert.match(html, /<div[^>]*class="[^"]*font-semibold[^"]*tracking-wide[^"]*"[^>]*><input(?=[^>]*id="packed-autocomplete-forced")(?=[^>]*aria-label="Published suggestion")(?=[^>]*value="Published select")/, 'ui.select must configure Autocomplete through the shared recipe')
     assert.match(html, /<input(?=[^>]*name="packed-forced-choice")(?=[^>]*value="1")/)
     assert.match(html, /<input(?=[^>]*id="packed-autocomplete-created")(?=[^>]*aria-label="Published free text")(?=[^>]*value="Created text")/)
     const stylesheets = [...html.matchAll(/<link [^>]+>/g)]

@@ -1,11 +1,13 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
+import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import Badge from '../../src/runtime/components/Badge.vue'
 import Button from '../../src/runtime/components/Button.vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
+import Select from '../../src/runtime/components/Select.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 
 function withTheme(themeProps: Record<string, unknown>, children: any) {
@@ -137,6 +139,23 @@ describe('theme', () => {
       compoundVariants: [{ color: 'premium', variant: 'card', class: { root: 'tracking-widest' } }],
     } } }, h(Checkbox, { color: 'premium', variant: 'card', modelValue: true, label: 'Upgrade' })))
     expect(wrapper.find('[data-selaras-color="premium"]').classes()).toContain('tracking-widest')
+  })
+
+  it('uses one Select recipe extension for Select and Autocomplete custom roles', async () => {
+    const items = [{ label: 'One', value: 'one' }]
+    const wrapper = await mountSuspended(withTheme({ ui: { select: {
+      compoundVariants: [{ color: 'premium', class: { trigger: 'tracking-widest' } }],
+    } } }, [
+      h(Select<(typeof items)[number]>, { id: 'themed-select', items, color: 'premium' }),
+      h(Autocomplete<(typeof items)[number]>, { id: 'themed-autocomplete', items, color: 'premium' }),
+    ]))
+
+    const selectTrigger = wrapper.find('#themed-select')
+    const autocompleteTrigger = wrapper.find('#themed-autocomplete').element.parentElement
+    expect(selectTrigger.classes()).toContain('tracking-widest')
+    expect(autocompleteTrigger?.classList).toContain('tracking-widest')
+    expect(selectTrigger.classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
+    expect(autocompleteTrigger?.classList).toContain('focus-within:ring-[var(--_selaras-color-focus)]')
   })
 
   it('does not affect a button outside the Theme boundary', async () => {
