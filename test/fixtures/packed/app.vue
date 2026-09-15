@@ -81,6 +81,7 @@ void hyphenatedRole
     <SColorPicker :color="role" />
     <SFileUpload :color="role" />
     <SNavigationMenu :items="navigationItems" :color="role" />
+    <SSeparator id="packed-separator" :color="role" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
     <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" :color="role" aria-label="Published selection" />
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />

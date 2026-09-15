@@ -11,7 +11,7 @@ export const separatorTheme = tv({
     // plain bar; with a label, a second one of these renders after it
     // (see Separator.vue), splitting the available space evenly on both
     // sides of the text.
-    line: 'shrink-0 border-[var(--ui-border)]',
+    line: 'shrink-0 border-[var(--_selaras-color-fill)]',
     // Always muted, independent of `color` - a colored line with
     // matching bright label text reads as garish rather than
     // informative; the label stays legible/neutral regardless of how
@@ -42,14 +42,18 @@ export const separatorTheme = tv({
     // a divider's own default has to stay subtle, matching precedent for
     // "neutral" carrying whatever's contextually right per component
     // (Badge's own soft variant does the same with --ui-bg-elevated).
+    // Semantic color is the base line treatment so registered roles work even
+    // without a finite built-in branch. Empty built-in entries preserve the
+    // public recipe condition, and neutral explicitly restores the subtle
+    // functional border.
     color: {
       neutral: { line: 'border-[var(--ui-border)]' },
-      primary: { line: 'border-[var(--_selaras-color-fill)]' },
-      secondary: { line: 'border-[var(--_selaras-color-fill)]' },
-      success: { line: 'border-[var(--_selaras-color-fill)]' },
-      danger: { line: 'border-[var(--_selaras-color-fill)]' },
-      info: { line: 'border-[var(--_selaras-color-fill)]' },
-      warning: { line: 'border-[var(--_selaras-color-fill)]' },
+      primary: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
     },
   },
   compoundVariants: [

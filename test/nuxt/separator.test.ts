@@ -1,6 +1,8 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import Separator from '../../src/runtime/components/Separator.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 
 describe('separator', () => {
   it('binds a custom semantic role to semantic color variables', async () => {
@@ -8,6 +10,16 @@ describe('separator', () => {
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
     expect(wrapper.attributes('style')).toBeUndefined()
     expect(wrapper.find('span').classes()).toContain('border-[var(--_selaras-color-fill)]')
+  })
+
+  it('passes a custom role to public recipe conditions', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { separator: {
+        compoundVariants: [{ color: 'premium', orientation: 'vertical', class: { line: 'opacity-75' } }],
+      } } }, () => h(Separator, { color: 'premium', orientation: 'vertical' })),
+    }))
+
+    expect(wrapper.find('span').classes()).toContain('opacity-75')
   })
 
   it('defaults to role="separator" with no aria-orientation (horizontal)', async () => {

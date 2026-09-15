@@ -16,6 +16,7 @@ export default defineAppConfig({
         slots: { trigger: 'font-semibold' },
         compoundVariants: [{ color: 'published', class: { trigger: 'tracking-wide' } }],
       },
+      separator: { compoundVariants: [{ color: 'published', class: { line: 'opacity-75' } }] },
       toast: { compoundVariants: [{ color: 'published', class: { root: 'tracking-widest' } }] },
     },
     tokens: {

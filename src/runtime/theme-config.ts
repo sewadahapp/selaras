@@ -20,6 +20,7 @@ import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
 import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
 import type { ratingTheme, RatingThemeSlots } from './theme/rating'
 import type { selectTheme, SelectThemeSlots } from './theme/select'
+import type { separatorTheme, SeparatorThemeSlots } from './theme/separator'
 import type { slideoverTheme, SlideoverThemeSlots } from './theme/slideover'
 import type { sliderTheme, SliderThemeSlots } from './theme/slider'
 import type { switchTheme, SwitchThemeSlots } from './theme/switch'
@@ -46,6 +47,7 @@ type PinInputVariants = VariantProps<typeof pinInputTheme>
 type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
 type RatingVariants = VariantProps<typeof ratingTheme>
 type SelectVariants = VariantProps<typeof selectTheme>
+type SeparatorVariants = VariantProps<typeof separatorTheme>
 type SliderVariants = VariantProps<typeof sliderTheme>
 type SwitchVariants = VariantProps<typeof switchTheme>
 type TextareaVariants = VariantProps<typeof textareaTheme>
@@ -142,6 +144,10 @@ export interface ThemeComponentRegistry {
   select: {
     slots: SelectThemeSlots
     conditions: WithRegisteredColor<Pick<SelectVariants, 'color' | 'size' | 'invalid'>>
+  }
+  separator: {
+    slots: SeparatorThemeSlots
+    conditions: WithRegisteredColor<Pick<SeparatorVariants, 'orientation' | 'variant' | 'color'>>
   }
   slider: {
     slots: SliderThemeSlots

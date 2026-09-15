@@ -82,6 +82,8 @@ async function inspectSsr(prefixed = true) {
     assert.match(html, pattern(/<button(?=[^>]*aria-label="Color picker")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:tracking-wide)/), 'registered roles must reach ColorPicker recipe conditions')
     assert.match(html, pattern(/tw:tracking-widest/), 'registered roles must reach FileUpload recipe conditions')
     assert.match(html, pattern(/<a(?=[^>]*href="\/")(?=[^>]*tw:underline-offset-8)/), 'registered roles must reach NavigationMenu recipe conditions')
+    assert.match(html, /id="packed-separator"/, 'the published Separator must render during SSR')
+    assert.match(html, pattern(/tw:opacity-75/), 'registered roles must reach Separator recipe conditions')
     assert.ok(html.includes('--selaras-color-primary-fill: #6789ab;'), 'built-in runtime tokens must appear in SSR head')
     assert.ok(html.includes('--selaras-color-published-fill: #456789;'), 'runtime app-config CSS must appear in SSR head')
     assert.ok(html.includes('--selaras-color-published-fill: #56789a;'), 'scoped token CSS must appear in SSR head')

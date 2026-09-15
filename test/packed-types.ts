@@ -141,6 +141,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
     radioGroup: { compoundVariants: [{ color: 'success', variant: 'card', class: { itemWrapper: 'shadow-sm' } }] },
     rating: { compoundVariants: [{ color: 'warning', orientation: 'vertical', class: { root: 'gap-2' } }] },
     select: { compoundVariants: [{ color: 'primary', invalid: true, class: { trigger: 'font-semibold' } }] },
+    separator: { compoundVariants: [{ color: 'danger', orientation: 'vertical', variant: 'dashed', class: { line: 'opacity-75' } }] },
     slider: { compoundVariants: [{ color: 'secondary', thumbVariant: 'bar', class: { thumb: 'shadow-sm' } }] },
     slideover: { compoundVariants: [{ side: 'right', inset: true, class: { content: 'w-96' } }] },
     switch: { compoundVariants: [{ color: 'success', invalid: true, class: { track: 'shadow-sm' } }] },

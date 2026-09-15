@@ -6,7 +6,6 @@ import type { UiProp } from '../utils/ui'
 import { Separator } from 'reka-ui'
 import { computed } from 'vue'
 import { separatorTheme } from '../theme/separator'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -34,11 +33,10 @@ export interface SeparatorSlots {
 
 const theme = useComponentTheme('separator', separatorTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'neutral', 'neutral'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as SeparatorVariants['color'] : 'primary')
 const ui = computed(() => theme.value({
   orientation: props.orientation,
   variant: props.variant,
-  color: recipeColor.value,
+  color: effectiveColor.value as SeparatorVariants['color'],
 }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
