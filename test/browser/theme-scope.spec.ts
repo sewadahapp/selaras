@@ -10,6 +10,35 @@ test('applies global managed tokens to an unscoped programmatic toast', async ({
   await expect(toast).toHaveCSS('border-inline-start-color', 'rgb(1, 2, 3)')
 })
 
+test('keeps programmatic theme snapshots after their caller scope unmounts', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  await page.locator('#open-programmatic-theme').evaluate(element => (element as HTMLButtonElement).click())
+
+  const button = page.locator('#programmatic-theme-button')
+  const toast = page.getByText('Snapshotted toast', { exact: true }).locator('..').locator('..')
+  await expect(button).toHaveCSS('background-color', 'rgb(40, 50, 60)')
+  await expect(button).toHaveCSS('height', '44px')
+  await expect(toast).toHaveCSS('border-inline-start-color', 'rgb(40, 50, 60)')
+  const modalScope = await button.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme'))
+  const toastScope = await toast.getAttribute('data-selaras-theme')
+  expect(modalScope).toMatch(/^p/)
+  expect(toastScope).toMatch(/^p/)
+
+  await page.locator('#toggle-scope').evaluate(element => (element as HTMLButtonElement).click())
+
+  await expect(page.locator('#outer-fill')).toHaveCount(0)
+  await expect(button).toHaveCSS('background-color', 'rgb(40, 50, 60)')
+  await expect(button).toHaveCSS('height', '44px')
+  await expect(toast).toHaveCSS('border-inline-start-color', 'rgb(40, 50, 60)')
+  expect(await button.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme'))).toBe(modalScope)
+  expect(await toast.getAttribute('data-selaras-theme')).toBe(toastScope)
+
+  await page.locator('#open-nested-programmatic-toast').click()
+  const nestedToast = page.getByText('Nested snapshotted toast', { exact: true }).locator('..').locator('..')
+  await expect(nestedToast).toHaveCSS('border-inline-start-color', 'rgb(40, 50, 60)')
+  await expect(nestedToast).toHaveAttribute('data-selaras-mode', 'light')
+})
+
 test('renders explicit semantic modes before JavaScript or hydration', async ({ browser, page, goto }) => {
   await goto('/', { waitUntil: 'hydration' })
   const serverRenderedPage = await browser.newPage({ javaScriptEnabled: false })

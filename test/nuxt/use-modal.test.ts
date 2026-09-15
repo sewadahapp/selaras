@@ -1,7 +1,9 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, ref } from 'vue'
+import Button from '../../src/runtime/components/Button.vue'
 import ModalRenderer from '../../src/runtime/components/ModalRenderer.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 import { useModal } from '../../src/runtime/composables/use-modal'
 
 const TestDialog = defineComponent({
@@ -12,6 +14,39 @@ const TestDialog = defineComponent({
       h('span', { class: 'test-dialog-message' }, props.message),
       h('button', { class: 'confirm-btn', onClick: () => emit('close', 'confirmed') }, 'Confirm'),
     ])
+  },
+})
+
+const ThemedDialog = defineComponent({
+  render: () => h(Button, { class: 'snapshot-button', color: 'premium' as any }, () => 'Themed action'),
+})
+
+const ThemedModalTrigger = defineComponent({
+  setup() {
+    const { open } = useModal()
+    return () => h('button', {
+      'data-testid': 'themed-modal-trigger',
+      'onClick': () => open(ThemedDialog, { title: 'Themed dialog', description: 'Snapshot verification', dismissible: false }),
+    }, 'Open')
+  },
+})
+
+const ThemedModalHarness = defineComponent({
+  setup() {
+    const showScope = ref(true)
+    return () => [
+      showScope.value
+        ? h(Theme, {
+            as: 'section',
+            mode: 'dark',
+            ui: { modal: { slots: { content: 'tracking-widest' } } },
+            defaults: { button: { size: 'lg' } },
+            tokens: { light: { colors: { premium: { fill: '#5134a8' } } } },
+          }, () => h(ThemedModalTrigger))
+        : null,
+      h('button', { 'data-testid': 'remove-scope', 'onClick': () => { showScope.value = false } }, 'Remove scope'),
+      h(ModalRenderer),
+    ]
   },
 })
 
@@ -60,6 +95,17 @@ describe('useModal', () => {
     await wrapper.vm.$nextTick()
 
     close(modals.value[0]!.id)
+
+    expect(await promise).toBeUndefined()
+  })
+
+  it('settles pending work when its renderer app boundary unmounts', async () => {
+    wrapper = await mountSuspended(ModalRenderer)
+    const promise = useModal().open(TestDialog, { title: 'Test dialog', description: 'Test dialog' })
+    await wrapper.vm.$nextTick()
+
+    wrapper.unmount()
+    wrapper = undefined
 
     expect(await promise).toBeUndefined()
   })
@@ -134,5 +180,28 @@ describe('useModal', () => {
     await new Promise(resolve => setTimeout(resolve, 50))
 
     expect(document.body.querySelector('[role=dialog]')).toBeFalsy()
+  })
+
+  it('keeps its UI, defaults, tokens, and mode owner after the caller scope unmounts', async () => {
+    wrapper = await mountSuspended(ThemedModalHarness)
+    await wrapper.find('[data-testid="themed-modal-trigger"]').trigger('click')
+    await wrapper.vm.$nextTick()
+
+    const dialog = document.body.querySelector<HTMLElement>('[role=dialog]')
+    const button = dialog?.querySelector<HTMLElement>('.snapshot-button')
+    const snapshotScope = dialog?.getAttribute('data-selaras-theme')
+    expect(dialog?.classList).toContain('tracking-widest')
+    expect(button?.classList).toContain('h-11')
+    expect(snapshotScope).toMatch(/^p/)
+    expect(dialog?.getAttribute('data-selaras-mode')).toBe('dark')
+    expect(dialog?.getAttribute('style')).toContain('color-scheme: dark')
+
+    await wrapper.find('[data-testid="remove-scope"]').trigger('click')
+    await wrapper.vm.$nextTick()
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(wrapper.find('section[data-selaras-theme]').exists()).toBe(false)
+    expect(document.body.querySelector('[role=dialog]')?.getAttribute('data-selaras-theme')).toBe(snapshotScope)
+    expect([...document.head.querySelectorAll('style')].some(style => style.textContent?.includes(`[data-selaras-theme="${snapshotScope}"]`) && style.textContent.includes('#5134a8'))).toBe(true)
   })
 })

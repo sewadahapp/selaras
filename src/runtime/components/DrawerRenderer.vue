@@ -1,31 +1,42 @@
 <script setup lang="ts">
+import { onUnmounted } from 'vue'
 import { useDrawer } from '../composables/use-drawer'
+import ProgrammaticTheme from '../internal/ProgrammaticTheme.vue'
 import Drawer from './Drawer.vue'
 
 const { drawers, close, remove } = useDrawer()
+onUnmounted(() => {
+  for (const instance of drawers.value)
+    instance.resolve(undefined)
+  drawers.value = []
+})
 </script>
 
 <template>
-  <Drawer
+  <ProgrammaticTheme
     v-for="instance in drawers"
     :key="instance.id"
-    :open="instance.isOpen"
-    :title="instance.title"
-    :description="instance.description"
-    :side="instance.side"
-    :handle="instance.handle"
-    :snap-points="instance.snapPoints"
-    :snap-point="instance.snapPoint"
-    :snap-to-sequential-points="instance.snapToSequentialPoints"
-    :dismissible="instance.dismissible"
-    :modal="instance.modal"
-    :overlay="instance.overlay"
-    :transition="instance.transition"
-    @update:open="(open) => !open && close(instance.id)"
-    @after-leave="remove(instance.id)"
+    :snapshot="instance._theme"
   >
-    <template #content>
-      <component :is="instance.component" v-bind="instance.props" @close="(value: unknown) => close(instance.id, value)" />
-    </template>
-  </Drawer>
+    <Drawer
+      :open="instance.isOpen"
+      :title="instance.title"
+      :description="instance.description"
+      :side="instance.side"
+      :handle="instance.handle"
+      :snap-points="instance.snapPoints"
+      :snap-point="instance.snapPoint"
+      :snap-to-sequential-points="instance.snapToSequentialPoints"
+      :dismissible="instance.dismissible"
+      :modal="instance.modal"
+      :overlay="instance.overlay"
+      :transition="instance.transition"
+      @update:open="(open) => !open && close(instance.id)"
+      @after-leave="remove(instance.id)"
+    >
+      <template #content>
+        <component :is="instance.component" v-bind="instance.props" @close="(value: unknown) => close(instance.id, value)" />
+      </template>
+    </Drawer>
+  </ProgrammaticTheme>
 </template>

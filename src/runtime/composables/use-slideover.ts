@@ -1,5 +1,8 @@
 import type { Component, Ref } from 'vue'
+import type { ProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
 import { markRaw, ref } from 'vue'
+import { createAppScopedState } from '../utils/app-scoped-state'
+import { useProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
 
 export interface SlideoverInstance {
   id: number
@@ -14,6 +17,8 @@ export interface SlideoverInstance {
   modal?: boolean
   overlay?: boolean
   transition?: boolean
+  /** @internal */
+  _theme: ProgrammaticThemeSnapshot
   resolve: (value: unknown) => void
 }
 
@@ -38,18 +43,25 @@ export interface UseSlideoverReturn {
   remove: (id: number) => void
 }
 
-// Module-level singleton, not useState - see use-modal.ts for why
-// (components aren't SSR-serializable, and this is a client-only action).
-const slideovers = ref<SlideoverInstance[]>([])
-let counter = 0
+const useSlideoverState = createAppScopedState(() => ({
+  slideovers: ref<SlideoverInstance[]>([]),
+  counter: 0,
+}))
 
 // Explicit return type - see use-modal.ts's useModal() for why (TS2883,
 // breaks the real non-stub build without it).
 export function useSlideover(): UseSlideoverReturn {
+  const state = useSlideoverState()
+  const { slideovers } = state
+  const snapshotTheme = useProgrammaticThemeSnapshot()
+
   function open<T = void>(component: Component, options?: UseSlideoverOpenOptions): Promise<T | undefined> {
+    if (import.meta.server)
+      return Promise.reject(new Error('[useSlideover] open() is client-only. Render SSlideover declaratively during SSR.'))
+
     return new Promise((resolve) => {
       slideovers.value.push({
-        id: counter++,
+        id: state.counter++,
         // Vue components are meant to stay an opaque, non-reactive value -
         // without this, pushing one into this reactive array wraps it in
         // a reactive proxy too, which Vue's own dev warning flags as
@@ -65,6 +77,7 @@ export function useSlideover(): UseSlideoverReturn {
         modal: options?.modal,
         overlay: options?.overlay,
         transition: options?.transition,
+        _theme: snapshotTheme(),
         resolve: resolve as (value: unknown) => void,
       })
     })

@@ -207,7 +207,7 @@ export function useComponentTheme<T extends (...args: any[]) => any>(key: string
 
   return computed(() => {
     let result: any = base
-    const globalOverride = appConfig.selaras?.ui?.[key]
+    const globalOverride = themeContext?.value.replaceGlobal ? undefined : appConfig.selaras?.ui?.[key]
     if (globalOverride)
       result = tv({ extend: result, ...globalOverride } as any)
     for (const override of collectThemeChain(themeContext?.value, c => c.ui, key))
@@ -228,7 +228,11 @@ export function useThemeProps(key: string): ComputedRef<Record<string, unknown>>
   const appConfig = useAppConfig() as { selaras?: { defaults?: Record<string, Record<string, unknown>> } }
   const themeContext = inject(THEME_INJECTION_KEY, undefined)
 
-  return computed(() => Object.assign({}, appConfig.selaras?.defaults?.[key], ...collectThemeChain(themeContext?.value, c => c.defaults, key)))
+  return computed(() => Object.assign(
+    {},
+    themeContext?.value.replaceGlobal ? undefined : appConfig.selaras?.defaults?.[key],
+    ...collectThemeChain(themeContext?.value, c => c.defaults, key),
+  ))
 }
 
 /** Returns the nearest explicit STheme DOM marker for portalled content roots. */

@@ -76,5 +76,7 @@ export interface ThemeContext {
   /** Effective managed tokens from explicit DOM scopes only. */
   tokens?: RuntimeTokenOverrides
   parent?: ThemeContext
+  /** Internal snapshot boundary: its chain already contains global UI/defaults. */
+  replaceGlobal?: boolean
 }
 export const THEME_INJECTION_KEY: InjectionKey<ComputedRef<ThemeContext>> = Symbol('selaras-theme')

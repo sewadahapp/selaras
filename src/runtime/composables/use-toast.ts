@@ -1,7 +1,9 @@
+import type { Ref } from 'vue'
 import type { ColorRole } from '../utils/color-registry'
-import { hasInjectionContext } from 'vue'
-import { useState } from '#imports'
-import { useThemeScope } from '../utils/ui'
+import type { ProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
+import { ref } from 'vue'
+import { createAppScopedState } from '../utils/app-scoped-state'
+import { useProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
 
 export interface ToastOptions {
   title?: string
@@ -15,18 +17,31 @@ export interface ToastOptions {
 
 export interface ToastItem extends ToastOptions {
   id: number
-  /** Opaque STheme marker captured where useToast() was created. @internal */
-  _themeScope?: string
+  /** @internal */
+  _theme: ProgrammaticThemeSnapshot
 }
 
-export function useToast() {
-  const toasts = useState<ToastItem[]>('selaras-toasts', () => [])
-  const counter = useState('selaras-toast-counter', () => 0)
-  const themeScope = hasInjectionContext() ? useThemeScope() : undefined
+export interface UseToastReturn {
+  toasts: Ref<ToastItem[]>
+  add: (toast: ToastOptions) => number
+  remove: (id: number) => void
+}
+
+const useToastState = createAppScopedState(() => ({
+  toasts: ref<ToastItem[]>([]),
+  counter: 0,
+}))
+
+export function useToast(): UseToastReturn {
+  const state = useToastState()
+  const { toasts } = state
+  const snapshotTheme = useProgrammaticThemeSnapshot()
 
   function add(toast: ToastOptions) {
-    const id = counter.value++
-    toasts.value.push({ ...toast, id, _themeScope: themeScope?.value })
+    if (import.meta.server)
+      throw new Error('[useToast] add() is client-only. Render server-visible status content declaratively.')
+    const id = state.counter++
+    toasts.value.push({ ...toast, id, _theme: snapshotTheme() })
     return id
   }
 

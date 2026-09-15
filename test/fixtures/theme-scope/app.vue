@@ -97,6 +97,7 @@ const outerTokens = {
           <SButton id="inline-fill" style="--selaras-color-primary-fill: rgb(80 90 100)">
             Inline CSS
           </SButton>
+          <ProgrammaticThemeProbe />
           <SPopover :open="true" @open-auto-focus="event => event.preventDefault()">
             <SButton id="portal-trigger">
               Portal

@@ -1,5 +1,8 @@
 import type { Component, Ref } from 'vue'
+import type { ProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
 import { markRaw, ref } from 'vue'
+import { createAppScopedState } from '../utils/app-scoped-state'
+import { useProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
 
 export interface ModalInstance {
   id: number
@@ -12,6 +15,8 @@ export interface ModalInstance {
   modal?: boolean
   overlay?: boolean
   transition?: boolean
+  /** @internal */
+  _theme: ProgrammaticThemeSnapshot
   resolve: (value: unknown) => void
 }
 
@@ -34,22 +39,27 @@ export interface UseModalReturn {
   remove: (id: number) => void
 }
 
-// Module-level singleton, not useState - a modal opened programmatically
-// renders an arbitrary Vue component, which isn't SSR-serializable, so it
-// can't live in Nuxt's useState. Opening a modal is realistically always a
-// client-side action anyway, so a plain shared client ref is enough.
-const modals = ref<ModalInstance[]>([])
-let counter = 0
+const useModalState = createAppScopedState(() => ({
+  modals: ref<ModalInstance[]>([]),
+  counter: 0,
+}))
 
 // Explicit return type - without it, TS infers a structural type that
 // can't be printed in a declaration file without referencing internal
 // Vue/Nuxt types (TS2883), breaking `nuxt-module-build`'s real (non-stub)
 // build.
 export function useModal(): UseModalReturn {
+  const state = useModalState()
+  const { modals } = state
+  const snapshotTheme = useProgrammaticThemeSnapshot()
+
   function open<T = void>(component: Component, options?: UseModalOpenOptions): Promise<T | undefined> {
+    if (import.meta.server)
+      return Promise.reject(new Error('[useModal] open() is client-only. Render SModal declaratively during SSR.'))
+
     return new Promise((resolve) => {
       modals.value.push({
-        id: counter++,
+        id: state.counter++,
         // Vue components are meant to stay an opaque, non-reactive value -
         // without this, pushing one into this reactive array wraps it in
         // a reactive proxy too, which Vue's own dev warning flags as
@@ -63,6 +73,7 @@ export function useModal(): UseModalReturn {
         modal: options?.modal,
         overlay: options?.overlay,
         transition: options?.transition,
+        _theme: snapshotTheme(),
         resolve: resolve as (value: unknown) => void,
       })
     })

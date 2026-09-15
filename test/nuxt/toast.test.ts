@@ -1,7 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { ToastProvider } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 import Toast from '../../src/runtime/components/Toast.vue'
 import { useToast } from '../../src/runtime/composables/use-toast'
@@ -14,17 +14,20 @@ const ToastHarness = defineComponent({
   render: () => h(ToastProvider, () => h(Toast)),
 })
 
-const ThemedToastHarness = defineComponent({
-  render: () => h(ToastProvider, () => h(Theme, { ui: { toast: {
-    compoundVariants: [{ color: 'premium', class: { root: 'tracking-widest' } }],
-  } } }, () => h(Toast))),
-})
-
 const ScopedToastTrigger = defineComponent({
   setup() {
     const { add } = useToast()
     return () => h('button', { 'data-testid': 'scoped-toast-trigger', 'onClick': () => add({ title: 'Scoped', color: 'premium' as any }) }, 'Show')
   },
+})
+
+const ThemedToastHarness = defineComponent({
+  render: () => h(ToastProvider, () => [
+    h(Theme, { ui: { toast: {
+      compoundVariants: [{ color: 'premium', class: { root: 'tracking-widest' } }],
+    } } }, () => h(ScopedToastTrigger)),
+    h(Toast),
+  ]),
 })
 
 const ScopedToastHarness = defineComponent({
@@ -34,9 +37,21 @@ const ScopedToastHarness = defineComponent({
   ]),
 })
 
-// useToast's state is a Nuxt useState singleton, keyed by a fixed string -
-// it survives across mounts within the same test file, so each test must
-// clear it itself rather than relying on a fresh wrapper to start empty.
+const SurvivingScopedToastHarness = defineComponent({
+  setup() {
+    const showScope = ref(true)
+    return () => h(ToastProvider, () => [
+      showScope.value
+        ? h(Theme, { as: 'section', tokens: { light: { colors: { premium: { fill: '#5134a8' } } } } }, () => h(ScopedToastTrigger))
+        : null,
+      h('button', { 'data-testid': 'remove-scope', 'onClick': () => { showScope.value = false } }, 'Remove scope'),
+      h(Toast),
+    ])
+  },
+})
+
+// The Nuxt test harness reuses one application instance within this file, so
+// its app-owned queue is cleared between tests.
 afterEach(() => {
   useToast().toasts.value = []
 })
@@ -65,9 +80,8 @@ describe('toast', () => {
   })
 
   it('passes a custom semantic role to scoped recipe conditions', async () => {
-    const { add } = useToast()
-    add({ title: 'Custom recipe', color: 'premium' as any })
     wrapper = await mountSuspended(ThemedToastHarness)
+    await wrapper.find('[data-testid="scoped-toast-trigger"]').trigger('click')
     await new Promise(resolve => setTimeout(resolve, 50))
 
     expect(document.body.querySelector('[data-selaras-color="premium"]')?.classList).toContain('tracking-widest')
@@ -84,14 +98,32 @@ describe('toast', () => {
     expect(statusIcons()[0]?.classList).toContain('text-[var(--_selaras-color-fill,var(--ui-text-muted))]')
   })
 
-  it('captures the nearest explicit theme scope when the composable is created', async () => {
+  it('owns a snapshot of the nearest explicit theme when the toast is added', async () => {
     wrapper = await mountSuspended(ScopedToastHarness)
     await wrapper.find('[data-testid="scoped-toast-trigger"]').trigger('click')
     await new Promise(resolve => setTimeout(resolve, 50))
 
-    const scope = wrapper.find('[data-selaras-theme]').attributes('data-selaras-theme')
+    const sourceScope = wrapper.find('[data-selaras-theme]').attributes('data-selaras-theme')
     const root = document.body.querySelector('[data-selaras-color="premium"]')
-    expect(root?.getAttribute('data-selaras-theme')).toBe(scope)
+    const snapshotScope = root?.getAttribute('data-selaras-theme')
+    expect(snapshotScope).toMatch(/^p/)
+    expect(snapshotScope).not.toBe(sourceScope)
+    expect([...document.head.querySelectorAll('style')].some(style => style.textContent?.includes(`[data-selaras-theme="${snapshotScope}"]`) && style.textContent.includes('#5134a8'))).toBe(true)
+  })
+
+  it('keeps its theme snapshot after the caller scope unmounts', async () => {
+    wrapper = await mountSuspended(SurvivingScopedToastHarness)
+    await wrapper.find('[data-testid="scoped-toast-trigger"]').trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 50))
+    const root = document.body.querySelector('[data-selaras-color="premium"]')
+    const snapshotScope = root?.getAttribute('data-selaras-theme')
+
+    await wrapper.find('[data-testid="remove-scope"]').trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(wrapper.find('section[data-selaras-theme]').exists()).toBe(false)
+    expect(document.body.querySelector('[data-selaras-color="premium"]')?.getAttribute('data-selaras-theme')).toBe(snapshotScope)
+    expect([...document.head.querySelectorAll('style')].some(style => style.textContent?.includes(`[data-selaras-theme="${snapshotScope}"]`) && style.textContent.includes('#5134a8'))).toBe(true)
   })
 
   it('renders an added toast\'s title and description', async () => {
