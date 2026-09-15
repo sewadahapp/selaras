@@ -1,3 +1,4 @@
+import type { VariantProps } from 'tailwind-variants'
 import { tv } from 'tailwind-variants'
 
 export const navigationMenuTheme = tv({
@@ -192,32 +193,21 @@ export const navigationMenuTheme = tv({
   },
   compoundVariants: [
     { variant: 'pill', active: false, class: { link: 'hover:bg-[var(--ui-bg-elevated)]', childLink: 'hover:bg-[var(--ui-bg-elevated)]' } },
-    { variant: 'pill', active: true, color: 'primary', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
+    // All registered non-neutral roles use the selected semantic recipe.
+    // Neutral follows these entries so its functional-token classes win via
+    // tailwind-merge. Keeping color as a real variant still lets consumer
+    // compound extensions match registered role names.
+    { variant: 'pill', active: true, class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
     { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--ui-neutral-soft)] text-[var(--ui-text)]' } },
-    { variant: 'pill', active: true, color: 'secondary', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
-    { variant: 'pill', active: true, color: 'success', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
-    { variant: 'pill', active: true, color: 'danger', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
-    { variant: 'pill', active: true, color: 'info', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
-    { variant: 'pill', active: true, color: 'warning', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
 
-    { variant: 'link', active: true, color: 'primary', class: { link: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'link', active: true, class: { link: 'text-[var(--_selaras-color-text)]' } },
     { variant: 'link', active: true, color: 'neutral', class: { link: 'text-[var(--ui-text)]' } },
-    { variant: 'link', active: true, color: 'secondary', class: { link: 'text-[var(--_selaras-color-text)]' } },
-    { variant: 'link', active: true, color: 'success', class: { link: 'text-[var(--_selaras-color-text)]' } },
-    { variant: 'link', active: true, color: 'danger', class: { link: 'text-[var(--_selaras-color-text)]' } },
-    { variant: 'link', active: true, color: 'info', class: { link: 'text-[var(--_selaras-color-text)]' } },
-    { variant: 'link', active: true, color: 'warning', class: { link: 'text-[var(--_selaras-color-text)]' } },
 
     // Child links (inside horizontal's own dropdown panel) always get the
     // "active" text-color treatment regardless of `variant` - a pill-style
     // background on every list row in a dropdown would be visual noise.
-    { active: true, color: 'primary', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
+    { active: true, class: { childLink: 'text-[var(--_selaras-color-text)]' } },
     { active: true, color: 'neutral', class: { childLink: 'text-[var(--ui-text)]' } },
-    { active: true, color: 'secondary', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
-    { active: true, color: 'success', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
-    { active: true, color: 'danger', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
-    { active: true, color: 'info', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
-    { active: true, color: 'warning', class: { childLink: 'text-[var(--_selaras-color-text)]' } },
 
     // The highlight bar reuses whatever text color `active` already set via
     // the compound variants above (`after:bg-current`) instead of a second,
@@ -236,3 +226,4 @@ export const navigationMenuTheme = tv({
 })
 
 export type NavigationMenuThemeSlots = keyof (typeof navigationMenuTheme)['slots']
+export type NavigationMenuThemeVariants = VariantProps<typeof navigationMenuTheme>

@@ -251,6 +251,10 @@ These same slots work identically in vertical mode.
 
 ### Custom `:ui`
 
+Global and scoped recipe overrides use `ui.navigationMenu`. The recursive
+accordion and collapsed flyout renderers intentionally consume that same key;
+they are implementation details rather than separate theme surfaces.
+
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `NavigationMenu`'s own theme file:
 

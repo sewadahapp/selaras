@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import { computed, ref, useSlots } from 'vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -91,8 +90,7 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: true, active: false, disabled: props.item.disabled }))
+const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: true, active: false, disabled: props.item.disabled }))
 
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 

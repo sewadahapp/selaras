@@ -9,6 +9,7 @@ const narrow = useIsMobile()
 const { add: addPublishedToast } = useToast()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
+const navigationItems = [{ label: 'Published navigation', to: '/', active: true }]
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
 const registeredDefaults = {
   defaults: {
@@ -79,6 +80,7 @@ void hyphenatedRole
     <SAvatar text="P" :color="role" />
     <SColorPicker :color="role" />
     <SFileUpload :color="role" />
+    <SNavigationMenu :items="navigationItems" :color="role" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
     <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" :color="role" aria-label="Published selection" />
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />

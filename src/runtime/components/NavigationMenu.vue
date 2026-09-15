@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
@@ -17,7 +17,6 @@ import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -60,8 +59,7 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const ui = computed(() => theme.value({ orientation: props.orientation, color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed }))
+const ui = computed(() => theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed }))
 
 const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
@@ -73,11 +71,11 @@ function isActive(item: NavigationMenuItem) {
 // Recomputed per item, not a single shared `ui` - active/disabled vary
 // row-to-row (same reasoning as Dropdown.vue's own itemPropsFor).
 function linkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: props.orientation, color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
 
 function childLinkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: props.orientation, color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
+  return resolveSlot(theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
 }
 
 // A collapsed rail's own flyout triggers (see NavigationMenuFlyoutTrigger.vue)

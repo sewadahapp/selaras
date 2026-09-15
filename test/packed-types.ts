@@ -135,6 +135,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
     formField: { compoundVariants: [{ orientation: 'horizontal', class: { label: 'w-40' } }] },
     inputNumber: { compoundVariants: [{ color: 'info', orientation: 'vertical', class: { input: 'tabular-nums' } }] },
     modal: { compoundVariants: [{ fullscreen: true, transition: false, class: { content: 'rounded-none' } }] },
+    navigationMenu: { compoundVariants: [{ color: 'primary', active: true, variant: 'pill', class: { link: 'font-semibold' } }] },
     pinInput: { compoundVariants: [{ color: 'secondary', invalid: true, class: { input: 'font-mono' } }] },
     popover: { slots: { content: 'max-w-sm' } },
     radioGroup: { compoundVariants: [{ color: 'success', variant: 'card', class: { itemWrapper: 'shadow-sm' } }] },

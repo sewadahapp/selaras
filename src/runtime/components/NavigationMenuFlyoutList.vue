@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
@@ -7,7 +7,6 @@ import { computed } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
@@ -51,11 +50,10 @@ function isActive(item: NavigationMenuItem) {
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
+const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
 
 function linkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
 </script>
 

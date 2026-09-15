@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NavigationMenuThemeSlots } from '../theme/navigation-menu'
+import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
@@ -7,7 +7,6 @@ import { computed, useId, useSlots } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
@@ -65,8 +64,7 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const recipeColor = computed(() => isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value : 'primary')
-const ui = computed(() => theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight }))
+const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight }))
 
 const accordionValue = useId()
 const accordionItems = computed(() => [{ value: accordionValue, label: props.item.label, disabled: props.item.disabled }])
@@ -95,7 +93,7 @@ function isActive(item: NavigationMenuItem) {
 // `theme.value(...)` there would try to read `.value` off the already-
 // unwrapped function itself.
 function linkProps(child: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: 'vertical', color: recipeColor.value, variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
 }
 
 // Reka's real NavigationMenuLink has no `disabled` prop - a disabled leaf

@@ -10,6 +10,7 @@ export default defineAppConfig({
       colorPicker: { compoundVariants: [{ color: 'published', class: { trigger: 'tracking-wide' } }] },
       fileUpload: { compoundVariants: [{ color: 'published', class: { dropzone: 'tracking-widest' } }] },
       modal: { slots: { content: 'max-w-xl' } },
+      navigationMenu: { compoundVariants: [{ color: 'published', active: true, class: { link: 'underline-offset-8' } }] },
       popover: { slots: { content: 'p-6' } },
       select: {
         slots: { trigger: 'font-semibold' },

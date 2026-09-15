@@ -1,8 +1,9 @@
 import type { NavigationMenuItem } from '../../src/runtime/utils/navigation-menu'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
-import { nextTick } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import NavigationMenu from '../../src/runtime/components/NavigationMenu.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 
 function macrotask() {
   return new Promise(resolve => setTimeout(resolve, 50))
@@ -21,6 +22,18 @@ describe('navigationMenu (horizontal)', () => {
   it('binds a custom semantic role to navigation links', async () => {
     const wrapper = await mountSuspended(NavigationMenu, { props: { items, color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
+  })
+
+  it('passes a custom role to active horizontal recipe conditions', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { navigationMenu: {
+        compoundVariants: [{ color: 'premium', orientation: 'horizontal', active: true, class: { link: 'tracking-widest' } }],
+      } } }, () => h(NavigationMenu, { items, color: 'premium' })),
+    }), { route: '/docs' })
+
+    const active = wrapper.find('a[href="/docs"]')
+    expect(active.classes()).toContain('tracking-widest')
+    expect(active.classes()).toContain('bg-[var(--_selaras-color-subtle)]')
   })
 
   it('renders a leaf item as a real link to its path', async () => {
@@ -87,6 +100,19 @@ describe('navigationMenu (horizontal)', () => {
     const link = wrapper.find('a[href="/docs"]')
     expect(link.classes()).toContain('text-[var(--_selaras-color-text)]')
     expect(link.classes().some(c => c.includes('after:'))).toBe(true)
+  })
+
+  it('keeps the neutral active treatment distinct from semantic roles', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items: [{ label: 'Docs', to: '/docs' }], color: 'neutral' },
+      route: '/docs',
+    })
+
+    const link = wrapper.find('a[href="/docs"]')
+    expect(link.classes()).toContain('bg-[var(--ui-neutral-soft)]')
+    expect(link.classes()).toContain('text-[var(--ui-text)]')
+    expect(link.classes()).not.toContain('bg-[var(--_selaras-color-subtle)]')
+    expect(link.classes()).not.toContain('text-[var(--_selaras-color-text)]')
   })
 
   it('the dropdown spans the full width of the nav bar - regression, it used to size itself to the narrowest possible content (120px for a short child list)', async () => {
@@ -202,6 +228,23 @@ describe('navigationMenu (vertical)', () => {
   function findTrigger(wrapper: { findAll: (selector: string) => { text: () => string, element: Element, classes: () => string[] }[] }, label: string) {
     return wrapper.findAll('button').find(b => b.text() === label)!
   }
+
+  it('passes a custom role through recursive accordion recipe conditions', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { navigationMenu: {
+        compoundVariants: [{ color: 'premium', orientation: 'vertical', active: true, class: { link: 'tracking-widest' } }],
+      } } }, () => h(NavigationMenu, { items: deepItems, orientation: 'vertical', color: 'premium' })),
+    }), { route: '/deep/level-3' })
+
+    findTrigger(wrapper, 'Level 1').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+    findTrigger(wrapper, 'Level 2').element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    expect(wrapper.find('a[href="/deep/level-3"]').classes()).toContain('tracking-widest')
+  })
 
   it('renders nested children inside an accordion, to arbitrary depth', async () => {
     const wrapper = await mountSuspended(NavigationMenu, { props: { items: deepItems, orientation: 'vertical' } })
@@ -329,6 +372,31 @@ describe('navigationMenu (vertical)', () => {
 })
 
 describe('navigationMenu (collapsed)', () => {
+  it('uses the public recipe across the collapsed trigger and flyout list', async () => {
+    const items: NavigationMenuItem[] = [
+      { label: 'Guides', icon: 'lucide:book', children: [{ label: 'Getting started', to: '/guides/getting-started' }] },
+    ]
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { navigationMenu: { compoundVariants: [
+        { color: 'premium', collapsed: true, class: { link: 'tracking-tight' } },
+        { color: 'premium', flyoutRoot: true, class: { childList: 'tracking-wide' } },
+        { color: 'premium', active: true, class: { link: 'font-bold' } },
+      ] } } }, () => h(NavigationMenu, { items, orientation: 'vertical', collapsed: true, color: 'premium' })),
+    }), { route: '/guides/getting-started' })
+
+    const trigger = wrapper.find('button')
+    expect(trigger.classes()).toContain('tracking-tight')
+    trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    await nextTick()
+    await macrotask()
+
+    const flyout = document.body.querySelector('ul[data-selaras-color="premium"]')
+    const active = document.body.querySelector('a[href="/guides/getting-started"]')
+    expect(flyout?.classList).toContain('tracking-wide')
+    expect(active?.classList).toContain('font-bold')
+    wrapper.unmount()
+  })
+
   it('visually hides a leaf item\'s label (sr-only, not removed) while keeping its icon', async () => {
     const items: NavigationMenuItem[] = [{ label: 'Docs', icon: 'lucide:book', to: '/docs' }]
     const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })

@@ -14,6 +14,7 @@ import type { formFieldTheme, FormFieldThemeSlots } from './theme/form-field'
 import type { inputTheme, InputThemeSlots } from './theme/input'
 import type { inputNumberTheme, InputNumberThemeSlots } from './theme/input-number'
 import type { modalTheme, ModalThemeSlots } from './theme/modal'
+import type { navigationMenuTheme, NavigationMenuThemeSlots } from './theme/navigation-menu'
 import type { pinInputTheme, PinInputThemeSlots } from './theme/pin-input'
 import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
 import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
@@ -40,6 +41,7 @@ type InputVariants = VariantProps<typeof inputTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
 type FileUploadVariants = VariantProps<typeof fileUploadTheme>
 type FormFieldVariants = VariantProps<typeof formFieldTheme>
+type NavigationMenuVariants = VariantProps<typeof navigationMenuTheme>
 type PinInputVariants = VariantProps<typeof pinInputTheme>
 type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
 type RatingVariants = VariantProps<typeof ratingTheme>
@@ -118,6 +120,11 @@ export interface ThemeComponentRegistry {
   inputNumber: {
     slots: InputNumberThemeSlots
     conditions: WithRegisteredColor<Pick<InputNumberVariants, 'color' | 'size' | 'orientation' | 'invalid'>>
+  }
+  /** Shared by the public component and its recursive accordion/flyout renderers. */
+  navigationMenu: {
+    slots: NavigationMenuThemeSlots
+    conditions: WithRegisteredColor<Pick<NavigationMenuVariants, 'orientation' | 'color' | 'variant' | 'active' | 'disabled' | 'highlight' | 'collapsed' | 'flyoutRoot'>>
   }
   pinInput: {
     slots: PinInputThemeSlots
