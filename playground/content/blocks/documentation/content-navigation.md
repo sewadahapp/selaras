@@ -77,6 +77,10 @@ that only ever describes a leaf link's own exact path):
 To see exactly what you'd be overriding - the current default classes for
 every slot - here's `ContentNavigation`'s own theme file:
 
+Global and scoped theme recipes use `ui.contentNavigation`. Its group slots
+adapt the nested Accordion layout while `ui.accordion` and `ui.icon` remain
+independent primitive recipes.
+
 ::theme-source{name="content-navigation"}
 ::
 

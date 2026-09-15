@@ -29,6 +29,8 @@ example.
 To see exactly what you'd be overriding - the current default classes for
 every slot - here's `ContentSurround`'s own theme file:
 
+Global and scoped theme recipes use `ui.contentSurround`.
+
 ::theme-source{name="content-surround"}
 ::
 

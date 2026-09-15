@@ -14,6 +14,9 @@ import type { chipTheme, ChipThemeSlots } from './theme/chip'
 import type { collapsibleTheme, CollapsibleThemeSlots } from './theme/collapsible'
 import type { colorPickerTheme, ColorPickerThemeSlots } from './theme/color-picker'
 import type { containerTheme, ContainerThemeSlots } from './theme/container'
+import type { contentNavigationTheme, ContentNavigationThemeSlots } from './theme/content-navigation'
+import type { contentSurroundTheme, ContentSurroundThemeSlots } from './theme/content-surround'
+import type { contentTocTheme, ContentTocThemeSlots } from './theme/content-toc'
 import type { contextMenuTheme, ContextMenuThemeSlots } from './theme/context-menu'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
@@ -64,6 +67,9 @@ type ChipVariants = VariantProps<typeof chipTheme>
 type CollapsibleVariants = VariantProps<typeof collapsibleTheme>
 type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
 type ContainerVariants = VariantProps<typeof containerTheme>
+type ContentNavigationVariants = VariantProps<typeof contentNavigationTheme>
+type ContentSurroundVariants = VariantProps<typeof contentSurroundTheme>
+type ContentTocVariants = VariantProps<typeof contentTocTheme>
 type InputVariants = VariantProps<typeof inputTheme>
 type InputGroupVariants = VariantProps<typeof inputGroupTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
@@ -178,6 +184,19 @@ export interface ThemeComponentRegistry {
   container: {
     slots: ContainerThemeSlots
     conditions: Pick<ContainerVariants, 'size'>
+  }
+  /** Nested groups use Accordion internally; this key owns the navigation-tree adaptation. */
+  contentNavigation: {
+    slots: ContentNavigationThemeSlots
+    conditions: WithRegisteredColor<Pick<ContentNavigationVariants, 'color' | 'isNested'>>
+  }
+  contentSurround: {
+    slots: ContentSurroundThemeSlots
+    conditions: WithRegisteredColor<Pick<ContentSurroundVariants, 'color' | 'align'>>
+  }
+  contentToc: {
+    slots: ContentTocThemeSlots
+    conditions: WithRegisteredColor<Pick<ContentTocVariants, 'color' | 'active'>>
   }
   fileUpload: {
     slots: FileUploadThemeSlots

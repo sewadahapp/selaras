@@ -15,6 +15,9 @@ import Checkbox from '../../src/runtime/components/Checkbox.vue'
 import Collapsible from '../../src/runtime/components/Collapsible.vue'
 import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
 import Container from '../../src/runtime/components/Container.vue'
+import ContentNavigation from '../../src/runtime/components/ContentNavigation.vue'
+import ContentSurround from '../../src/runtime/components/ContentSurround.vue'
+import ContentToc from '../../src/runtime/components/ContentToc.vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import FileUpload from '../../src/runtime/components/FileUpload.vue'
 import Header from '../../src/runtime/components/Header.vue'
@@ -258,6 +261,33 @@ describe('theme', () => {
     expect(wrapper.find('#themed-page-aside').classes()).toContain('outline-solid')
     expect(wrapper.find('#themed-page-aside').findComponent(ScrollArea).classes()).toContain('max-h-40')
     expect(wrapper.find('#themed-scroll-area').classes()).toContain('font-mono')
+  })
+
+  it('applies content-navigation recipes without replacing nested primitive recipes', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: {
+      accordion: { slots: { root: 'font-mono' } },
+      contentNavigation: { compoundVariants: [{ color: 'premium', isNested: true, class: { item: 'outline-dashed' } }] },
+      contentSurround: { compoundVariants: [{ color: 'premium', align: 'end', class: { link: 'outline-dotted' } }] },
+      contentToc: { compoundVariants: [{ color: 'premium', active: true, class: { link: 'outline-double' } }] },
+    } }, [
+      h(ContentNavigation, {
+        navigation: [{ title: 'Group', path: '/group', children: [{ title: 'Child', path: '/child' }] }],
+        color: 'premium',
+      }),
+      h(ContentSurround, { next: { title: 'Next', path: '/next' }, color: 'premium' }),
+      h(ContentToc, {
+        links: [{ id: 'heading', text: 'Heading', depth: 2 }],
+        color: 'premium',
+        isNested: true,
+        activeIds: new Set(['heading']),
+      }),
+    ]))
+
+    const navigation = wrapper.findComponent(ContentNavigation)
+    expect(navigation.findComponent(Accordion).classes()).toContain('font-mono')
+    expect(navigation.find('li li').classes()).toContain('outline-dashed')
+    expect(wrapper.findComponent(ContentSurround).find('a').classes()).toContain('outline-dotted')
+    expect(wrapper.findComponent(ContentToc).find('a').classes()).toContain('outline-double')
   })
 
   it('uses one Select recipe extension for Select and Autocomplete custom roles', async () => {

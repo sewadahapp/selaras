@@ -14,6 +14,8 @@ const breadcrumbItems = [{ label: 'Home', to: '/' }, { label: 'Published current
 const accordionItems = [{ value: 'published', label: 'Published accordion' }]
 const tabItems = [{ value: 'published', label: 'Published tab' }]
 const stepperItems = [{ title: 'Published step' }]
+const contentNavigationItems = [{ title: 'Published group', path: '/group', children: [{ title: 'Published child', path: '/child' }] }]
+const tocItems = [{ id: 'published-heading', text: 'Published heading', depth: 2 }]
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
 const registeredDefaults = {
   defaults: {
@@ -99,6 +101,9 @@ void hyphenatedRole
     <SScrollArea id="packed-scroll-area">
       Published scroll area
     </SScrollArea>
+    <SContentNavigation id="packed-content-navigation" :navigation="contentNavigationItems" :color="role" />
+    <SContentSurround id="packed-content-surround" :next="{ title: 'Published next', path: '/next' }" :color="role" />
+    <SContentToc id="packed-content-toc" :links="tocItems" :color="role" />
     <STheme as="section" v-bind="theme" :tokens="{ light: { colors: { published: { fill: '#56789a' } } } }">
       <SButton id="packed-scoped" :color="role">
         Published scoped
