@@ -81,6 +81,7 @@ async function inspectSsr(prefixed = true) {
     assert.match(html, pattern(/<span(?=[^>]*data-selaras-color="published")(?=[^>]*tw:tracking-tight)/), 'registered roles must reach Avatar recipe conditions')
     assert.match(html, pattern(/<button(?=[^>]*aria-label="Color picker")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:tracking-wide)/), 'registered roles must reach ColorPicker recipe conditions')
     assert.match(html, pattern(/tw:tracking-widest/), 'registered roles must reach FileUpload recipe conditions')
+    assert.match(html, pattern(/<span(?=[^>]*id="packed-icon")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:align-top)/), 'registered roles must reach Icon recipe conditions')
     assert.match(html, pattern(/<a(?=[^>]*href="\/")(?=[^>]*tw:underline-offset-8)/), 'registered roles must reach NavigationMenu recipe conditions')
     assert.match(html, /id="packed-separator"/, 'the published Separator must render during SSR')
     assert.match(html, pattern(/tw:opacity-75/), 'registered roles must reach Separator recipe conditions')

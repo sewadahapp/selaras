@@ -15,15 +15,25 @@ export const iconTheme = tv({
     // icon usage - a raw `class="text-*"` still overrides `color` too,
     // since both just flow through the same tailwind-merge below.
     color: {
-      primary: { base: 'text-[var(--_selaras-color-fill)]' },
-      neutral: { base: 'text-[var(--ui-text)]' },
-      secondary: { base: 'text-[var(--_selaras-color-fill)]' },
-      success: { base: 'text-[var(--_selaras-color-fill)]' },
-      danger: { base: 'text-[var(--_selaras-color-fill)]' },
-      info: { base: 'text-[var(--_selaras-color-fill)]' },
-      warning: { base: 'text-[var(--_selaras-color-fill)]' },
+      primary: '',
+      neutral: '',
+      secondary: '',
+      success: '',
+      danger: '',
+      info: '',
+      warning: '',
+    },
+    // Runtime derives this from the optional color prop. It supplies the
+    // shared semantic treatment even when `color` is an application-registered
+    // role with no finite built-in branch, while leaving uncolored icons free
+    // to inherit currentColor.
+    colored: {
+      true: { base: 'text-[var(--_selaras-color-fill)]' },
     },
   },
+  compoundVariants: [
+    { color: 'neutral', colored: true, class: { base: 'text-[var(--ui-text)]' } },
+  ],
 })
 
 export type IconThemeSlots = keyof (typeof iconTheme)['slots']

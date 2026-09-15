@@ -5,7 +5,6 @@ import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { iconTheme } from '../theme/icon'
-import { isBuiltinColorRole } from '../utils/color-registry'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -24,8 +23,10 @@ export interface IconProps {
 
 const theme = useComponentTheme('icon', iconTheme)
 const effectiveColor = computed(() => props.color ? resolveRegisteredColorRole(props.color, 'primary') : undefined)
-const recipeColor = computed(() => effectiveColor.value && isBuiltinColorRole(effectiveColor.value) ? effectiveColor.value as IconVariants['color'] : effectiveColor.value ? 'primary' : undefined)
-const ui = computed(() => theme.value({ color: recipeColor.value }))
+const ui = computed(() => theme.value({
+  color: effectiveColor.value as IconVariants['color'],
+  colored: !!effectiveColor.value,
+}))
 
 const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>

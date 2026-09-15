@@ -40,8 +40,8 @@ to impose one.
 `color` is unset by default, so the icon inherits `currentColor` from
 whatever text color surrounds it - the same behavior every internal icon
 usage in this library already relies on (an input's leading icon takes
-`--ui-text-muted` from its wrapper, not a color prop of its own). Pass one of
-the seven semantic role names to force a specific color instead:
+`--ui-text-muted` from its wrapper, not a color prop of its own). Pass a
+registered semantic role to force a specific color instead:
 
 ```vue-html
 <SIcon name="hugeicons:checkmark-circle-01" color="success" />
@@ -74,6 +74,11 @@ still needs its own closing line:
 ```
 
 ### Custom `:ui`
+
+Global and scoped recipe overrides use `ui.icon`. This is deliberately a
+shared primitive hook: it affects direct `<SIcon>` instances and icons rendered
+inside other Selaras components. The owning component's icon slot is merged
+later, so its size and other conflicting Tailwind classes remain more specific.
 
 To see exactly what you'd be overriding - the current default classes for
 every slot and variant - here's `Icon`'s own theme file:

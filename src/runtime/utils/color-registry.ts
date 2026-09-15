@@ -119,12 +119,6 @@ export function createColorRegistry<T extends Record<string, ColorModePair<Color
   }])) as { [K in keyof T]: ColorModePair<ColorRecipe> }
 }
 
-const builtinRoleSet = new Set<string>(builtinColorNames)
-
-export function isBuiltinColorRole(role: string): role is BuiltinColorName {
-  return builtinRoleSet.has(role)
-}
-
 const generatedRoleFields = [
   'fill',
   'fill-hover',

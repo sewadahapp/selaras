@@ -80,6 +80,7 @@ void hyphenatedRole
     <SAvatar text="P" :color="role" />
     <SColorPicker :color="role" />
     <SFileUpload :color="role" />
+    <SIcon id="packed-icon" name="hugeicons:star" :color="role" />
     <SNavigationMenu :items="navigationItems" :color="role" />
     <SSeparator id="packed-separator" :color="role" />
     <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />

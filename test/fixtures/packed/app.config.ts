@@ -9,6 +9,7 @@ export default defineAppConfig({
       button: { compoundVariants: [{ color: ['published', 'published-accent'], class: { base: 'font-bold' } }] },
       colorPicker: { compoundVariants: [{ color: 'published', class: { trigger: 'tracking-wide' } }] },
       fileUpload: { compoundVariants: [{ color: 'published', class: { dropzone: 'tracking-widest' } }] },
+      icon: { compoundVariants: [{ color: 'published', class: { base: 'align-top' } }] },
       modal: { slots: { content: 'max-w-xl' } },
       navigationMenu: { compoundVariants: [{ color: 'published', active: true, class: { link: 'underline-offset-8' } }] },
       popover: { slots: { content: 'p-6' } },

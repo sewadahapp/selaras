@@ -11,6 +11,7 @@ import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
 import type { fileUploadTheme, FileUploadThemeSlots } from './theme/file-upload'
 import type { formFieldTheme, FormFieldThemeSlots } from './theme/form-field'
+import type { iconTheme, IconThemeSlots } from './theme/icon'
 import type { inputTheme, InputThemeSlots } from './theme/input'
 import type { inputNumberTheme, InputNumberThemeSlots } from './theme/input-number'
 import type { modalTheme, ModalThemeSlots } from './theme/modal'
@@ -42,6 +43,7 @@ type InputVariants = VariantProps<typeof inputTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
 type FileUploadVariants = VariantProps<typeof fileUploadTheme>
 type FormFieldVariants = VariantProps<typeof formFieldTheme>
+type IconVariants = VariantProps<typeof iconTheme>
 type NavigationMenuVariants = VariantProps<typeof navigationMenuTheme>
 type PinInputVariants = VariantProps<typeof pinInputTheme>
 type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
@@ -118,6 +120,11 @@ export interface ThemeComponentRegistry {
   formField: {
     slots: FormFieldThemeSlots
     conditions: Pick<FormFieldVariants, 'size' | 'orientation'>
+  }
+  /** Shared primitive recipe used by direct SIcon and icons inside components. */
+  icon: {
+    slots: IconThemeSlots
+    conditions: WithRegisteredColor<Pick<IconVariants, 'color'>>
   }
   inputNumber: {
     slots: InputNumberThemeSlots

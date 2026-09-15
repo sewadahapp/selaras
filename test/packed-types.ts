@@ -133,6 +133,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
     dropdown: { compoundVariants: [{ destructive: true, class: { item: 'font-bold' } }] },
     fileUpload: { compoundVariants: [{ color: 'warning', invalid: true, class: { dropzone: 'border-dashed' } }] },
     formField: { compoundVariants: [{ orientation: 'horizontal', class: { label: 'w-40' } }] },
+    icon: { compoundVariants: [{ color: 'warning', class: { base: 'opacity-75' } }] },
     inputNumber: { compoundVariants: [{ color: 'info', orientation: 'vertical', class: { input: 'tabular-nums' } }] },
     modal: { compoundVariants: [{ fullscreen: true, transition: false, class: { content: 'rounded-none' } }] },
     navigationMenu: { compoundVariants: [{ color: 'primary', active: true, variant: 'pill', class: { link: 'font-semibold' } }] },

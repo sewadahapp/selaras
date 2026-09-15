@@ -1,12 +1,38 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
+import Button from '../../src/runtime/components/Button.vue'
 import Icon from '../../src/runtime/components/Icon.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 
 describe('icon', () => {
   it('binds a custom semantic role to the icon root', async () => {
     const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star', color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
     expect(wrapper.find('[data-selaras-color="premium"]').attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.find('.iconify').classes()).toContain('text-[var(--_selaras-color-fill)]')
+  })
+
+  it('passes a custom role to public recipe conditions', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { icon: {
+        compoundVariants: [{ color: 'premium', class: { base: 'opacity-75' } }],
+      } } }, () => h(Icon, { name: 'lucide:star', color: 'premium' })),
+    }))
+
+    expect(wrapper.find('.iconify').classes()).toContain('opacity-75')
+  })
+
+  it('applies the shared recipe to internal icons while the owner controls conflicting classes', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { icon: { slots: { base: 'size-8 opacity-75' } } } }, () =>
+        h(Button, { icon: 'lucide:star', size: 'sm' })),
+    }))
+
+    const icon = wrapper.find('.iconify')
+    expect(icon.classes()).toContain('opacity-75')
+    expect(icon.classes()).toContain('size-4')
+    expect(icon.classes()).not.toContain('size-8')
   })
 
   it('renders the named icon', async () => {
