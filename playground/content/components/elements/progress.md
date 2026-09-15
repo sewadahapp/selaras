@@ -58,6 +58,8 @@ every slot and variant - here's `Progress`'s own theme file:
 ::theme-source{name="progress"}
 ::
 
+Global and scoped theme recipes use `ui.progress`.
+
 ## Props
 
 | Prop | Type | Default |

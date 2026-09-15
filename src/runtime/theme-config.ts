@@ -7,6 +7,7 @@ import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
 import type { breadcrumbTheme, BreadcrumbThemeSlots } from './theme/breadcrumb'
 import type { buttonTheme, ButtonThemeSlots } from './theme/button'
 import type { buttonGroupTheme, ButtonGroupThemeSlots } from './theme/button-group'
+import type { calloutTheme, CalloutThemeSlots } from './theme/callout'
 import type { cardTheme, CardThemeSlots } from './theme/card'
 import type { cardGroupTheme, CardGroupThemeSlots } from './theme/card-group'
 import type { checkboxTheme, CheckboxThemeSlots } from './theme/checkbox'
@@ -27,6 +28,7 @@ import type { iconTheme, IconThemeSlots } from './theme/icon'
 import type { inputTheme, InputThemeSlots } from './theme/input'
 import type { inputGroupTheme, InputGroupThemeSlots } from './theme/input-group'
 import type { inputNumberTheme, InputNumberThemeSlots } from './theme/input-number'
+import type { kbdTheme, KbdThemeSlots } from './theme/kbd'
 import type { modalTheme, ModalThemeSlots } from './theme/modal'
 import type { navigationMenuTheme, NavigationMenuThemeSlots } from './theme/navigation-menu'
 import type { pageAsideTheme, PageAsideThemeSlots } from './theme/page-aside'
@@ -34,8 +36,10 @@ import type { pageHeaderTheme, PageHeaderThemeSlots } from './theme/page-header'
 import type { paginationTheme, PaginationThemeSlots } from './theme/pagination'
 import type { pinInputTheme, PinInputThemeSlots } from './theme/pin-input'
 import type { popoverTheme, PopoverThemeSlots } from './theme/popover'
+import type { progressTheme, ProgressThemeSlots } from './theme/progress'
 import type { radioGroupTheme, RadioGroupThemeSlots } from './theme/radio-group'
 import type { ratingTheme, RatingThemeSlots } from './theme/rating'
+import type { readMoreTheme, ReadMoreThemeSlots } from './theme/read-more'
 import type { scrollAreaTheme, ScrollAreaThemeSlots } from './theme/scroll-area'
 import type { selectTheme, SelectThemeSlots } from './theme/select'
 import type { separatorTheme, SeparatorThemeSlots } from './theme/separator'
@@ -60,6 +64,7 @@ type BadgeVariants = VariantProps<typeof badgeTheme>
 type BreadcrumbVariants = VariantProps<typeof breadcrumbTheme>
 type ButtonVariants = VariantProps<typeof buttonTheme>
 type ButtonGroupVariants = VariantProps<typeof buttonGroupTheme>
+type CalloutVariants = VariantProps<typeof calloutTheme>
 type CardVariants = VariantProps<typeof cardTheme>
 type CardGroupVariants = VariantProps<typeof cardGroupTheme>
 type CheckboxVariants = VariantProps<typeof checkboxTheme>
@@ -73,14 +78,17 @@ type ContentTocVariants = VariantProps<typeof contentTocTheme>
 type InputVariants = VariantProps<typeof inputTheme>
 type InputGroupVariants = VariantProps<typeof inputGroupTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
+type KbdVariants = VariantProps<typeof kbdTheme>
 type FileUploadVariants = VariantProps<typeof fileUploadTheme>
 type FormFieldVariants = VariantProps<typeof formFieldTheme>
 type IconVariants = VariantProps<typeof iconTheme>
 type NavigationMenuVariants = VariantProps<typeof navigationMenuTheme>
 type PaginationVariants = VariantProps<typeof paginationTheme>
 type PinInputVariants = VariantProps<typeof pinInputTheme>
+type ProgressVariants = VariantProps<typeof progressTheme>
 type RadioGroupVariants = VariantProps<typeof radioGroupTheme>
 type RatingVariants = VariantProps<typeof ratingTheme>
+type ReadMoreVariants = VariantProps<typeof readMoreTheme>
 type SelectVariants = VariantProps<typeof selectTheme>
 type SeparatorVariants = VariantProps<typeof separatorTheme>
 type SkeletonVariants = VariantProps<typeof skeletonTheme>
@@ -146,6 +154,10 @@ export interface ThemeComponentRegistry {
   buttonGroup: {
     slots: ButtonGroupThemeSlots
     conditions: Pick<ButtonGroupVariants, 'orientation'>
+  }
+  callout: {
+    slots: CalloutThemeSlots
+    conditions: Pick<CalloutVariants, 'type'>
   }
   card: {
     slots: CardThemeSlots
@@ -219,6 +231,10 @@ export interface ThemeComponentRegistry {
     slots: InputNumberThemeSlots
     conditions: WithRegisteredColor<Pick<InputNumberVariants, 'color' | 'size' | 'orientation' | 'invalid'>>
   }
+  kbd: {
+    slots: KbdThemeSlots
+    conditions: Pick<KbdVariants, 'size'>
+  }
   /** Shared by the public component and its recursive accordion/flyout renderers. */
   navigationMenu: {
     slots: NavigationMenuThemeSlots
@@ -242,6 +258,10 @@ export interface ThemeComponentRegistry {
     slots: PinInputThemeSlots
     conditions: WithRegisteredColor<Pick<PinInputVariants, 'color' | 'size' | 'invalid'>>
   }
+  progress: {
+    slots: ProgressThemeSlots
+    conditions: WithRegisteredColor<Pick<ProgressVariants, 'color' | 'size' | 'indeterminate'>>
+  }
   radioGroup: {
     slots: RadioGroupThemeSlots
     conditions: WithRegisteredColor<Pick<RadioGroupVariants, 'color' | 'size' | 'orientation' | 'variant' | 'invalid'>>
@@ -249,6 +269,10 @@ export interface ThemeComponentRegistry {
   rating: {
     slots: RatingThemeSlots
     conditions: WithRegisteredColor<Pick<RatingVariants, 'color' | 'size' | 'orientation'>>
+  }
+  readMore: {
+    slots: ReadMoreThemeSlots
+    conditions: WithRegisteredColor<Pick<ReadMoreVariants, 'color' | 'open'>>
   }
   /** Shared by Select and Autocomplete, which intentionally use one recipe. */
   select: {

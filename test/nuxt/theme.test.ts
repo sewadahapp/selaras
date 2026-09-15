@@ -9,6 +9,7 @@ import Badge from '../../src/runtime/components/Badge.vue'
 import Breadcrumb from '../../src/runtime/components/Breadcrumb.vue'
 import Button from '../../src/runtime/components/Button.vue'
 import ButtonGroup from '../../src/runtime/components/ButtonGroup.vue'
+import Callout from '../../src/runtime/components/Callout.vue'
 import Card from '../../src/runtime/components/Card.vue'
 import CardGroup from '../../src/runtime/components/CardGroup.vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
@@ -22,10 +23,13 @@ import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 import FileUpload from '../../src/runtime/components/FileUpload.vue'
 import Header from '../../src/runtime/components/Header.vue'
 import InputGroup from '../../src/runtime/components/InputGroup.vue'
+import Kbd from '../../src/runtime/components/Kbd.vue'
 import PageAside from '../../src/runtime/components/PageAside.vue'
 import PageHeader from '../../src/runtime/components/PageHeader.vue'
 import Pagination from '../../src/runtime/components/Pagination.vue'
 import Popover from '../../src/runtime/components/Popover.vue'
+import Progress from '../../src/runtime/components/Progress.vue'
+import ReadMore from '../../src/runtime/components/ReadMore.vue'
 import ScrollArea from '../../src/runtime/components/ScrollArea.vue'
 import Select from '../../src/runtime/components/Select.vue'
 import Skeleton from '../../src/runtime/components/Skeleton.vue'
@@ -288,6 +292,25 @@ describe('theme', () => {
     expect(navigation.find('li li').classes()).toContain('outline-dashed')
     expect(wrapper.findComponent(ContentSurround).find('a').classes()).toContain('outline-dotted')
     expect(wrapper.findComponent(ContentToc).find('a').classes()).toContain('outline-double')
+  })
+
+  it('applies standalone content primitive recipe conditions', async () => {
+    const wrapper = await mountSuspended(withTheme({ ui: {
+      callout: { compoundVariants: [{ type: 'danger', class: { root: 'outline-dashed' } }] },
+      kbd: { compoundVariants: [{ size: 'sm', class: { base: 'outline-dotted' } }] },
+      progress: { compoundVariants: [{ color: 'premium', size: 'lg', indeterminate: true, class: { root: 'outline-double' } }] },
+      readMore: { compoundVariants: [{ color: 'premium', open: false, class: { root: 'outline-solid' } }] },
+    } }, [
+      h(Callout, { id: 'themed-callout', type: 'danger' }, () => 'Danger'),
+      h(Kbd, { id: 'themed-kbd', size: 'sm', value: 'meta' }),
+      h(Progress, { id: 'themed-progress', color: 'premium', size: 'lg' }),
+      h(ReadMore, { id: 'themed-read-more', color: 'premium' }, () => 'More content'),
+    ]))
+
+    expect(wrapper.find('#themed-callout').classes()).toContain('outline-dashed')
+    expect(wrapper.find('#themed-kbd').classes()).toContain('outline-dotted')
+    expect(wrapper.find('#themed-progress').classes()).toContain('outline-double')
+    expect(wrapper.find('#themed-read-more').classes()).toContain('outline-solid')
   })
 
   it('uses one Select recipe extension for Select and Autocomplete custom roles', async () => {

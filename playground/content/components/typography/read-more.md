@@ -36,6 +36,8 @@ every slot and variant - here's `ReadMore`'s own theme file:
 ::theme-source{name="read-more"}
 ::
 
+Global and scoped theme recipes use `ui.readMore`.
+
 ## Props
 
 | Prop | Type | Default |

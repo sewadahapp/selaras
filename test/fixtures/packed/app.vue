@@ -104,6 +104,14 @@ void hyphenatedRole
     <SContentNavigation id="packed-content-navigation" :navigation="contentNavigationItems" :color="role" />
     <SContentSurround id="packed-content-surround" :next="{ title: 'Published next', path: '/next' }" :color="role" />
     <SContentToc id="packed-content-toc" :links="tocItems" :color="role" />
+    <SCallout id="packed-callout" type="danger">
+      Published callout
+    </SCallout>
+    <SKbd id="packed-kbd" size="sm" value="meta" />
+    <SProgress id="packed-progress" size="lg" :color="role" />
+    <SReadMore id="packed-read-more" :color="role">
+      Published read more
+    </SReadMore>
     <STheme as="section" v-bind="theme" :tokens="{ light: { colors: { published: { fill: '#56789a' } } } }">
       <SButton id="packed-scoped" :color="role">
         Published scoped

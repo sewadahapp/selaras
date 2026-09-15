@@ -79,6 +79,8 @@ every slot and variant - here's `Callout`'s own theme file:
 ::theme-source{name="callout"}
 ::
 
+Global and scoped theme recipes use `ui.callout`.
+
 ## Props
 
 | Prop | Type | Default |

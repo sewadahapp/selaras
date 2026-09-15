@@ -61,6 +61,8 @@ every slot and variant - here's `Kbd`'s own theme file:
 ::theme-source{name="kbd"}
 ::
 
+Global and scoped theme recipes use `ui.kbd`.
+
 ## Props
 
 | Prop | Type | Default |
