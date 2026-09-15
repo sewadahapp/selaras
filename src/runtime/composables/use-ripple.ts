@@ -4,8 +4,8 @@ import { useAppConfig } from '#imports'
 
 /**
  * Whether v-ripple should actually spawn a ripple - mirrors useIcons' own
- * app.config merge (see use-icons.ts), just a single top-level boolean
- * instead of a registry object. Defaults to enabled; app.config.ripple =
+ * app.config merge (see use-icons.ts), just a single boolean instead of a
+ * registry object. Defaults to enabled; app.config.selaras.ripple =
  * false turns it off globally for every component that binds v-ripple to
  * this rather than hardcoding it unconditionally on.
  *
@@ -16,6 +16,6 @@ import { useAppConfig } from '#imports'
  * value (`v-ripple="rippleEnabled"`) instead.
  */
 export function useRippleEnabled(): ComputedRef<boolean> {
-  const appConfig = useAppConfig() as { ripple?: boolean }
-  return computed(() => appConfig.ripple ?? true)
+  const appConfig = useAppConfig() as { selaras?: { ripple?: boolean } }
+  return computed(() => appConfig.selaras?.ripple ?? true)
 }

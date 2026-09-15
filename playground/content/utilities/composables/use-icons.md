@@ -18,9 +18,11 @@ Override any key globally in `app.config.ts`:
 
 ```ts
 export default defineAppConfig({
-  icons: {
-    close: 'lucide:x',
-    loading: 'lucide:loader-2',
+  selaras: {
+    icons: {
+      close: 'lucide:x',
+      loading: 'lucide:loader-2',
+    },
   },
 })
 ```
@@ -77,7 +79,7 @@ together, rather than needing a separate override for each.
 function useIcons(): ComputedRef<IconRegistry>
 ```
 
-Returns the merged registry (your `app.config.icons` overrides applied
+Returns the merged registry (your `app.config.selaras.icons` overrides applied
 on top of the Hugeicons defaults above) - use this if you're building
 your own component and want it to respect the same overrides a consumer
 already set, instead of hardcoding an icon name directly:

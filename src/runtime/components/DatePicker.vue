@@ -314,7 +314,7 @@ const isMobile = useIsMobile()
 // ComboboxSelectBase.vue's own identical override.
 const mobileModalUi = { content: 'rounded-[var(--ui-radius-md)]' }
 
-// Falls back to the global default (app.config.locale, see use-locale.ts)
+// Falls back to the global default (app.config.selaras.locale, see use-locale.ts)
 // instead of a hardcoded 'en-US' - every locale-consuming computed/prop
 // below reads this instead of `props.locale` directly, so a consumer only
 // needs to set the locale once globally rather than repeating it on every

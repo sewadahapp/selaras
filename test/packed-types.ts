@@ -1,3 +1,5 @@
+// @ts-expect-error renderer lifecycle components are package-private
+import type { ModalRendererProps } from '@sewadah/selaras/components/ModalRenderer.vue'
 import type { DtcgResolvedColor, SeedColorOptions } from '@sewadah/selaras/theme'
 import type {
   AutocompleteEmits,
@@ -30,6 +32,8 @@ interface PackedUser {
   name: string
   age: number
 }
+type PrivateRendererContract = ModalRendererProps
+void (undefined as unknown as PrivateRendererContract)
 
 const packedButton: ButtonProps = { color: 'primary' }
 interface PackedOption { id: number, title: string }

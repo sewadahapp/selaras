@@ -44,6 +44,12 @@
       "types": "./dist/runtime/theme-api.d.ts",
       "import": "./dist/runtime/theme-api.js"
     },
+    "./components/DrawerRenderer*": {},
+    "./components/ModalRenderer*": {},
+    "./components/NavigationMenuAccordionItem*": {},
+    "./components/NavigationMenuFlyoutList*": {},
+    "./components/NavigationMenuFlyoutTrigger*": {},
+    "./components/SlideoverRenderer*": {},
     "./components/*": "./dist/runtime/components/*",
     "./theme.css": "./dist/runtime/theme.css",
     "./prose.css": "./dist/runtime/prose.css",
@@ -68,6 +74,12 @@
       "theme": [
         "./dist/runtime/theme-api.d.ts"
       ],
+      "components/DrawerRenderer*": [],
+      "components/ModalRenderer*": [],
+      "components/NavigationMenuAccordionItem*": [],
+      "components/NavigationMenuFlyoutList*": [],
+      "components/NavigationMenuFlyoutTrigger*": [],
+      "components/SlideoverRenderer*": [],
       "components/*": [
         "./dist/runtime/components/*"
       ]

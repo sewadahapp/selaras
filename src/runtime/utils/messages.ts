@@ -69,7 +69,7 @@ export interface MessageRegistry {
 }
 
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
-// its own comment for the reasoning - a single app.config.messages.clear
+// its own comment for the reasoning - a single app.config.selaras.messages.clear
 // override reaches every "Clear" button in the library together, instead
 // of a separate override per component). Function-valued entries are the
 // ones needing interpolation (a label, a count, a page number) - a plain

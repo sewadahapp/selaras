@@ -84,6 +84,11 @@ async function inspectSsr(prefixed = true) {
     assert.equal(response.status, 200)
     const html = await response.text()
     const pattern = value => new RegExp(value.source.replaceAll('tw:', prefixed ? 'tw:' : ''), value.flags)
+    const configOutput = html.match(/<output[^>]*id="packed-config"[^>]*>en-GB<\/output>/)?.[0]
+    assert.ok(configOutput, 'namespaced runtime configuration must render in SSR')
+    assert.ok(configOutput.includes('data-icon="packed:close"'))
+    assert.ok(configOutput.includes('data-message="Packed close"'))
+    assert.ok(configOutput.includes('data-ripple="false"'))
     for (const [id, className] of [
       ['remaining-code-button', 'outline-dotted'],
       ['remaining-code-tree', 'outline-double'],
@@ -293,6 +298,11 @@ try {
   ]).trim()))
   assert.ok(!relative(consumerDir, packageEntry).startsWith('..'), 'package resolution must stay outside the repository')
   assert.ok(!existsSync(join(consumerDir, 'node_modules', sourceManifest.name, 'src')))
+  run('reject package-private renderer imports', process.execPath, ['--input-type=module', '--eval', `
+    import(${JSON.stringify(`${sourceManifest.name}/components/ModalRenderer.vue`)})
+      .then(() => process.exit(1))
+      .catch((error) => { if (error.code !== 'ERR_PACKAGE_PATH_NOT_EXPORTED') throw error })
+  `])
   const defaultTokens = JSON.parse(run('load the published default DTCG token source', process.execPath, [
     '--input-type=module',
     '-e',

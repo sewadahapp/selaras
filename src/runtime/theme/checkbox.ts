@@ -28,7 +28,7 @@ export const checkboxTheme = tv({
     // which needs a real path to control, not an arbitrary swappable
     // Iconify icon. This is a deliberate, one-off exception to the
     // icon-registry pattern documented in use-icons.ts: this glyph isn't
-    // overridable via app.config.icons, only restylable (stroke width/
+    // overridable via app.config.selaras.icons, only restylable (stroke width/
     // color/duration) via these two :ui slots. dasharray/dashoffset are
     // each set to the exact measured length of their own path
     // (path.getTotalLength(), not a guess) so the "draw" finishes exactly

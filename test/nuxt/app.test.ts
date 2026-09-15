@@ -26,12 +26,12 @@ describe('app', () => {
   })
 
   it('sets <html lang> from the global locale default', async () => {
-    await updateAppConfig({ locale: 'de-DE' })
+    await updateAppConfig({ selaras: { locale: 'de-DE' } })
     const wrapper = await mountSuspended(App)
     await flush()
     expect(document.documentElement.getAttribute('lang')).toBe('de-DE')
     wrapper.unmount()
-    await updateAppConfig({ locale: undefined })
+    await updateAppConfig({ selaras: undefined })
   })
 
   it('emits light/dark runtime role overrides into an SSR-safe style layer', async () => {

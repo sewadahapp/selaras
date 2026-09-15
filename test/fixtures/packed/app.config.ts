@@ -1,8 +1,12 @@
-import type { ThemeConfiguration } from '@sewadah/selaras/theme'
+import type { SelarasRuntimeConfig } from '@sewadah/selaras/types'
 import { remainingTheme } from './remaining-theme'
 
 export default defineAppConfig({
   selaras: {
+    icons: { close: 'packed:close' },
+    locale: 'en-GB',
+    messages: { close: 'Packed close' },
+    ripple: false,
     defaults: { button: { size: 'lg', color: 'published' } },
     ui: {
       ...remainingTheme.ui,
@@ -50,5 +54,5 @@ export default defineAppConfig({
       light: { colors: { published: { fill: '#456789' }, primary: { fill: '#6789ab' } }, surface: { default: 'rgb(240 241 242)' }, text: { default: 'rgb(21 22 23)' } },
       dark: { surface: { default: 'rgb(31 32 33)' }, text: { default: 'rgb(220 221 222)' } },
     },
-  } satisfies ThemeConfiguration,
+  } satisfies SelarasRuntimeConfig,
 })

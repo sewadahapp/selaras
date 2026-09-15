@@ -304,6 +304,11 @@ the document mode; omitted mode inherits, and unscoped components follow the
 document root. Runtime tokens and explicit modes require a DOM boundary
 through `as`.
 
+All app-wide Selaras runtime settings share the `app.config.selaras`
+namespace: `ui`, `defaults`, `tokens`, `icons`, `messages`, `locale`, and
+`ripple`. Generic top-level keys are not read, avoiding collisions with other
+Nuxt modules and application configuration.
+
 CSS authors can use inherited inputs such as `--selaras-surface-default`,
 `--selaras-text-muted`, `--selaras-border-hover` and `--selaras-scrim`. For
 example, a root declaration changes the default surface without supplying a

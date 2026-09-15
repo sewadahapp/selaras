@@ -10,8 +10,10 @@
 // broken/missing icon on the live site if the replacement name were ever
 // wrong; see useIcons's own doc page for that override shown in isolation.
 export default defineAppConfig({
-  locale: 'en-GB',
-  messages: {
-    colorModeToggle: 'Switch theme',
+  selaras: {
+    locale: 'en-GB',
+    messages: {
+      colorModeToggle: 'Switch theme',
+    },
   },
 })

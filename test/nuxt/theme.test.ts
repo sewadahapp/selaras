@@ -1,6 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, ref } from 'vue'
+import { updateAppConfig } from '#app'
 import Accordion from '../../src/runtime/components/Accordion.vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import Avatar from '../../src/runtime/components/Avatar.vue'
@@ -134,6 +135,14 @@ describe('theme', () => {
       h('div', [h(Button, () => 'Click me')]),
     ]))
     expect(wrapper.find('button').classes()).toContain('rounded-full')
+  })
+
+  it('does not consume the removed generic app.config.ui namespace', async () => {
+    await updateAppConfig({ ui: { button: { slots: { base: 'legacy-global-ui' } } } } as any)
+    const wrapper = await mountSuspended(Button, { slots: { default: () => 'Button' } })
+    expect(wrapper.find('button').classes()).not.toContain('legacy-global-ui')
+    wrapper.unmount()
+    await updateAppConfig({ ui: undefined } as any)
   })
 
   it('applies a scoped UI override to a portalled Popover without granting it prop defaults', async () => {

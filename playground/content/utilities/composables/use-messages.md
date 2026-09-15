@@ -17,9 +17,11 @@ Override any key globally in `app.config.ts`:
 
 ```ts
 export default defineAppConfig({
-  messages: {
-    clear: 'Effacer',
-    search: 'Rechercher...',
+  selaras: {
+    messages: {
+      clear: 'Effacer',
+      search: 'Rechercher...',
+    },
   },
 })
 ```
@@ -117,7 +119,7 @@ sync by hand.
 function useMessages(): ComputedRef<MessageRegistry>
 ```
 
-Returns the merged registry (your `app.config.messages` overrides applied
+Returns the merged registry (your `app.config.selaras.messages` overrides applied
 on top of the English defaults above) - use this if you're building your
 own component and want it to respect the same overrides a consumer
 already set, instead of hardcoding a string directly:

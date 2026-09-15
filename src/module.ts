@@ -130,9 +130,9 @@ export default defineNuxtModule<ModuleOptions>({
 
     addImportsDir(resolver.resolve('./runtime/composables'))
 
-    // Types app.config.ts's messages/icons/locale override surface (see
-    // runtime/types/app-config.d.ts) - without this reference, a consumer's
-    // own app.config.ts sees `messages`/`icons`/`locale` as untyped.
+    // Types the collision-resistant app.config.selaras runtime surface (see
+    // runtime/types/app-config.d.ts), including theme, locale, messages,
+    // icons and ripple settings in a consumer's own app.config.ts.
     nuxt.hook('prepare:types', ({ references }) => {
       references.push({ path: resolver.resolve('./runtime/types/app-config.d.ts') })
     })

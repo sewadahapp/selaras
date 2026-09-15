@@ -15,7 +15,7 @@ import { THEME_INJECTION_KEY } from '../utils/injection-keys'
 const props = defineProps<ThemeProps>()
 
 export interface ThemeProps {
-  /** Component-name-keyed slot-class overrides, same shape as app.config.ui but scoped to this subtree instead of the whole app - e.g. `{ button: { slots: { base: 'rounded-full' } } }`. */
+  /** Component-name-keyed slot-class overrides, same shape as app.config.selaras.ui but scoped to this subtree instead of the whole app - e.g. `{ button: { slots: { base: 'rounded-full' } } }`. */
   ui?: ThemeUiOverrides
   /** Component-name-keyed prop-default overrides - e.g. `{ button: { size: 'lg' } }`. Only respected by components that opt into reading useThemeProps for a given prop (see theming.md's "STheme" section for which ones currently do); an explicit prop on the component itself always wins. */
   defaults?: ThemeDefaults

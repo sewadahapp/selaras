@@ -195,19 +195,19 @@ function collectThemeChain<V extends object>(context: ThemeContext | undefined, 
 }
 
 /**
- * Merges a component's global `app.config.ui.<key>` override, then any
+ * Merges a component's global `app.config.selaras.ui.<key>` override, then any
  * ancestor STheme's scoped `ui.<key>` override, into its base `tv()`
  * theme - each layered via tv()'s own `extend` composition, so an
  * override only needs to name the slots it actually changes. Falls back
  * to the base theme untouched when neither exists.
  */
 export function useComponentTheme<T extends (...args: any[]) => any>(key: string, base: T): ComputedRef<T> {
-  const appConfig = useAppConfig() as { ui?: Record<string, object>, selaras?: { ui?: Record<string, object> } }
+  const appConfig = useAppConfig() as { selaras?: { ui?: Record<string, object> } }
   const themeContext = inject(THEME_INJECTION_KEY, undefined)
 
   return computed(() => {
     let result: any = base
-    const globalOverride = appConfig.selaras?.ui?.[key] ?? appConfig.ui?.[key]
+    const globalOverride = appConfig.selaras?.ui?.[key]
     if (globalOverride)
       result = tv({ extend: result, ...globalOverride } as any)
     for (const override of collectThemeChain(themeContext?.value, c => c.ui, key))

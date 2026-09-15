@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<AppProps>(), {
   dir: 'ltr',
 })
 
-// `lang` is driven by the global locale default (app.config.locale, see
+// `lang` is driven by the global locale default (app.config.selaras.locale, see
 // use-locale.ts) rather than a prop of its own - dir is a distinct,
 // per-app layout choice, while lang should just track whatever locale the
 // rest of the library is already resolving text/date formatting against.

@@ -17,7 +17,9 @@ Set the default once in `app.config.ts`:
 
 ```ts
 export default defineAppConfig({
-  locale: 'de-DE',
+  selaras: {
+    locale: 'de-DE',
+  },
 })
 ```
 
@@ -43,7 +45,7 @@ side doesn't need to fight a single global setting.
 function useLocale(): ComputedRef<string>
 ```
 
-Returns your `app.config.locale` override, or `'en-US'` if unset - use
+Returns your `app.config.selaras.locale` override, or `'en-US'` if unset - use
 this if you're building your own component and want its own formatting to
 respect the same app-wide default DatePicker/InputNumber already do:
 

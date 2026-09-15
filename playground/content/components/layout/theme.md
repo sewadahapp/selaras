@@ -20,12 +20,12 @@ explicit DOM boundary.
 </STheme>
 ```
 
-This is the same override shape as [`app.config.ui`](/overview/theming#4-global-overrides)
+This is the same override shape as [`app.config.selaras.ui`](/overview/theming#4-global-overrides)
 - `{ <componentKey>: { slots: { <slotName>: '...' } } }`, merged onto the
 component's base theme the same way (`tv()`'s own `extend`) - just scoped
 to this subtree instead of the whole app. See
 [Theming](/overview/theming) for the full precedence order and how
-`:ui`/`app.config.ui`/`STheme` all fit together.
+`:ui`/`app.config.selaras.ui`/`STheme` all fit together.
 
 ### Prop defaults
 
@@ -43,7 +43,7 @@ An explicit prop on the component itself always wins - `STheme` only
 fills in when a prop is left unset. **Only `size`/`color` are wired up to
 read this today**, and only on `Button`, `Badge`, `Avatar`, `Chip`, and
 `Input` - not every prop on every component. Unwired components ignore
-`defaults` entirely (their own `:ui`/`app.config.ui` overrides are
+`defaults` entirely (their own `:ui`/`app.config.selaras.ui` overrides are
 unaffected either way).
 
 ### Nesting

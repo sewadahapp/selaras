@@ -6,6 +6,10 @@ import { createTableColumnHelper } from '@sewadah/selaras/table'
 const role: ColorRole = 'published'
 const seededRole: ColorRole = 'seeded'
 const narrow = useIsMobile()
+const packedIcons = useIcons()
+const packedLocale = useLocale()
+const packedMessages = useMessages()
+const packedRipple = useRippleEnabled()
 const { add: addPublishedToast } = useToast()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
@@ -43,6 +47,9 @@ const choices = [{ id: 1, title: 'Published select' }]
 const config: NonNullable<AppConfig['selaras']> = { tokens: { light: { colors: { published: { fill: '#123456' } } } } }
 // @ts-expect-error generated AppConfig augmentation must reject unknown token roles
 const invalidConfig: NonNullable<AppConfig['selaras']> = { tokens: { light: { colors: { 'not-published': { fill: '#123456' } } } } }
+const completeConfig: NonNullable<AppConfig['selaras']> = { icons: { close: 'packed:close' }, locale: 'en-GB', messages: { close: 'Packed close' }, ripple: false }
+// @ts-expect-error Selaras settings no longer pollute generic AppConfig keys
+const legacyConfig: AppConfig = { locale: 'en-GB' }
 // @ts-expect-error generated registry must reject roles absent from this consumer
 const unknownRole: ColorRole = 'not-published'
 // @ts-expect-error the removed pre-1.0 namespace must remain absent in the package
@@ -51,11 +58,14 @@ void unknownRole
 void oldTheme
 void config
 void invalidConfig
+void completeConfig
+void legacyConfig
 void hyphenatedRole
 </script>
 
 <template>
   <SApp>
+    <output id="packed-config" :data-icon="packedIcons.close" :data-message="packedMessages.close" :data-ripple="packedRipple">{{ packedLocale }}</output>
     <RemainingThemes />
     <output id="packed-narrow">{{ narrow }}</output>
     <span id="packed-responsive" class="tw:hidden tw:tablet:block">Wide viewport</span>
