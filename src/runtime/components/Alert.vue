@@ -7,6 +7,7 @@ import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { alertTheme } from '../theme/alert'
+import { isFeedbackIntent } from '../utils/icons'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
@@ -49,11 +50,10 @@ const icons = useIcons()
 const messages = useMessages()
 
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'info', 'info'))
-const recipeColor = computed<AlertVariants['color']>(() => ['success', 'danger', 'warning', 'info'].includes(effectiveColor.value) ? effectiveColor.value as AlertVariants['color'] : 'info')
-const iconName = computed(() => props.icon ?? (props.color ? icons.value[recipeColor.value ?? 'info'] : undefined))
+const iconName = computed(() => props.icon ?? (props.color && isFeedbackIntent(effectiveColor.value) ? icons.value[effectiveColor.value] : undefined))
 
 const theme = useComponentTheme('alert', alertTheme)
-const ui = computed(() => theme.value({ color: recipeColor.value, variant: props.variant }))
+const ui = computed(() => theme.value({ color: effectiveColor.value as AlertVariants['color'], variant: props.variant }))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))

@@ -53,11 +53,11 @@ function save() {
 
 ### Colors
 
-`color` (`success`/`danger`/`warning`/`info`) tints the toast's icon and
-adds a matching left-edge accent - a status this narrow rather than the
-full color palette `Button`/`Badge` expose, since a toast's color only
-ever means "what kind of status is this." Each color resolves to its own
-default icon unless `icon` overrides it:
+`color` accepts any registered semantic role and tints the toast's icon and
+left-edge accent. The built-in `success`, `danger`, `warning`, and `info`
+intents select matching default icons. Other roles do not guess an icon; set
+`icon` explicitly when needed. With no color, the accent and an explicit icon
+use neutral fallbacks:
 
 ::component-example{name="toast-colors"}
 ::

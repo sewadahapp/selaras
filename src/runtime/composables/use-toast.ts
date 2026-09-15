@@ -7,7 +7,7 @@ export interface ToastOptions {
   title?: string
   description?: string
   duration?: number
-  /** Status - tints the icon and adds a matching left-edge accent. Scoped to just these four (not the full color palette Button/Badge/Chip expose) since a toast's color only ever means "what kind of status is this." */
+  /** Tints the icon and left-edge accent with any registered semantic role. Built-in feedback intents also select a default icon. */
   color?: ColorRole
   /** Overrides the color's own default icon (or shows an icon with no color set at all). */
   icon?: string

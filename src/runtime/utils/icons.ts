@@ -36,6 +36,13 @@ export interface IconRegistry {
   sidebarCollapse: string
 }
 
+export const feedbackIntentNames = ['success', 'danger', 'warning', 'info'] as const
+export type FeedbackIntent = typeof feedbackIntentNames[number]
+
+export function isFeedbackIntent(value: string): value is FeedbackIntent {
+  return feedbackIntentNames.includes(value as FeedbackIntent)
+}
+
 // Hugeicons by default. One registry keyed by semantic purpose, not by
 // component/slot - matches how --ui-* colors are a single shared layer
 // rather than per-component tokens, so overriding app.config.icons.close

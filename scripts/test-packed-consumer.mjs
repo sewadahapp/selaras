@@ -77,6 +77,7 @@ async function inspectSsr(prefixed = true) {
     assert.match(html, /<button(?=[^>]*id="packed-runtime-builtin")(?=[^>]*data-selaras-color="primary")/)
     assert.match(html, pattern(/<span(?=[^>]*id="packed-badge")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:bg-\[var\(--_selaras-color-subtle\)\])/))
     assert.match(html, /<span(?=[^>]*id="packed-dot")(?=[^>]*role="img")(?=[^>]*aria-label="Offline")(?=[^>]*data-selaras-color="neutral")/)
+    assert.match(html, pattern(/<div(?=[^>]*data-selaras-color="published")(?=[^>]*tw:tracking-normal)/), 'registered roles must reach Alert recipe conditions')
     assert.match(html, pattern(/<span(?=[^>]*data-selaras-color="published")(?=[^>]*tw:tracking-tight)/), 'registered roles must reach Avatar recipe conditions')
     assert.match(html, pattern(/<button(?=[^>]*aria-label="Color picker")(?=[^>]*data-selaras-color="published")(?=[^>]*tw:tracking-wide)/), 'registered roles must reach ColorPicker recipe conditions')
     assert.match(html, pattern(/tw:tracking-widest/), 'registered roles must reach FileUpload recipe conditions')
@@ -147,10 +148,10 @@ async function inspectSsr(prefixed = true) {
         await page.waitForFunction(() => document.querySelector('#packed-narrow')?.textContent === 'false')
         assert.equal(await page.locator('#packed-responsive').isVisible(), true)
         await page.locator('#packed-toast').evaluate(element => element.click())
-        await page.waitForFunction(() => {
+        await page.waitForFunction((expectedClass) => {
           const toast = [...document.querySelectorAll('[data-selaras-color="published"]')].find(element => element.textContent.includes('Published global toast'))
-          return toast && getComputedStyle(toast).borderInlineStartColor === 'rgb(69, 103, 137)'
-        })
+          return toast && toast.classList.contains(expectedClass) && getComputedStyle(toast).borderInlineStartColor === 'rgb(69, 103, 137)'
+        }, prefixed ? 'tw:tracking-widest' : 'tracking-widest')
         assert.deepEqual(issues, [])
         console.log(`[packed] ${prefixed ? 'prefixed' : 'normal'} hydration and adaptive/CSS agreement passed`)
       }

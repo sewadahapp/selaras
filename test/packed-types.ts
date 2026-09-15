@@ -124,6 +124,7 @@ void packedOverlayTheme
 const packedThemeConfiguration: ThemeConfiguration = {
   defaults: { button: { color: 'primary', size: 'lg' } },
   ui: {
+    alert: { compoundVariants: [{ color: 'info', variant: 'outline', class: { root: 'shadow-sm' } }] },
     button: { slots: { base: 'rounded-full' } },
     contextMenu: { compoundVariants: [{ destructive: true, class: { item: 'font-bold' } }] },
     checkbox: { compoundVariants: [{ color: 'danger', variant: 'card', class: { root: 'shadow-sm' } }] },
@@ -143,6 +144,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
     slideover: { compoundVariants: [{ side: 'right', inset: true, class: { content: 'w-96' } }] },
     switch: { compoundVariants: [{ color: 'success', invalid: true, class: { track: 'shadow-sm' } }] },
     textarea: { compoundVariants: [{ color: 'info', autoresize: true, class: { base: 'leading-6' } }] },
+    toast: { compoundVariants: [{ color: 'success', class: { root: 'shadow-xl' } }] },
     toggle: { compoundVariants: [{ color: 'secondary', square: true, class: { base: 'rounded-full' } }] },
     toggleGroup: { compoundVariants: [{ color: 'primary', orientation: 'vertical', class: { root: 'w-fit' } }] },
     tooltip: { slots: { content: 'font-medium' } },

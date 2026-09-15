@@ -4,6 +4,7 @@ export default defineAppConfig({
   selaras: {
     defaults: { button: { size: 'lg', color: 'published' } },
     ui: {
+      alert: { compoundVariants: [{ color: 'published', variant: 'outline', class: { root: 'tracking-normal' } }] },
       avatar: { compoundVariants: [{ color: 'published', class: { base: 'tracking-tight' } }] },
       button: { compoundVariants: [{ color: ['published', 'published-accent'], class: { base: 'font-bold' } }] },
       colorPicker: { compoundVariants: [{ color: 'published', class: { trigger: 'tracking-wide' } }] },
@@ -14,6 +15,7 @@ export default defineAppConfig({
         slots: { trigger: 'font-semibold' },
         compoundVariants: [{ color: 'published', class: { trigger: 'tracking-wide' } }],
       },
+      toast: { compoundVariants: [{ color: 'published', class: { root: 'tracking-widest' } }] },
     },
     tokens: {
       light: { colors: { published: { fill: '#456789' }, primary: { fill: '#6789ab' } }, surface: { default: 'rgb(240 241 242)' }, text: { default: 'rgb(21 22 23)' } },

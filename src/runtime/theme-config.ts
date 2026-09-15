@@ -1,4 +1,5 @@
 import type { VariantProps } from 'tailwind-variants'
+import type { alertTheme, AlertThemeSlots } from './theme/alert'
 import type { avatarTheme, AvatarThemeSlots } from './theme/avatar'
 import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
 import type { buttonTheme, ButtonThemeSlots } from './theme/button'
@@ -22,11 +23,13 @@ import type { slideoverTheme, SlideoverThemeSlots } from './theme/slideover'
 import type { sliderTheme, SliderThemeSlots } from './theme/slider'
 import type { switchTheme, SwitchThemeSlots } from './theme/switch'
 import type { textareaTheme, TextareaThemeSlots } from './theme/textarea'
+import type { toastTheme, ToastThemeSlots } from './theme/toast'
 import type { toggleTheme, ToggleThemeSlots } from './theme/toggle'
 import type { toggleGroupTheme, ToggleGroupThemeSlots } from './theme/toggle-group'
 import type { tooltipTheme, TooltipThemeSlots } from './theme/tooltip'
 import type { ColorRole, RuntimeTokenOverrides } from './utils/color-registry'
 
+type AlertVariants = VariantProps<typeof alertTheme>
 type AvatarVariants = VariantProps<typeof avatarTheme>
 type BadgeVariants = VariantProps<typeof badgeTheme>
 type ButtonVariants = VariantProps<typeof buttonTheme>
@@ -44,6 +47,7 @@ type SelectVariants = VariantProps<typeof selectTheme>
 type SliderVariants = VariantProps<typeof sliderTheme>
 type SwitchVariants = VariantProps<typeof switchTheme>
 type TextareaVariants = VariantProps<typeof textareaTheme>
+type ToastVariants = VariantProps<typeof toastTheme>
 type ToggleVariants = VariantProps<typeof toggleTheme>
 type ToggleGroupVariants = VariantProps<typeof toggleGroupTheme>
 type ContextMenuVariants = VariantProps<typeof contextMenuTheme>
@@ -66,6 +70,10 @@ type WithRegisteredColor<T> = Omit<T, 'color'> & { color?: ColorRole }
  * contract tests.
  */
 export interface ThemeComponentRegistry {
+  alert: {
+    slots: AlertThemeSlots
+    conditions: WithRegisteredColor<Pick<AlertVariants, 'color' | 'variant'>>
+  }
   avatar: {
     slots: AvatarThemeSlots
     conditions: WithRegisteredColor<Pick<AvatarVariants, 'color' | 'statusColor' | 'size' | 'shape'>>
@@ -139,6 +147,10 @@ export interface ThemeComponentRegistry {
   textarea: {
     slots: TextareaThemeSlots
     conditions: WithRegisteredColor<Pick<TextareaVariants, 'color' | 'size' | 'hasLeadingIcon' | 'hasTrailingIcon' | 'autoresize' | 'invalid'>>
+  }
+  toast: {
+    slots: ToastThemeSlots
+    conditions: WithRegisteredColor<Pick<ToastVariants, 'color'>>
   }
   toggle: {
     slots: ToggleThemeSlots

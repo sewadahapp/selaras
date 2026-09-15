@@ -30,10 +30,11 @@ order: 12.9
 
 ### Color
 
-`color` is one of the four semantic states - `success`, `danger`,
-`warning`, `info` - each with its own default icon, matching `Toast`. That
-default only kicks in when `icon` itself is unset, and only once `color`
-is given too - an `SAlert` with neither renders no icon at all:
+`color` accepts any registered semantic role. The four built-in feedback
+intents - `success`, `danger`, `warning`, and `info` - each select a matching
+default icon. Other roles still control the visual recipe, but do not guess an
+icon; set `icon` explicitly when that role needs one. A default icon only
+renders once `color` is supplied, so an `SAlert` with neither renders no icon:
 
 ::component-example{name="alert-color"}
 ::
@@ -79,7 +80,7 @@ The `actions` slot renders buttons below the description:
 | `description` | `string` | - |
 | `icon` | `string` | - |
 | `closable` | `boolean` | `false` |
-| `color` | `'success' \| 'danger' \| 'warning' \| 'info'` | `info` |
+| `color` | `ColorRole` | `info` |
 | `variant` | `'solid' \| 'soft' \| 'outline'` | `soft` |
 | `ui` | `Partial<Record<AlertSlot, string \| object>>` | - |
 

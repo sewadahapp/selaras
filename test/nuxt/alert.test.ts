@@ -1,12 +1,24 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import Alert from '../../src/runtime/components/Alert.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 
 describe('alert', () => {
   it('binds a custom semantic role to the alert root', async () => {
     const wrapper = await mountSuspended(Alert, { props: { color: 'premium', title: 'Notice' } as any })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
     expect(wrapper.attributes('style')).toBeUndefined()
+    expect(wrapper.find('.iconify').exists()).toBe(false)
+  })
+
+  it('passes a custom semantic role to scoped recipe conditions', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { alert: {
+        compoundVariants: [{ color: 'premium', variant: 'outline', class: { root: 'tracking-widest' } }],
+      } } }, () => h(Alert, { color: 'premium', variant: 'outline', title: 'Notice' })),
+    }))
+    expect(wrapper.find('[data-selaras-color="premium"]').classes()).toContain('tracking-widest')
   })
 
   it('renders title and description from props', async () => {

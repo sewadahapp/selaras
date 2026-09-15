@@ -14,6 +14,12 @@ const ToastHarness = defineComponent({
   render: () => h(ToastProvider, () => h(Toast)),
 })
 
+const ThemedToastHarness = defineComponent({
+  render: () => h(ToastProvider, () => h(Theme, { ui: { toast: {
+    compoundVariants: [{ color: 'premium', class: { root: 'tracking-widest' } }],
+  } } }, () => h(Toast))),
+})
+
 const ScopedToastTrigger = defineComponent({
   setup() {
     const { add } = useToast()
@@ -55,6 +61,27 @@ describe('toast', () => {
     const root = document.body.querySelector('[data-selaras-color="premium"]')
     expect(root).toBeTruthy()
     expect(root?.getAttribute('style')).not.toContain('--ui-info')
+    expect(statusIcons()).toHaveLength(0)
+  })
+
+  it('passes a custom semantic role to scoped recipe conditions', async () => {
+    const { add } = useToast()
+    add({ title: 'Custom recipe', color: 'premium' as any })
+    wrapper = await mountSuspended(ThemedToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(document.body.querySelector('[data-selaras-color="premium"]')?.classList).toContain('tracking-widest')
+  })
+
+  it('keeps a colorless toast neutral even when it has an explicit icon', async () => {
+    const { add } = useToast()
+    add({ title: 'Plain', icon: 'lucide:star' })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const root = Array.from(document.body.querySelectorAll('[data-state]')).find(element => element.textContent?.includes('Plain'))
+    expect(root?.hasAttribute('data-selaras-color')).toBe(false)
+    expect(statusIcons()[0]?.classList).toContain('text-[var(--_selaras-color-fill,var(--ui-text-muted))]')
   })
 
   it('captures the nearest explicit theme scope when the composable is created', async () => {

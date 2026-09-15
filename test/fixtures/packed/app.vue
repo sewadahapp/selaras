@@ -75,6 +75,7 @@ void hyphenatedRole
       <SInput id="packed-functional-input" model-value="Scoped functional input" readonly />
     </STheme>
     <SBadge id="packed-dot" dot aria-label="Offline" />
+    <SAlert title="Published alert" :color="role" variant="outline" />
     <SAvatar text="P" :color="role" />
     <SColorPicker :color="role" />
     <SFileUpload :color="role" />
