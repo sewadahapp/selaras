@@ -1,18 +1,23 @@
 import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
-import { generateDefaultColorCss } from '../scripts/generate-default-colors.mjs'
+import { generateDefaultColorCss, generateDefaultColorMetadata } from '../scripts/generate-default-colors.mjs'
 import { createBuiltinColorRegistry } from '../src/builtin-colors'
+import { defaultSeedSurfaces } from '../src/runtime/default-color-metadata'
 
 const sourceUrl = new URL('../src/tokens/default-colors.tokens.json', import.meta.url)
 const cssUrl = new URL('../src/runtime/default-colors.css', import.meta.url)
+const metadataUrl = new URL('../src/runtime/default-color-metadata.ts', import.meta.url)
 
 describe('owned default color source', () => {
   it('generates the checked-in Tailwind foundations from one portable DTCG document', async () => {
     const document = JSON.parse(await readFile(sourceUrl, 'utf8'))
     const css = await readFile(cssUrl, 'utf8')
+    const metadata = await readFile(metadataUrl, 'utf8')
 
     expect(document.color.$type).toBe('color')
     expect(generateDefaultColorCss(document)).toBe(css)
+    expect(generateDefaultColorMetadata(document)).toBe(metadata)
+    expect(defaultSeedSurfaces).toEqual({ light: '#fdfdfe', dark: '#090a0d' })
     expect([...css.matchAll(/--color-selaras-[a-z-]+-\d+/g)]).toHaveLength(78)
     expect(css).not.toMatch(/--color-(?:primary|secondary|success|info|warning|danger|neutral)-/)
   })

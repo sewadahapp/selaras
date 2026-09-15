@@ -1,4 +1,4 @@
-import { defineColor, dtcgColorToCss } from '@sewadah/selaras/theme'
+import { defineColor, defineColorFromSeed, dtcgColorToCss } from '@sewadah/selaras/theme'
 
 const recipe = {
   fill: '#5134a8',
@@ -15,3 +15,6 @@ if (defineColor(color) !== color)
 
 if (dtcgColorToCss({ colorSpace: 'oklch', components: [0.7, 0.2, 320] }) !== 'oklch(0.7 0.2 320)')
   throw new Error('The published DTCG helper must serialize resolved OKLCH values.')
+
+if (defineColorFromSeed('#FD5E53').light.fill !== '#f6584d')
+  throw new Error('The published seed helper must normalize the documented one-color path.')

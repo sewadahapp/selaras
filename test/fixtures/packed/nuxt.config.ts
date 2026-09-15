@@ -1,4 +1,4 @@
-import { defineColor } from '@sewadah/selaras/theme'
+import { defineColor, defineColorFromSeed } from '@sewadah/selaras/theme'
 
 const color = defineColor({
   light: { fill: '#123456', onFill: '#ffffff', subtle: '#ddeeff', onSubtle: '#112233', text: '#234567', border: '#345678' },
@@ -8,6 +8,6 @@ const color = defineColor({
 export default defineNuxtConfig({
   modules: ['@sewadah/selaras'],
   compatibilityDate: '2026-09-13',
-  selaras: { classPrefix: 'tw', adaptive: { breakpoint: 'tablet' }, theme: { colors: { 'published': color, 'published-accent': color, 'secondary': color } } },
+  selaras: { classPrefix: 'tw', adaptive: { breakpoint: 'tablet' }, theme: { colors: { 'published': color, 'published-accent': color, 'seeded': defineColorFromSeed('#FD5E53'), 'secondary': color } } },
   css: ['~/main.css'],
 })

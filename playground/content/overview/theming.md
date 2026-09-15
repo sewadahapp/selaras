@@ -73,6 +73,39 @@ Use a complete semantic recipe when your brand needs different foregrounds
 or interaction choices. Other components still use the legacy `--ui-*`
 bridges while their semantic recipe migration is in progress.
 
+### One brand color
+
+For an opaque sRGB brand color, `defineColorFromSeed()` creates the complete
+light/dark semantic recipe for you. It selects readable foregrounds and adjusts
+the seed where needed for contrast, so the generated light fill may differ
+slightly from the input:
+
+```ts
+import { defineColorFromSeed } from '@sewadah/selaras/theme'
+
+export default defineNuxtConfig({
+  modules: ['@sewadah/selaras'],
+  selaras: {
+    theme: {
+      colors: {
+        coral: defineColorFromSeed('#FD5E53'),
+      },
+    },
+  },
+})
+```
+
+The helper initially accepts only opaque `#RRGGBB` values. It cannot verify
+CSS variables, transparent colors, or arbitrary expressions. If you change
+Selaras's functional surfaces, pass the same resolved surface colors to the
+helper; otherwise use `defineColor()` with an explicit recipe:
+
+```ts
+const surfaces = { light: '#f4f0e8', dark: '#20242a' }
+
+defineColorFromSeed('#FD5E53', { surfaces })
+```
+
 ### Custom semantic roles
 
 Register an additional role in `nuxt.config.ts` when a named product color

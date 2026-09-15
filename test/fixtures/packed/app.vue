@@ -4,6 +4,7 @@ import type { ButtonProps, ColorRole, ThemeConfiguration, ThemeProps } from '@se
 import { createTableColumnHelper } from '@sewadah/selaras/table'
 
 const role: ColorRole = 'published'
+const seededRole: ColorRole = 'seeded'
 const narrow = useIsMobile()
 const { add: addPublishedToast } = useToast()
 const hyphenatedRole: ColorRole = 'published-accent'
@@ -56,6 +57,9 @@ void hyphenatedRole
     <SToast />
     <SButton id="packed-default" v-bind="button">
       Published default
+    </SButton>
+    <SButton id="packed-seed" :color="seededRole">
+      Seeded role
     </SButton>
     <SButton id="packed-registered-builtin" color="secondary">
       Registered built-in recipe

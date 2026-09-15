@@ -5,8 +5,45 @@ import { dtcgColorToCss } from '../src/runtime/utils/dtcg-colors.ts'
 
 const sourceUrl = new URL('../src/tokens/default-colors.tokens.json', import.meta.url)
 const outputUrl = new URL('../src/runtime/default-colors.css', import.meta.url)
+const metadataUrl = new URL('../src/runtime/default-color-metadata.ts', import.meta.url)
 const paletteNamePattern = /^[a-z][a-z0-9-]*$/
 const stepPattern = /^\d+$/
+
+function linearToGamma(value) {
+  return value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055
+}
+
+/** The generator emits portable sRGB metadata from the owned OKLCH source. */
+function oklchToSrgbHex([L, chroma, hue]) {
+  const radians = hue * Math.PI / 180
+  const encode = (candidateChroma) => {
+    const candidateA = candidateChroma * Math.cos(radians)
+    const candidateB = candidateChroma * Math.sin(radians)
+    const l = (L + 0.3963377774 * candidateA + 0.2158037573 * candidateB) ** 3
+    const m = (L - 0.1055613458 * candidateA - 0.0638541728 * candidateB) ** 3
+    const s = (L - 0.0894841775 * candidateA - 1.291485548 * candidateB) ** 3
+    return [
+      linearToGamma(+4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s),
+      linearToGamma(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s),
+      linearToGamma(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s),
+    ]
+  }
+  let low = 0
+  let high = chroma
+  let rgb = encode(0)
+  for (let iteration = 0; iteration < 24; iteration++) {
+    const candidateChroma = (low + high) / 2
+    const candidate = encode(candidateChroma)
+    if (candidate.every(component => component >= -1e-7 && component <= 1 + 1e-7)) {
+      low = candidateChroma
+      rgb = candidate
+    }
+    else {
+      high = candidateChroma
+    }
+  }
+  return `#${rgb.map(component => Math.round(Math.min(1, Math.max(0, component)) * 255).toString(16).padStart(2, '0')).join('')}`
+}
 
 function invalid(path, message) {
   throw new Error(`Invalid Selaras default color token at ${path}: ${message}`)
@@ -45,17 +82,37 @@ export function generateDefaultColorCss(document) {
   return `/* Generated from ../tokens/default-colors.tokens.json. Do not edit directly. */\n@theme static {\n${declarations.join('\n')}\n}\n`
 }
 
+/** Emits the default surfaces consumed by the build-time seed helper. */
+export function generateDefaultColorMetadata(document) {
+  const gray = record(record(record(document, '$').color, 'color').palette, 'color.palette').gray
+  const palette = record(gray, 'color.palette.gray')
+  const surface = (step) => {
+    const token = record(palette[step], `color.palette.gray.${step}`)
+    const value = record(token.$value, `color.palette.gray.${step}.$value`)
+    if (value.colorSpace !== 'oklch' || !Array.isArray(value.components) || value.components.length !== 3 || !value.components.every(component => typeof component === 'number'))
+      invalid(`color.palette.gray.${step}.$value`, 'expected an OKLCH color with three numeric components.')
+    return oklchToSrgbHex(value.components)
+  }
+  return `/* Generated from ../tokens/default-colors.tokens.json. Do not edit directly. */\nexport const defaultSeedSurfaces = {\n  light: '${surface('25')}',\n  dark: '${surface('950')}',\n} as const\n`
+}
+
 export async function expectedDefaultColorCss() {
   return generateDefaultColorCss(JSON.parse(await readFile(sourceUrl, 'utf8')))
 }
 
+export async function expectedDefaultColorMetadata() {
+  return generateDefaultColorMetadata(JSON.parse(await readFile(sourceUrl, 'utf8')))
+}
+
 export async function checkDefaultColorCss() {
-  const [expected, actual] = await Promise.all([
+  const [expectedCss, actualCss, expectedMetadata, actualMetadata] = await Promise.all([
     expectedDefaultColorCss(),
     readFile(outputUrl, 'utf8'),
+    expectedDefaultColorMetadata(),
+    readFile(metadataUrl, 'utf8'),
   ])
-  if (actual !== expected)
-    throw new Error('Generated default colors are stale. Run `bun run tokens:generate`.')
+  if (actualCss !== expectedCss || actualMetadata !== expectedMetadata)
+    throw new Error('Generated default color artifacts are stale. Run `bun run tokens:generate`.')
 }
 
 async function main() {
@@ -63,7 +120,8 @@ async function main() {
     await checkDefaultColorCss()
     return
   }
-  await writeFile(outputUrl, await expectedDefaultColorCss())
+  const [css, metadata] = await Promise.all([expectedDefaultColorCss(), expectedDefaultColorMetadata()])
+  await Promise.all([writeFile(outputUrl, css), writeFile(metadataUrl, metadata)])
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1])

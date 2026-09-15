@@ -1,6 +1,7 @@
 import type { ColorModePair, ColorRecipeInput } from './utils/color-registry'
 import { normalizeColorRecipe } from './utils/color-registry'
 import { dtcgColorToCss } from './utils/dtcg-colors'
+import { defineColorFromSeed } from './utils/seed-colors'
 
 export type { ThemeComponentRegistry, ThemeConfiguration, ThemeDefaults, ThemeUiOverrides } from './theme-config'
 export type {
@@ -15,7 +16,9 @@ export type {
 } from './utils/color-registry'
 export type { DtcgColorComponent, DtcgColorConversionOptions, DtcgColorSpace, DtcgResolvedColor } from './utils/dtcg-colors'
 export type { FunctionalTokenOverrides } from './utils/functional-tokens'
+export type { SeedColorOptions, SeedColorSurfaces } from './utils/seed-colors'
 export { dtcgColorToCss }
+export { defineColorFromSeed }
 
 /**
  * Validates a build-time semantic color while preserving its literal types.

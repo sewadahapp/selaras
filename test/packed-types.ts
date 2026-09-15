@@ -1,4 +1,4 @@
-import type { DtcgResolvedColor } from '@sewadah/selaras/theme'
+import type { DtcgResolvedColor, SeedColorOptions } from '@sewadah/selaras/theme'
 import type {
   AutocompleteEmits,
   AutocompleteProps,
@@ -23,7 +23,7 @@ import type {
 } from '@sewadah/selaras/types'
 import type * as PublicTypes from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
-import { defineColor, dtcgColorToCss } from '@sewadah/selaras/theme'
+import { defineColor, defineColorFromSeed, dtcgColorToCss } from '@sewadah/selaras/theme'
 
 interface PackedUser {
   id: string
@@ -112,9 +112,12 @@ const autocompleteSlots: AutocompleteSlots<{ id: number, title: string }> = { it
 const packedTheme: ThemeProps = { defaults: { button: { size: 'lg' } } }
 const packedDtcgColor = { colorSpace: 'srgb', components: [0.1, 0.2, 0.3] } satisfies DtcgResolvedColor
 const packedDtcgCss = dtcgColorToCss(packedDtcgColor)
+const packedSeedOptions: SeedColorOptions = { surfaces: { light: '#f4f0e8', dark: '#20242a' } }
+const packedSeedColor = defineColorFromSeed('#FD5E53', packedSeedOptions)
 // @ts-expect-error only the documented resolved color spaces are supported
 const invalidPackedDtcgColor: DtcgResolvedColor = { colorSpace: 'display-p3', components: [1, 0, 1] }
 void packedDtcgCss
+void packedSeedColor
 void invalidPackedDtcgColor
 const packedThemeConfiguration: ThemeConfiguration = {
   defaults: { button: { color: 'primary', size: 'lg' } },
