@@ -1,0 +1,204 @@
+import assert from 'node:assert/strict'
+import { spawn, spawnSync } from 'node:child_process'
+import { cpSync, existsSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
+import { createServer } from 'node:net'
+import { tmpdir } from 'node:os'
+import { dirname, join, relative } from 'node:path'
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+import { chromium } from '@playwright/test'
+
+const rootDir = fileURLToPath(new URL('..', import.meta.url))
+const docsDir = join(rootDir, 'packages/docs')
+const fixtureDir = join(rootDir, 'test/fixtures/docs-layer')
+const rootRequire = createRequire(join(rootDir, 'package.json'))
+const playgroundRequire = createRequire(join(rootDir, 'playground/package.json'))
+const nuxtRequire = createRequire(rootRequire.resolve('nuxt/package.json'))
+const consumerDir = mkdtempSync(join(tmpdir(), 'selaras-docs-layer-'))
+const normalOnly = process.env.SELARAS_DOCS_LAYER_NORMAL_ONLY === '1'
+
+function run(label, command, args, cwd = consumerDir) {
+  console.log(`[docs-layer] ${label}`)
+  const result = spawnSync(command, args, { cwd, env: process.env, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 })
+  if (result.error)
+    throw result.error
+  assert.equal(result.status, 0, `${label}\n${result.stdout}\n${result.stderr}`)
+  return result.stdout
+}
+
+function installedManifest(name, require = nuxtRequire) {
+  for (const directory of require.resolve.paths(name) ?? []) {
+    const path = join(directory, name, 'package.json')
+    if (existsSync(path)) {
+      const manifest = JSON.parse(readFileSync(path, 'utf8'))
+      if (manifest.name === name)
+        return manifest
+    }
+  }
+  throw new Error(`Cannot find installed manifest for ${name}`)
+}
+
+async function findFreePort() {
+  const reservation = createServer()
+  await new Promise((resolve, reject) => {
+    reservation.once('error', reject)
+    reservation.listen(0, '127.0.0.1', resolve)
+  })
+  const address = reservation.address()
+  assert.ok(address && typeof address !== 'string')
+  const { port } = address
+  await new Promise(resolve => reservation.close(resolve))
+  return port
+}
+
+async function inspectConsumer({ prefixed, overridden }) {
+  console.log(`[docs-layer] inspect ${prefixed ? 'prefixed' : 'normal'} ${overridden ? 'override' : 'default'} consumer`)
+  const port = await findFreePort()
+  const server = spawn(process.execPath, ['.output/server/index.mjs'], {
+    cwd: consumerDir,
+    env: { ...process.env, NITRO_HOST: '127.0.0.1', NITRO_PORT: String(port), PORT: String(port) },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
+  let output = ''
+  try {
+    const url = await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(`Docs layer server startup timed out\n${output}`)), 30_000)
+      server.once('error', (error) => {
+        clearTimeout(timer)
+        reject(error)
+      })
+      server.once('exit', (code) => {
+        clearTimeout(timer)
+        reject(new Error(`Docs layer server exited: ${code}\n${output}`))
+      })
+      const collect = (chunk) => {
+        output += chunk.toString()
+        const match = output.match(/http:\/\/127\.0\.0\.1:\d+/)
+        if (match) {
+          clearTimeout(timer)
+          resolve(match[0])
+        }
+      }
+      server.stdout.on('data', collect)
+      server.stderr.on('data', collect)
+    })
+    const pageUrl = new URL('/guide/getting-started', url)
+    const response = await fetch(pageUrl)
+    assert.equal(response.status, 200)
+    const html = await response.text()
+    assert.match(html, /<h1[^>]*>[\s\S]*Getting started/, 'the consumer-owned docs collection must render through the layer route')
+    assert.match(html, /id="consumer-example"/, 'the layer Content component must resolve a consumer-owned example')
+    if (overridden) {
+      assert.match(html, /id="consumer-docs-header"/, 'the consuming app must override a layer component')
+      assert.doesNotMatch(html, /Open documentation navigation/, 'the overridden component must replace the layer header')
+    }
+    else {
+      assert.match(html, /Open documentation navigation/, 'the default layer header must render')
+      assert.match(html, /id="selaras-docs-main"/, 'the named layer layout must render a main landmark')
+    }
+    const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
+      .filter(([tag]) => tag.includes('rel="stylesheet"'))
+      .map(([tag]) => tag.match(/href="([^"]+)"/)?.[1])
+    assert.ok(stylesheets.length > 0)
+    const css = (await Promise.all(stylesheets.map(async (href) => {
+      assert.ok(href)
+      const stylesheet = await fetch(new URL(href, url))
+      assert.equal(stylesheet.status, 200)
+      return stylesheet.text()
+    }))).join('\n')
+    const prefix = prefixed ? 'tw\\:' : ''
+    assert.ok(css.includes(`.${prefix}inline-flex`), 'Selaras CSS must share the consumer Tailwind compilation')
+    assert.ok(css.includes(`--${prefixed ? 'tw-' : ''}breakpoint-${prefixed ? 'tablet' : 'laptop'}:60rem`), 'the consumer owns the emitted breakpoint')
+    assert.ok(css.includes('.selaras-docs-content button p'), 'the layer stylesheet must be imported through the consumer entry')
+    if (process.env.SELARAS_DOCS_LAYER_BROWSER) {
+      const browser = await chromium.launch()
+      try {
+        const page = await browser.newPage({ viewport: { width: 600, height: 800 } })
+        const issues = []
+        page.on('pageerror', error => issues.push(error.message))
+        page.on('console', (message) => {
+          if (/hydration|mismatch|\[Selaras\]/i.test(message.text()))
+            issues.push(message.text())
+        })
+        await page.goto(pageUrl.href, { waitUntil: 'networkidle' })
+        await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
+        await page.locator('#consumer-example').waitFor()
+        if (!overridden) {
+          await page.getByRole('button', { name: 'Open documentation navigation', exact: true }).click()
+          const drawer = page.getByRole('dialog', { name: 'Documentation navigation', exact: true })
+          await drawer.waitFor()
+          await page.keyboard.press('Escape')
+          await drawer.waitFor({ state: 'hidden' })
+        }
+        else {
+          await page.locator('#consumer-docs-header').waitFor()
+        }
+        assert.deepEqual(issues, [])
+      }
+      finally {
+        await browser.close()
+      }
+    }
+    console.log(`[docs-layer] ${prefixed ? 'prefixed' : 'normal'} ${overridden ? 'override' : 'default'} consumer passed`)
+  }
+  finally {
+    if (server.exitCode === null) {
+      server.kill('SIGTERM')
+      await new Promise(resolve => server.once('exit', resolve))
+    }
+  }
+}
+
+try {
+  const npmCache = join(consumerDir, '.npm-cache')
+  const packArguments = ['--cache', npmCache, 'pack', '--ignore-scripts', '--json', '--pack-destination', consumerDir]
+  const [selarasArchive] = JSON.parse(run('create the Selaras tarball', 'npm', packArguments, rootDir))
+  const [docsArchive] = JSON.parse(run('create the docs layer tarball', 'npm', packArguments, docsDir))
+  for (const archive of [selarasArchive, docsArchive]) {
+    assert.ok(!archive.files.some(file => file.path.startsWith('src/') || file.path.startsWith('.notes/')), `${archive.filename} must not ship repository-only files`)
+  }
+  assert.ok(docsArchive.files.some(file => file.path === 'nuxt.config.mjs'))
+  assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/ComponentExample.vue'))
+  assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')
+  cpSync(fixtureDir, consumerDir, { recursive: true })
+  const dependencies = Object.fromEntries(
+    ['nuxt', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']
+      .map(name => [name, installedManifest(name).version]),
+  )
+  const rootManifest = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'))
+  dependencies['better-sqlite3'] = rootManifest.devDependencies['better-sqlite3']
+  dependencies['@nuxt/content'] = installedManifest('@nuxt/content', playgroundRequire).version
+  dependencies['@sewadah/selaras'] = `file:./${selarasArchive.filename}`
+  dependencies['@sewadah/selaras-docs'] = `file:./${docsArchive.filename}`
+  writeFileSync(join(consumerDir, 'package.json'), `${JSON.stringify({ name: 'selaras-packed-docs-layer-consumer', private: true, type: 'module', dependencies }, null, 2)}\n`)
+  run('install both tarballs in an isolated dependency graph', 'bun', ['install', '--ignore-scripts'])
+  const consumerRequire = createRequire(join(consumerDir, 'package.json'))
+  for (const packageName of ['@sewadah/selaras', '@sewadah/selaras-docs']) {
+    const entry = realpathSync(fileURLToPath(run(`resolve ${packageName}`, process.execPath, ['--input-type=module', '--eval', `console.log(import.meta.resolve(${JSON.stringify(packageName)}))`])))
+    assert.ok(!relative(consumerDir, entry).startsWith('..'), `${packageName} must resolve from the installed consumer`)
+  }
+  const nuxtCli = join(dirname(consumerRequire.resolve('nuxt/package.json')), 'bin/nuxt.mjs')
+  const vueTsc = join(dirname(consumerRequire.resolve('vue-tsc/package.json')), 'bin/vue-tsc.js')
+  if (normalOnly) {
+    cpSync(join(consumerDir, 'components/DocsHeader.override.vue'), join(consumerDir, 'components/DocsHeader.vue'))
+    const configPath = join(consumerDir, 'nuxt.config.ts')
+    writeFileSync(configPath, readFileSync(configPath, 'utf8').replace('classPrefix: \'tw\'', 'classPrefix: undefined').replace('breakpoint: \'tablet\'', 'breakpoint: \'laptop\''))
+    const cssPath = join(consumerDir, 'main.css')
+    writeFileSync(cssPath, readFileSync(cssPath, 'utf8').replace(' prefix(tw)', '').replace('--breakpoint-tablet', '--breakpoint-laptop'))
+    run('build the normal-prefix consumer override', process.execPath, [nuxtCli, 'build'])
+    run('type-check generated normal-prefix contracts', process.execPath, [vueTsc, '--noEmit', '--project', 'tsconfig.json'])
+    await inspectConsumer({ prefixed: false, overridden: true })
+  }
+  else {
+    run('build the default prefixed consumer', process.execPath, [nuxtCli, 'build'])
+    run('type-check generated layer and Content contracts', process.execPath, [vueTsc, '--noEmit', '--project', 'tsconfig.json'])
+    await inspectConsumer({ prefixed: true, overridden: false })
+    cpSync(join(consumerDir, 'components/DocsHeader.override.vue'), join(consumerDir, 'components/DocsHeader.vue'))
+    run('rebuild the prefixed consumer override', process.execPath, [nuxtCli, 'build'])
+    await inspectConsumer({ prefixed: true, overridden: true })
+  }
+}
+finally {
+  rmSync(consumerDir, { recursive: true, force: true })
+}

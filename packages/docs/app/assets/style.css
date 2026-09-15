@@ -1,0 +1,5 @@
+.selaras-docs-content button p,
+.selaras-docs-content a p {
+  margin: 0;
+  color: inherit;
+}

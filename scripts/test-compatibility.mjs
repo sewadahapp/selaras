@@ -6,12 +6,12 @@ import { fileURLToPath } from 'node:url'
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url))
 
-function run(label, script, args) {
+function run(label, script, args, environment = {}) {
   console.log(`\n[compat] ${label}`)
 
   const result = spawnSync(process.execPath, [script, ...args], {
     cwd: rootDir,
-    env: process.env,
+    env: { ...process.env, ...environment },
     stdio: 'inherit',
   })
 
@@ -82,4 +82,17 @@ run(
   'exercise an isolated installed-tarball consumer',
   'scripts/test-packed-consumer.mjs',
   [],
+)
+
+run(
+  'exercise a prefixed installed docs-layer consumer',
+  'scripts/test-packed-docs-layer.mjs',
+  [],
+)
+
+run(
+  'exercise an unprefixed installed docs-layer consumer',
+  'scripts/test-packed-docs-layer.mjs',
+  [],
+  { SELARAS_DOCS_LAYER_NORMAL_ONLY: '1' },
 )
