@@ -98,9 +98,34 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
       const classPrefix = prefixed ? 'tw\\:' : ''
       assert.ok(css.includes(`.${classPrefix}inline-flex`), 'structural CSS must retain library source discovery')
       assert.ok(css.includes('--selaras-resolved-color-primary-fill:var(--selaras-color-primary-fill,#123456)'), 'explicit primary recipe must be generated')
-      assert.ok(css.includes('--selaras-resolved-color-brand-fill:var(--selaras-color-brand-fill,#123456)'), 'explicit custom recipe must be generated')
+      assert.ok(css.includes('--selaras-resolved-color-brand-fill:var(--selaras-color-brand-fill,#456789)'), 'explicit custom recipe must be generated')
       assert.ok(css.includes('--selaras-surface-default:#f8fafc'), 'explicit functional inputs must reach the compiled CSS')
       assert.ok(!css.includes('--color-selaras-indigo-500:'), 'structural import must not emit Selaras owned foundations')
+      if (process.env.SELARAS_PACKED_BROWSER) {
+        const browser = await chromium.launch()
+        try {
+          const page = await browser.newPage({ viewport: { width: 959, height: 800 } })
+          const issues = []
+          page.on('pageerror', error => issues.push(error.message))
+          page.on('console', (message) => {
+            if (/hydration|mismatch|\[Selaras\]/i.test(message.text()))
+              issues.push(message.text())
+          })
+          await page.goto(url)
+          const primary = page.locator('#explicit-primary')
+          const brand = page.locator('#explicit-brand')
+          await primary.waitFor({ state: 'visible' })
+          await brand.waitFor({ state: 'visible' })
+          assert.equal(await primary.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(18, 52, 86)')
+          assert.equal(await brand.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(69, 103, 137)')
+          assert.equal(await brand.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme')), 'global')
+          assert.deepEqual(issues, [])
+          console.log(`[packed] ${prefixed ? 'prefixed' : 'normal'} structural-theme hydration, portal, and semantic colors passed`)
+        }
+        finally {
+          await browser.close()
+        }
+      }
       return
     }
     const pattern = value => new RegExp(value.source.replaceAll('tw:', prefixed ? 'tw:' : ''), value.flags)
@@ -388,17 +413,24 @@ const color = defineColor({
   dark: { fill: '#abcdef', onFill: '#112233', subtle: '#223344', onSubtle: '#ddeeff', text: '#cdefab', border: '#bcdefa' },
 })
 
+const brand = defineColor({
+  light: { fill: '#456789', onFill: '#ffffff', subtle: '#e5edf5', onSubtle: '#132b43', text: '#345678', border: '#456789' },
+  dark: { fill: '#89abcd', onFill: '#102030', subtle: '#1d344b', onSubtle: '#e5edf5', text: '#bcdcef', border: '#9abada' },
+})
+
 export default defineNuxtConfig({
   modules: ['@sewadah/selaras'],
   compatibilityDate: '2026-09-13',
-  selaras: { classPrefix: 'tw', adaptive: { breakpoint: 'tablet' }, theme: { colors: { primary: color, secondary: color, success: color, info: color, warning: color, danger: color, neutral: color, brand: color } } },
+  selaras: { classPrefix: 'tw', adaptive: { breakpoint: 'tablet' }, theme: { colors: { primary: color, secondary: color, success: color, info: color, warning: color, danger: color, neutral: color, brand } } },
   css: ['~/main.css'],
 })
 `
   const explicitApp = `<template>
   <SApp>
     <SButton id="explicit-primary">Primary</SButton>
-    <SButton id="explicit-brand" color="brand">Brand</SButton>
+    <SModal :open="true" :transition="false" title="Structural theme">
+      <SButton id="explicit-brand" color="brand">Brand</SButton>
+    </SModal>
   </SApp>
 </template>
 `
@@ -426,6 +458,11 @@ export default defineNuxtConfig({
   writeFileSync(configPath, explicitConfig)
   writeFileSync(cssPath, explicitCss(true))
   writeFileSync(appPath, explicitApp)
+  // This fixture starts as the broad published-consumer app, whose runtime
+  // token overrides deliberately exercise another contract. A complete
+  // structural theme must prove module recipes and CSS inputs alone, so erase
+  // those inherited runtime values before the two explicit-theme builds.
+  writeFileSync(join(consumerDir, 'app.config.ts'), 'export default defineAppConfig({})\n')
   run('build a prefixed fully explicit structural-theme consumer', process.execPath, [nuxtCli, 'build'])
   await inspectSsr(true, true)
   writeFileSync(configPath, explicitConfig.replace('classPrefix: \'tw\'', 'classPrefix: undefined').replace('breakpoint: \'tablet\'', 'breakpoint: \'laptop\''))
