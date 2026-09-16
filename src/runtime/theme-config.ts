@@ -23,6 +23,11 @@ import type { contentNavigationTheme, ContentNavigationThemeSlots } from './them
 import type { contentSurroundTheme, ContentSurroundThemeSlots } from './theme/content-surround'
 import type { contentTocTheme, ContentTocThemeSlots } from './theme/content-toc'
 import type { contextMenuTheme, ContextMenuThemeSlots } from './theme/context-menu'
+import type { dashboardGroupTheme, DashboardGroupThemeSlots } from './theme/dashboard-group'
+import type { dashboardNavbarTheme, DashboardNavbarThemeSlots } from './theme/dashboard-navbar'
+import type { dashboardPanelTheme, DashboardPanelThemeSlots } from './theme/dashboard-panel'
+import type { dashboardResizeHandleTheme, DashboardResizeHandleThemeSlots } from './theme/dashboard-resize-handle'
+import type { dashboardSidebarTheme, DashboardSidebarThemeSlots } from './theme/dashboard-sidebar'
 import type { datePickerTheme, DatePickerThemeSlots } from './theme/date-picker'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
@@ -83,6 +88,11 @@ type CheckboxVariants = VariantProps<typeof checkboxTheme>
 type ChipVariants = VariantProps<typeof chipTheme>
 type CollapsibleVariants = VariantProps<typeof collapsibleTheme>
 type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
+type DashboardGroupVariants = VariantProps<typeof dashboardGroupTheme>
+type DashboardNavbarVariants = VariantProps<typeof dashboardNavbarTheme>
+type DashboardPanelVariants = VariantProps<typeof dashboardPanelTheme>
+type DashboardResizeHandleVariants = VariantProps<typeof dashboardResizeHandleTheme>
+type DashboardSidebarVariants = VariantProps<typeof dashboardSidebarTheme>
 type ContainerVariants = VariantProps<typeof containerTheme>
 type ContentNavigationVariants = VariantProps<typeof contentNavigationTheme>
 type ContentSurroundVariants = VariantProps<typeof contentSurroundTheme>
@@ -151,6 +161,28 @@ export interface ThemeComponentRegistry {
   datePicker: {
     slots: DatePickerThemeSlots
     conditions: Pick<VariantProps<typeof datePickerTheme>, 'size' | 'invalid' | 'range'>
+  }
+  /** Dashboard layout primitives are slot-only compositions; behavior stays on their props. */
+  dashboardGroup: {
+    slots: DashboardGroupThemeSlots
+    conditions: Pick<DashboardGroupVariants, never>
+  }
+  dashboardNavbar: {
+    slots: DashboardNavbarThemeSlots
+    conditions: Pick<DashboardNavbarVariants, never>
+  }
+  dashboardPanel: {
+    slots: DashboardPanelThemeSlots
+    conditions: Pick<DashboardPanelVariants, never>
+  }
+  /** This recipe owns the wrapper background; SplitterResizeHandle retains its own line recipe. */
+  dashboardResizeHandle: {
+    slots: DashboardResizeHandleThemeSlots
+    conditions: Pick<DashboardResizeHandleVariants, never>
+  }
+  dashboardSidebar: {
+    slots: DashboardSidebarThemeSlots
+    conditions: Pick<DashboardSidebarVariants, never>
   }
   fileTree: {
     slots: FileTreeThemeSlots

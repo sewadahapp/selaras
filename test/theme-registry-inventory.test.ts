@@ -12,14 +12,8 @@ const sources = ['components', 'internal'].flatMap(directory =>
 const consumed = new Set(sources.flatMap(source => [...source.matchAll(/useComponentTheme\('([^']+)'/g)].map(match => match[1])))
 
 describe('finite theme registry inventory', () => {
-  it('covers every runtime recipe except explicitly deferred dashboard contracts', () => {
-    expect([...consumed].filter(key => !registered.has(key)).sort()).toEqual([
-      'dashboardGroup',
-      'dashboardNavbar',
-      'dashboardPanel',
-      'dashboardResizeHandle',
-      'dashboardSidebar',
-    ])
+  it('covers every runtime recipe', () => {
+    expect([...consumed].filter(key => !registered.has(key)).sort()).toEqual([])
     expect([...registered].filter(key => !consumed.has(key))).toEqual([])
   })
 

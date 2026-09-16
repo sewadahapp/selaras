@@ -377,8 +377,9 @@ and `compoundVariants`. Registered roles are available in color conditions.
 Behavioral props such as `open`, selected data, pagination state, persistence,
 and callbacks stay on the component.
 
-The non-dashboard runtime recipes are covered. Dashboard recipe configuration
-is still provisional and excluded from this typed contract. Theme `defaults`
+Every runtime recipe, including the Dashboard layout primitives, is covered by
+this typed contract. Dashboard recipes are slot-only: their resize, persistence,
+breakpoint, and open-state behavior remains on the components. Theme `defaults`
 remain limited to Avatar, Badge, Button, Chip, and Input.
 
 | Recipe | Conditions | Ownership |
