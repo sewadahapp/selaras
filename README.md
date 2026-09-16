@@ -60,6 +60,12 @@ Import the CSS in your own stylesheet, after Tailwind itself:
 @import "#selaras/tailwind.css";
 ```
 
+For a mature design system that supplies complete semantic role recipes and
+`--selaras-*` functional inputs, import `@sewadah/selaras/structural.css`
+instead. It keeps Selaras's source discovery, variants, motion and semantic
+bindings while omitting Selaras-owned foundation colors. The default aggregate
+import remains the recommended path for most applications.
+
 The Nuxt-generated import supplies library class candidates and the adaptive
 breakpoint binding to the same Tailwind compilation as your app. Breakpoint
 values come from your CSS (`@theme { --breakpoint-md: 60rem; }`); select another

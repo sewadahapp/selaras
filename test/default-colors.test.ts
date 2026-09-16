@@ -18,7 +18,10 @@ describe('owned default color source', () => {
     expect(generateDefaultColorCss(document)).toBe(css)
     expect(generateDefaultColorMetadata(document)).toBe(metadata)
     expect(defaultSeedSurfaces).toEqual({ light: '#fdfdfe', dark: '#090a0d' })
-    expect([...css.matchAll(/--color-selaras-[a-z-]+-\d+/g)]).toHaveLength(78)
+    const foundations = css.match(/@theme static \{\n([\s\S]*?)\n\}/)?.[1] ?? ''
+    expect([...foundations.matchAll(/--color-selaras-[a-z-]+-\d+/g)]).toHaveLength(78)
+    expect(css).toContain('--_selaras-default-surface-default: --theme(--color-selaras-gray-25);')
+    expect(css).toContain('--_selaras-default-surface-default: --theme(--color-selaras-gray-950);')
     expect(css).not.toMatch(/--color-(?:primary|secondary|success|info|warning|danger|neutral)-/)
   })
 

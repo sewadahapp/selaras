@@ -1,0 +1,324 @@
+/*
+ * Deliberately no `@import "tailwindcss";` here - that's the consumer's
+ * own import now (`@import "tailwindcss"; @import "selaras";` in their
+ * own CSS, in that order), matching how other Nuxt component libraries'
+ * own CSS packages commonly work (confirmed by reading a comparable
+ * reference's own shipped CSS directly: it imports its own internal
+ * build artifacts and keyframes, never `tailwindcss` itself). Tailwind
+ * v4 processes `@source`/`@theme`/`@custom-variant` anywhere in the
+ * whole resolved import graph as one unit, regardless of which specific
+ * file contains the actual `@import "tailwindcss";` - this file only
+ * needs to come *after* that import somewhere upstream, not contain it
+ * itself. `tw-animate-css` stays here though - that's this library's
+ * own internal implementation detail (the animation utilities Modal/
+ * Dropdown/Toast/Tooltip's own transitions rely on), not something a
+ * consumer should need to know to import themselves.
+ */
+@import "tw-animate-css";
+/*
+ * This is Selaras's required structural CSS entry. It intentionally does not
+ * import owned foundation colors: a complete explicit theme may provide its
+ * own role recipes and `--selaras-*` inputs without adopting our palette.
+ * Most applications should import the aggregate `@sewadah/selaras` entry,
+ * which adds `default-colors.css` before this file.
+ */
+
+/*
+ * Tailwind's automatic content detection only scans the consuming app's own
+ * tree. Our component/theme sources live in a sibling package directory, so
+ * they'd otherwise never be scanned and their classes would be silently
+ * dropped from the generated CSS.
+ *
+ * Bare directory paths, no extension glob - confirmed directly (via
+ * @tailwindcss/oxide's own Scanner, against a real installed tarball, not
+ * just this repo's own workspace symlink) that an extension-specific glob
+ * here was a real bug: nuxt-module-build compiles the theme and utils
+ * directories' TypeScript sources down to plain .js in the published dist,
+ * so a source directive glob ending in .ts matched zero files in a real
+ * consumer - every class defined only inside a component's own theme file
+ * (most of them: every size/color/variant string) silently never made it
+ * into a consumer's build. Never caught locally because this repo's own
+ * dev/playground testing scans the whole monorepo tree automatically,
+ * masking that these directives never worked end-to-end. Matches a
+ * comparable reference library's own shipped CSS, confirmed by reading it
+ * directly - a bare directory path there too, no glob, no extension.
+ */
+@source "./components";
+@source "./internal";
+@source "./theme";
+@source "./utils";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Chromium's own UA stylesheet applies a nonzero outline-offset to a
+   focused link that no other focusable element gets - components that set
+   their own focus-visible:outline-offset-* (Button, NavigationMenu, ...)
+   already override this, but a link with no custom focus styling at all
+   (Breadcrumb, ContentSurround, ContentToc) was still exposed to it,
+   making its focus ring look inconsistent with everything else on the
+   page. Matches a comparable reference library's own reset for this
+   exact case. */
+@layer base {
+  a:focus-visible {
+    outline-offset: 0;
+  }
+}
+
+/* Grow-and-fade motion for the v-ripple directive (directives/ripple.ts) -
+   one shared definition; each ripple span sets its own size/position/color
+   inline and just points its `animation` at this by name. */
+@keyframes selaras-ripple {
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+
+/* Expand/collapse motion for Accordion's content panel - Reka's own
+   AccordionContent measures the panel's real, natural height and exposes
+   it as --reka-accordion-content-height, so this only needs to interpolate
+   between 0 and that value; it never has to guess or hardcode a height. */
+@keyframes selaras-accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--reka-accordion-content-height);
+  }
+}
+@keyframes selaras-accordion-up {
+  from {
+    height: var(--reka-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+/* Same expand/collapse motion as Accordion's own, for the standalone
+   Collapsible component - Reka's CollapsibleContent exposes the panel's
+   measured natural height as --reka-collapsible-content-height. */
+@keyframes selaras-collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--reka-collapsible-content-height);
+  }
+}
+@keyframes selaras-collapsible-up {
+  from {
+    height: var(--reka-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+/* Sweep motion for Skeleton's shimmer animation - the theme sets a
+   200%-wide gradient background (theme/skeleton.ts), this just slides its
+   position so the lighter band travels left to right across the block. */
+@keyframes selaras-skeleton-shimmer {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+/* Sliding motion for Progress's indeterminate linear indicator (no known
+   value to track a real width against) - the indicator is fixed at 1/3 the
+   track's own width, this just slides it fully across and back out again. */
+@keyframes selaras-progress-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+/*
+ * tw-animate-css's enter/exit utilities (animate-in, zoom-in-95, fade-in-0,
+ * ...) - used by Select/Dropdown/Modal/Toast/Tooltip's open/close
+ * transitions - have no built-in prefers-reduced-motion handling, and
+ * neither do this file's own hover/active transition-colors utilities.
+ * This is the standard "kill switch" for both: forcing every animation/
+ * transition to near-zero duration is a safe, complete fallback under
+ * reduced motion (an instant color or state change loses nothing
+ * functionally), rather than trying to selectively target only the
+ * "real" motion case by case.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/*
+ * Tree-connector rail for a nested nav group's own children
+ * (ContentNavigation.vue's `item` slot, NavigationMenu's own `childItem`
+ * slot in vertical mode) - a trunk line plus one curved "elbow" per row,
+ * branching off it toward each item.
+ *
+ * Both the trunk and the elbow live entirely on the *item* (the per-row
+ * wrapper `<li>`), not on the list that wraps all of them - two earlier
+ * versions of this got that wrong in opposite ways:
+ * - v1 drew trunk+elbow together as a single tile, tiled down the
+ *   *list* via `mask-repeat: repeat-y`, on the assumption every row is
+ *   the same fixed height - broken the moment a child is itself an
+ *   expanded group, since its own nested subtree adds height without
+ *   adding a "row", and the tile kept repeating elbow marks straight
+ *   through that nested space.
+ * - v2 fixed that by moving the elbow onto the item (this file's own
+ *   `::before` below) but left the trunk as a plain `border-s` on the
+ *   *list* - which is correct-height for a flat list, but wrong the
+ *   moment the *last* child is itself expanded: the list's own box
+ *   height then includes that child's whole nested subtree, so a
+ *   border spanning "100% of the list" ran straight past the last
+ *   child's own elbow, all the way down to whatever follows the entire
+ *   group in the DOM (visually reaching toward the *next sibling of
+ *   the group itself*, not stopping at the group's own last row).
+ *
+ * The fix: give every item its own trunk segment (`::after` below,
+ * `top: 0` down to its own bottom edge, extended slightly further via
+ * a negative `bottom` to bridge the list's own row gap so consecutive
+ * segments read as one unbroken line) - except the *last* item in the
+ * list (plain CSS `:last-child`, no JS needed), whose segment instead
+ * stops at a small fixed height matching where its own elbow curve
+ * begins bending away. That short stop is what makes the trunk end
+ * exactly at the group's own last row regardless of how tall that
+ * row's own expanded content makes it, since the segment's height is a
+ * fixed constant, never a percentage of anything nested inside it.
+ *
+ * Both pseudo-elements get their real color from `--selaras-resolved-border-default` (the
+ * elbow via `mask-image` over black-on-transparent SVG geometry - the
+ * same "colored div, SVG-as-mask" technique ContentToc's own rail
+ * already uses; the trunk is a plain colored bar, no mask needed since
+ * it's just a straight line). `inset-inline-start` on both reaches back
+ * into the `ps-4` gutter `content`/`childList` reserve for them.
+ */
+.selaras-nav-elbow {
+  position: relative;
+}
+.selaras-nav-elbow::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: -16px;
+  top: 0;
+  width: 16px;
+  background-color: var(--selaras-resolved-border-default);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.selaras-nav-elbow::after {
+  content: '';
+  position: absolute;
+  inset-inline-start: -15px;
+  top: 0;
+  width: 1.5px;
+  background-color: var(--selaras-resolved-border-default);
+}
+/* Row height 40px (py-2.5 + text-sm's 20px line-height); elbow curves
+   from the trunk down to the row's own midpoint (y=20). List gap is
+   2px (gap-0.5), so a non-last row's own trunk segment extends 2px
+   past its own bottom edge to meet the next row's segment flush; the
+   last row's own segment instead stops at y=14, exactly where its
+   elbow curve (below) begins bending away from vertical. */
+.selaras-nav-elbow--content-navigation::before {
+  height: 40px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 40'%3E%3Cpath d='M1 14A6 6 0 0 0 7 20L14 20' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 40'%3E%3Cpath d='M1 14A6 6 0 0 0 7 20L14 20' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.selaras-nav-elbow--content-navigation::after {
+  bottom: -2px;
+}
+.selaras-nav-elbow--content-navigation:last-child::after {
+  bottom: auto;
+  height: 14px;
+}
+/* Row height 32px (py-1.5 + text-sm's 20px line-height); elbow curves
+   down to the row's own midpoint (y=16). List gap is 4px (gap-1); the
+   last row's own trunk segment stops at y=10, matching its elbow
+   curve's own start. */
+.selaras-nav-elbow--navigation-menu::before {
+  height: 32px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 32'%3E%3Cpath d='M1 10A6 6 0 0 0 7 16L14 16' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 32'%3E%3Cpath d='M1 10A6 6 0 0 0 7 16L14 16' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.selaras-nav-elbow--navigation-menu::after {
+  bottom: -4px;
+}
+.selaras-nav-elbow--navigation-menu:last-child::after {
+  bottom: auto;
+  height: 10px;
+}
+/* Row height 28px (py-1 + text-sm's 20px line-height); elbow curves
+   down to the row's own midpoint (y=14). List gap is 2px (gap-0.5); the
+   last row's own trunk segment stops at y=8, matching its elbow
+   curve's own start. */
+.selaras-nav-elbow--file-tree::before {
+  height: 28px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 28'%3E%3Cpath d='M1 8A6 6 0 0 0 7 14L14 14' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 28'%3E%3Cpath d='M1 8A6 6 0 0 0 7 14L14 14' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.selaras-nav-elbow--file-tree::after {
+  bottom: -2px;
+}
+.selaras-nav-elbow--file-tree:last-child::after {
+  bottom: auto;
+  height: 8px;
+}
+
+
+
+/* Public inputs inherit without bundled defaults. Resolve them at each managed
+ * owner so explicit modes and transported portals share one semantic contract. */
+@layer theme {
+  :root,
+  [data-selaras-theme] {
+    --selaras-resolved-surface-default: var(--selaras-surface-default, var(--_selaras-default-surface-default));
+    --selaras-resolved-surface-elevated: var(--selaras-surface-elevated, var(--_selaras-default-surface-elevated));
+    --selaras-resolved-surface-inverted: var(--selaras-surface-inverted, var(--_selaras-default-surface-inverted));
+    --selaras-resolved-text-default: var(--selaras-text-default, var(--_selaras-default-text-default));
+    --selaras-resolved-text-muted: var(--selaras-text-muted, var(--_selaras-default-text-muted));
+    --selaras-resolved-text-inverted: var(--selaras-text-inverted, var(--_selaras-default-text-inverted));
+    --selaras-resolved-border-default: var(--selaras-border-default, var(--_selaras-default-border-default));
+    --selaras-resolved-border-muted: var(--selaras-border-muted, var(--_selaras-default-border-muted));
+    --selaras-resolved-border-hover: var(--selaras-border-hover, var(--_selaras-default-border-hover));
+    --selaras-resolved-scrim: var(--selaras-scrim, rgb(0 0 0 / 0.5));
+    --selaras-resolved-radius-base: var(--selaras-radius-base, 8px);
+    --selaras-resolved-radius-sm: var(--selaras-radius-sm, calc(var(--selaras-resolved-radius-base) * 0.75));
+    --selaras-resolved-radius-md: var(--selaras-radius-md, var(--selaras-resolved-radius-base));
+    --selaras-resolved-radius-lg: var(--selaras-radius-lg, calc(var(--selaras-resolved-radius-base) * 2));
+    --selaras-resolved-radius-full: var(--selaras-radius-full, 9999px);
+    --selaras-resolved-shadow-sm: var(--selaras-shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.06));
+    --selaras-resolved-shadow-md: var(--selaras-shadow-md, 0 4px 16px -2px rgb(0 0 0 / 0.12));
+    --selaras-resolved-shadow-lg: var(--selaras-shadow-lg, 0 12px 32px -4px rgb(0 0 0 / 0.16));
+    --selaras-resolved-z-modal-overlay: var(--selaras-z-modal-overlay, 40);
+    --selaras-resolved-z-modal: var(--selaras-z-modal, 50);
+    --selaras-resolved-z-dropdown: var(--selaras-z-dropdown, 60);
+    --selaras-resolved-z-tooltip: var(--selaras-z-tooltip, 70);
+    --selaras-resolved-z-toast: var(--selaras-z-toast, 80);
+  }
+
+  :root.dark,
+  :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),
+  [data-selaras-theme]:where([data-selaras-mode="dark"]) {
+    --selaras-resolved-surface-default: var(--selaras-surface-default, var(--_selaras-default-surface-default));
+    --selaras-resolved-surface-elevated: var(--selaras-surface-elevated, var(--_selaras-default-surface-elevated));
+    --selaras-resolved-surface-inverted: var(--selaras-surface-inverted, var(--_selaras-default-surface-inverted));
+    --selaras-resolved-text-default: var(--selaras-text-default, var(--_selaras-default-text-default));
+    --selaras-resolved-text-muted: var(--selaras-text-muted, var(--_selaras-default-text-muted));
+    --selaras-resolved-text-inverted: var(--selaras-text-inverted, var(--_selaras-default-text-inverted));
+    --selaras-resolved-border-default: var(--selaras-border-default, var(--_selaras-default-border-default));
+    --selaras-resolved-border-muted: var(--selaras-border-muted, var(--_selaras-default-border-muted));
+    --selaras-resolved-border-hover: var(--selaras-border-hover, var(--_selaras-default-border-hover));
+  }
+}

@@ -9,6 +9,13 @@ properties, and its layout/variant classes from a `tailwind-variants`
 theme. The sections below cover token inputs, instance slots, scoped themes,
 and global recipes; their class merge order is listed under Precedence.
 
+The normal `@sewadah/selaras` import includes Selaras-owned default
+foundations. A complete external theme can import
+`@sewadah/selaras/structural.css` instead, then provide every rendered role
+recipe and functional input itself. Structural CSS still supplies Tailwind
+source discovery, variants, motion and read bindings; it deliberately does not
+supply an unconfigured fallback palette.
+
 ## 1. Design tokens
 
 Use semantic color recipes for roles and functional inputs for general

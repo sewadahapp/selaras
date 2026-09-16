@@ -52,6 +52,7 @@
     "./components/SlideoverRenderer*": {},
     "./components/*": "./dist/runtime/components/*",
     "./theme.css": "./dist/runtime/theme.css",
+    "./structural.css": "./dist/runtime/structural.css",
     "./prose.css": "./dist/runtime/prose.css",
     "./tokens/default-colors.tokens.json": "./dist/tokens/default-colors.tokens.json"
   },

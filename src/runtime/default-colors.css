@@ -79,3 +79,32 @@
   --color-selaras-red-900: oklch(0.295 0.1 28);
   --color-selaras-red-950: oklch(0.205 0.065 28);
 }
+
+@layer theme {
+  :root,
+  [data-selaras-theme] {
+  --_selaras-default-surface-default: --theme(--color-selaras-gray-25);
+  --_selaras-default-surface-elevated: --theme(--color-selaras-gray-50);
+  --_selaras-default-surface-inverted: --theme(--color-selaras-gray-950);
+  --_selaras-default-text-default: --theme(--color-selaras-gray-950);
+  --_selaras-default-text-muted: --theme(--color-selaras-gray-600);
+  --_selaras-default-text-inverted: --theme(--color-selaras-gray-50);
+  --_selaras-default-border-default: --theme(--color-selaras-gray-200);
+  --_selaras-default-border-muted: --theme(--color-selaras-gray-100);
+  --_selaras-default-border-hover: --theme(--color-selaras-gray-300);
+  }
+
+  :root.dark,
+  :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),
+  [data-selaras-theme]:where([data-selaras-mode="dark"]) {
+  --_selaras-default-surface-default: --theme(--color-selaras-gray-950);
+  --_selaras-default-surface-elevated: --theme(--color-selaras-gray-900);
+  --_selaras-default-surface-inverted: --theme(--color-selaras-gray-50);
+  --_selaras-default-text-default: --theme(--color-selaras-gray-50);
+  --_selaras-default-text-muted: --theme(--color-selaras-gray-400);
+  --_selaras-default-text-inverted: --theme(--color-selaras-gray-950);
+  --_selaras-default-border-default: --theme(--color-selaras-gray-800);
+  --_selaras-default-border-muted: --theme(--color-selaras-gray-900);
+  --_selaras-default-border-hover: --theme(--color-selaras-gray-700);
+  }
+}

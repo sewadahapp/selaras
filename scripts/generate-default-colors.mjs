@@ -79,7 +79,30 @@ export function generateDefaultColorCss(document) {
 
   if (declarations.length === 0)
     invalid('color.palette', 'expected at least one color token.')
-  return `/* Generated from ../tokens/default-colors.tokens.json. Do not edit directly. */\n@theme static {\n${declarations.join('\n')}\n}\n`
+  const light = {
+    'surface-default': '--theme(--color-selaras-gray-25)',
+    'surface-elevated': '--theme(--color-selaras-gray-50)',
+    'surface-inverted': '--theme(--color-selaras-gray-950)',
+    'text-default': '--theme(--color-selaras-gray-950)',
+    'text-muted': '--theme(--color-selaras-gray-600)',
+    'text-inverted': '--theme(--color-selaras-gray-50)',
+    'border-default': '--theme(--color-selaras-gray-200)',
+    'border-muted': '--theme(--color-selaras-gray-100)',
+    'border-hover': '--theme(--color-selaras-gray-300)',
+  }
+  const dark = {
+    'surface-default': '--theme(--color-selaras-gray-950)',
+    'surface-elevated': '--theme(--color-selaras-gray-900)',
+    'surface-inverted': '--theme(--color-selaras-gray-50)',
+    'text-default': '--theme(--color-selaras-gray-50)',
+    'text-muted': '--theme(--color-selaras-gray-400)',
+    'text-inverted': '--theme(--color-selaras-gray-950)',
+    'border-default': '--theme(--color-selaras-gray-800)',
+    'border-muted': '--theme(--color-selaras-gray-900)',
+    'border-hover': '--theme(--color-selaras-gray-700)',
+  }
+  const defaultDeclarations = values => Object.entries(values).map(([name, value]) => `  --_selaras-default-${name}: ${value};`).join('\n')
+  return `/* Generated from ../tokens/default-colors.tokens.json. Do not edit directly. */\n@theme static {\n${declarations.join('\n')}\n}\n\n@layer theme {\n  :root,\n  [data-selaras-theme] {\n${defaultDeclarations(light)}\n  }\n\n  :root.dark,\n  :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),\n  [data-selaras-theme]:where([data-selaras-mode="dark"]) {\n${defaultDeclarations(dark)}\n  }\n}\n`
 }
 
 /** Emits the default surfaces consumed by the build-time seed helper. */

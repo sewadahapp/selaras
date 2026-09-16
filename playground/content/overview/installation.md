@@ -92,6 +92,23 @@ export default defineNuxtConfig({
 styles - see [Theming](/overview/theming). `#selaras/tailwind.css` is generated
 by the Nuxt module. Import it in this same entry so library class candidates
 and adaptive presentation use your app's final Tailwind theme.
+
+### Complete explicit theme
+
+Applications with a complete existing semantic theme can import Selaras's
+structural entry instead of its owned default foundations:
+
+```css [assets/css/main.css]
+@import "tailwindcss";
+@import "@sewadah/selaras/structural.css";
+@import "#selaras/tailwind.css";
+```
+
+This entry retains source discovery, variants, motion and semantic bindings.
+Register every color role your application renders and provide the functional
+`--selaras-*` inputs required by your design system. It is not an unthemed
+zero-configuration mode; use the aggregate import unless you provide that
+complete contract.
 If your project also renders long-form markdown/CMS content, add
 [prose.css](/components/typography/prose) the same way:
 

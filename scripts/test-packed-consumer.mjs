@@ -50,7 +50,7 @@ async function findFreePort() {
   return port
 }
 
-async function inspectSsr(prefixed = true) {
+async function inspectSsr(prefixed = true, explicitTheme = false) {
   const port = await findFreePort()
   const server = spawn(process.execPath, ['.output/server/index.mjs'], {
     cwd: consumerDir,
@@ -83,6 +83,26 @@ async function inspectSsr(prefixed = true) {
     const response = await fetch(url)
     assert.equal(response.status, 200)
     const html = await response.text()
+    if (explicitTheme) {
+      assert.match(html, /<button(?=[^>]*id="explicit-primary")(?=[^>]*data-selaras-color="primary")/, 'an explicit replacement must serve the default role during SSR')
+      assert.match(html, /<button(?=[^>]*id="explicit-brand")(?=[^>]*data-selaras-color="brand")/, 'an explicit custom role must serve during SSR')
+      const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
+        .filter(([tag]) => tag.includes('rel="stylesheet"'))
+        .map(([tag]) => tag.match(/href="([^"]+)"/)?.[1])
+      const css = (await Promise.all(stylesheets.map(async (href) => {
+        assert.ok(href)
+        const result = await fetch(new URL(href, url))
+        assert.equal(result.status, 200)
+        return result.text()
+      }))).join('\n')
+      const classPrefix = prefixed ? 'tw\\:' : ''
+      assert.ok(css.includes(`.${classPrefix}inline-flex`), 'structural CSS must retain library source discovery')
+      assert.ok(css.includes('--selaras-resolved-color-primary-fill:var(--selaras-color-primary-fill,#123456)'), 'explicit primary recipe must be generated')
+      assert.ok(css.includes('--selaras-resolved-color-brand-fill:var(--selaras-color-brand-fill,#123456)'), 'explicit custom recipe must be generated')
+      assert.ok(css.includes('--selaras-surface-default:#f8fafc'), 'explicit functional inputs must reach the compiled CSS')
+      assert.ok(!css.includes('--color-selaras-indigo-500:'), 'structural import must not emit Selaras owned foundations')
+      return
+    }
     const pattern = value => new RegExp(value.source.replaceAll('tw:', prefixed ? 'tw:' : ''), value.flags)
     const configOutput = html.match(/<output[^>]*id="packed-config"[^>]*>en-GB<\/output>/)?.[0]
     assert.ok(configOutput, 'namespaced runtime configuration must render in SSR')
@@ -183,7 +203,7 @@ async function inspectSsr(prefixed = true) {
     assert.ok(css.includes('--selaras-resolved-color-secondary-fill:var(--selaras-color-secondary-fill,#123456)'), 'module options must replace a built-in default recipe')
     assert.ok(css.includes('--_selaras-color-fill:var(--selaras-color-published-fill,var(--selaras-resolved-color-published-fill))'), 'generated CSS must bind selected roles through local inputs and public reads')
     assert.ok(css.includes(':root.dark [data-selaras-theme]'), 'generated CSS must contain dark resolved role reads')
-    assert.ok(Buffer.byteLength(css) <= (prefixed ? 130_000 : 135_000), `compiled CSS is ${Buffer.byteLength(css)} bytes`)
+    assert.ok(Buffer.byteLength(css) <= (prefixed ? 134_000 : 140_000), `compiled CSS is ${Buffer.byteLength(css)} bytes`)
     assert.ok(gzipSync(css).byteLength <= (prefixed ? 18_000 : 19_000), `compiled CSS is ${gzipSync(css).byteLength} gzip bytes`)
     console.log(`[packed] SSR, generated defaults/tokens, Table and CSS passed (${Buffer.byteLength(css)} bytes / ${gzipSync(css).byteLength} gzip)`)
     if (process.env.SELARAS_PACKED_BROWSER) {
@@ -361,6 +381,57 @@ try {
     .replaceAll('tw:text-[var(--selaras-resolved-color-', 'text-[var(--selaras-resolved-color-'))
   run('rebuild changed prefix and breakpoint options without prepare', process.execPath, [nuxtCli, 'build'])
   await inspectSsr(false)
+  const explicitConfig = `import { defineColor } from '@sewadah/selaras/theme'
+
+const color = defineColor({
+  light: { fill: '#123456', onFill: '#ffffff', subtle: '#ddeeff', onSubtle: '#112233', text: '#234567', border: '#345678' },
+  dark: { fill: '#abcdef', onFill: '#112233', subtle: '#223344', onSubtle: '#ddeeff', text: '#cdefab', border: '#bcdefa' },
+})
+
+export default defineNuxtConfig({
+  modules: ['@sewadah/selaras'],
+  compatibilityDate: '2026-09-13',
+  selaras: { classPrefix: 'tw', adaptive: { breakpoint: 'tablet' }, theme: { colors: { primary: color, secondary: color, success: color, info: color, warning: color, danger: color, neutral: color, brand: color } } },
+  css: ['~/main.css'],
+})
+`
+  const explicitApp = `<template>
+  <SApp>
+    <SButton id="explicit-primary">Primary</SButton>
+    <SButton id="explicit-brand" color="brand">Brand</SButton>
+  </SApp>
+</template>
+`
+  const explicitCss = prefixed => `@import "tailwindcss"${prefixed ? ' prefix(tw)' : ''};
+@import "@sewadah/selaras/structural.css";
+@import "#selaras/tailwind.css";
+
+@theme {
+  --breakpoint-${prefixed ? 'tablet' : 'laptop'}: 60rem;
+}
+
+:root {
+  --selaras-surface-default: #f8fafc;
+  --selaras-surface-elevated: #f1f5f9;
+  --selaras-surface-inverted: #0f172a;
+  --selaras-text-default: #0f172a;
+  --selaras-text-muted: #475569;
+  --selaras-text-inverted: #f8fafc;
+  --selaras-border-default: #cbd5e1;
+  --selaras-border-muted: #e2e8f0;
+  --selaras-border-hover: #94a3b8;
+  --selaras-scrim: rgb(15 23 42 / .5);
+}
+`
+  writeFileSync(configPath, explicitConfig)
+  writeFileSync(cssPath, explicitCss(true))
+  writeFileSync(appPath, explicitApp)
+  run('build a prefixed fully explicit structural-theme consumer', process.execPath, [nuxtCli, 'build'])
+  await inspectSsr(true, true)
+  writeFileSync(configPath, explicitConfig.replace('classPrefix: \'tw\'', 'classPrefix: undefined').replace('breakpoint: \'tablet\'', 'breakpoint: \'laptop\''))
+  writeFileSync(cssPath, explicitCss(false))
+  run('build a normal fully explicit structural-theme consumer', process.execPath, [nuxtCli, 'build'])
+  await inspectSsr(false, true)
 }
 finally {
   rmSync(consumerDir, { recursive: true, force: true })
