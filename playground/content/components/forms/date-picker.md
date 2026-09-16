@@ -364,17 +364,15 @@ mode only) `selectionStart`/`selectionEnd`/`highlighted`:
 </SDatePicker>
 ```
 
-### Mobile modal presentation
+### Adaptive presentation
 
-`mobileModal` switches the calendar to a centered
-[Modal](/components/overlays/modal) below a 768px viewport width, instead
-of the small anchored panel - easier to tap with a finger. Opt-in (defaults
-`false`) rather than automatic, so an existing usage's look never changes
-without asking for it. Works the same across single-date, range, and
-time-only mode:
+`adaptive` switches the calendar to a centered
+[Modal](/components/overlays/modal) below your configured adaptive breakpoint.
+It is opt-in (defaults `false`), chooses the presentation on open, and works
+across single-date, range, and time-only mode:
 
 ```vue-html
-<SDatePicker v-model="date" mobile-modal />
+<SDatePicker v-model="date" adaptive />
 ```
 
 ### Forms integration
@@ -447,7 +445,7 @@ every slot and variant - here's `DatePicker`'s own theme file:
 | `activeColor` | same as `color` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `arrow` | `boolean` | `false` |
-| `mobileModal` | `boolean` | `false` |
+| `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'separator' \| 'content' \| 'mobileContent' \| 'header' \| 'heading' \| 'grids' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'viewGrid' \| 'timeSection' \| 'arrow', string \| object>>` | - |
 
 ## Slots

@@ -47,9 +47,9 @@ a single object literal covering every key below.
 | `continue` | `Continue` | AlertDialog's default footer |
 | `colorModeToggle` | `Toggle color mode` | ColorModeToggle |
 | `colorPicker` | `Color picker` | ColorPicker |
-| `colorPickerDescription` | `Drag to adjust hue, saturation, and lightness` | ColorPicker's mobileModal sr-only description |
+| `colorPickerDescription` | `Drag to adjust hue, saturation, and lightness` | ColorPicker's adaptive sr-only description |
 | `search` | `Search...` | CommandPalette, Autocomplete |
-| `searchDescription` | `Type to filter, then use arrow keys and enter to select` | Select/Autocomplete's mobileModal sr-only description |
+| `searchDescription` | `Type to filter, then use arrow keys and enter to select` | Select/Autocomplete's adaptive sr-only description |
 | `columns` | `Columns` | Table's column-toggle control |
 | `filterPlaceholder` | `Filter...` | Table's filter input |
 | `previous` | `Previous` | Pagination, ContentSurround |
@@ -58,11 +58,11 @@ a single object literal covering every key below.
 | `last` | `Last` | Pagination |
 | `pagination` | `Pagination` | Pagination's nav aria-label |
 | `datePicker` | `Date picker` | DatePicker |
-| `datePickerDescription` | `Use arrow keys to navigate days, enter to select` | DatePicker's mobileModal sr-only description |
+| `datePickerDescription` | `Use arrow keys to navigate days, enter to select` | DatePicker's adaptive sr-only description |
 | `dateRangePicker` | `Date range picker` | DatePicker (range mode) |
-| `dateRangePickerDescription` | `Use arrow keys to navigate days, enter to select a start and end date` | DatePicker (range mode)'s mobileModal sr-only description |
+| `dateRangePickerDescription` | `Use arrow keys to navigate days, enter to select a start and end date` | DatePicker (range mode)'s adaptive sr-only description |
 | `timePicker` | `Time picker` | DatePicker (time section) |
-| `timePickerDescription` | `Use arrow keys to adjust the highlighted field` | DatePicker (time section)'s mobileModal sr-only description |
+| `timePickerDescription` | `Use arrow keys to adjust the highlighted field` | DatePicker (time section)'s adaptive sr-only description |
 | `pickTime` | `Pick a time` | DatePicker (timeOnly mode) |
 | `previousMonth` | `Previous month` | DatePicker |
 | `nextMonth` | `Next month` | DatePicker |

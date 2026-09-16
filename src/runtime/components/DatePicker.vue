@@ -130,8 +130,8 @@ export interface DatePickerProps {
   size?: DatePickerVariants['size']
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
-  /** Below 768px viewport width, presents the calendar as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`) rather than automatic, so an existing usage's look never changes without asking for it. */
-  mobileModal?: boolean
+  /** Opts into the calendar's accessible small-screen modal presentation. It is selected when the calendar opens and held until close. */
+  adaptive?: boolean
   ui?: UiProp<DatePickerThemeSlots>
 }
 
@@ -312,7 +312,7 @@ const isMobile = useIsMobile()
 // reads noticeably heavier/rounder than the desktop equivalent for what's
 // otherwise the same surface. Same fix, same reasoning, as
 // ComboboxSelectBase.vue's own identical override.
-const mobileModalUi = { content: 'rounded-[var(--selaras-resolved-radius-md)]' }
+const adaptiveUi = { content: 'rounded-[var(--selaras-resolved-radius-md)]' }
 
 // Falls back to the global default (app.config.selaras.locale, see use-locale.ts)
 // instead of a hardcoded 'en-US' - every locale-consuming computed/prop
@@ -452,7 +452,7 @@ const timePlaceholder = shallowRef<Time>(timeOnlyValue.value ?? (() => {
 // between Popover and Modal during an active calendar interaction.
 const mobilePresentation = ref(false)
 watch(open, (value) => {
-  mobilePresentation.value = value && !!props.mobileModal && isMobile.value
+  mobilePresentation.value = value && !!props.adaptive && isMobile.value
 })
 // `open` may already be true on the first render through `defaultOpen` or a
 // controlled prop. The watcher deliberately is not immediate: SSR and the
@@ -462,7 +462,7 @@ watch(open, (value) => {
 // modal path as every later open request.
 onMounted(() => {
   if (open.value)
-    mobilePresentation.value = !!props.mobileModal && isMobile.value
+    mobilePresentation.value = !!props.adaptive && isMobile.value
 })
 const showMobileModal = computed(() => mobilePresentation.value)
 
@@ -582,7 +582,7 @@ const timeSectionProps = computed(() => resolveSlot(ui.value.timeSection, props.
 const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
 
 // Single source of truth for each extracted body component's own (large)
-// prop surface, so the desktop and mobileModal template branches below
+// prop surface, so the desktop and adaptive template branches below
 // each just `v-bind` this instead of repeating every prop twice - same
 // reasoning as ComboboxSelectBase.vue's own bodyProps.
 const rangeBodyProps = computed(() => ({
@@ -808,13 +808,13 @@ const buttonTriggerUi = computed(() => ({
       Below 768px, the exact same DatePickerRangeCalendarBody - the same
       Root-injected grid/selection state, unchanged - inside a centered
       Modal instead of the small anchored popover above. See
-      ComboboxSelectBase.vue's own mobileModal branch for why there's no
+      ComboboxSelectBase.vue's own adaptive branch for why there's no
       extra portal here and why `title`/`description` are passed
       explicitly.
     -->
     <Modal
       v-else :open="open" :title="messages.dateRangePicker" :description="messages.dateRangePickerDescription"
-      :ui="mobileModalUi" @update:open="onUpdateOpen"
+      :ui="adaptiveUi" @update:open="onUpdateOpen"
     >
       <template #content>
         <div v-bind="mobileContentProps">
@@ -933,7 +933,7 @@ const buttonTriggerUi = computed(() => ({
     <!-- Below 768px - see the range branch's own identical note above. -->
     <Modal
       v-else :open="open" :title="messages.timePicker" :description="messages.timePickerDescription"
-      :ui="mobileModalUi" @update:open="onUpdateOpen"
+      :ui="adaptiveUi" @update:open="onUpdateOpen"
     >
       <template #content>
         <div v-bind="mobileContentProps">
@@ -1069,7 +1069,7 @@ const buttonTriggerUi = computed(() => ({
     <!-- Below 768px - see the range branch's own identical note above. -->
     <Modal
       v-else :open="open" :title="messages.datePicker" :description="messages.datePickerDescription"
-      :ui="mobileModalUi" @update:open="onUpdateOpen"
+      :ui="adaptiveUi" @update:open="onUpdateOpen"
     >
       <template #content>
         <div v-bind="mobileContentProps">

@@ -30,7 +30,7 @@ export const selectTheme = tv({
     searchWrapper: 'flex items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-2',
     searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--selaras-resolved-text-default)] outline-none placeholder:text-[var(--selaras-resolved-text-muted)]',
     content: 'z-[var(--selaras-resolved-z-dropdown)] max-h-72 min-w-[var(--reka-combobox-trigger-width)] overflow-hidden rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-    // The `mobileModal` path's own content wrapper - none of `content`'s
+    // The `adaptive` path's own content wrapper - none of `content`'s
     // own popover chrome (ring/shadow/rounded/animate-in, sized off the
     // trigger's own width via --reka-combobox-trigger-width, which is
     // only ever set while position="popper" is active) applies here,

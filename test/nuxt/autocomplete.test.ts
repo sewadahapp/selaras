@@ -511,13 +511,13 @@ function mockMatchMedia(matches: boolean) {
 // Autocomplete's own trigger is the search input typed into continuously.
 // On mobile it remains the Combobox focus owner and opens a wider nonmodal
 // panel; putting that editor outside a modal would hide it from AT.
-describe('autocomplete (mobileModal)', () => {
-  it('mobileModal=true on a mobile-matching viewport keeps the editable combobox and opens a nonmodal panel', async () => {
+describe('autocomplete (adaptive)', () => {
+  it('adaptive=true on a mobile-matching viewport keeps the editable combobox and opens a nonmodal panel', async () => {
     const restore = mockMatchMedia(true)
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    const wrapper = await mountSuspended(Autocomplete, { attachTo: container, props: { items: fruitItems, mobileModal: true } })
+    const wrapper = await mountSuspended(Autocomplete, { attachTo: container, props: { items: fruitItems, adaptive: true } })
 
     const input = wrapper.find('input')
     input.element.focus()

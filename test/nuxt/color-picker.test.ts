@@ -249,8 +249,8 @@ function hasModalOverlay() {
     .some(dialog => dialog.previousElementSibling?.getAttribute('data-state') === 'open')
 }
 
-describe('colorPicker (mobileModal)', () => {
-  it('mobileModal unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
+describe('colorPicker (adaptive)', () => {
+  it('adaptive unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
     const restore = mockMatchMedia(true)
     const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed' } })
     await open(wrapper)
@@ -262,9 +262,9 @@ describe('colorPicker (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true on a desktop viewport: still the anchored popover, not a Modal', async () => {
+  it('adaptive=true on a desktop viewport: still the anchored popover, not a Modal', async () => {
     const restore = mockMatchMedia(false)
-    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', mobileModal: true } })
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', adaptive: true } })
     await open(wrapper)
 
     expect(hasModalOverlay()).toBe(false)
@@ -274,9 +274,9 @@ describe('colorPicker (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true on a mobile-matching viewport: renders a Modal, and the hex field there still updates modelValue', async () => {
+  it('adaptive=true on a mobile-matching viewport: renders a Modal, and the hex field there still updates modelValue', async () => {
     const restore = mockMatchMedia(true)
-    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', mobileModal: true } })
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', adaptive: true } })
     await open(wrapper)
 
     expect(hasModalOverlay()).toBe(true)
@@ -296,7 +296,7 @@ describe('colorPicker (mobileModal)', () => {
 
   it('holds the chosen presentation while open when the viewport crosses the breakpoint', async () => {
     const media = mockResponsiveMatchMedia(true)
-    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', mobileModal: true } })
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', adaptive: true } })
     await open(wrapper)
     expect(hasModalOverlay()).toBe(true)
 
@@ -308,9 +308,9 @@ describe('colorPicker (mobileModal)', () => {
     media.restore()
   })
 
-  it('mobileModal=true: the modal content uses the same rounded-md as the desktop popover, not Modal\'s own larger default', async () => {
+  it('adaptive=true: the modal content uses the same rounded-md as the desktop popover, not Modal\'s own larger default', async () => {
     const restore = mockMatchMedia(true)
-    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', mobileModal: true } })
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', adaptive: true } })
     await open(wrapper)
 
     const dialog = document.body.querySelector('[role=dialog]')

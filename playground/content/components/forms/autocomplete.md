@@ -209,16 +209,15 @@ show the selection instead). Same `v-model:search-term` and
 [Select's](/components/forms/select#sizes) - see the [Props](#props) table
 below.
 
-### Mobile modal presentation
+### Adaptive presentation
 
-`mobileModal` works the same as
-[Select's](/components/forms/select#mobile-modal-presentation) - below a
-768px viewport width, it presents the popover as a centered
-[Modal](/components/overlays/modal) instead of a small anchored panel,
-easier to tap with a finger:
+`adaptive` uses the same breakpoint and open-time latch as
+[Select](/components/forms/select#adaptive-presentation). Because its editor
+must remain the combobox focus owner, Autocomplete uses a wider nonmodal panel
+rather than a dialog:
 
 ```vue-html
-<SAutocomplete v-model="value" mobile-modal placeholder="Type anything" :items="fruitItems" />
+<SAutocomplete v-model="value" adaptive placeholder="Type anything" :items="fruitItems" />
 ```
 
 ### Forms integration

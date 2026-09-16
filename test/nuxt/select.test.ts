@@ -586,8 +586,8 @@ function mockResponsiveMatchMedia(matches: boolean) {
   }
 }
 
-describe('select (mobileModal)', () => {
-  it('mobileModal unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
+describe('select (adaptive)', () => {
+  it('adaptive unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
     const restore = mockMatchMedia(true)
     const wrapper = await mountSuspended(Select, { props: { items: fruitItems } })
 
@@ -601,9 +601,9 @@ describe('select (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true on a desktop viewport: still the anchored popover, not a Modal', async () => {
+  it('adaptive=true on a desktop viewport: still the anchored popover, not a Modal', async () => {
     const restore = mockMatchMedia(false)
-    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, adaptive: true } })
 
     await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
     await nextTick()
@@ -615,9 +615,9 @@ describe('select (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true on a mobile-matching viewport: renders a Modal, and selecting an item there still updates modelValue', async () => {
+  it('adaptive=true on a mobile-matching viewport: renders a Modal, and selecting an item there still updates modelValue', async () => {
     const restore = mockMatchMedia(true)
-    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, adaptive: true } })
 
     await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()
@@ -638,7 +638,7 @@ describe('select (mobileModal)', () => {
 
   it('holds the chosen presentation while open when the viewport crosses the breakpoint', async () => {
     const media = mockResponsiveMatchMedia(true)
-    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, adaptive: true } })
 
     await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()
@@ -652,9 +652,9 @@ describe('select (mobileModal)', () => {
     media.restore()
   })
 
-  it('mobileModal=true: moves focus into the modal on open', async () => {
+  it('adaptive=true: moves focus into the modal on open', async () => {
     const restore = mockMatchMedia(true)
-    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, adaptive: true } })
 
     await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()
@@ -666,9 +666,9 @@ describe('select (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true: the modal content uses the same rounded-md as every other floating panel here, not Modal\'s own larger default', async () => {
+  it('adaptive=true: the modal content uses the same rounded-md as every other floating panel here, not Modal\'s own larger default', async () => {
     const restore = mockMatchMedia(true)
-    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, mobileModal: true } })
+    const wrapper = await mountSuspended(Select, { props: { items: fruitItems, adaptive: true } })
 
     await wrapper.find('[aria-haspopup="dialog"]').trigger('click')
     await nextTick()

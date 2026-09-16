@@ -18,7 +18,7 @@ import Icon from '../components/Icon.vue'
 import { useIcons } from '../composables/use-icons'
 import { useThemeBindings } from '../utils/ui'
 
-// ColorPicker.vue's own popover/mobile-modal-shared content - everything
+// ColorPicker.vue's own popover/adaptive-shared content - everything
 // that used to sit inside its <Popover>'s #content slot, split out so the
 // exact same markup can be instantiated once for either presentation
 // (desktop Popover or mobile Modal) without duplicating the area/slider/

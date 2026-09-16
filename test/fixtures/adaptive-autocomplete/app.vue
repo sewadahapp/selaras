@@ -38,7 +38,7 @@ function proposeValue(value) {
     <STheme as="section" :tokens="{ light: { colors: { enterprise: { fill: 'rgb(11 34 51)' } } } }">
       <SAutocomplete
         id="autocomplete-input" aria-label="Find a number" name="number" form="autocomplete-form"
-        :items="items" color="enterprise" mobile-modal
+        :items="items" color="enterprise" adaptive
         :ui="{ mobilePanel: { 'data-test': 'autocomplete-mobile-panel' } }"
         v-bind="bindings" @update:open="requestOpen" @update:model-value="proposeValue"
       />

@@ -289,19 +289,19 @@ function updateNestedTokens() {
   </section>
   <section v-if="route.query.mobile" id="datepicker-mobile-fixture">
     <SFormField id="mobile-date" label="Mobile date" description="Choose a date on a small screen.">
-      <SDatePicker mobile-modal />
+      <SDatePicker adaptive />
     </SFormField>
     <SFormField id="mobile-range" label="Mobile range">
-      <SDatePicker mobile-modal range />
+      <SDatePicker adaptive range />
     </SFormField>
     <SFormField id="mobile-time" label="Mobile time">
-      <SDatePicker mobile-modal time-only />
+      <SDatePicker adaptive time-only />
     </SFormField>
     <SFormField v-if="route.query.initialOpen" id="mobile-initial-date" label="Initially open mobile date">
-      <SDatePicker mobile-modal default-open />
+      <SDatePicker adaptive default-open />
     </SFormField>
-    <SSelect v-if="route.query.initialSelect" :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]" mobile-modal default-open :ui="{ mobileContent: { 'data-test': 'initial-select-modal-content' } }" />
-    <SAutocomplete v-if="route.query.initialAutocomplete" :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]" mobile-modal :open="true" :ui="{ mobilePanel: { 'data-test': 'initial-autocomplete-mobile-panel' } }" />
-    <SColorPicker v-if="route.query.initialColorPicker" mobile-modal default-open :ui="{ mobileContent: { 'data-test': 'initial-color-picker-modal-content' } }" />
+    <SSelect v-if="route.query.initialSelect" :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]" adaptive default-open :ui="{ mobileContent: { 'data-test': 'initial-select-modal-content' } }" />
+    <SAutocomplete v-if="route.query.initialAutocomplete" :items="[{ label: 'One', value: 'one' }, { label: 'Two', value: 'two' }]" adaptive :open="true" :ui="{ mobilePanel: { 'data-test': 'initial-autocomplete-mobile-panel' } }" />
+    <SColorPicker v-if="route.query.initialColorPicker" adaptive default-open :ui="{ mobileContent: { 'data-test': 'initial-color-picker-modal-content' } }" />
   </section>
 </template>

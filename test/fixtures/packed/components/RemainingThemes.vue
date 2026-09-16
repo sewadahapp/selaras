@@ -33,7 +33,7 @@ const alertOpen = ref(false)
     />
     <STree id="remaining-tree" :items="[{ label: 'Leaf', value: 'leaf' }]" size="sm" color="published" />
     <SDatePicker
-      size="sm" color="published" active-color="published" mobile-modal
+      size="sm" color="published" active-color="published" adaptive
       aria-label="Remaining calendar"
       :ui="{ field: { 'data-testid': 'remaining-date-field' }, mobileContent: { 'data-testid': 'remaining-date-mobile' }, heading: { 'data-testid': 'remaining-date-heading' } }"
     />

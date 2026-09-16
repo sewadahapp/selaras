@@ -19,7 +19,7 @@ export const colorPickerTheme = tv({
     triggerSwatch: 'size-5 shrink-0 rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--reka-color-swatch-color)] ring-1 ring-inset ring-black/10',
     triggerValue: 'flex-1 truncate text-start font-mono text-[var(--selaras-resolved-text-default)]',
     content: 'z-[var(--selaras-resolved-z-dropdown)] w-64 space-y-3 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] p-3 shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-    // The `mobileModal` path's own content wrapper - none of `content`'s
+    // The `adaptive` path's own content wrapper - none of `content`'s
     // own popover chrome (width/background/shadow/ring/rounded/animate)
     // applies here, since Modal's own card already provides that surface;
     // this only needs this picker's own internal spacing/padding, same

@@ -990,8 +990,8 @@ function hasModalOverlay() {
     .some(dialog => dialog.previousElementSibling?.getAttribute('data-state') === 'open')
 }
 
-describe('datePicker (mobileModal)', () => {
-  it('mobileModal unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
+describe('datePicker (adaptive)', () => {
+  it('adaptive unset (default false): still the anchored popover even on a mobile-matching viewport', async () => {
     const restore = mockMatchMedia(true)
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
     await openCalendar(wrapper)
@@ -1002,9 +1002,9 @@ describe('datePicker (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true, plain mode, mobile viewport: renders a Modal, and picking a day still updates modelValue', async () => {
+  it('adaptive=true, plain mode, mobile viewport: renders a Modal, and picking a day still updates modelValue', async () => {
     const restore = mockMatchMedia(true)
-    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), mobileModal: true } })
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), adaptive: true } })
     await openCalendar(wrapper)
 
     expect(hasModalOverlay()).toBe(true)
@@ -1017,9 +1017,9 @@ describe('datePicker (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true, range mode, mobile viewport: renders a Modal, and picking start+end still updates modelValue', async () => {
+  it('adaptive=true, range mode, mobile viewport: renders a Modal, and picking start+end still updates modelValue', async () => {
     const restore = mockMatchMedia(true)
-    wrapper = await mountSuspended(DatePicker, { props: { range: true, defaultPlaceholder: new CalendarDate(2024, 1, 1), mobileModal: true } as any })
+    wrapper = await mountSuspended(DatePicker, { props: { range: true, defaultPlaceholder: new CalendarDate(2024, 1, 1), adaptive: true } as any })
     await openRangeCalendar(wrapper)
 
     expect(hasModalOverlay()).toBe(true)
@@ -1031,7 +1031,7 @@ describe('datePicker (mobileModal)', () => {
     // pick before the second click can complete the range. On the
     // desktop path this goes unnoticed because DatePickerContent's own
     // openAutoFocus (handleCalendarInitialFocus, intentionally not carried
-    // over to the mobileModal path - see DatePicker.vue's own comment on
+    // over to the adaptive path - see DatePicker.vue's own comment on
     // why) already happens to focus a day cell when it opens; the mobile
     // Modal's own generic autofocus lands on the first tabbable element
     // (the "Previous month" button) instead, so this test has to do
@@ -1048,9 +1048,9 @@ describe('datePicker (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true, timeOnly mode, mobile viewport: renders a Modal containing the time stepper', async () => {
+  it('adaptive=true, timeOnly mode, mobile viewport: renders a Modal containing the time stepper', async () => {
     const restore = mockMatchMedia(true)
-    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, mobileModal: true } })
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, adaptive: true } })
     await openTimePicker(wrapper)
 
     expect(hasModalOverlay()).toBe(true)
@@ -1059,9 +1059,9 @@ describe('datePicker (mobileModal)', () => {
     restore()
   })
 
-  it('mobileModal=true: the modal content uses the same rounded-md as the desktop popover\'s own content, not Modal\'s own larger default', async () => {
+  it('adaptive=true: the modal content uses the same rounded-md as the desktop popover\'s own content, not Modal\'s own larger default', async () => {
     const restore = mockMatchMedia(true)
-    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), mobileModal: true } })
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), adaptive: true } })
     await openCalendar(wrapper)
 
     const dialog = document.body.querySelector('[role=dialog]')

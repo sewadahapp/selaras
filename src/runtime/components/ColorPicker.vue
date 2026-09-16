@@ -37,8 +37,8 @@ export interface ColorPickerProps {
   /** A row of preset colors shown below the hex field - omitted entirely (no swatch row) unless given. */
   swatches?: string[]
   placeholder?: string
-  /** Below a 768px viewport width, presents the popover as a centered Modal instead of a small anchored panel - easier to tap with a finger. Opt-in (defaults `false`), matching Select/Autocomplete/DatePicker's own mobileModal. */
-  mobileModal?: boolean
+  /** Opts into the picker's accessible small-screen modal presentation. */
+  adaptive?: boolean
   size?: ColorPickerVariants['size']
   color?: ColorRole
   ui?: UiProp<ColorPickerThemeSlots>
@@ -111,14 +111,14 @@ const isMobile = useIsMobile()
 // next opening samples the current breakpoint again.
 const mobilePresentation = ref(false)
 watch(open, (open) => {
-  mobilePresentation.value = open && !!props.mobileModal && isMobile.value
+  mobilePresentation.value = open && !!props.adaptive && isMobile.value
 })
 // SSR and the first client render intentionally retain the desktop popover:
 // the viewport only exists after mount. An already-open uncontrolled or
 // controlled picker still needs to sample that viewport once it is available.
 onMounted(() => {
   if (open.value)
-    mobilePresentation.value = !!props.mobileModal && isMobile.value
+    mobilePresentation.value = !!props.adaptive && isMobile.value
 })
 const showMobileModal = computed(() => mobilePresentation.value)
 
@@ -169,7 +169,7 @@ const popoverUi = computed(() => ({ content: resolveSlot(ui.value.content, props
 // `mobileContent` (the inner div's own padding/spacing) is this
 // component's own theme slot, not Modal's - applied directly on that div
 // below, not through Modal's `ui` prop.
-const mobileModalUi = computed(() => ({ content: 'rounded-[var(--selaras-resolved-radius-md)]' }))
+const adaptiveUi = computed(() => ({ content: 'rounded-[var(--selaras-resolved-radius-md)]' }))
 const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
 </script>
 
@@ -196,7 +196,7 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
 
   <Modal
     v-else :open="open" :title="messages.colorPicker" :description="messages.colorPickerDescription"
-    :ui="mobileModalUi" @update:open="onUpdateOpen"
+    :ui="adaptiveUi" @update:open="onUpdateOpen"
   >
     <button
       type="button"

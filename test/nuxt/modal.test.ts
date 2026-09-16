@@ -305,7 +305,7 @@ describe('modal', () => {
     container.remove()
   })
 
-  // Autocomplete's own mobileModal usage needs this - its trigger *is* a
+  // Autocomplete's own adaptive usage needs this - its trigger *is* a
   // search input, typed into continuously while the dialog stays open, so
   // Reka's default open-autofocus stealing focus away broke every
   // keystroke after the first (confirmed live - see

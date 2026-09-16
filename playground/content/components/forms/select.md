@@ -317,15 +317,14 @@ trigger:
 <SSelect v-model="fruit" arrow :items="items" />
 ```
 
-### Mobile modal presentation
+### Adaptive presentation
 
-`mobileModal` switches the popover to a centered [Modal](/components/overlays/modal)
-below a 768px viewport width, instead of the small anchored panel - easier to
-tap with a finger. Opt-in (defaults `false`) rather than automatic, so an
-existing usage's look never changes without asking for it:
+`adaptive` switches the popover to a centered [Modal](/components/overlays/modal)
+below your configured adaptive breakpoint. It is opt-in (defaults `false`),
+chooses the presentation on open, and holds it until close:
 
 ```vue-html
-<SSelect v-model="fruit" mobile-modal placeholder="Pick a fruit" :items="fruitItems" />
+<SSelect v-model="fruit" adaptive placeholder="Pick a fruit" :items="fruitItems" />
 ```
 
 ### Forms integration
@@ -382,7 +381,7 @@ the same key because both components use this recipe.
 | `invalid` | `boolean` | `false` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `arrow` | `boolean` | `false` |
-| `mobileModal` | `boolean` | `false` |
+| `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<SelectSlot, string \| object>>` | - |
 
 ## Slots

@@ -180,12 +180,8 @@ export interface ComboboxSelectBaseProps {
   resetSearchTermOnSelect?: boolean
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   arrow?: boolean
-  /**
-   * Below 768px, Select uses a centered Modal; Autocomplete uses a wider
-   * nonmodal panel so its editable input remains the focus owner. This
-   * compatibility spelling is provisional before the shared presentation API.
-   */
-  mobileModal?: boolean
+  /** Opts into the component's accessible small-screen presentation. */
+  adaptive?: boolean
   ui?: UiProp<SelectThemeSlots>
 }
 
@@ -614,7 +610,7 @@ const mobilePresentation = ref(false)
 watch(open, (open) => {
   if (!open && mobilePresentation.value && !props.creatable && props.resetSearchTermOnBlur)
     searchText.value = ''
-  mobilePresentation.value = open && !!props.mobileModal && isMobile.value
+  mobilePresentation.value = open && !!props.adaptive && isMobile.value
 })
 // Keep server and first-client markup deterministic, then sample the actual
 // viewport for a picker that was already open through defaultOpen or open.
@@ -622,7 +618,7 @@ watch(open, (open) => {
 onMounted(() => {
   if (!open.value)
     return
-  mobilePresentation.value = !!props.mobileModal && isMobile.value
+  mobilePresentation.value = !!props.adaptive && isMobile.value
   // An initially-open mobile Autocomplete has no trigger interaction to put
   // focus in its editor. Once its client-only presentation is chosen, make
   // that persistent editable combobox the active owner without issuing an
@@ -638,7 +634,7 @@ const showMobileAutocompletePanel = computed(() => mobilePresentation.value && !
 const modalId = `selaras-select-modal-${useId()}`
 const selectTrigger = ref<{ $el: HTMLElement }>()
 const modalBody = ref<InstanceType<typeof ComboboxSelectBody>>()
-const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showMobileSelectModal.value : props.mobileModal && isMobile.value)
+const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showMobileSelectModal.value : props.adaptive && isMobile.value)
   ? { 'aria-haspopup': 'dialog', 'aria-controls': modalId }
   : {})
 function onModalSelection(value: unknown) {
@@ -646,7 +642,7 @@ function onModalSelection(value: unknown) {
   if (!props.multiple)
     updateOpen(false)
 }
-const mobileModalUi = computed(() => ({
+const adaptiveUi = computed(() => ({
   content: {
     class: 'rounded-[var(--selaras-resolved-radius-md)]',
     ...(!props.creatable
@@ -992,7 +988,7 @@ const bodyProps = computed(() => ({
     -->
     <Modal
       v-else :open="open" :title="placeholder || messages.search" :description="messages.searchDescription"
-      :auto-focus="true" :ui="mobileModalUi"
+      :auto-focus="true" :ui="adaptiveUi"
       @update:open="updateOpen($event)"
     >
       <template #content>

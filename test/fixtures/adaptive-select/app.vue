@@ -49,7 +49,7 @@ function proposeValue(value) {
       <SSelect
         id="select-trigger" aria-label="Choose a number" name="choice" form="selection-form"
         :items="items" :multiple="multiple" :searchable="route.query.searchable !== 'false'"
-        :virtualize="route.query.virtual === 'true'" color="enterprise" mobile-modal
+        :virtualize="route.query.virtual === 'true'" color="enterprise" adaptive
         :ui="{ itemIndicator: { 'data-test': 'selection-indicator' } }"
         placeholder="Choose a number" v-bind="bindings"
         @update:open="requestOpen" @update:model-value="proposeValue"
