@@ -105,10 +105,12 @@ structural entry instead of its owned default foundations:
 ```
 
 This entry retains source discovery, variants, motion and semantic bindings.
-Register every color role your application renders and provide the functional
-`--selaras-*` inputs required by your design system. It is not an unthemed
-zero-configuration mode; use the aggregate import unless you provide that
-complete contract.
+Provide a light and dark recipe for every role your components can render,
+including any built-in role you keep and each custom role you register. Provide
+the functional `--selaras-*` inputs required by your design system as well.
+It is not an unthemed zero-configuration mode: incomplete structural themes
+have no Selaras fallback palette or runtime completeness diagnostic. Use the
+aggregate import unless you provide that complete contract.
 If your project also renders long-form markdown/CMS content, add
 [prose.css](/components/typography/prose) the same way:
 

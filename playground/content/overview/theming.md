@@ -157,7 +157,9 @@ change leaves of a registered role, but cannot introduce a new role name.
 For an existing DTCG token system, resolve aliases and select its context in
 your token pipeline, then map each resolved color value into the recipe. The
 `dtcgColorToCss` helper accepts structured `srgb`, `srgb-linear`, and `oklch`
-values. It deliberately does not parse token documents or resolve references:
+values. This is a resolved-value mapping boundary, not a general DTCG token
+importer: it deliberately does not parse token documents, choose modes, or
+resolve references:
 
 ```ts
 import { defineColor, dtcgColorToCss } from '@sewadah/selaras/theme'
@@ -341,10 +343,10 @@ managed token must exist at its destination, including the portal target.
 Selaras does not copy DOM-local variables into body portals or certify contrast
 for arbitrary CSS expressions.
 
-Use the `--selaras-*` inputs for functional customization. The current
-`--selaras-resolved-surface-default`/`--selaras-resolved-text-default`/`--selaras-resolved-border-default` aliases are resolved recipe bindings and are
-rebound at theme owners; overriding those aliases only on an ancestor is no
-longer a scoped customization contract.
+Use the `--selaras-*` inputs for functional customization. The
+`--selaras-resolved-*` values are public effective reads, rebound at managed
+theme owners; they are not scoped customization inputs. Overriding a resolved
+read only on an ancestor is therefore outside Selaras's theme contract.
 
 ## 4. Global overrides
 

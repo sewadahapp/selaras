@@ -64,7 +64,9 @@ For a mature design system that supplies complete semantic role recipes and
 `--selaras-*` functional inputs, import `@sewadah/selaras/structural.css`
 instead. It keeps Selaras's source discovery, variants, motion and semantic
 bindings while omitting Selaras-owned foundation colors. The default aggregate
-import remains the recommended path for most applications.
+import remains the recommended path for most applications. Structural CSS is
+not an unthemed fallback: an incomplete theme has no default palette or runtime
+diagnostic, so provide every role and functional value your components use.
 
 The Nuxt-generated import supplies library class candidates and the adaptive
 breakpoint binding to the same Tailwind compilation as your app. Breakpoint
