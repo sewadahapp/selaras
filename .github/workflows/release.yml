@@ -72,6 +72,16 @@ jobs:
       - name: Bump version
         run: npx changelogen --bump ${{ inputs.bump != 'auto' && format('--{0}', inputs.bump) || '' }}
 
+      # Validate the versioned release candidate itself, including generated
+      # declarations, a fresh packed install, and Chromium hydration/portal
+      # behavior. CI's matrix remains broader; this is the publish-critical
+      # slice that must finish before npm can receive the artifact.
+      - name: Install Chromium for release validation
+        run: bunx playwright install --with-deps chromium
+
+      - name: Verify release candidate
+        run: bun run test:release
+
       - name: Build
         run: bun run prepack
 
