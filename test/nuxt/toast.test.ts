@@ -5,6 +5,7 @@ import { defineComponent, h, ref } from 'vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 import Toast from '../../src/runtime/components/Toast.vue'
 import { useToast } from '../../src/runtime/composables/use-toast'
+import { useToastService } from '../../src/runtime/internal/programmatic-services'
 
 // Toast.vue only injects a ToastProviderContext - it doesn't provide one
 // itself, since in the real app SApp's own ToastProvider ancestor does that
@@ -53,7 +54,7 @@ const SurvivingScopedToastHarness = defineComponent({
 // The Nuxt test harness reuses one application instance within this file, so
 // its app-owned queue is cleared between tests.
 afterEach(() => {
-  useToast().toasts.value = []
+  useToastService().dispose()
 })
 
 // ToastRootImpl teleports each root into the real ToastViewport DOM node
@@ -148,7 +149,8 @@ describe('toast', () => {
   })
 
   it('removes the toast from state when its close button is clicked', async () => {
-    const { add, toasts } = useToast()
+    const { add } = useToast()
+    const { toasts } = useToastService()
     const id = add({ title: 'Dismiss me' })
     wrapper = await mountSuspended(ToastHarness)
     await new Promise(resolve => setTimeout(resolve, 50))

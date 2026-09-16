@@ -5,6 +5,7 @@ import Button from '../../src/runtime/components/Button.vue'
 import ModalRenderer from '../../src/runtime/components/ModalRenderer.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 import { useModal } from '../../src/runtime/composables/use-modal'
+import { useModalService } from '../../src/runtime/internal/programmatic-services'
 
 const TestDialog = defineComponent({
   props: { message: { type: String, default: '' } },
@@ -50,11 +51,9 @@ const ThemedModalHarness = defineComponent({
   },
 })
 
-// useModal's state is a module-level singleton, not scoped to a mount - it
-// survives across tests in this file, same reason toast.test.ts resets
-// useToast()'s own useState singleton in its own afterEach.
+// The Nuxt test harness reuses one application instance within this file.
 afterEach(() => {
-  useModal().modals.value = []
+  useModalService().dispose()
 })
 
 // DialogContent teleports to document.body (see modal.test.ts) - invisible
@@ -90,7 +89,8 @@ describe('useModal', () => {
 
   it('close(id) with no value resolves the promise with undefined', async () => {
     wrapper = await mountSuspended(ModalRenderer)
-    const { open, close, modals } = useModal()
+    const { open } = useModal()
+    const { close, instances: modals } = useModalService()
     const promise = open(TestDialog, { title: 'Test dialog', description: 'Test dialog' })
     await wrapper.vm.$nextTick()
 
@@ -150,7 +150,8 @@ describe('useModal', () => {
 
   it('does not remove the dialog from the DOM until the exit animation finishes', async () => {
     wrapper = await mountSuspended(ModalRenderer)
-    const { open, close, modals } = useModal()
+    const { open } = useModal()
+    const { close, instances: modals } = useModalService()
     const promise = open(TestDialog, { title: 'Test dialog', description: 'Test dialog' })
     await wrapper.vm.$nextTick()
 
@@ -171,7 +172,8 @@ describe('useModal', () => {
 
   it('removes the dialog immediately when transition is off, with no animationend needed', async () => {
     wrapper = await mountSuspended(ModalRenderer)
-    const { open, close, modals } = useModal()
+    const { open } = useModal()
+    const { close, instances: modals } = useModalService()
     open(TestDialog, { title: 'Test dialog', description: 'Test dialog', transition: false })
     await wrapper.vm.$nextTick()
 

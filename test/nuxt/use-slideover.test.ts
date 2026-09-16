@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 import SlideoverRenderer from '../../src/runtime/components/SlideoverRenderer.vue'
 import { useSlideover } from '../../src/runtime/composables/use-slideover'
+import { useSlideoverService } from '../../src/runtime/internal/programmatic-services'
 
 const TestPanel = defineComponent({
   props: { message: { type: String, default: '' } },
@@ -15,11 +16,9 @@ const TestPanel = defineComponent({
   },
 })
 
-// useSlideover's state is a module-level singleton, not scoped to a mount -
-// it survives across tests in this file, same reason use-modal.test.ts
-// resets useModal()'s own singleton in its own afterEach.
+// The Nuxt test harness reuses one application instance within this file.
 afterEach(() => {
-  useSlideover().slideovers.value = []
+  useSlideoverService().dispose()
 })
 
 // DialogContent teleports to document.body (see slideover.test.ts) -
@@ -56,7 +55,8 @@ describe('useSlideover', () => {
 
   it('close(id) with no value resolves the promise with undefined', async () => {
     wrapper = await mountSuspended(SlideoverRenderer)
-    const { open, close, slideovers } = useSlideover()
+    const { open } = useSlideover()
+    const { close, instances: slideovers } = useSlideoverService()
     const promise = open(TestPanel, { title: 'Test panel', description: 'Test panel' })
     await wrapper.vm.$nextTick()
 
@@ -114,7 +114,8 @@ describe('useSlideover', () => {
 
   it('does not remove the panel from the DOM until the exit animation finishes', async () => {
     wrapper = await mountSuspended(SlideoverRenderer)
-    const { open, close, slideovers } = useSlideover()
+    const { open } = useSlideover()
+    const { close, instances: slideovers } = useSlideoverService()
     const promise = open(TestPanel, { title: 'Test panel', description: 'Test panel' })
     await wrapper.vm.$nextTick()
 
@@ -135,7 +136,8 @@ describe('useSlideover', () => {
 
   it('removes the panel immediately when transition is off, with no animationend needed', async () => {
     wrapper = await mountSuspended(SlideoverRenderer)
-    const { open, close, slideovers } = useSlideover()
+    const { open } = useSlideover()
+    const { close, instances: slideovers } = useSlideoverService()
     open(TestPanel, { title: 'Test panel', description: 'Test panel', transition: false })
     await wrapper.vm.$nextTick()
 

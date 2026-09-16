@@ -3,7 +3,7 @@ import type { ToastThemeSlots } from '../theme/toast'
 import type { UiProp } from '../utils/ui'
 import { ToastPortal, ToastViewport } from 'reka-ui'
 import { computed, onUnmounted } from 'vue'
-import { useToast } from '../composables/use-toast'
+import { useToastService } from '../internal/programmatic-services'
 import ProgrammaticTheme from '../internal/ProgrammaticTheme.vue'
 import ToastItemRenderer from '../internal/ToastItemRenderer.vue'
 import { toastTheme } from '../theme/toast'
@@ -15,14 +15,12 @@ export interface ToastProps {
 
 const props = defineProps<ToastProps>()
 
-const { toasts, remove } = useToast()
+const { toasts, remove, dispose } = useToastService()
 const theme = useComponentTheme('toast', toastTheme)
 const ui = computed(() => theme.value())
 
 const viewportProps = computed(() => resolveSlot(ui.value.viewport, props.ui?.viewport))
-onUnmounted(() => {
-  toasts.value = []
-})
+onUnmounted(dispose)
 </script>
 
 <template>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
-import type { ToastItem } from '../composables/use-toast'
 import type { ToastThemeSlots } from '../theme/toast'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
+import type { ToastItem } from './programmatic-services'
 import { ToastClose, ToastDescription, ToastRoot, ToastTitle } from 'reka-ui'
 import { computed } from 'vue'
 import Button from '../components/Button.vue'

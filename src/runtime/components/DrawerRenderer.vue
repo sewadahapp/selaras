@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { onUnmounted } from 'vue'
-import { useDrawer } from '../composables/use-drawer'
+import { useDrawerService } from '../internal/programmatic-services'
 import ProgrammaticTheme from '../internal/ProgrammaticTheme.vue'
 import Drawer from './Drawer.vue'
 
-const { drawers, close, remove } = useDrawer()
-onUnmounted(() => {
-  for (const instance of drawers.value)
-    instance.resolve(undefined)
-  drawers.value = []
-})
+const { instances: drawers, close, remove, dispose } = useDrawerService()
+onUnmounted(dispose)
 </script>
 
 <template>

@@ -1,24 +1,7 @@
-import type { Component, Ref } from 'vue'
-import type { ProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
-import { markRaw, ref } from 'vue'
-import { createAppScopedState } from '../utils/app-scoped-state'
+import type { Component } from 'vue'
+import { markRaw } from 'vue'
+import { useModalService } from '../internal/programmatic-services'
 import { useProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
-
-export interface ModalInstance {
-  id: number
-  component: Component
-  props: Record<string, unknown>
-  isOpen: boolean
-  title?: string
-  description?: string
-  dismissible?: boolean
-  modal?: boolean
-  overlay?: boolean
-  transition?: boolean
-  /** @internal */
-  _theme: ProgrammaticThemeSnapshot
-  resolve: (value: unknown) => void
-}
 
 export interface UseModalOpenOptions {
   props?: Record<string, unknown>
@@ -33,24 +16,15 @@ export interface UseModalOpenOptions {
 }
 
 export interface UseModalReturn {
-  modals: Ref<ModalInstance[]>
   open: <T = void>(component: Component, options?: UseModalOpenOptions) => Promise<T | undefined>
-  close: (id: number, value?: unknown) => void
-  remove: (id: number) => void
 }
-
-const useModalState = createAppScopedState(() => ({
-  modals: ref<ModalInstance[]>([]),
-  counter: 0,
-}))
 
 // Explicit return type - without it, TS infers a structural type that
 // can't be printed in a declaration file without referencing internal
 // Vue/Nuxt types (TS2883), breaking `nuxt-module-build`'s real (non-stub)
 // build.
 export function useModal(): UseModalReturn {
-  const state = useModalState()
-  const { modals } = state
+  const service = useModalService()
   const snapshotTheme = useProgrammaticThemeSnapshot()
 
   function open<T = void>(component: Component, options?: UseModalOpenOptions): Promise<T | undefined> {
@@ -58,8 +32,8 @@ export function useModal(): UseModalReturn {
       return Promise.reject(new Error('[useModal] open() is client-only. Render SModal declaratively during SSR.'))
 
     return new Promise((resolve) => {
-      modals.value.push({
-        id: state.counter++,
+      service.instances.value.push({
+        id: service.nextId(),
         // Vue components are meant to stay an opaque, non-reactive value -
         // without this, pushing one into this reactive array wraps it in
         // a reactive proxy too, which Vue's own dev warning flags as
@@ -67,6 +41,7 @@ export function useModal(): UseModalReturn {
         component: markRaw(component),
         props: options?.props ?? {},
         isOpen: true,
+        _settled: false,
         title: options?.title,
         description: options?.description,
         dismissible: options?.dismissible,
@@ -79,24 +54,5 @@ export function useModal(): UseModalReturn {
     })
   }
 
-  // Only flips `isOpen` and resolves the caller's promise - the instance
-  // stays in `modals` so Modal's own exit animation can still play. See
-  // `remove` below for the actual cleanup.
-  function close(id: number, value?: unknown) {
-    const instance = modals.value.find(m => m.id === id)
-    if (!instance)
-      return
-    instance.isOpen = false
-    instance.resolve(value)
-  }
-
-  // Called once Modal reports its close animation has finished (or
-  // immediately, if transition is off) - actually removes the instance.
-  function remove(id: number) {
-    const index = modals.value.findIndex(m => m.id === id)
-    if (index !== -1)
-      modals.value.splice(index, 1)
-  }
-
-  return { modals, open, close, remove }
+  return { open }
 }

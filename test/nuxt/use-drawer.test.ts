@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h } from 'vue'
 import DrawerRenderer from '../../src/runtime/components/DrawerRenderer.vue'
 import { useDrawer } from '../../src/runtime/composables/use-drawer'
+import { useDrawerService } from '../../src/runtime/internal/programmatic-services'
 
 const TestPanel = defineComponent({
   props: { message: { type: String, default: '' } },
@@ -15,11 +16,9 @@ const TestPanel = defineComponent({
   },
 })
 
-// useDrawer's state is a module-level singleton, not scoped to a mount -
-// it survives across tests in this file, same reason use-modal.test.ts
-// resets useModal()'s own singleton in its own afterEach.
+// The Nuxt test harness reuses one application instance within this file.
 afterEach(() => {
-  useDrawer().drawers.value = []
+  useDrawerService().dispose()
 })
 
 // DrawerContent teleports to document.body (see drawer.test.ts) -
@@ -56,7 +55,8 @@ describe('useDrawer', () => {
 
   it('close(id) with no value resolves the promise with undefined', async () => {
     wrapper = await mountSuspended(DrawerRenderer)
-    const { open, close, drawers } = useDrawer()
+    const { open } = useDrawer()
+    const { close, instances: drawers } = useDrawerService()
     const promise = open(TestPanel, { title: 'Test panel' })
     await wrapper.vm.$nextTick()
 
@@ -123,7 +123,8 @@ describe('useDrawer', () => {
 
   it('does not remove the panel from the DOM until the exit animation finishes', async () => {
     wrapper = await mountSuspended(DrawerRenderer)
-    const { open, close, drawers } = useDrawer()
+    const { open } = useDrawer()
+    const { close, instances: drawers } = useDrawerService()
     const promise = open(TestPanel, { title: 'Test panel' })
     await wrapper.vm.$nextTick()
 
@@ -144,7 +145,8 @@ describe('useDrawer', () => {
 
   it('removes the panel immediately when transition is off, with no animationend needed', async () => {
     wrapper = await mountSuspended(DrawerRenderer)
-    const { open, close, drawers } = useDrawer()
+    const { open } = useDrawer()
+    const { close, instances: drawers } = useDrawerService()
     open(TestPanel, { title: 'Test panel', transition: false })
     await wrapper.vm.$nextTick()
 

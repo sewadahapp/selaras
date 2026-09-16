@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { onUnmounted } from 'vue'
-import { useSlideover } from '../composables/use-slideover'
+import { useSlideoverService } from '../internal/programmatic-services'
 import ProgrammaticTheme from '../internal/ProgrammaticTheme.vue'
 import Slideover from './Slideover.vue'
 
-const { slideovers, close, remove } = useSlideover()
-onUnmounted(() => {
-  for (const instance of slideovers.value)
-    instance.resolve(undefined)
-  slideovers.value = []
-})
+const { instances: slideovers, close, remove, dispose } = useSlideoverService()
+onUnmounted(dispose)
 </script>
 
 <template>

@@ -1,15 +1,11 @@
 <script setup lang="ts">
 import { onUnmounted } from 'vue'
-import { useModal } from '../composables/use-modal'
+import { useModalService } from '../internal/programmatic-services'
 import ProgrammaticTheme from '../internal/ProgrammaticTheme.vue'
 import Modal from './Modal.vue'
 
-const { modals, close, remove } = useModal()
-onUnmounted(() => {
-  for (const instance of modals.value)
-    instance.resolve(undefined)
-  modals.value = []
-})
+const { instances: modals, close, remove, dispose } = useModalService()
+onUnmounted(dispose)
 </script>
 
 <template>

@@ -27,18 +27,15 @@ async function handleDelete() {
 </script>
 ```
 
-The component you pass to `open()` resolves the returned promise itself
-(typically by calling `useModal().close(id, value)` from inside it, or by
-emitting an event your host page listens for and resolves in turn).
+The component you pass to `open()` resolves the returned promise by emitting
+`close` with its result. Escape, an outside click, or the shell's close button
+resolve it with `undefined`.
 
 ## API
 
 ```ts
 function useModal(): {
-  modals: Ref<ModalInstance[]>
   open: <T = void>(component: Component, options?: UseModalOpenOptions) => Promise<T | undefined>
-  close: (id: number, value?: unknown) => void
-  remove: (id: number) => void
 }
 ```
 
@@ -64,10 +61,6 @@ opened component always renders through `SModal`'s `content` slot (see
 are the only way to give a programmatically-opened dialog a real
 accessible name/description - pass them if the opened component's own
 content doesn't already include a heading Reka can associate with it.
-
-`modals` is the full list of currently-open instances, mostly useful if
-you're building your own rendering loop instead of relying on the
-library's built-in one.
 
 ## Setup
 

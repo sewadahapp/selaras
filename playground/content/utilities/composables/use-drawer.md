@@ -27,10 +27,7 @@ async function handleFilters() {
 
 ```ts
 function useDrawer(): {
-  drawers: Ref<DrawerInstance[]>
   open: <T = void>(component: Component, options?: UseDrawerOpenOptions) => Promise<T | undefined>
-  close: (id: number, value?: unknown) => void
-  remove: (id: number) => void
 }
 ```
 

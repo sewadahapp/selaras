@@ -27,10 +27,7 @@ async function handleEdit() {
 
 ```ts
 function useSlideover(): {
-  slideovers: Ref<SlideoverInstance[]>
   open: <T = void>(component: Component, options?: UseSlideoverOpenOptions) => Promise<T | undefined>
-  close: (id: number, value?: unknown) => void
-  remove: (id: number) => void
 }
 ```
 
