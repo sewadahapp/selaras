@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[var(--ui-bg)] text-[var(--ui-text)]">
+  <div class="min-h-screen bg-[var(--selaras-resolved-surface-default)] text-[var(--selaras-resolved-text-default)]">
     <SHeader>
       <NuxtLink to="/" class="font-semibold">
         Selaras

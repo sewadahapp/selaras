@@ -12,7 +12,7 @@ const items = [
     <template #group="{ group }">
       <span class="flex items-center justify-between">
         <span>{{ group.label }}</span>
-        <span class="text-[var(--ui-text-muted)]">{{ group.items.length }}</span>
+        <span class="text-[var(--selaras-resolved-text-muted)]">{{ group.items.length }}</span>
       </span>
     </template>
   </SSelect>

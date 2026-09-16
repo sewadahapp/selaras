@@ -161,7 +161,7 @@ describe('slideover', () => {
     wrapper = await mountSuspended(Slideover, { props: { open: true, title: 'Filters', description: 'Filters', inset: true } })
 
     const dialog = document.body.querySelector('[role=dialog]')!
-    expect(dialog.className).toContain('rounded-[var(--ui-radius-lg)]')
+    expect(dialog.className).toContain('rounded-[var(--selaras-resolved-radius-lg)]')
   })
 
   it('modal="false" does not hide the rest of the page from assistive tech, unlike the modal default', async () => {

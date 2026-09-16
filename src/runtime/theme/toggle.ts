@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const toggleTheme = tv({
   slots: {
-    base: 'inline-flex items-center justify-center gap-1.5 font-medium rounded-[var(--ui-radius-md)] transition-colors text-[var(--ui-text-muted)] hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)] data-[state=on]:bg-[var(--_selaras-color-subtle)] data-[state=on]:text-[var(--_selaras-color-text)] data-[state=on]:hover:bg-[var(--_selaras-color-subtle-hover)]',
+    base: 'inline-flex items-center justify-center gap-1.5 font-medium rounded-[var(--selaras-resolved-radius-md)] transition-colors text-[var(--selaras-resolved-text-muted)] hover:bg-[var(--selaras-resolved-surface-elevated)] hover:text-[var(--selaras-resolved-text-default)] disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)] data-[state=on]:bg-[var(--_selaras-color-subtle)] data-[state=on]:text-[var(--_selaras-color-text)] data-[state=on]:hover:bg-[var(--_selaras-color-subtle-hover)]',
     icon: 'shrink-0',
   },
   variants: {

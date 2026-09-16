@@ -7,7 +7,7 @@ export const paginationTheme = tv({
     // Sized per-variant to match Button's own square icon-button dimensions
     // (w-8/w-10/w-11) so the ellipsis lines up with the surrounding
     // page-number buttons instead of collapsing to its own text size.
-    ellipsis: 'inline-flex items-center justify-center text-[var(--ui-text-muted)]',
+    ellipsis: 'inline-flex items-center justify-center text-[var(--selaras-resolved-text-muted)]',
   },
   variants: {
     size: {

@@ -12,7 +12,7 @@ const items = [
     <template #item="{ item }">
       <span class="flex flex-1 items-center justify-between gap-4">
         {{ item.label }}
-        <span class="text-xs text-[var(--ui-text-muted)]">{{ item.shortcut }}</span>
+        <span class="text-xs text-[var(--selaras-resolved-text-muted)]">{{ item.shortcut }}</span>
       </span>
     </template>
     <SButton variant="outline">

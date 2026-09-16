@@ -2,11 +2,11 @@ import { tv } from 'tailwind-variants'
 
 export const alertTheme = tv({
   slots: {
-    root: 'relative flex items-start gap-3 rounded-[var(--ui-radius-md)] p-4',
+    root: 'relative flex items-start gap-3 rounded-[var(--selaras-resolved-radius-md)] p-4',
     icon: 'size-5 shrink-0',
     content: 'min-w-0 flex-1',
-    title: 'text-sm font-medium text-[var(--ui-text)]',
-    description: 'mt-1 text-sm text-[var(--ui-text-muted)]',
+    title: 'text-sm font-medium text-[var(--selaras-resolved-text-default)]',
+    description: 'mt-1 text-sm text-[var(--selaras-resolved-text-muted)]',
     actions: 'mt-3 flex items-center gap-2',
     // Rendered as an <SButton> (ghost/neutral) - matches Toast's own
     // close slot exactly (theme/toast.ts).
@@ -34,7 +34,7 @@ export const alertTheme = tv({
     // `-foreground` token to stay legible, the same pairing Button's
     // own solid variant already uses.
     { variant: 'soft', class: { root: 'bg-[var(--_selaras-color-subtle)]', icon: 'text-[var(--_selaras-color-text)]' } },
-    { variant: 'outline', class: { root: 'bg-[var(--ui-bg)] ring-1 ring-[var(--_selaras-color-border)]', icon: 'text-[var(--_selaras-color-text)]' } },
+    { variant: 'outline', class: { root: 'bg-[var(--selaras-resolved-surface-default)] ring-1 ring-[var(--_selaras-color-border)]', icon: 'text-[var(--_selaras-color-text)]' } },
     { variant: 'solid', class: { root: 'bg-[var(--_selaras-color-fill)]', icon: 'text-[var(--_selaras-color-on-fill)]', title: 'text-[var(--_selaras-color-on-fill)]', description: 'text-[var(--_selaras-color-on-fill)] opacity-80' } },
   ],
   defaultVariants: {

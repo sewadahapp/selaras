@@ -18,8 +18,8 @@ export const radioGroupTheme = tv({
     // color by the checked-state variant below - an explicit var per
     // state rather than currentColor, since this slot's own text color
     // isn't otherwise tied to checked/unchecked here. Uses
-    // --ui-border-hover for the gray fill - lighter than a plain mid-gray
-    // text color would give, while still clearing the plain --ui-border
+    // --selaras-resolved-border-hover for the gray fill - lighter than a plain mid-gray
+    // text color would give, while still clearing the plain --selaras-resolved-border-default
     // token, which reads as basically invisible at any reasonable opacity
     // since it's already very close to the page background. scale(0)/
     // scale(1) use Tailwind's arbitrary-value [transform:] syntax, not the
@@ -90,7 +90,7 @@ export const radioGroupTheme = tv({
     variant: {
       default: {},
       card: {
-        itemWrapper: 'w-full items-start gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] px-3.5 py-3 transition-colors',
+        itemWrapper: 'w-full items-start gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] px-3.5 py-3 transition-colors',
         item: 'mt-0.5',
       },
     },

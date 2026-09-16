@@ -205,11 +205,14 @@ const packedThemeConfiguration: ThemeConfiguration = {
     toggleGroup: { compoundVariants: [{ color: 'primary', orientation: 'vertical', class: { root: 'w-fit' } }] },
     tooltip: { slots: { content: 'font-medium' } },
   },
-  tokens: { light: { surface: { elevated: 'var(--company-raised)' }, text: { muted: '#555555' }, border: { hover: '#777777' }, scrim: 'rgb(0 0 0 / .5)' } },
+  tokens: { light: { surface: { elevated: 'var(--company-raised)' }, text: { muted: '#555555' }, border: { hover: '#777777' }, scrim: 'rgb(0 0 0 / .5)', radius: { base: '0.5rem' }, shadow: { md: '0 2px 4px rgb(0 0 0 / .2)' }, zIndex: { dropdown: '91' } } },
 }
 // @ts-expect-error functional groups have a finite semantic vocabulary
 const invalidFunctionalTokens: ThemeConfiguration = { tokens: { dark: { surface: { hover: '#111111' } } } }
 void invalidFunctionalTokens
+// @ts-expect-error geometry groups have a finite semantic vocabulary
+const invalidGeometryTokens: ThemeConfiguration = { tokens: { light: { radius: { xl: '1rem' } } } }
+void invalidGeometryTokens
 // @ts-expect-error behavioral props are intentionally excluded from theme defaults
 const invalidPackedThemeConfiguration: ThemeConfiguration = { defaults: { button: { disabled: true } } }
 const invalidOverlayDefaults: ThemeConfiguration = {

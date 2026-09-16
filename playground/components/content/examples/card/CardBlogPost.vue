@@ -4,10 +4,10 @@
       <SBadge label="Design" color="primary" variant="soft" />
     </template>
 
-    <h3 class="font-semibold text-[var(--ui-text)]">
+    <h3 class="font-semibold text-[var(--selaras-resolved-text-default)]">
       Building a scalable design token system
     </h3>
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       A look at how semantic tokens keep a component library themeable
       without ever touching a single component file.
     </p>
@@ -16,10 +16,10 @@
       <div class="flex items-center gap-2">
         <SAvatar text="JS" size="sm" />
         <div class="text-sm leading-tight">
-          <p class="font-medium text-[var(--ui-text)]">
+          <p class="font-medium text-[var(--selaras-resolved-text-default)]">
             Jane Smith
           </p>
-          <p class="text-[var(--ui-text-muted)]">
+          <p class="text-[var(--selaras-resolved-text-muted)]">
             Mar 12, 2026
           </p>
         </div>

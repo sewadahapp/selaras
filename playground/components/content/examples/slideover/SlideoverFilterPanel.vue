@@ -5,7 +5,7 @@ defineEmits<{ close: [applied?: boolean] }>()
 <template>
   <div class="flex h-full flex-col">
     <div class="flex-1 overflow-y-auto p-4">
-      <h2 class="mb-4 text-base font-semibold text-[var(--ui-text)]">
+      <h2 class="mb-4 text-base font-semibold text-[var(--selaras-resolved-text-default)]">
         Filters
       </h2>
       <div class="flex flex-col gap-3">
@@ -14,7 +14,7 @@ defineEmits<{ close: [applied?: boolean] }>()
         <SCheckbox label="Free shipping" />
       </div>
     </div>
-    <div class="flex items-center justify-end gap-2 border-t border-[var(--ui-border)] p-4">
+    <div class="flex items-center justify-end gap-2 border-t border-[var(--selaras-resolved-border-default)] p-4">
       <SButton variant="ghost" @click="$emit('close', false)">
         Cancel
       </SButton>

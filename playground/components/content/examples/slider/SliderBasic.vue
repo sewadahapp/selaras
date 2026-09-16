@@ -5,7 +5,7 @@ const value = ref(30)
 <template>
   <div class="flex w-full flex-col gap-2">
     <SSlider v-model="value" aria-label="Volume" />
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       {{ value }}
     </p>
   </div>

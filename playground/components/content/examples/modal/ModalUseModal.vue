@@ -15,7 +15,7 @@ async function confirm() {
     <SButton color="danger" @click="confirm">
       Delete item
     </SButton>
-    <p v-if="result" class="text-sm text-[var(--ui-text-muted)]">
+    <p v-if="result" class="text-sm text-[var(--selaras-resolved-text-muted)]">
       Result: {{ result }}
     </p>
   </div>

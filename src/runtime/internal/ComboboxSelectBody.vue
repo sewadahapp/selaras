@@ -93,7 +93,7 @@ defineExpose({ focusSearch })
 
   <div v-if="searchable && !creatable" v-bind="searchWrapperProps">
     <slot name="filter-icon">
-      <Icon :name="icons.search" class="size-4 text-[var(--ui-text-muted)]" />
+      <Icon :name="icons.search" class="size-4 text-[var(--selaras-resolved-text-muted)]" />
     </slot>
     <component
       :is="primitives.input"

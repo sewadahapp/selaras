@@ -76,7 +76,7 @@ const outerTokens = {
       <span id="outer-primary-read" class="text-[var(--selaras-resolved-color-primary-text)]">
         Outer public role read
       </span>
-      <STheme as="section" mode="light" :tokens="{ light: { colors: { primary: { fill: innerFill } }, surface: { default: surface }, scrim } }">
+      <STheme as="section" mode="light" :tokens="{ light: { colors: { primary: { fill: innerFill } }, surface: { default: surface }, scrim, radius: { base: '4px' }, shadow: { md: '0 0 0 2px rgb(1 2 3)' }, zIndex: { dropdown: '91' } } }">
         <STheme :defaults="{ button: { size: 'lg' } }">
           <SButton id="inner-fill">
             Inner
@@ -110,7 +110,7 @@ const outerTokens = {
               Portal
             </SButton>
             <template #content>
-              <div id="portal-surface" class="functional-sample">
+              <div id="portal-surface" class="functional-sample geometry-read">
                 Portal surface
               </div>
               <SButton id="portal-fill">

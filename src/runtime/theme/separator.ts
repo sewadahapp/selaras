@@ -16,7 +16,7 @@ export const separatorTheme = tv({
     // matching bright label text reads as garish rather than
     // informative; the label stays legible/neutral regardless of how
     // much the line itself is emphasized.
-    label: 'shrink-0 px-2 text-xs text-[var(--ui-text-muted)] whitespace-nowrap',
+    label: 'shrink-0 px-2 text-xs text-[var(--selaras-resolved-text-muted)] whitespace-nowrap',
   },
   variants: {
     orientation: {
@@ -37,17 +37,17 @@ export const separatorTheme = tv({
     // Unlike Input/PinInput's own `color` (focus-ring only), the line is
     // always visible with no interactive state to gate a color reveal
     // behind - it just tints directly. `neutral` here means the same
-    // subtle --ui-border this component always used, not the bold
-    // --ui-bg-inverted "neutral" means elsewhere (Checkbox, Slider, ...) -
+    // subtle --selaras-resolved-border-default this component always used, not the bold
+    // --selaras-resolved-surface-inverted "neutral" means elsewhere (Checkbox, Slider, ...) -
     // a divider's own default has to stay subtle, matching precedent for
     // "neutral" carrying whatever's contextually right per component
-    // (Badge's own soft variant does the same with --ui-bg-elevated).
+    // (Badge's own soft variant does the same with --selaras-resolved-surface-elevated).
     // Semantic color is the base line treatment so registered roles work even
     // without a finite built-in branch. Empty built-in entries preserve the
     // public recipe condition, and neutral explicitly restores the subtle
     // functional border.
     color: {
-      neutral: { line: 'border-[var(--ui-border)]' },
+      neutral: { line: 'border-[var(--selaras-resolved-border-default)]' },
       primary: '',
       secondary: '',
       success: '',

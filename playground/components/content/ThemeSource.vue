@@ -37,9 +37,9 @@ async function copy() {
 </script>
 
 <template>
-  <div v-if="source" class="not-prose overflow-hidden rounded-[var(--ui-radius-md)] border border-[var(--ui-border)]">
-    <div class="flex items-center justify-between gap-2 border-b border-[var(--ui-border)] bg-[var(--ui-bg-elevated)] px-4 py-2">
-      <span class="font-mono text-xs text-[var(--ui-text-muted)]">src/runtime/theme/{{ name }}.ts</span>
+  <div v-if="source" class="not-prose overflow-hidden rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)]">
+    <div class="flex items-center justify-between gap-2 border-b border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-elevated)] px-4 py-2">
+      <span class="font-mono text-xs text-[var(--selaras-resolved-text-muted)]">src/runtime/theme/{{ name }}.ts</span>
       <SButton size="sm" variant="ghost" color="neutral" :icon="copied ? 'hugeicons:tick-02' : 'hugeicons:copy-01'" @click="copy" />
     </div>
     <pre class="overflow-x-auto p-4 text-xs leading-relaxed"><code>{{ source }}</code></pre>

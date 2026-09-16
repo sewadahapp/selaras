@@ -9,7 +9,7 @@ describe('icon', () => {
   it('binds a custom semantic role to the icon root', async () => {
     const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star', color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
-    expect(wrapper.find('[data-selaras-color="premium"]').attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.find('[data-selaras-color="premium"]').attributes('style') ?? '').not.toContain('--_selaras-color-fill')
     expect(wrapper.find('.iconify').classes()).toContain('text-[var(--_selaras-color-fill)]')
   })
 

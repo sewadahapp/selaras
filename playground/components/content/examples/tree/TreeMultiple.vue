@@ -24,7 +24,7 @@ const items = [
 <template>
   <div class="flex w-full max-w-xs flex-col gap-2">
     <STree v-model="selected" :items="items" multiple :default-expanded="['frontend', 'backend']" />
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       {{ selected?.length ?? 0 }} selected
     </p>
   </div>

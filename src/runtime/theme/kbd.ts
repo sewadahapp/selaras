@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const kbdTheme = tv({
   slots: {
-    base: 'inline-flex items-center justify-center rounded-[var(--ui-radius-sm)] border border-[var(--ui-border)] bg-[var(--ui-bg-elevated)] font-mono font-medium text-[var(--ui-text-muted)]',
+    base: 'inline-flex items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] border border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-elevated)] font-mono font-medium text-[var(--selaras-resolved-text-muted)]',
   },
   variants: {
     size: {

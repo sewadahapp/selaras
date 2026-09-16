@@ -25,9 +25,12 @@ custom properties:
 | `--selaras-color-<role>-<leaf>` | Registered-role inputs, described below |
 | `--selaras-resolved-color-<role>-<leaf>` | Readable effective values for registered roles |
 | `--selaras-scrim` | Overlay backdrop input |
-| `--ui-radius` | Base corner radius - see below |
-| `--ui-shadow-sm`, `--ui-shadow-md`, `--ui-shadow-lg` | Overlay elevation (Modal, Dropdown, Popover, ...) |
-| `--ui-z-modal-overlay`, `--ui-z-modal`, `--ui-z-dropdown`, `--ui-z-tooltip`, `--ui-z-toast` | Overlay stacking order, reflecting real nesting (a Dropdown can open from inside a Modal, a Toast always stays on top) |
+| `--selaras-radius-base`, `--selaras-radius-sm`, `--selaras-radius-md`, `--selaras-radius-lg`, `--selaras-radius-full` | Corner-radius inputs |
+| `--selaras-resolved-radius-base`, `--selaras-resolved-radius-sm`, `--selaras-resolved-radius-md`, `--selaras-resolved-radius-lg`, `--selaras-resolved-radius-full` | Effective corner-radius reads |
+| `--selaras-shadow-sm`, `--selaras-shadow-md`, `--selaras-shadow-lg` | Elevation inputs |
+| `--selaras-resolved-shadow-sm`, `--selaras-resolved-shadow-md`, `--selaras-resolved-shadow-lg` | Overlay elevation (Modal, Dropdown, Popover, ...) |
+| `--selaras-z-modal-overlay`, `--selaras-z-modal`, `--selaras-z-dropdown`, `--selaras-z-tooltip`, `--selaras-z-toast` | Overlay stacking inputs |
+| `--selaras-resolved-z-modal-overlay`, `--selaras-resolved-z-modal`, `--selaras-resolved-z-dropdown`, `--selaras-resolved-z-tooltip`, `--selaras-resolved-z-toast` | Overlay stacking order, reflecting real nesting (a Dropdown can open from inside a Modal, a Toast always stays on top) |
 
 For document dark mode, Selaras follows the `.dark` class on `<html>` (set by
 `SColorModeToggle`, or your own `useColorMode()` logic). Explicit `STheme`
@@ -208,17 +211,17 @@ Tailwind to always keep it regardless of detected usage:
 }
 ```
 
-**Radius is one knob, not four.** `--ui-radius-sm`/`-md`/`-lg` are derived
-from `--ui-radius` itself (0.75x/1x/2x), so changing the single base value
+**Radius is one knob, not four.** Resolved `-sm`/`-md`/`-lg` values derive
+from the `--selaras-radius-base` input (0.75x/1x/2x), so changing the single base value
 rescales every component's corners proportionally:
 
 ```css
 :root {
-  --ui-radius: 0.25rem; /* sharper corners across the whole library */
+  --selaras-radius-base: 0.25rem; /* sharper corners across the whole library */
 }
 ```
 
-`--ui-radius-full` (pills, avatars) stays independent - "pill-shaped" is
+`--selaras-radius-full` (pills, avatars) stays independent - "pill-shaped" is
 a distinct visual choice, not a point on the same size gradient.
 
 **Breakpoints and spacing** aren't Selaras tokens at all - components use
@@ -332,7 +335,7 @@ Selaras does not copy DOM-local variables into body portals or certify contrast
 for arbitrary CSS expressions.
 
 Use the `--selaras-*` inputs for functional customization. The current
-`--ui-bg`/`--ui-text`/`--ui-border` aliases are resolved recipe bindings and are
+`--selaras-resolved-surface-default`/`--selaras-resolved-text-default`/`--selaras-resolved-border-default` aliases are resolved recipe bindings and are
 rebound at theme owners; overriding those aliases only on an ancestor is no
 longer a scoped customization contract.
 

@@ -480,7 +480,7 @@ describe('autocomplete', () => {
     await nextTick()
     await nextTick()
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
   })
 })
 

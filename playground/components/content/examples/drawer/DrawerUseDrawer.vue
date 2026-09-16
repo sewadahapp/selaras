@@ -15,7 +15,7 @@ async function openCart() {
     <SButton @click="openCart">
       Open cart
     </SButton>
-    <p v-if="result" class="text-sm text-[var(--ui-text-muted)]">
+    <p v-if="result" class="text-sm text-[var(--selaras-resolved-text-muted)]">
       Result: {{ result }}
     </p>
   </div>

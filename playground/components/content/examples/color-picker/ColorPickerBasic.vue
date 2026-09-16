@@ -5,7 +5,7 @@ const color = ref('#7c3aed')
 <template>
   <div class="flex w-full flex-col gap-2">
     <SColorPicker v-model="color" />
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       {{ color }}
     </p>
   </div>

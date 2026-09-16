@@ -648,7 +648,7 @@ function onModalSelection(value: unknown) {
 }
 const mobileModalUi = computed(() => ({
   content: {
-    class: 'rounded-[var(--ui-radius-md)]',
+    class: 'rounded-[var(--selaras-resolved-radius-md)]',
     ...(!props.creatable
       ? {
           'id': modalId,

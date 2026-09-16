@@ -57,7 +57,7 @@ independent of the chevron on the other end of the trigger:
 <SAccordion :items="items">
   <template #label="{ item }">
     <span class="flex items-center gap-2">
-      <SIcon :name="item.icon" class="size-4 text-[var(--ui-text-muted)]" />
+      <SIcon :name="item.icon" class="size-4 text-[var(--selaras-resolved-text-muted)]" />
       {{ item.label }}
     </span>
   </template>
@@ -77,7 +77,7 @@ icon's rotation, for a plus/minus toggle instead of an arrow:
 ```vue-html
 <SAccordion :items="items">
   <template #chevron-icon>
-    <span class="relative size-4 shrink-0 text-[var(--ui-text-muted)]">
+    <span class="relative size-4 shrink-0 text-[var(--selaras-resolved-text-muted)]">
       <SIcon name="hugeicons:plus-sign" class="absolute inset-0 transition-opacity group-data-[state=open]:opacity-0" />
       <SIcon name="hugeicons:minus-sign" class="absolute inset-0 opacity-0 transition-opacity group-data-[state=open]:opacity-100" />
     </span>

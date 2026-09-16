@@ -6,12 +6,12 @@ export const alertDialogTheme = tv({
     // same kind of centered, blocking surface, just a distinct semantic
     // (Reka's AlertDialogContent unconditionally blocks outside-click
     // dismissal itself, so there's no need for a second z-index tier).
-    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-[var(--ui-scrim)]',
-    content: 'fixed left-1/2 top-1/2 z-[var(--ui-z-modal)] flex max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-[var(--ui-radius-lg)] bg-[var(--ui-bg)] p-6 shadow-[var(--ui-shadow-lg)] focus:outline-none',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
+    content: 'fixed left-1/2 top-1/2 z-[var(--selaras-resolved-z-modal)] flex max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-[var(--selaras-resolved-radius-lg)] bg-[var(--selaras-resolved-surface-default)] p-6 shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none',
     header: 'flex flex-col gap-1',
-    title: 'text-base font-semibold text-[var(--ui-text)]',
-    description: 'text-sm text-[var(--ui-text-muted)]',
-    body: 'text-sm text-[var(--ui-text-muted)]',
+    title: 'text-base font-semibold text-[var(--selaras-resolved-text-default)]',
+    description: 'text-sm text-[var(--selaras-resolved-text-muted)]',
+    body: 'text-sm text-[var(--selaras-resolved-text-muted)]',
     footer: 'flex items-center justify-end gap-2',
   },
   variants: {

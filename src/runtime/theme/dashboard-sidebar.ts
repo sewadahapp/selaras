@@ -13,14 +13,14 @@ export const dashboardSidebarTheme = tv({
     // every pointermove instead, frequently enough that a short duration
     // like this reads as smoothed-out tracking rather than lag, not a
     // rubber-band fight against the cursor.
-    // --ui-bg-elevated (not the base --ui-bg the main content area sits
+    // --selaras-resolved-surface-elevated (not the base --selaras-resolved-surface-default the main content area sits
     // on) - a step darker/lighter than the page background, the same
     // token hover states elsewhere already use for "a surface slightly
     // apart from the page" - gives the sidebar a genuine, real contrast
     // against DashboardPanel's own content instead of both areas reading
     // as one contiguous white/dark surface with only the resize-handle's
     // thin line between them.
-    root: 'flex h-full flex-col overflow-hidden bg-[var(--ui-bg-elevated)] transition-[flex-grow] duration-200 ease-out',
+    root: 'flex h-full flex-col overflow-hidden bg-[var(--selaras-resolved-surface-elevated)] transition-[flex-grow] duration-200 ease-out',
     // No border, no height lock to DashboardNavbar's own h-14 - an
     // earlier version of this tried exactly that (to fix a real reported
     // bug: the two areas' bottom borders landing a few px apart), but
@@ -36,7 +36,7 @@ export const dashboardSidebarTheme = tv({
     header: 'shrink-0 p-4',
     scrollArea: 'flex-1 min-h-0',
     body: 'p-2',
-    footer: 'shrink-0 border-t border-[var(--ui-border)] p-4',
+    footer: 'shrink-0 border-t border-[var(--selaras-resolved-border-default)] p-4',
   },
 })
 

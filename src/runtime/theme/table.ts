@@ -3,23 +3,23 @@ import { tv } from 'tailwind-variants'
 export const tableTheme = tv({
   slots: {
     root: 'relative w-full',
-    wrapper: 'overflow-x-auto rounded-[var(--ui-radius-md)] ring-1 ring-[var(--ui-border)]',
+    wrapper: 'overflow-x-auto rounded-[var(--selaras-resolved-radius-md)] ring-1 ring-[var(--selaras-resolved-border-default)]',
     table: 'w-full border-collapse',
-    thead: 'bg-[var(--ui-bg-elevated)]',
-    tr: 'border-b border-[var(--ui-border)] last:border-b-0',
-    th: 'text-start font-medium text-[var(--ui-text-muted)] whitespace-nowrap data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--ui-bg-elevated)]',
-    thSortable: 'cursor-pointer select-none hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)]',
-    sortIcon: 'ms-1 inline-block size-3.5 align-text-bottom text-[var(--ui-text-muted)]',
-    td: 'text-[var(--ui-text)] data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--ui-bg)]',
-    tfoot: 'bg-[var(--ui-bg-elevated)] font-medium',
-    emptyState: 'px-3 py-8 text-center text-sm text-[var(--ui-text-muted)]',
+    thead: 'bg-[var(--selaras-resolved-surface-elevated)]',
+    tr: 'border-b border-[var(--selaras-resolved-border-default)] last:border-b-0',
+    th: 'text-start font-medium text-[var(--selaras-resolved-text-muted)] whitespace-nowrap data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--selaras-resolved-surface-elevated)]',
+    thSortable: 'cursor-pointer select-none hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)]',
+    sortIcon: 'ms-1 inline-block size-3.5 align-text-bottom text-[var(--selaras-resolved-text-muted)]',
+    td: 'text-[var(--selaras-resolved-text-default)] data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--selaras-resolved-surface-default)]',
+    tfoot: 'bg-[var(--selaras-resolved-surface-elevated)] font-medium',
+    emptyState: 'px-3 py-8 text-center text-sm text-[var(--selaras-resolved-text-muted)]',
     filterInput: 'mt-1',
     paginationWrapper: 'flex items-center justify-between gap-3 px-3 py-2',
-    paginationInfo: 'text-sm text-[var(--ui-text-muted)]',
+    paginationInfo: 'text-sm text-[var(--selaras-resolved-text-muted)]',
     paginationButtons: 'flex items-center gap-2',
-    loadingOverlay: 'absolute inset-0 z-10 flex items-center justify-center bg-[var(--ui-bg)]/60',
+    loadingOverlay: 'absolute inset-0 z-10 flex items-center justify-center bg-[var(--selaras-resolved-surface-default)]/60',
     loadingIcon: 'size-6 animate-spin text-[var(--_selaras-color-text)]',
-    expandButton: 'flex size-5 shrink-0 items-center justify-center text-[var(--ui-text-muted)]',
+    expandButton: 'flex size-5 shrink-0 items-center justify-center text-[var(--selaras-resolved-text-muted)]',
     // Points toward the reading-start direction while collapsed - 0deg
     // (right) under LTR, 180deg (left) under RTL - then always rotates to
     // an absolute 90deg once expanded, which already points down under
@@ -28,11 +28,11 @@ export const tableTheme = tv({
     // for the one case where both conditions hold at once, rather than
     // leaving the outcome to rely on Tailwind's variant cascade order.
     expandChevron: 'size-4 transition-transform rtl:rotate-180 data-[expanded]:rotate-90 rtl:data-[expanded]:rotate-90',
-    expandedRow: 'border-b border-[var(--ui-border)] last:border-b-0',
-    expandedCell: 'bg-[var(--ui-bg-elevated)] px-3 py-3 text-[var(--ui-text)]',
+    expandedRow: 'border-b border-[var(--selaras-resolved-border-default)] last:border-b-0',
+    expandedCell: 'bg-[var(--selaras-resolved-surface-elevated)] px-3 py-3 text-[var(--selaras-resolved-text-default)]',
     columnToggle: 'relative',
-    columnTogglePanel: 'absolute end-0 z-20 mt-1 flex min-w-40 flex-col gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-2 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)]',
-    columnToggleItem: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] px-2 py-1.5 text-sm text-[var(--ui-text)] hover:bg-[var(--ui-bg-elevated)]',
+    columnTogglePanel: 'absolute end-0 z-20 mt-1 flex min-w-40 flex-col gap-1 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] p-2 shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)]',
+    columnToggleItem: 'flex items-center gap-2 rounded-[var(--selaras-resolved-radius-sm)] px-2 py-1.5 text-sm text-[var(--selaras-resolved-text-default)] hover:bg-[var(--selaras-resolved-surface-elevated)]',
   },
   variants: {
     color: {
@@ -51,13 +51,13 @@ export const tableTheme = tv({
     },
     gridlines: {
       true: {
-        table: 'border border-[var(--ui-border)]',
-        th: 'border border-[var(--ui-border)]',
-        td: 'border border-[var(--ui-border)]',
+        table: 'border border-[var(--selaras-resolved-border-default)]',
+        th: 'border border-[var(--selaras-resolved-border-default)]',
+        td: 'border border-[var(--selaras-resolved-border-default)]',
       },
     },
     striped: {
-      true: { table: '[&>tbody>tr:nth-child(even)]:bg-[var(--ui-bg-elevated)]' },
+      true: { table: '[&>tbody>tr:nth-child(even)]:bg-[var(--selaras-resolved-surface-elevated)]' },
     },
     scrollable: {
       true: { wrapper: 'overflow-y-auto', thead: 'sticky top-0 z-[1]' },

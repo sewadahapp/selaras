@@ -10,7 +10,7 @@ const name = ref('')
     </SButton>
     <template #content>
       <div class="flex w-64 flex-col gap-3">
-        <p class="text-sm font-medium text-[var(--ui-text)]">
+        <p class="text-sm font-medium text-[var(--selaras-resolved-text-default)]">
           Display name
         </p>
         <SInput v-model="name" placeholder="Jane Doe" />

@@ -1,4 +1,4 @@
-import type { FunctionalTokenOverrides } from './functional-tokens'
+import type { ThemeTokenOverrides } from './functional-tokens'
 import { functionalTokenEntries, mergeFunctionalTokenOverrides } from './functional-tokens'
 
 /**
@@ -39,7 +39,7 @@ export type ColorRecipeInput = Pick<ColorRecipe, 'fill' | 'onFill' | 'subtle' | 
 
 export type RuntimeColorOverrides = Partial<Record<ColorRole, Partial<ColorRecipeInput>>>
 
-export interface RuntimeThemeMode extends FunctionalTokenOverrides {
+export interface RuntimeThemeMode extends ThemeTokenOverrides {
   colors?: RuntimeColorOverrides
 }
 

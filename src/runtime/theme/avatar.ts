@@ -16,7 +16,7 @@ export const avatarTheme = tv({
     icon: 'shrink-0',
     // The ring separates the dot from the avatar itself, using the page
     // background so it reads as a clean offset indicator at any size.
-    status: 'absolute bottom-0 end-0 rounded-full ring-2 ring-[var(--ui-bg)]',
+    status: 'absolute bottom-0 end-0 rounded-full ring-2 ring-[var(--selaras-resolved-surface-default)]',
   },
   variants: {
     color: {
@@ -33,7 +33,7 @@ export const avatarTheme = tv({
     // it gets its own variant rather than tracking the avatar's.
     statusColor: {
       primary: { status: 'bg-[var(--selaras-resolved-color-primary-fill)]' },
-      neutral: { status: 'bg-[var(--ui-text-muted)]' },
+      neutral: { status: 'bg-[var(--selaras-resolved-text-muted)]' },
       secondary: { status: 'bg-[var(--selaras-resolved-color-secondary-fill)]' },
       success: { status: 'bg-[var(--selaras-resolved-color-success-fill)]' },
       danger: { status: 'bg-[var(--selaras-resolved-color-danger-fill)]' },
@@ -47,11 +47,11 @@ export const avatarTheme = tv({
     },
     shape: {
       circle: { base: 'rounded-full' },
-      rounded: { base: 'rounded-[var(--ui-radius-md)]' },
+      rounded: { base: 'rounded-[var(--selaras-resolved-radius-md)]' },
     },
   },
   compoundVariants: [
-    { color: 'neutral', class: { fallback: 'text-[var(--ui-text-muted)]' } },
+    { color: 'neutral', class: { fallback: 'text-[var(--selaras-resolved-text-muted)]' } },
   ],
   defaultVariants: {
     color: 'neutral',

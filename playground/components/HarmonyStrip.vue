@@ -52,7 +52,7 @@ onMounted(() => {
     >
       <div class="flex w-full flex-1 items-end">
         <div
-          class="harmony-bar w-full rounded-t-[var(--ui-radius-md)]"
+          class="harmony-bar w-full rounded-t-[var(--selaras-resolved-radius-md)]"
           :style="{
             height: `${settled ? role.lightness : scatter[index]}%`,
             backgroundColor: `var(--color-${role.key}-500)`,
@@ -61,10 +61,10 @@ onMounted(() => {
         />
       </div>
       <div class="w-full text-center">
-        <p class="truncate text-[0.65rem] tracking-wide text-[var(--ui-text-muted)] uppercase">
+        <p class="truncate text-[0.65rem] tracking-wide text-[var(--selaras-resolved-text-muted)] uppercase">
           {{ role.key }}
         </p>
-        <p class="hidden truncate font-mono text-[0.65rem] text-[var(--ui-text-muted)] opacity-0 transition-opacity group-hover:opacity-100 sm:block">
+        <p class="hidden truncate font-mono text-[0.65rem] text-[var(--selaras-resolved-text-muted)] opacity-0 transition-opacity group-hover:opacity-100 sm:block">
           --color-{{ role.key }}-500
         </p>
       </div>

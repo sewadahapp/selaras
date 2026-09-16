@@ -80,7 +80,7 @@ horizontal space is tight:
 ### Sizes and states
 
 `size` takes `sm` / `md` / `lg`, `disabled` prevents interaction and dims
-the control, and `invalid` switches the ring to `--ui-danger`:
+the control, and `invalid` switches the ring to the danger role's focus color:
 
 ::component-example{name="input-number-invalid"}
 ::
@@ -94,7 +94,7 @@ the control, and `invalid` switches the ring to `--ui-danger`:
 ### Colors
 
 `color` sets the focus-ring color - the resting (unfocused) ring stays
-`--ui-border` regardless, and `invalid` always wins over a custom `color`:
+`--selaras-resolved-border-default` regardless, and `invalid` always wins over a custom `color`:
 
 ::component-example{name="input-number-colors"}
 ::

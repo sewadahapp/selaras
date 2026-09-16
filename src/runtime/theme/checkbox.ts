@@ -17,10 +17,10 @@ export const checkboxTheme = tv({
     // element's own isolated stacking context its own background paints
     // first and the negative-z halo paints after it, same as the check
     // icon itself. Only the unchecked resting background was dropped
-    // (transparent instead of --ui-bg), the same reason radio's item is
+    // (transparent instead of --selaras-resolved-surface-default), the same reason radio's item is
     // hollow - an opaque fill there would block the halo from showing as
     // a full disc instead of a ring cut off by the box's own edge.
-    box: 'relative isolate flex shrink-0 items-center justify-center rounded-[var(--ui-radius-sm)] ring-[1.5px] ring-inset ring-[var(--_selaras-color-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--_selaras-color-subtle-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:bg-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)] data-[state=indeterminate]:bg-[var(--_selaras-color-fill)] data-[state=indeterminate]:ring-[var(--_selaras-color-fill)] data-[state=indeterminate]:before:bg-[var(--_selaras-color-fill-hover)]',
+    box: 'relative isolate flex shrink-0 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] ring-[1.5px] ring-inset ring-[var(--_selaras-color-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--_selaras-color-subtle-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:bg-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)] data-[state=indeterminate]:bg-[var(--_selaras-color-fill)] data-[state=indeterminate]:ring-[var(--_selaras-color-fill)] data-[state=indeterminate]:before:bg-[var(--_selaras-color-fill-hover)]',
     indicator: 'flex items-center justify-center text-[var(--_selaras-color-on-fill)]',
     // A hand-drawn stroke path (not an Icon/icon-registry glyph, unlike
     // every other icon in this library) animated via stroke-dasharray/
@@ -73,7 +73,7 @@ export const checkboxTheme = tv({
     variant: {
       default: {},
       card: {
-        root: 'w-full items-start gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] px-3.5 py-3 transition-colors has-[[data-state=checked]]:border-[var(--_selaras-color-fill)] has-[[data-state=checked]]:bg-[var(--_selaras-color-subtle)]',
+        root: 'w-full items-start gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] px-3.5 py-3 transition-colors has-[[data-state=checked]]:border-[var(--_selaras-color-fill)] has-[[data-state=checked]]:bg-[var(--_selaras-color-subtle)]',
         box: 'mt-0.5',
       },
     },

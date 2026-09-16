@@ -10,9 +10,9 @@ export const inputTheme = tv({
     // focus ring's own color comes from the `color` variant below, not
     // hardcoded here - hover's own color stays neutral regardless of
     // `color`, matching every other component's own hover state.
-    base: 'w-full rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] placeholder:text-[var(--ui-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
-    leadingIcon: 'absolute start-2.5 shrink-0 text-[var(--ui-text-muted)]',
-    trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--ui-text-muted)]',
+    base: 'w-full rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] text-[var(--selaras-resolved-text-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] placeholder:text-[var(--selaras-resolved-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
+    leadingIcon: 'absolute start-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
+    trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     // A separate slot from trailingIcon (not reused) - that one is a
     // decorative, non-interactive icon; this is a real dismiss button.
     // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
@@ -31,7 +31,7 @@ export const inputTheme = tv({
       md: { base: 'h-10 px-3 text-sm', leadingIcon: 'size-4.5', trailingIcon: 'size-4.5', clear: 'size-9' },
       lg: { base: 'h-11 px-3.5 text-base', leadingIcon: 'size-5', trailingIcon: 'size-5', clear: 'size-10' },
     },
-    // Focus-ring color only - the resting ring stays --ui-border regardless
+    // Focus-ring color only - the resting ring stays --selaras-resolved-border-default regardless
     // of `color`, matching a Nuxt-ecosystem component kit's own Input
     // (confirmed by reading its docs directly, not assumed).
     color: {

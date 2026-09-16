@@ -43,7 +43,7 @@ export interface ButtonProps {
   disabled?: boolean
   /** Shows a spinner in the leading icon's place. Doesn't imply `disabled` - combine `:loading="x" :disabled="x"` if a busy button shouldn't be clickable. */
   loading?: boolean
-  /** Adds `--ui-shadow-md` - independent of `variant`, so it composes with any of them. */
+  /** Adds `--selaras-resolved-shadow-md` - independent of `variant`, so it composes with any of them. */
   raised?: boolean
   icon?: string
   trailingIcon?: string

@@ -7,7 +7,7 @@ describe('rating', () => {
   it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(Rating, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style')).not.toContain('--_selaras-color-fill')
     expect(wrapper.html()).toContain('group-data-[state=active]/step:text-[var(--_selaras-color-fill)]')
   })
 

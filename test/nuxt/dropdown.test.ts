@@ -139,7 +139,7 @@ describe('dropdown', () => {
     })
     await openMenu()
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeFalsy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeFalsy()
   })
 
   it('arrow renders the pointer triangle', async () => {
@@ -149,6 +149,6 @@ describe('dropdown', () => {
     })
     await openMenu()
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
   })
 })

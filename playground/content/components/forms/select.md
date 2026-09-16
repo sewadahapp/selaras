@@ -237,7 +237,7 @@ it entirely - it receives the whole `{ label, items }` entry:
   <template #group="{ group }">
     <span class="flex items-center justify-between">
       <span>{{ group.label }}</span>
-      <span class="text-[var(--ui-text-muted)]">{{ group.items.length }}</span>
+      <span class="text-[var(--selaras-resolved-text-muted)]">{{ group.items.length }}</span>
     </span>
   </template>
 </SSelect>
@@ -288,13 +288,13 @@ library - see the [Props](#props) table below.
 
 `loading` swaps the trailing chevron for a spinner (the trigger stays
 clickable - it doesn't disable the select), `disabled` prevents opening it
-entirely, and `invalid` switches the ring to `--ui-danger`. All three compose
+entirely, and `invalid` switches the ring to the danger role's focus color. All three compose
 with everything above them on this page - see [Props](#props).
 
 ### Colors
 
 `color` sets the focus-ring color - the resting (unfocused) ring stays
-`--ui-border` regardless, and `invalid` always wins over a custom `color`:
+`--selaras-resolved-border-default` regardless, and `invalid` always wins over a custom `color`:
 
 ::component-example{name="select-colors"}
 ::

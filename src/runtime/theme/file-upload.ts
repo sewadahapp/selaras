@@ -8,10 +8,10 @@ export const fileUploadTheme = tv({
     // instead of needing hand-rolled keydown handling. dragging (a
     // component-set data attribute, not a native one) recolors it
     // toward `color` - see the color variant below.
-    dropzone: 'flex w-full flex-col items-center justify-center gap-2 rounded-[var(--ui-radius-md)] border-2 border-dashed border-[var(--ui-border)] p-6 text-center transition-colors hover:border-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)] disabled:opacity-50 disabled:pointer-events-none',
+    dropzone: 'flex w-full flex-col items-center justify-center gap-2 rounded-[var(--selaras-resolved-radius-md)] border-2 border-dashed border-[var(--selaras-resolved-border-default)] p-6 text-center transition-colors hover:border-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)] disabled:opacity-50 disabled:pointer-events-none',
     icon: 'text-[var(--_selaras-color-fill)]',
-    label: 'font-medium text-[var(--ui-text)]',
-    description: 'text-[var(--ui-text-muted)]',
+    label: 'font-medium text-[var(--selaras-resolved-text-default)]',
+    description: 'text-[var(--selaras-resolved-text-muted)]',
     // Purely an implementation detail - visually hidden and (via
     // tabindex="-1" in FileUpload.vue) not independently tab-reachable
     // either.
@@ -21,12 +21,12 @@ export const fileUploadTheme = tv({
     // label/validation focus on the input is forwarded to the dropzone.
     input: 'sr-only',
     fileList: 'flex w-full flex-col gap-2',
-    file: 'flex items-center gap-3 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] p-2',
-    fileThumbnail: 'size-8 shrink-0 rounded-[var(--ui-radius-sm)] object-cover',
-    fileIcon: 'size-8 shrink-0 text-[var(--ui-text-muted)]',
+    file: 'flex items-center gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-2',
+    fileThumbnail: 'size-8 shrink-0 rounded-[var(--selaras-resolved-radius-sm)] object-cover',
+    fileIcon: 'size-8 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     fileInfo: 'flex min-w-0 flex-1 flex-col',
-    fileName: 'truncate text-[var(--ui-text)]',
-    fileSize: 'text-[var(--ui-text-muted)]',
+    fileName: 'truncate text-[var(--selaras-resolved-text-default)]',
+    fileSize: 'text-[var(--selaras-resolved-text-muted)]',
     fileRemove: 'shrink-0',
   },
   variants: {
@@ -44,7 +44,7 @@ export const fileUploadTheme = tv({
     // direct user feedback, not just a style preference.
     color: {
       primary: '',
-      neutral: { icon: 'text-[var(--ui-bg-inverted)]', dropzone: 'focus-visible:ring-[var(--ui-bg-inverted)] data-[dragging]:border-[var(--ui-bg-inverted)] data-[dragging]:bg-[var(--ui-bg-elevated)]' },
+      neutral: { icon: 'text-[var(--selaras-resolved-surface-inverted)]', dropzone: 'focus-visible:ring-[var(--selaras-resolved-surface-inverted)] data-[dragging]:border-[var(--selaras-resolved-surface-inverted)] data-[dragging]:bg-[var(--selaras-resolved-surface-elevated)]' },
       secondary: '',
       success: '',
       danger: '',

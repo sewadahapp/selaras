@@ -7,10 +7,10 @@ defineEmits<{ close: [confirmed?: boolean] }>()
     <div class="flex size-12 items-center justify-center rounded-full bg-[var(--selaras-resolved-color-danger-subtle)] text-[var(--selaras-resolved-color-danger-text)]">
       <SIcon name="hugeicons:alert-02" class="size-6" />
     </div>
-    <h2 class="text-base font-semibold text-[var(--ui-text)]">
+    <h2 class="text-base font-semibold text-[var(--selaras-resolved-text-default)]">
       Delete this item?
     </h2>
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       This action cannot be undone.
     </p>
     <div class="mt-2 flex gap-2">

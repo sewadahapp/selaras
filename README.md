@@ -9,7 +9,7 @@ A UI component library for Nuxt, built on Reka UI and Tailwind v4. Every
 component ships a `tailwind-variants` theme and a single `:ui` prop for
 overrides - no separate pass-through prop to juggle, no specificity fights
 between the library's own classes and yours. Design tokens are plain CSS
-variables (`@theme` + a semantic `--ui-*` layer), so re-theming an app is a
+variables (`@theme` foundations plus semantic `--selaras-*` inputs), so re-theming an app is a
 matter of overriding variables, not rebuilding the library.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
@@ -23,9 +23,9 @@ matter of overriding variables, not rebuilding the library.
 - **One override prop, not two.** `:ui` accepts a string (tailwind-merge'd
   against the theme) or an object (merged via `mergeProps` for the rare
   non-class case) per slot - the same mental model everywhere in the library.
-- **CSS variable design tokens.** Colors, radii, shadows, and z-index all
-  live in `theme.css` as `--ui-*` variables built on OKLCH primitives, so
-  swapping a brand color is a CSS override, not a rebuild.
+- **CSS variable design tokens.** Colors, radii, shadows, and z-index use
+  semantic `--selaras-*` inputs and `--selaras-resolved-*` reads, so swapping
+  a brand color is a CSS override, not a rebuild.
 - **CSS-only animation.** Open/close and hover/focus transitions run on
   `data-state` attributes and Tailwind variants - no motion library
   dependency.

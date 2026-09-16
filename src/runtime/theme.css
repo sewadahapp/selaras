@@ -191,7 +191,7 @@
  * row's own expanded content makes it, since the segment's height is a
  * fixed constant, never a percentage of anything nested inside it.
  *
- * Both pseudo-elements get their real color from `--ui-border` (the
+ * Both pseudo-elements get their real color from `--selaras-resolved-border-default` (the
  * elbow via `mask-image` over black-on-transparent SVG geometry - the
  * same "colored div, SVG-as-mask" technique ContentToc's own rail
  * already uses; the trunk is a plain colored bar, no mask needed since
@@ -207,7 +207,7 @@
   inset-inline-start: -16px;
   top: 0;
   width: 16px;
-  background-color: var(--ui-border);
+  background-color: var(--selaras-resolved-border-default);
   -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
 }
@@ -217,7 +217,7 @@
   inset-inline-start: -15px;
   top: 0;
   width: 1.5px;
-  background-color: var(--ui-border);
+  background-color: var(--selaras-resolved-border-default);
 }
 /* Row height 40px (py-2.5 + text-sm's 20px line-height); elbow curves
    from the trunk down to the row's own midpoint (y=20). List gap is
@@ -272,86 +272,47 @@
 
 
 
-:root {
-  /*
-   * Plain CSS, deliberately not `@theme` - these aren't a Tailwind theme
-   * namespace (`--radius-*`/`--shadow-*`/`--z-*` are; `--ui-radius-*`/
-   * `--ui-shadow-*`/`--ui-z-*` aren't), and nothing anywhere references
-   * them via Tailwind's named-utility convention, only ever arbitrary
-   * values (`rounded-[var(--ui-radius-md)]`) - so there's no Tailwind
-   * theme-merge behavior to gain from `@theme` here, only its downside:
-   * under a configured class prefix, Tailwind renames/prunes `@theme`
-   * variables it can't prove are used by a discovered utility candidate.
-   * Plain custom properties are never touched by that, prefixed or not.
-   */
-
-  /*
-   * Radius scale, generous by default - one base value, the rest derived
-   * from it (sm = 0.75x, lg = 2x) so retheming radius only ever means
-   * changing `--ui-radius` itself, with the whole scale staying
-   * proportional automatically. `full` stays independent - "pill-shaped"
-   * is a distinct visual choice, not a point on the same size gradient.
-   */
-  --ui-radius: 8px;
-  --ui-radius-sm: calc(var(--ui-radius) * 0.75);
-  --ui-radius-md: var(--ui-radius);
-  --ui-radius-lg: calc(var(--ui-radius) * 2);
-  --ui-radius-full: 9999px;
-
-  /* overlay elevation */
-  --ui-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.06);
-  --ui-shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
-  --ui-shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.16);
-
-  /*
-   * Overlay stacking order. Every overlay used to share a flat z-50, which
-   * only worked by accident of portal-mount order - a Dropdown opened from
-   * inside an open Modal (e.g. a row-actions menu in a dialog) would render
-   * behind the modal instead of above it. This tier reflects real nesting:
-   * a Dropdown can open from inside a Modal; a Tooltip can be triggered from
-   * inside either; a Toast is a global notification that must stay visible
-   * above everything else regardless of what's open.
-   */
-  --ui-z-modal-overlay: 40;
-  --ui-z-modal: 50;
-  --ui-z-dropdown: 60;
-  --ui-z-tooltip: 70;
-  --ui-z-toast: 80;
-
-}
-
-/*
- * Public --selaras-* inputs inherit without bundled defaults. Resolve them
- * at each managed owner so explicit modes and local external variables work
- * in components and portals alike. --ui-* remain the current recipe bindings;
- * they are not an additional input API or a permanent compatibility layer.
- */
+/* Public inputs inherit without bundled defaults. Resolve them at each managed
+ * owner so explicit modes and transported portals share one semantic contract. */
 @layer theme {
   :root,
   [data-selaras-theme] {
-    --ui-bg: var(--selaras-surface-default, --theme(--color-selaras-gray-25));
-    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-selaras-gray-50));
-    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-selaras-gray-950));
-    --ui-text: var(--selaras-text-default, --theme(--color-selaras-gray-950));
-    --ui-text-muted: var(--selaras-text-muted, --theme(--color-selaras-gray-600));
-    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-selaras-gray-50));
-    --ui-border: var(--selaras-border-default, --theme(--color-selaras-gray-200));
-    --ui-border-muted: var(--selaras-border-muted, --theme(--color-selaras-gray-100));
-    --ui-border-hover: var(--selaras-border-hover, --theme(--color-selaras-gray-300));
-    --ui-scrim: var(--selaras-scrim, rgb(0 0 0 / 0.5));
+    --selaras-resolved-surface-default: var(--selaras-surface-default, --theme(--color-selaras-gray-25));
+    --selaras-resolved-surface-elevated: var(--selaras-surface-elevated, --theme(--color-selaras-gray-50));
+    --selaras-resolved-surface-inverted: var(--selaras-surface-inverted, --theme(--color-selaras-gray-950));
+    --selaras-resolved-text-default: var(--selaras-text-default, --theme(--color-selaras-gray-950));
+    --selaras-resolved-text-muted: var(--selaras-text-muted, --theme(--color-selaras-gray-600));
+    --selaras-resolved-text-inverted: var(--selaras-text-inverted, --theme(--color-selaras-gray-50));
+    --selaras-resolved-border-default: var(--selaras-border-default, --theme(--color-selaras-gray-200));
+    --selaras-resolved-border-muted: var(--selaras-border-muted, --theme(--color-selaras-gray-100));
+    --selaras-resolved-border-hover: var(--selaras-border-hover, --theme(--color-selaras-gray-300));
+    --selaras-resolved-scrim: var(--selaras-scrim, rgb(0 0 0 / 0.5));
+    --selaras-resolved-radius-base: var(--selaras-radius-base, 8px);
+    --selaras-resolved-radius-sm: var(--selaras-radius-sm, calc(var(--selaras-resolved-radius-base) * 0.75));
+    --selaras-resolved-radius-md: var(--selaras-radius-md, var(--selaras-resolved-radius-base));
+    --selaras-resolved-radius-lg: var(--selaras-radius-lg, calc(var(--selaras-resolved-radius-base) * 2));
+    --selaras-resolved-radius-full: var(--selaras-radius-full, 9999px);
+    --selaras-resolved-shadow-sm: var(--selaras-shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.06));
+    --selaras-resolved-shadow-md: var(--selaras-shadow-md, 0 4px 16px -2px rgb(0 0 0 / 0.12));
+    --selaras-resolved-shadow-lg: var(--selaras-shadow-lg, 0 12px 32px -4px rgb(0 0 0 / 0.16));
+    --selaras-resolved-z-modal-overlay: var(--selaras-z-modal-overlay, 40);
+    --selaras-resolved-z-modal: var(--selaras-z-modal, 50);
+    --selaras-resolved-z-dropdown: var(--selaras-z-dropdown, 60);
+    --selaras-resolved-z-tooltip: var(--selaras-z-tooltip, 70);
+    --selaras-resolved-z-toast: var(--selaras-z-toast, 80);
   }
 
   :root.dark,
   :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),
   [data-selaras-theme]:where([data-selaras-mode="dark"]) {
-    --ui-bg: var(--selaras-surface-default, --theme(--color-selaras-gray-950));
-    --ui-bg-elevated: var(--selaras-surface-elevated, --theme(--color-selaras-gray-900));
-    --ui-bg-inverted: var(--selaras-surface-inverted, --theme(--color-selaras-gray-50));
-    --ui-text: var(--selaras-text-default, --theme(--color-selaras-gray-50));
-    --ui-text-muted: var(--selaras-text-muted, --theme(--color-selaras-gray-400));
-    --ui-text-inverted: var(--selaras-text-inverted, --theme(--color-selaras-gray-950));
-    --ui-border: var(--selaras-border-default, --theme(--color-selaras-gray-800));
-    --ui-border-muted: var(--selaras-border-muted, --theme(--color-selaras-gray-900));
-    --ui-border-hover: var(--selaras-border-hover, --theme(--color-selaras-gray-700));
+    --selaras-resolved-surface-default: var(--selaras-surface-default, --theme(--color-selaras-gray-950));
+    --selaras-resolved-surface-elevated: var(--selaras-surface-elevated, --theme(--color-selaras-gray-900));
+    --selaras-resolved-surface-inverted: var(--selaras-surface-inverted, --theme(--color-selaras-gray-50));
+    --selaras-resolved-text-default: var(--selaras-text-default, --theme(--color-selaras-gray-50));
+    --selaras-resolved-text-muted: var(--selaras-text-muted, --theme(--color-selaras-gray-400));
+    --selaras-resolved-text-inverted: var(--selaras-text-inverted, --theme(--color-selaras-gray-950));
+    --selaras-resolved-border-default: var(--selaras-border-default, --theme(--color-selaras-gray-800));
+    --selaras-resolved-border-muted: var(--selaras-border-muted, --theme(--color-selaras-gray-900));
+    --selaras-resolved-border-hover: var(--selaras-border-hover, --theme(--color-selaras-gray-700));
   }
 }

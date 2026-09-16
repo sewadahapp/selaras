@@ -26,7 +26,7 @@ separating border) when you actually pass it:
 ```vue-html
 <SCard>
   <template #header>
-    <p class="font-semibold text-[var(--ui-text)]">Delete project</p>
+    <p class="font-semibold text-[var(--selaras-resolved-text-default)]">Delete project</p>
   </template>
 
   This action cannot be undone. All data associated with this project
@@ -75,10 +75,10 @@ components:
     <SBadge label="Design" color="primary" variant="soft" />
   </template>
 
-  <h3 class="font-semibold text-[var(--ui-text)]">
+  <h3 class="font-semibold text-[var(--selaras-resolved-text-default)]">
     Building a scalable design token system
   </h3>
-  <p class="text-sm text-[var(--ui-text-muted)]">
+  <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
     A look at how semantic tokens keep a component library themeable
     without ever touching a single component file.
   </p>
@@ -87,8 +87,8 @@ components:
     <div class="flex items-center gap-2">
       <SAvatar text="JS" size="sm" />
       <div class="text-sm leading-tight">
-        <p class="font-medium text-[var(--ui-text)]">Jane Smith</p>
-        <p class="text-[var(--ui-text-muted)]">Mar 12, 2026</p>
+        <p class="font-medium text-[var(--selaras-resolved-text-default)]">Jane Smith</p>
+        <p class="text-[var(--selaras-resolved-text-muted)]">Mar 12, 2026</p>
       </div>
     </div>
   </template>
@@ -111,10 +111,10 @@ card's edges, with your own padded wrapper underneath for the details:
     class="aspect-[4/3] w-full object-cover"
   >
   <div class="flex flex-col gap-1 p-4">
-    <p class="font-medium text-[var(--ui-text)]">Wireless headphones</p>
-    <p class="text-sm text-[var(--ui-text-muted)]">Noise-cancelling, 30-hour battery life</p>
+    <p class="font-medium text-[var(--selaras-resolved-text-default)]">Wireless headphones</p>
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">Noise-cancelling, 30-hour battery life</p>
     <div class="mt-2 flex items-center justify-between">
-      <span class="font-semibold text-[var(--ui-text)]">$129</span>
+      <span class="font-semibold text-[var(--selaras-resolved-text-default)]">$129</span>
       <SButton size="sm">Add to cart</SButton>
     </div>
   </div>

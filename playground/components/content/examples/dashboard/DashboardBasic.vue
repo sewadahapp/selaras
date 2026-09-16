@@ -33,11 +33,11 @@ const links = computed(() => [
 </script>
 
 <template>
-  <div class="h-96 w-full overflow-hidden rounded-[var(--ui-radius-md)] border border-[var(--ui-border)]">
+  <div class="h-96 w-full overflow-hidden rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)]">
     <SDashboardGroup auto-save-id="docs-example-dashboard">
       <SDashboardSidebar>
         <template #header="{ isCollapsed }">
-          <span class="font-semibold text-[var(--ui-text)]">{{ isCollapsed ? 'A' : 'Acme Inc' }}</span>
+          <span class="font-semibold text-[var(--selaras-resolved-text-default)]">{{ isCollapsed ? 'A' : 'Acme Inc' }}</span>
         </template>
         <template #default="{ isCollapsed }">
           <SNavigationMenu :items="links" orientation="vertical" :collapsed="isCollapsed" />
@@ -45,7 +45,7 @@ const links = computed(() => [
         <template #footer="{ isCollapsed }">
           <div class="flex items-center gap-2">
             <SAvatar text="JD" size="sm" />
-            <span v-if="!isCollapsed" class="text-sm text-[var(--ui-text-muted)]">Jane Doe</span>
+            <span v-if="!isCollapsed" class="text-sm text-[var(--selaras-resolved-text-muted)]">Jane Doe</span>
           </div>
         </template>
       </SDashboardSidebar>
@@ -59,7 +59,7 @@ const links = computed(() => [
             New
           </SButton>
         </SDashboardNavbar>
-        <main class="flex-1 overflow-y-auto p-4 text-sm text-[var(--ui-text-muted)]">
+        <main class="flex-1 overflow-y-auto p-4 text-sm text-[var(--selaras-resolved-text-muted)]">
           <p>
             Drag the divider to resize the sidebar, or use the navbar's
             toggle button to collapse it down to an icon rail. Shrink the

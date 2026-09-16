@@ -9,7 +9,7 @@ const items = [
   <SAccordion :items="items">
     <template #label="{ item }">
       <span class="flex items-center gap-2">
-        <SIcon v-if="item.icon" :name="item.icon" class="size-4 text-[var(--ui-text-muted)]" />
+        <SIcon v-if="item.icon" :name="item.icon" class="size-4 text-[var(--selaras-resolved-text-muted)]" />
         {{ item.label }}
       </span>
     </template>

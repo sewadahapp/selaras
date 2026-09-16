@@ -12,10 +12,10 @@ export const ratingTheme = tv({
     // narrower-than-the-whole-star) indicator button is current, but the
     // ring should still outline the *whole* star, not just that step's
     // own cropped hit region.
-    item: 'relative shrink-0 rounded-[var(--ui-radius-sm)] transition-shadow has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--_selaras-color-focus)]',
+    item: 'relative shrink-0 rounded-[var(--selaras-resolved-radius-sm)] transition-shadow has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--_selaras-color-focus)]',
     // The empty/outline star, always visible, sitting behind every step
     // indicator - what a not-yet-filled star reads as.
-    icon: 'absolute inset-0 text-[var(--ui-border)]',
+    icon: 'absolute inset-0 text-[var(--selaras-resolved-border-default)]',
     // One per fractional sub-step (Rating.vue renders one
     // RatingItemIndicator per entry in RatingItem's own `steps`, a single
     // entry `[N]` when `step` is the default 1, several overlapping ones

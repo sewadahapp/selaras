@@ -44,7 +44,7 @@ export function isFeedbackIntent(value: string): value is FeedbackIntent {
 }
 
 // Hugeicons by default. One registry keyed by semantic purpose, not by
-// component/slot - matches how --ui-* colors are a single shared layer
+// component/slot - matches how semantic color roles are a shared layer
 // rather than per-component tokens, so overriding app.config.selaras.icons.close
 // once retheme every dismiss/clear/remove "x" glyph in the library
 // together, instead of needing a separate override per component.

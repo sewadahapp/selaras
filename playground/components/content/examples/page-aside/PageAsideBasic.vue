@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-64 w-full rounded-[var(--ui-radius-md)] ring-1 ring-[var(--ui-border)]">
+  <div class="flex h-64 w-full rounded-[var(--selaras-resolved-radius-md)] ring-1 ring-[var(--selaras-resolved-border-default)]">
     <SPageAside :ui="{ root: 'static flex h-full w-48' }">
       <template #header>
         <strong class="text-sm">Header</strong>
@@ -8,7 +8,7 @@
         Item {{ i }}
       </div>
     </SPageAside>
-    <div class="flex-1 p-4 text-sm text-[var(--ui-text-muted)]">
+    <div class="flex-1 p-4 text-sm text-[var(--selaras-resolved-text-muted)]">
       Main content sits alongside the aside.
     </div>
   </div>

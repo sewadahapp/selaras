@@ -20,12 +20,12 @@ const items = [
     <template #item-content="{ item }">
       <ul class="grid w-full grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-2 p-2">
         <li v-for="child in item.children" :key="child.label">
-          <NuxtLink :to="child.to" class="flex flex-col gap-1 rounded-[var(--ui-radius-md)] p-3 hover:bg-[var(--ui-bg-elevated)]">
-            <span class="flex items-center gap-2 text-sm font-medium text-[var(--ui-text)]">
+          <NuxtLink :to="child.to" class="flex flex-col gap-1 rounded-[var(--selaras-resolved-radius-md)] p-3 hover:bg-[var(--selaras-resolved-surface-elevated)]">
+            <span class="flex items-center gap-2 text-sm font-medium text-[var(--selaras-resolved-text-default)]">
               <SIcon v-if="child.icon" :name="child.icon" class="size-4" />
               {{ child.label }}
             </span>
-            <span class="text-xs text-[var(--ui-text-muted)]">{{ child.description }}</span>
+            <span class="text-xs text-[var(--selaras-resolved-text-muted)]">{{ child.description }}</span>
           </NuxtLink>
         </li>
       </ul>
@@ -33,7 +33,7 @@ const items = [
 
     <template #help-content="{ item }">
       <div class="w-56 p-3 text-sm">
-        <p class="mb-2 text-[var(--ui-text-muted)]">
+        <p class="mb-2 text-[var(--selaras-resolved-text-muted)]">
           Need a hand?
         </p>
         <NuxtLink v-for="child in item.children" :key="child.label" :to="child.to" class="block py-1 text-[var(--selaras-resolved-color-primary-text)]">

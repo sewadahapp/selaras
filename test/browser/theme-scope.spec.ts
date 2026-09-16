@@ -77,6 +77,9 @@ test('keeps functional colors coherent through nested modes, real portals and re
   }
   await expect(page.locator('#portal-surface')).toHaveCSS('color', 'rgb(30, 31, 32)')
   await expect(page.locator('#portal-surface')).toHaveCSS('border-top-color', 'rgb(80, 81, 82)')
+  await expect(page.locator('#portal-surface')).toHaveCSS('border-top-left-radius', '4px')
+  await expect(page.locator('#portal-surface')).toHaveCSS('box-shadow', 'rgb(1, 2, 3) 0px 0px 0px 2px')
+  await expect(page.locator('#portal-surface')).toHaveCSS('z-index', '91')
   // Parent muted text and scrim are dark-only: explicit light restores defaults.
   await expect(page.locator('#modal-muted')).toHaveCSS('color', 'oklch(0.445 0.019 280)')
   await expect(page.getByTestId('functional-scrim')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0.5)')

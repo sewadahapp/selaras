@@ -192,7 +192,7 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
     overlay reads differently from an inline panel anyway, so there's
     no real reason to force the split-pane's exact classes onto it.
   -->
-  <Drawer v-else v-model:open="mobileOpen" side="left" :handle="false" :ui="{ content: 'bg-[var(--ui-bg-elevated)]' }">
+  <Drawer v-else v-model:open="mobileOpen" side="left" :handle="false" :ui="{ content: 'bg-[var(--selaras-resolved-surface-elevated)]' }">
     <template v-if="$slots.header" #header>
       <slot name="header" :is-collapsed="false" />
     </template>

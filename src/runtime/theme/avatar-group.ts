@@ -3,8 +3,8 @@ import { tv } from 'tailwind-variants'
 export const avatarGroupTheme = tv({
   slots: {
     root: 'inline-flex flex-row-reverse justify-end',
-    item: 'relative rounded-full ring-[var(--ui-bg)]',
-    count: 'relative rounded-full bg-[var(--ui-bg-elevated)] text-[var(--ui-text-muted)] font-medium flex items-center justify-center',
+    item: 'relative rounded-full ring-[var(--selaras-resolved-surface-default)]',
+    count: 'relative rounded-full bg-[var(--selaras-resolved-surface-elevated)] text-[var(--selaras-resolved-text-muted)] font-medium flex items-center justify-center',
   },
   variants: {
     size: {

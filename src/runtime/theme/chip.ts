@@ -6,7 +6,7 @@ export const chipTheme = tv({
     // specific chip into the fully-rounded pill look instead. Padding/
     // height below is Badge's original scale, carried over here; Badge
     // itself moved to a tighter one (see badge.ts).
-    root: 'inline-flex items-center gap-1 rounded-[var(--ui-radius-sm)] font-medium whitespace-nowrap',
+    root: 'inline-flex items-center gap-1 rounded-[var(--selaras-resolved-radius-sm)] font-medium whitespace-nowrap',
     leadingIcon: 'shrink-0',
     label: 'truncate',
     // inline-flex items-center justify-center centers the icon in both

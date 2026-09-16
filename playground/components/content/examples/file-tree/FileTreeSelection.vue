@@ -17,7 +17,7 @@ const selected = ref()
 <template>
   <div class="flex w-64 flex-col gap-2">
     <SFileTree v-model:selected="selected" :items="items" />
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       Selected: {{ selected?.name ?? 'none' }}
     </p>
   </div>

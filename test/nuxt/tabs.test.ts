@@ -155,6 +155,6 @@ describe('tabs', () => {
     await nextTick()
 
     const list = wrapper.find('[role="tablist"]')
-    expect(list.classes()).toContain('rounded-[var(--ui-radius-md)]')
+    expect(list.classes()).toContain('rounded-[var(--selaras-resolved-radius-md)]')
   })
 })

@@ -2,16 +2,16 @@ import { tv } from 'tailwind-variants'
 
 export const modalTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-[var(--ui-scrim)]',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
     // flex flex-col + the header/footer's own shrink-0 (native to a flex
     // child, no extra class needed) let a tall body scroll internally via
     // its own overflow-y-auto below, capped to the viewport height so a
     // centered dialog can never overflow past the screen edges regardless
     // of content length.
-    content: 'fixed left-1/2 top-1/2 z-[var(--ui-z-modal)] flex max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col rounded-[var(--ui-radius-lg)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-lg)] focus:outline-none',
+    content: 'fixed left-1/2 top-1/2 z-[var(--selaras-resolved-z-modal)] flex max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col rounded-[var(--selaras-resolved-radius-lg)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none',
     header: 'flex items-start justify-between gap-4 p-4 sm:px-6',
-    title: 'text-base font-semibold text-[var(--ui-text)]',
-    description: 'mt-1 text-sm text-[var(--ui-text-muted)]',
+    title: 'text-base font-semibold text-[var(--selaras-resolved-text-default)]',
+    description: 'mt-1 text-sm text-[var(--selaras-resolved-text-muted)]',
     // Groups the maximize + close buttons as header's second flex item, so
     // `header`'s own justify-between still splits [title block] / [buttons]
     // correctly regardless of how many buttons are actually shown.

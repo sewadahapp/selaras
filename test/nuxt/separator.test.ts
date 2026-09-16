@@ -69,7 +69,7 @@ describe('separator', () => {
 
     const line = wrapper.find('span')
     expect(line.classes()).toContain('border-solid')
-    expect(line.classes()).toContain('border-[var(--ui-border)]')
+    expect(line.classes()).toContain('border-[var(--selaras-resolved-border-default)]')
   })
 
   it('applies the dashed and dotted variant classes', async () => {

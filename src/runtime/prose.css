@@ -63,7 +63,7 @@
 }
 
 .selaras-prose {
-  color: var(--ui-text);
+  color: var(--selaras-resolved-text-default);
   font-family: var(--selaras-prose-font-body);
   font-size: 1rem;
   line-height: 1.75;
@@ -106,7 +106,7 @@
 }
 
 .selaras-prose :where(h1, h2, h3, h4, h5, h6):not(:where(.not-prose, .not-prose *)) {
-  color: var(--ui-text);
+  color: var(--selaras-resolved-text-default);
   font-family: var(--selaras-prose-font-heading);
   font-weight: 600;
   letter-spacing: -0.025em;
@@ -171,7 +171,7 @@
 }
 
 .selaras-prose :where(strong):not(:where(.not-prose, .not-prose *)) {
-  color: var(--ui-text);
+  color: var(--selaras-resolved-text-default);
   font-weight: 600;
 }
 
@@ -180,24 +180,24 @@
 }
 
 .selaras-prose :where(blockquote):not(:where(.not-prose, .not-prose *)) {
-  border-inline-start: 2px solid var(--ui-border);
+  border-inline-start: 2px solid var(--selaras-resolved-border-default);
   padding-inline-start: 1rem;
-  color: var(--ui-text-muted);
+  color: var(--selaras-resolved-text-muted);
   font-style: italic;
 }
 
 .selaras-prose :where(hr):not(:where(.not-prose, .not-prose *)) {
-  border-color: var(--ui-border);
+  border-color: var(--selaras-resolved-border-default);
 }
 
 .selaras-prose :where(img):not(:where(.not-prose, .not-prose *)) {
   max-width: 100%;
-  border-radius: var(--ui-radius-md);
+  border-radius: var(--selaras-resolved-radius-md);
 }
 
 .selaras-prose :where(ul, ol):not(:where(.not-prose, .not-prose *)) {
   padding-inline-start: 1.5rem;
-  color: var(--ui-text);
+  color: var(--selaras-resolved-text-default);
 }
 
 .selaras-prose :where(ul):not(:where(.not-prose, .not-prose *)) {
@@ -213,13 +213,13 @@
 }
 
 .selaras-prose :where(code):not(:where(.not-prose, .not-prose *)) {
-  border-radius: var(--ui-radius-sm);
-  background-color: var(--ui-bg-elevated);
+  border-radius: var(--selaras-resolved-radius-sm);
+  background-color: var(--selaras-resolved-surface-elevated);
   padding-inline: 0.375rem;
   padding-block: 0.125rem;
   font-family: var(--selaras-prose-font-mono);
   font-size: 0.875em;
-  color: var(--ui-text);
+  color: var(--selaras-resolved-text-default);
 }
 
 /* A `pre > code` pair (an unenhanced fenced code block, no ProsePre
@@ -227,8 +227,8 @@
    the pre itself carries that instead. */
 .selaras-prose :where(pre):not(:where(.not-prose, .not-prose *)) {
   overflow-x: auto;
-  border-radius: var(--ui-radius-md);
-  background-color: var(--ui-bg-elevated);
+  border-radius: var(--selaras-resolved-radius-md);
+  background-color: var(--selaras-resolved-surface-elevated);
   padding: 1rem;
   font-family: var(--selaras-prose-font-mono);
   font-size: 0.875rem;
@@ -264,22 +264,22 @@
 }
 
 .selaras-prose :where(thead):not(:where(.not-prose, .not-prose *)) {
-  background-color: var(--ui-bg-elevated);
+  background-color: var(--selaras-resolved-surface-elevated);
 }
 
 .selaras-prose :where(th):not(:where(.not-prose, .not-prose *)) {
-  border-bottom: 1px solid var(--ui-border);
+  border-bottom: 1px solid var(--selaras-resolved-border-default);
   padding-inline: 0.75rem;
   padding-block: 0.5rem;
   text-align: start;
   font-weight: 500;
-  color: var(--ui-text-muted);
+  color: var(--selaras-resolved-text-muted);
 }
 
 .selaras-prose :where(td):not(:where(.not-prose, .not-prose *)) {
-  border-bottom: 1px solid var(--ui-border-muted);
+  border-bottom: 1px solid var(--selaras-resolved-border-muted);
   padding-inline: 0.75rem;
   padding-block: 0.5rem;
-  color: var(--ui-text);
+  color: var(--selaras-resolved-text-default);
 }
 } /* @layer selaras-prose */

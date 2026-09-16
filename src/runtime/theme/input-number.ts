@@ -26,12 +26,12 @@ export const inputNumberTheme = tv({
     // bg's own hover change is left unscoped - there's no competing
     // focus-driven background to conflict with, so it can keep showing
     // regardless of focus state.
-    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] has-[input:disabled]:opacity-50 has-[input:disabled]:pointer-events-none',
+    root: 'relative inline-flex w-full items-center gap-1 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] has-[input:disabled]:opacity-50 has-[input:disabled]:pointer-events-none',
     // Borderless/transparent - root already carries the visual box, this is
     // just the editable text. Centered + tabular-nums so digits don't shift
     // width as the value changes - orientation="vertical" overrides the
     // centering below, since the stepper only occupies the end edge there.
-    input: 'w-full min-w-0 flex-1 border-0 bg-transparent text-center tabular-nums text-[var(--ui-text)] outline-none placeholder:text-[var(--ui-text-muted)] disabled:cursor-not-allowed',
+    input: 'w-full min-w-0 flex-1 border-0 bg-transparent text-center tabular-nums text-[var(--selaras-resolved-text-default)] outline-none placeholder:text-[var(--selaras-resolved-text-muted)] disabled:cursor-not-allowed',
     // orientation="vertical" only - a compact up/down pair pinned to the
     // end edge, replacing the two full-height flanking buttons.
     stepper: 'absolute end-1 inset-y-1 flex flex-col justify-center gap-px',
@@ -40,7 +40,7 @@ export const inputNumberTheme = tv({
     // own size scale has no step small enough for two of these to stack
     // inside one field's own height, and fighting its fixed sm classes with
     // overrides is more fragile than a plain, purpose-built button here.
-    stepperButton: 'flex h-3.5 w-5 items-center justify-center rounded-[var(--ui-radius-sm)] text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] disabled:opacity-50 disabled:pointer-events-none',
+    stepperButton: 'flex h-3.5 w-5 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] text-[var(--selaras-resolved-text-muted)] transition-colors hover:text-[var(--selaras-resolved-text-default)] disabled:opacity-50 disabled:pointer-events-none',
   },
   variants: {
     size: {
@@ -48,7 +48,7 @@ export const inputNumberTheme = tv({
       md: { root: 'h-10 px-1.5', input: 'text-sm' },
       lg: { root: 'h-11 px-2', input: 'text-base' },
     },
-    // Focus-ring color only - the resting ring stays --ui-border regardless
+    // Focus-ring color only - the resting ring stays --selaras-resolved-border-default regardless
     // of `color`, matching Input's own scope (see input.ts).
     color: {
       primary: '',

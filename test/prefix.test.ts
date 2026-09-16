@@ -101,7 +101,10 @@ describe('classPrefix', async () => {
 
   it('keeps the packed consumer stylesheet within the initial size budget', async () => {
     const css = await fetchCss()
-    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(125_000)
+    // Resolved public token names are intentionally repeated in Tailwind's
+    // arbitrary-value selectors. Keep a budget, but allow that explicit API
+    // contract rather than restoring a private short-name compatibility layer.
+    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(130_000)
     expect(gzipSync(css).byteLength).toBeLessThanOrEqual(18_000)
   })
 

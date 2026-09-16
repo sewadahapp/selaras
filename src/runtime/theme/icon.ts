@@ -7,7 +7,7 @@ export const iconTheme = tv({
   variants: {
     // No default - an unset color inherits currentColor from wherever the
     // icon is placed, which is what every internal usage elsewhere in this
-    // library already relies on (e.g. Input's --ui-text-muted icon slots).
+    // library already relies on (e.g. Input's --selaras-resolved-text-muted icon slots).
     // No size variant (deliberately) - every internal consumer needs its
     // own precise size (size-2.5/3/3.5/4/4.5/5/6 depending on component and
     // slot), none of which map cleanly onto a shared sm/md/lg scale. Pass
@@ -32,7 +32,7 @@ export const iconTheme = tv({
     },
   },
   compoundVariants: [
-    { color: 'neutral', colored: true, class: { base: 'text-[var(--ui-text)]' } },
+    { color: 'neutral', colored: true, class: { base: 'text-[var(--selaras-resolved-text-default)]' } },
   ],
 })
 

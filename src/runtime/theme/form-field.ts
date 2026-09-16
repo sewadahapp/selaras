@@ -8,11 +8,11 @@ export const formFieldTheme = tv({
     // own default look exactly) in vertical.
     body: 'flex flex-col gap-1.5',
     header: '',
-    label: 'text-sm font-medium text-[var(--ui-text)]',
+    label: 'text-sm font-medium text-[var(--selaras-resolved-text-default)]',
     required: 'ms-0.5 text-[var(--selaras-resolved-color-danger-text)]',
-    description: 'text-xs text-[var(--ui-text-muted)]',
+    description: 'text-xs text-[var(--selaras-resolved-text-muted)]',
     container: '',
-    hint: 'text-xs text-[var(--ui-text-muted)]',
+    hint: 'text-xs text-[var(--selaras-resolved-text-muted)]',
     error: 'text-xs text-[var(--selaras-resolved-color-danger-text)]',
   },
   variants: {

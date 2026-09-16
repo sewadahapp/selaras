@@ -15,7 +15,7 @@ export type {
   RuntimeTokenOverrides,
 } from './utils/color-registry'
 export type { DtcgColorComponent, DtcgColorConversionOptions, DtcgColorSpace, DtcgResolvedColor } from './utils/dtcg-colors'
-export type { FunctionalTokenOverrides } from './utils/functional-tokens'
+export type { FunctionalTokenOverrides, GeometryTokenOverrides, ThemeTokenOverrides } from './utils/functional-tokens'
 export type { SeedColorOptions, SeedColorSurfaces } from './utils/seed-colors'
 export { dtcgColorToCss }
 export { defineColorFromSeed }

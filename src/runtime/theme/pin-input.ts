@@ -6,7 +6,7 @@ export const pinInputTheme = tv({
     // Mirrors Input.vue's own `base` slot look (theme/input.ts) - same
     // ring/hover/focus/disabled treatment - but square instead of
     // full-width, one box per character.
-    input: 'rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-center font-medium text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
+    input: 'rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] text-center font-medium text-[var(--selaras-resolved-text-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
   },
   variants: {
     // Square boxes matching Input's own h-8/h-10/h-11 height scale for

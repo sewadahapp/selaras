@@ -164,12 +164,12 @@ const bodyProps = computed(() => ({
 // own layout, same as ComboboxSelectBase's mobile Modal content override.
 const popoverUi = computed(() => ({ content: resolveSlot(ui.value.content, props.ui?.content) }))
 // Same radius-matching override as Select/Autocomplete/DatePicker's own
-// mobile Modal - Modal's own default content radius (--ui-radius-lg) is
-// visibly larger than every desktop popover's own (--ui-radius-md).
+// mobile Modal - Modal's own default content radius (--selaras-resolved-radius-lg) is
+// visibly larger than every desktop popover's own (--selaras-resolved-radius-md).
 // `mobileContent` (the inner div's own padding/spacing) is this
 // component's own theme slot, not Modal's - applied directly on that div
 // below, not through Modal's `ui` prop.
-const mobileModalUi = computed(() => ({ content: 'rounded-[var(--ui-radius-md)]' }))
+const mobileModalUi = computed(() => ({ content: 'rounded-[var(--selaras-resolved-radius-md)]' }))
 const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
 </script>
 

@@ -414,7 +414,7 @@ describe('select', () => {
     await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
     await nextTick()
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeFalsy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeFalsy()
   })
 
   it('arrow renders the pointer triangle', async () => {
@@ -422,7 +422,7 @@ describe('select', () => {
     await wrapper.find('[aria-haspopup="listbox"]').trigger('click')
     await nextTick()
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
   })
 })
 
@@ -674,8 +674,8 @@ describe('select (mobileModal)', () => {
     await nextTick()
 
     const dialog = document.body.querySelector('[role=dialog]')
-    expect(dialog?.classList.contains('rounded-[var(--ui-radius-md)]')).toBe(true)
-    expect(dialog?.classList.contains('rounded-[var(--ui-radius-lg)]')).toBe(false)
+    expect(dialog?.classList.contains('rounded-[var(--selaras-resolved-radius-md)]')).toBe(true)
+    expect(dialog?.classList.contains('rounded-[var(--selaras-resolved-radius-lg)]')).toBe(false)
 
     wrapper.unmount()
     restore()

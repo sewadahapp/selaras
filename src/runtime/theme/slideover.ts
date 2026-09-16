@@ -2,11 +2,11 @@ import { tv } from 'tailwind-variants'
 
 export const slideoverTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-[var(--ui-scrim)]',
-    content: 'fixed z-[var(--ui-z-modal)] flex flex-col bg-[var(--ui-bg)] shadow-[var(--ui-shadow-lg)] focus:outline-none',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
+    content: 'fixed z-[var(--selaras-resolved-z-modal)] flex flex-col bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none',
     header: 'flex items-start justify-between gap-4 p-4 sm:px-6',
-    title: 'text-base font-semibold text-[var(--ui-text)]',
-    description: 'mt-1 text-sm text-[var(--ui-text-muted)]',
+    title: 'text-base font-semibold text-[var(--selaras-resolved-text-default)]',
+    description: 'mt-1 text-sm text-[var(--selaras-resolved-text-muted)]',
     close: 'shrink-0 rounded-full',
     body: 'flex-1 overflow-y-auto p-4 sm:px-6',
     footer: 'flex items-center justify-end gap-2 p-4 sm:px-6',
@@ -30,7 +30,7 @@ export const slideoverTheme = tv({
       right: { content: 'max-w-md' },
     },
     inset: {
-      true: { content: 'rounded-[var(--ui-radius-lg)] ring-1 ring-[var(--ui-border)]' },
+      true: { content: 'rounded-[var(--selaras-resolved-radius-lg)] ring-1 ring-[var(--selaras-resolved-border-default)]' },
     },
     // The animation classes live entirely in this variant (and the
     // compoundVariants below) rather than the base slot strings above -

@@ -37,7 +37,7 @@ export function createBuiltinColorRegistry(classPrefix?: string | null) {
       const text = foundation(role, neutral ? dark ? 50 : 950 : dark ? 300 : textShade)
       const subtle = neutral
         ? foundation(role, dark ? 900 : 100)
-        : dark ? `color-mix(in oklab, ${fill} 24%, var(--ui-bg))` : foundation(role, 100)
+        : dark ? `color-mix(in oklab, ${fill} 24%, var(--selaras-resolved-surface-default))` : foundation(role, 100)
       return {
         fill,
         fillHover: hover,
@@ -45,10 +45,10 @@ export function createBuiltinColorRegistry(classPrefix?: string | null) {
         onFill: foundation('neutral', dark ? 950 : 25),
         subtle,
         subtleHover: dark
-          ? `color-mix(in oklab, ${foundation(role, 500)} 32%, var(--ui-bg))`
+          ? `color-mix(in oklab, ${foundation(role, 500)} 32%, var(--selaras-resolved-surface-default))`
           : `color-mix(in oklab, ${subtle} 94%, ${text})`,
         subtlePressed: dark
-          ? `color-mix(in oklab, ${foundation(role, 500)} 40%, var(--ui-bg))`
+          ? `color-mix(in oklab, ${foundation(role, 500)} 40%, var(--selaras-resolved-surface-default))`
           : `color-mix(in oklab, ${subtle} 90%, ${text})`,
         onSubtle: text,
         text,

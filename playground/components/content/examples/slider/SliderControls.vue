@@ -4,7 +4,7 @@ const value = ref(105)
 
 <template>
   <div class="flex w-full flex-col gap-2">
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       {{ value }} credits/mo
     </p>
     <SSlider v-model="value" :min="0" :max="500" :step="5" controls aria-label="Credits per month" />

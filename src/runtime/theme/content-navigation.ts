@@ -7,13 +7,13 @@ export const contentNavigationTheme = tv({
     // py-2.5 (+ text-sm's 20px line-height) lands close to the 44px touch
     // target guideline without doubling the sidebar's height the way a
     // literal py-3 would across ~40 entries.
-    link: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] px-2 py-2.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)]',
-    linkActive: 'flex items-center gap-2 rounded-[var(--ui-radius-sm)] bg-[var(--_selaras-color-subtle)] px-2 py-2.5 text-[var(--_selaras-color-text)]',
-    trigger: 'group flex w-full items-center justify-between gap-2 rounded-[var(--ui-radius-sm)] px-2 py-2.5 text-start font-medium text-[var(--ui-text)] transition-colors hover:bg-[var(--ui-bg-elevated)]',
+    link: 'flex items-center gap-2 rounded-[var(--selaras-resolved-radius-sm)] px-2 py-2.5 text-[var(--selaras-resolved-text-muted)] transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] hover:text-[var(--selaras-resolved-text-default)]',
+    linkActive: 'flex items-center gap-2 rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--_selaras-color-subtle)] px-2 py-2.5 text-[var(--_selaras-color-text)]',
+    trigger: 'group flex w-full items-center justify-between gap-2 rounded-[var(--selaras-resolved-radius-sm)] px-2 py-2.5 text-start font-medium text-[var(--selaras-resolved-text-default)] transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)]',
     // A separate slot from label - this styles the icon a link/group-header
     // shows before its title, not the title text itself.
-    icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',
-    chevron: 'size-4 shrink-0 text-[var(--ui-text-muted)] transition-transform group-data-[state=open]:rotate-180',
+    icon: 'size-4 shrink-0 text-[var(--selaras-resolved-text-muted)]',
+    chevron: 'size-4 shrink-0 text-[var(--selaras-resolved-text-muted)] transition-transform group-data-[state=open]:rotate-180',
     // `ps-4` (16px) reserves the gutter each child's own trunk segment
     // and elbow (on the `item` slot above) reach back into - the trunk
     // line itself has no presence here at all, see theme.css's own

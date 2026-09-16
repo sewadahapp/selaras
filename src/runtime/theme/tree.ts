@@ -9,15 +9,15 @@ export const treeTheme = tv({
     // other component here keys off Reka's own data-* state, rather than
     // a JS-computed variant like FileTree.vue's own hand-rolled one (it
     // has no Reka data-attribute of its own to key off).
-    item: 'flex w-full items-center gap-1.5 rounded-[var(--ui-radius-sm)] px-1.5 py-1 text-[var(--ui-text)] outline-none cursor-pointer select-none data-[selected]:bg-[var(--_selaras-color-subtle)] data-[selected]:text-[var(--_selaras-color-text)] not-data-[selected]:hover:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)]',
+    item: 'flex w-full items-center gap-1.5 rounded-[var(--selaras-resolved-radius-sm)] px-1.5 py-1 text-[var(--selaras-resolved-text-default)] outline-none cursor-pointer select-none data-[selected]:bg-[var(--_selaras-color-subtle)] data-[selected]:text-[var(--_selaras-color-text)] not-data-[selected]:hover:bg-[var(--selaras-resolved-surface-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)]',
     // Same rotate-on-expand convention as Accordion/FileTree's own
     // chevron. A leaf row (no children) renders `spacer` instead, sized
     // identically, so labels still align into one column regardless of
     // depth.
-    toggle: 'flex size-4 shrink-0 items-center justify-center text-[var(--ui-text-muted)] transition-transform rtl:rotate-180 data-[expanded]:rotate-90 rtl:data-[expanded]:rotate-90',
+    toggle: 'flex size-4 shrink-0 items-center justify-center text-[var(--selaras-resolved-text-muted)] transition-transform rtl:rotate-180 data-[expanded]:rotate-90 rtl:data-[expanded]:rotate-90',
     spacer: 'size-4 shrink-0',
     checkbox: 'shrink-0 pointer-events-none',
-    icon: 'size-4 shrink-0 text-[var(--ui-text-muted)]',
+    icon: 'size-4 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     label: 'truncate',
   },
   variants: {

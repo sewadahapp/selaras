@@ -68,7 +68,7 @@ describe('fileUpload', () => {
   it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(FileUpload, { props: { color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--_selaras-color-fill')
     expect(wrapper.find('button').classes()).toContain('focus-visible:ring-[var(--_selaras-color-focus)]')
   })
 

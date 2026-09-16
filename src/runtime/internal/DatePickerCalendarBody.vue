@@ -78,7 +78,7 @@ const messages = useMessages()
 // copies - see that file's own comments on these for why they stay plain
 // object literals/strings rather than theme slots.
 const navButtonUi = { leadingIcon: 'rtl:-scale-x-100' }
-const headingButtonUi = 'rounded-[var(--ui-radius-sm)] px-1.5 py-0.5 transition-colors hover:bg-[var(--ui-bg-elevated)] disabled:hover:bg-transparent disabled:cursor-default'
+const headingButtonUi = 'rounded-[var(--selaras-resolved-radius-sm)] px-1.5 py-0.5 transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] disabled:hover:bg-transparent disabled:cursor-default'
 const cellTriggerUi = {
   base: 'relative data-[today]:font-semibold data-[today]:after:absolute data-[today]:after:bottom-1 data-[today]:after:left-1/2 data-[today]:after:size-1 data-[today]:after:-translate-x-1/2 data-[today]:after:rounded-full data-[today]:after:bg-[var(--_selaras-color-fill)] data-[outside-view]:opacity-40 data-[unavailable]:opacity-40 data-[unavailable]:line-through',
 }

@@ -11,18 +11,18 @@ export const datePickerTheme = tv({
     // slot for why (same fix, same reasoning: hovering while focused is
     // unavoidable here, and would otherwise let the plain gray hover ring
     // beat the primary focus-within ring).
-    field: 'inline-flex w-full items-center gap-1 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-inset ring-[var(--ui-border)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] has-[[data-disabled]]:opacity-50 has-[[data-disabled]]:pointer-events-none',
+    field: 'inline-flex w-full items-center gap-1 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] transition-[color,background-color,box-shadow] not-focus-within:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] has-[[data-disabled]]:opacity-50 has-[[data-disabled]]:pointer-events-none',
     // rounded-sm + tabular-nums keeps digit width stable as a segment's
     // value changes; the segment itself is the contenteditable element
     // Reka renders, so focus state is real :focus, not a data-attribute.
-    segment: 'rounded-[var(--ui-radius-sm)] px-0.5 text-[var(--ui-text)] tabular-nums outline-none focus:bg-[var(--_selaras-color-subtle)]/15 data-[reka-date-field-segment=literal]:px-0 data-[reka-date-field-segment=literal]:text-[var(--ui-text-muted)]',
+    segment: 'rounded-[var(--selaras-resolved-radius-sm)] px-0.5 text-[var(--selaras-resolved-text-default)] tabular-nums outline-none focus:bg-[var(--_selaras-color-subtle)]/15 data-[reka-date-field-segment=literal]:px-0 data-[reka-date-field-segment=literal]:text-[var(--selaras-resolved-text-muted)]',
     // Between the two segment groups in range mode - a plain en dash, not an
     // arrow glyph, so there's nothing directional to mirror under RTL.
-    separator: 'px-0.5 text-[var(--ui-text-muted)]',
+    separator: 'px-0.5 text-[var(--selaras-resolved-text-muted)]',
     // Copied from theme/dropdown.ts's `content` - the more complete of this
     // library's two floating-panel precedents (directional slide-in, not
     // just fade/zoom).
-    content: 'z-[var(--ui-z-dropdown)] rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2',
+    content: 'z-[var(--selaras-resolved-z-dropdown)] rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] p-3 shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)] data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2',
     // The `mobileModal` path's own content wrapper - none of `content`'s
     // own popover chrome (ring/shadow/rounded/animate-in/slide-in, all
     // tied to a data-[side=] this never gets since it isn't Floating-UI
@@ -31,14 +31,14 @@ export const datePickerTheme = tv({
     // wants the same breathing room it gets in the popover.
     mobileContent: 'p-3',
     header: 'mb-2 flex items-center justify-between gap-2',
-    heading: 'text-sm font-medium text-[var(--ui-text)]',
+    heading: 'text-sm font-medium text-[var(--selaras-resolved-text-default)]',
     // Wraps one <table> per visible month (numberOfMonths>1, e.g. range
     // mode's default of 2) - without it, multiple month tables just stack
     // vertically (block-level default), not side by side.
     grids: 'flex flex-col gap-4 sm:flex-row',
     grid: 'w-full border-collapse',
     gridHead: '',
-    headCell: 'size-8 text-xs font-medium text-[var(--ui-text-muted)]',
+    headCell: 'size-8 text-xs font-medium text-[var(--selaras-resolved-text-muted)]',
     // The <td> wrapper - just spacing, not the day's own look (that's the
     // nested Button inside it, styled directly in DatePicker.vue via a
     // plain :ui override string, same as Pagination's page buttons - no
@@ -50,8 +50,8 @@ export const datePickerTheme = tv({
     viewGrid: 'grid grid-cols-3 gap-1',
     // Hour/minute granularity only - sits below the day grid, separated by
     // a divider so it doesn't read as part of the grid itself.
-    timeSection: 'mt-3 flex items-center justify-center gap-1.5 border-t border-[var(--ui-border)] pt-3',
-    arrow: 'fill-[var(--ui-bg)] stroke-[var(--ui-border)] stroke-1',
+    timeSection: 'mt-3 flex items-center justify-center gap-1.5 border-t border-[var(--selaras-resolved-border-default)] pt-3',
+    arrow: 'fill-[var(--selaras-resolved-surface-default)] stroke-[var(--selaras-resolved-border-default)] stroke-1',
   },
   variants: {
     size: {

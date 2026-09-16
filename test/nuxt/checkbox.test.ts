@@ -6,7 +6,7 @@ describe('checkbox', () => {
   it('binds a custom semantic role to the label bridge', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--_selaras-color-fill')
     expect(wrapper.find('button').attributes('class')).toContain('data-[state=checked]:bg-[var(--_selaras-color-fill)]')
   })
 

@@ -70,7 +70,7 @@ on - the two would otherwise fight each other on the very next keystroke:
 ### Sizes and states
 
 `size` takes `sm` / `md` / `lg`, `disabled` prevents interaction and dims the
-textarea, and `invalid` switches the ring to `--ui-danger`:
+textarea, and `invalid` switches the ring to the danger role's focus color:
 
 ::component-example{name="textarea-invalid"}
 ::
@@ -84,7 +84,7 @@ See the [Props](#props) table below.
 ### Colors
 
 `color` sets the focus-ring color - the resting (unfocused) ring stays
-`--ui-border` regardless, and `invalid` always wins over a custom `color`:
+`--selaras-resolved-border-default` regardless, and `invalid` always wins over a custom `color`:
 
 ::component-example{name="textarea-colors"}
 ::

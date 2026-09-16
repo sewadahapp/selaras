@@ -16,16 +16,16 @@ export const stepperTheme = tv({
     // flow entirely (see its own comment) rather than laid out as a flex
     // sibling here, precisely so it can't push the indicator off-center.
     connector: 'relative flex items-center',
-    trigger: 'shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ui-bg)] disabled:opacity-50 disabled:pointer-events-none',
-    indicator: 'relative z-10 flex shrink-0 items-center justify-center rounded-full bg-[var(--ui-bg)] font-medium text-[var(--ui-text-muted)] ring-2 ring-[var(--ui-border)] transition-colors data-[state=active]:ring-[var(--_selaras-color-focus)] data-[state=active]:text-[var(--_selaras-color-text)] data-[state=completed]:bg-[var(--_selaras-color-fill)] data-[state=completed]:ring-[var(--_selaras-color-fill)] data-[state=completed]:text-[var(--_selaras-color-on-fill)]',
+    trigger: 'shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--selaras-resolved-surface-default)] disabled:opacity-50 disabled:pointer-events-none',
+    indicator: 'relative z-10 flex shrink-0 items-center justify-center rounded-full bg-[var(--selaras-resolved-surface-default)] font-medium text-[var(--selaras-resolved-text-muted)] ring-2 ring-[var(--selaras-resolved-border-default)] transition-colors data-[state=active]:ring-[var(--_selaras-color-focus)] data-[state=active]:text-[var(--_selaras-color-text)] data-[state=completed]:bg-[var(--_selaras-color-fill)] data-[state=completed]:ring-[var(--_selaras-color-fill)] data-[state=completed]:text-[var(--_selaras-color-on-fill)]',
     icon: 'shrink-0',
     labels: 'flex flex-col',
-    title: 'text-sm font-medium text-[var(--ui-text)]',
-    description: 'text-xs text-[var(--ui-text-muted)]',
+    title: 'text-sm font-medium text-[var(--selaras-resolved-text-default)]',
+    description: 'text-xs text-[var(--selaras-resolved-text-muted)]',
     // bg-border by default, switching to the color's own solid shade via
     // data-[state=completed] (set by Reka from the *preceding* item's own
     // state) - that's what makes the line "fill in" as steps complete.
-    separator: 'absolute bg-[var(--ui-border)] transition-colors data-[state=completed]:bg-[var(--_selaras-color-fill)]',
+    separator: 'absolute bg-[var(--selaras-resolved-border-default)] transition-colors data-[state=completed]:bg-[var(--_selaras-color-fill)]',
   },
   variants: {
     orientation: {

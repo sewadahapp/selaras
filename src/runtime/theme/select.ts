@@ -8,8 +8,8 @@ export const selectTheme = tv({
     // true (unavoidable while interacting with the trigger or its options)
     // let the plain gray hover ring beat the primary one in the cascade,
     // since they're all equal-specificity pseudo-class/attribute selectors.
-    trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-focus-within:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
-    value: 'flex-1 truncate text-start text-[var(--ui-text)] data-[placeholder]:text-[var(--ui-text-muted)]',
+    trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] outline-none transition-[color,background-color,box-shadow] not-focus:not-focus-within:not-data-[state=open]:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
+    value: 'flex-1 truncate text-start text-[var(--selaras-resolved-text-default)] data-[placeholder]:text-[var(--selaras-resolved-text-muted)]',
     // Both chip display branches render a real Chip (see
     // ComboboxSelectBase.vue) instead of hand-rolled markup, styled/
     // colored via its own props and :ui override - only the "+N more"
@@ -20,16 +20,16 @@ export const selectTheme = tv({
     // matches the chips' own primary too, not text-muted - muted-on-
     // primary-soft measures 4.46:1, just under AA; primary-on-primary-
     // soft (the same pairing Chip's own soft variant uses) clears 6.5:1.
-    chipOverflow: 'inline-flex items-center rounded-[var(--ui-radius-sm)] bg-[var(--_selaras-color-subtle)] px-2 py-0.5 text-xs text-[var(--_selaras-color-text)]',
-    icon: 'shrink-0 text-[var(--ui-text-muted)]',
+    chipOverflow: 'inline-flex items-center rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--_selaras-color-subtle)] px-2 py-0.5 text-xs text-[var(--_selaras-color-text)]',
+    icon: 'shrink-0 text-[var(--selaras-resolved-text-muted)]',
     // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
     // and touch target come from Button's own theme; only rounded-full
     // (this dismiss-glyph family reads better circular) stays here.
     clear: 'shrink-0 rounded-full',
-    dropdown: 'shrink-0 rounded-[var(--ui-radius-sm)] p-0.5 text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-border)] hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
-    searchWrapper: 'flex items-center gap-2 border-b border-[var(--ui-border)] px-2',
-    searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--ui-text)] outline-none placeholder:text-[var(--ui-text-muted)]',
-    content: 'z-[var(--ui-z-dropdown)] max-h-72 min-w-[var(--reka-combobox-trigger-width)] overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+    dropdown: 'shrink-0 rounded-[var(--selaras-resolved-radius-sm)] p-0.5 text-[var(--selaras-resolved-text-muted)] transition-colors hover:bg-[var(--selaras-resolved-border-default)] hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
+    searchWrapper: 'flex items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-2',
+    searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--selaras-resolved-text-default)] outline-none placeholder:text-[var(--selaras-resolved-text-muted)]',
+    content: 'z-[var(--selaras-resolved-z-dropdown)] max-h-72 min-w-[var(--reka-combobox-trigger-width)] overflow-hidden rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
     // The `mobileModal` path's own content wrapper - none of `content`'s
     // own popover chrome (ring/shadow/rounded/animate-in, sized off the
     // trigger's own width via --reka-combobox-trigger-width, which is
@@ -43,11 +43,11 @@ export const selectTheme = tv({
     // trigger while leaving consumer `ui.mobilePanel` overrides available.
     mobilePanel: '',
     viewport: 'max-h-72 overflow-y-auto p-1',
-    group: 'px-2 pt-2 pb-1 text-xs font-medium text-[var(--ui-text-muted)]',
-    item: 'relative flex items-center gap-2 rounded-[var(--ui-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--ui-text)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--ui-bg-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
+    group: 'px-2 pt-2 pb-1 text-xs font-medium text-[var(--selaras-resolved-text-muted)]',
+    item: 'relative flex items-center gap-2 rounded-[var(--selaras-resolved-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--selaras-resolved-text-default)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--selaras-resolved-surface-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
     itemIndicator: 'absolute end-2 flex items-center text-[var(--_selaras-color-fill)]',
-    empty: 'px-2 py-6 text-center text-sm text-[var(--ui-text-muted)]',
-    arrow: 'fill-[var(--ui-bg)] stroke-[var(--ui-border)] stroke-1',
+    empty: 'px-2 py-6 text-center text-sm text-[var(--selaras-resolved-text-muted)]',
+    arrow: 'fill-[var(--selaras-resolved-surface-default)] stroke-[var(--selaras-resolved-border-default)] stroke-1',
   },
   variants: {
     size: {
@@ -62,7 +62,7 @@ export const selectTheme = tv({
     // consumer compound variants.
     color: {
       primary: '',
-      neutral: { trigger: 'focus:ring-[var(--ui-bg-inverted)] focus-within:ring-[var(--ui-bg-inverted)] data-[state=open]:ring-[var(--ui-bg-inverted)]' },
+      neutral: { trigger: 'focus:ring-[var(--selaras-resolved-surface-inverted)] focus-within:ring-[var(--selaras-resolved-surface-inverted)] data-[state=open]:ring-[var(--selaras-resolved-surface-inverted)]' },
       secondary: '',
       success: '',
       danger: '',

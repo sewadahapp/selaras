@@ -18,7 +18,7 @@ describe('slider', () => {
   it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(Slider, { props: { color: 'premium', modelValue: 30 } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style')).not.toContain('--_selaras-color-fill')
     expect(wrapper.html()).toContain('bg-[var(--_selaras-color-fill)]')
   })
 
@@ -96,14 +96,14 @@ describe('slider', () => {
   it('renders no tick marks by default', async () => {
     const wrapper = await mountSuspended(Slider, { props: { modelValue: 50 } })
 
-    expect(wrapper.findAll('.bg-\\[var\\(--ui-border-hover\\)\\]')).toHaveLength(0)
+    expect(wrapper.findAll('.bg-\\[var\\(--selaras-resolved-border-hover\\)\\]')).toHaveLength(0)
   })
 
   it('renders a tick per step when showTicks is set', async () => {
     const wrapper = await mountSuspended(Slider, { props: { modelValue: 50, showTicks: true, step: 25 } })
 
     // 0, 25, 50, 75, 100 - five ticks for a 0-100 range stepped by 25.
-    expect(wrapper.findAll('.bg-\\[var\\(--ui-border-hover\\)\\]')).toHaveLength(5)
+    expect(wrapper.findAll('.bg-\\[var\\(--selaras-resolved-border-hover\\)\\]')).toHaveLength(5)
   })
 
   it('forwards a single ariaLabel to every thumb', async () => {
@@ -155,7 +155,7 @@ describe('slider', () => {
     const wrapper = await mountSuspended(Slider, { props: { modelValue: 30, thumbVariant: 'bar' } })
 
     const thumb = wrapper.find('[role="slider"]')
-    expect(thumb.classes()).toContain('rounded-[var(--ui-radius-sm)]')
+    expect(thumb.classes()).toContain('rounded-[var(--selaras-resolved-radius-sm)]')
     expect(thumb.classes()).not.toContain('rounded-full')
   })
 

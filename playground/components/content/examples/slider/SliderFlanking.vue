@@ -12,7 +12,7 @@ const value = ref(50)
         😄
       </template>
     </SSlider>
-    <p class="text-center text-sm text-[var(--ui-text-muted)]">
+    <p class="text-center text-sm text-[var(--selaras-resolved-text-muted)]">
       {{ value < 33 ? 'Not great' : value < 67 ? 'Okay' : 'Great' }}
     </p>
   </div>

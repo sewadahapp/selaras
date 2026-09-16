@@ -1,5 +1,5 @@
 <template>
-  <SHeader class="static rounded-[var(--ui-radius-md)] ring-1 ring-[var(--ui-border)]">
+  <SHeader class="static rounded-[var(--selaras-resolved-radius-md)] ring-1 ring-[var(--selaras-resolved-border-default)]">
     <span class="font-semibold">
       My App
     </span>

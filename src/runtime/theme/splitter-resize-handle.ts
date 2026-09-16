@@ -5,7 +5,7 @@ export const splitterResizeHandleTheme = tv({
     // A slim hit area with a thinner visible line inside it - the visible
     // line alone would be too narrow a target to reliably grab.
     root: 'group relative shrink-0 bg-transparent outline-none',
-    line: 'absolute bg-[var(--ui-border)] transition-colors group-hover:bg-[var(--_selaras-color-fill)] group-data-[state=drag]:bg-[var(--_selaras-color-fill)]',
+    line: 'absolute bg-[var(--selaras-resolved-border-default)] transition-colors group-hover:bg-[var(--_selaras-color-fill)] group-data-[state=drag]:bg-[var(--_selaras-color-fill)]',
   },
   variants: {
     color: {

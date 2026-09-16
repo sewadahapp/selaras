@@ -186,7 +186,7 @@ function updateNestedTokens() {
     <SButton id="override-button" :ui="{ base: 'tw:bg-purple-700' }">
       Overridden
     </SButton>
-    <div style="--ui-primary: rgb(1 2 3);">
+    <div style="--unrelated-primary: rgb(1 2 3);">
       <SButton id="builtin-foundation-button">
         Independent built-in default
       </SButton>
@@ -200,7 +200,7 @@ function updateNestedTokens() {
         Derived states
       </SButton>
     </STheme>
-    <section id="stock-colors" style="background: var(--ui-bg); position: relative; z-index: 999999;">
+    <section id="stock-colors" style="background: var(--selaras-resolved-surface-default); position: relative; z-index: 999999;">
       <SButton
         v-for="role in ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'neutral']"
         :id="`stock-${role}`" :key="role" :color="role" variant="soft"

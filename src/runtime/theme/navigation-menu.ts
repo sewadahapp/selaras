@@ -31,7 +31,7 @@ export const navigationMenuTheme = tv({
     // `childLink` used from 2nd level down, `ps-0`/gap fixes chasing each
     // new place the two silently drifted apart) - genuinely not worth it;
     // one style everywhere is both simpler and correct by construction.
-    link: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
+    link: 'group relative flex items-center gap-2 rounded-[var(--selaras-resolved-radius-md)] px-2.5 py-1.5 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     linkIcon: 'size-4 shrink-0',
     // Collapsed-rail fallback for a top-level item with no icon (see the
     // `collapsed` variant below) - same box size as `linkIcon` so it
@@ -53,18 +53,18 @@ export const navigationMenuTheme = tv({
     // indented nested list into a multi-column grid). Both now live in
     // the `orientation` variant below instead, so vertical gets none of it.
     content: 'p-2',
-    viewport: 'absolute inset-x-0 top-full z-[var(--ui-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-full overflow-hidden rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] transition-[height] duration-200',
+    viewport: 'absolute inset-x-0 top-full z-[var(--selaras-resolved-z-dropdown)] h-[var(--reka-navigation-menu-viewport-height)] w-full overflow-hidden rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)] transition-[height] duration-200',
     childList: 'grid gap-1',
     childItem: '',
-    childLink: 'group relative flex items-center gap-2 rounded-[var(--ui-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
+    childLink: 'group relative flex items-center gap-2 rounded-[var(--selaras-resolved-radius-md)] px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     childLinkLabel: 'truncate',
     // `type: 'label'`/`'separator'` items (see NavigationMenuItem's own
     // doc comment) - non-interactive, so neither gets `link`'s own
     // hover/focus/active treatment. groupLabel's own px-2.5 matches
     // link's, so a "Links"-style heading sits flush with the real items
     // below it.
-    groupLabel: 'px-2.5 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-[var(--ui-text-muted)] first:pt-0',
-    separator: 'my-1 h-px bg-[var(--ui-border)]',
+    groupLabel: 'px-2.5 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-[var(--selaras-resolved-text-muted)] first:pt-0',
+    separator: 'my-1 h-px bg-[var(--selaras-resolved-border-default)]',
   },
   variants: {
     orientation: {
@@ -141,7 +141,7 @@ export const navigationMenuTheme = tv({
     },
     active: {
       true: {},
-      false: { link: 'text-[var(--ui-text-muted)] hover:text-[var(--ui-text)]', childLink: 'text-[var(--ui-text-muted)] hover:text-[var(--ui-text)]' },
+      false: { link: 'text-[var(--selaras-resolved-text-muted)] hover:text-[var(--selaras-resolved-text-default)]', childLink: 'text-[var(--selaras-resolved-text-muted)] hover:text-[var(--selaras-resolved-text-default)]' },
     },
     disabled: {
       true: { link: 'pointer-events-none opacity-50', childLink: 'pointer-events-none opacity-50' },
@@ -192,22 +192,22 @@ export const navigationMenuTheme = tv({
     },
   },
   compoundVariants: [
-    { variant: 'pill', active: false, class: { link: 'hover:bg-[var(--ui-bg-elevated)]', childLink: 'hover:bg-[var(--ui-bg-elevated)]' } },
+    { variant: 'pill', active: false, class: { link: 'hover:bg-[var(--selaras-resolved-surface-elevated)]', childLink: 'hover:bg-[var(--selaras-resolved-surface-elevated)]' } },
     // All registered non-neutral roles use the selected semantic recipe.
     // Neutral follows these entries so its functional-token classes win via
     // tailwind-merge. Keeping color as a real variant still lets consumer
     // compound extensions match registered role names.
     { variant: 'pill', active: true, class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
-    { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--ui-text)]' } },
+    { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--selaras-resolved-text-default)]' } },
 
     { variant: 'link', active: true, class: { link: 'text-[var(--_selaras-color-text)]' } },
-    { variant: 'link', active: true, color: 'neutral', class: { link: 'text-[var(--ui-text)]' } },
+    { variant: 'link', active: true, color: 'neutral', class: { link: 'text-[var(--selaras-resolved-text-default)]' } },
 
     // Child links (inside horizontal's own dropdown panel) always get the
     // "active" text-color treatment regardless of `variant` - a pill-style
     // background on every list row in a dropdown would be visual noise.
     { active: true, class: { childLink: 'text-[var(--_selaras-color-text)]' } },
-    { active: true, color: 'neutral', class: { childLink: 'text-[var(--ui-text)]' } },
+    { active: true, color: 'neutral', class: { childLink: 'text-[var(--selaras-resolved-text-default)]' } },
 
     // The highlight bar reuses whatever text color `active` already set via
     // the compound variants above (`after:bg-current`) instead of a second,

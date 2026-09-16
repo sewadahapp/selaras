@@ -132,7 +132,7 @@ const NuxtLinkComponent = resolveComponent('NuxtLink')
 
 ### Raised
 
-`raised` adds `--ui-shadow-md`, independent of `variant` - useful for a solid
+`raised` adds `--selaras-resolved-shadow-md`, independent of `variant` - useful for a solid
 button that needs to lift off a busy background, or even a `soft`/`ghost`
 one that wants some elevation without switching to `solid`.
 

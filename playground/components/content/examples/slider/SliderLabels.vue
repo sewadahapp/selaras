@@ -4,8 +4,8 @@ const value = ref(50)
 
 <template>
   <div class="flex w-full items-center gap-3">
-    <span class="text-sm text-[var(--ui-text-muted)]">Low</span>
+    <span class="text-sm text-[var(--selaras-resolved-text-muted)]">Low</span>
     <SSlider v-model="value" aria-label="Priority" />
-    <span class="text-sm text-[var(--ui-text-muted)]">High</span>
+    <span class="text-sm text-[var(--selaras-resolved-text-muted)]">High</span>
   </div>
 </template>

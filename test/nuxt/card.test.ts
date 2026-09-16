@@ -48,18 +48,18 @@ describe('card', () => {
 
   it('applies the solid variant classes', async () => {
     const wrapper = await mountSuspended(Card, { props: { variant: 'solid' }, slots: { default: () => 'Body' } })
-    expect(wrapper.classes()).toContain('shadow-[var(--ui-shadow-md)]')
+    expect(wrapper.classes()).toContain('shadow-[var(--selaras-resolved-shadow-md)]')
   })
 
   it('applies the soft variant classes', async () => {
     const wrapper = await mountSuspended(Card, { props: { variant: 'soft' }, slots: { default: () => 'Body' } })
-    expect(wrapper.classes()).toContain('bg-[var(--ui-bg-elevated)]')
+    expect(wrapper.classes()).toContain('bg-[var(--selaras-resolved-surface-elevated)]')
     expect(wrapper.classes()).not.toContain('ring-1')
   })
 
   it('applies the subtle variant classes - soft\'s background, plus a border', async () => {
     const wrapper = await mountSuspended(Card, { props: { variant: 'subtle' }, slots: { default: () => 'Body' } })
-    expect(wrapper.classes()).toContain('bg-[var(--ui-bg-elevated)]')
+    expect(wrapper.classes()).toContain('bg-[var(--selaras-resolved-surface-elevated)]')
     expect(wrapper.classes()).toContain('ring-1')
   })
 

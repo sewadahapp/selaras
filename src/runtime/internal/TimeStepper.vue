@@ -122,7 +122,7 @@ const effectiveSize = computed(() => props.size ?? 'sm')
     class="w-28"
     @update:model-value="setHour"
   />
-  <span v-if="granularity === 'minute'" class="text-[var(--ui-text-muted)]">:</span>
+  <span v-if="granularity === 'minute'" class="text-[var(--selaras-resolved-text-muted)]">:</span>
   <InputNumber
     v-if="granularity === 'minute'"
     :id="minuteId"

@@ -314,8 +314,8 @@ describe('colorPicker (mobileModal)', () => {
     await open(wrapper)
 
     const dialog = document.body.querySelector('[role=dialog]')
-    expect(dialog?.classList.contains('rounded-[var(--ui-radius-md)]')).toBe(true)
-    expect(dialog?.classList.contains('rounded-[var(--ui-radius-lg)]')).toBe(false)
+    expect(dialog?.classList.contains('rounded-[var(--selaras-resolved-radius-md)]')).toBe(true)
+    expect(dialog?.classList.contains('rounded-[var(--selaras-resolved-radius-lg)]')).toBe(false)
 
     wrapper.unmount()
     restore()

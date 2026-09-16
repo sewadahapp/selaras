@@ -206,4 +206,19 @@ describe('color registry', () => {
     expect(() => generateRuntimeTokenOverrideCss({ dark: { surface: { default: 'red; color: blue' } } })).toThrow()
     expect(() => generateRuntimeTokenOverrideCss({ light: { scrim: '' } })).toThrow(/non-empty/)
   })
+
+  it('serializes scoped geometry inputs with the same mode isolation as functional colors', () => {
+    const css = generateRuntimeTokenOverrideCss({
+      light: { radius: { base: '6px' }, shadow: { md: '0 2px 4px rgb(0 0 0 / .2)' }, zIndex: { dropdown: '91' } },
+      dark: { radius: { full: '1rem' } },
+    }, '[data-selaras-theme="scope"]')
+    const [light, dark] = css.split('\n\n')
+    expect(light).toContain('--selaras-radius-base: 6px;')
+    expect(light).toContain('--selaras-radius-full: initial;')
+    expect(light).toContain('--selaras-shadow-md: 0 2px 4px rgb(0 0 0 / .2);')
+    expect(light).toContain('--selaras-z-dropdown: 91;')
+    expect(dark).toContain('--selaras-radius-base: initial;')
+    expect(dark).toContain('--selaras-radius-full: 1rem;')
+    expect(() => generateRuntimeTokenOverrideCss({ light: { zIndex: { dropdown: '1; color: red' } } })).toThrow()
+  })
 })

@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants'
 export const sliderTheme = tv({
   slots: {
     root: 'relative flex touch-none select-none items-center data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
-    track: 'relative grow rounded-full bg-[var(--ui-border)]',
+    track: 'relative grow rounded-full bg-[var(--selaras-resolved-border-default)]',
     // Reka's own SliderRange sets left/right (horizontal) or top/bottom
     // (vertical) itself via inline style, to size the *main* axis - the
     // *cross* axis (this slot's own height for horizontal, width for
@@ -12,15 +12,15 @@ export const sliderTheme = tv({
     // height. inset-y-0/inset-x-0 below (in the orientation variant)
     // supply that missing cross-axis size.
     range: 'absolute rounded-full bg-[var(--_selaras-color-fill)]',
-    thumb: 'block shrink-0 rounded-full bg-[var(--ui-bg)] shadow-[var(--ui-shadow-sm)] ring-2 ring-[var(--_selaras-color-fill)] transition-shadow focus-visible:outline-none focus-visible:ring-4',
+    thumb: 'block shrink-0 rounded-full bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-sm)] ring-2 ring-[var(--_selaras-color-fill)] transition-shadow focus-visible:outline-none focus-visible:ring-4',
     // Own addition - Reka's Slider has no tick/mark concept of its own.
     // Positioned via an inline style (percent along the track), not a
     // variant - see Slider.vue's own `ticks` computed.
-    tick: 'absolute size-1 -translate-x-1/2 rounded-full bg-[var(--ui-border-hover)]',
+    tick: 'absolute size-1 -translate-x-1/2 rounded-full bg-[var(--selaras-resolved-border-hover)]',
     // Own addition - flanking content (an icon, an emoji, a unit label)
     // either side of the track. Plain flex boxes, no Reka equivalent.
-    start: 'flex shrink-0 items-center justify-center text-[var(--ui-text-muted)]',
-    end: 'flex shrink-0 items-center justify-center text-[var(--ui-text-muted)]',
+    start: 'flex shrink-0 items-center justify-center text-[var(--selaras-resolved-text-muted)]',
+    end: 'flex shrink-0 items-center justify-center text-[var(--selaras-resolved-text-muted)]',
   },
   variants: {
     size: {
@@ -51,7 +51,7 @@ export const sliderTheme = tv({
     // per-size class here isn't enough on its own).
     thumbVariant: {
       circle: { thumb: 'rounded-full' },
-      bar: { thumb: 'rounded-[var(--ui-radius-sm)]' },
+      bar: { thumb: 'rounded-[var(--selaras-resolved-radius-sm)]' },
     },
   },
   compoundVariants: [

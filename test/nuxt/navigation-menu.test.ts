@@ -110,7 +110,7 @@ describe('navigationMenu (horizontal)', () => {
 
     const link = wrapper.find('a[href="/docs"]')
     expect(link.classes()).toContain('bg-[var(--_selaras-color-subtle)]')
-    expect(link.classes()).toContain('text-[var(--ui-text)]')
+    expect(link.classes()).toContain('text-[var(--selaras-resolved-text-default)]')
     expect(link.classes()).not.toContain('text-[var(--_selaras-color-text)]')
   })
 
@@ -122,7 +122,7 @@ describe('navigationMenu (horizontal)', () => {
     await nextTick()
     await macrotask()
 
-    const viewport = wrapper.find('a[href="/guides/getting-started"]').element.closest('[class*="z-\\[var(--ui-z-dropdown)\\]"]')
+    const viewport = wrapper.find('a[href="/guides/getting-started"]').element.closest('[class*="z-\\[var(--selaras-resolved-z-dropdown)\\]"]')
     expect(viewport?.className).toContain('w-full')
   })
 })

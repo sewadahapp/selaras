@@ -13,10 +13,10 @@ const open = ref(false)
         <div class="flex size-12 items-center justify-center rounded-full bg-[var(--selaras-resolved-color-success-subtle)] text-[var(--selaras-resolved-color-success-text)]">
           <SIcon name="hugeicons:checkmark-circle-01" class="size-6" />
         </div>
-        <h2 class="text-base font-semibold text-[var(--ui-text)]">
+        <h2 class="text-base font-semibold text-[var(--selaras-resolved-text-default)]">
           Payment successful
         </h2>
-        <p class="text-sm text-[var(--ui-text-muted)]">
+        <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
           A receipt has been sent to your email.
         </p>
         <SButton class="mt-2" block @click="open = false">

@@ -312,7 +312,7 @@ const isMobile = useIsMobile()
 // reads noticeably heavier/rounder than the desktop equivalent for what's
 // otherwise the same surface. Same fix, same reasoning, as
 // ComboboxSelectBase.vue's own identical override.
-const mobileModalUi = { content: 'rounded-[var(--ui-radius-md)]' }
+const mobileModalUi = { content: 'rounded-[var(--selaras-resolved-radius-md)]' }
 
 // Falls back to the global default (app.config.selaras.locale, see use-locale.ts)
 // instead of a hardcoded 'en-US' - every locale-consuming computed/prop
@@ -663,7 +663,7 @@ const timeBodyProps = computed(() => ({
 // in play rather than fighting a second, competing background.
 const buttonTriggerUi = computed(() => ({
   base: [
-    'w-full justify-start rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)]',
+    'w-full justify-start rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] text-[var(--selaras-resolved-text-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)]',
     datePickerInvalid.value ? 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)]' : undefined,
     // Room for the clear button, which sits absolutely positioned on top of
     // this same end edge - without it, a long formatted date can run under it.

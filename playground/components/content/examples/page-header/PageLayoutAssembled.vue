@@ -29,19 +29,19 @@ const tocLinks = [
 </script>
 
 <template>
-  <div class="flex h-96 w-full overflow-hidden rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] text-sm">
+  <div class="flex h-96 w-full overflow-hidden rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] text-sm">
     <SPageAside :ui="{ root: 'static flex h-full w-40 shrink-0' }">
       <SContentNavigation :navigation="navigation" />
     </SPageAside>
     <main class="min-w-0 flex-1 overflow-y-auto p-6">
       <SPageHeader title="Button" description="A clickable trigger for an action." />
-      <div id="demo-overview" class="pt-4 text-[var(--ui-text-muted)]">
+      <div id="demo-overview" class="pt-4 text-[var(--selaras-resolved-text-muted)]">
         A short introduction to the component would go here.
       </div>
-      <div id="demo-usage" class="pt-8 text-[var(--ui-text-muted)]">
+      <div id="demo-usage" class="pt-8 text-[var(--selaras-resolved-text-muted)]">
         A live example and a usage snippet would go here.
       </div>
-      <div id="demo-props" class="pt-8 text-[var(--ui-text-muted)]">
+      <div id="demo-props" class="pt-8 text-[var(--selaras-resolved-text-muted)]">
         A Props table would go here.
       </div>
     </main>

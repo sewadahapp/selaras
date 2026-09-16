@@ -76,7 +76,7 @@ describe('toast', () => {
 
     const root = document.body.querySelector('[data-selaras-color="premium"]')
     expect(root).toBeTruthy()
-    expect(root?.getAttribute('style')).not.toContain('--ui-info')
+    expect(root?.getAttribute('style')).not.toContain('--_selaras-color-fill')
     expect(statusIcons()).toHaveLength(0)
   })
 
@@ -96,7 +96,7 @@ describe('toast', () => {
 
     const root = Array.from(document.body.querySelectorAll('[data-state]')).find(element => element.textContent?.includes('Plain'))
     expect(root?.hasAttribute('data-selaras-color')).toBe(false)
-    expect(statusIcons()[0]?.classList).toContain('text-[var(--_selaras-color-fill,var(--ui-text-muted))]')
+    expect(statusIcons()[0]?.classList).toContain('text-[var(--_selaras-color-fill,var(--selaras-resolved-text-muted))]')
   })
 
   it('owns a snapshot of the nearest explicit theme when the toast is added', async () => {

@@ -1,7 +1,7 @@
 <template>
   <SCard>
     <template #header>
-      <p class="font-semibold text-[var(--ui-text)]">
+      <p class="font-semibold text-[var(--selaras-resolved-text-default)]">
         Delete project
       </p>
     </template>

@@ -7,9 +7,9 @@
 }
 
 .functional-sample {
-  background-color: var(--ui-bg);
-  color: var(--ui-text);
-  border: 1px solid var(--ui-border);
+  background-color: var(--selaras-resolved-surface-default);
+  color: var(--selaras-resolved-text-default);
+  border: 1px solid var(--selaras-resolved-border-default);
 }
 
 .functional-consumer {
@@ -17,9 +17,16 @@
 }
 
 .functional-muted {
-  color: var(--ui-text-muted);
+  color: var(--selaras-resolved-text-muted);
 }
 
 .functional-elevated {
-  background-color: var(--ui-bg-elevated);
+  background-color: var(--selaras-resolved-surface-elevated);
+}
+
+.geometry-read {
+  border-radius: var(--selaras-resolved-radius-md);
+  box-shadow: var(--selaras-resolved-shadow-md);
+  position: relative;
+  z-index: var(--selaras-resolved-z-dropdown);
 }

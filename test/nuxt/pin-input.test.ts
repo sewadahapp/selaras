@@ -25,7 +25,7 @@ describe('pinInput', () => {
   it('binds a custom semantic role to semantic color variables', async () => {
     wrapper = await mountSuspended(PinInput, { props: { color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--_selaras-color-fill')
     expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
   })
 

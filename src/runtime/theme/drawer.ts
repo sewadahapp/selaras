@@ -2,16 +2,16 @@ import { tv } from 'tailwind-variants'
 
 export const drawerTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--ui-z-modal-overlay)] bg-[var(--ui-scrim)]',
-    content: 'fixed z-[var(--ui-z-modal)] flex flex-col bg-[var(--ui-bg)] shadow-[var(--ui-shadow-lg)] focus:outline-none',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
+    content: 'fixed z-[var(--selaras-resolved-z-modal)] flex flex-col bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none',
     // A small rounded grip bar - purely visual, signals "draggable" the
     // same way a real bottom sheet's handle does. Centered via the
     // header's own flex row would fight the header's title/close layout,
     // so it gets its own row above everything else instead.
-    handle: 'mx-auto my-2 h-1.5 w-12 shrink-0 rounded-full bg-[var(--ui-border)]',
+    handle: 'mx-auto my-2 h-1.5 w-12 shrink-0 rounded-full bg-[var(--selaras-resolved-border-default)]',
     header: 'flex items-start justify-between gap-4 p-4 sm:px-6',
-    title: 'text-base font-semibold text-[var(--ui-text)]',
-    description: 'mt-1 text-sm text-[var(--ui-text-muted)]',
+    title: 'text-base font-semibold text-[var(--selaras-resolved-text-default)]',
+    description: 'mt-1 text-sm text-[var(--selaras-resolved-text-muted)]',
     close: 'shrink-0 rounded-full',
     body: 'flex-1 overflow-y-auto p-4 sm:px-6',
     footer: 'flex items-center justify-end gap-2 p-4 sm:px-6',
@@ -26,10 +26,10 @@ export const drawerTheme = tv({
     // identity, distinct from Slideover's flush-by-default/optional-
     // floating-inset treatment.
     side: {
-      top: { content: 'rounded-b-[var(--ui-radius-lg)]' },
-      bottom: { content: 'rounded-t-[var(--ui-radius-lg)]' },
-      left: { content: 'max-w-md rounded-e-[var(--ui-radius-lg)]' },
-      right: { content: 'max-w-md rounded-s-[var(--ui-radius-lg)]' },
+      top: { content: 'rounded-b-[var(--selaras-resolved-radius-lg)]' },
+      bottom: { content: 'rounded-t-[var(--selaras-resolved-radius-lg)]' },
+      left: { content: 'max-w-md rounded-e-[var(--selaras-resolved-radius-lg)]' },
+      right: { content: 'max-w-md rounded-s-[var(--selaras-resolved-radius-lg)]' },
     },
     // See slideover.ts for why this lives entirely in the variant (and
     // compoundVariants below), not the base slot strings - tailwind-merge

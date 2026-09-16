@@ -5,7 +5,7 @@ export const fileTreeTheme = tv({
     // The outer box - only the top-level call renders this (see
     // FileTree.vue's own `isNested`); a recursive call for a directory's
     // children renders `list` directly instead, no extra wrapping element.
-    root: 'flex flex-col gap-0.5 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] bg-[var(--ui-bg)] p-2 font-mono text-sm',
+    root: 'flex flex-col gap-0.5 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-default)] p-2 font-mono text-sm',
     // Real indentation, not a border/padding trick - each recursive level
     // renders its own nested <FileTree>, so depth accumulates naturally
     // via this same left padding stacking once per level. `ps-4` also
@@ -13,7 +13,7 @@ export const fileTreeTheme = tv({
     // the `isNested` variant below) reaches back into.
     list: 'flex flex-col gap-0.5 ps-4 font-mono text-sm ms-3',
     item: 'flex flex-col',
-    row: 'flex w-full items-center gap-1.5 rounded-[var(--ui-radius-sm)] px-1.5 py-1 text-start text-[var(--ui-text-muted)] transition-colors hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)]',
+    row: 'flex w-full items-center gap-1.5 rounded-[var(--selaras-resolved-radius-sm)] px-1.5 py-1 text-start text-[var(--selaras-resolved-text-muted)] transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] hover:text-[var(--selaras-resolved-text-default)]',
     icon: 'size-4 shrink-0',
     label: 'truncate',
   },

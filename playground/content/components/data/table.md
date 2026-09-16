@@ -146,7 +146,7 @@ API) that replaces the plain string prop when given:
     <span class="inline-flex items-center gap-1">
       Role
       <STooltip text="Admins can manage billing and members">
-        <SIcon name="hugeicons:information-circle" class="size-3.5 text-[var(--ui-text-muted)]" />
+        <SIcon name="hugeicons:information-circle" class="size-3.5 text-[var(--selaras-resolved-text-muted)]" />
       </STooltip>
     </span>
   </template>

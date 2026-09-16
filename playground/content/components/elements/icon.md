@@ -40,7 +40,7 @@ to impose one.
 `color` is unset by default, so the icon inherits `currentColor` from
 whatever text color surrounds it - the same behavior every internal icon
 usage in this library already relies on (an input's leading icon takes
-`--ui-text-muted` from its wrapper, not a color prop of its own). Pass a
+`--selaras-resolved-text-muted` from its wrapper, not a color prop of its own). Pass a
 registered semantic role to force a specific color instead:
 
 ```vue-html

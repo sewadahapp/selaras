@@ -9,14 +9,14 @@ export const accordionTheme = tv({
     root: 'w-full flex flex-col',
     item: '',
     header: '',
-    trigger: 'group flex w-full items-center gap-2 text-start font-medium text-[var(--ui-text)] transition-colors hover:text-[var(--_selaras-color-text-hover)] disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'group flex w-full items-center gap-2 text-start font-medium text-[var(--selaras-resolved-text-default)] transition-colors hover:text-[var(--_selaras-color-text-hover)] disabled:opacity-50 disabled:pointer-events-none',
     label: '',
-    chevron: 'size-4 shrink-0 text-[var(--ui-text-muted)] transition-transform group-data-[state=open]:rotate-180',
+    chevron: 'size-4 shrink-0 text-[var(--selaras-resolved-text-muted)] transition-transform group-data-[state=open]:rotate-180',
     // overflow-hidden clips the panel to its own animated height (without
     // it, content would visibly spill out mid-animation); the two
     // data-state keyframes interpolate between 0 and Reka's own measured
     // --reka-accordion-content-height, so this never hardcodes a height.
-    content: 'overflow-hidden text-[var(--ui-text-muted)] data-[state=open]:animate-[selaras-accordion-down_200ms_ease-out] data-[state=closed]:animate-[selaras-accordion-up_200ms_ease-out]',
+    content: 'overflow-hidden text-[var(--selaras-resolved-text-muted)] data-[state=open]:animate-[selaras-accordion-down_200ms_ease-out] data-[state=closed]:animate-[selaras-accordion-up_200ms_ease-out]',
     // A separate slot (not `content` itself) for the padding that used to
     // live on `content` directly - the padding must NOT be part of the
     // height being animated (animating a 0-to-N height with vertical
@@ -53,11 +53,11 @@ export const accordionTheme = tv({
     // instead of a shared divider - overflow-hidden on `item` clips the
     // content panel's corners to match, the same way Card's root does.
     variant: {
-      list: { item: 'border-b border-[var(--ui-border)] last:border-b-0' },
+      list: { item: 'border-b border-[var(--selaras-resolved-border-default)] last:border-b-0' },
       pill: {
         root: 'gap-2',
-        item: 'rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] ring-1 ring-[var(--ui-border)] overflow-hidden',
-        trigger: 'px-3 hover:bg-[var(--ui-bg-elevated)] hover:text-[var(--ui-text)]',
+        item: 'rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] ring-1 ring-[var(--selaras-resolved-border-default)] overflow-hidden',
+        trigger: 'px-3 hover:bg-[var(--selaras-resolved-surface-elevated)] hover:text-[var(--selaras-resolved-text-default)]',
         contentInner: 'px-3',
       },
     },

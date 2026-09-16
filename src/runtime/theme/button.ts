@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const buttonTheme = tv({
   slots: {
-    base: 'inline-flex items-center justify-center gap-1.5 font-medium rounded-[var(--ui-radius-md)] transition-colors disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
+    base: 'inline-flex items-center justify-center gap-1.5 font-medium rounded-[var(--selaras-resolved-radius-md)] transition-colors disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     leadingIcon: 'shrink-0',
     trailingIcon: 'shrink-0',
   },
@@ -34,7 +34,7 @@ export const buttonTheme = tv({
       true: { base: 'w-full' },
     },
     raised: {
-      true: { base: 'shadow-[var(--ui-shadow-md)]' },
+      true: { base: 'shadow-[var(--selaras-resolved-shadow-md)]' },
     },
     square: {
       true: {},

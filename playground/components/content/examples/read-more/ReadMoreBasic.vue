@@ -1,5 +1,5 @@
 <template>
-  <SReadMore :preview-height="80" class="w-full max-w-md text-sm text-[var(--ui-text-muted)]">
+  <SReadMore :preview-height="80" class="w-full max-w-md text-sm text-[var(--selaras-resolved-text-muted)]">
     <p>
       Selaras is a Nuxt module that provides a set of UI components built on
       Reka UI primitives, styled with Tailwind CSS v4 and tailwind-variants.

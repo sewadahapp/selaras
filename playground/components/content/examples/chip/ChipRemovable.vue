@@ -16,6 +16,6 @@ function remove(fruit: string) {
       removable
       @remove="remove(fruit)"
     />
-    <span v-if="!fruits.length" class="text-sm text-[var(--ui-text-muted)]">All cleared</span>
+    <span v-if="!fruits.length" class="text-sm text-[var(--selaras-resolved-text-muted)]">All cleared</span>
   </div>
 </template>

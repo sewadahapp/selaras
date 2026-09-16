@@ -932,28 +932,28 @@ describe('datePicker', () => {
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
     await openCalendar(wrapper)
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeFalsy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeFalsy()
   })
 
   it('arrow renders the pointer triangle - single date mode', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), arrow: true } })
     await openCalendar(wrapper)
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
   })
 
   it('arrow renders the pointer triangle - range mode', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { range: true, arrow: true } })
     await openRangeCalendar(wrapper)
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
   })
 
   it('arrow renders the pointer triangle - timeOnly mode', async () => {
     wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, arrow: true } })
     await openTimePicker(wrapper)
 
-    expect(document.body.querySelector('.fill-\\[var\\(--ui-bg\\)\\]')).toBeTruthy()
+    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
   })
 })
 
@@ -1065,8 +1065,8 @@ describe('datePicker (mobileModal)', () => {
     await openCalendar(wrapper)
 
     const dialog = document.body.querySelector('[role=dialog]')
-    expect(dialog?.classList.contains('rounded-[var(--ui-radius-md)]')).toBe(true)
-    expect(dialog?.classList.contains('rounded-[var(--ui-radius-lg)]')).toBe(false)
+    expect(dialog?.classList.contains('rounded-[var(--selaras-resolved-radius-md)]')).toBe(true)
+    expect(dialog?.classList.contains('rounded-[var(--selaras-resolved-radius-lg)]')).toBe(false)
 
     restore()
   })

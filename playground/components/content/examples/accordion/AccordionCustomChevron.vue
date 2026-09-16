@@ -8,7 +8,7 @@ const items = [
 <template>
   <SAccordion :items="items">
     <template #chevron-icon>
-      <span class="relative size-4 shrink-0 text-[var(--ui-text-muted)]">
+      <span class="relative size-4 shrink-0 text-[var(--selaras-resolved-text-muted)]">
         <SIcon name="hugeicons:plus-sign" class="absolute inset-0 transition-opacity group-data-[state=open]:opacity-0" />
         <SIcon name="hugeicons:minus-sign" class="absolute inset-0 opacity-0 transition-opacity group-data-[state=open]:opacity-100" />
       </span>

@@ -25,7 +25,7 @@ const groups = [
     <SButton variant="outline" @click="open = true">
       Open command palette
     </SButton>
-    <p v-if="result" class="text-sm text-[var(--ui-text-muted)]">
+    <p v-if="result" class="text-sm text-[var(--selaras-resolved-text-muted)]">
       Ran: {{ result }}
     </p>
   </div>

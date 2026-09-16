@@ -25,7 +25,7 @@ function onRowClick(row: unknown) {
       <SColumn field="email" header="Email" />
       <SColumn field="role" header="Role" />
     </STable>
-    <p v-if="selected" class="text-sm text-[var(--ui-text-muted)]">
+    <p v-if="selected" class="text-sm text-[var(--selaras-resolved-text-muted)]">
       Selected: {{ selected.name }}
     </p>
   </div>

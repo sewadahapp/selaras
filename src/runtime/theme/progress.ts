@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants'
 export const progressTheme = tv({
   slots: {
     // Linear
-    root: 'relative w-full overflow-hidden rounded-full bg-[var(--ui-bg-elevated)]',
+    root: 'relative w-full overflow-hidden rounded-full bg-[var(--selaras-resolved-surface-elevated)]',
     indicator: 'h-full rounded-full bg-[var(--_selaras-color-fill)]',
     // Circular - a relative wrapper (for the centered label overlay) around
     // an SVG pair: a static background track circle plus an animated
@@ -11,9 +11,9 @@ export const progressTheme = tv({
     // component, from the real geometry) draws the current percentage.
     circleRoot: 'relative inline-flex items-center justify-center',
     circleWrapper: '',
-    circleTrack: 'stroke-[var(--ui-bg-elevated)]',
+    circleTrack: 'stroke-[var(--selaras-resolved-surface-elevated)]',
     circleIndicator: 'stroke-[var(--_selaras-color-fill)]',
-    label: 'absolute inset-0 flex items-center justify-center text-xs font-medium text-[var(--ui-text)]',
+    label: 'absolute inset-0 flex items-center justify-center text-xs font-medium text-[var(--selaras-resolved-text-default)]',
   },
   variants: {
     size: {

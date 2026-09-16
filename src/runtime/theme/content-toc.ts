@@ -3,7 +3,7 @@ import { tv } from 'tailwind-variants'
 export const contentTocTheme = tv({
   slots: {
     root: 'flex flex-col gap-2 text-sm',
-    title: 'font-medium text-[var(--ui-text)]',
+    title: 'font-medium text-[var(--selaras-resolved-text-default)]',
     // relative + start padding reserves room for the rail (an absolutely
     // positioned box, sized/placed entirely by ContentToc.vue's JS
     // measurement - this only wraps the <ul>, not the title, matching the
@@ -15,7 +15,7 @@ export const contentTocTheme = tv({
     // supplementary "on this page" list, not primary navigation - but
     // still meaningfully bigger than the original py-0.5. No left
     // border/padding for the indicator anymore - the rail owns that job.
-    link: 'block py-1.5 text-[var(--ui-text-muted)] transition-colors hover:text-[var(--ui-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
+    link: 'block py-1.5 text-[var(--selaras-resolved-text-muted)] transition-colors hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     content: 'ms-3 flex flex-col gap-1',
     // The rail is a single continuous "wire" connecting every heading
     // (not just the active one), drawn as an SVG path and applied as a
@@ -26,7 +26,7 @@ export const contentTocTheme = tv({
     // Two masked divs share that same path shape:
     railContainer: 'absolute start-0 top-0 rtl:-scale-x-100',
     // - a faint always-visible track (the full path, every heading).
-    railTrack: 'absolute inset-0 bg-[var(--ui-text-muted)]/25',
+    railTrack: 'absolute inset-0 bg-[var(--selaras-resolved-text-muted)]/25',
     // - a primary-colored overlay, masked identically, whose own child
     //   blocks (railSegment, one per contiguous run of active headings)
     //   only paint where they fall within the path - so the "lit"

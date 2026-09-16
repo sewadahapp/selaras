@@ -5,7 +5,7 @@ export const colorPickerTheme = tv({
     // Same chrome as Select's own trigger (select.ts) - both are a form
     // field that opens a popover, so they share the exact ring/hover/
     // focus/disabled treatment rather than reinventing it here.
-    trigger: 'inline-flex w-full min-h-10 items-center gap-2 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:not-data-[state=open]:hover:ring-[var(--ui-border-hover)] hover:bg-[var(--ui-bg-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
+    trigger: 'inline-flex w-full min-h-10 items-center gap-2 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] outline-none transition-[color,background-color,box-shadow] not-focus:not-data-[state=open]:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
     // Painted via ColorSwatch's own exposed --reka-color-swatch-color
     // custom property - ColorSwatch.js applies no background of its own,
     // only exposes that var, so every consumer of it (this trigger swatch
@@ -16,23 +16,23 @@ export const colorPickerTheme = tv({
     // so an abbreviated, non-CSS placeholder in place of the real value
     // gets a real attempt at CSS generation and chokes on it - confirmed:
     // that's exactly what produced a real build warning once.
-    triggerSwatch: 'size-5 shrink-0 rounded-[var(--ui-radius-sm)] bg-[var(--reka-color-swatch-color)] ring-1 ring-inset ring-black/10',
-    triggerValue: 'flex-1 truncate text-start font-mono text-[var(--ui-text)]',
-    content: 'z-[var(--ui-z-dropdown)] w-64 space-y-3 rounded-[var(--ui-radius-md)] bg-[var(--ui-bg)] p-3 shadow-[var(--ui-shadow-md)] ring-1 ring-[var(--ui-border)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+    triggerSwatch: 'size-5 shrink-0 rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--reka-color-swatch-color)] ring-1 ring-inset ring-black/10',
+    triggerValue: 'flex-1 truncate text-start font-mono text-[var(--selaras-resolved-text-default)]',
+    content: 'z-[var(--selaras-resolved-z-dropdown)] w-64 space-y-3 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] p-3 shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
     // The `mobileModal` path's own content wrapper - none of `content`'s
     // own popover chrome (width/background/shadow/ring/rounded/animate)
     // applies here, since Modal's own card already provides that surface;
     // this only needs this picker's own internal spacing/padding, same
     // reasoning as Select's own mobileContent (select.ts).
     mobileContent: 'w-full space-y-3 p-4',
-    area: 'relative h-40 w-full overflow-hidden rounded-[var(--ui-radius-sm)] cursor-crosshair',
+    area: 'relative h-40 w-full overflow-hidden rounded-[var(--selaras-resolved-radius-sm)] cursor-crosshair',
     // Shared by the area thumb and both slider thumbs below - all three
     // are the same plain white ring-bordered circle sitting on top of a
     // color surface Reka itself paints (the area's own gradient, each
     // slider track's own gradient) - a colored ring here would fight
     // that surface instead of marking a position on it, the same reason
     // Slider.vue's own thumb stays neutral against its colored range.
-    thumb: 'block size-4 shrink-0 rounded-full border-2 border-white shadow-[var(--ui-shadow-sm)] ring-1 ring-[var(--ui-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)]',
+    thumb: 'block size-4 shrink-0 rounded-full border-2 border-white shadow-[var(--selaras-resolved-shadow-sm)] ring-1 ring-[var(--selaras-resolved-border-default)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)]',
     // ColorSliderRoot itself (bound onto directly, no dedicated slot of
     // its own since nothing else needs to reach it) - Reka's own default
     // `as` for it is a bare inline `span` (confirmed in Slider/SliderRoot.js,
@@ -46,9 +46,9 @@ export const colorPickerTheme = tv({
     // (ColorSliderTrack.js), not this class. Same inline-`span`-by-default
     // reasoning as sliderRoot above applies here too - `block` first.
     track: 'relative block h-3 w-full cursor-pointer rounded-full ring-1 ring-inset ring-black/10',
-    field: 'w-full rounded-[var(--ui-radius-sm)] bg-[var(--ui-bg)] px-2 py-1.5 text-sm font-mono text-[var(--ui-text)] ring-1 ring-inset ring-[var(--ui-border)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--ui-border-hover)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)]',
+    field: 'w-full rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--selaras-resolved-surface-default)] px-2 py-1.5 text-sm font-mono text-[var(--selaras-resolved-text-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--selaras-resolved-border-hover)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)]',
     swatchList: 'flex flex-wrap gap-1.5',
-    swatch: 'relative size-6 shrink-0 rounded-[var(--ui-radius-sm)] ring-1 ring-inset ring-black/10 cursor-pointer data-[highlighted]:ring-2 data-[highlighted]:ring-[var(--ui-border-hover)] data-[state=checked]:ring-2 data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
+    swatch: 'relative size-6 shrink-0 rounded-[var(--selaras-resolved-radius-sm)] ring-1 ring-inset ring-black/10 cursor-pointer data-[highlighted]:ring-2 data-[highlighted]:ring-[var(--selaras-resolved-border-hover)] data-[state=checked]:ring-2 data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
     // The preset item's own color fill - same --reka-color-swatch-color
     // var as triggerSwatch, sized to fill its parent `swatch` item
     // (rounded-[inherit] so it doesn't poke past that item's own corners).
@@ -70,7 +70,7 @@ export const colorPickerTheme = tv({
     // it, while empty built-in branches retain the public recipe condition.
     color: {
       primary: '',
-      neutral: { trigger: 'focus:ring-[var(--ui-bg-inverted)] data-[state=open]:ring-[var(--ui-bg-inverted)]' },
+      neutral: { trigger: 'focus:ring-[var(--selaras-resolved-surface-inverted)] data-[state=open]:ring-[var(--selaras-resolved-surface-inverted)]' },
       secondary: '',
       success: '',
       danger: '',

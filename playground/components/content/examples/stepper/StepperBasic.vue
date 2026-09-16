@@ -10,7 +10,7 @@ const step = ref(1)
 <template>
   <div class="flex w-full flex-col gap-4">
     <SStepper v-model="step" :items="items" />
-    <p class="text-sm text-[var(--ui-text-muted)]">
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
       Step {{ step }}: {{ items[step - 1]?.title }}
     </p>
     <div class="flex gap-2">

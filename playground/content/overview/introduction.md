@@ -22,8 +22,8 @@ Selaras is a Nuxt module that provides a set of UI components built on
   animation library. Every transition respects `prefers-reduced-motion`
   automatically.
 - **Design tokens, not hardcoded colors.** Every component reads from a
-  small set of semantic CSS custom properties (`--ui-primary`,
-  `--ui-border`, `--ui-text-muted`, and so on) instead of baking in
+  small set of semantic CSS custom properties (`--selaras-resolved-color-primary-fill`,
+  `--selaras-resolved-border-default`, `--selaras-resolved-text-muted`, and so on) instead of baking in
   specific Tailwind color classes, so retheming an app doesn't require
   rebuilding the library. See [Theming](/overview/theming).
 

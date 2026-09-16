@@ -10,7 +10,7 @@ const messages = useMessages()
 <template>
   <button
     type="button"
-    class="flex items-center gap-2 rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] px-3 py-1.5 text-sm text-[var(--ui-text-muted)] transition-colors hover:border-[var(--ui-border-accented)] hover:text-[var(--ui-text)]"
+    class="flex items-center gap-2 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] px-3 py-1.5 text-sm text-[var(--selaras-resolved-text-muted)] transition-colors hover:border-[var(--selaras-resolved-border-default-accented)] hover:text-[var(--selaras-resolved-text-default)]"
     @click="open"
   >
     <SIcon :name="icons.search" class="size-4" />

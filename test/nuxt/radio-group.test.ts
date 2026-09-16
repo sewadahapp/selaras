@@ -6,7 +6,7 @@ describe('radioGroup', () => {
   it('binds a custom semantic role directly', async () => {
     const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one'], color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style')).not.toContain('--ui-primary')
+    expect(wrapper.attributes('style')).not.toContain('--_selaras-color-fill')
     expect(wrapper.find('button').classes()).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
   })
 

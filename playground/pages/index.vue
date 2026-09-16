@@ -45,14 +45,14 @@ const values = [
     <!-- Hero -->
     <SContainer size="lg" class="flex flex-col gap-10 py-20 sm:py-28">
       <div class="flex flex-col gap-6">
-        <p class="text-xs tracking-[0.2em] text-[var(--ui-text-muted)] uppercase">
+        <p class="text-xs tracking-[0.2em] text-[var(--selaras-resolved-text-muted)] uppercase">
           Selaras — Indonesian for “in harmony”
         </p>
-        <h1 class="text-4xl leading-[1.05] font-medium tracking-tight text-[var(--ui-text)] sm:text-6xl">
+        <h1 class="text-4xl leading-[1.05] font-medium tracking-tight text-[var(--selaras-resolved-text-default)] sm:text-6xl">
           Design tokens,<br>in alignment.
         </h1>
-        <p class="max-w-xl text-lg text-[var(--ui-text-muted)]">
-          A UI component library for Nuxt, themed with <code class="font-mono text-[var(--ui-text)]">tv()</code> and CSS variables – every color a real, measured token, every component styled through one shared <code class="font-mono text-[var(--ui-text)]">:ui</code> prop.
+        <p class="max-w-xl text-lg text-[var(--selaras-resolved-text-muted)]">
+          A UI component library for Nuxt, themed with <code class="font-mono text-[var(--selaras-resolved-text-default)]">tv()</code> and CSS variables – every color a real, measured token, every component styled through one shared <code class="font-mono text-[var(--selaras-resolved-text-default)]">:ui</code> prop.
         </p>
         <div class="flex flex-wrap items-center gap-3">
           <SButton size="lg" :as="NuxtLinkComponent" to="/components/elements/button">
@@ -64,24 +64,24 @@ const values = [
         </div>
       </div>
 
-      <div class="rounded-[var(--ui-radius-lg)] border border-[var(--ui-border)] bg-[var(--ui-bg-elevated)] p-4 sm:p-8">
+      <div class="rounded-[var(--selaras-resolved-radius-lg)] border border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-elevated)] p-4 sm:p-8">
         <HarmonyStrip />
       </div>
     </SContainer>
 
     <!-- Showcase -->
-    <div class="border-t border-[var(--ui-border)] bg-[var(--ui-bg-elevated)]">
+    <div class="border-t border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-elevated)]">
       <SContainer size="lg" class="flex flex-col gap-8 py-16">
         <div class="flex flex-col gap-2">
-          <h2 class="text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+          <h2 class="text-2xl font-medium tracking-tight text-[var(--selaras-resolved-text-default)]">
             Built from real components
           </h2>
-          <p class="text-[var(--ui-text-muted)]">
+          <p class="text-[var(--selaras-resolved-text-muted)]">
             Every example on this site renders the actual library – nothing here is a mockup.
           </p>
         </div>
 
-        <div class="flex flex-col gap-8 rounded-[var(--ui-radius-lg)] border border-[var(--ui-border)] bg-[var(--ui-bg)] p-8">
+        <div class="flex flex-col gap-8 rounded-[var(--selaras-resolved-radius-lg)] border border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-default)] p-8">
           <div class="flex flex-wrap items-center gap-3">
             <SButton>Solid</SButton>
             <SButton variant="soft">
@@ -128,19 +128,19 @@ const values = [
 
     <!-- Value props -->
     <SContainer size="lg" class="flex flex-col gap-8 py-16">
-      <h2 class="text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+      <h2 class="text-2xl font-medium tracking-tight text-[var(--selaras-resolved-text-default)]">
         Why Selaras
       </h2>
       <div class="grid gap-6 sm:grid-cols-2">
         <div
           v-for="value in values"
           :key="value.title"
-          class="flex flex-col gap-2 rounded-[var(--ui-radius-lg)] border border-[var(--ui-border)] p-6"
+          class="flex flex-col gap-2 rounded-[var(--selaras-resolved-radius-lg)] border border-[var(--selaras-resolved-border-default)] p-6"
         >
-          <h3 class="text-sm font-medium text-[var(--ui-text)]">
+          <h3 class="text-sm font-medium text-[var(--selaras-resolved-text-default)]">
             {{ value.title }}
           </h3>
-          <p class="text-sm text-[var(--ui-text-muted)]">
+          <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
             {{ value.body }}
           </p>
         </div>
@@ -148,9 +148,9 @@ const values = [
     </SContainer>
 
     <!-- Closing CTA -->
-    <div class="border-t border-[var(--ui-border)]">
+    <div class="border-t border-[var(--selaras-resolved-border-default)]">
       <SContainer size="lg" class="flex flex-col items-center gap-4 py-20 text-center">
-        <h2 class="text-2xl font-medium tracking-tight text-[var(--ui-text)]">
+        <h2 class="text-2xl font-medium tracking-tight text-[var(--selaras-resolved-text-default)]">
           Start with a component.
         </h2>
         <SButton size="lg" :as="NuxtLinkComponent" to="/components/elements/button">

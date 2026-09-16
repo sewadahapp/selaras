@@ -6,7 +6,7 @@ describe('avatar', () => {
   it('binds a custom semantic role to semantic color variables', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', color: 'premium' as any } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
-    expect(wrapper.attributes('style') ?? '').not.toContain('--ui-primary: var(--_selaras-color-fill)')
+    expect(wrapper.attributes('style') ?? '').not.toContain('--_selaras-color-fill')
   })
 
   it('renders text fallback when no image is given', async () => {
@@ -69,7 +69,7 @@ describe('avatar', () => {
 
   it('applies the rounded shape instead of a circle', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', shape: 'rounded' } })
-    expect(wrapper.classes()).toContain('rounded-[var(--ui-radius-md)]')
+    expect(wrapper.classes()).toContain('rounded-[var(--selaras-resolved-radius-md)]')
     expect(wrapper.classes()).not.toContain('rounded-full')
   })
 
@@ -89,7 +89,7 @@ describe('avatar', () => {
   it('renders a status dot with the default neutral color', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', status: true } })
     const status = wrapper.findAll('span').find(sp => sp.classes().includes('absolute'))
-    expect(status?.classes()).toContain('bg-[var(--ui-text-muted)]')
+    expect(status?.classes()).toContain('bg-[var(--selaras-resolved-text-muted)]')
     expect(status?.classes()).toContain('ring-2')
   })
 

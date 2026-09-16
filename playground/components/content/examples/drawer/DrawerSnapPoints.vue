@@ -16,7 +16,7 @@ const snapPoint = ref<number | string | null>(0.3)
     description="Rests at 30%, 60%, or fully open - drag the handle to snap between them."
   >
     <template #body>
-      <p class="text-sm text-[var(--ui-text-muted)]">
+      <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
         Current snap point: {{ snapPoint }}
       </p>
     </template>
