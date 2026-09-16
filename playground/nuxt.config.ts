@@ -20,7 +20,6 @@ function fakeDemoLinkedPaths() {
   const dir = join(__dirname, 'components/content/examples')
   const realRouteExceptions = new Set([
     '/',
-    '/dashboard',
     '/components/forms/input',
     '/components/forms/select',
     '/components/overlays/modal',
