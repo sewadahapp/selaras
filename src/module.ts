@@ -1,5 +1,5 @@
 import type { ColorModePair, ColorRecipeInput } from './runtime/utils/color-registry'
-import { addComponentsDir, addImports, addImportsDir, addTemplate, addTypeTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addComponentsDir, addImports, addTemplate, addTypeTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import { Scanner } from '@tailwindcss/oxide'
 import tailwindcss from '@tailwindcss/vite'
 import { createBuiltinColorRegistry } from './builtin-colors'
@@ -128,7 +128,23 @@ export default defineNuxtModule<ModuleOptions>({
       })
     }
 
-    addImportsDir(resolver.resolve('./runtime/composables'))
+    // Auto-imports are a public Nuxt API. Keep this list explicit so adding an
+    // implementation composable does not silently expose it to every consumer.
+    // FormField context, responsive presentation and Table's TanStack wiring
+    // remain component internals. The column helper is the one intentional
+    // public value from use-table and also has an explicit package entry.
+    addImports([
+      { name: 'useCommandPalette', from: resolver.resolve('./runtime/composables/use-command-palette') },
+      { name: 'useDrawer', from: resolver.resolve('./runtime/composables/use-drawer') },
+      { name: 'useIcons', from: resolver.resolve('./runtime/composables/use-icons') },
+      { name: 'useLocale', from: resolver.resolve('./runtime/composables/use-locale') },
+      { name: 'useMessages', from: resolver.resolve('./runtime/composables/use-messages') },
+      { name: 'useModal', from: resolver.resolve('./runtime/composables/use-modal') },
+      { name: 'useRippleEnabled', from: resolver.resolve('./runtime/composables/use-ripple') },
+      { name: 'useSlideover', from: resolver.resolve('./runtime/composables/use-slideover') },
+      { name: 'createTableColumnHelper', from: resolver.resolve('./runtime/composables/use-table') },
+      { name: 'useToast', from: resolver.resolve('./runtime/composables/use-toast') },
+    ])
 
     // Types the collision-resistant app.config.selaras runtime surface (see
     // runtime/types/app-config.d.ts), including theme, locale, messages,
@@ -137,8 +153,8 @@ export default defineNuxtModule<ModuleOptions>({
       references.push({ path: resolver.resolve('./runtime/types/app-config.d.ts') })
     })
 
-    // Registers vRipple as an auto-importable directive - plain
-    // addImportsDir doesn't mark an import as a directive (confirmed: a
+    // Registers vRipple as an auto-importable directive - ordinary composable
+    // registration doesn't mark an import as a directive (confirmed: a
     // v-ripple used only in a template, with no matching identifier
     // anywhere in the script block, gave Nuxt's import-scanner nothing to
     // detect, so nothing got injected and the directive stayed fully

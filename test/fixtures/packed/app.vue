@@ -5,7 +5,6 @@ import { createTableColumnHelper } from '@sewadah/selaras/table'
 
 const role: ColorRole = 'published'
 const seededRole: ColorRole = 'seeded'
-const narrow = useIsMobile()
 const packedIcons = useIcons()
 const packedLocale = useLocale()
 const packedMessages = useMessages()
@@ -67,7 +66,6 @@ void hyphenatedRole
   <SApp>
     <output id="packed-config" :data-icon="packedIcons.close" :data-message="packedMessages.close" :data-ripple="packedRipple">{{ packedLocale }}</output>
     <RemainingThemes />
-    <output id="packed-narrow">{{ narrow }}</output>
     <span id="packed-responsive" class="tw:hidden tw:tablet:block">Wide viewport</span>
     <button id="packed-toast" @click="addPublishedToast({ title: 'Published global toast', color: 'published' })">
       Show published toast

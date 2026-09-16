@@ -2,11 +2,15 @@
 import type { ModalRendererProps } from '@sewadah/selaras/components/ModalRenderer.vue'
 import type { DtcgResolvedColor, SeedColorOptions } from '@sewadah/selaras/theme'
 import type {
+  AlertDialogProps,
   AutocompleteEmits,
   AutocompleteProps,
   AutocompleteSlots,
   ButtonProps,
+  ColorPickerProps,
   ColorRole,
+  DrawerProps,
+  InputGroupProps,
   SelectEmits,
   SelectGroup,
   SelectIdentity,
@@ -15,6 +19,7 @@ import type {
   SelectResolvedOption,
   SelectSlots,
   SelectValue,
+  SliderProps,
   TableColumnDef,
   TableEmits,
   TableProps,
@@ -22,6 +27,15 @@ import type {
   ThemeConfiguration,
   ThemeProps,
   ToastOptions,
+  TreeProps,
+  UseCommandPaletteReturn,
+  UseDrawerOpenOptions,
+  UseDrawerReturn,
+  UseModalOpenOptions,
+  UseModalReturn,
+  UseSlideoverOpenOptions,
+  UseSlideoverReturn,
+  UseToastReturn,
 } from '@sewadah/selaras/types'
 import type * as PublicTypes from '@sewadah/selaras/types'
 import { createTableColumnHelper } from '@sewadah/selaras/table'
@@ -36,6 +50,17 @@ type PrivateRendererContract = ModalRendererProps
 void (undefined as unknown as PrivateRendererContract)
 
 const packedButton: ButtonProps = { color: 'primary' }
+type PreviouslyMissingComponentContracts = AlertDialogProps & ColorPickerProps & DrawerProps & InputGroupProps & SliderProps & TreeProps
+type PublicComposableContracts
+  = UseCommandPaletteReturn
+    & UseDrawerReturn
+    & UseModalReturn
+    & UseSlideoverReturn
+    & UseToastReturn
+type PublicOverlayOptions = UseDrawerOpenOptions & UseModalOpenOptions & UseSlideoverOpenOptions
+void (undefined as unknown as PreviouslyMissingComponentContracts)
+void (undefined as unknown as PublicComposableContracts)
+void (undefined as unknown as PublicOverlayOptions)
 interface PackedOption { id: number, title: string }
 type PackedEntry = PackedOption | SelectGroup<PackedOption>
 const authoredItems: SelectProps<PackedEntry, 'id'>['items'] = [
