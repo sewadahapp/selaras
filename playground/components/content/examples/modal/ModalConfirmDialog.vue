@@ -4,7 +4,7 @@ defineEmits<{ close: [confirmed?: boolean] }>()
 
 <template>
   <div class="flex flex-col items-center gap-4 p-8 text-center">
-    <div class="flex size-12 items-center justify-center rounded-full bg-[var(--ui-danger-soft)] text-[var(--ui-danger)]">
+    <div class="flex size-12 items-center justify-center rounded-full bg-[var(--selaras-resolved-color-danger-subtle)] text-[var(--selaras-resolved-color-danger-text)]">
       <SIcon name="hugeicons:alert-02" class="size-6" />
     </div>
     <h2 class="text-base font-semibold text-[var(--ui-text)]">

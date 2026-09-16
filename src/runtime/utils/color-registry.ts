@@ -142,6 +142,17 @@ function roleFieldValue(recipe: ColorRecipe, field: GeneratedRoleField): string 
   return recipe[property]
 }
 
+const selectedRoleDependencyPattern = /^var\(--_selaras-color-([a-z-]+)\)$/
+
+function resolvedRoleProperty(role: string, field: GeneratedRoleField): string {
+  return `--selaras-resolved-color-${role}-${field}`
+}
+
+/** Rebinds normalization's finite omitted-state dependencies to this role. */
+function resolvedRoleValue(role: string, recipe: ColorRecipe, field: GeneratedRoleField): string {
+  return roleFieldValue(recipe, field).replace(selectedRoleDependencyPattern, (_match, dependency: GeneratedRoleField) => `var(${resolvedRoleProperty(role, dependency)})`)
+}
+
 function assertCssValue(value: string): void {
   if (typeof value !== 'string' || value.trim().length === 0)
     throw new Error('Invalid Selaras token value: expected a non-empty CSS string.')
@@ -188,6 +199,9 @@ export function generateRuntimeTokenOverrideCss(overrides: RuntimeTokenOverrides
       rules.push(`${functionalSelector} {\n${functionalDeclarations.join('\n')}\n}`)
     }
     const colors = overrides[mode]?.colors
+    const colorSelector = owner === '[data-selaras-theme="global"]'
+      ? `${selector},\n${mode === 'dark' ? ':root.dark' : ':root'}`
+      : selector
     for (const role of [...roles].sort()) {
       assertColorRoleName(role)
       const key = role as ColorRole
@@ -198,7 +212,7 @@ export function generateRuntimeTokenOverrideCss(overrides: RuntimeTokenOverrides
         ...Object.entries(overrides.dark?.colors?.[key] ?? {}),
       ].filter(([, value]) => value !== undefined).map(([field]) => field))
       const effective = Object.fromEntries([...fields].map(field => [field, colors?.[key]?.[field as keyof ColorRecipeInput] ?? 'initial']))
-      const rule = overrideRule(selector, role, effective)
+      const rule = overrideRule(colorSelector, role, effective)
       if (rule)
         rules.push(rule)
     }
@@ -206,20 +220,32 @@ export function generateRuntimeTokenOverrideCss(overrides: RuntimeTokenOverrides
   return rules.length > 0 ? `@layer theme {\n${rules.join('\n\n')}\n}\n` : ''
 }
 
-function roleRule(selector: string, role: string, recipe: ColorRecipe, fields: readonly (typeof generatedRoleFields)[number][] = generatedRoleFields): string {
-  const declarations = fields
-    .map((field) => {
-      const value = roleFieldValue(recipe, field)
-      return `  --_selaras-color-${field}: var(--selaras-color-${role}-${field}, ${value});`
-    })
+function roleReadRule(selector: string, registry: Record<string, ColorModePair<ColorRecipe>>, mode: keyof ColorModePair<unknown>, changedOnly = false): string | undefined {
+  const declarations: string[] = []
+  for (const role of Object.keys(registry).sort()) {
+    const recipes = registry[role]!
+    for (const field of generatedRoleFields) {
+      const value = resolvedRoleValue(role, recipes[mode], field)
+      if (changedOnly && value === resolvedRoleValue(role, recipes.light, field))
+        continue
+      declarations.push(`  ${resolvedRoleProperty(role, field)}: var(--selaras-color-${role}-${field}, ${value});`)
+    }
+  }
+  return declarations.length ? `${selector} {\n${declarations.join('\n')}\n}` : undefined
+}
+
+function selectedRoleRule(role: string): string {
+  const declarations = generatedRoleFields
+    .map(field => `  --_selaras-color-${field}: var(--selaras-color-${role}-${field}, var(${resolvedRoleProperty(role, field)}));`)
     .join('\n')
-  return `${selector} {\n${declarations}\n}`
+  return `[data-selaras-color="${role}"] {\n${declarations}\n}`
 }
 
 /**
- * Serializes normalized role recipes into the private CSS bindings consumed by
- * role-capable components. Role-specific public inputs inherit from the DOM;
- * authored defaults resolve here so local external variables remain usable.
+ * Serializes normalized role recipes into public owner-local read values and
+ * the private selected-role bindings consumed by role-capable components.
+ * Role-specific public inputs inherit from the DOM; authored defaults resolve
+ * at managed owners so local external variables remain usable.
  * The output is deterministic so Nuxt template
  * hashes and HMR invalidation do not change with object insertion order.
  */
@@ -229,12 +255,13 @@ export function generateColorRoleCss(registry: Record<string, ColorModePair<Colo
     assertColorRoleName(role)
 
   const rules: string[] = []
-  for (const role of roles) {
-    const modes = registry[role]!
-    rules.push(roleRule(`[data-selaras-color="${role}"]`, role, modes.light))
-    const changedFields = generatedRoleFields.filter(field => roleFieldValue(modes.light, field) !== roleFieldValue(modes.dark, field))
-    if (changedFields.length)
-      rules.push(roleRule(`:root.dark [data-selaras-color="${role}"]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),\n[data-selaras-color="${role}"]:where([data-selaras-mode="dark"])`, role, modes.dark, changedFields))
-  }
+  const lightReads = roleReadRule(':root,\n[data-selaras-theme]', registry, 'light')
+  if (lightReads)
+    rules.push(lightReads)
+  const darkReads = roleReadRule(':root.dark,\n:root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),\n[data-selaras-theme]:where([data-selaras-mode="dark"])', registry, 'dark', true)
+  if (darkReads)
+    rules.push(darkReads)
+  for (const role of roles)
+    rules.push(selectedRoleRule(role))
   return rules.length > 0 ? `@layer theme {\n${rules.join('\n\n')}\n}\n` : ''
 }

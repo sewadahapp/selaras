@@ -16,7 +16,7 @@ function onError(rejected: { file: File, reason: string }[]) {
       @error="onError"
       @update:model-value="errors = []"
     />
-    <p v-for="(error, index) in errors" :key="index" class="text-sm text-[var(--ui-danger)]">
+    <p v-for="(error, index) in errors" :key="index" class="text-sm text-[var(--selaras-resolved-color-danger-text)]">
       {{ error }}
     </p>
   </div>

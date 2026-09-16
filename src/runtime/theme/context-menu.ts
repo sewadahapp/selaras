@@ -14,8 +14,8 @@ export const contextMenuTheme = tv({
     // theme uses, rather than the full 7-color palette Badge/Chip expose.
     destructive: {
       true: {
-        item: 'text-[var(--ui-danger)] data-[highlighted]:bg-[var(--ui-danger-soft)]',
-        icon: 'text-[var(--ui-danger)]',
+        item: 'text-[var(--selaras-resolved-color-danger-text)] data-[highlighted]:bg-[var(--selaras-resolved-color-danger-subtle-hover)] data-[highlighted]:text-[var(--selaras-resolved-color-danger-on-subtle)]',
+        icon: 'text-current',
       },
     },
   },

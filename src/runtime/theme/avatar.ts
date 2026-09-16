@@ -32,13 +32,13 @@ export const avatarTheme = tv({
     // (online, offline, ...) rarely match the avatar's own identity color, so
     // it gets its own variant rather than tracking the avatar's.
     statusColor: {
-      primary: { status: 'bg-[var(--_selaras-color-fill)]' },
+      primary: { status: 'bg-[var(--selaras-resolved-color-primary-fill)]' },
       neutral: { status: 'bg-[var(--ui-text-muted)]' },
-      secondary: { status: 'bg-[var(--_selaras-color-fill)]' },
-      success: { status: 'bg-[var(--_selaras-color-fill)]' },
-      danger: { status: 'bg-[var(--_selaras-color-fill)]' },
-      info: { status: 'bg-[var(--_selaras-color-fill)]' },
-      warning: { status: 'bg-[var(--_selaras-color-fill)]' },
+      secondary: { status: 'bg-[var(--selaras-resolved-color-secondary-fill)]' },
+      success: { status: 'bg-[var(--selaras-resolved-color-success-fill)]' },
+      danger: { status: 'bg-[var(--selaras-resolved-color-danger-fill)]' },
+      info: { status: 'bg-[var(--selaras-resolved-color-info-fill)]' },
+      warning: { status: 'bg-[var(--selaras-resolved-color-warning-fill)]' },
     },
     size: {
       sm: { base: 'size-6', fallback: 'text-[10px]', icon: 'size-3', status: 'size-1.5' },
@@ -51,7 +51,7 @@ export const avatarTheme = tv({
     },
   },
   compoundVariants: [
-    { color: 'neutral', class: { base: 'bg-[var(--ui-neutral-soft)]', fallback: 'text-[var(--ui-text-muted)]' } },
+    { color: 'neutral', class: { fallback: 'text-[var(--ui-text-muted)]' } },
   ],
   defaultVariants: {
     color: 'neutral',

@@ -13,7 +13,7 @@ const items = [
     </template>
     <template #title="{ item, state }">
       {{ item.title }}
-      <span v-if="state === 'active'" class="text-[var(--ui-primary)]">· current</span>
+      <span v-if="state === 'active'" class="text-[var(--selaras-resolved-color-primary-text)]">· current</span>
     </template>
   </SStepper>
 </template>

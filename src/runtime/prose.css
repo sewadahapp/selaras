@@ -149,14 +149,14 @@
    prose's pre background+padding on top of its own, from being rendered
    inside a docs page's .selaras-prose ancestor. */
 .selaras-prose :where(a):not(:where(.not-prose, .not-prose *)) {
-  color: var(--ui-primary);
+  color: var(--selaras-resolved-color-primary-text);
   font-weight: 500;
   text-decoration-line: underline;
   text-underline-offset: 4px;
 }
 
 .selaras-prose :where(a:hover):not(:where(.not-prose, .not-prose *)) {
-  color: var(--ui-primary-hover);
+  color: var(--selaras-resolved-color-primary-text-hover);
 }
 
 /* The self-anchor link the kept ProseH1-H6 components wrap heading

@@ -109,9 +109,8 @@ describe('navigationMenu (horizontal)', () => {
     })
 
     const link = wrapper.find('a[href="/docs"]')
-    expect(link.classes()).toContain('bg-[var(--ui-neutral-soft)]')
+    expect(link.classes()).toContain('bg-[var(--_selaras-color-subtle)]')
     expect(link.classes()).toContain('text-[var(--ui-text)]')
-    expect(link.classes()).not.toContain('bg-[var(--_selaras-color-subtle)]')
     expect(link.classes()).not.toContain('text-[var(--_selaras-color-text)]')
   })
 

@@ -106,7 +106,8 @@ describe('contextMenu', () => {
     await openMenu()
 
     const items = document.body.querySelectorAll('[role="menuitem"]')
-    expect(items[0]!.className).not.toContain('text-[var(--ui-danger)]')
-    expect(items[1]!.className).toContain('text-[var(--ui-danger)]')
+    expect(items[0]!.className).not.toContain('text-[var(--selaras-resolved-color-danger-text)]')
+    expect(items[1]!.className).toContain('text-[var(--selaras-resolved-color-danger-text)]')
+    expect(items[1]!.className).toContain('data-[highlighted]:text-[var(--selaras-resolved-color-danger-on-subtle)]')
   })
 })

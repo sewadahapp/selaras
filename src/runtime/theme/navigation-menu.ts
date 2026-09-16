@@ -198,7 +198,7 @@ export const navigationMenuTheme = tv({
     // tailwind-merge. Keeping color as a real variant still lets consumer
     // compound extensions match registered role names.
     { variant: 'pill', active: true, class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)]' } },
-    { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--ui-neutral-soft)] text-[var(--ui-text)]' } },
+    { variant: 'pill', active: true, color: 'neutral', class: { link: 'bg-[var(--_selaras-color-subtle)] text-[var(--ui-text)]' } },
 
     { variant: 'link', active: true, class: { link: 'text-[var(--_selaras-color-text)]' } },
     { variant: 'link', active: true, color: 'neutral', class: { link: 'text-[var(--ui-text)]' } },

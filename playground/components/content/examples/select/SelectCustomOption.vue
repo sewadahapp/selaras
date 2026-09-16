@@ -2,8 +2,8 @@
 const status = ref('online')
 
 const statusItems = [
-  { label: 'Online', value: 'online', color: 'bg-[var(--ui-success)]' },
-  { label: 'Away', value: 'away', color: 'bg-[var(--ui-warning)]' },
+  { label: 'Online', value: 'online', color: 'bg-[var(--selaras-resolved-color-success-fill)]' },
+  { label: 'Away', value: 'away', color: 'bg-[var(--selaras-resolved-color-warning-fill)]' },
   { label: 'Offline', value: 'offline', color: 'bg-[var(--ui-text-muted)]' },
 ]
 </script>

@@ -73,6 +73,9 @@ const outerTokens = {
       <SButton id="outer-text" variant="text">
         Outer text
       </SButton>
+      <span id="outer-primary-read" class="text-[var(--selaras-resolved-color-primary-text)]">
+        Outer public role read
+      </span>
       <STheme as="section" mode="light" :tokens="{ light: { colors: { primary: { fill: innerFill } }, surface: { default: surface }, scrim } }">
         <STheme :defaults="{ button: { size: 'lg' } }">
           <SButton id="inner-fill">
@@ -88,6 +91,10 @@ const outerTokens = {
           <SButton id="inner-text" variant="text">
             Inner text
           </SButton>
+          <span id="inner-primary-read" class="text-[var(--selaras-resolved-color-primary-fill)]">
+            Inner public role read
+          </span>
+          <SAvatar id="independent-status" text="A" color="primary" status status-color="success" />
           <SButton id="inner-soft" variant="soft" style="--local-subtle: rgb(50 60 70)">
             Local alias
           </SButton>
@@ -112,6 +119,9 @@ const outerTokens = {
               <SButton id="portal-text" variant="text">
                 Portalled text
               </SButton>
+              <span id="portal-primary-read" class="text-[var(--selaras-resolved-color-primary-fill)]">
+                Portalled public role read
+              </span>
               <input id="portal-native" aria-label="Portalled native input">
             </template>
           </SPopover>

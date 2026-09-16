@@ -93,7 +93,7 @@ describe('color registry', () => {
     expect(registry.premium.dark.focus).toBe('var(--_selaras-color-text)')
   })
 
-  it('generates deterministic light/dark private bindings for registered roles', () => {
+  it('generates deterministic public reads and private selected bindings for registered roles', () => {
     const registry = createColorRegistry({
       premium: {
         light: { fill: 'light-fill', onFill: 'light-on', subtle: 'light-subtle', onSubtle: 'light-on-subtle', text: 'light-text', border: 'light-border' },
@@ -102,24 +102,34 @@ describe('color registry', () => {
     })
     const css = generateColorRoleCss(registry)
     expect(css).toContain('[data-selaras-color="premium"]')
-    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, light-fill);')
-    expect(css).not.toContain('--selaras-color-premium-fill:')
+    expect(css).toContain(':root,\n[data-selaras-theme]')
+    expect(css).toContain('--selaras-resolved-color-premium-fill: var(--selaras-color-premium-fill, light-fill);')
+    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, var(--selaras-resolved-color-premium-fill));')
     expect(css).not.toContain('--selaras-color-role-')
-    expect(css).toContain('.dark [data-selaras-color="premium"]')
-    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, dark-fill);')
+    expect(css).toContain(':root.dark [data-selaras-theme]')
+    expect(css).toContain('--selaras-resolved-color-premium-fill: var(--selaras-color-premium-fill, dark-fill);')
     expect(css.endsWith('\n')).toBe(true)
   })
 
-  it('keeps shared bindings on the role element and emits only changed dark defaults', () => {
+  it('keeps omitted-state dependencies within their role and emits only changed dark reads', () => {
     const light = { fill: 'shared-fill', onFill: 'shared-on', subtle: 'light-subtle', onSubtle: 'shared-text', text: 'shared-text', border: 'shared-border' }
     const css = generateColorRoleCss(createColorRegistry({ premium: { light, dark: { ...light, subtle: 'dark-subtle' } } }))
-    const [base, dark] = css.split('\n\n')
-    expect(base).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, shared-fill);')
-    expect(dark).toContain('--_selaras-color-subtle: var(--selaras-color-premium-subtle, dark-subtle);')
-    expect(dark).not.toContain('--_selaras-color-fill:')
-    expect(base).toContain('--_selaras-color-subtle-hover:')
-    expect(dark).not.toContain('--_selaras-color-subtle-hover:')
+    const [base, dark, selected] = css.split('\n\n')
+    expect(base).toContain('--selaras-resolved-color-premium-fill: var(--selaras-color-premium-fill, shared-fill);')
+    expect(base).toContain('--selaras-resolved-color-premium-subtle-hover: var(--selaras-color-premium-subtle-hover, var(--selaras-resolved-color-premium-subtle));')
+    expect(dark).toContain('--selaras-resolved-color-premium-subtle: var(--selaras-color-premium-subtle, dark-subtle);')
+    expect(dark).not.toContain('--selaras-resolved-color-premium-fill:')
+    expect(dark).not.toContain('--selaras-resolved-color-premium-subtle-hover:')
+    expect(selected).toContain('--_selaras-color-subtle-hover: var(--selaras-color-premium-subtle-hover, var(--selaras-resolved-color-premium-subtle-hover));')
     expect(generateColorRoleCss(createColorRegistry({ premium: { light, dark: light } }))).not.toContain('.dark')
+  })
+
+  it('keeps external recipe expressions in owner-local public reads', () => {
+    const recipe = { fill: 'var(--company-brand-10)', onFill: '#fff', subtle: '#eee', onSubtle: '#111', text: '#333', border: '#555' }
+    const css = generateColorRoleCss(createColorRegistry({ brand: { light: recipe, dark: { ...recipe, fill: 'var(--company-brand-dark-10)' } } }))
+    expect(css).toContain('--selaras-resolved-color-brand-fill: var(--selaras-color-brand-fill, var(--company-brand-10));')
+    expect(css).toContain('--selaras-resolved-color-brand-fill: var(--selaras-color-brand-fill, var(--company-brand-dark-10));')
+    expect(css).toContain('--_selaras-color-fill: var(--selaras-color-brand-fill, var(--selaras-resolved-color-brand-fill));')
   })
 
   it('sorts role output and rejects unsafe generated selectors', () => {
@@ -140,6 +150,8 @@ describe('color registry', () => {
     expect(css).toContain('--selaras-color-premium-fill-hover: var(--brand-hover);')
     expect(css).toContain('[data-selaras-mode="light"]')
     expect(css).toContain(':root.dark [data-selaras-theme="global"]')
+    expect(css).toContain(':root {\n  --selaras-color-premium-fill: #5134a8;')
+    expect(css).toContain(':root.dark {\n  --selaras-color-premium-fill: #a78bfa;')
     expect(() => generateRuntimeTokenOverrideCss({ light: { colors: { premium: { fill: 'red; color: blue' } } } })).toThrow()
   })
 

@@ -78,7 +78,7 @@ describe('radioGroup', () => {
     })
     const classes = wrapper.find('button').classes().join(' ')
     expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
-    expect(classes).not.toContain('data-[state=checked]:ring-[var(--ui-success)]')
+    expect(classes).not.toContain('data-[state=checked]:ring-[var(--selaras-resolved-color-success-fill)]')
   })
 
   it('applies the matching card-highlight compound variant for color + variant="card"', async () => {

@@ -36,7 +36,7 @@ const items = [
         <p class="mb-2 text-[var(--ui-text-muted)]">
           Need a hand?
         </p>
-        <NuxtLink v-for="child in item.children" :key="child.label" :to="child.to" class="block py-1 text-[var(--ui-primary)]">
+        <NuxtLink v-for="child in item.children" :key="child.label" :to="child.to" class="block py-1 text-[var(--selaras-resolved-color-primary-text)]">
           {{ child.label }} →
         </NuxtLink>
       </div>

@@ -96,6 +96,6 @@ describe('textarea', () => {
     const wrapper = await mountSuspended(Textarea, { props: { color: 'success', invalid: true } })
     const classes = wrapper.find('textarea').classes()
     expect(classes).toContain('focus:ring-[var(--_selaras-color-fill)]')
-    expect(classes).not.toContain('focus:ring-[var(--ui-success)]')
+    expect(classes).not.toContain('focus:ring-[var(--selaras-resolved-color-success-fill)]')
   })
 })

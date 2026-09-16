@@ -47,7 +47,7 @@ registered semantic role to force a specific color instead:
 <SIcon name="hugeicons:checkmark-circle-01" color="success" />
 ```
 
-A plain `class="text-[var(--ui-danger)]"` still overrides `color` if you need
+A plain `class="text-[var(--selaras-resolved-color-danger-text)]"` still overrides `color` if you need
 something the preset roles don't cover - both flow through the same
 tailwind-merge, so whichever `text-*` class you add wins.
 

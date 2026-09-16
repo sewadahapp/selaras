@@ -77,6 +77,9 @@ void hyphenatedRole
     <SButton id="packed-seed" :color="seededRole">
       Seeded role
     </SButton>
+    <span id="packed-role-read" class="tw:text-[var(--selaras-resolved-color-published-text)]">
+      Published public role read
+    </span>
     <SButton id="packed-registered-builtin" color="secondary">
       Registered built-in recipe
     </SButton>
@@ -126,6 +129,9 @@ void hyphenatedRole
         Published scoped
       </SButton>
       <SBadge id="packed-badge" :color="role" variant="soft" label="Published badge" />
+      <span id="packed-scoped-role-read" class="tw:text-[var(--selaras-resolved-color-published-fill)]">
+        Published scoped public role read
+      </span>
       <SInput id="packed-functional-input" model-value="Scoped functional input" readonly />
     </STheme>
     <SBadge id="packed-dot" dot aria-label="Offline" />

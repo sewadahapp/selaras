@@ -96,7 +96,7 @@ describe('avatar', () => {
   it('renders a status dot with the given statusColor', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', status: true, statusColor: 'success' } })
     const status = wrapper.findAll('span').find(sp => sp.classes().includes('absolute'))
-    expect(status?.classes()).toContain('bg-[var(--_selaras-color-fill)]')
+    expect(status?.classes()).toContain('bg-[var(--selaras-resolved-color-success-fill)]')
   })
 
   it('clips content but not the status dot', async () => {

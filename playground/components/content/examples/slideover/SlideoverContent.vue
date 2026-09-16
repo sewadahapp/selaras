@@ -10,7 +10,7 @@ const open = ref(false)
   <SSlideover v-model:open="open">
     <template #content>
       <div class="flex flex-col items-center gap-4 p-8 text-center">
-        <div class="flex size-12 items-center justify-center rounded-full bg-[var(--ui-success-soft)] text-[var(--ui-success)]">
+        <div class="flex size-12 items-center justify-center rounded-full bg-[var(--selaras-resolved-color-success-subtle)] text-[var(--selaras-resolved-color-success-text)]">
           <SIcon name="hugeicons:checkmark-circle-01" class="size-6" />
         </div>
         <h2 class="text-base font-semibold text-[var(--ui-text)]">

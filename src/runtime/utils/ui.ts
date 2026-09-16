@@ -73,7 +73,7 @@ export function applyClassPrefix(classString: string, prefix?: string): string {
  * applies this to a `:ui` override *before* handing it to the slot function,
  * because `tailwind-merge` (bundled by `tailwind-variants`) has no concept
  * of Tailwind v4's `tw:`-style prefix syntax: a mixed merge - an unprefixed
- * base class (`bg-[var(--ui-primary)]`) against an already-prefixed override
+ * base class (`bg-[var(--_selaras-color-fill)]`) against an already-prefixed override
  * (`tw:bg-red-500`, exactly what a consumer is documented to write once a
  * prefix is configured) - never dedupes, confirmed directly (both classes
  * survive as-is). Since Selaras's own safelist stylesheet loads after the

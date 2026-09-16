@@ -223,7 +223,7 @@ describe('inputNumber', () => {
     const wrapper = await mountSuspended(InputNumber, { props: { color: 'success', invalid: true } })
     const classes = wrapper.find('div').classes()
     expect(classes).toContain('focus-within:ring-[var(--_selaras-color-fill)]')
-    expect(classes).not.toContain('focus-within:ring-[var(--ui-success)]')
+    expect(classes).not.toContain('focus-within:ring-[var(--selaras-resolved-color-success-fill)]')
   })
 
   it('wires id/aria-describedby/aria-invalid through FormField', async () => {

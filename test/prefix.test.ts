@@ -60,16 +60,17 @@ describe('classPrefix', async () => {
   it('ships generated light/dark role CSS alongside the prefixed consumer stylesheet', async () => {
     const css = await fetchCss()
     expect(css).toContain('[data-selaras-color=enterprise]')
-    expect(css).toContain('--_selaras-color-fill:var(--selaras-color-enterprise-fill,#5134a8)')
-    expect(css).toContain('.dark [data-selaras-color=enterprise]')
+    expect(css).toContain('--selaras-resolved-color-enterprise-fill:var(--selaras-color-enterprise-fill,#5134a8)')
+    expect(css).toContain('--_selaras-color-fill:var(--selaras-color-enterprise-fill,var(--selaras-resolved-color-enterprise-fill))')
+    expect(css).toContain(':root.dark [data-selaras-theme]')
   })
 
   it('preserves CSS-variable-backed role values in generated light/dark bindings', async () => {
     const css = await fetchCss()
     expect(css).toContain('[data-selaras-color=brand-vars]')
-    expect(css).toContain('--_selaras-color-fill:var(--selaras-color-brand-vars-fill,var(--company-brand-fill))')
-    expect(css).toContain('.dark [data-selaras-color=brand-vars]')
-    expect(css).toContain('--_selaras-color-fill:var(--selaras-color-brand-vars-fill,var(--company-brand-dark-fill))')
+    expect(css).toContain('--selaras-resolved-color-brand-vars-fill:var(--selaras-color-brand-vars-fill,var(--company-brand-fill))')
+    expect(css).toContain(':root.dark [data-selaras-theme]')
+    expect(css).toContain('--selaras-resolved-color-brand-vars-fill:var(--selaras-color-brand-vars-fill,var(--company-brand-dark-fill))')
   })
 
   it('ships a real owned foundation value, rather than only a class rule that references a pruned variable', async () => {

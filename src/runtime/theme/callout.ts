@@ -12,10 +12,10 @@ export const calloutTheme = tv({
   },
   variants: {
     type: {
-      note: { root: 'border-s-[var(--ui-info)]', icon: 'text-[var(--ui-info)]' },
-      tip: { root: 'border-s-[var(--ui-success)]', icon: 'text-[var(--ui-success)]' },
-      warning: { root: 'border-s-[var(--ui-warning)]', icon: 'text-[var(--ui-warning)]' },
-      danger: { root: 'border-s-[var(--ui-danger)]', icon: 'text-[var(--ui-danger)]' },
+      note: { root: 'border-s-[var(--selaras-resolved-color-info-border)]', icon: 'text-[var(--selaras-resolved-color-info-text)]' },
+      tip: { root: 'border-s-[var(--selaras-resolved-color-success-border)]', icon: 'text-[var(--selaras-resolved-color-success-text)]' },
+      warning: { root: 'border-s-[var(--selaras-resolved-color-warning-border)]', icon: 'text-[var(--selaras-resolved-color-warning-text)]' },
+      danger: { root: 'border-s-[var(--selaras-resolved-color-danger-border)]', icon: 'text-[var(--selaras-resolved-color-danger-text)]' },
     },
   },
   defaultVariants: {

@@ -23,6 +23,7 @@ custom properties:
 | `--selaras-border-default`, `--selaras-border-hover`, `--selaras-border-muted` | Border inputs |
 | `--selaras-text-default`, `--selaras-text-muted`, `--selaras-text-inverted` | Text inputs |
 | `--selaras-color-<role>-<leaf>` | Registered-role inputs, described below |
+| `--selaras-resolved-color-<role>-<leaf>` | Readable effective values for registered roles |
 | `--selaras-scrim` | Overlay backdrop input |
 | `--ui-radius` | Base corner radius - see below |
 | `--ui-shadow-sm`, `--ui-shadow-md`, `--ui-shadow-lg` | Overlay elevation (Modal, Dropdown, Popover, ...) |
@@ -57,12 +58,11 @@ it does not change explicitly authored recipes. For example:
 
 The built-in Button and Badge recipes select separate filled, subtle and text
 colors from these scales in each mode. Button hover and pressed states preserve
-contrast against the stock `--ui-bg` surface. Warning uses a dark foreground
+contrast against the stock surface. Warning uses a dark foreground
 and brighter filled interaction shades; dark-mode text uses lighter shades.
 Changing a palette or surface requires checking the resulting contrast again.
 Use a complete semantic recipe when your brand needs different foregrounds
-or interaction choices. Other components still use the legacy `--ui-*`
-bridges while their semantic recipe migration is in progress.
+or interaction choices.
 
 ### One brand color
 
@@ -173,20 +173,24 @@ a local ancestor for a subtree:
 }
 ```
 
-These variables are override inputs. Selaras resolves registered defaults
-at each role element; it does not declare a complete default palette under
-these names on `:root`. This keeps default expressions referencing local
-company variables usable. Explicit managed token overrides take precedence
-over inherited CSS inputs. Changing `fill` updates an omitted `fillHover` and
+These variables are override inputs. Read the effective value through
+`--selaras-resolved-color-<role>-<leaf>` in ordinary CSS or Tailwind arbitrary
+utilities; for example,
+`text-[var(--selaras-resolved-color-premium-text)]`. Selaras resolves every
+registered recipe at the nearest managed theme owner. A component can also
+resolve recipe expressions against company variables on its own local wrapper.
+For ordinary HTML using a public read, place an `STheme` owner where those
+company variables are available. Managed token overrides rematerialize inputs
+at the theme owner; later local CSS inputs follow the normal cascade. Changing
+`fill` updates an omitted `fillHover` and
 its omitted pressed state. Override authored interaction leaves explicitly
 when you want to change them. Built-in recipes author all their state leaves,
 so changing only their fill does not retheme their interactions.
 Button and Badge use these inputs for built-in roles too, for example
-`--selaras-color-primary-fill`. Built-in defaults read the palette foundations,
-so a local `--ui-primary` override no longer recolors Button or Badge. Module
+`--selaras-color-primary-fill`. Built-in defaults read the palette foundations.
+Module
 `theme.colors.primary` can replace the complete built-in recipe; runtime
 `selaras.tokens` and explicit `STheme` scopes can override its leaves.
-Other components still use the legacy bridge during their semantic migration.
 
 Tailwind v4 only keeps a theme variable in the compiled CSS if it detects
 the variable actually being used somewhere - normally that means a

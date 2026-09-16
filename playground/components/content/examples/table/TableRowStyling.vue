@@ -13,7 +13,7 @@ const orders = ref<Order[]>([
 ])
 
 function rowClass(row: unknown) {
-  return (row as Order).overdue ? 'bg-[var(--ui-danger-soft)]' : undefined
+  return (row as Order).overdue ? 'bg-[var(--selaras-resolved-color-danger-subtle)]' : undefined
 }
 </script>
 

@@ -50,7 +50,7 @@ describe('stripClassPrefix', () => {
 
 describe('resolveSlot normalizes a prefixed override before merging (real bug: tailwind-merge has no concept of tw:-style prefixes, so a mixed unprefixed-base/prefixed-override merge never dedupes on its own)', () => {
   it('strip -> tv() merge -> re-prefix correctly dedupes a conflicting override, matching what resolveSlot does internally', () => {
-    const theme = tv({ base: 'bg-[var(--ui-primary)] rounded-md' })
+    const theme = tv({ base: 'bg-[var(--_selaras-color-fill)] rounded-md' })
     // Exactly resolveSlot's own sequence: strip the override's prefix before
     // merging, then applyClassPrefix the whole merged result afterward.
     const stripped = stripClassPrefix('tw:bg-purple-700', 'tw')
@@ -60,7 +60,7 @@ describe('resolveSlot normalizes a prefixed override before merging (real bug: t
     // Without the strip step, tailwind-merge fails to recognize the prefixed
     // override as conflicting with the base class at all - both survive.
     const mergedWithoutStrip = theme({ class: 'tw:bg-purple-700' })
-    expect(mergedWithoutStrip).toBe('bg-[var(--ui-primary)] rounded-md tw:bg-purple-700')
+    expect(mergedWithoutStrip).toBe('bg-[var(--_selaras-color-fill)] rounded-md tw:bg-purple-700')
   })
 })
 

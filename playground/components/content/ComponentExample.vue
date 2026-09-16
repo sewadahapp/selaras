@@ -39,7 +39,7 @@ const resolvedComponent = computed(() => {
   <div v-if="resolvedComponent" class="not-prose flex flex-wrap items-center gap-3 overflow-x-auto rounded-[var(--ui-radius-md)] border border-[var(--ui-border)] p-6">
     <component :is="resolvedComponent" />
   </div>
-  <div v-else class="text-sm text-[var(--ui-danger)]">
+  <div v-else class="text-sm text-[var(--selaras-resolved-color-danger-text)]">
     Example "{{ name }}" not found
   </div>
 </template>

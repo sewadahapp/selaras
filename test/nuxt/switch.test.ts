@@ -60,7 +60,7 @@ describe('switch', () => {
     const wrapper = await mountSuspended(Switch, { props: { invalid: true, color: 'success', modelValue: true } })
     const classes = wrapper.find('button').classes().join(' ')
     expect(classes).toContain('ring-[var(--_selaras-color-fill)]')
-    expect(classes).not.toContain('data-[state=checked]:bg-[var(--ui-success)]')
+    expect(classes).not.toContain('data-[state=checked]:bg-[var(--selaras-resolved-color-success-fill)]')
   })
 
   it('renders a spinning loading icon in the thumb when loading is set', async () => {

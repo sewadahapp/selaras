@@ -62,7 +62,7 @@ describe('checkbox', () => {
     const wrapper = await mountSuspended(Checkbox, { props: { invalid: true, color: 'success', modelValue: true } })
     const classes = wrapper.find('button').classes().join(' ')
     expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
-    expect(classes).not.toContain('data-[state=checked]:ring-[var(--ui-success)]')
+    expect(classes).not.toContain('data-[state=checked]:ring-[var(--selaras-resolved-color-success-fill)]')
   })
 
   it('renders description as a second, muted line under the label', async () => {

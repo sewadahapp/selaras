@@ -44,7 +44,7 @@ async function copy() {
     </div>
     <pre class="overflow-x-auto p-4 text-xs leading-relaxed"><code>{{ source }}</code></pre>
   </div>
-  <div v-else class="text-sm text-[var(--ui-danger)]">
+  <div v-else class="text-sm text-[var(--selaras-resolved-color-danger-text)]">
     Theme source "{{ name }}" not found
   </div>
 </template>

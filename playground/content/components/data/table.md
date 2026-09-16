@@ -203,7 +203,7 @@ style a row conditionally - highlighting an overdue order, say:
 ::
 
 ```vue-html
-<STable :data="orders" :row-class="(row) => row.overdue ? 'bg-[var(--ui-danger-soft)]' : undefined">
+<STable :data="orders" :row-class="(row) => row.overdue ? 'bg-[var(--selaras-resolved-color-danger-subtle)]' : undefined">
   <SColumn field="id" header="Order" />
   <SColumn field="customer" header="Customer" />
   <SColumn field="total" header="Total" />

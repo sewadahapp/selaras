@@ -21,7 +21,7 @@ Auto-imported, no explicit import needed inside a Nuxt app:
 Opt out per-element with `v-ripple="false"`, or override the defaults:
 
 ```vue-html
-<button v-ripple="{ color: 'var(--ui-primary)', opacity: 0.4, duration: 700 }">
+<button v-ripple="{ color: 'var(--selaras-resolved-color-primary-fill)', opacity: 0.4, duration: 700 }">
   Click me
 </button>
 ```
