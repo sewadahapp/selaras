@@ -11,6 +11,16 @@ const foundationPaletteByRole = {
   neutral: 'gray',
 } as const satisfies Record<typeof builtinColorNames[number], string>
 
+const fillShadesByRole = {
+  primary: { light: [500, 600, 700], dark: [400, 300, 200] },
+  secondary: { light: [600, 700, 800], dark: [400, 300, 200] },
+  success: { light: [700, 800, 900], dark: [500, 400, 300] },
+  info: { light: [600, 700, 800], dark: [500, 400, 300] },
+  warning: { light: [700, 800, 900], dark: [500, 400, 300] },
+  danger: { light: [600, 700, 800], dark: [500, 400, 300] },
+  neutral: { light: [950, 900, 800], dark: [200, 100, 50] },
+} as const satisfies Record<typeof builtinColorNames[number], Record<'light' | 'dark', readonly [number, number, number]>>
+
 /** Build-time default recipes read foundations, never a component's legacy bridge. */
 export function createBuiltinColorRegistry(classPrefix?: string | null) {
   const foundation = (role: typeof builtinColorNames[number], shade: number) => `var(--${classPrefix ? `${classPrefix}-` : ''}color-selaras-${foundationPaletteByRole[role]}-${shade})`
@@ -18,13 +28,12 @@ export function createBuiltinColorRegistry(classPrefix?: string | null) {
     const mode = (dark: boolean): ColorRecipeInput => {
       const neutral = role === 'neutral'
       const warning = role === 'warning'
-      const fillShade = role === 'success' ? 700 : role === 'secondary' || role === 'info' || role === 'danger' ? 600 : 500
+      const modeName = dark ? 'dark' : 'light'
+      const [fillShade, hoverShade, pressedShade] = fillShadesByRole[role][modeName]
       const textShade = warning || role === 'success' ? 800 : role === 'info' || role === 'danger' ? 700 : fillShade
-      const fill = foundation(role, neutral ? dark ? 50 : 950 : fillShade)
-      // Amber keeps a dark foreground in all filled states; its interactions
-      // brighten rather than crossing into shades that require white text.
-      const hover = foundation(role, neutral ? dark ? 100 : 900 : warning ? 400 : fillShade + 100)
-      const pressed = foundation(role, neutral ? dark ? 200 : 800 : warning ? 300 : fillShade + 200)
+      const fill = foundation(role, fillShade)
+      const hover = foundation(role, hoverShade)
+      const pressed = foundation(role, pressedShade)
       const text = foundation(role, neutral ? dark ? 50 : 950 : dark ? 300 : textShade)
       const subtle = neutral
         ? foundation(role, dark ? 900 : 100)
@@ -33,7 +42,7 @@ export function createBuiltinColorRegistry(classPrefix?: string | null) {
         fill,
         fillHover: hover,
         fillPressed: pressed,
-        onFill: foundation('neutral', role === 'warning' || (neutral && dark) ? 950 : 25),
+        onFill: foundation('neutral', dark ? 950 : 25),
         subtle,
         subtleHover: dark
           ? `color-mix(in oklab, ${foundation(role, 500)} 32%, var(--ui-bg))`
@@ -45,7 +54,7 @@ export function createBuiltinColorRegistry(classPrefix?: string | null) {
         text,
         textHover: foundation(role, neutral ? dark ? 100 : 900 : dark ? 200 : Math.min(textShade + 100, 950)),
         textPressed: foundation(role, neutral ? dark ? 200 : 800 : dark ? 100 : Math.min(textShade + 200, 950)),
-        border: neutral ? foundation(role, dark ? 800 : 200) : fill,
+        border: neutral ? foundation(role, 500) : fill,
         focus: text,
       }
     }

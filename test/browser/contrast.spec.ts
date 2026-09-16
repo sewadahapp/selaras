@@ -3,7 +3,7 @@ import { expect, test } from '@nuxt/test-utils/playwright'
 
 // Stock defaults on ui-bg only; arbitrary consumer palettes/surfaces need their
 // own validation. Existing interaction tests verify actual state bindings.
-test('measures stock semantic text contrast in both modes', async ({ page, goto }, testInfo) => {
+test('measures stock semantic contrast in both modes', async ({ page, goto }, testInfo) => {
   await goto('/', { waitUntil: 'hydration' })
   const measurements = []
   for (const mode of ['light', 'dark']) {
@@ -27,28 +27,31 @@ test('measures stock semantic text contrast in both modes', async ({ page, goto 
       }
       const surface = getComputedStyle(section).backgroundColor
       const pairs = [
-        ['solid', 'on-fill', 'fill'],
-        ['solid:hover', 'on-fill', 'fill-hover'],
-        ['solid:active', 'on-fill', 'fill-pressed'],
-        ['soft', 'on-subtle', 'subtle'],
-        ['soft:hover', 'on-subtle', 'subtle-hover'],
-        ['soft:active', 'on-subtle', 'subtle-pressed'],
-        ['text', 'text', null],
-        ['text:hover', 'text-hover', null],
-        ['text:active', 'text-pressed', null],
-        ['outline', 'text', null],
-        ['outline:hover', 'text', 'subtle-hover'],
-        ['outline:active', 'text', 'subtle-pressed'],
-        ['ghost', 'text', null],
-        ['ghost:hover', 'text', 'subtle-hover'],
-        ['ghost:active', 'text', 'subtle-pressed'],
-        ['focus', 'focus', null],
-        ['status-dot', 'text', null],
+        ['solid', 'on-fill', 'fill', 4.5],
+        ['solid:hover', 'on-fill', 'fill-hover', 4.5],
+        ['solid:active', 'on-fill', 'fill-pressed', 4.5],
+        ['soft', 'on-subtle', 'subtle', 4.5],
+        ['soft:hover', 'on-subtle', 'subtle-hover', 4.5],
+        ['soft:active', 'on-subtle', 'subtle-pressed', 4.5],
+        ['text', 'text', null, 4.5],
+        ['text:hover', 'text-hover', null, 4.5],
+        ['text:active', 'text-pressed', null, 4.5],
+        ['outline', 'text', null, 4.5],
+        ['outline:hover', 'text', 'subtle-hover', 4.5],
+        ['outline:active', 'text', 'subtle-pressed', 4.5],
+        ['ghost', 'text', null, 4.5],
+        ['ghost:hover', 'text', 'subtle-hover', 4.5],
+        ['ghost:active', 'text', 'subtle-pressed', 4.5],
+        ['fill/surface', 'fill', null, 3],
+        ['fill-hover/surface', 'fill-hover', null, 3],
+        ['fill-pressed/surface', 'fill-pressed', null, 3],
+        ['border/surface', 'border', null, 3],
+        ['focus/surface', 'focus', null, 3],
       ] as const
       return Array.from(section.querySelectorAll('button')).flatMap((button) => {
         const probe = document.createElement('span')
         button.append(probe)
-        const values = pairs.map(([state, foreground, background]) => {
+        const values = pairs.map(([state, foreground, background, threshold]) => {
           probe.style.color = `var(--_selaras-color-${foreground})`
           probe.style.backgroundColor = background ? `var(--_selaras-color-${background})` : surface
           const style = getComputedStyle(probe)
@@ -57,7 +60,6 @@ test('measures stock semantic text contrast in both modes', async ({ page, goto 
           const first = luminance(foregroundColor)
           const second = luminance(backgroundColor)
           const ratio = (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05)
-          const threshold = state === 'focus' || state === 'status-dot' ? 3 : 4.5
           return { role: button.dataset.selarasColor, state, foregroundColor, backgroundColor, ratio, threshold, passes: ratio >= threshold }
         })
         probe.remove()
@@ -66,11 +68,11 @@ test('measures stock semantic text contrast in both modes', async ({ page, goto 
     })
     measurements.push(...results.map(result => ({ mode, ...result })))
   }
-  expect(measurements).toHaveLength(238)
+  expect(measurements).toHaveLength(280)
   expect(measurements.every(result => Number.isFinite(result.ratio) && result.ratio >= 1 && result.ratio <= 21)).toBe(true)
-  const report = testInfo.outputPath('stock-text-contrast.json')
+  const report = testInfo.outputPath('stock-semantic-contrast.json')
   await writeFile(report, JSON.stringify({ measurements }, null, 2))
-  await testInfo.attach('stock-text-contrast.json', {
+  await testInfo.attach('stock-semantic-contrast.json', {
     path: report,
     contentType: 'application/json',
   })
