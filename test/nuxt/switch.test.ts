@@ -56,6 +56,16 @@ describe('switch', () => {
     expect(classes).toContain('data-[state=checked]:bg-[var(--_selaras-color-fill)]')
   })
 
+  it('uses functional neutral tokens until the switch is checked', async () => {
+    const wrapper = await mountSuspended(Switch, { props: { color: 'danger' } })
+    const trackClasses = wrapper.find('button').classes().join(' ')
+    const thumbClasses = wrapper.find('[data-state]').find('[data-state]').classes().join(' ')
+    expect(trackClasses).toContain('bg-[var(--selaras-resolved-border-default)]')
+    expect(trackClasses).not.toContain('bg-[var(--_selaras-color-border)]')
+    expect(thumbClasses).toContain('text-[var(--selaras-resolved-text-muted)]')
+    expect(thumbClasses).toContain('before:bg-[var(--selaras-resolved-border-hover)]')
+  })
+
   it('invalid wins over a custom color for the checked-state track, not the other way around', async () => {
     const wrapper = await mountSuspended(Switch, { props: { invalid: true, color: 'success', modelValue: true } })
     const classes = wrapper.find('button').classes().join(' ')

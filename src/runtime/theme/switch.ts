@@ -13,7 +13,7 @@ export const switchTheme = tv({
     // (the checked-state fill) comes entirely from the `color` variant
     // below now, not hardcoded here - same reasoning as every other
     // themed component that exposes `color`.
-    track: 'group relative inline-flex h-4.5 w-8 shrink-0 items-center rounded-[var(--selaras-resolved-radius-full)] bg-[var(--_selaras-color-border)] transition-colors focus-visible:outline-none data-[state=checked]:bg-[var(--_selaras-color-fill)]',
+    track: 'group relative inline-flex h-4.5 w-8 shrink-0 items-center rounded-[var(--selaras-resolved-radius-full)] bg-[var(--selaras-resolved-border-default)] transition-colors focus-visible:outline-none data-[state=checked]:bg-[var(--_selaras-color-fill)]',
     // Track/thumb sized down from the original 40x24/20px to 32x18/16px - a
     // 1px inset on each side at rest (translate-x-px, thumb centered
     // vertically via the track's own items-center), traveling to 15px when
@@ -25,7 +25,7 @@ export const switchTheme = tv({
     // (group-hover/group-focus-visible) - the -z-10 pseudo itself still
     // needs its own stacking context to stay scoped to the thumb, not
     // escape past it.
-    thumb: 'relative isolate flex items-center justify-center size-4 translate-x-px rounded-full bg-[var(--selaras-resolved-surface-default)] text-[var(--_selaras-color-text)] shadow-[var(--selaras-resolved-shadow-sm)] transition-transform before:absolute before:-inset-[8px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--_selaras-color-subtle-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] group-hover:before:[transform:scale(1)] group-focus-visible:before:[transform:scale(1)] data-[state=checked]:translate-x-[15px] data-[state=checked]:bg-[var(--_selaras-color-on-fill)] data-[state=checked]:text-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)]',
+    thumb: 'relative isolate flex items-center justify-center size-4 translate-x-px rounded-full bg-[var(--selaras-resolved-surface-default)] text-[var(--selaras-resolved-text-muted)] shadow-[var(--selaras-resolved-shadow-sm)] transition-transform before:absolute before:-inset-[8px] before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--selaras-resolved-border-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] group-hover:before:[transform:scale(1)] group-focus-visible:before:[transform:scale(1)] data-[state=checked]:translate-x-[15px] data-[state=checked]:bg-[var(--_selaras-color-on-fill)] data-[state=checked]:text-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)]',
     // The checked/unchecked/loading glyph rendered inside the thumb -
     // muted gray by default (the thumb itself stays white regardless of
     // `color`, so an icon needs its own contrast rather than inheriting
