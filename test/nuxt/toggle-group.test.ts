@@ -10,6 +10,15 @@ describe('toggleGroup', () => {
     expect(wrapper.html()).toContain('data-[state=on]:bg-[var(--_selaras-color-subtle)]')
   })
 
+  it('keeps unpressed segments neutral until Reka marks them on', async () => {
+    const wrapper = await mountSuspended(ToggleGroup, { props: { items: ['List', 'Grid'] } })
+
+    const classes = wrapper.find('button').attributes('class')
+    expect(classes).toContain('ring-[var(--selaras-resolved-border-default)]')
+    expect(classes).not.toContain('ring-[var(--_selaras-color-border)]')
+    expect(classes).toContain('data-[state=on]:bg-[var(--_selaras-color-subtle)]')
+  })
+
   it('normalizes a plain string item into { label: value, value }', async () => {
     const wrapper = await mountSuspended(ToggleGroup, { props: { items: ['List', 'Grid'] } })
 

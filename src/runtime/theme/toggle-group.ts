@@ -8,7 +8,10 @@ export const toggleGroupTheme = tv({
     // focus z-index bump keeps a hovered/focused item's own edge drawn
     // on top of its neighbor's instead of being clipped by it.
     root: 'inline-flex [&>*]:relative [&>*:hover]:z-10 [&>*:focus-visible]:z-10',
-    item: 'inline-flex items-center justify-center gap-1.5 font-medium rounded-[var(--selaras-resolved-radius-md)] transition-colors ring-1 ring-inset ring-[var(--_selaras-color-border)] text-[var(--selaras-resolved-text-muted)] hover:bg-[var(--selaras-resolved-surface-elevated)] hover:text-[var(--selaras-resolved-text-default)] disabled:opacity-50 disabled:pointer-events-none focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)] data-[state=on]:bg-[var(--_selaras-color-subtle)] data-[state=on]:text-[var(--_selaras-color-text)] data-[state=on]:hover:bg-[var(--_selaras-color-subtle-hover)]',
+    // Resting segments are neutral controls; the selected role begins when
+    // Reka exposes data-state="on" below. This keeps an unpressed group from
+    // looking preselected simply because its default role is primary.
+    item: 'inline-flex items-center justify-center gap-1.5 font-medium rounded-[var(--selaras-resolved-radius-md)] transition-colors ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] text-[var(--selaras-resolved-text-muted)] hover:bg-[var(--selaras-resolved-surface-elevated)] hover:text-[var(--selaras-resolved-text-default)] disabled:opacity-50 disabled:pointer-events-none focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)] data-[state=on]:bg-[var(--_selaras-color-subtle)] data-[state=on]:text-[var(--_selaras-color-text)] data-[state=on]:hover:bg-[var(--_selaras-color-subtle-hover)]',
     icon: 'shrink-0',
   },
   variants: {
