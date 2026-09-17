@@ -27,6 +27,16 @@ function run(label, command, args, cwd = consumerDir) {
   return result.stdout
 }
 
+function readPackedArchive(output) {
+  // npm 11 reports `npm pack --json` as an array; newer npm versions return
+  // the archive object directly. The compatibility gate supports both npm
+  // output shapes because release deliberately uses npm for its final pack.
+  const result = JSON.parse(output)
+  const archive = Array.isArray(result) ? result[0] : result
+  assert.ok(archive && typeof archive === 'object' && typeof archive.filename === 'string', 'npm pack must report its archive')
+  return archive
+}
+
 function installedManifest(name, require = nuxtRequire) {
   for (const directory of require.resolve.paths(name) ?? []) {
     const path = join(directory, name, 'package.json')
@@ -153,8 +163,8 @@ async function inspectConsumer({ prefixed, overridden }) {
 try {
   const npmCache = join(consumerDir, '.npm-cache')
   const packArguments = ['--cache', npmCache, 'pack', '--ignore-scripts', '--json', '--pack-destination', consumerDir]
-  const [selarasArchive] = JSON.parse(run('create the Selaras tarball', 'npm', packArguments, rootDir))
-  const [docsArchive] = JSON.parse(run('create the docs layer tarball', 'npm', packArguments, docsDir))
+  const selarasArchive = readPackedArchive(run('create the Selaras tarball', 'npm', packArguments, rootDir))
+  const docsArchive = readPackedArchive(run('create the docs layer tarball', 'npm', packArguments, docsDir))
   for (const archive of [selarasArchive, docsArchive]) {
     assert.ok(!archive.files.some(file => file.path.startsWith('src/') || file.path.startsWith('.notes/')), `${archive.filename} must not ship repository-only files`)
   }

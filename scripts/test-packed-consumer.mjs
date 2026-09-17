@@ -25,6 +25,16 @@ function run(label, command, args, cwd = consumerDir) {
   return result.stdout
 }
 
+function readPackedArchive(output) {
+  // npm 11 reports `npm pack --json` as an array; newer npm versions return
+  // the archive object directly. The compatibility gate supports both npm
+  // output shapes because release deliberately uses npm for its final pack.
+  const result = JSON.parse(output)
+  const archive = Array.isArray(result) ? result[0] : result
+  assert.ok(archive && typeof archive === 'object' && typeof archive.filename === 'string', 'npm pack must report its archive')
+  return archive
+}
+
 function installedManifest(name) {
   for (const directory of nuxtRequire.resolve.paths(name) ?? []) {
     const path = join(directory, name, 'package.json')
@@ -334,7 +344,7 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
 
 try {
   // The compatibility runner builds first; packing must not rebuild or stub dist.
-  const [archive] = JSON.parse(run('create the publishable tarball', 'npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', consumerDir], rootDir))
+  const archive = readPackedArchive(run('create the publishable tarball', 'npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', consumerDir], rootDir))
   assert.ok(archive.files.some(file => file.path === 'dist/module.mjs'))
   assert.ok(!archive.files.some(file => file.path.startsWith('src/') || file.path.startsWith('.notes/')))
   cpSync(join(rootDir, 'test/fixtures/packed'), consumerDir, { recursive: true })
