@@ -144,7 +144,12 @@ jobs:
           node-version: 24.19.0
 
       - name: Install dependencies
-        run: bun install
+        # Nuxt Content loads better-sqlite3 under Node while generating the
+        # static site. Bun's isolated linker can leave its native package
+        # unmaterialized; the docs-only hoisted install gives Node the
+        # package layout it expects without changing the library's normal
+        # development or release install strategy.
+        run: bun install --linker=hoisted
 
       - name: Playground prepare
         run: bun run dev:prepare
@@ -156,7 +161,7 @@ jobs:
       # accounts for it. Left unset for local `bun run dev:generate`, which
       # still defaults to `/`.
       - name: Generate static docs site
-        run: bun --bun run dev:generate
+        run: bun run dev:generate
         env:
           NUXT_APP_BASE_URL: /selaras/
 
