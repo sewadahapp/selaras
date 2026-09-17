@@ -36,16 +36,16 @@ function makeGroups(onSelect = vi.fn(), onSelectDisabled = vi.fn()) {
 }
 
 describe('commandPalette', () => {
-  it('uses the primary focus recipe for its search field on the palette frame', async () => {
+  it('uses the primary focus recipe on its search input, not the palette frame', async () => {
     useCommandPalette().open()
     wrapper = await mountSuspended(CommandPalette, { props: { groups: makeGroups() } })
     await macrotask()
 
     const dialog = document.body.querySelector('[role="dialog"]')!
-    const header = dialog.querySelector('input[role="combobox"]')!.parentElement!
+    const input = dialog.querySelector('input[role="combobox"]')!
     expect(dialog.getAttribute('data-selaras-color')).toBe('primary')
-    expect(dialog.className).toContain('focus-within:ring-[var(--_selaras-color-focus)]')
-    expect(header.className).not.toContain('focus-within:border-[var(--_selaras-color-focus)]')
+    expect(dialog.className).not.toContain('focus-within:ring-[var(--_selaras-color-focus)]')
+    expect(input.className).toContain('focus-visible:outline-[var(--_selaras-color-focus)]')
   })
 
   it('is closed until useCommandPalette().open() is called', async () => {
