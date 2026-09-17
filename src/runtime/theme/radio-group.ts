@@ -48,7 +48,7 @@ export const radioGroupTheme = tv({
     // rendered visibly jagged at normal (non-zoomed) browser scale; the
     // fractional width needs the arbitrary-value form since Tailwind's
     // named ring scale only has integer steps.
-    item: 'relative isolate flex shrink-0 items-center justify-center rounded-full ring-[1.5px] ring-inset ring-[var(--_selaras-color-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--_selaras-color-subtle-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)]',
+    item: 'relative isolate flex shrink-0 items-center justify-center rounded-full ring-[1.5px] ring-inset ring-[var(--selaras-resolved-border-default)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--selaras-resolved-border-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)]',
     // force-mount (see RadioGroup.vue) keeps this in the DOM for every
     // item regardless of checked state, so switching the selection scales
     // the old dot out and the new one in instead of an abrupt pop -
@@ -58,8 +58,8 @@ export const radioGroupTheme = tv({
     // transitions, so a transition-only version without force-mount would
     // just vanish instantly.
     indicator: 'rounded-full bg-[var(--_selaras-color-fill)] [transform:scale(0)] transition-transform duration-200 data-[state=checked]:[transform:scale(1)]',
-    label: 'select-none text-[var(--_selaras-color-text)]',
-    description: 'block select-none text-[var(--_selaras-color-text-hover)]',
+    label: 'select-none text-[var(--selaras-resolved-text-default)]',
+    description: 'block select-none text-[var(--selaras-resolved-text-muted)]',
     // Only rendered when an item has a description (wrapping the label and
     // description together so they stack under one another). The label
     // text visually sits a bit lower than its own line box's true center -

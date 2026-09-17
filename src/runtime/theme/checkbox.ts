@@ -20,7 +20,7 @@ export const checkboxTheme = tv({
     // (transparent instead of --selaras-resolved-surface-default), the same reason radio's item is
     // hollow - an opaque fill there would block the halo from showing as
     // a full disc instead of a ring cut off by the box's own edge.
-    box: 'relative isolate flex shrink-0 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] ring-[1.5px] ring-inset ring-[var(--_selaras-color-border)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--_selaras-color-subtle-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:bg-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)] data-[state=indeterminate]:bg-[var(--_selaras-color-fill)] data-[state=indeterminate]:ring-[var(--_selaras-color-fill)] data-[state=indeterminate]:before:bg-[var(--_selaras-color-fill-hover)]',
+    box: 'relative isolate flex shrink-0 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] ring-[1.5px] ring-inset ring-[var(--selaras-resolved-border-default)] transition-colors before:absolute before:-z-10 before:[transform:scale(0)] before:rounded-full before:bg-[var(--selaras-resolved-border-hover)] before:opacity-35 before:transition-transform before:duration-200 before:content-[\'\'] hover:before:[transform:scale(1)] focus-visible:outline-none focus-visible:before:[transform:scale(1)] data-[state=checked]:bg-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)] data-[state=indeterminate]:bg-[var(--_selaras-color-fill)] data-[state=indeterminate]:ring-[var(--_selaras-color-fill)] data-[state=indeterminate]:before:bg-[var(--_selaras-color-fill-hover)]',
     indicator: 'flex items-center justify-center text-[var(--_selaras-color-on-fill)]',
     // A hand-drawn stroke path (not an Icon/icon-registry glyph, unlike
     // every other icon in this library) animated via stroke-dasharray/
@@ -35,8 +35,8 @@ export const checkboxTheme = tv({
     // at the stroke's own end with no visible overshoot or gap.
     checkIcon: '[stroke-dasharray:20px] [stroke-dashoffset:20px] transition-[stroke-dashoffset] duration-200 data-[state=checked]:[stroke-dashoffset:0]',
     indeterminateIcon: '[stroke-dasharray:14px] [stroke-dashoffset:14px] transition-[stroke-dashoffset] duration-200 data-[state=indeterminate]:[stroke-dashoffset:0]',
-    label: 'select-none text-sm text-[var(--_selaras-color-text)]',
-    description: 'block select-none text-xs text-[var(--_selaras-color-text-hover)]',
+    label: 'select-none text-sm text-[var(--selaras-resolved-text-default)]',
+    description: 'block select-none text-xs text-[var(--selaras-resolved-text-muted)]',
     // Only rendered when there's a description (wrapping the label and
     // description together so they stack under one another) - same font-
     // baseline correction as RadioGroup's own labelGroup slot (see its

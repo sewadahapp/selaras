@@ -58,6 +58,14 @@ describe('checkbox', () => {
     expect(classes).toContain('data-[state=checked]:bg-[var(--_selaras-color-fill)]')
   })
 
+  it('uses functional neutral tokens until the box is checked', async () => {
+    const wrapper = await mountSuspended(Checkbox, { props: { color: 'danger' } })
+    const classes = wrapper.find('button').classes().join(' ')
+    expect(classes).toContain('ring-[var(--selaras-resolved-border-default)]')
+    expect(classes).toContain('before:bg-[var(--selaras-resolved-border-hover)]')
+    expect(classes).not.toContain('ring-[var(--_selaras-color-border)]')
+  })
+
   it('invalid wins over a custom color for the checked-state ring, not the other way around', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { invalid: true, color: 'success', modelValue: true } })
     const classes = wrapper.find('button').classes().join(' ')

@@ -72,6 +72,14 @@ describe('radioGroup', () => {
     expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
   })
 
+  it('uses functional neutral tokens until an item is checked', async () => {
+    const wrapper = await mountSuspended(RadioGroup, { props: { items: ['one', 'two'], color: 'danger' } })
+    const classes = wrapper.find('button').classes().join(' ')
+    expect(classes).toContain('ring-[var(--selaras-resolved-border-default)]')
+    expect(classes).toContain('before:bg-[var(--selaras-resolved-border-hover)]')
+    expect(classes).not.toContain('ring-[var(--_selaras-color-border)]')
+  })
+
   it('invalid wins over a custom color for the checked-state ring, not the other way around', async () => {
     const wrapper = await mountSuspended(RadioGroup, {
       props: { items: ['one'], color: 'success', invalid: true, modelValue: 'one' },
