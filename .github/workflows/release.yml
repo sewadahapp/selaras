@@ -46,11 +46,7 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        # The release candidate runs Nuxt Content and vue-tsc under Node.
-        # Bun's isolated linker can leave their native or compiler files
-        # unmaterialized; use the Node-compatible layout in CI while leaving
-        # the repository's normal development install strategy unchanged.
-        run: bun install --linker=hoisted
+        run: bun install
 
       - name: Playground prepare
         run: bun run dev:prepare
@@ -163,12 +159,7 @@ jobs:
           node-version: 24.19.0
 
       - name: Install dependencies
-        # Nuxt Content loads better-sqlite3 under Node while generating the
-        # static site. Bun's isolated linker can leave its native package
-        # unmaterialized; the docs-only hoisted install gives Node the
-        # package layout it expects without changing the library's normal
-        # development or release install strategy.
-        run: bun install --linker=hoisted
+        run: bun install
 
       - name: Playground prepare
         run: bun run dev:prepare

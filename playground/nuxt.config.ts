@@ -55,6 +55,14 @@ function isFakeDemoLinkedPath(path: string) {
 
 export default defineNuxtConfig({
   modules: ['../src/module', '@nuxt/content', '@nuxt/fonts'],
+  // The supported Node range starts at 22.19, where node:sqlite is available.
+  // Keep Content on that built-in connector so the documentation playground
+  // does not need a native better-sqlite3 installation.
+  content: {
+    experimental: {
+      sqliteConnector: 'native',
+    },
+  },
   css: ['~/assets/css/global.css'],
   devtools: { enabled: true },
   compatibilityDate: 'latest',
