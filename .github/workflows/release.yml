@@ -46,7 +46,11 @@ jobs:
       - run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: bun install
+        # The release candidate runs Nuxt Content and vue-tsc under Node.
+        # Bun's isolated linker can leave their native or compiler files
+        # unmaterialized; use the Node-compatible layout in CI while leaving
+        # the repository's normal development install strategy unchanged.
+        run: bun install --linker=hoisted
 
       - name: Playground prepare
         run: bun run dev:prepare
