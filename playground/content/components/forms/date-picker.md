@@ -441,7 +441,7 @@ every slot and variant - here's `DatePicker`'s own theme file:
 | `preventDeselect` | `boolean` (not `timeOnly`) | `false` |
 | `invalid` | `boolean` | `false` |
 | `clearable` | `boolean` | `false` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
+| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
 | `activeColor` | same as `color` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `arrow` | `boolean` | `false` |

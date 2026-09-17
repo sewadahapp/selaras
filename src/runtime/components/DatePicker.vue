@@ -54,9 +54,7 @@ const props = withDefaults(defineProps<DatePickerProps>(), {
   closeOnSelect: true,
   triggerMode: 'field',
   granularity: 'day',
-  // DatePicker is a form control: like Input, Select, and Autocomplete, its
-  // neutral resting chrome becomes the primary focus recipe by default.
-  color: 'primary',
+  color: 'neutral',
   activeColor: 'primary',
   minuteStep: 1,
   arrow: false,
@@ -564,7 +562,11 @@ const theme = useComponentTheme('datePicker', datePickerTheme)
 const ui = computed(() => theme.value({ size: effectiveSize.value, invalid: datePickerInvalid.value, range: props.range }))
 const fieldColor = computed(() => datePickerInvalid.value
   ? 'danger'
-  : resolveRegisteredColorRole(props.color, 'neutral'))
+  // DatePicker deliberately separates neutral calendar chrome (`color`) from
+  // active semantics (`activeColor`). The field focus ring belongs to the
+  // latter, so its default remains primary without recoloring icons or every
+  // unselected day/month/year in the popover.
+  : resolveRegisteredColorRole(props.activeColor, 'primary'))
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const fieldProps = computed(() => resolveSlot(ui.value.field, props.ui?.field))
@@ -717,7 +719,7 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(value)"
   >
     <DateRangePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" :data-selaras-color="fieldColor" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <DateRangePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="segment in segments.start" :key="`start-${segment.part}`">
             <DateRangePickerInput as="span" type="start" :part="segment.part" v-bind="segmentProps">
@@ -835,7 +837,7 @@ const buttonTriggerUi = computed(() => ({
 
   <PopoverRoot v-else-if="timeOnly" :open="open" :data-selaras-color="fieldColor" @update:open="onUpdateOpen">
     <PopoverAnchor as-child>
-      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" :data-selaras-color="fieldColor" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <TimeFieldRoot
           :id="datePickerId"
           v-slot="{ segments }"
@@ -978,7 +980,7 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(normalizeForGranularity(value as DateValue | undefined))"
   >
     <DatePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" :data-selaras-color="fieldColor" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <DatePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="(segment, index) in visibleSegments(segments)" :key="`${segment.part}-${index}`">
             <DatePickerInput as="span" :part="segment.part" v-bind="segmentProps">

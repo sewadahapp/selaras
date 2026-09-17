@@ -110,11 +110,15 @@ describe('datePicker', () => {
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
   })
 
-  it('uses the primary focus recipe by default, like other form controls', async () => {
-    wrapper = await mountSuspended(DatePicker)
+  it('uses the active primary recipe for field focus without recoloring neutral calendar chrome', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15) } })
 
     expect(wrapper.find('[data-selaras-color="primary"]').exists()).toBe(true)
     expect(wrapper.html()).toContain('focus-within:ring-[var(--_selaras-color-focus)]')
+
+    await openCalendar(wrapper)
+    expect(dayButton('10').getAttribute('data-selaras-color')).toBe('neutral')
+    expect(dayButton('15').getAttribute('data-selaras-color')).toBe('primary')
   })
 
   it('renders a day-number button for every day in the placeholder month', async () => {
