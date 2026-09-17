@@ -50,6 +50,10 @@ jobs:
           RELEASE_VERSION: ${{ inputs.version }}
         run: npx changelogen --bump -r "$RELEASE_VERSION"
 
+      - name: Add 1.0 migration summary
+        if: inputs.version == '1.0.0'
+        run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
+
       - name: Install Chromium for candidate validation
         run: bunx playwright install --with-deps chromium
 

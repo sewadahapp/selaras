@@ -87,6 +87,13 @@ jobs:
             npx changelogen --bump "--$RELEASE_BUMP"
           fi
 
+      # Changelogen preserves the complete commit history. The first stable
+      # release adds a short user-facing upgrade summary ahead of it; the
+      # release body below is read from this same generated entry.
+      - name: Add 1.0 migration summary
+        if: inputs.version == '1.0.0'
+        run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
+
       # Validate the versioned release candidate itself, including generated
       # declarations, a fresh packed install, and Chromium hydration/portal
       # behavior. CI's matrix remains broader; this is the publish-critical
