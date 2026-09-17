@@ -26,11 +26,13 @@ function run(label, command, args, cwd = consumerDir) {
 }
 
 function readPackedArchive(output) {
-  // npm 11 reports `npm pack --json` as an array; newer npm versions return
-  // the archive object directly. The compatibility gate supports both npm
-  // output shapes because release deliberately uses npm for its final pack.
+  // npm 11 reports `npm pack --json` as an array. npm 12 returns an object
+  // keyed by package name. The compatibility gate supports both because
+  // release deliberately uses npm for its final pack.
   const result = JSON.parse(output)
-  const archive = Array.isArray(result) ? result[0] : result
+  const archives = Array.isArray(result) ? result : Object.values(result)
+  assert.equal(archives.length, 1, 'npm pack must report exactly one archive')
+  const [archive] = archives
   assert.ok(archive && typeof archive === 'object' && typeof archive.filename === 'string', 'npm pack must report its archive')
   return archive
 }
