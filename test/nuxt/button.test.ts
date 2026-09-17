@@ -122,9 +122,10 @@ describe('button', () => {
     expect(wrapper.classes()).toContain('px-3')
   })
 
-  it('the `text` variant never adds a background class, only a hover text-color shift', async () => {
+  it('the `text` variant never adds background or border chrome, only a hover text-color shift', async () => {
     const wrapper = await mountSuspended(Button, { props: { variant: 'text', color: 'neutral' }, slots: { default: () => 'Clear' } })
     expect(wrapper.classes().some(c => c.includes('bg-'))).toBe(false)
+    expect(wrapper.classes().some(c => c.includes('ring-') || c.startsWith('border'))).toBe(false)
     expect(wrapper.classes()).toContain('hover:text-[var(--_selaras-color-text-hover)]')
   })
 

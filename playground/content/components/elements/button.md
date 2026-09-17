@@ -75,11 +75,17 @@ shifts on hover. Meant for an action button that sits tight against another
 control's own border, like a field's clear button - `ghost`'s hover-fill
 would otherwise visually compete with that border right at the seam:
 
+The border in this comparison belongs to the illustrative field, not either
+button.
+
 ::component-example{name="button-text"}
 ::
 
 ```vue-html
-<SButton icon="hugeicons:cancel-01" variant="text" aria-label="Clear" />
+<div class="flex items-center rounded-[var(--selaras-resolved-radius-md)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)]">
+  <span>Example field</span>
+  <SButton icon="hugeicons:cancel-01" variant="text" aria-label="Clear" />
+</div>
 ```
 
 ### Loading
