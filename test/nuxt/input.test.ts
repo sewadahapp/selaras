@@ -32,11 +32,15 @@ describe('input', () => {
     expect(wrapper.attributes('aria-labelledby')).toBeUndefined()
   })
 
-  it('forwards a public class to the editable input while keeping the wrapper target explicit', async () => {
-    const wrapper = await mountSuspended(Input, { attrs: { class: 'w-48 custom-input' } })
+  it('applies a public class to the positioned root so trailing affordances stay inside its width', async () => {
+    const wrapper = await mountSuspended(Input, {
+      attrs: { class: 'w-48 custom-input' },
+      props: { modelValue: 'hello', clearable: true },
+    })
 
-    expect(wrapper.find('input').classes()).toEqual(expect.arrayContaining(['w-48', 'custom-input']))
-    expect(wrapper.classes()).not.toContain('custom-input')
+    expect(wrapper.classes()).toEqual(expect.arrayContaining(['relative', 'w-48', 'custom-input']))
+    expect(wrapper.find('input').classes()).not.toContain('custom-input')
+    expect(wrapper.find('button').classes()).toContain('absolute')
   })
 
   it('renders the leading and trailing icons when given', async () => {

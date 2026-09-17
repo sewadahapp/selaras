@@ -3,7 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { InputThemeSlots } from '../theme/input'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, mergeProps, useAttrs } from 'vue'
+import { computed, mergeProps } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
@@ -46,8 +46,6 @@ export interface InputEmits {
 }
 
 const field = useFormField()
-const attrs = useAttrs()
-
 const inputId = computed(() => props.id ?? field?.id)
 const inputInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
@@ -81,10 +79,13 @@ const ui = computed(() => theme.value({
 }))
 
 const isInputAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA11yAttr(key)
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isInputAttr, includeClass: false })
+// A class on SInput controls its positioned wrapper, as documented: width and
+// layout must include the absolute leading/trailing affordances. Consumers can
+// still target the native input itself with ui.base.
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isInputAttr })
 const nativeInputAttrs = useFallthroughAttrs(isInputAttr)
 const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
-const inputProps = computed(() => mergeProps(baseProps.value, { class: attrs.class }, nativeInputAttrs.value))
+const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.value))
 </script>
 
 <template>
