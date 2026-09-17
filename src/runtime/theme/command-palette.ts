@@ -6,11 +6,11 @@ export const commandPaletteTheme = tv({
     // Top-anchored (not vertically centered like Modal) - the conventional
     // command-palette position, and it means the dialog doesn't visibly
     // jump up and down as the result list grows/shrinks while typing.
-    content: 'fixed left-1/2 top-24 z-[var(--selaras-resolved-z-modal)] flex max-h-[min(28rem,calc(100vh-8rem))] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 flex-col overflow-hidden rounded-[var(--selaras-resolved-radius-lg)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-    // The search input is the palette's only editor. Its focused state is
-    // expressed on this visible field boundary rather than as an outline on
-    // the transparent input itself.
-    header: 'flex shrink-0 items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-4 transition-colors focus-within:border-[var(--_selaras-color-focus)]',
+    // The search input is the palette's only editor. Its focus indicator
+    // belongs on the palette's rounded frame, not only its internal divider:
+    // a primary divider reads disconnected from the rest of the surface.
+    content: 'fixed left-1/2 top-24 z-[var(--selaras-resolved-z-modal)] flex max-h-[min(28rem,calc(100vh-8rem))] w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 flex-col overflow-hidden rounded-[var(--selaras-resolved-radius-lg)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-lg)] ring-1 ring-[var(--selaras-resolved-border-default)] transition-[box-shadow] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] focus:outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+    header: 'flex shrink-0 items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-4',
     searchIcon: 'size-4.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     input: 'h-12 flex-1 bg-transparent text-sm text-[var(--selaras-resolved-text-default)] placeholder:text-[var(--selaras-resolved-text-muted)] focus:outline-none',
     list: 'flex-1 overflow-y-auto p-1',
