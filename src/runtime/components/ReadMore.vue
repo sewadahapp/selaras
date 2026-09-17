@@ -91,8 +91,8 @@ const triggerIconProps = computed(() => resolveSlot(ui.value.triggerIcon, props.
       v-bind="contentProps"
     >
       <slot />
+      <div v-if="truncated && !open" v-bind="fadeProps" />
     </div>
-    <div v-if="truncated && !open" v-bind="fadeProps" />
     <button
       v-if="truncated"
       type="button"

@@ -37,6 +37,15 @@ describe('readMore', () => {
     expect(content.attributes('style')).toContain('max-height: 120px')
   })
 
+  it('anchors the collapsed fade to the clipped content instead of the trigger row', async () => {
+    const wrapper = await mountSuspended(ReadMore, { props: {} })
+    const content = wrapper.find('[id^="selaras-read-more-content-"]')
+    const fade = content.find('div')
+
+    expect(content.classes()).toContain('relative')
+    expect(fade.classes()).toContain('bottom-0')
+  })
+
   it('clicking the trigger flips the label to "Show less" and removes the fade', async () => {
     const wrapper = await mountSuspended(ReadMore, { props: {} })
 
