@@ -36,6 +36,17 @@ function makeGroups(onSelect = vi.fn(), onSelectDisabled = vi.fn()) {
 }
 
 describe('commandPalette', () => {
+  it('uses the primary focus recipe for its search field boundary', async () => {
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, { props: { groups: makeGroups() } })
+    await macrotask()
+
+    const dialog = document.body.querySelector('[role="dialog"]')!
+    const header = dialog.querySelector('input[role="combobox"]')!.parentElement!
+    expect(dialog.getAttribute('data-selaras-color')).toBe('primary')
+    expect(header.className).toContain('focus-within:border-[var(--_selaras-color-focus)]')
+  })
+
   it('is closed until useCommandPalette().open() is called', async () => {
     wrapper = await mountSuspended(CommandPalette, { props: { groups: makeGroups() } })
 

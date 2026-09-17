@@ -54,7 +54,9 @@ const props = withDefaults(defineProps<DatePickerProps>(), {
   closeOnSelect: true,
   triggerMode: 'field',
   granularity: 'day',
-  color: 'neutral',
+  // DatePicker is a form control: like Input, Select, and Autocomplete, its
+  // neutral resting chrome becomes the primary focus recipe by default.
+  color: 'primary',
   activeColor: 'primary',
   minuteStep: 1,
   arrow: false,

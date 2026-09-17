@@ -236,7 +236,9 @@ function itemId(index: number) {
         :style="themeBindings.style"
         v-bind="overlayProps"
       />
-      <DialogContent :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps" @open-auto-focus="onOpenAutoFocus">
+      <!-- CommandPalette has one built-in search field, so it uses the same
+           primary focus role as the other default form controls. -->
+      <DialogContent :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" data-selaras-color="primary" v-bind="contentProps" @open-auto-focus="onOpenAutoFocus">
         <DialogTitle :class="applyClassPrefix('sr-only')">
           {{ messages.commandPalette }}
         </DialogTitle>
