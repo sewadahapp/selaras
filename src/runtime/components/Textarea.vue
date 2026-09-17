@@ -3,13 +3,14 @@ import type { VariantProps } from 'tailwind-variants'
 import type { TextareaThemeSlots } from '../theme/textarea'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, mergeProps, nextTick, onMounted, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { textareaTheme } from '../theme/textarea'
+import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -81,14 +82,13 @@ const ui = computed(() => theme.value({
   autoresize: props.autoresize,
 }))
 
-// Plain resolveSlot (no $attrs merge) - unlike Input.vue's own root, which
-// merges fallthrough attrs onto its wrapper div. Textarea had no wrapper
-// at all before this, so an attr like `maxlength`/`spellcheck` already
-// landed on the real <textarea>; keeping that (not copying Input's own
-// wrapper-catches-fallthrough shape) avoids silently regressing it once
-// this wrapper exists purely for icon/clear positioning.
-const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
-const baseProps = useRootProps(() => ui.value.base, () => props.ui?.base)
+const isTextareaAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA11yAttr(key)
+// The wrapper owns positioning for the absolute affordances, so public layout
+// classes belong here. Native textarea attributes and listeners still route to
+// the editable element below.
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isTextareaAttr })
+const nativeTextareaAttrs = useFallthroughAttrs(isTextareaAttr)
+const baseProps = computed(() => mergeProps(resolveSlot(ui.value.base, props.ui?.base), nativeTextareaAttrs.value))
 
 const textareaRef = ref<HTMLTextAreaElement>()
 

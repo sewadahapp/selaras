@@ -1,5 +1,5 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import Textarea from '../../src/runtime/components/Textarea.vue'
 
 describe('textarea', () => {
@@ -14,6 +14,22 @@ describe('textarea', () => {
     const textarea = wrapper.find('textarea')
     await textarea.setValue('Hello world')
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Hello world'])
+  })
+
+  it('keeps layout classes on the positioned root and native attributes on the textarea', async () => {
+    const onFocus = vi.fn()
+    const wrapper = await mountSuspended(Textarea, {
+      attrs: { class: 'max-w-md', maxlength: 20, onFocus },
+      props: { modelValue: 'hello', clearable: true },
+    })
+    const textarea = wrapper.find('textarea')
+
+    expect(wrapper.classes()).toEqual(expect.arrayContaining(['relative', 'max-w-md']))
+    expect(textarea.classes()).not.toContain('max-w-md')
+    expect(textarea.attributes('maxlength')).toBe('20')
+    expect(wrapper.find('button').classes()).toContain('absolute')
+    await textarea.trigger('focus')
+    expect(onFocus).toHaveBeenCalledOnce()
   })
 
   it('defaults rows to 3 and honors an explicit override', async () => {
