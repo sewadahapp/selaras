@@ -12,6 +12,10 @@ on:
           - patch
           - minor
           - major
+      version:
+        description: Exact release version (for example 1.0.0; overrides bump)
+        required: false
+        type: string
 
 jobs:
   release:
@@ -67,10 +71,21 @@ jobs:
       # GitHub). Publishing first means a failure here simply stops the
       # job - there's nothing to revert because nothing was pushed.
       # `bump` defaults to "auto" (changelogen infers patch/minor/major
-      # from commit types since the last tag) - the workflow input only
-      # overrides it when explicitly set to patch/minor/major.
+      # from commit types since the last tag). `version` is an exact override:
+      # SemVer's pre-1.0 major bump turns 0.1.1 into 0.2.0, while the first
+      # stable release must explicitly request 1.0.0.
       - name: Bump version
-        run: npx changelogen --bump ${{ inputs.bump != 'auto' && format('--{0}', inputs.bump) || '' }}
+        env:
+          RELEASE_BUMP: ${{ inputs.bump }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          if [ -n "$RELEASE_VERSION" ]; then
+            npx changelogen --bump -r "$RELEASE_VERSION"
+          elif [ "$RELEASE_BUMP" = "auto" ]; then
+            npx changelogen --bump
+          else
+            npx changelogen --bump "--$RELEASE_BUMP"
+          fi
 
       # Validate the versioned release candidate itself, including generated
       # declarations, a fresh packed install, and Chromium hydration/portal
