@@ -4,6 +4,10 @@
   color: inherit;
 }
 
+.selaras-docs-root {
+  background: var(--selaras-resolved-surface-canvas, var(--selaras-resolved-surface-default));
+}
+
 .selaras-docs-skip-link {
   position: fixed;
   z-index: 100;
