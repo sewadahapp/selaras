@@ -12,7 +12,6 @@ import { chromium } from '@playwright/test'
 const rootDir = fileURLToPath(new URL('..', import.meta.url))
 const docsDir = join(rootDir, 'packages/docs')
 const rootRequire = createRequire(join(rootDir, 'package.json'))
-const playgroundRequire = createRequire(join(rootDir, 'playground/package.json'))
 const nuxtRequire = createRequire(rootRequire.resolve('nuxt/package.json'))
 const consumerDir = mkdtempSync(join(tmpdir(), 'selaras-docs-layer-'))
 const normalOnly = process.env.SELARAS_DOCS_LAYER_NORMAL_ONLY === '1'
@@ -212,10 +211,9 @@ try {
   assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')
   cpSync(fixtureDir, consumerDir, { recursive: true })
   const dependencies = Object.fromEntries(
-    ['nuxt', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']
+    ['nuxt', 'vue', 'typescript', 'vue-tsc']
       .map(name => [name, installedManifest(name).version]),
   )
-  dependencies['@nuxt/content'] = installedManifest('@nuxt/content', playgroundRequire).version
   dependencies['@sewadah/selaras'] = `file:./${selarasArchive.filename}`
   dependencies['@sewadah/selaras-docs'] = `file:./${docsArchive.filename}`
   writeFileSync(join(consumerDir, 'package.json'), `${JSON.stringify({ name: 'selaras-packed-docs-layer-consumer', private: true, type: 'module', dependencies }, null, 2)}\n`)

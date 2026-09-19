@@ -35,7 +35,7 @@ watch(() => route.path, () => {
         :key="`${link.to}:${link.label ?? link.icon ?? ''}`"
         :to="link.to"
         :target="link.target"
-        class="selaras-docs-header-link"
+        class="selaras-docs-header-link selaras-docs-header-link--desktop"
         :aria-label="link.ariaLabel ?? link.label"
       >
         <SIcon v-if="link.icon" :name="link.icon" />
@@ -46,7 +46,7 @@ watch(() => route.path, () => {
         :to="repositoryUrl"
         target="_blank"
         rel="noreferrer"
-        class="selaras-docs-header-link"
+        class="selaras-docs-header-link selaras-docs-header-link--desktop"
         aria-label="Source repository"
       >
         <span>Source</span>

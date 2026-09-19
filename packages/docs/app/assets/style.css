@@ -4,6 +4,11 @@
   color: inherit;
 }
 
+:root {
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
 .selaras-docs-skip-link {
   position: fixed;
   z-index: 100;
@@ -137,6 +142,10 @@
 @media (max-width: 63.999rem) {
   .selaras-docs-main {
     padding: 1.5rem;
+  }
+
+  .selaras-docs-header-link--desktop {
+    display: none;
   }
 
   .selaras-docs-footer-inner {
