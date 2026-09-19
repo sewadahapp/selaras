@@ -139,7 +139,7 @@
     padding: 1.5rem;
   }
 
-  .selaras-docs-header-link--desktop {
+  .selaras-docs-header-link.selaras-docs-header-link--desktop {
     display: none;
   }
 
