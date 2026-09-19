@@ -117,6 +117,7 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     }
     else {
       assert.match(html, /Open documentation navigation/, 'the default layer header must render')
+      assert.match(html, /Search documentation/, 'the default layer header must expose local navigation search')
       assert.match(html, /id="selaras-docs-main"/, 'the named layer layout must render a main landmark')
       assert.match(html, /href="#selaras-docs-main"[^>]*>Skip to content/, 'the shell must expose a skip link')
       assert.match(html, /aria-label="Documentation navigation"/, 'the shell must expose a labelled desktop navigation landmark')
@@ -168,6 +169,11 @@ async function inspectConsumer({ prefixed, overridden, example }) {
           await drawer.waitFor()
           await page.keyboard.press('Escape')
           await drawer.waitFor({ state: 'hidden' })
+          await page.getByRole('button', { name: 'Search documentation', exact: true }).click()
+          const commandPalette = page.getByRole('dialog', { name: 'Command palette', exact: true })
+          await commandPalette.waitFor()
+          await page.keyboard.press('Escape')
+          await commandPalette.waitFor({ state: 'hidden' })
           await page.setViewportSize({ width: 1280, height: 800 })
           await page.getByRole('complementary', { name: 'Table of contents', exact: true }).getByRole('link', { name: 'Installation', exact: true }).waitFor()
         }

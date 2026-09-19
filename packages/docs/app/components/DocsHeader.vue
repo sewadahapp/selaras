@@ -51,6 +51,7 @@ watch(() => route.path, () => {
       >
         <span>Source</span>
       </NuxtLink>
+      <DocsSearchButton v-if="docsConfig.header?.search !== false" />
       <DocsColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
       <SButton
         variant="ghost"
