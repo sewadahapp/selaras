@@ -11,12 +11,12 @@ import { chromium } from '@playwright/test'
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url))
 const docsDir = join(rootDir, 'packages/docs')
-const fixtureDir = join(rootDir, 'test/fixtures/docs-layer')
 const rootRequire = createRequire(join(rootDir, 'package.json'))
 const playgroundRequire = createRequire(join(rootDir, 'playground/package.json'))
 const nuxtRequire = createRequire(rootRequire.resolve('nuxt/package.json'))
 const consumerDir = mkdtempSync(join(tmpdir(), 'selaras-docs-layer-'))
 const normalOnly = process.env.SELARAS_DOCS_LAYER_NORMAL_ONLY === '1'
+const fixtureDir = join(rootDir, `test/fixtures/${normalOnly ? 'docs-layer-minimal' : 'docs-layer'}`)
 
 function run(label, command, args, cwd = consumerDir) {
   console.log(`[docs-layer] ${label}`)
@@ -64,7 +64,7 @@ async function findFreePort() {
   return port
 }
 
-async function inspectConsumer({ prefixed, overridden }) {
+async function inspectConsumer({ prefixed, overridden, example }) {
   console.log(`[docs-layer] inspect ${prefixed ? 'prefixed' : 'normal'} ${overridden ? 'override' : 'default'} consumer`)
   const port = await findFreePort()
   const server = spawn(process.execPath, ['.output/server/index.mjs'], {
@@ -100,7 +100,8 @@ async function inspectConsumer({ prefixed, overridden }) {
     assert.equal(response.status, 200)
     const html = await response.text()
     assert.match(html, /<h1[^>]*>[\s\S]*Getting started/, 'the consumer-owned docs collection must render through the layer route')
-    assert.match(html, /id="consumer-example"/, 'the layer Content component must resolve a consumer-owned example')
+    if (example)
+      assert.match(html, /id="consumer-example"/, 'the layer Content component must resolve a consumer-owned example')
     if (overridden) {
       assert.match(html, /id="consumer-docs-header"/, 'the consuming app must override a layer component')
       assert.doesNotMatch(html, /Open documentation navigation/, 'the overridden component must replace the layer header')
@@ -121,7 +122,8 @@ async function inspectConsumer({ prefixed, overridden }) {
     }))).join('\n')
     const prefix = prefixed ? 'tw\\:' : ''
     assert.ok(css.includes(`.${prefix}inline-flex`), 'Selaras CSS must share the consumer Tailwind compilation')
-    assert.ok(css.includes(`--${prefixed ? 'tw-' : ''}breakpoint-${prefixed ? 'tablet' : 'laptop'}:60rem`), 'the consumer owns the emitted breakpoint')
+    if (prefixed)
+      assert.ok(css.includes('--tw-breakpoint-tablet:60rem'), 'the advanced consumer owns the emitted breakpoint')
     assert.ok(css.includes('.selaras-docs-content button p'), 'the layer stylesheet must be imported through the consumer entry')
     if (process.env.SELARAS_DOCS_LAYER_BROWSER) {
       const browser = await chromium.launch()
@@ -135,7 +137,8 @@ async function inspectConsumer({ prefixed, overridden }) {
         })
         await page.goto(pageUrl.href, { waitUntil: 'networkidle' })
         await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
-        await page.locator('#consumer-example').waitFor()
+        if (example)
+          await page.locator('#consumer-example').waitFor()
         if (!overridden) {
           await page.getByRole('button', { name: 'Open documentation navigation', exact: true }).click()
           const drawer = page.getByRole('dialog', { name: 'Documentation navigation', exact: true })
@@ -171,6 +174,9 @@ try {
     assert.ok(!archive.files.some(file => file.path.startsWith('src/') || file.path.startsWith('.notes/')), `${archive.filename} must not ship repository-only files`)
   }
   assert.ok(docsArchive.files.some(file => file.path === 'nuxt.config.mjs'))
+  assert.ok(docsArchive.files.some(file => file.path === 'content.config.ts'))
+  assert.ok(docsArchive.files.some(file => file.path === 'modules/docs.mjs'))
+  assert.ok(docsArchive.files.some(file => file.path === 'app/app.vue'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/ComponentExample.vue'))
   assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')
   cpSync(fixtureDir, consumerDir, { recursive: true })
@@ -191,22 +197,20 @@ try {
   const nuxtCli = join(dirname(consumerRequire.resolve('nuxt/package.json')), 'bin/nuxt.mjs')
   const vueTsc = join(dirname(consumerRequire.resolve('vue-tsc/package.json')), 'bin/vue-tsc.js')
   if (normalOnly) {
-    cpSync(join(consumerDir, 'components/DocsHeader.override.vue'), join(consumerDir, 'components/DocsHeader.vue'))
-    const configPath = join(consumerDir, 'nuxt.config.ts')
-    writeFileSync(configPath, readFileSync(configPath, 'utf8').replace('classPrefix: \'tw\'', 'classPrefix: undefined').replace('breakpoint: \'tablet\'', 'breakpoint: \'laptop\''))
-    const cssPath = join(consumerDir, 'main.css')
-    writeFileSync(cssPath, readFileSync(cssPath, 'utf8').replace(' prefix(tw)', '').replace('--breakpoint-tablet', '--breakpoint-laptop'))
-    run('build the normal-prefix consumer override', process.execPath, [nuxtCli, 'build'])
-    run('type-check generated normal-prefix contracts', process.execPath, [vueTsc, '--noEmit', '--project', 'tsconfig.json'])
-    await inspectConsumer({ prefixed: false, overridden: true })
+    assert.ok(!existsSync(join(consumerDir, 'app.vue')), 'the minimal consumer must use the layer app root')
+    assert.ok(!existsSync(join(consumerDir, 'content.config.ts')), 'the minimal consumer must use the layer Content collection')
+    assert.ok(!existsSync(join(consumerDir, 'main.css')), 'the minimal consumer must use the layer stylesheet')
+    run('build the minimal unprefixed consumer', process.execPath, [nuxtCli, 'build'])
+    run('type-check generated minimal-consumer contracts', process.execPath, [vueTsc, '--noEmit', '--project', 'tsconfig.json'])
+    await inspectConsumer({ prefixed: false, overridden: false, example: false })
   }
   else {
     run('build the default prefixed consumer', process.execPath, [nuxtCli, 'build'])
     run('type-check generated layer and Content contracts', process.execPath, [vueTsc, '--noEmit', '--project', 'tsconfig.json'])
-    await inspectConsumer({ prefixed: true, overridden: false })
+    await inspectConsumer({ prefixed: true, overridden: false, example: true })
     cpSync(join(consumerDir, 'components/DocsHeader.override.vue'), join(consumerDir, 'components/DocsHeader.vue'))
     run('rebuild the prefixed consumer override', process.execPath, [nuxtCli, 'build'])
-    await inspectConsumer({ prefixed: true, overridden: true })
+    await inspectConsumer({ prefixed: true, overridden: true, example: true })
   }
 }
 finally {

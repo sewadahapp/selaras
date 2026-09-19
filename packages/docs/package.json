@@ -4,13 +4,19 @@
   "version": "0.0.0",
   "description": "Nuxt Content documentation layer for Selaras",
   "exports": {
-    ".": "./nuxt.config.mjs",
+    ".": {
+      "types": "./types.d.ts",
+      "import": "./nuxt.config.mjs"
+    },
     "./style.css": "./app/assets/style.css"
   },
   "main": "./nuxt.config.mjs",
   "files": [
     "app",
-    "nuxt.config.mjs"
+    "content.config.ts",
+    "modules",
+    "nuxt.config.mjs",
+    "types.d.ts"
   ],
   "engines": {
     "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
@@ -21,6 +27,7 @@
   },
   "dependencies": {
     "@nuxt/content": "^3.16.0",
+    "@nuxt/kit": "^4.5.2",
     "@sewadah/selaras": "^0.2.0"
   }
 }
