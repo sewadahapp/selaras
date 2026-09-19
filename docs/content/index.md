@@ -4,8 +4,6 @@ description: Nuxt-first components for adaptable design systems.
 order: 1
 ---
 
-# Selaras
-
 Selaras is a Nuxt-first component library built on Reka UI, Tailwind CSS v4,
 and CSS custom properties.
 
