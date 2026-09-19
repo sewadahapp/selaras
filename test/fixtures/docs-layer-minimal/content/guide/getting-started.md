@@ -8,3 +8,7 @@ order: 1
 
 This page only needs Markdown. The layer owns the application shell, content
 collection and default stylesheet.
+
+## Installation
+
+The default page shell should expose this heading in its table of contents.

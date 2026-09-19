@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TocLink } from '@sewadah/selaras/components/ContentToc.vue'
 import ProseH1 from '@sewadah/selaras/components/ProseH1.vue'
 import ProseH2 from '@sewadah/selaras/components/ProseH2.vue'
 import ProseH3 from '@sewadah/selaras/components/ProseH3.vue'
@@ -27,11 +28,23 @@ const proseComponents = {
   h6: ProseH6,
   pre: ProsePre,
 }
+
+const tocLinks = computed(() => (page.value?.body?.toc?.links ?? []) as unknown as TocLink[])
+const surround = useDocsSurround()
 </script>
 
 <template>
-  <SContainer size="full">
-    <SPageHeader :description="page!.description" />
-    <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content" />
+  <SContainer size="full" class="selaras-docs-page">
+    <div class="selaras-docs-page-grid">
+      <article class="selaras-docs-article">
+        <p v-if="page!.description" class="selaras-docs-description">
+          {{ page!.description }}
+        </p>
+        <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose" />
+        <DocsEditLink :path="route.path" />
+        <SContentSurround :prev="surround.prev" :next="surround.next" class="selaras-docs-surround" />
+      </article>
+      <DocsTableOfContents :links="tocLinks" />
+    </div>
   </SContainer>
 </template>

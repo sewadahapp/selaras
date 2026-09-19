@@ -118,6 +118,11 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     else {
       assert.match(html, /Open documentation navigation/, 'the default layer header must render')
       assert.match(html, /id="selaras-docs-main"/, 'the named layer layout must render a main landmark')
+      assert.match(html, /href="#selaras-docs-main"[^>]*>Skip to content/, 'the shell must expose a skip link')
+      assert.match(html, /aria-label="Documentation navigation"/, 'the shell must expose a labelled desktop navigation landmark')
+      assert.match(html, /aria-label="Table of contents"/, 'Markdown headings must render a labelled table of contents')
+      if (prefixed)
+        assert.match(html, /href="https:\/\/github\.com\/sewadahapp\/selaras\/edit\/main\/content\/guide\/getting-started\.md"/, 'a configured GitHub repository must expose an edit link')
     }
     const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
       .filter(([tag]) => tag.includes('rel="stylesheet"'))
@@ -144,7 +149,10 @@ async function inspectConsumer({ prefixed, overridden, example }) {
           if (/hydration|mismatch|\[Selaras\]/i.test(message.text()))
             issues.push(message.text())
         })
-        await page.goto(pageUrl.href, { waitUntil: 'networkidle' })
+        // Icon providers and other optional browser requests must not turn a
+        // hydration assertion into a network-idle test. The following
+        // interactive checks wait for the hydrated UI they actually need.
+        await page.goto(pageUrl.href, { waitUntil: 'domcontentloaded' })
         await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
         if (example)
           await page.locator('#consumer-example').waitFor()
@@ -154,11 +162,14 @@ async function inspectConsumer({ prefixed, overridden, example }) {
           await page.getByRole('link', { name: 'Source repository', exact: true }).waitFor()
         }
         if (!overridden) {
+          await page.getByRole('link', { name: 'Skip to content', exact: true }).waitFor()
           await page.getByRole('button', { name: 'Open documentation navigation', exact: true }).click()
           const drawer = page.getByRole('dialog', { name: 'Documentation navigation', exact: true })
           await drawer.waitFor()
           await page.keyboard.press('Escape')
           await drawer.waitFor({ state: 'hidden' })
+          await page.setViewportSize({ width: 1280, height: 800 })
+          await page.getByRole('complementary', { name: 'Table of contents', exact: true }).getByRole('link', { name: 'Installation', exact: true }).waitFor()
         }
         else {
           await page.locator('#consumer-docs-header').waitFor()

@@ -8,5 +8,9 @@ order: 1
 
 This page belongs to the consumer-owned collection.
 
+## Installation
+
+The layer should provide navigation around ordinary Markdown headings.
+
 ::component-example{name="welcome"}
 ::

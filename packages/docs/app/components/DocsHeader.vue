@@ -49,16 +49,18 @@ watch(() => route.path, () => {
         class="selaras-docs-header-link"
         aria-label="Source repository"
       >
-        <SIcon name="hugeicons:github" />
+        <span>Source</span>
       </NuxtLink>
-      <SColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
+      <DocsColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
       <SButton
-        icon="hugeicons:sidebar-left-01"
         variant="ghost"
         color="neutral"
+        class="selaras-docs-nav-toggle"
         aria-label="Open documentation navigation"
         @click="navigationOpen = true"
-      />
+      >
+        Menu
+      </SButton>
     </template>
   </SHeader>
   <SDrawer v-model:open="navigationOpen" side="left" title="Documentation navigation" :handle="false">

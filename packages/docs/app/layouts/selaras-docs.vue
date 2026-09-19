@@ -1,8 +1,13 @@
 <template>
   <div class="min-h-screen bg-[var(--selaras-resolved-surface-canvas)] text-[var(--selaras-resolved-text-default)]">
+    <a class="selaras-docs-skip-link" href="#selaras-docs-main">Skip to content</a>
     <DocsHeader />
-    <main id="selaras-docs-main">
-      <slot />
-    </main>
+    <div class="selaras-docs-shell">
+      <DocsSidebar />
+      <main id="selaras-docs-main" class="selaras-docs-main" tabindex="-1">
+        <slot />
+      </main>
+    </div>
+    <DocsFooter />
   </div>
 </template>

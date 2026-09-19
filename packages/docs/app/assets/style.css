@@ -4,6 +4,154 @@
   color: inherit;
 }
 
+.selaras-docs-skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 0.75rem;
+  left: 0.75rem;
+  transform: translateY(-160%);
+  border-radius: var(--selaras-resolved-radius-md);
+  background: var(--selaras-resolved-color-primary-fill);
+  color: var(--selaras-resolved-color-primary-on-fill);
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+}
+
+.selaras-docs-skip-link:focus {
+  transform: translateY(0);
+  outline: 2px solid var(--selaras-resolved-color-primary-focus);
+  outline-offset: 2px;
+}
+
+.selaras-docs-shell {
+  display: flex;
+  width: min(100%, 90rem);
+  min-height: calc(100vh - 4rem);
+  margin: 0 auto;
+}
+
+.selaras-docs-sidebar {
+  border-inline-end: 1px solid var(--selaras-resolved-border-default);
+}
+
+.selaras-docs-main {
+  min-width: 0;
+  flex: 1;
+  padding: 2rem;
+}
+
+.selaras-docs-page {
+  max-width: 78rem;
+  margin: 0 auto;
+}
+
+.selaras-docs-page-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 3rem;
+}
+
+.selaras-docs-article {
+  min-width: 0;
+}
+
+.selaras-docs-description {
+  max-width: 44rem;
+  margin: 0 0 1.5rem;
+  color: var(--selaras-resolved-text-muted);
+  font-size: 1.125rem;
+  line-height: 1.65;
+}
+
+.selaras-docs-content {
+  min-width: 0;
+}
+
+.selaras-docs-toc {
+  width: 14rem;
+}
+
+.selaras-docs-edit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 2.5rem;
+  color: var(--selaras-resolved-text-muted);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.selaras-docs-edit-link:hover {
+  color: var(--selaras-resolved-text-default);
+  text-decoration: underline;
+}
+
+.selaras-docs-surround {
+  margin-top: 2rem;
+}
+
+.selaras-docs-footer {
+  border-top: 1px solid var(--selaras-resolved-border-default);
+}
+
+.selaras-docs-footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 5rem;
+}
+
+.selaras-docs-footer-text {
+  margin: 0;
+  color: var(--selaras-resolved-text-muted);
+  font-size: 0.875rem;
+}
+
+.selaras-docs-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.selaras-docs-footer-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--selaras-resolved-text-muted);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.selaras-docs-footer-links a:hover {
+  color: var(--selaras-resolved-text-default);
+  text-decoration: underline;
+}
+
+@media (min-width: 64rem) {
+  .selaras-docs-nav-toggle {
+    display: none;
+  }
+
+  .selaras-docs-page-grid {
+    grid-template-columns: minmax(0, 1fr) 14rem;
+  }
+}
+
+@media (max-width: 63.999rem) {
+  .selaras-docs-main {
+    padding: 1.5rem;
+  }
+
+  .selaras-docs-footer-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
 .selaras-docs-brand,
 .selaras-docs-header-link {
   display: inline-flex;
