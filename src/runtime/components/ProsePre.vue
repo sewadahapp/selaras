@@ -2,9 +2,11 @@
 import { computed, ref } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { proseTheme } from '../theme/prose'
+import { resolveFileIcon } from '../utils/file-icons'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Badge from './Badge.vue'
 import Button from './Button.vue'
+import Icon from './Icon.vue'
 
 defineOptions({ inheritAttrs: false })
 
@@ -14,11 +16,14 @@ export interface ProsePreProps {
   code?: string
   language?: string
   filename?: string
+  /** Overrides the file-type icon resolved from `filename`/`language`. */
+  icon?: string
   highlights?: number[]
   meta?: string
 }
 
 const icons = useIcons()
+const fileIcon = computed(() => props.icon ?? resolveFileIcon(props.language, props.filename))
 const theme = useComponentTheme('prose', proseTheme)
 const ui = computed(() => theme.value())
 
@@ -45,9 +50,11 @@ async function copy() {
 <template>
   <div v-bind="resolveSlot(ui.preWrapper, undefined)">
     <div v-if="filename || language || code" v-bind="resolveSlot(ui.preHeader, undefined)">
-      <span v-if="filename" v-bind="resolveSlot(ui.preFilename, undefined)">{{ filename }}</span>
-      <Badge v-else-if="language" :label="language" size="sm" variant="outline" />
-      <span v-else />
+      <span v-bind="resolveSlot(ui.preLabel, undefined)">
+        <Icon v-if="fileIcon" :name="fileIcon" v-bind="resolveSlot(ui.preIcon, undefined)" />
+        <span v-if="filename" v-bind="resolveSlot(ui.preFilename, undefined)">{{ filename }}</span>
+        <Badge v-else-if="language" :label="language" size="sm" variant="outline" />
+      </span>
       <Button
         v-if="code"
         v-bind="resolveSlot(ui.preCopyButton, undefined)"

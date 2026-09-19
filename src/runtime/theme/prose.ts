@@ -16,6 +16,8 @@ export const proseTheme = tv({
 
     preWrapper: 'overflow-hidden rounded-[var(--selaras-resolved-radius-md)] ring-1 ring-[var(--selaras-resolved-border-default)]',
     preHeader: 'flex items-center justify-between gap-2 border-b border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-elevated)] px-3 py-1.5',
+    preLabel: 'flex min-w-0 items-center gap-2',
+    preIcon: 'size-4',
     preFilename: 'font-mono text-xs text-[var(--selaras-resolved-text-muted)]',
     preCopyButton: 'shrink-0',
     pre: 'overflow-x-auto bg-[var(--selaras-resolved-surface-elevated)] p-4 font-mono text-sm leading-relaxed',

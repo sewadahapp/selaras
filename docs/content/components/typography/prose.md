@@ -57,7 +57,8 @@ Two elements have real interactive behavior a CSS class can't
 replicate, so they're still real components: `SProsePre` (a
 copy-to-clipboard button, via [Button](/components/elements/button),
 plus a filename/language header bar, via
-[Badge](/components/elements/badge)) and `SProseH1`-`SProseH6` (wraps
+[Badge](/components/elements/badge) and a file-type
+[Icon](/components/elements/icon)) and `SProseH1`-`SProseH6` (wraps
 heading content in a self-anchor `<a href="#id">` when given an `id` -
 this page's own headings work exactly this way).
 
@@ -77,13 +78,18 @@ Both are usable directly, the same as any other component:
 | `code` | `string` | - |
 | `language` | `string` | - |
 | `filename` | `string` | - |
+| `icon` | `string` | resolved from `filename`/`language` |
 | `highlights` | `number[]` | - |
 | `meta` | `string` | - |
 
 `code` drives the copy button (nothing renders if it's unset) and is also
 copied verbatim, regardless of what's in the default slot. The header bar
 shows `filename` if set, else a `Badge` for `language` if that's set, else
-nothing. `highlights` and `meta` are accepted but currently have no
+nothing. Beside either, a file-type icon is resolved from the filename's
+extension first, then the fence language - for example `vue` renders the
+`vscode-icons:file-type-vue` glyph - with no icon for an unrecognized
+type. Pass `icon` to override that resolution, or `ui.preIcon` to restyle
+it. `highlights` and `meta` are accepted but currently have no
 effect - there's no line-highlighting logic wired up yet anywhere in the
 component, so passing either does nothing visible today. They're reserved
 for that feature landing later; don't wire them up expecting output.
