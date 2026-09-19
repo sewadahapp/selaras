@@ -8,6 +8,7 @@ import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
 
 const route = useRoute()
+const appConfig = useAppConfig()
 const { data: page } = await useAsyncData(`selaras-docs:${route.path}`, () => queryCollection('docs').path(route.path).first())
 
 if (!page.value) {
@@ -15,7 +16,7 @@ if (!page.value) {
 }
 
 definePageMeta({ layout: 'selaras-docs' })
-useSeoMeta({ title: page.value.title, description: page.value.description })
+useSeoMeta({ title: page.value.title, description: page.value.description ?? appConfig.selarasDocs?.site?.description })
 
 const proseComponents = {
   h1: ProseH1,

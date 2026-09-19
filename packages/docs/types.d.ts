@@ -7,7 +7,54 @@ export interface SelarasDocsModuleOptions {
   css?: boolean
 }
 
+export interface SelarasDocsLink {
+  label?: string
+  to: string
+  icon?: string
+  target?: string
+  ariaLabel?: string
+}
+
+export interface SelarasDocsLogo {
+  light?: string
+  dark?: string
+  alt?: string
+}
+
+export interface SelarasDocsAppConfig {
+  site?: {
+    name?: string
+    description?: string
+    logo?: string | SelarasDocsLogo
+  }
+  repository?: {
+    url?: string
+    branch?: string
+    contentDirectory?: string
+    editLinks?: boolean
+  }
+  header?: {
+    title?: string
+    showTitle?: boolean
+    search?: boolean
+    colorMode?: boolean
+    links?: SelarasDocsLink[]
+  }
+  toc?: {
+    enabled?: boolean
+    title?: string
+  }
+  footer?: {
+    text?: string
+    links?: SelarasDocsLink[]
+  }
+}
+
 declare module '@nuxt/schema' {
+  interface AppConfig {
+    selarasDocs?: SelarasDocsAppConfig
+  }
+
   interface NuxtConfig {
     selarasDocs?: SelarasDocsModuleOptions
   }
@@ -18,6 +65,10 @@ declare module '@nuxt/schema' {
 }
 
 declare module 'nuxt/schema' {
+  interface AppConfig {
+    selarasDocs?: SelarasDocsAppConfig
+  }
+
   interface NuxtConfig {
     selarasDocs?: SelarasDocsModuleOptions
   }

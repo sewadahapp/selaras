@@ -100,6 +100,15 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     assert.equal(response.status, 200)
     const html = await response.text()
     assert.match(html, /<h1[^>]*>[\s\S]*Getting started/, 'the consumer-owned docs collection must render through the layer route')
+    if (prefixed && !overridden) {
+      assert.match(html, /Packed documentation/, 'typed app config must set the site identity')
+      assert.match(html, /src="\/brand\.svg"[^>]*alt="Packed mark"/, 'site config must render the configured logo and alternative text')
+      assert.match(html, /href="https:\/\/github\.com\/sewadahapp\/selaras"/, 'repository config must render a source link')
+      assert.match(html, /href="\/guide\/getting-started"[^>]*>[\s\S]*Guide/, 'header link config must render consumer navigation')
+    }
+    else if (!prefixed) {
+      assert.match(html, /Documentation home/, 'the layer must provide a useful default site identity')
+    }
     if (example)
       assert.match(html, /id="consumer-example"/, 'the layer Content component must resolve a consumer-owned example')
     if (overridden) {
@@ -139,6 +148,11 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
         if (example)
           await page.locator('#consumer-example').waitFor()
+        if (prefixed && !overridden) {
+          await page.getByRole('link', { name: 'Packed documentation home', exact: true }).waitFor()
+          await page.getByRole('img', { name: 'Packed mark', exact: true }).waitFor()
+          await page.getByRole('link', { name: 'Source repository', exact: true }).waitFor()
+        }
         if (!overridden) {
           await page.getByRole('button', { name: 'Open documentation navigation', exact: true }).click()
           const drawer = page.getByRole('dialog', { name: 'Documentation navigation', exact: true })
