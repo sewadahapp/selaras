@@ -1,91 +1,922 @@
 ---
 title: Theming
-description: Design tokens, the :ui prop, and global overrides.
+description: Customize Selaras with CSS first. Use Nuxt config and helpers only when you need them.
 order: 30
 ---
 
-Every component reads its colors from a small set of semantic CSS custom
-properties, and its layout/variant classes from a `tailwind-variants`
-theme. The sections below cover token inputs, instance slots, scoped themes,
-and global recipes; their class merge order is listed under Precedence.
+Selaras uses CSS custom properties for design values. Start with CSS.
 
-The normal `@sewadah/selaras` import includes Selaras-owned default
-foundations. A complete external theme can import
-`@sewadah/selaras/structural.css` instead, then provide every rendered role
-recipe and functional input itself. Structural CSS still supplies Tailwind
-source discovery, variants, motion and read bindings; it deliberately does not
-supply an unconfigured fallback palette.
+Use Nuxt configuration only when Selaras must know a new color role at build
+time, such as `tertiary`. Use TypeScript helpers only when they make a task
+easier.
 
-## 1. Design tokens
-
-Use semantic color recipes for roles and functional inputs for general
-surfaces, text, borders, and scrims. Selaras's default palette is optional:
-your recipes can reference an existing design system's CSS variables without
-adopting its shade names. Radius, shadows, and overlay stacking also have CSS
-custom properties:
-
-| Token | Purpose |
-| --- | --- |
-| `--selaras-surface-default`, `--selaras-surface-elevated`, `--selaras-surface-inverted` | Page/surface inputs |
-| `--selaras-border-default`, `--selaras-border-hover`, `--selaras-border-muted` | Border inputs |
-| `--selaras-text-default`, `--selaras-text-muted`, `--selaras-text-inverted` | Text inputs |
-| `--selaras-color-<role>-<leaf>` | Registered-role inputs, described below |
-| `--selaras-resolved-color-<role>-<leaf>` | Readable effective values for registered roles |
-| `--selaras-scrim` | Overlay backdrop input |
-| `--selaras-radius-base`, `--selaras-radius-sm`, `--selaras-radius-md`, `--selaras-radius-lg`, `--selaras-radius-full` | Corner-radius inputs |
-| `--selaras-resolved-radius-base`, `--selaras-resolved-radius-sm`, `--selaras-resolved-radius-md`, `--selaras-resolved-radius-lg`, `--selaras-resolved-radius-full` | Effective corner-radius reads |
-| `--selaras-shadow-sm`, `--selaras-shadow-md`, `--selaras-shadow-lg` | Elevation inputs |
-| `--selaras-resolved-shadow-sm`, `--selaras-resolved-shadow-md`, `--selaras-resolved-shadow-lg` | Overlay elevation (Modal, Dropdown, Popover, ...) |
-| `--selaras-z-modal-overlay`, `--selaras-z-modal`, `--selaras-z-dropdown`, `--selaras-z-tooltip`, `--selaras-z-toast` | Overlay stacking inputs |
-| `--selaras-resolved-z-modal-overlay`, `--selaras-resolved-z-modal`, `--selaras-resolved-z-dropdown`, `--selaras-resolved-z-tooltip`, `--selaras-resolved-z-toast` | Overlay stacking order, reflecting real nesting (a Dropdown can open from inside a Modal, a Toast always stays on top) |
-
-For document dark mode, Selaras follows the `.dark` class on `<html>` (set by
-`SColorModeToggle`, or your own `useColorMode()` logic). Explicit `STheme`
-modes can override that choice within a subtree, including managed portals.
-See Functional colors and explicit modes below for scoped ownership.
-
-You can also customize Selaras's owned default foundations in your own
-`@theme` block. This changes the default recipes that reference those shades;
-it does not change explicitly authored recipes. For example:
+The normal setup is:
 
 ```css
-@theme {
-  /* An optional foundation override. Check contrast in both modes
-     after changing any palette or surface. */
-  --color-selaras-indigo-50:  oklch(0.9700 0.0120 25);
-  --color-selaras-indigo-100: oklch(0.9300 0.0280 25);
-  --color-selaras-indigo-200: oklch(0.8600 0.0550 25);
-  --color-selaras-indigo-300: oklch(0.7800 0.1000 25);
-  --color-selaras-indigo-400: oklch(0.6400 0.1650 25);
-  --color-selaras-indigo-500: oklch(0.4755 0.2026 25);
-  --color-selaras-indigo-600: oklch(0.4150 0.1850 25);
-  --color-selaras-indigo-700: oklch(0.3550 0.1580 25);
-  --color-selaras-indigo-800: oklch(0.2950 0.1280 25);
-  --color-selaras-indigo-900: oklch(0.2350 0.0950 25);
-  --color-selaras-indigo-950: oklch(0.1700 0.0600 25);
+@import "tailwindcss";
+@import "@sewadah/selaras";
+@import "#selaras/tailwind.css";
+```
+
+`@sewadah/selaras` supplies the default Selaras colors and structural styles.
+`#selaras/tailwind.css` connects Selaras to the Tailwind build of your Nuxt
+application. It does not define your color theme.
+
+## Design tokens
+
+### Start with CSS
+
+For most theme changes, edit CSS only.
+
+Selaras has public input variables. The main groups are:
+
+| Input | Purpose |
+| --- | --- |
+| `--selaras-surface-*` | Page and surface colors |
+| `--selaras-text-*` | General text colors |
+| `--selaras-border-*` | General border colors |
+| `--selaras-color-<role>-<leaf>` | Component color roles, such as `primary` or `warning` |
+| `--selaras-radius-*` | Corner radius |
+| `--selaras-shadow-*` | Shadow values |
+| `--selaras-z-*` | Overlay stacking |
+| `--selaras-scrim` | Overlay backdrop |
+
+Selaras also has `--selaras-resolved-*` variables. These are effective read
+values. Do not use them as theme inputs.
+
+### Small CSS changes
+
+You can change one value:
+
+```css
+:root {
+  --selaras-radius-base: 0.375rem;
 }
 ```
 
-The built-in Button and Badge recipes select separate filled, subtle and text
-colors from these scales in each mode. Button hover and pressed states preserve
-contrast against the stock surface. Warning uses a dark foreground
-and brighter filled interaction shades; dark-mode text uses lighter shades.
-Changing a palette or surface requires checking the resulting contrast again.
-Use a complete semantic recipe when your brand needs different foregrounds
-or interaction choices.
+Or you can change general surfaces and text:
 
-### One brand color
+The light canvas is white by default. A card-heavy dashboard can use a subtle
+canvas such as `#f9f9f9` while keeping its component surfaces white:
 
-For an opaque sRGB brand color, `defineColorFromSeed()` creates the complete
-light/dark semantic recipe for you. It selects readable foregrounds and adjusts
-the seed where needed for contrast, so the generated light fill may differ
-slightly from the input:
+```css
+:root {
+  --selaras-surface-canvas: #f9f9f9;
+  --selaras-surface-default: #ffffff;
+  --selaras-surface-elevated: #fafafa;
+
+  --selaras-text-default: #18181b;
+  --selaras-text-muted: #71717a;
+
+  --selaras-border-default: #e4e4e7;
+  --selaras-border-hover: #d4d4d8;
+}
+```
+
+For dark mode, override the same inputs under `:root.dark`:
+
+```css
+:root.dark {
+  --selaras-surface-canvas: #0c0c0d;
+  --selaras-surface-default: #09090b;
+  --selaras-surface-elevated: #18181b;
+
+  --selaras-text-default: #fafafa;
+  --selaras-text-muted: #a1a1aa;
+
+  --selaras-border-default: #27272a;
+  --selaras-border-hover: #3f3f46;
+}
+```
+
+Selaras follows the `.dark` class on `<html>` for the document theme.
+
+### Built-in component color roles
+
+Selaras supplies these roles:
+
+- `primary`
+- `secondary`
+- `success`
+- `info`
+- `warning`
+- `danger`
+- `neutral`
+
+The default theme maps these roles to foundation palettes:
+
+| Role | Default foundation |
+| --- | --- |
+| `primary` | `indigo` |
+| `secondary` | `plum` |
+| `success` | `green` |
+| `info` | `blue` |
+| `warning` | `yellow` |
+| `danger` | `red` |
+| `neutral` | `gray` |
+
+The role name is the meaning. The foundation name is the hue family.
+
+For example, the default `warning` recipe reads the Selaras yellow palette.
+The default `danger` recipe reads the Selaras red palette.
+
+### Change one exact role value
+
+You can override a public role input directly:
+
+```css
+:root {
+  --selaras-color-warning-fill: #ffff00;
+  --selaras-color-warning-on-fill: #000000;
+}
+```
+
+Selaras uses the exact CSS value that you provide. It does not change it.
+
+This example changes only two leaves. The other warning leaves still use their
+default values. If you want one consistent custom warning theme, define the
+complete recipe.
+
+### Build one role from one CSS color
+
+You do not need a TypeScript helper when you want to start from one CSS color.
+
+You can keep the base color exact and derive the other values with CSS:
+
+```css
+:root {
+  --brand: #fd5e53;
+
+  --selaras-color-primary-fill:
+    var(--brand);
+
+  --selaras-color-primary-fill-hover:
+    color-mix(in oklch, var(--brand), black 8%);
+
+  --selaras-color-primary-fill-pressed:
+    color-mix(in oklch, var(--brand), black 15%);
+
+  --selaras-color-primary-on-fill:
+    white;
+
+  --selaras-color-primary-indicator:
+    color-mix(in oklch, var(--brand), black 18%);
+
+  --selaras-color-primary-subtle:
+    color-mix(in oklch, var(--brand) 12%, transparent);
+
+  --selaras-color-primary-subtle-hover:
+    color-mix(in oklch, var(--brand) 18%, transparent);
+
+  --selaras-color-primary-subtle-pressed:
+    color-mix(in oklch, var(--brand) 24%, transparent);
+
+  --selaras-color-primary-on-subtle:
+    color-mix(in oklch, var(--brand), black 35%);
+
+  --selaras-color-primary-text:
+    color-mix(in oklch, var(--brand), black 20%);
+
+  --selaras-color-primary-text-hover:
+    color-mix(in oklch, var(--brand), black 28%);
+
+  --selaras-color-primary-text-pressed:
+    color-mix(in oklch, var(--brand), black 35%);
+
+  --selaras-color-primary-border:
+    var(--brand);
+
+  --selaras-color-primary-focus:
+    var(--brand);
+}
+```
+
+This is only one possible recipe. You own the color choices.
+
+Test the result in the components and contexts that your application uses.
+Selaras does not change CSS values that you author.
+
+### Complete role recipe
+
+A color role has these public inputs:
+
+```text
+fill
+fill-hover
+fill-pressed
+on-fill
+indicator
+
+subtle
+subtle-hover
+subtle-pressed
+on-subtle
+
+text
+text-hover
+text-pressed
+
+border
+focus
+```
+
+For `warning`, the full CSS names are:
+
+```css
+:root {
+  --selaras-color-warning-fill: ...;
+  --selaras-color-warning-fill-hover: ...;
+  --selaras-color-warning-fill-pressed: ...;
+  --selaras-color-warning-on-fill: ...;
+  --selaras-color-warning-indicator: ...;
+
+  --selaras-color-warning-subtle: ...;
+  --selaras-color-warning-subtle-hover: ...;
+  --selaras-color-warning-subtle-pressed: ...;
+  --selaras-color-warning-on-subtle: ...;
+
+  --selaras-color-warning-text: ...;
+  --selaras-color-warning-text-hover: ...;
+  --selaras-color-warning-text-pressed: ...;
+
+  --selaras-color-warning-border: ...;
+  --selaras-color-warning-focus: ...;
+}
+```
+
+Replace `warning` with any registered role name.
+
+The component variant selects the leaves that it needs. For example, a solid
+Button uses `fill`, `on-fill`, `fill-hover`, and `fill-pressed`. A soft Button
+uses the `subtle` leaves. Essential unpaired graphics, such as progress and
+radio indicators, use `indicator`. When it is omitted, it follows `border`.
+
+You can also supply different values for dark mode:
+
+```css
+:root {
+  --selaras-color-warning-fill: #ffff00;
+  --selaras-color-warning-on-fill: #000000;
+}
+
+:root.dark {
+  --selaras-color-warning-fill: #eaea00;
+  --selaras-color-warning-on-fill: #000000;
+}
+```
+
+
+### Complete CSS theme example
+
+The following example replaces the main Selaras visual theme with CSS only.
+
+It defines:
+
+- surfaces
+- general text
+- general borders
+- scrim
+- radius
+- shadows
+- `primary`
+- `secondary`
+- `success`
+- `info`
+- `warning`
+- `danger`
+- `neutral`
+
+It also defines separate light and dark values.
+
+These values are examples. Use the values that match your product.
+
+```css
+/* Light mode */
+:root {
+  /* Surfaces */
+  --selaras-surface-canvas: #f9f9f9;
+  --selaras-surface-default: #fffdf9;
+  --selaras-surface-elevated: #ffffff;
+  --selaras-surface-inverted: #161616;
+
+  /* General text */
+  --selaras-text-default: #1f1f1f;
+  --selaras-text-muted: #707070;
+  --selaras-text-inverted: #ffffff;
+
+  /* General borders */
+  --selaras-border-default: #e7e2dc;
+  --selaras-border-muted: #f2eee9;
+  --selaras-border-hover: #d4cdc5;
+
+  /* Overlay */
+  --selaras-scrim: rgb(0 0 0 / 0.55);
+
+  /* Radius */
+  --selaras-radius-base: 0.5rem;
+  --selaras-radius-sm: 0.375rem;
+  --selaras-radius-md: 0.5rem;
+  --selaras-radius-lg: 1rem;
+  --selaras-radius-full: 9999px;
+
+  /* Shadows */
+  --selaras-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06);
+  --selaras-shadow-md: 0 6px 20px rgb(0 0 0 / 0.10);
+  --selaras-shadow-lg: 0 18px 48px rgb(0 0 0 / 0.16);
+
+  /* Primary */
+  --selaras-color-primary-fill: #6d4aff;
+  --selaras-color-primary-fill-hover: #5e3bf0;
+  --selaras-color-primary-fill-pressed: #4f2fd8;
+  --selaras-color-primary-on-fill: #ffffff;
+
+  --selaras-color-primary-subtle: #f0ecff;
+  --selaras-color-primary-subtle-hover: #e7e0ff;
+  --selaras-color-primary-subtle-pressed: #ddd3ff;
+  --selaras-color-primary-on-subtle: #3d267f;
+
+  --selaras-color-primary-text: #5b3be0;
+  --selaras-color-primary-text-hover: #4f31c4;
+  --selaras-color-primary-text-pressed: #4328a9;
+
+  --selaras-color-primary-border: #8d73ff;
+  --selaras-color-primary-focus: #6d4aff;
+
+  /* Secondary */
+  --selaras-color-secondary-fill: #d946ef;
+  --selaras-color-secondary-fill-hover: #c735dc;
+  --selaras-color-secondary-fill-pressed: #ad27c2;
+  --selaras-color-secondary-on-fill: #ffffff;
+
+  --selaras-color-secondary-subtle: #fcecff;
+  --selaras-color-secondary-subtle-hover: #f8ddff;
+  --selaras-color-secondary-subtle-pressed: #f3ccff;
+  --selaras-color-secondary-on-subtle: #70207c;
+
+  --selaras-color-secondary-text: #b72cca;
+  --selaras-color-secondary-text-hover: #9822aa;
+  --selaras-color-secondary-text-pressed: #7d1b8b;
+
+  --selaras-color-secondary-border: #e879f9;
+  --selaras-color-secondary-focus: #d946ef;
+
+  /* Success */
+  --selaras-color-success-fill: #16a34a;
+  --selaras-color-success-fill-hover: #138a3f;
+  --selaras-color-success-fill-pressed: #107436;
+  --selaras-color-success-on-fill: #ffffff;
+
+  --selaras-color-success-subtle: #eaf8ef;
+  --selaras-color-success-subtle-hover: #dcf3e4;
+  --selaras-color-success-subtle-pressed: #ccecd8;
+  --selaras-color-success-on-subtle: #14532d;
+
+  --selaras-color-success-text: #16803f;
+  --selaras-color-success-text-hover: #126b35;
+  --selaras-color-success-text-pressed: #0f592d;
+
+  --selaras-color-success-border: #3fc16d;
+  --selaras-color-success-focus: #16a34a;
+
+  /* Info */
+  --selaras-color-info-fill: #0ea5e9;
+  --selaras-color-info-fill-hover: #0c91cc;
+  --selaras-color-info-fill-pressed: #0a7db0;
+  --selaras-color-info-on-fill: #ffffff;
+
+  --selaras-color-info-subtle: #e9f7fe;
+  --selaras-color-info-subtle-hover: #d8f1fd;
+  --selaras-color-info-subtle-pressed: #c7eafb;
+  --selaras-color-info-on-subtle: #0c4a6e;
+
+  --selaras-color-info-text: #087fb6;
+  --selaras-color-info-text-hover: #076b9a;
+  --selaras-color-info-text-pressed: #065a82;
+
+  --selaras-color-info-border: #38bdf8;
+  --selaras-color-info-focus: #0ea5e9;
+
+  /* Warning */
+  --selaras-color-warning-fill: #ffff00;
+  --selaras-color-warning-fill-hover: #eeee00;
+  --selaras-color-warning-fill-pressed: #d8d800;
+  --selaras-color-warning-on-fill: #111111;
+
+  --selaras-color-warning-subtle: #fffed6;
+  --selaras-color-warning-subtle-hover: #fffca8;
+  --selaras-color-warning-subtle-pressed: #fff77a;
+  --selaras-color-warning-on-subtle: #575700;
+
+  --selaras-color-warning-text: #757500;
+  --selaras-color-warning-text-hover: #626200;
+  --selaras-color-warning-text-pressed: #505000;
+
+  --selaras-color-warning-border: #bdbd00;
+  --selaras-color-warning-focus: #8a8a00;
+
+  /* Danger */
+  --selaras-color-danger-fill: #ff3b5c;
+  --selaras-color-danger-fill-hover: #ed2e4e;
+  --selaras-color-danger-fill-pressed: #d62241;
+  --selaras-color-danger-on-fill: #ffffff;
+
+  --selaras-color-danger-subtle: #fff0f3;
+  --selaras-color-danger-subtle-hover: #ffe1e7;
+  --selaras-color-danger-subtle-pressed: #ffd0da;
+  --selaras-color-danger-on-subtle: #8a1c32;
+
+  --selaras-color-danger-text: #d92c49;
+  --selaras-color-danger-text-hover: #bd243f;
+  --selaras-color-danger-text-pressed: #a21d35;
+
+  --selaras-color-danger-border: #ff6b84;
+  --selaras-color-danger-focus: #ff3b5c;
+
+  /* Neutral */
+  --selaras-color-neutral-fill: #27272a;
+  --selaras-color-neutral-fill-hover: #3f3f46;
+  --selaras-color-neutral-fill-pressed: #52525b;
+  --selaras-color-neutral-on-fill: #ffffff;
+
+  --selaras-color-neutral-subtle: #f4f4f5;
+  --selaras-color-neutral-subtle-hover: #e4e4e7;
+  --selaras-color-neutral-subtle-pressed: #d4d4d8;
+  --selaras-color-neutral-on-subtle: #27272a;
+
+  --selaras-color-neutral-text: #3f3f46;
+  --selaras-color-neutral-text-hover: #27272a;
+  --selaras-color-neutral-text-pressed: #18181b;
+
+  --selaras-color-neutral-border: #a1a1aa;
+  --selaras-color-neutral-focus: #52525b;
+}
+
+
+/* Dark mode */
+:root.dark {
+  /* Surfaces */
+  --selaras-surface-canvas: #0c0c0d;
+  --selaras-surface-default: #0f0f12;
+  --selaras-surface-elevated: #18181d;
+  --selaras-surface-inverted: #f6f6f6;
+
+  /* General text */
+  --selaras-text-default: #f4f4f5;
+  --selaras-text-muted: #a1a1aa;
+  --selaras-text-inverted: #18181b;
+
+  /* General borders */
+  --selaras-border-default: #2d2d35;
+  --selaras-border-muted: #232329;
+  --selaras-border-hover: #3b3b45;
+
+  /* Overlay */
+  --selaras-scrim: rgb(0 0 0 / 0.72);
+
+  /* Radius */
+  --selaras-radius-base: 0.5rem;
+  --selaras-radius-sm: 0.375rem;
+  --selaras-radius-md: 0.5rem;
+  --selaras-radius-lg: 1rem;
+  --selaras-radius-full: 9999px;
+
+  /* Shadows */
+  --selaras-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.28);
+  --selaras-shadow-md: 0 8px 28px rgb(0 0 0 / 0.38);
+  --selaras-shadow-lg: 0 22px 56px rgb(0 0 0 / 0.48);
+
+  /* Primary */
+  --selaras-color-primary-fill: #8b6cff;
+  --selaras-color-primary-fill-hover: #9c82ff;
+  --selaras-color-primary-fill-pressed: #ad98ff;
+  --selaras-color-primary-on-fill: #171020;
+
+  --selaras-color-primary-subtle: #261f46;
+  --selaras-color-primary-subtle-hover: #302858;
+  --selaras-color-primary-subtle-pressed: #3a306a;
+  --selaras-color-primary-on-subtle: #d9d0ff;
+
+  --selaras-color-primary-text: #b9a9ff;
+  --selaras-color-primary-text-hover: #c9bcff;
+  --selaras-color-primary-text-pressed: #d8d0ff;
+
+  --selaras-color-primary-border: #7259dc;
+  --selaras-color-primary-focus: #9f8aff;
+
+  /* Secondary */
+  --selaras-color-secondary-fill: #e879f9;
+  --selaras-color-secondary-fill-hover: #ef91fb;
+  --selaras-color-secondary-fill-pressed: #f3a9fc;
+  --selaras-color-secondary-on-fill: #2a0b2e;
+
+  --selaras-color-secondary-subtle: #3c173f;
+  --selaras-color-secondary-subtle-hover: #4a1c4e;
+  --selaras-color-secondary-subtle-pressed: #59235d;
+  --selaras-color-secondary-on-subtle: #f7c9ff;
+
+  --selaras-color-secondary-text: #f0a5fb;
+  --selaras-color-secondary-text-hover: #f5bafd;
+  --selaras-color-secondary-text-pressed: #f9d0fe;
+
+  --selaras-color-secondary-border: #c65fd6;
+  --selaras-color-secondary-focus: #e879f9;
+
+  /* Success */
+  --selaras-color-success-fill: #22c55e;
+  --selaras-color-success-fill-hover: #35d36f;
+  --selaras-color-success-fill-pressed: #4ade80;
+  --selaras-color-success-on-fill: #061a0c;
+
+  --selaras-color-success-subtle: #12331f;
+  --selaras-color-success-subtle-hover: #174129;
+  --selaras-color-success-subtle-pressed: #1d5033;
+  --selaras-color-success-on-subtle: #bbf7d0;
+
+  --selaras-color-success-text: #86efac;
+  --selaras-color-success-text-hover: #a7f3c0;
+  --selaras-color-success-text-pressed: #c6f6d5;
+
+  --selaras-color-success-border: #3fba68;
+  --selaras-color-success-focus: #4ade80;
+
+  /* Info */
+  --selaras-color-info-fill: #38bdf8;
+  --selaras-color-info-fill-hover: #55c7fa;
+  --selaras-color-info-fill-pressed: #73d2fb;
+  --selaras-color-info-on-fill: #06151d;
+
+  --selaras-color-info-subtle: #112f3f;
+  --selaras-color-info-subtle-hover: #163c50;
+  --selaras-color-info-subtle-pressed: #1b4a61;
+  --selaras-color-info-on-subtle: #c7efff;
+
+  --selaras-color-info-text: #7dd3fc;
+  --selaras-color-info-text-hover: #9bdffc;
+  --selaras-color-info-text-pressed: #bae9fd;
+
+  --selaras-color-info-border: #2e9fd0;
+  --selaras-color-info-focus: #38bdf8;
+
+  /* Warning */
+  --selaras-color-warning-fill: #ffff33;
+  --selaras-color-warning-fill-hover: #ffff66;
+  --selaras-color-warning-fill-pressed: #ffff88;
+  --selaras-color-warning-on-fill: #111100;
+
+  --selaras-color-warning-subtle: #333300;
+  --selaras-color-warning-subtle-hover: #414100;
+  --selaras-color-warning-subtle-pressed: #505000;
+  --selaras-color-warning-on-subtle: #ffffb8;
+
+  --selaras-color-warning-text: #ffff66;
+  --selaras-color-warning-text-hover: #ffff88;
+  --selaras-color-warning-text-pressed: #ffffaa;
+
+  --selaras-color-warning-border: #baba24;
+  --selaras-color-warning-focus: #ffff66;
+
+  /* Danger */
+  --selaras-color-danger-fill: #ff5c78;
+  --selaras-color-danger-fill-hover: #ff748c;
+  --selaras-color-danger-fill-pressed: #ff8ca0;
+  --selaras-color-danger-on-fill: #26070d;
+
+  --selaras-color-danger-subtle: #3c1720;
+  --selaras-color-danger-subtle-hover: #4b1c28;
+  --selaras-color-danger-subtle-pressed: #5b2330;
+  --selaras-color-danger-on-subtle: #ffd0da;
+
+  --selaras-color-danger-text: #ff9caf;
+  --selaras-color-danger-text-hover: #ffb3c1;
+  --selaras-color-danger-text-pressed: #ffc8d2;
+
+  --selaras-color-danger-border: #d64f68;
+  --selaras-color-danger-focus: #ff6b84;
+
+  /* Neutral */
+  --selaras-color-neutral-fill: #e4e4e7;
+  --selaras-color-neutral-fill-hover: #f4f4f5;
+  --selaras-color-neutral-fill-pressed: #ffffff;
+  --selaras-color-neutral-on-fill: #18181b;
+
+  --selaras-color-neutral-subtle: #27272a;
+  --selaras-color-neutral-subtle-hover: #3f3f46;
+  --selaras-color-neutral-subtle-pressed: #52525b;
+  --selaras-color-neutral-on-subtle: #f4f4f5;
+
+  --selaras-color-neutral-text: #d4d4d8;
+  --selaras-color-neutral-text-hover: #e4e4e7;
+  --selaras-color-neutral-text-pressed: #f4f4f5;
+
+  --selaras-color-neutral-border: #71717a;
+  --selaras-color-neutral-focus: #a1a1aa;
+}
+```
+
+This example changes the complete semantic theme without `nuxt.config.ts`.
+
+Use `nuxt.config.ts` only when you need build-time features, such as a new
+role name that must work with a component `color` prop.
+
+### Change a complete foundation palette
+
+The default foundations are Tailwind v4 theme variables.
+
+For example, the default warning role uses the Selaras yellow foundation. You
+can replace that foundation and keep the built-in warning recipe:
+
+```css
+@theme {
+  --color-selaras-yellow-50: var(--color-orange-50);
+  --color-selaras-yellow-100: var(--color-orange-100);
+  --color-selaras-yellow-200: var(--color-orange-200);
+  --color-selaras-yellow-300: var(--color-orange-300);
+  --color-selaras-yellow-400: var(--color-orange-400);
+  --color-selaras-yellow-500: var(--color-orange-500);
+  --color-selaras-yellow-600: var(--color-orange-600);
+  --color-selaras-yellow-700: var(--color-orange-700);
+  --color-selaras-yellow-800: var(--color-orange-800);
+  --color-selaras-yellow-900: var(--color-orange-900);
+  --color-selaras-yellow-950: var(--color-orange-950);
+}
+```
+
+The warning role now uses your replacement foundation through its existing
+recipe.
+
+The same rule applies to:
+
+- `blue` for the default `info` role
+- `red` for the default `danger` role
+- `gray` for the default `neutral` role
+- `green` for the default `success` role
+- `yellow` for the default `warning` role
+- `indigo` for the default `primary` role
+- `plum` for the default `secondary` role
+
+The Selaras gray foundation also supplies the default general surfaces, text,
+and borders. A change to the gray foundation can therefore change more than the
+`neutral` component role.
+
+### Map an existing design system
+
+You do not have to rename your design tokens.
+
+For example, your design system can use a `10` to `100` scale:
+
+```css
+:root {
+  --company-brand-10: ...;
+  --company-brand-20: ...;
+  --company-brand-30: ...;
+  --company-brand-40: ...;
+  --company-brand-50: ...;
+  --company-brand-60: ...;
+  --company-brand-70: ...;
+  --company-brand-80: ...;
+  --company-brand-90: ...;
+  --company-brand-100: ...;
+
+  --selaras-color-primary-fill: var(--company-brand-60);
+  --selaras-color-primary-fill-hover: var(--company-brand-70);
+  --selaras-color-primary-fill-pressed: var(--company-brand-80);
+  --selaras-color-primary-on-fill: var(--company-brand-10);
+
+  --selaras-color-primary-subtle: var(--company-brand-10);
+  --selaras-color-primary-subtle-hover: var(--company-brand-20);
+  --selaras-color-primary-subtle-pressed: var(--company-brand-30);
+  --selaras-color-primary-on-subtle: var(--company-brand-90);
+
+  --selaras-color-primary-text: var(--company-brand-70);
+  --selaras-color-primary-text-hover: var(--company-brand-80);
+  --selaras-color-primary-text-pressed: var(--company-brand-90);
+
+  --selaras-color-primary-border: var(--company-brand-50);
+  --selaras-color-primary-focus: var(--company-brand-60);
+}
+```
+
+Your design system stays the source of truth. The `--selaras-*` variables are
+the mapping layer.
+
+### Use your own complete theme
+
+Most applications should import the default theme:
+
+```css
+@import "tailwindcss";
+@import "@sewadah/selaras";
+@import "#selaras/tailwind.css";
+```
+
+A mature design system can omit Selaras-owned foundation colors:
+
+```css
+@import "tailwindcss";
+@import "@sewadah/selaras/structural.css";
+@import "#selaras/tailwind.css";
+```
+
+Then provide all semantic values that your application uses.
+
+`structural.css` still supplies:
+
+- Selaras source discovery for Tailwind
+- variants
+- animations
+- structural CSS
+- semantic read bindings
+
+It does not supply the default Selaras foundation palette.
+
+This mode is for a complete external theme. It is not an automatic unthemed
+fallback.
+
+### Radius, shadows, stacking, and Tailwind tokens
+
+Radius uses one base input by default:
+
+```css
+:root {
+  --selaras-radius-base: 0.25rem;
+}
+```
+
+Selaras derives its default small, medium, and large radius values from this
+base. You can override each radius input separately if you need to.
+
+You can also set shadows and stacking values:
+
+```css
+:root {
+  --selaras-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.06);
+  --selaras-shadow-md: 0 4px 16px -2px rgb(0 0 0 / 0.12);
+  --selaras-shadow-lg: 0 12px 32px -4px rgb(0 0 0 / 0.16);
+
+  --selaras-z-modal-overlay: 40;
+  --selaras-z-modal: 50;
+  --selaras-z-dropdown: 60;
+  --selaras-z-tooltip: 70;
+  --selaras-z-toast: 80;
+}
+```
+
+Spacing and normal Tailwind breakpoints are Tailwind tokens, not Selaras theme
+tokens:
+
+```css
+@theme {
+  --breakpoint-3xl: 1920px;
+  --spacing: 0.2rem;
+}
+```
+
+The adaptive Selaras presentation uses the Tailwind breakpoint name selected by
+`selaras.adaptive.breakpoint`. The default name is `md`.
+
+## Nuxt configuration and theme helpers
+
+Use CSS first.
+
+Use `nuxt.config.ts` when Selaras needs build-time information. The most common
+color case is a new role name.
+
+### Add a new role
+
+Built-in role names already work without theme configuration.
+
+A new role such as `tertiary` or `premium` must be registered at build time so
+Selaras can:
+
+- generate its role bindings
+- add it to `ColorRole`
+- make `color="tertiary"` type-safe
+
+The current Nuxt API requires a light and dark recipe:
+
+```ts
+import { defineColor } from '@sewadah/selaras/theme'
+
+export default defineNuxtConfig({
+  modules: ['@sewadah/selaras'],
+
+  selaras: {
+    theme: {
+      colors: {
+        tertiary: defineColor({
+          light: {
+            fill: 'var(--company-tertiary-fill)',
+            onFill: 'var(--company-tertiary-on-fill)',
+            subtle: 'var(--company-tertiary-subtle)',
+            onSubtle: 'var(--company-tertiary-on-subtle)',
+            text: 'var(--company-tertiary-text)',
+            border: 'var(--company-tertiary-border)',
+          },
+          dark: {
+            fill: 'var(--company-tertiary-fill-dark)',
+            onFill: 'var(--company-tertiary-on-fill-dark)',
+            subtle: 'var(--company-tertiary-subtle-dark)',
+            onSubtle: 'var(--company-tertiary-on-subtle-dark)',
+            text: 'var(--company-tertiary-text-dark)',
+            border: 'var(--company-tertiary-border-dark)',
+          },
+        }),
+      },
+    },
+  },
+})
+```
+
+After registration, you can use:
+
+```vue-html
+<SButton color="tertiary">
+  Tertiary
+</SButton>
+```
+
+You can still override the registered role from CSS:
+
+```css
+:root {
+  --selaras-color-tertiary-fill: #8b5cf6;
+}
+```
+
+The Nuxt configuration registers the role. CSS can still own its visual values.
+
+### Override a built-in recipe in Nuxt config
+
+You can also replace a built-in recipe:
+
+```ts
+import { defineColor } from '@sewadah/selaras/theme'
+
+export default defineNuxtConfig({
+  selaras: {
+    theme: {
+      colors: {
+        warning: defineColor({
+          light: {
+            fill: '#ffff00',
+            onFill: '#000000',
+            subtle: '#fffbd1',
+            onSubtle: '#3d3d00',
+            text: '#6b6b00',
+            border: '#a3a300',
+          },
+          dark: {
+            fill: '#eaea00',
+            onFill: '#000000',
+            subtle: '#2a2a00',
+            onSubtle: '#ffff99',
+            text: '#ffff66',
+            border: '#baba00',
+          },
+        }),
+      },
+    },
+  },
+})
+```
+
+`defineColor()` validates the required recipe shape. It does not change the
+values that you provide.
+
+The required leaves in each mode are:
+
+- `fill`
+- `onFill`
+- `subtle`
+- `onSubtle`
+- `text`
+- `border`
+
+These leaves are optional:
+
+- `fillHover`
+- `fillPressed`
+- `indicator` (defaults to `border`)
+- `subtleHover`
+- `subtlePressed`
+- `textHover`
+- `textPressed`
+- `focus`
+
+If an optional interaction leaf is missing, Selaras links it to the nearest
+defined state. It does not calculate a new hue for `defineColor()`.
+
+### Optional helper: `defineColorFromSeed()`
+
+`defineColorFromSeed()` is not the CSS-first theme path.
+
+Use it when you want Selaras to preserve one opaque sRGB color as the resting
+solid fill and derive the rest of the recipe around it.
 
 ```ts
 import { defineColorFromSeed } from '@sewadah/selaras/theme'
 
 export default defineNuxtConfig({
-  modules: ['@sewadah/selaras'],
   selaras: {
     theme: {
       colors: {
@@ -96,167 +927,54 @@ export default defineNuxtConfig({
 })
 ```
 
-The helper initially accepts only opaque `#RRGGBB` values. It cannot verify
-CSS variables, transparent colors, or arbitrary expressions. If you change
-Selaras's functional surfaces, pass the same resolved surface colors to the
-helper; otherwise use `defineColor()` with an explicit recipe:
+The light and dark resting `fill` values remain exactly the six-digit color
+that you pass. Selaras chooses black or white `onFill`, derives distinct
+interaction states, and derives text, border, focus, and indicator colors
+against the supplied surfaces. If those supporting families cannot be derived
+safely, the helper rejects the input and directs you to `defineColor()`.
+
+Use CSS or `defineColor()` when you need exact control over every state.
+
+The helper currently accepts only opaque six-digit sRGB hex values. It cannot
+evaluate CSS variables, transparent colors, or arbitrary CSS expressions.
+
+If you use custom surfaces, you can give the resolved light and dark surface
+colors to the helper:
 
 ```ts
-const surfaces = { light: '#f4f0e8', dark: '#20242a' }
-
-defineColorFromSeed('#FD5E53', { surfaces })
-```
-
-### Custom semantic roles
-
-Register an additional role in `nuxt.config.ts` when a named product color
-needs to work through component `color` props. Role names are build-time
-topology so Nuxt can generate their CSS and augment `ColorRole`; their values
-remain CSS expressions and can use company variables. `defineColor` validates
-the six required leaves in both modes without deriving or changing them:
-
-```ts
-import { defineColor } from '@sewadah/selaras/theme'
-
-export default defineNuxtConfig({
-  modules: ['@sewadah/selaras'],
-  selaras: {
-    theme: {
-      colors: {
-        premium: defineColor({
-          light: {
-            fill: 'var(--company-premium)',
-            onFill: '#fff',
-            subtle: 'var(--company-premium-soft)',
-            onSubtle: '#241344',
-            text: '#5134a8',
-            border: '#765fc0',
-          },
-          dark: {
-            fill: '#a895f0',
-            onFill: '#170b38',
-            subtle: '#2b2050',
-            onSubtle: '#eeeaff',
-            text: '#c9bcff',
-            border: '#8c78d4',
-          },
-        }),
-      },
-    },
+defineColorFromSeed('#FD5E53', {
+  surfaces: {
+    light: '#f4f0e8',
+    dark: '#20242a',
   },
 })
 ```
 
-Hover, pressed, and focus leaves are optional. Omitted hover leaves follow
-the resolved base; omitted pressed leaves follow the resolved hover; omitted
-focus follows resolved text. CSS inputs and runtime token overrides participate
-in these chains. Explicitly authored leaves remain independent, even if their
-expression initially matches the base. New roles require both modes. A runtime `app.config` override can
-change leaves of a registered role, but cannot introduce a new role name.
+### Optional helper: DTCG resolved colors
 
-For an existing DTCG token system, resolve aliases and select its context in
-your token pipeline, then map each resolved color value into the recipe. The
-`dtcgColorToCss` helper accepts structured `srgb`, `srgb-linear`, and `oklch`
-values. This is a resolved-value mapping boundary, not a general DTCG token
-importer: it deliberately does not parse token documents, choose modes, or
-resolve references:
+If your design-token pipeline uses DTCG, resolve aliases and modes in that
+pipeline first.
+
+`dtcgColorToCss()` converts a resolved structured DTCG color value to CSS. It
+does not parse a token document. It does not resolve aliases. It does not
+select a mode.
 
 ```ts
-import { defineColor, dtcgColorToCss } from '@sewadah/selaras/theme'
+import { dtcgColorToCss } from '@sewadah/selaras/theme'
 
 const fill = dtcgColorToCss(tokens.brand.fill.$value, {
   path: 'semantic.brand.fill.$value',
 })
-
-const brand = defineColor({
-  light: { fill, onFill: '#fff', subtle: fill, onSubtle: '#111', text: fill, border: fill },
-  dark: { fill, onFill: '#111', subtle: fill, onSubtle: '#fff', text: fill, border: fill },
-})
 ```
 
-Custom roles accept role-specific CSS overrides such as
-`--selaras-color-premium-fill`. Set them on `:root` for the document or on
-a local ancestor for a subtree:
+You can then use the result in `defineColor()` or in your own generated CSS.
 
-```css
-.premium-panel {
-  --selaras-color-premium-fill: #5134a8;
-  --selaras-color-premium-on-fill: #fff;
-}
-```
+## The `:ui` prop and `STheme`
 
-These variables are override inputs. Read the effective value through
-`--selaras-resolved-color-<role>-<leaf>` in ordinary CSS or Tailwind arbitrary
-utilities; for example,
-`text-[var(--selaras-resolved-color-premium-text)]`. Selaras resolves every
-registered recipe at the nearest managed theme owner. A component can also
-resolve recipe expressions against company variables on its own local wrapper.
-For ordinary HTML using a public read, place an `STheme` owner where those
-company variables are available. Managed token overrides rematerialize inputs
-at the theme owner; later local CSS inputs follow the normal cascade. Changing
-`fill` updates an omitted `fillHover` and
-its omitted pressed state. Override authored interaction leaves explicitly
-when you want to change them. Built-in recipes author all their state leaves,
-so changing only their fill does not retheme their interactions.
-Button and Badge use these inputs for built-in roles too, for example
-`--selaras-color-primary-fill`. Built-in defaults read the palette foundations.
-Module
-`theme.colors.primary` can replace the complete built-in recipe; runtime
-`selaras.tokens` and explicit `STheme` scopes can override its leaves.
+Color tokens and component class overrides are separate systems.
 
-Tailwind v4 only keeps a theme variable in the compiled CSS if it detects
-the variable actually being used somewhere - normally that means a
-utility class like `bg-selaras-indigo-500` appearing literally in a scanned
-file. Overriding a color Selaras already ships (as above) works with a
-plain `@theme` block, since Selaras's own CSS already references the full
-scale internally. If a color you add still doesn't show up in your build
-- most likely a token that isn't one of Selaras's own roles - add
-`static` to your own block instead (`@theme static { ... }`), which tells
-Tailwind to always keep it regardless of detected usage:
-
-```css
-@theme static {
-  --color-brand-500: oklch(0.55 0.20 300);
-}
-```
-
-**Radius is one knob, not four.** Resolved `-sm`/`-md`/`-lg` values derive
-from the `--selaras-radius-base` input (0.75x/1x/2x), so changing the single base value
-rescales every component's corners proportionally:
-
-```css
-:root {
-  --selaras-radius-base: 0.25rem; /* sharper corners across the whole library */
-}
-```
-
-`--selaras-radius-full` (pills, avatars) stays independent - "pill-shaped" is
-a distinct visual choice, not a point on the same size gradient.
-
-**Breakpoints and spacing** aren't Selaras tokens at all - components use
-Tailwind's own default scale directly, so you customize them the same way
-you would in any Tailwind v4 project, through Tailwind's own `@theme`:
-
-```css
-@theme {
-  --breakpoint-3xl: 1920px;
-  --spacing: 0.2rem;
-}
-```
-
-## 2. The `:ui` prop
-
-Every component takes a single `:ui` prop for per-instance overrides -
-there's no separate "pass-through props" prop alongside it. Each key is a
-slot name; each value is either:
-
-- a **string** - extra classes, merged with the slot's own classes via
-  `tailwind-merge` (so a conflicting utility like `bg-*` correctly
-  replaces the default rather than stacking both);
-- an **object** - `{ class, ...attrs }`, where `class` is merged the same
-  way and everything else is applied as raw attributes/event handlers via
-  Vue's `mergeProps` (never tailwind-merged) - the escape hatch for the
-  rare case you need more than classes.
+Use theme tokens for design values. Use `:ui` when you want to change classes
+or attributes for one component instance.
 
 ```vue-html
 <SButton :ui="{ base: 'font-mono' }">
@@ -264,95 +982,69 @@ slot name; each value is either:
 </SButton>
 ```
 
-To know what you're actually overriding - the current default classes for
-every slot and variant - every component's own doc page ends with a "Theme
-source" block showing its real `src/runtime/theme/*.ts` file, read live
-rather than transcribed by hand (so it can never drift from what's
-actually shipped, the way a hand-written table would).
+Each `:ui` key is a component slot.
 
-## 3. `STheme`
+A string adds classes. Selaras merges conflicting Tailwind classes with
+`tailwind-merge`.
 
-To retheme every component inside one part of the page - a card, a
-sidebar - without making that a global default, wrap it in
-[`STheme`](/components/layout/theme):
+An object can contain `class` and other Vue attributes:
+
+```vue-html
+<SButton
+  :ui="{
+    base: {
+      class: 'font-mono',
+      'data-test': 'save-button',
+    },
+  }"
+>
+  Save
+</SButton>
+```
+
+### Scoped component configuration
+
+Use `STheme` to scope `ui` and supported default props to a subtree:
 
 ```vue-html
 <STheme :ui="{ button: { slots: { base: 'font-mono' } } }">
-  <!-- every SButton in here, however deeply nested -->
+  <SButton>Scoped</SButton>
 </STheme>
 ```
 
-Same override shape as `app.config.selaras.ui` (below), and merged onto the
-component's theme the same way - just scoped to `STheme`'s own subtree
-instead of the whole app. It can also default a prop's value (`:defaults`)
-for a component that opts into reading it - see its own doc page for
-which components currently do.
-
-### Functional colors and explicit modes
-
-Role colors are separate from general surfaces, text, borders and the modal
-scrim. Configure these functional values per mode through `selaras.tokens` in
-`app.config.ts`, or through the same `tokens` shape on an explicit `STheme`:
+Use a DOM boundary when you also need runtime token overrides:
 
 ```vue-html
 <STheme
   as="section"
-  mode="light"
   :tokens="{
     light: {
-      surface: { default: 'var(--company-surface)', elevated: '#f5f5f5' },
-      text: { default: '#202020', muted: '#555555' },
-      border: { default: '#808080' },
-      scrim: 'rgb(0 0 0 / .6)',
+      colors: {
+        primary: {
+          fill: '#fd5e53',
+        },
+      },
     },
   }"
 >
-  <!-- Descendants and declarative portals inherit this managed contract. -->
+  <SButton color="primary">Scoped color</SButton>
 </STheme>
 ```
 
-`surface` supports `default`, `elevated` and `inverted`; `text` supports
-`default`, `muted` and `inverted`; `border` supports `default`, `muted` and
-`hover`. `scrim` is a separate CSS color. Values are partial and inherit by
-mode and leaf. A parent's dark-only value does not become a light override.
-Explicit `light`/`dark` governs functional and role colors independently of
-the document mode; omitted mode inherits, and unscoped components follow the
-document root. Runtime tokens and explicit modes require a DOM boundary
-through `as`.
+Runtime tokens are useful for dynamic or scoped themes. They do not replace the
+normal CSS-first global theme path.
 
-All app-wide Selaras runtime settings share the `app.config.selaras`
-namespace: `ui`, `defaults`, `tokens`, `icons`, `messages`, `locale`, and
-`ripple`. Generic top-level keys are not read, avoiding collisions with other
-Nuxt modules and application configuration.
+Supported overlay portals carry managed Selaras theme values into the portal
+scope. External CSS custom properties still follow normal DOM inheritance.
 
-CSS authors can use inherited inputs such as `--selaras-surface-default`,
-`--selaras-text-muted`, `--selaras-border-hover` and `--selaras-scrim`. For
-example, a root declaration changes the default surface without supplying a
-palette:
+## Global overrides
 
-```css
-:root {
-  --selaras-surface-default: #fafafa;
-}
-```
+Use `app.config.ts` when you want global component class changes or supported
+component defaults.
 
-An unqualified CSS input applies in both modes; use per-mode runtime tokens
-when mode-dependent ownership is needed. Consumer CSS on a theme owner and
-inline inputs can override managed values. External variables referenced by a
-managed token must exist at its destination, including the portal target.
-Selaras does not copy DOM-local variables into body portals or certify contrast
-for arbitrary CSS expressions.
+This configuration is not required for normal CSS theme customization.
 
-Use the `--selaras-*` inputs for functional customization. The
-`--selaras-resolved-*` values are public effective reads, rebound at managed
-theme owners; they are not scoped customization inputs. Overriding a resolved
-read only on an ancestor is therefore outside Selaras's theme contract.
-
-## 4. Global overrides
-
-To retheme a component everywhere instead of one instance at a time,
-extend its theme from `app.config.ts` under `selaras.ui.<componentKey>` (the
-lowercase component name, e.g. `button`, `modal`):
+### Global component classes
 
 ```ts
 export default defineAppConfig({
@@ -368,67 +1060,65 @@ export default defineAppConfig({
 })
 ```
 
-This is merged over the component's base theme with `tailwind-variants`'
-own `extend`, so you only need to specify what you're changing.
+Selaras extends the component `tailwind-variants` recipe with these classes.
 
-### Typed recipe boundaries
+### Global component defaults
 
-`ThemeConfiguration` (exported from `@sewadah/selaras/theme`) types both
-`selaras.ui` and `STheme` configuration. Each recipe accepts its own `slots`
-and `compoundVariants`. Registered roles are available in color conditions.
-Behavioral props such as `open`, selected data, pagination state, persistence,
-and callbacks stay on the component.
+Only components that support theme defaults read this configuration.
 
-Every runtime recipe, including the Dashboard layout primitives, is covered by
-this typed contract. Dashboard recipes are slot-only: their resize, persistence,
-breakpoint, and open-state behavior remains on the components. Theme `defaults`
-remain limited to Avatar, Badge, Button, Chip, and Input.
+For example:
 
-| Recipe | Conditions | Ownership |
-| --- | --- | --- |
-| `alertDialog` | `transition` | Alert surface; actions still use Button |
-| `commandPalette` | None | Palette surface/list; glyphs and shortcuts use Icon/Kbd |
-| `datePicker` | `size`, `invalid`, `range` | Field/calendar layout in desktop and mobile presentations |
-| `table` | `color`, `size`, `gridlines`, `striped`, `scrollable` | Table layout; controls retain their own recipes |
-| `tree` | `color`, `size` | Tree rows; Reka exposes selection/expansion through data attributes |
-| `fileTree` | `color`, `selected`, `isNested` | File rows and nested layout, including combined conditions |
-| `codeTree`, `codeButton` | None | Code viewer/copy-button layout; nested FileTree/Icon remain configurable |
-| `splitter` | `direction` | Group layout |
-| `splitterPanel` | None | Panel layout |
-| `splitterResizeHandle` | `color`, `direction` | Resize-handle presentation |
-| `prose` | `color` for headings | Shared H1–H6 and code-block recipe; ordinary prose uses `prose.css` |
+```ts
+export default defineAppConfig({
+  selaras: {
+    defaults: {
+      button: {
+        size: 'lg',
+      },
+    },
+  },
+})
+```
 
-DatePicker's `color` and `activeColor` serve different controls. Set these on
-the component; there is no single `color` compound condition on its layout
-recipe. Its day/navigation controls still use `ui.button`, and its mobile
-surface uses `ui.modal` around `ui.datePicker.mobileContent`.
+An explicit component prop has higher priority than a configured default.
 
-Parent components apply local layout overrides after shared child recipes.
-For example, CodeTree removes FileTree's outer border to avoid double framing,
-while unrelated `ui.fileTree` styling remains active.
+### Global runtime tokens
+
+`app.config.selaras.tokens` can also supply runtime token overrides.
+
+Use this only when you need runtime-managed values. Prefer CSS for a static
+global design theme.
+
+All app-wide Selaras runtime settings use the `app.config.selaras` namespace.
 
 ## Precedence
 
-For classes, lowest to highest: the component's base `tv()` theme →
-`app.config.selaras.ui` → ancestor `STheme` recipes (outer to inner) →
-the instance's root `class` → the instance's `:ui` slot class.
-Explicit component props take precedence over supported theme `defaults`;
-native attribute destinations are described by each component.
+For component classes, the order from low priority to high priority is:
+
+1. component base `tv()` theme
+2. `app.config.selaras.ui`
+3. ancestor `STheme` recipes, from outer to inner
+4. the component root `class`
+5. the component `:ui` slot class
+
+For design tokens, normal CSS cascade rules apply to the public
+`--selaras-*` inputs. Managed `STheme` and runtime token scopes create explicit
+theme owners for their subtree and supported portals.
 
 ## Class prefix
 
-If your own Tailwind build namespaces its utilities behind a prefix, see
-[Installation](/overview/installation#class-prefix) for the matching
-`classPrefix` option - it applies after every one of the mechanisms above,
-regardless of which one produced the final class string.
+If your Tailwind build uses a class prefix, configure the same prefix in
+Selaras. See [Installation](/overview/installation#class-prefix).
+
+The class prefix applies to Selaras utility classes. It does not change the
+public `--selaras-*` semantic input names.
 
 ## Localization
 
-Retheming covers color/layout - three separate mechanisms cover text and
-direction the same way `app.config.selaras.ui` covers a component's classes:
-[`useMessages`](/utilities/composables/use-messages) overrides the text a
-component renders on its own, [`useLocale`](/utilities/composables/use-locale)
-sets the app-wide default for date/time formatting, and `SApp`'s `dir`
-prop switches the whole layout to RTL. All three are independent axes,
-matching how a page's language, its date formatting, and its reading
-direction can each vary on their own.
+Theme configuration does not control language or reading direction.
+
+Use:
+
+- [`useMessages`](/utilities/composables/use-messages) for component text
+- [`useLocale`](/utilities/composables/use-locale) for locale defaults
+- the `SApp` `dir` prop for LTR or RTL layout

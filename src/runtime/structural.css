@@ -283,6 +283,7 @@
 @layer theme {
   :root,
   [data-selaras-theme] {
+    --selaras-resolved-surface-canvas: var(--selaras-surface-canvas, var(--_selaras-default-surface-canvas));
     --selaras-resolved-surface-default: var(--selaras-surface-default, var(--_selaras-default-surface-default));
     --selaras-resolved-surface-elevated: var(--selaras-surface-elevated, var(--_selaras-default-surface-elevated));
     --selaras-resolved-surface-inverted: var(--selaras-surface-inverted, var(--_selaras-default-surface-inverted));
@@ -311,6 +312,7 @@
   :root.dark,
   :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),
   [data-selaras-theme]:where([data-selaras-mode="dark"]) {
+    --selaras-resolved-surface-canvas: var(--selaras-surface-canvas, var(--_selaras-default-surface-canvas));
     --selaras-resolved-surface-default: var(--selaras-surface-default, var(--_selaras-default-surface-default));
     --selaras-resolved-surface-elevated: var(--selaras-surface-elevated, var(--_selaras-default-surface-elevated));
     --selaras-resolved-surface-inverted: var(--selaras-surface-inverted, var(--_selaras-default-surface-inverted));

@@ -19,7 +19,7 @@ describe('splitter', () => {
 
     const handle = wrapper.find('[data-selaras-color="premium"]')
     expect(handle.exists()).toBe(true)
-    expect(handle.find('div').classes()).toContain('group-hover:bg-[var(--_selaras-color-fill)]')
+    expect(handle.find('div').classes()).toContain('group-hover:bg-[var(--_selaras-color-indicator)]')
   })
 
   it('renders every panel\'s own content', async () => {

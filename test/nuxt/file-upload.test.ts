@@ -250,10 +250,10 @@ describe('fileUpload', () => {
     expect(wrapper.find('input[type="file"]').attributes('disabled')).toBeDefined()
   })
 
-  it('uses semantic fill color for invalid dropzones', async () => {
+  it('uses semantic border and focus colors for invalid dropzones', async () => {
     const wrapper = await mountSuspended(FileUpload, { props: { invalid: true } })
-    expect(wrapper.find('button').classes()).toContain('border-[var(--_selaras-color-fill)]')
-    expect(wrapper.find('button').classes()).toContain('focus-visible:ring-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('button').classes()).toContain('border-[var(--_selaras-color-border)]')
+    expect(wrapper.find('button').classes()).toContain('focus-visible:ring-[var(--_selaras-color-focus)]')
   })
 
   it('sets a dragging state on dragenter and clears it on drop', async () => {

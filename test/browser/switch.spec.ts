@@ -20,5 +20,5 @@ test('uses a semantic danger role for invalid Switch styling', async ({ page, go
   await goto('/', { waitUntil: 'hydration' })
   const track = page.locator('#switch-invalid')
   await expect(track.locator('..')).toHaveAttribute('data-selaras-color', 'danger')
-  await expect(track).toHaveClass(/ring-\[var\(--_selaras-color-fill\)\]/)
+  await expect(track).toHaveClass(/ring-\[var\(--_selaras-color-border\)\]/)
 })

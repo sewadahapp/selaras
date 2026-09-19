@@ -7,7 +7,7 @@ test('renders Progress semantic indicator leaves in both modes', async ({ page, 
     for (const role of ['primary', 'enterprise']) {
       const progress = page.locator(`#progress-${role}`)
       await expect(progress).toHaveAttribute('data-selaras-color', role)
-      await expect(progress.locator('[data-state]')).toHaveClass(/bg-\[var\(--_selaras-color-fill\)\]/)
+      await expect(progress.locator('[data-state]')).toHaveClass(/bg-\[var\(--_selaras-color-indicator\)\]/)
     }
   }
 })

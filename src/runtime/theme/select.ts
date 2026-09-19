@@ -45,7 +45,7 @@ export const selectTheme = tv({
     viewport: 'max-h-72 overflow-y-auto p-1',
     group: 'px-2 pt-2 pb-1 text-xs font-medium text-[var(--selaras-resolved-text-muted)]',
     item: 'relative flex items-center gap-2 rounded-[var(--selaras-resolved-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--selaras-resolved-text-default)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--selaras-resolved-surface-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
-    itemIndicator: 'absolute end-2 flex items-center text-[var(--_selaras-color-fill)]',
+    itemIndicator: 'absolute end-2 flex items-center text-[var(--_selaras-color-indicator)]',
     empty: 'px-2 py-6 text-center text-sm text-[var(--selaras-resolved-text-muted)]',
     arrow: 'fill-[var(--selaras-resolved-surface-default)] stroke-[var(--selaras-resolved-border-default)] stroke-1',
   },
@@ -73,7 +73,7 @@ export const selectTheme = tv({
     // overrides win over color's - see input.ts for why declaration order
     // (not runtime call order) is what decides this.
     invalid: {
-      true: { trigger: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus:ring-[var(--_selaras-color-fill)] focus-within:ring-[var(--_selaras-color-fill)] data-[state=open]:ring-[var(--_selaras-color-fill)]' },
+      true: { trigger: 'ring-[var(--_selaras-color-border)] hover:ring-[var(--_selaras-color-border)] focus:ring-[var(--_selaras-color-focus)] focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-[var(--_selaras-color-focus)]' },
     },
   },
   defaultVariants: {

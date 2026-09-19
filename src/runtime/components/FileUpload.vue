@@ -280,7 +280,7 @@ const removeButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as con
 </script>
 
 <template>
-  <div :data-selaras-color="effectiveColor" v-bind="rootProps">
+  <div :data-selaras-color="fileUploadInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
     <button
       ref="dropzoneEl"
       type="button"

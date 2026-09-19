@@ -104,7 +104,7 @@ describe('classPrefix', async () => {
     // Resolved public token names are intentionally repeated in Tailwind's
     // arbitrary-value selectors. Keep a budget, but allow that explicit API
     // contract rather than restoring a private short-name compatibility layer.
-    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(134_000)
+    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(135_000)
     expect(gzipSync(css).byteLength).toBeLessThanOrEqual(18_000)
   })
 

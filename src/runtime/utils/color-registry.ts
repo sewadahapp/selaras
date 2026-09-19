@@ -24,6 +24,8 @@ export interface ColorRecipe {
   fillHover: string
   fillPressed: string
   onFill: string
+  /** Essential unpaired graphics such as progress and selection indicators. */
+  indicator: string
   subtle: string
   subtleHover: string
   subtlePressed: string
@@ -35,7 +37,7 @@ export interface ColorRecipe {
   focus: string
 }
 
-export type ColorRecipeInput = Pick<ColorRecipe, 'fill' | 'onFill' | 'subtle' | 'onSubtle' | 'text' | 'border'> & Partial<Pick<ColorRecipe, 'fillHover' | 'fillPressed' | 'subtleHover' | 'subtlePressed' | 'textHover' | 'textPressed' | 'focus'>>
+export type ColorRecipeInput = Pick<ColorRecipe, 'fill' | 'onFill' | 'subtle' | 'onSubtle' | 'text' | 'border'> & Partial<Pick<ColorRecipe, 'fillHover' | 'fillPressed' | 'indicator' | 'subtleHover' | 'subtlePressed' | 'textHover' | 'textPressed' | 'focus'>>
 
 export type RuntimeColorOverrides = Partial<Record<ColorRole, Partial<ColorRecipeInput>>>
 
@@ -97,6 +99,9 @@ export function normalizeColorRecipe(input: ColorRecipeInput): ColorRecipe {
     fillHover: input.fillHover ?? 'var(--_selaras-color-fill)',
     fillPressed: input.fillPressed ?? 'var(--_selaras-color-fill-hover)',
     onFill: input.onFill,
+    // A recipe's border is already authored for visibility against its
+    // surrounding surface, making it the safe shorthand for unpaired marks.
+    indicator: input.indicator ?? 'var(--_selaras-color-border)',
     subtle: input.subtle,
     subtleHover: input.subtleHover ?? 'var(--_selaras-color-subtle)',
     subtlePressed: input.subtlePressed ?? 'var(--_selaras-color-subtle-hover)',
@@ -124,6 +129,7 @@ const generatedRoleFields = [
   'fill-hover',
   'fill-pressed',
   'on-fill',
+  'indicator',
   'subtle',
   'subtle-hover',
   'subtle-pressed',

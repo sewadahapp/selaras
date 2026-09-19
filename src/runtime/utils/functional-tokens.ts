@@ -1,6 +1,6 @@
 /** Functional colors are independent of a component's selected intent role. */
 export const functionalTokenGroups = {
-  surface: ['default', 'elevated', 'inverted'],
+  surface: ['canvas', 'default', 'elevated', 'inverted'],
   text: ['default', 'muted', 'inverted'],
   border: ['default', 'muted', 'hover'],
 } as const

@@ -33,7 +33,7 @@ export const pinInputTheme = tv({
     // focus:ring override win over color's - matches Input's own
     // documented reasoning for this order.
     invalid: {
-      true: { input: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus:ring-[var(--_selaras-color-fill)]' },
+      true: { input: 'ring-[var(--_selaras-color-border)] hover:ring-[var(--_selaras-color-border)] focus:ring-[var(--_selaras-color-focus)]' },
     },
   },
   defaultVariants: {

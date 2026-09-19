@@ -83,7 +83,7 @@ export const checkboxTheme = tv({
     // requested, not whichever variant happens to compose later. See
     // RadioGroup's own theme file, which already has this order right.
     invalid: {
-      true: { box: 'ring-[var(--_selaras-color-fill)] data-[state=checked]:ring-[var(--_selaras-color-fill)] data-[state=indeterminate]:ring-[var(--_selaras-color-fill)]' },
+      true: { box: 'ring-[var(--_selaras-color-border)] data-[state=checked]:ring-[var(--_selaras-color-border)] data-[state=indeterminate]:ring-[var(--_selaras-color-border)]' },
     },
   },
   defaultVariants: {

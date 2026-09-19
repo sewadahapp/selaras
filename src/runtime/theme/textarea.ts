@@ -47,7 +47,7 @@ export const textareaTheme = tv({
     // override win over color's - see input.ts for why declaration order
     // (not runtime call order) is what decides this.
     invalid: {
-      true: { base: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus:ring-[var(--_selaras-color-fill)]' },
+      true: { base: 'ring-[var(--_selaras-color-border)] hover:ring-[var(--_selaras-color-border)] focus:ring-[var(--_selaras-color-focus)]' },
     },
   },
   defaultVariants: {

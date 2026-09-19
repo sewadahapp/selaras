@@ -22,6 +22,7 @@ const semanticRecipe = {
   textHover: 'rgb(80 90 100)',
   textPressed: 'rgb(90 100 110)',
   border: 'rgb(100 110 120)',
+  indicator: 'rgb(110 120 130)',
   focus: 'rgb(130 140 150)',
 }
 const nestedTokens = ref({
@@ -200,7 +201,7 @@ function updateNestedTokens() {
         Derived states
       </SButton>
     </STheme>
-    <section id="stock-colors" style="background: var(--selaras-resolved-surface-default); position: relative; z-index: 999999;">
+    <section id="stock-colors" style="background: var(--selaras-resolved-surface-canvas); position: relative; z-index: 999999;">
       <SButton
         v-for="role in ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'neutral']"
         :id="`stock-${role}`" :key="role" :color="role" variant="soft"

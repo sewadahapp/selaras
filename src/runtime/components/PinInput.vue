@@ -87,7 +87,7 @@ const inputProps = computed(() => mergeProps(resolveSlot(ui.value.input, props.u
     :aria-invalid="pinInputInvalid || undefined"
     :aria-describedby="describedBy"
     :aria-labelledby="labelledBy"
-    :data-selaras-color="effectiveColor"
+    :data-selaras-color="pinInputInvalid ? 'danger' : effectiveColor"
     v-bind="rootProps"
     @update:model-value="(value) => emit('update:modelValue', value as (string | number)[])"
     @complete="(value) => emit('complete', value as (string | number)[])"

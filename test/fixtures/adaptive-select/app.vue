@@ -42,7 +42,7 @@ function proposeValue(value) {
         Reset selection
       </button>
     </form>
-    <STheme as="section" :tokens="{ light: { colors: { enterprise: { fill: 'rgb(11 34 51)' } } } }">
+    <STheme as="section" :tokens="{ light: { colors: { enterprise: { fill: 'rgb(11 34 51)', indicator: 'rgb(12 35 52)' } } } }">
       <button id="before">
         Before
       </button>

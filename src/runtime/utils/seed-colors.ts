@@ -196,22 +196,28 @@ function requireSeries(mode: keyof SeedColorSurfaces, family: string, create: ()
   }
 }
 
+function deriveFillStates(seed: Rgb, foreground: Rgb, mode: keyof SeedColorSurfaces): readonly [Rgb, Rgb] {
+  const preferredTarget = mode === 'light' ? black : white
+  const alternateTarget = preferredTarget === black ? white : black
+  for (const target of [preferredTarget, alternateTarget]) {
+    for (const scale of [1, 0.75, 0.5, 0.25, 0.125, 0.0625, 0.03125]) {
+      const hover = quantize(mixLab(seed, target, 0.06 * scale))
+      const pressed = quantize(mixLab(seed, target, 0.12 * scale))
+      const colors = [seed, hover, pressed]
+      if (new Set(colors.map(toHex)).size === colors.length && colors.every(color => contrast(color, foreground) >= textMinimum))
+        return [hover, pressed]
+    }
+  }
+  invalid(`cannot derive distinct ${mode} fill states while preserving readable content; provide an explicit defineColor() recipe.`)
+}
+
 function deriveMode(seed: Rgb, surface: Rgb, mode: keyof SeedColorSurfaces): ColorRecipe {
   const direction = contrast(white, surface) > contrast(black, surface) ? 1 : -1
-  const fillCandidates = [black, white].flatMap((foreground) => {
-    try {
-      const series = findStateSeries(seed, direction, 0.045, 3, color => contrast(color, surface) >= nonTextGuard && contrast(color, foreground) >= textGuard)
-      return [{ ...series, foreground }]
-    }
-    catch {
-      return []
-    }
-  }).sort((left, right) => (left.cost + Number(left.collapsed) * 0.02) - (right.cost + Number(right.collapsed) * 0.02))
-  const fill = fillCandidates[0]
-  if (!fill)
-    invalid(`cannot derive the ${mode} fill family while preserving its contrast targets; provide an explicit defineColor() recipe.`)
-
-  const fillColor = fill.colors[0]!
+  const foreground = contrast(seed, black) >= contrast(seed, white) ? black : white
+  if (contrast(seed, foreground) < textMinimum)
+    invalid(`cannot preserve the ${mode} fill while deriving readable content; provide an explicit defineColor() recipe.`)
+  const [fillHover, fillPressed] = deriveFillStates(seed, foreground, mode)
+  const fillColor = seed
   const subtle = quantize(mixLab(surface, fillColor, 0.10))
   const subtleHover = quantize(mixLab(surface, fillColor, 0.14))
   const subtlePressed = quantize(mixLab(surface, fillColor, 0.18))
@@ -219,10 +225,11 @@ function deriveMode(seed: Rgb, surface: Rgb, mode: keyof SeedColorSurfaces): Col
   const border = requireSeries(mode, 'border', () => findStateSeries(seed, direction, 0.02, 1, color => contrast(color, surface) >= nonTextGuard)).colors[0]!
 
   return {
-    fill: toHex(fill.colors[0]!),
-    fillHover: toHex(fill.colors[1]!),
-    fillPressed: toHex(fill.colors[2]!),
-    onFill: toHex(fill.foreground),
+    fill: toHex(fillColor),
+    fillHover: toHex(fillHover),
+    fillPressed: toHex(fillPressed),
+    onFill: toHex(foreground),
+    indicator: toHex(border),
     subtle: toHex(subtle),
     subtleHover: toHex(subtleHover),
     subtlePressed: toHex(subtlePressed),
@@ -236,7 +243,8 @@ function deriveMode(seed: Rgb, surface: Rgb, mode: keyof SeedColorSurfaces): Col
 }
 
 /**
- * Derives a complete, opaque two-mode web ColorRecipe from one opaque sRGB seed.
+ * Preserves one opaque sRGB seed as the resting fill and derives a complete,
+ * opaque two-mode web ColorRecipe around it.
  * Custom or unresolved surfaces require explicit recipes instead.
  */
 export function defineColorFromSeed(seed: string, options: SeedColorOptions = {}): ColorModePair<ColorRecipe> {

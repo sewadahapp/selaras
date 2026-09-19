@@ -8,7 +8,7 @@ describe('progress', () => {
     const root = wrapper.find('[role="progressbar"]')
     expect(root.attributes('data-selaras-color')).toBe('premium')
     expect(root.attributes('style')).toBeUndefined()
-    expect(root.find(':scope > *').classes()).toContain('bg-[var(--_selaras-color-fill)]')
+    expect(root.find(':scope > *').classes()).toContain('bg-[var(--_selaras-color-indicator)]')
   })
 
   it('linear: sets the indicator width from modelValue/max', async () => {
@@ -46,7 +46,7 @@ describe('progress', () => {
 
     const root = wrapper.find('[role="progressbar"]')
     expect(root.classes()).toContain('h-3')
-    expect(wrapper.find('[role="progressbar"] > *').classes()).toContain('bg-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('[role="progressbar"] > *').classes()).toContain('bg-[var(--_selaras-color-indicator)]')
   })
 
   it('circular: renders an svg with a track and an indicator circle', async () => {

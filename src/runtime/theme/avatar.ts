@@ -32,13 +32,13 @@ export const avatarTheme = tv({
     // (online, offline, ...) rarely match the avatar's own identity color, so
     // it gets its own variant rather than tracking the avatar's.
     statusColor: {
-      primary: { status: 'bg-[var(--selaras-resolved-color-primary-fill)]' },
-      neutral: { status: 'bg-[var(--selaras-resolved-text-muted)]' },
-      secondary: { status: 'bg-[var(--selaras-resolved-color-secondary-fill)]' },
-      success: { status: 'bg-[var(--selaras-resolved-color-success-fill)]' },
-      danger: { status: 'bg-[var(--selaras-resolved-color-danger-fill)]' },
-      info: { status: 'bg-[var(--selaras-resolved-color-info-fill)]' },
-      warning: { status: 'bg-[var(--selaras-resolved-color-warning-fill)]' },
+      primary: { status: 'bg-[var(--selaras-resolved-color-primary-indicator)]' },
+      neutral: { status: 'bg-[var(--selaras-resolved-color-neutral-indicator)]' },
+      secondary: { status: 'bg-[var(--selaras-resolved-color-secondary-indicator)]' },
+      success: { status: 'bg-[var(--selaras-resolved-color-success-indicator)]' },
+      danger: { status: 'bg-[var(--selaras-resolved-color-danger-indicator)]' },
+      info: { status: 'bg-[var(--selaras-resolved-color-info-indicator)]' },
+      warning: { status: 'bg-[var(--selaras-resolved-color-warning-indicator)]' },
     },
     size: {
       sm: { base: 'size-6', fallback: 'text-[10px]', icon: 'size-3', status: 'size-1.5' },

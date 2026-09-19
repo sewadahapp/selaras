@@ -80,6 +80,7 @@ export function generateDefaultColorCss(document) {
   if (declarations.length === 0)
     invalid('color.palette', 'expected at least one color token.')
   const light = {
+    'surface-canvas': '#FFFFFF',
     'surface-default': '--theme(--color-selaras-gray-25)',
     'surface-elevated': '--theme(--color-selaras-gray-50)',
     'surface-inverted': '--theme(--color-selaras-gray-950)',
@@ -91,6 +92,7 @@ export function generateDefaultColorCss(document) {
     'border-hover': '--theme(--color-selaras-gray-300)',
   }
   const dark = {
+    'surface-canvas': '#0c0c0d',
     'surface-default': '--theme(--color-selaras-gray-950)',
     'surface-elevated': '--theme(--color-selaras-gray-900)',
     'surface-inverted': '--theme(--color-selaras-gray-50)',

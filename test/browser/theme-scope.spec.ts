@@ -123,7 +123,7 @@ test('isolates explicit modes, inherited partial tokens and body portals through
   await expect(portal).toHaveCSS('background-color', 'rgb(40, 50, 60)')
   await expect(page.locator('#portal-text')).toHaveCSS('color', 'rgb(35, 69, 103)')
   await expect(page.locator('#portal-primary-read')).toHaveCSS('color', 'rgb(40, 50, 60)')
-  await expect(page.locator('#independent-status span.absolute')).toHaveCSS('background-color', 'oklch(0.47 0.14 148)')
+  await expect(page.locator('#independent-status span.absolute')).toHaveCSS('background-color', 'oklch(0.527 0.154 150.069)')
   await expect(page.locator('#portal-native')).toHaveCSS('color-scheme', 'light')
   await expect(page.locator('#modal-native')).toHaveCSS('color-scheme', 'light')
   await expect(page.locator('#invalid-radio label').first()).toHaveAttribute('data-selaras-mode', 'light')

@@ -19,7 +19,7 @@ export interface BadgeProps {
   label?: string
   icon?: string
   trailingIcon?: string
-  /** A status circle. Inline dots use the badge foreground; standalone dots use the role text color. Supply an accessible name when no label is visible. */
+  /** A status circle. Inline dots use the badge foreground; standalone dots use the role indicator. Supply an accessible name when no label is visible. */
   dot?: boolean
   color?: ColorRole
   variant?: BadgeVariants['variant']

@@ -134,12 +134,12 @@ describe('badge', () => {
     const wrapper = await mountSuspended(Badge, { props: { dot: true, color: 'success' } })
     expect(wrapper.text()).toBe('')
     expect(wrapper.classes()).toContain('rounded-full')
-    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-text)]')
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-indicator)]')
   })
 
-  it('uses the role text color for a standalone dot, regardless of variant', async () => {
+  it('uses the role indicator color for a standalone dot, regardless of variant', async () => {
     const wrapper = await mountSuspended(Badge, { props: { dot: true, color: 'success', variant: 'outline' } })
-    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-text)]')
+    expect(wrapper.classes()).toContain('bg-[var(--_selaras-color-indicator)]')
   })
 
   it('forwards a plain aria-label onto the bare dot for accessibility', async () => {

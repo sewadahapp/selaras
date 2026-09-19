@@ -11,7 +11,7 @@ export const separatorTheme = tv({
     // plain bar; with a label, a second one of these renders after it
     // (see Separator.vue), splitting the available space evenly on both
     // sides of the text.
-    line: 'shrink-0 border-[var(--_selaras-color-fill)]',
+    line: 'shrink-0 border-[var(--_selaras-color-indicator)]',
     // Always muted, independent of `color` - a colored line with
     // matching bright label text reads as garish rather than
     // informative; the label stays legible/neutral regardless of how

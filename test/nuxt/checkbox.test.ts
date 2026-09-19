@@ -69,7 +69,7 @@ describe('checkbox', () => {
   it('invalid wins over a custom color for the checked-state ring, not the other way around', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { invalid: true, color: 'success', modelValue: true } })
     const classes = wrapper.find('button').classes().join(' ')
-    expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-fill)]')
+    expect(classes).toContain('data-[state=checked]:ring-[var(--_selaras-color-border)]')
     expect(classes).not.toContain('data-[state=checked]:ring-[var(--selaras-resolved-color-success-fill)]')
   })
 

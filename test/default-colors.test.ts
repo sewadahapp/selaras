@@ -20,6 +20,8 @@ describe('owned default color source', () => {
     expect(defaultSeedSurfaces).toEqual({ light: '#fdfdfe', dark: '#090a0d' })
     const foundations = css.match(/@theme static \{\n([\s\S]*?)\n\}/)?.[1] ?? ''
     expect([...foundations.matchAll(/--color-selaras-[a-z-]+-\d+/g)]).toHaveLength(78)
+    expect(css).toContain('--_selaras-default-surface-canvas: #FFFFFF;')
+    expect(css).toContain('--_selaras-default-surface-canvas: #0c0c0d;')
     expect(css).toContain('--_selaras-default-surface-default: --theme(--color-selaras-gray-25);')
     expect(css).toContain('--_selaras-default-surface-default: --theme(--color-selaras-gray-950);')
     expect(css).not.toMatch(/--color-(?:primary|secondary|success|info|warning|danger|neutral)-/)
@@ -30,8 +32,9 @@ describe('owned default color source', () => {
 
     expect(registry.primary.light.fill).toBe('var(--color-selaras-indigo-500)')
     expect(registry.secondary.light.fill).toBe('var(--color-selaras-plum-600)')
-    expect(registry.success.light.fill).toBe('var(--color-selaras-emerald-700)')
-    expect(registry.warning.light.onFill).toBe('var(--color-selaras-gray-25)')
+    expect(registry.success.light.fill).toBe('var(--color-selaras-green-500)')
+    expect(registry.warning.light.fill).toBe('var(--color-selaras-yellow-500)')
+    expect(registry.warning.light.onFill).toBe('var(--color-selaras-gray-950)')
     expect(JSON.stringify(registry)).not.toMatch(/--color-(?:primary|secondary|success|info|warning|danger|neutral)-/)
   })
 

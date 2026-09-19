@@ -75,7 +75,7 @@ export const switchTheme = tv({
       // its own to recolor (unlike Radio/Checkbox's ring-inset), but an
       // offset outline left a visible gap between it and the pill, unlike
       // every other invalid state in this library, which sits flush.
-      true: { track: 'ring-2 ring-[var(--_selaras-color-fill)]', thumb: 'data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)]' },
+      true: { track: 'ring-2 ring-[var(--_selaras-color-border)]', thumb: 'data-[state=checked]:before:bg-[var(--_selaras-color-fill-hover)]' },
     },
   },
   defaultVariants: {

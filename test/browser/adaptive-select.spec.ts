@@ -89,7 +89,7 @@ test('keeps modal multiple selections across filtering and resets the persistent
   await dialog.getByRole('option', { name: 'One', exact: true }).click()
   const values = () => page.locator('#selection-form').evaluate(el => new FormData(el as HTMLFormElement).getAll('choice'))
   await expect.poll(values).toEqual(['2', '1'])
-  await expect.poll(() => dialog.getByRole('option', { name: 'One', exact: true }).locator('[data-test="selection-indicator"]').evaluate(el => getComputedStyle(el).color)).toBe('rgb(11, 34, 51)')
+  await expect.poll(() => dialog.getByRole('option', { name: 'One', exact: true }).locator('[data-test="selection-indicator"]').evaluate(el => getComputedStyle(el).color)).toBe('rgb(12, 35, 52)')
   await dialog.getByRole('button', { name: 'Done', exact: true }).click()
   await expect(dialog).toBeHidden()
   await expect(page.locator('#select-trigger')).toBeFocused()

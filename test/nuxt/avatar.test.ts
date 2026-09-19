@@ -89,14 +89,14 @@ describe('avatar', () => {
   it('renders a status dot with the default neutral color', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', status: true } })
     const status = wrapper.findAll('span').find(sp => sp.classes().includes('absolute'))
-    expect(status?.classes()).toContain('bg-[var(--selaras-resolved-text-muted)]')
+    expect(status?.classes()).toContain('bg-[var(--selaras-resolved-color-neutral-indicator)]')
     expect(status?.classes()).toContain('ring-2')
   })
 
   it('renders a status dot with the given statusColor', async () => {
     const wrapper = await mountSuspended(Avatar, { props: { text: 'JD', status: true, statusColor: 'success' } })
     const status = wrapper.findAll('span').find(sp => sp.classes().includes('absolute'))
-    expect(status?.classes()).toContain('bg-[var(--selaras-resolved-color-success-fill)]')
+    expect(status?.classes()).toContain('bg-[var(--selaras-resolved-color-success-indicator)]')
   })
 
   it('clips content but not the status dot', async () => {

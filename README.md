@@ -96,6 +96,26 @@ Every component is now auto-imported and ready to use:
 </SButton>
 ```
 
+## Theming
+
+Selaras is CSS-first for design values.
+
+For normal theme changes, override the public `--selaras-*` CSS variables or
+the Selaras foundation palettes in Tailwind `@theme`. You do not need
+`nuxt.config.ts` to change built-in roles such as `primary`, `warning`,
+`danger`, or `neutral`.
+
+Use `selaras.theme.colors` in `nuxt.config.ts` when you must register a new
+role name, such as `tertiary`, or when you intentionally want to author a
+complete build-time recipe.
+
+`defineColorFromSeed()` is an optional accessibility-oriented generator. The
+supplied color remains the exact resting solid fill; Selaras derives readable
+content, interaction states, text, borders, focus, and essential indicators
+around it. Use `defineColor()` when you need to author every leaf yourself.
+
+See the full [Theming guide](./playground/content/overview/theming.md).
+
 ## Contribution
 
 <details>

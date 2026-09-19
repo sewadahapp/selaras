@@ -160,10 +160,10 @@ describe('pinInput', () => {
     expect(wrapper.find('div').attributes('readonly')).toBeUndefined()
   })
 
-  it('uses the semantic fill color for invalid boxes', async () => {
+  it('uses semantic border and focus colors for invalid boxes', async () => {
     wrapper = await mountSuspended(PinInput, { props: { invalid: true } })
-    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-fill)]')
-    expect(wrapper.find('input').classes()).toContain('ring-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('input').classes()).toContain('focus:ring-[var(--_selaras-color-focus)]')
+    expect(wrapper.find('input').classes()).toContain('ring-[var(--_selaras-color-border)]')
   })
 
   it('merges a string :ui.input override with the theme classes', async () => {

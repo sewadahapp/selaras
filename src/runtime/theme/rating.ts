@@ -48,7 +48,7 @@ export const ratingTheme = tv({
     // backdrop through it, reading as "not filled" with no shape swap
     // needed - recolored once its own indicator's data-state flips to
     // active.
-    fillIcon: 'text-transparent transition-colors group-data-[state=active]/step:text-[var(--_selaras-color-fill)]',
+    fillIcon: 'text-transparent transition-colors group-data-[state=active]/step:text-[var(--_selaras-color-indicator)]',
   },
   variants: {
     orientation: {

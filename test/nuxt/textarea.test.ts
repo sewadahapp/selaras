@@ -111,7 +111,7 @@ describe('textarea', () => {
   it('invalid wins over a custom color for the focus ring, not the other way around', async () => {
     const wrapper = await mountSuspended(Textarea, { props: { color: 'success', invalid: true } })
     const classes = wrapper.find('textarea').classes()
-    expect(classes).toContain('focus:ring-[var(--_selaras-color-fill)]')
+    expect(classes).toContain('focus:ring-[var(--_selaras-color-focus)]')
     expect(classes).not.toContain('focus:ring-[var(--selaras-resolved-color-success-fill)]')
   })
 })

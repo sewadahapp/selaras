@@ -10,7 +10,7 @@ describe('icon', () => {
     const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star', color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
     expect(wrapper.find('[data-selaras-color="premium"]').attributes('style') ?? '').not.toContain('--_selaras-color-fill')
-    expect(wrapper.find('.iconify').classes()).toContain('text-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('.iconify').classes()).toContain('text-[var(--_selaras-color-indicator)]')
   })
 
   it('passes a custom role to public recipe conditions', async () => {
@@ -57,7 +57,7 @@ describe('icon', () => {
 
   it('applies a semantic color when given', async () => {
     const wrapper = await mountSuspended(Icon, { props: { name: 'lucide:star', color: 'danger' } })
-    expect(wrapper.find('.iconify').classes()).toContain('text-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('.iconify').classes()).toContain('text-[var(--_selaras-color-indicator)]')
   })
 
   it('lets a passed-in class override the color prop, same tailwind-merge as everywhere else', async () => {

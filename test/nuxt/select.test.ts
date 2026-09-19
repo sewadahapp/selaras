@@ -387,8 +387,9 @@ describe('select', () => {
   it('invalid wins over a custom color for the focus ring, not the other way around', async () => {
     const wrapper = await mountSuspended(Select, { props: { items: fruitItems, color: 'success', invalid: true } })
     const classes = wrapper.find('button').classes()
-    expect(classes).toContain('focus:ring-[var(--_selaras-color-fill)]')
-    expect(classes).not.toContain('focus:ring-[var(--_selaras-color-focus)]')
+    expect(wrapper.find('[data-selaras-color]').attributes('data-selaras-color')).toBe('danger')
+    expect(classes).toContain('focus:ring-[var(--_selaras-color-focus)]')
+    expect(classes).not.toContain('focus:ring-[var(--selaras-resolved-surface-inverted)]')
   })
 
   it('renders custom group header content from the group slot, receiving the group entry', async () => {

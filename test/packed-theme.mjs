@@ -16,5 +16,5 @@ if (defineColor(color) !== color)
 if (dtcgColorToCss({ colorSpace: 'oklch', components: [0.7, 0.2, 320] }) !== 'oklch(0.7 0.2 320)')
   throw new Error('The published DTCG helper must serialize resolved OKLCH values.')
 
-if (defineColorFromSeed('#FD5E53').light.fill !== '#f6584d')
+if (defineColorFromSeed('#FD5E53').light.fill !== '#fd5e53')
   throw new Error('The published seed helper must normalize the documented one-color path.')

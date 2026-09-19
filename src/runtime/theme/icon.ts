@@ -28,7 +28,7 @@ export const iconTheme = tv({
     // role with no finite built-in branch, while leaving uncolored icons free
     // to inherit currentColor.
     colored: {
-      true: { base: 'text-[var(--_selaras-color-fill)]' },
+      true: { base: 'text-[var(--_selaras-color-indicator)]' },
     },
   },
   compoundVariants: [

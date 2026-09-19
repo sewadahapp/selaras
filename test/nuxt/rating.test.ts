@@ -8,13 +8,13 @@ describe('rating', () => {
     const wrapper = await mountSuspended(Rating, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
     expect(wrapper.attributes('style')).not.toContain('--_selaras-color-fill')
-    expect(wrapper.html()).toContain('group-data-[state=active]/step:text-[var(--_selaras-color-fill)]')
+    expect(wrapper.html()).toContain('group-data-[state=active]/step:text-[var(--_selaras-color-indicator)]')
   })
 
   it('binds its built-in role too, so the selected recipe is always available', async () => {
     const wrapper = await mountSuspended(Rating, { props: { color: 'danger' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('danger')
-    expect(wrapper.html()).toContain('group-data-[state=active]/step:text-[var(--_selaras-color-fill)]')
+    expect(wrapper.html()).toContain('group-data-[state=active]/step:text-[var(--_selaras-color-indicator)]')
   })
 
   it('renders 5 stars by default, none active, when no value is given', async () => {

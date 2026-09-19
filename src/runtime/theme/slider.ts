@@ -11,8 +11,8 @@ export const sliderTheme = tv({
     // positioned element with no top/bottom of its own collapses to 0
     // height. inset-y-0/inset-x-0 below (in the orientation variant)
     // supply that missing cross-axis size.
-    range: 'absolute rounded-full bg-[var(--_selaras-color-fill)]',
-    thumb: 'block shrink-0 rounded-full bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-sm)] ring-2 ring-[var(--_selaras-color-fill)] transition-shadow focus-visible:outline-none focus-visible:ring-4',
+    range: 'absolute rounded-full bg-[var(--_selaras-color-indicator)]',
+    thumb: 'block shrink-0 rounded-full bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-sm)] ring-2 ring-[var(--_selaras-color-indicator)] transition-shadow focus-visible:outline-none focus-visible:ring-4',
     // Own addition - Reka's Slider has no tick/mark concept of its own.
     // Positioned via an inline style (percent along the track), not a
     // variant - see Slider.vue's own `ticks` computed.

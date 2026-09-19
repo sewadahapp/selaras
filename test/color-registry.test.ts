@@ -15,6 +15,7 @@ describe('color registry', () => {
       fillHover: 'var(--_selaras-color-fill)',
       fillPressed: 'var(--_selaras-color-fill-hover)',
       onFill: '#fff',
+      indicator: 'var(--_selaras-color-border)',
       subtle: 'var(--brand-subtle)',
       subtleHover: 'var(--_selaras-color-subtle)',
       subtlePressed: 'var(--_selaras-color-subtle-hover)',
@@ -33,6 +34,7 @@ describe('color registry', () => {
       fillHover: 'hover',
       fillPressed: 'pressed',
       onFill: 'on-fill',
+      indicator: 'indicator',
       subtle: 'subtle',
       subtleHover: 'subtle-hover',
       subtlePressed: 'subtle-pressed',
@@ -44,6 +46,7 @@ describe('color registry', () => {
       focus: 'focus',
     })
     expect(recipe.fillPressed).toBe('pressed')
+    expect(recipe.indicator).toBe('indicator')
     expect(recipe.focus).toBe('focus')
   })
 
@@ -104,7 +107,9 @@ describe('color registry', () => {
     expect(css).toContain('[data-selaras-color="premium"]')
     expect(css).toContain(':root,\n[data-selaras-theme]')
     expect(css).toContain('--selaras-resolved-color-premium-fill: var(--selaras-color-premium-fill, light-fill);')
+    expect(css).toContain('--selaras-resolved-color-premium-indicator: var(--selaras-color-premium-indicator, var(--selaras-resolved-color-premium-border));')
     expect(css).toContain('--_selaras-color-fill: var(--selaras-color-premium-fill, var(--selaras-resolved-color-premium-fill));')
+    expect(css).toContain('--_selaras-color-indicator: var(--selaras-color-premium-indicator, var(--selaras-resolved-color-premium-indicator));')
     expect(css).not.toContain('--selaras-color-role-')
     expect(css).toContain(':root.dark [data-selaras-theme]')
     expect(css).toContain('--selaras-resolved-color-premium-fill: var(--selaras-color-premium-fill, dark-fill);')
@@ -143,11 +148,12 @@ describe('color registry', () => {
 
   it('serializes runtime light/dark overrides without allowing declaration injection', () => {
     const css = generateRuntimeTokenOverrideCss({
-      light: { colors: { premium: { fill: '#5134a8', fillHover: 'var(--brand-hover)' } } },
+      light: { colors: { premium: { fill: '#5134a8', fillHover: 'var(--brand-hover)', indicator: '#765fc0' } } },
       dark: { colors: { premium: { fill: '#a78bfa' } } },
     })
     expect(css).toContain('[data-selaras-theme="global"]')
     expect(css).toContain('--selaras-color-premium-fill-hover: var(--brand-hover);')
+    expect(css).toContain('--selaras-color-premium-indicator: #765fc0;')
     expect(css).toContain('[data-selaras-mode="light"]')
     expect(css).toContain(':root.dark [data-selaras-theme="global"]')
     expect(css).toContain(':root {\n  --selaras-color-premium-fill: #5134a8;')

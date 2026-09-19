@@ -60,7 +60,7 @@ export const datePickerTheme = tv({
       lg: { field: 'h-11 px-3.5 text-base' },
     },
     invalid: {
-      true: { field: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus-within:ring-[var(--_selaras-color-fill)]' },
+      true: { field: 'ring-[var(--_selaras-color-border)] hover:ring-[var(--_selaras-color-border)] focus-within:ring-[var(--_selaras-color-focus)]' },
     },
     // Range mode's day cells butt up against each other with no horizontal
     // gap, so a highlighted run of days reads as one continuous connected

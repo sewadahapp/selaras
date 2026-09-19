@@ -67,7 +67,7 @@ export const inputNumberTheme = tv({
     // focus-within:ring override win over color's - see input.ts for why
     // declaration order (not runtime call order) is what decides this.
     invalid: {
-      true: { root: 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)] focus-within:ring-[var(--_selaras-color-fill)]' },
+      true: { root: 'ring-[var(--_selaras-color-border)] hover:ring-[var(--_selaras-color-border)] focus-within:ring-[var(--_selaras-color-focus)]' },
     },
   },
   defaultVariants: {

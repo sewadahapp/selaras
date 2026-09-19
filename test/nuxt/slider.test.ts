@@ -19,13 +19,13 @@ describe('slider', () => {
     const wrapper = await mountSuspended(Slider, { props: { color: 'premium', modelValue: 30 } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
     expect(wrapper.attributes('style')).not.toContain('--_selaras-color-fill')
-    expect(wrapper.html()).toContain('bg-[var(--_selaras-color-fill)]')
+    expect(wrapper.html()).toContain('bg-[var(--_selaras-color-indicator)]')
   })
 
   it('binds its built-in role too, so the selected recipe is always available', async () => {
     const wrapper = await mountSuspended(Slider, { props: { color: 'danger', modelValue: 30 } })
     expect(wrapper.attributes('data-selaras-color')).toBe('danger')
-    expect(wrapper.find('[role="slider"]').classes()).toContain('ring-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('[role="slider"]').classes()).toContain('ring-[var(--_selaras-color-indicator)]')
   })
 
   it('renders a single thumb reflecting a plain number modelValue', async () => {
@@ -128,7 +128,7 @@ describe('slider', () => {
   it('applies the color variant\'s classes to the range and thumb', async () => {
     const wrapper = await mountSuspended(Slider, { props: { modelValue: 30, color: 'danger' } })
 
-    expect(wrapper.find('[role="slider"]').classes()).toContain('ring-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('[role="slider"]').classes()).toContain('ring-[var(--_selaras-color-indicator)]')
   })
 
   it('merges a string :ui.thumb override with the theme classes', async () => {

@@ -9,7 +9,7 @@ describe('separator', () => {
     const wrapper = await mountSuspended(Separator, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
     expect(wrapper.attributes('style')).toBeUndefined()
-    expect(wrapper.find('span').classes()).toContain('border-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('span').classes()).toContain('border-[var(--_selaras-color-indicator)]')
   })
 
   it('passes a custom role to public recipe conditions', async () => {
@@ -92,6 +92,6 @@ describe('separator', () => {
   it('applies the color variant\'s border token', async () => {
     const wrapper = await mountSuspended(Separator, { props: { color: 'danger' } })
 
-    expect(wrapper.find('span').classes()).toContain('border-[var(--_selaras-color-fill)]')
+    expect(wrapper.find('span').classes()).toContain('border-[var(--_selaras-color-indicator)]')
   })
 })

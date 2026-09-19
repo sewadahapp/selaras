@@ -509,7 +509,7 @@ const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
 const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const colorRoleMarker = computed(() => effectiveColor.value)
+const colorRoleMarker = computed(() => selectInvalid.value ? 'danger' : effectiveColor.value)
 const ui = computed(() => theme.value({ size: effectiveSize.value, color: effectiveColor.value as SelectVariants['color'], invalid: selectInvalid.value }))
 
 const nativeTriggerAttrs = useFallthroughAttrs(key => !props.creatable && (isNativeInputA11yAttr(key) || (!props.searchable && isNativeInputEvent(key))))

@@ -16,5 +16,5 @@ test('uses the danger semantic role for invalid InputNumber styling', async ({ p
   await goto('/', { waitUntil: 'hydration' })
   const input = page.locator('#input-number-invalid')
   await expect(input.locator('..')).toHaveAttribute('data-selaras-color', 'danger')
-  await expect(input.locator('..')).toHaveClass(/focus-within:ring-\[var\(--_selaras-color-fill\)\]/)
+  await expect(input.locator('..')).toHaveClass(/focus-within:ring-\[var\(--_selaras-color-focus\)\]/)
 })

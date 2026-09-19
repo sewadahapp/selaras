@@ -1,16 +1,5 @@
 /* Generated from ../tokens/default-colors.tokens.json. Do not edit directly. */
 @theme static {
-  --color-selaras-amber-50: oklch(0.985 0.022 88);
-  --color-selaras-amber-100: oklch(0.96 0.055 88);
-  --color-selaras-amber-200: oklch(0.915 0.105 88);
-  --color-selaras-amber-300: oklch(0.86 0.145 88);
-  --color-selaras-amber-400: oklch(0.81 0.165 88);
-  --color-selaras-amber-500: oklch(0.755 0.165 88);
-  --color-selaras-amber-600: oklch(0.665 0.155 88);
-  --color-selaras-amber-700: oklch(0.565 0.135 88);
-  --color-selaras-amber-800: oklch(0.465 0.11 88);
-  --color-selaras-amber-900: oklch(0.375 0.085 88);
-  --color-selaras-amber-950: oklch(0.255 0.055 88);
   --color-selaras-blue-50: oklch(0.975 0.018 245);
   --color-selaras-blue-100: oklch(0.945 0.04 245);
   --color-selaras-blue-200: oklch(0.895 0.075 245);
@@ -22,17 +11,6 @@
   --color-selaras-blue-800: oklch(0.375 0.115 245);
   --color-selaras-blue-900: oklch(0.3 0.085 245);
   --color-selaras-blue-950: oklch(0.215 0.055 245);
-  --color-selaras-emerald-50: oklch(0.98 0.02 148);
-  --color-selaras-emerald-100: oklch(0.95 0.045 148);
-  --color-selaras-emerald-200: oklch(0.895 0.08 148);
-  --color-selaras-emerald-300: oklch(0.82 0.12 148);
-  --color-selaras-emerald-400: oklch(0.735 0.155 148);
-  --color-selaras-emerald-500: oklch(0.64 0.175 148);
-  --color-selaras-emerald-600: oklch(0.555 0.16 148);
-  --color-selaras-emerald-700: oklch(0.47 0.14 148);
-  --color-selaras-emerald-800: oklch(0.39 0.115 148);
-  --color-selaras-emerald-900: oklch(0.315 0.085 148);
-  --color-selaras-emerald-950: oklch(0.225 0.055 148);
   --color-selaras-gray-25: oklch(0.995 0.0015 280);
   --color-selaras-gray-50: oklch(0.98 0.003 280);
   --color-selaras-gray-100: oklch(0.945 0.0065 280);
@@ -45,6 +23,17 @@
   --color-selaras-gray-800: oklch(0.275 0.014 280);
   --color-selaras-gray-900: oklch(0.205 0.011 280);
   --color-selaras-gray-950: oklch(0.145 0.008 280);
+  --color-selaras-green-50: oklch(0.982 0.018 155.826);
+  --color-selaras-green-100: oklch(0.962 0.044 156.743);
+  --color-selaras-green-200: oklch(0.925 0.084 155.995);
+  --color-selaras-green-300: oklch(0.871 0.15 154.449);
+  --color-selaras-green-400: oklch(0.792 0.209 151.711);
+  --color-selaras-green-500: oklch(0.723 0.219 149.579);
+  --color-selaras-green-600: oklch(0.627 0.194 149.214);
+  --color-selaras-green-700: oklch(0.527 0.154 150.069);
+  --color-selaras-green-800: oklch(0.448 0.119 151.328);
+  --color-selaras-green-900: oklch(0.393 0.095 152.535);
+  --color-selaras-green-950: oklch(0.266 0.065 152.934);
   --color-selaras-indigo-50: oklch(0.97 0.012 279.99);
   --color-selaras-indigo-100: oklch(0.93 0.028 279.99);
   --color-selaras-indigo-200: oklch(0.86 0.055 279.99);
@@ -67,22 +56,34 @@
   --color-selaras-plum-800: oklch(0.345 0.115 325);
   --color-selaras-plum-900: oklch(0.275 0.085 325);
   --color-selaras-plum-950: oklch(0.19 0.055 325);
-  --color-selaras-red-50: oklch(0.975 0.015 28);
-  --color-selaras-red-100: oklch(0.945 0.035 28);
-  --color-selaras-red-200: oklch(0.89 0.07 28);
-  --color-selaras-red-300: oklch(0.805 0.12 28);
-  --color-selaras-red-400: oklch(0.7 0.175 28);
-  --color-selaras-red-500: oklch(0.6 0.205 28);
-  --color-selaras-red-600: oklch(0.525 0.195 28);
-  --color-selaras-red-700: oklch(0.445 0.17 28);
-  --color-selaras-red-800: oklch(0.365 0.135 28);
-  --color-selaras-red-900: oklch(0.295 0.1 28);
-  --color-selaras-red-950: oklch(0.205 0.065 28);
+  --color-selaras-red-50: oklch(0.971 0.013 17.38);
+  --color-selaras-red-100: oklch(0.936 0.032 17.717);
+  --color-selaras-red-200: oklch(0.885 0.062 18.334);
+  --color-selaras-red-300: oklch(0.808 0.114 19.571);
+  --color-selaras-red-400: oklch(0.704 0.191 22.216);
+  --color-selaras-red-500: oklch(0.637 0.237 25.331);
+  --color-selaras-red-600: oklch(0.577 0.245 27.325);
+  --color-selaras-red-700: oklch(0.505 0.213 27.518);
+  --color-selaras-red-800: oklch(0.444 0.177 26.899);
+  --color-selaras-red-900: oklch(0.396 0.141 25.723);
+  --color-selaras-red-950: oklch(0.258 0.092 26.042);
+  --color-selaras-yellow-50: oklch(0.987 0.026 102.212);
+  --color-selaras-yellow-100: oklch(0.973 0.071 103.193);
+  --color-selaras-yellow-200: oklch(0.945 0.129 101.54);
+  --color-selaras-yellow-300: oklch(0.905 0.182 98.111);
+  --color-selaras-yellow-400: oklch(0.852 0.199 91.936);
+  --color-selaras-yellow-500: oklch(0.795 0.184 86.047);
+  --color-selaras-yellow-600: oklch(0.681 0.162 75.834);
+  --color-selaras-yellow-700: oklch(0.554 0.135 66.442);
+  --color-selaras-yellow-800: oklch(0.476 0.114 61.907);
+  --color-selaras-yellow-900: oklch(0.421 0.095 57.708);
+  --color-selaras-yellow-950: oklch(0.286 0.066 53.813);
 }
 
 @layer theme {
   :root,
   [data-selaras-theme] {
+  --_selaras-default-surface-canvas: #FFFFFF;
   --_selaras-default-surface-default: --theme(--color-selaras-gray-25);
   --_selaras-default-surface-elevated: --theme(--color-selaras-gray-50);
   --_selaras-default-surface-inverted: --theme(--color-selaras-gray-950);
@@ -97,6 +98,7 @@
   :root.dark,
   :root.dark [data-selaras-theme]:where(:not([data-selaras-mode]), [data-selaras-mode="root"]),
   [data-selaras-theme]:where([data-selaras-mode="dark"]) {
+  --_selaras-default-surface-canvas: #0c0c0d;
   --_selaras-default-surface-default: --theme(--color-selaras-gray-950);
   --_selaras-default-surface-elevated: --theme(--color-selaras-gray-900);
   --_selaras-default-surface-inverted: --theme(--color-selaras-gray-50);

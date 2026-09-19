@@ -27,13 +27,13 @@ function expectAccessibleRecipe(recipe: ReturnType<typeof defineColorFromSeed>, 
     const color = recipe[mode]
     for (const state of ['fill', 'fillHover', 'fillPressed'] as const) {
       expect(contrast(color[state], color.onFill)).toBeGreaterThanOrEqual(4.5)
-      expect(contrast(color[state], surfaces[mode])).toBeGreaterThanOrEqual(3)
     }
     for (const state of ['subtle', 'subtleHover', 'subtlePressed'] as const)
       expect(contrast(color[state], color.onSubtle)).toBeGreaterThanOrEqual(4.5)
     for (const state of ['text', 'textHover', 'textPressed'] as const)
       expect(contrast(color[state], surfaces[mode])).toBeGreaterThanOrEqual(4.5)
     expect(contrast(color.border, surfaces[mode])).toBeGreaterThanOrEqual(3)
+    expect(contrast(color.indicator, surfaces[mode])).toBeGreaterThanOrEqual(3)
     expect(contrast(color.focus, surfaces[mode])).toBeGreaterThanOrEqual(3)
   }
 }
@@ -43,22 +43,24 @@ describe('seed color helper', () => {
     const recipe = defineColorFromSeed('#FD5E53')
 
     expect(recipe.light).toMatchObject({
-      fill: '#f6584d',
-      fillHover: '#ea4c43',
-      fillPressed: '#de4039',
+      fill: '#fd5e53',
+      fillHover: '#e9564c',
+      fillPressed: '#d64e45',
       onFill: '#000000',
-      subtle: '#ffeeec',
+      indicator: '#f6584d',
+      subtle: '#ffeeed',
       onSubtle: '#c52423',
     })
     expect(recipe.dark).toMatchObject({
       fill: '#fd5e53',
-      fillHover: '#ff7b6e',
-      fillPressed: '#ff9589',
+      fillHover: '#ff6a5e',
+      fillPressed: '#ff7568',
       onFill: '#000000',
       subtle: '#1d1314',
       onSubtle: '#fd5e53',
     })
-    expect(Object.keys(recipe.light)).toHaveLength(13)
+    expect(recipe.dark.fill).toBe('#fd5e53')
+    expect(Object.keys(recipe.light)).toHaveLength(14)
     expect(Object.values(recipe.light).every(value => /^#[0-9a-f]{6}$/i.test(value))).toBe(true)
     expectAccessibleRecipe(recipe, { light: '#fdfdfe', dark: '#090a0d' })
   })
@@ -68,6 +70,8 @@ describe('seed color helper', () => {
     const recipe = defineColorFromSeed('#6750A4', { surfaces })
 
     expectAccessibleRecipe(recipe, surfaces)
+    expect(recipe.light.fill).toBe('#6750a4')
+    expect(recipe.dark.fill).toBe('#6750a4')
     expect(recipe.light.subtle).not.toBe(defineColorFromSeed('#6750A4').light.subtle)
   })
 

@@ -23,7 +23,7 @@ test('renders Badge semantic leaves and visible dots in both modes', async ({ pa
       const dot = page.locator(`#semantic-dot-${role}`)
       await expect(dot).toHaveRole('img')
       await expect(dot).toHaveAccessibleName(`${role} status`)
-      expect(await dot.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(70, 80, 90)')
+      expect(await dot.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(110, 120, 130)')
     }
   }
 })

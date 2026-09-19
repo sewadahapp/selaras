@@ -16,5 +16,5 @@ test('uses the danger semantic role for invalid Textarea styling', async ({ page
   await goto('/', { waitUntil: 'hydration' })
   const textarea = page.locator('#textarea-invalid')
   await expect(textarea.locator('..')).toHaveAttribute('data-selaras-color', 'danger')
-  await expect(textarea).toHaveClass(/focus:ring-\[var\(--_selaras-color-fill\)\]/)
+  await expect(textarea).toHaveClass(/focus:ring-\[var\(--_selaras-color-focus\)\]/)
 })

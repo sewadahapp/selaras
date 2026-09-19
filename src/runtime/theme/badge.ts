@@ -10,8 +10,8 @@ export const badgeTheme = tv({
     leadingIcon: 'shrink-0',
     label: 'truncate',
     trailingIcon: 'shrink-0',
-    // Standalone dots use role text for surface contrast; inline dots use the pill foreground.
-    dot: 'shrink-0 rounded-full bg-[var(--_selaras-color-text)]',
+    // Standalone dots are unpaired graphics; inline dots use the pill foreground.
+    dot: 'shrink-0 rounded-full bg-[var(--_selaras-color-indicator)]',
   },
   variants: {
     color: {

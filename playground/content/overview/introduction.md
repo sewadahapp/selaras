@@ -1,51 +1,131 @@
 ---
+
 title: Introduction
-description: What Selaras is and how it's put together.
+description: Learn what Selaras is, what it provides, and how you can customize it.
 order: 10
 ---
 
-Selaras is a Nuxt module that provides a set of UI components built on
-[Reka UI](https://reka-ui.com) primitives, styled with Tailwind CSS v4 and
-[tailwind-variants](https://www.tailwind-variants.org).
+Selaras is a UI component library for Nuxt.
+
+It uses [Reka UI](https://reka-ui.com) for accessible UI primitives. It uses Tailwind CSS v4 for styling and [tailwind-variants](https://www.tailwind-variants.org) for component variants.
+
+Selaras provides ready-to-use components for forms, navigation, data display, overlays, content, and application layouts.
 
 ## Design goals
 
-- **One customization prop.** Every component accepts a single `:ui` prop
-  for per-instance style overrides - no separate "pass-through props" prop
-  alongside it. Each slot value can be a plain string (extra classes,
-  merged via `tailwind-merge`) or an object (`{ class, ...attrs }`, merged
-  via Vue's `mergeProps`) for the rare case where you need to pass raw
-  attributes or event handlers instead of just classes. See
-  [Theming](/overview/theming) for the full merge order.
-- **CSS-only animation.** Open/close and hover/focus motion is done with
-  Reka UI's `data-state` attributes and Tailwind variants - no JavaScript
-  animation library. Every transition respects `prefers-reduced-motion`
-  automatically.
-- **Design tokens, not hardcoded colors.** Every component reads from a
-  small set of semantic CSS custom properties (`--selaras-resolved-color-primary-fill`,
-  `--selaras-resolved-border-default`, `--selaras-resolved-text-muted`, and so on) instead of baking in
-  specific Tailwind color classes, so retheming an app doesn't require
-  rebuilding the library. See [Theming](/overview/theming).
+### CSS-first theming
+
+Selaras uses CSS custom properties for design values.
+
+You can change colors, surfaces, text, borders, radius, shadows, and other theme values with CSS.
+
+For example:
+
+```css
+:root {
+  --selaras-color-primary-fill: #6d4aff;
+  --selaras-surface-canvas: #f9f9f9;
+  --selaras-surface-default: #ffffff;
+  --selaras-radius-base: 0.5rem;
+}
+```
+
+You do not need JavaScript or Nuxt configuration for normal theme changes.
+
+Use Nuxt configuration only when Selaras needs build-time information. For example, use it when you add a new color role such as `tertiary`.
+
+See [Theming](/overview/theming) for all theme options.
+
+### Predictable component customization
+
+Each component has one `:ui` prop for instance-level customization.
+
+Use `:ui` when you want to change the classes or attributes of one component.
+
+```vue-html
+<SButton :ui="{ base: 'font-mono' }">
+  Save
+</SButton>
+```
+
+Use CSS theme tokens when you want to change design values across many components.
+
+Use `app.config.ts` or `STheme` when you want to change component configuration across an application or a subtree.
+
+### Accessible primitives
+
+Selaras uses Reka UI for many interactive primitives.
+
+Reka UI provides keyboard interaction, focus management, ARIA behavior, and other accessibility features for these primitives.
+
+Selaras adds its own components and styling on top of this foundation.
+
+### Adaptive interfaces
+
+Some Selaras components can use a different presentation when the available screen space changes.
+
+For example, a component can use a popover on a larger screen and a modal or drawer on a smaller screen.
+
+The component keeps one public API while Selaras changes the presentation.
+
+### CSS-based motion
+
+Selaras uses CSS for component transitions and interaction states.
+
+It does not require a JavaScript animation library for its standard motion.
+
+Selaras also respects the user's reduced-motion preference.
 
 ## What you get
 
-Installing the module auto-imports every component with an `S` prefix
-(`SButton`, `SModal`, `SSelect`, ...), plus composables for programmatic
-overlays (`useModal`, `useDrawer`, `useSlideover`, `useToast`,
-`useCommandPalette`) and one directive (`v-ripple`) for click-feedback.
+When you install Selaras, Nuxt automatically imports the components with an `S` prefix.
+
+For example:
+
+```vue-html
+<SButton />
+<SInput />
+<SSelect />
+<SModal />
+<STable />
+```
+
+Selaras also provides composables for application-level UI:
+
+```ts
+useModal()
+useDrawer()
+useSlideover()
+useToast()
+useCommandPalette()
+```
+
+Selaras can also provide small DOM behaviors through directives, such as:
+
+```vue-html
+<SButton v-ripple>
+  Save
+</SButton>
+```
+
+## Where to start
+
 Start with [Installation](/overview/installation).
+
+Then read [Theming](/overview/theming) to learn how to customize Selaras with CSS.
+
+Use the component documentation when you need the props, slots, events, variants, and `:ui` options for a specific component.
 
 ## Acknowledgments
 
-Selaras is built directly on top of [Reka UI](https://reka-ui.com) for its
-accessible primitives. Beyond that foundation, its API shapes and
-interaction patterns were also informed by looking at how other component
-libraries in the Vue ecosystem approach the same problems, including:
+Selaras uses [Reka UI](https://reka-ui.com) as its primitive foundation.
 
-- [Nuxt UI](https://ui.nuxt.com) - a full-featured Vue and Nuxt component library maintained by the Nuxt team.
-- [PrimeVue](https://primevue.org) - a long-established, broad Vue UI component library.
-- [shadcn-vue](https://www.shadcn-vue.com) - a Vue port of shadcn/ui's copy-into-your-project approach to components.
-- [UI Thing](https://ui-thing.behonbaker.com) - a set of Nuxt components built on Reka UI and Tailwind CSS.
-- [Quasar](https://quasar.dev) - a Vue framework with a large set of Material Design-influenced components.
+Its API and interaction design also take ideas from other Vue and Nuxt UI projects, including:
 
-Thanks to those communities for the ideas.
+* [Nuxt UI](https://ui.nuxt.com)
+* [PrimeVue](https://primevue.org)
+* [shadcn-vue](https://www.shadcn-vue.com)
+* [UI Thing](https://ui-thing.behonbaker.com)
+* [Quasar](https://quasar.dev)
+
+These projects provide useful references for component APIs, interaction patterns, and design-system architecture.

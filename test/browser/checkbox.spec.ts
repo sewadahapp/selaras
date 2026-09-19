@@ -22,5 +22,5 @@ test('uses a semantic danger role for invalid Checkbox styling', async ({ page, 
   const box = page.locator('#checkbox-invalid')
   const root = box.locator('..')
   await expect(root).toHaveAttribute('data-selaras-color', 'danger')
-  await expect(box).toHaveClass(/data-\[state=checked\]:ring-\[var\(--_selaras-color-fill\)\]/)
+  await expect(box).toHaveClass(/data-\[state=checked\]:ring-\[var\(--_selaras-color-border\)\]/)
 })

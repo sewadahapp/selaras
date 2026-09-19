@@ -8,7 +8,7 @@ export const fileUploadTheme = tv({
     // instead of needing hand-rolled keydown handling. dragging (a
     // component-set data attribute, not a native one) recolors it
     // toward `color` - see the color variant below.
-    dropzone: 'flex w-full flex-col items-center justify-center gap-2 rounded-[var(--selaras-resolved-radius-md)] border-2 border-dashed border-[var(--selaras-resolved-border-default)] p-6 text-center transition-colors hover:border-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-fill)] data-[dragging]:bg-[var(--_selaras-color-subtle)] disabled:opacity-50 disabled:pointer-events-none',
+    dropzone: 'flex w-full flex-col items-center justify-center gap-2 rounded-[var(--selaras-resolved-radius-md)] border-2 border-dashed border-[var(--selaras-resolved-border-default)] p-6 text-center transition-colors hover:border-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--_selaras-color-focus)] data-[dragging]:border-[var(--_selaras-color-border)] data-[dragging]:bg-[var(--_selaras-color-subtle)] disabled:opacity-50 disabled:pointer-events-none',
     icon: 'text-[var(--_selaras-color-fill)]',
     label: 'font-medium text-[var(--selaras-resolved-text-default)]',
     description: 'text-[var(--selaras-resolved-text-muted)]',
@@ -55,7 +55,7 @@ export const fileUploadTheme = tv({
     // override win over color's - matches Input's own documented
     // reasoning for this order.
     invalid: {
-      true: { dropzone: 'border-[var(--_selaras-color-fill)] focus-visible:ring-[var(--_selaras-color-fill)]' },
+      true: { dropzone: 'border-[var(--_selaras-color-border)] focus-visible:ring-[var(--_selaras-color-focus)]' },
     },
   },
   defaultVariants: {
