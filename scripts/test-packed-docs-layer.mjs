@@ -178,8 +178,6 @@ try {
     ['nuxt', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']
       .map(name => [name, installedManifest(name).version]),
   )
-  const rootManifest = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'))
-  dependencies['better-sqlite3'] = rootManifest.devDependencies['better-sqlite3']
   dependencies['@nuxt/content'] = installedManifest('@nuxt/content', playgroundRequire).version
   dependencies['@sewadah/selaras'] = `file:./${selarasArchive.filename}`
   dependencies['@sewadah/selaras-docs'] = `file:./${docsArchive.filename}`

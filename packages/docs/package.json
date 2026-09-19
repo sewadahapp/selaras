@@ -12,13 +12,15 @@
     "app",
     "nuxt.config.mjs"
   ],
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  },
   "peerDependencies": {
     "nuxt": "^4.5.2",
     "tailwindcss": "^4.3.0"
   },
   "dependencies": {
     "@nuxt/content": "^3.16.0",
-    "@sewadah/selaras": "^0.1.1",
-    "better-sqlite3": "^13.0.3"
+    "@sewadah/selaras": "^0.2.0"
   }
 }
