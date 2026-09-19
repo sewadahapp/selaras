@@ -26,9 +26,8 @@ now: a left [PageAside](/blocks/documentation/page-aside) wrapping a
 nav, a main column starting with `PageHeader` and followed by the actual
 page content, and a right `PageAside` wrapping a
 [ContentToc](/blocks/documentation/content-toc) for the "on this page" rail.
-All three sit in a single flex row - see `playground/layouts/default.vue` for
-the left nav and `playground/pages/[section]/[...slug].vue` for the header +
-content + right ToC, if you want the real, unsimplified wiring.
+The Selaras docs application uses this same arrangement, with a responsive
+drawer for the navigation on smaller screens.
 
 ::component-example{name="page-layout-assembled"}
 ::

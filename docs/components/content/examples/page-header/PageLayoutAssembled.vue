@@ -1,8 +1,6 @@
 <script setup lang="ts">
 // A simplified stand-in for how this docs site itself assembles all four
-// components into one page layout (see playground/layouts/default.vue for
-// the left nav, and playground/pages/[section]/[...slug].vue for the header
-// + main content + right ToC rail) - a left PageAside wrapping a
+// components into one page layout: a left PageAside wrapping a
 // ContentNavigation, a main column with a PageHeader on top, and a right
 // PageAside wrapping a ContentToc, all in one flex row.
 // Real, existing routes on this docs site - not just placeholders, so the

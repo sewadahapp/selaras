@@ -6,7 +6,8 @@ order: 53
 
 ## Usage
 
-Wrap your root `app.vue` in `<SApp>` once (already done in this playground),
+Wrap your root `app.vue` in `<SApp>` once (already done by this docs site's
+shell),
 and place `<SToast />` inside it, wrapped in `<ClientOnly>`. Then push toasts
 from anywhere with `useToast()`:
 

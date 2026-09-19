@@ -135,10 +135,9 @@ The reliable path is `<ContentRenderer>`'s own `components` prop -
 />
 ```
 
-This docs site's own pages are wired exactly this way
-(`playground/pages/components/[...slug].vue`) - no adapter file
-anywhere in `playground/components/content/`, and every heading/code
-block on this very page renders through it.
+This docs site's own pages are wired exactly this way in
+`docs/pages/[...slug].vue`, and every heading/code block on this very page
+renders through it.
 
 Everything else, `selaras-prose` styles directly - no `components`
 entry needed for it, since it's plain HTML either way.
