@@ -1,0 +1,21 @@
+{
+  "name": "selaras-docs-site",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "prepare": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/content": "^3.16.0",
+    "@sewadah/selaras": "file:..",
+    "@sewadah/selaras-docs": "workspace:*",
+    "nuxt": "^4.5.2",
+    "tailwindcss": "^4.3.0"
+  },
+  "devDependencies": {
+    "vue-router": "^5.2.0"
+  }
+}

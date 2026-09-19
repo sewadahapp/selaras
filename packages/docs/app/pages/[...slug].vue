@@ -30,7 +30,7 @@ const proseComponents = {
 
 <template>
   <SContainer size="full">
-    <SPageHeader :description="page.description" />
-    <ContentRenderer :value="page" :components="proseComponents" class="selaras-docs-content" />
+    <SPageHeader :description="page!.description" />
+    <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content" />
   </SContainer>
 </template>

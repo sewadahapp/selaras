@@ -13,7 +13,7 @@ describe('classPrefix', async () => {
     const html = await $fetch('/')
     const cssHref = html.match(/<link rel="stylesheet" href="([^"]+\.css)"/)?.[1]
     expect(cssHref).toBeTruthy()
-    return $fetch<string>(cssHref!)
+    return await $fetch(cssHref!) as string
   }
 
   it('renders the component with tw:-prefixed classes on its root', async () => {
