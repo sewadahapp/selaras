@@ -188,7 +188,12 @@ function buildRailSegments(links: HTMLElement[]): RailSegment[] {
 
 // Each heading's own vertical midpoint, connected top-to-bottom - depth
 // changes bend the path inward/outward (via a short bezier curve, not a
-// hard corner) rather than jumping straight across.
+// hard corner) rather than jumping straight across. Each bend is centered
+// on the gap between the two headings it connects, rather than ending on
+// one heading's own midpoint: a heading whose depth differs from both
+// neighbours then sits in the middle of the vertical stretch between its
+// two bends, instead of hugging the bend above it and leaving a long bare
+// run below.
 function buildRailPath(links: HTMLElement[], height: number): string {
   const items = links.map((node) => {
     const top = Math.round(node.offsetTop)
@@ -208,7 +213,10 @@ function buildRailPath(links: HTMLElement[], height: number): string {
     return Math.round(clamp(x, RAIL_X_OUTER, RAIL_X_INNER_MAX))
   }
 
+  const curveHalf = RAIL_CURVE_SPAN / 2
+
   let x = xForDepth(items[0]?.depth ?? baseDepth)
+  let yPath = 0
   let yPrev = 0
   let d = `M ${x} 0`
 
@@ -217,23 +225,31 @@ function buildRailPath(links: HTMLElement[], height: number): string {
     const xNext = xForDepth(item.depth)
 
     if (xNext === x) {
-      if (y > yPrev)
+      if (y > yPath) {
         d += ` L ${x} ${y}`
-      yPrev = Math.max(yPrev, y)
+        yPath = y
+      }
+      yPrev = y
       continue
     }
 
-    const y0 = clamp(y - RAIL_CURVE_SPAN, yPrev, height)
-    const midY = (y0 + y) / 2
-    if (y0 > yPrev)
+    // Center the bend on the midpoint between the previous heading and this
+    // one, then clamp it into the vertical room actually available.
+    const midY = (yPrev + y) / 2
+    const y0 = clamp(midY - curveHalf, yPath, y)
+    const y1 = clamp(midY + curveHalf, y0, y)
+    const controlY = (y0 + y1) / 2
+
+    if (y0 > yPath)
       d += ` L ${x} ${y0}`
-    d += ` C ${x} ${midY} ${xNext} ${midY} ${xNext} ${y}`
+    d += ` C ${x} ${controlY} ${xNext} ${controlY} ${xNext} ${y1}`
 
     x = xNext
+    yPath = y1
     yPrev = y
   }
 
-  if (height > yPrev)
+  if (height > yPath)
     d += ` L ${x} ${height}`
 
   return d
