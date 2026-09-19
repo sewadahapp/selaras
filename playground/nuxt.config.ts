@@ -68,8 +68,8 @@ export default defineNuxtConfig({
   compatibilityDate: 'latest',
   fonts: {
     families: [
-      { name: 'Plus Jakarta Sans', provider: 'google' },
-      { name: 'JetBrains Mono', provider: 'google' },
+      { name: 'Plus Jakarta Sans', provider: 'google', weights: ['200 800'] },
+      { name: 'JetBrains Mono', provider: 'google', weights: ['100 800'] },
     ],
   },
   nitro: {

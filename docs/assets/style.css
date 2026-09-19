@@ -2,6 +2,9 @@
 @import "@fontsource-variable/jetbrains-mono";
 
 :root {
-  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* The variable Fontsource packages expose these family names. Keeping
+   * the names in sync makes every weight in their declared ranges available
+   * instead of silently falling back to the system stacks below. */
+  --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 }
