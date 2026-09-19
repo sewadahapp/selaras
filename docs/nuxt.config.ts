@@ -51,6 +51,7 @@ export default defineNuxtConfig({
       sizeLimitKb: 512,
     },
   },
+  css: ['~/assets/style.css'],
   // The repository consumer resolves Selaras through the local workspace.
   // Keep Reka and VueUse in the app bundle so SSR uses one Vue instance.
   build: {

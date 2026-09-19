@@ -9,11 +9,11 @@
     "prepare": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/content": "^3.16.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
     "@sewadah/selaras": "file:..",
     "@sewadah/selaras-docs": "workspace:*",
-    "nuxt": "^4.5.2",
-    "tailwindcss": "^4.3.0"
+    "nuxt": "^4.5.2"
   },
   "devDependencies": {
     "vue-router": "^5.2.0"

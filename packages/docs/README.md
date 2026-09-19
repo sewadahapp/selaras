@@ -29,9 +29,9 @@ description: Documentation for my project.
 Start writing.
 ```
 
-The layer supplies Nuxt Content, Tailwind CSS v4, Nuxt Fonts, Selaras, an
-accessible responsive documentation shell, local navigation search, dark mode,
-and self-hosted default Plus Jakarta Sans and JetBrains Mono fonts. You do not
+The layer supplies Nuxt Content, Tailwind CSS v4, Selaras, an accessible
+responsive documentation shell, local navigation search, and dark mode. It
+uses neutral system font stacks by default. You do not
 need an app root, Content config, or stylesheet for the default setup.
 
 `nuxt` remains a peer because the documentation site is a Nuxt application;
