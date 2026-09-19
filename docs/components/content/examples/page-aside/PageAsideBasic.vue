@@ -1,0 +1,15 @@
+<template>
+  <div class="flex h-64 w-full rounded-[var(--selaras-resolved-radius-md)] ring-1 ring-[var(--selaras-resolved-border-default)]">
+    <SPageAside :ui="{ root: 'static flex h-full w-48' }">
+      <template #header>
+        <strong class="text-sm">Header</strong>
+      </template>
+      <div v-for="i in 20" :key="i" class="py-1 text-sm">
+        Item {{ i }}
+      </div>
+    </SPageAside>
+    <div class="flex-1 p-4 text-sm text-[var(--selaras-resolved-text-muted)]">
+      Main content sits alongside the aside.
+    </div>
+  </div>
+</template>

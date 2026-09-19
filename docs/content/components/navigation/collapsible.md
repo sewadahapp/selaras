@@ -1,0 +1,110 @@
+---
+title: Collapsible
+description: A single show/hide panel, built on Reka UI's Collapsible primitive.
+order: 41.5
+---
+
+## Usage
+
+Closed by default - the `trigger` slot is the button's own content, the
+default slot is the panel:
+
+::component-example{name="collapsible-basic"}
+::
+
+```vue-html
+<SCollapsible>
+  <template #trigger>
+    What's included in the free plan?
+  </template>
+  Everything you need to get started: unlimited projects, community
+  support, and access to every core feature.
+</SCollapsible>
+```
+
+### Controlled
+
+`v-model:open` controls it from the parent instead of managing its own
+state:
+
+::component-example{name="collapsible-controlled"}
+::
+
+```vue-html
+<SCollapsible v-model:open="open">
+  <template #trigger>
+    Toggle me
+  </template>
+  Content controlled by the parent.
+</SCollapsible>
+```
+
+### Disabled
+
+`disabled` blocks the trigger from toggling at all:
+
+::component-example{name="collapsible-disabled"}
+::
+
+```vue-html
+<SCollapsible disabled default-open>
+  <template #trigger>
+    This can't be collapsed
+  </template>
+  Locked open.
+</SCollapsible>
+```
+
+### Direction
+
+`direction="up"` reveals the content above the trigger instead of
+below it - the chevron's rest/open rotation flips to match, still
+pointing toward where the content will appear:
+
+::component-example{name="collapsible-direction"}
+::
+
+```vue-html
+<SCollapsible direction="up">
+  <template #trigger>
+    What's included in the free plan?
+  </template>
+  Everything you need to get started: unlimited projects, community
+  support, and access to every core feature.
+</SCollapsible>
+```
+
+### Custom `:ui`
+
+Global and scoped recipe overrides use `ui.collapsible`.
+
+To see exactly what you'd be overriding - the current default classes for
+every slot and variant - here's `Collapsible`'s own theme file:
+
+::theme-source{name="collapsible"}
+::
+
+## Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `open` | `boolean` | - |
+| `defaultOpen` | `boolean` | `false` |
+| `disabled` | `boolean` | - |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
+| `direction` | `'down' \| 'up'` | `'down'` |
+| `ui` | `Partial<Record<CollapsibleSlot, string \| object>>` | - |
+
+## Emits
+
+| Event | Payload |
+| --- | --- |
+| `update:open` | `boolean` |
+
+## Slots
+
+| Slot | Props | Description |
+| --- | --- | --- |
+| `trigger` | `{ open }` | The trigger button's own content |
+| `default` | `{ open }` | The collapsible panel's content |
+| `chevron-icon` | `{ open }` | Replaces the default chevron |

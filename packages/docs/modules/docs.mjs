@@ -20,6 +20,7 @@ export default defineNuxtModule({
     const { resolve: resolveLayer } = createResolver(import.meta.url)
     const layerApp = cssPath(resolveLayer('../app'))
     const consumerContent = cssPath(resolve(nuxt.options.rootDir, 'content'))
+    const consumerComponents = cssPath(resolve(nuxt.options.rootDir, 'components'))
     const stylesheet = addTemplate({
       filename: 'selaras-docs.css',
       write: true,
@@ -31,6 +32,7 @@ export default defineNuxtModule({
 
 @source "${layerApp}/**/*";
 @source "${consumerContent}/**/*";
+@source "${consumerComponents}/**/*";
 `,
     })
 

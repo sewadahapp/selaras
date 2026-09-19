@@ -127,6 +127,7 @@
     "tailwindcss": "^4.3.0"
   },
   "dependencies": {
+    "@iconify-json/hugeicons": "^1.2.35",
     "@internationalized/date": "^3.5.0",
     "@nuxt/icon": "^1.10.3",
     "@nuxt/kit": "^4.5.2",

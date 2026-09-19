@@ -6,6 +6,11 @@ order: 1
 
 # Selaras
 
-This dedicated documentation application consumes the published Selaras docs
-layer. The existing documentation corpus will move here after the application
-shell and package boundary are proven.
+Selaras is a Nuxt-first component library built on Reka UI, Tailwind CSS v4,
+and CSS custom properties.
+
+It provides accessible components, semantic theme contracts, typed Nuxt
+integration, and composables for application-level UI.
+
+Start with [Introduction](/overview/introduction), then follow
+[Installation](/overview/installation) and [Theming](/overview/theming).

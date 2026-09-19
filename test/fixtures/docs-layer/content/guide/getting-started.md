@@ -12,5 +12,5 @@ This page belongs to the consumer-owned collection.
 
 The layer should provide navigation around ordinary Markdown headings.
 
-::component-example{name="welcome"}
+::docs-example{name="welcome"}
 ::

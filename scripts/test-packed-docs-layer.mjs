@@ -208,7 +208,7 @@ try {
   assert.ok(docsArchive.files.some(file => file.path === 'content.config.ts'))
   assert.ok(docsArchive.files.some(file => file.path === 'modules/docs.mjs'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/app.vue'))
-  assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/ComponentExample.vue'))
+  assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsExample.vue'))
   assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')
   cpSync(fixtureDir, consumerDir, { recursive: true })
   const dependencies = Object.fromEntries(

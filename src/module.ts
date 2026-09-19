@@ -4,6 +4,7 @@ import { Scanner } from '@tailwindcss/oxide'
 import tailwindcss from '@tailwindcss/vite'
 import { createBuiltinColorRegistry } from './builtin-colors'
 import { createColorRegistry, generateColorRoleCss } from './runtime/utils/color-registry'
+import { defaultIcons } from './runtime/utils/icons'
 
 export interface ModuleOptions {
   /**
@@ -65,6 +66,11 @@ export default defineNuxtModule<ModuleOptions>({
     // runs, is what actually works.
     nuxt.options.icon ||= {}
     nuxt.options.icon.cssLayer = 'components'
+    nuxt.options.icon.clientBundle ||= {}
+    nuxt.options.icon.clientBundle.icons = Array.from(new Set([
+      ...(nuxt.options.icon.clientBundle.icons ?? []),
+      ...Object.values(defaultIcons),
+    ]))
 
     // Consumers import the default theme and generated Tailwind inputs in
     // their own CSS entry. All utilities must use that entry's final theme.
