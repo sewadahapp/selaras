@@ -50,8 +50,8 @@
   /*
    * An indirection layer, not the fonts themselves - each one defaults to
    * whatever the consumer's own project already defines (Tailwind v4's
-   * own --font-sans/--font-mono theme variables, playground/assets/css/
-   * global.css overrides those same two site-wide), so prose text follows
+   * own --font-sans/--font-mono theme variables, docs/assets/style.css
+   * overrides those same two site-wide), so prose text follows
    * the surrounding page's fonts automatically with nothing to configure.
    * Override just these three instead if prose specifically should look
    * different from the rest of the page - no need to touch the site-wide

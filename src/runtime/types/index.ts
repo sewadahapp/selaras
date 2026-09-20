@@ -6,9 +6,8 @@ export type * from '../components/Accordion.vue'
 // instead of needing the deep `@sewadah/selaras/components/Modal.vue` path
 // (which also still works directly, unchanged, for one component).
 //
-// This file is excluded from both this project's own tsconfig.json
-// AND playground/tsconfig.json (both have their own explicit
-// "exclude": ["src/runtime/types"]) - resolving a *plain .ts* file
+// This file is excluded from this project's own tsconfig.json (which has an
+// explicit "exclude": ["src/runtime/types"]) - resolving a *plain .ts* file
 // that imports types from *many* .vue files this way is genuinely
 // nondeterministic under vue-tsc's CLI (which lines resolve and
 // which error with "Cannot find module" varies between runs of the

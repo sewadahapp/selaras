@@ -1,7 +1,7 @@
 {
   "name": "@sewadah/selaras-docs",
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Nuxt Content documentation layer for Selaras",
   "exports": {
     ".": {

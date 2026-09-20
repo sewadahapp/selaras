@@ -114,7 +114,7 @@ supplied color remains the exact resting solid fill; Selaras derives readable
 content, interaction states, text, borders, focus, and essential indicators
 around it. Use `defineColor()` when you need to author every leaf yourself.
 
-See the full [Theming guide](./playground/content/overview/theming.md).
+See the full [Theming guide](./docs/content/overview/theming.md).
 
 ## Contribution
 
@@ -125,14 +125,14 @@ See the full [Theming guide](./playground/content/overview/theming.md).
   # Install dependencies
   npm install
 
-  # Generate type stubs
-  npm run dev:prepare
+  # Generate type stubs and prepare the docs site
+  npm run docs:prepare
 
-  # Develop with the playground (component docs site)
-  npm run dev
+  # Develop with the docs site (documentation + component showcase)
+  npm run docs:dev
 
-  # Build the playground
-  npm run dev:build
+  # Generate the static docs site
+  npm run docs:generate
 
   # Type-check
   npm run test:types
@@ -148,8 +148,10 @@ See the full [Theming guide](./playground/content/overview/theming.md).
   # Requires Bun for the temporary consumer's dependency installation
   npm run test:compat
 
-  # Release new version
+  # Release new versions (selaras, docs layer, or both)
   npm run release
+  npm run release:selaras
+  npm run release:docs
   ```
 
 </details>

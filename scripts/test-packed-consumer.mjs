@@ -290,7 +290,7 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
         assert.equal(await functionalInput.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(240, 241, 242)')
         assert.equal(await functionalInput.evaluate(element => getComputedStyle(element).color), 'rgb(21, 22, 23)')
         const seededButton = page.locator('#packed-seed')
-        assert.equal(await seededButton.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(246, 88, 77)')
+        assert.equal(await seededButton.evaluate(element => getComputedStyle(element).backgroundColor), 'rgb(253, 94, 83)')
         assert.equal(await seededButton.evaluate(element => getComputedStyle(element).color), 'rgb(0, 0, 0)')
         assert.equal(await page.locator('#packed-role-read').evaluate(element => getComputedStyle(element).color), 'rgb(35, 69, 103)')
         assert.equal(await page.locator('#packed-scoped-role-read').evaluate(element => getComputedStyle(element).color), 'rgb(86, 120, 154)')

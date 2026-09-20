@@ -35,10 +35,10 @@
  * here was a real bug: nuxt-module-build compiles the theme and utils
  * directories' TypeScript sources down to plain .js in the published dist,
  * so a source directive glob ending in .ts matched zero files in a real
- * consumer - every class defined only inside a component's own theme file
- * (most of them: every size/color/variant string) silently never made it
- * into a consumer's build. Never caught locally because this repo's own
- * dev/playground testing scans the whole monorepo tree automatically,
+  * consumer - every class defined only inside a component's own theme file
+  * (most of them: every size/color/variant string) silently never made it
+  * into a consumer's build. Never caught locally because this repo's own
+  * docs-site development mode scans the whole monorepo tree automatically,
  * masking that these directives never worked end-to-end. Matches a
  * comparable reference library's own shipped CSS, confirmed by reading it
  * directly - a bare directory path there too, no glob, no extension.

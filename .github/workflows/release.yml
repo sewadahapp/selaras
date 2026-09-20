@@ -3,8 +3,16 @@ name: release
 on:
   workflow_dispatch:
     inputs:
+      package:
+        description: Which package to release
+        type: choice
+        default: both
+        options:
+          - both
+          - selaras
+          - selaras-docs
       bump:
-        description: Version bump (leave as auto to let changelogen infer it from commit types)
+        description: Version bump (leave as auto to let changelogen infer it from commit types; docs auto resolves to patch)
         type: choice
         default: auto
         options:
@@ -48,9 +56,6 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Playground prepare
-        run: bun run dev:prepare
-
       - name: Docs prepare
         run: bun run docs:prepare
 
@@ -77,7 +82,8 @@ jobs:
       # from commit types since the last tag). `version` is an exact override:
       # SemVer's pre-1.0 major bump turns 0.1.1 into 0.2.0, while the first
       # stable release must explicitly request 1.0.0.
-      - name: Bump version
+      - name: Bump Selaras version
+        if: inputs.package != 'selaras-docs'
         env:
           RELEASE_BUMP: ${{ inputs.bump }}
           RELEASE_VERSION: ${{ inputs.version }}
@@ -94,8 +100,21 @@ jobs:
       # release adds a short user-facing upgrade summary ahead of it; the
       # release body below is read from this same generated entry.
       - name: Add 1.0 migration summary
-        if: inputs.version == '1.0.0'
+        if: inputs.package != 'selaras-docs' && inputs.version == '1.0.0'
         run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
+
+      # The docs layer is an independent release stream with its own version
+      # - this never copies the core version over. `auto` resolves to a
+      # patch bump; anything beyond that (or an exact version) needs an
+      # explicit bump, since changelogen's commit-type inference tracks the
+      # core stream. An exact `version` input applies to whichever packages
+      # are being released in this run.
+      - name: Bump docs layer version
+        if: inputs.package != 'selaras'
+        env:
+          RELEASE_BUMP: ${{ inputs.bump }}
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: node scripts/bump-docs-layer.mjs
 
       # Validate the versioned release candidate itself, including generated
       # declarations, a fresh packed install, and Chromium hydration/portal
@@ -108,6 +127,7 @@ jobs:
         run: bun run test:release
 
       - name: Build
+        if: inputs.package != 'selaras-docs'
         run: bun run prepack
 
       # BOOTSTRAP ONLY: npm wouldn't let a trusted publisher be configured
@@ -119,34 +139,72 @@ jobs:
       # then delete the `env:` block below and the NPM_TOKEN secret - the
       # `id-token: write` permission above is already in place for it.
       - name: Publish to npm
+        if: inputs.package != 'selaras-docs'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
 
-      # The docs layer is released in lockstep with the root package and
-      # depends on it through `file:../..` for local development - npm cannot
-      # publish that, so sync the layer version to the bumped root version and
-      # rewrite the dependency to a semver range right before publishing.
+      # The docs layer depends on the core package through `file:../..` for
+      # local development - npm cannot publish that, so rewrite the
+      # dependency to the just-published core range right before publishing.
+      # The layer keeps its own version throughout; restore the workspace
+      # dependency afterwards so the working tree stays developable.
+      - name: Prepare docs layer publish manifest
+        if: inputs.package != 'selaras'
+        run: node scripts/prepare-docs-layer-release.mjs && node scripts/prepare-docs-layer-release.mjs --assert-publishable
+
+      # A docs-only release publishes against a core version from an earlier
+      # run - confirm that range actually exists on the registry before
+      # shipping an uninstallable package. Skipped for joint releases, where
+      # the core version was published a few steps earlier in this same job.
+      - name: Verify published Selaras dependency
+        if: inputs.package == 'selaras-docs'
+        run: node scripts/prepare-docs-layer-release.mjs --verify
+
       - name: Publish docs layer to npm
+        if: inputs.package != 'selaras'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: node scripts/prepare-docs-layer-release.mjs && cd packages/docs && npm publish --access public
+        run: cd packages/docs && npm publish --access public
+
+      - name: Restore docs layer workspace dependency
+        if: inputs.package != 'selaras' && always()
+        run: node scripts/prepare-docs-layer-release.mjs --restore
 
       # Only reached once the publish above has actually succeeded - now
-      # it's safe to commit the version bump, tag it, and push. Same
-      # script the local `npm run release` uses, so there's one place
-      # that defines this instead of two copies to keep in sync.
+      # it's safe to commit the version bump(s), tag, and push. Same
+      # script the local `release:*` scripts use, so there's one place
+      # that defines this instead of two copies to keep in sync. Each
+      # package gets its own tag (selaras-v0.3.0, selaras-docs-v0.1.1);
+      # core releases additionally keep the legacy v0.3.0 tag so
+      # changelogen's bump inference keeps working.
       - name: Commit and tag the release
-        run: bash scripts/tag-and-push-release.sh
+        run: |
+          if [ "${{ inputs.package }}" = "both" ]; then
+            bash scripts/tag-and-push-release.sh selaras selaras-docs
+          elif [ "${{ inputs.package }}" = "selaras-docs" ]; then
+            bash scripts/tag-and-push-release.sh selaras-docs
+          else
+            bash scripts/tag-and-push-release.sh selaras
+          fi
 
-      # Reads the entry `Bump version` just wrote into CHANGELOG.md and
-      # creates the matching GitHub release from it - no recomputation of
+      # Reads the entry `Bump Selaras version` just wrote into CHANGELOG.md
+      # and creates the matching GitHub release from it - no recomputation of
       # commits/version, so this can't drift from what was actually
       # published above.
       - name: Create GitHub release
+        if: inputs.package != 'selaras-docs'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx changelogen gh release
+
+      # The docs layer has no CHANGELOG entry of its own - generate the
+      # release notes from the commits since the previous docs tag instead.
+      - name: Create docs layer GitHub release
+        if: inputs.package != 'selaras'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "selaras-docs-v$(node -p "require('./packages/docs/package.json').version")" --title "selaras-docs v$(node -p "require('./packages/docs/package.json').version")" --generate-notes
 
   docs:
     needs: release
@@ -180,17 +238,17 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Playground prepare
-        run: bun run dev:prepare
+      - name: Docs prepare
+        run: bun run docs:prepare
 
       # A GitHub Pages *project* site (not a custom domain or a
       # <org>.github.io root repo) serves from a /selaras/ subpath, not the
       # domain root - NUXT_APP_BASE_URL is Nuxt's own env-var mapping for
       # runtimeConfig.app.baseURL, so every generated link/asset path
-      # accounts for it. Left unset for local `bun run dev:generate`, which
+      # accounts for it. Left unset for local `bun run docs:generate`, which
       # still defaults to `/`.
       - name: Generate static docs site
-        run: bun run dev:generate
+        run: bun run docs:generate
         env:
           NUXT_APP_BASE_URL: /selaras/
 
@@ -198,7 +256,7 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: playground/.output/public
+          path: docs/.output/public
 
       - name: Deploy to GitHub Pages
         id: deployment

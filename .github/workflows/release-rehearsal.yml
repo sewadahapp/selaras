@@ -3,6 +3,14 @@ name: release rehearsal
 on:
   workflow_dispatch:
     inputs:
+      package:
+        description: Which package to rehearse
+        type: choice
+        default: both
+        options:
+          - both
+          - selaras
+          - selaras-docs
       version:
         description: Exact candidate version to validate
         type: string
@@ -36,9 +44,6 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Playground prepare
-        run: bun run dev:prepare
-
       - name: Docs prepare
         run: bun run docs:prepare
 
@@ -51,10 +56,16 @@ jobs:
       - name: Create ephemeral release candidate
         env:
           RELEASE_VERSION: ${{ inputs.version }}
-        run: npx changelogen --bump -r "$RELEASE_VERSION"
+        run: |
+          if [ "${{ inputs.package }}" != "selaras-docs" ]; then
+            npx changelogen --bump -r "$RELEASE_VERSION"
+          fi
+          if [ "${{ inputs.package }}" != "selaras" ]; then
+            node scripts/bump-docs-layer.mjs --version "$RELEASE_VERSION"
+          fi
 
       - name: Add 1.0 migration summary
-        if: inputs.version == '1.0.0'
+        if: inputs.package != 'selaras-docs' && inputs.version == '1.0.0'
         run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
 
       - name: Install Chromium for candidate validation
@@ -63,7 +74,15 @@ jobs:
       - name: Verify release candidate
         run: bun run test:release
 
+      - name: Validate docs layer publish manifest
+        if: inputs.package != 'selaras'
+        run: |
+          node scripts/prepare-docs-layer-release.mjs --selaras "$RELEASE_VERSION"
+          node scripts/prepare-docs-layer-release.mjs --assert-publishable
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+
       - name: Generate static docs site
-        run: bun run dev:generate
+        run: bun run docs:generate
         env:
           NUXT_APP_BASE_URL: /selaras/

@@ -31,9 +31,6 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      - name: Playground prepare
-        run: bun run dev:prepare
-
       - name: Docs prepare
         run: bun run docs:prepare
 
@@ -42,6 +39,33 @@ jobs:
 
       - name: Test
         run: bun run test
+
+      - name: Generate docs site
+        run: bun run docs:generate
+        env:
+          NUXT_APP_BASE_URL: /selaras/
+
+      - name: Build packages
+        run: bun run prepack
+
+      - name: Validate docs layer publish manifest
+        run: |
+          node scripts/prepare-docs-layer-release.mjs
+          node scripts/prepare-docs-layer-release.mjs --assert-publishable
+          node scripts/prepare-docs-layer-release.mjs --restore
+          git diff --exit-code -- packages/docs/package.json
+
+      # CHANGELOG.md keeps release history, .notes/ is local scratch, and
+      # test-packed-docs-layer.mjs intentionally asserts published files
+      # contain no playground paths - everything else must not mention it.
+      - name: No playground references
+        run: |
+          matches=$(rg -l "playground" --glob '!node_modules' --glob '!.nuxt' --glob '!.output' --glob '!bun.lock' --glob '!CHANGELOG.md' --glob '!.notes/**' --glob '!scripts/test-packed-docs-layer.mjs' . || true)
+          if [ -n "$matches" ]; then
+            echo "Stale playground references:"
+            echo "$matches"
+            exit 1
+          fi
 
   node-compatibility:
     runs-on: ubuntu-latest
