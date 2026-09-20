@@ -152,6 +152,13 @@ See the full [Theming guide](./docs/content/overview/theming.md).
   npm run release
   npm run release:selaras
   npm run release:docs
+
+  # Each package has its own version stream, so one run can bump them at
+  # different levels - Selaras major alongside a docs patch, for example.
+  # The release workflow exposes per-package bump/version inputs for this.
+  # Locally, drive each half through its own env:
+  RELEASE_BUMP=major npm run release:selaras
+  RELEASE_BUMP=patch npm run release:docs
   ```
 
 </details>

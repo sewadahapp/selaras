@@ -11,11 +11,16 @@ on:
           - both
           - selaras
           - selaras-docs
-      version:
-        description: Exact candidate version to validate
+      selaras-version:
+        description: Exact Selaras candidate version to validate
         type: string
         required: true
         default: 1.0.0
+      docs-version:
+        description: Exact docs layer candidate version to validate
+        type: string
+        required: true
+        default: 0.1.0
 
 jobs:
   rehearsal:
@@ -54,18 +59,16 @@ jobs:
         run: bun run test
 
       - name: Create ephemeral release candidate
-        env:
-          RELEASE_VERSION: ${{ inputs.version }}
         run: |
           if [ "${{ inputs.package }}" != "selaras-docs" ]; then
-            npx changelogen --bump -r "$RELEASE_VERSION"
+            npx changelogen --bump -r "${{ inputs.selaras-version }}"
           fi
           if [ "${{ inputs.package }}" != "selaras" ]; then
-            node scripts/bump-docs-layer.mjs --version "$RELEASE_VERSION"
+            node scripts/bump-docs-layer.mjs --version "${{ inputs.docs-version }}"
           fi
 
       - name: Add 1.0 migration summary
-        if: inputs.package != 'selaras-docs' && inputs.version == '1.0.0'
+        if: inputs.package != 'selaras-docs' && inputs.selaras-version == '1.0.0'
         run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
 
       - name: Install Chromium for candidate validation
@@ -77,10 +80,8 @@ jobs:
       - name: Validate docs layer publish manifest
         if: inputs.package != 'selaras'
         run: |
-          node scripts/prepare-docs-layer-release.mjs --selaras "$RELEASE_VERSION"
+          node scripts/prepare-docs-layer-release.mjs --selaras "${{ inputs.selaras-version }}"
           node scripts/prepare-docs-layer-release.mjs --assert-publishable
-        env:
-          RELEASE_VERSION: ${{ inputs.version }}
 
       - name: Generate static docs site
         run: bun run docs:generate

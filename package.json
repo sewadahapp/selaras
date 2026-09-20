@@ -112,7 +112,7 @@
     "docs-template:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare packages/docs/preview",
     "release": "bun run release:both",
     "release:both": "bun run release:selaras && bun run release:docs",
-    "release:selaras": "bun run lint && bun run test && changelogen --bump && bun run test:release && npm publish --access public && bash scripts/tag-and-push-release.sh selaras && changelogen gh release",
+    "release:selaras": "bun run lint && bun run test && (if [ -n \"$RELEASE_VERSION\" ]; then npx changelogen --bump -r \"$RELEASE_VERSION\"; elif [ \"${RELEASE_BUMP:-auto}\" = \"auto\" ]; then npx changelogen --bump; else npx changelogen --bump \"--$RELEASE_BUMP\"; fi) && bun run test:release && npm publish --access public && bash scripts/tag-and-push-release.sh selaras && changelogen gh release",
     "release:docs": "node scripts/bump-docs-layer.mjs && node scripts/prepare-docs-layer-release.mjs --verify && bun run test:release && node scripts/prepare-docs-layer-release.mjs && (cd packages/docs && npm publish --access public) && node scripts/prepare-docs-layer-release.mjs --restore && bash scripts/tag-and-push-release.sh selaras-docs",
     "lint": "eslint .",
     "lint:fix": "eslint --fix",

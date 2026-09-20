@@ -11,8 +11,8 @@ on:
           - both
           - selaras
           - selaras-docs
-      bump:
-        description: Version bump (leave as auto to let changelogen infer it from commit types; docs auto resolves to patch)
+      selaras-bump:
+        description: Selaras version bump (auto lets changelogen infer it from commit types)
         type: choice
         default: auto
         options:
@@ -20,8 +20,21 @@ on:
           - patch
           - minor
           - major
-      version:
-        description: Exact release version (for example 1.0.0; overrides bump)
+      selaras-version:
+        description: Exact Selaras version (for example 1.0.0; overrides selaras-bump)
+        required: false
+        type: string
+      docs-bump:
+        description: Docs layer version bump (auto resolves to patch)
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+      docs-version:
+        description: Exact docs layer version (for example 0.2.0; overrides docs-bump)
         required: false
         type: string
 
@@ -78,15 +91,15 @@ jobs:
       # way: a 403 from npm still left v0.1.1 tagged and released on
       # GitHub). Publishing first means a failure here simply stops the
       # job - there's nothing to revert because nothing was pushed.
-      # `bump` defaults to "auto" (changelogen infers patch/minor/major
-      # from commit types since the last tag). `version` is an exact override:
-      # SemVer's pre-1.0 major bump turns 0.1.1 into 0.2.0, while the first
-      # stable release must explicitly request 1.0.0.
+      # `selaras-bump` defaults to "auto" (changelogen infers patch/minor/
+      # major from commit types since the last tag). `selaras-version` is an
+      # exact override: SemVer's pre-1.0 major bump turns 0.1.1 into 0.2.0,
+      # while the first stable release must explicitly request 1.0.0.
       - name: Bump Selaras version
         if: inputs.package != 'selaras-docs'
         env:
-          RELEASE_BUMP: ${{ inputs.bump }}
-          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_BUMP: ${{ inputs.selaras-bump }}
+          RELEASE_VERSION: ${{ inputs.selaras-version }}
         run: |
           if [ -n "$RELEASE_VERSION" ]; then
             npx changelogen --bump -r "$RELEASE_VERSION"
@@ -100,20 +113,21 @@ jobs:
       # release adds a short user-facing upgrade summary ahead of it; the
       # release body below is read from this same generated entry.
       - name: Add 1.0 migration summary
-        if: inputs.package != 'selaras-docs' && inputs.version == '1.0.0'
+        if: inputs.package != 'selaras-docs' && inputs.selaras-version == '1.0.0'
         run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
 
       # The docs layer is an independent release stream with its own version
-      # - this never copies the core version over. `auto` resolves to a
-      # patch bump; anything beyond that (or an exact version) needs an
-      # explicit bump, since changelogen's commit-type inference tracks the
-      # core stream. An exact `version` input applies to whichever packages
-      # are being released in this run.
+      # - this never copies the core version over. `docs-bump` defaults to
+      # `auto`, which resolves to a patch bump; anything beyond that (or an
+      # exact `docs-version`) needs an explicit bump, since changelogen's
+      # commit-type inference tracks the core stream. Each package in a joint
+      # run uses its own inputs, so mixed levels (Selaras major alongside a
+      # docs patch, for example) release together in one run.
       - name: Bump docs layer version
         if: inputs.package != 'selaras'
         env:
-          RELEASE_BUMP: ${{ inputs.bump }}
-          RELEASE_VERSION: ${{ inputs.version }}
+          RELEASE_BUMP: ${{ inputs.docs-bump }}
+          RELEASE_VERSION: ${{ inputs.docs-version }}
         run: node scripts/bump-docs-layer.mjs
 
       # Validate the versioned release candidate itself, including generated
