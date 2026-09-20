@@ -36,18 +36,20 @@ watch(() => route.path, () => {
         variant="link"
         :ui="{ root: 'hidden w-auto lg:flex' }"
       />
-      <NuxtLink
-        v-if="repositoryUrl"
-        :to="repositoryUrl"
-        target="_blank"
-        rel="noreferrer"
-        class="selaras-docs-header-link selaras-docs-header-link--desktop"
-        aria-label="Source repository"
-      >
-        <span>Source</span>
-      </NuxtLink>
       <DocsSearchButton v-if="docsConfig.header?.search !== false" />
       <SColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
+      <SButton
+        v-if="repositoryUrl"
+        as="a"
+        :href="repositoryUrl"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Source repository"
+        title="Source repository"
+        icon="hugeicons:github"
+        variant="ghost"
+        color="neutral"
+      />
       <SButton
         variant="ghost"
         color="neutral"
