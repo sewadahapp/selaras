@@ -55,6 +55,13 @@ export default defineAppConfig({
     header: {
       links: [
         { label: 'Guide', to: '/guide/getting-started' },
+        {
+          label: 'Resources',
+          children: [
+            { label: 'API reference', to: '/api' },
+            { label: 'GitHub', to: 'https://github.com/example/project', target: '_blank', rel: 'noreferrer' },
+          ],
+        },
       ],
     },
   },

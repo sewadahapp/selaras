@@ -15,6 +15,19 @@ export interface SelarasDocsLink {
   ariaLabel?: string
 }
 
+/** A top-level header item rendered by Selaras' NavigationMenu. */
+export interface SelarasDocsNavigationItem {
+  /** Required so every header control has an accessible name. */
+  label: string
+  to?: string
+  icon?: string
+  target?: string
+  rel?: string
+  ariaLabel?: string
+  disabled?: boolean
+  children?: SelarasDocsNavigationItem[]
+}
+
 export interface SelarasDocsLogo {
   light?: string
   dark?: string
@@ -38,7 +51,7 @@ export interface SelarasDocsAppConfig {
     showTitle?: boolean
     search?: boolean
     colorMode?: boolean
-    links?: SelarasDocsLink[]
+    links?: SelarasDocsNavigationItem[]
   }
   toc?: {
     enabled?: boolean

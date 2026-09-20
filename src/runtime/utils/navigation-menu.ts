@@ -2,6 +2,9 @@ export interface NavigationMenuItem {
   label: string
   icon?: string
   to?: string
+  target?: string
+  rel?: string
+  ariaLabel?: string
   disabled?: boolean
   /** Force active state - otherwise auto-detected against the current route when `to` is set. */
   active?: boolean

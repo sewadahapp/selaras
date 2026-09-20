@@ -173,6 +173,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                       <component
                         :is="child.to ? NuxtLink : 'button'" :to="child.to" :type="child.to ? undefined : 'button'"
                         :disabled="child.to ? undefined : child.disabled" v-bind="childLinkProps(child)"
+                        :target="child.target" :rel="child.rel" :aria-label="child.ariaLabel"
                         :aria-disabled="child.to && child.disabled ? 'true' : undefined" @click="onSelect(child, $event)"
                       >
                         <slot :name="slotName(child, '')" :item="child" :active="isActive(child)">
@@ -195,6 +196,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
             <component
               :is="item.to ? NuxtLink : 'button'" :to="item.to" :type="item.to ? undefined : 'button'"
               :disabled="item.to ? undefined : item.disabled" v-bind="linkProps(item)"
+              :target="item.target" :rel="item.rel" :aria-label="item.ariaLabel"
               :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
             >
               <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">

@@ -44,6 +44,25 @@ describe('navigationMenu (horizontal)', () => {
     expect(link.text()).toBe('Docs')
   })
 
+  it('forwards link attributes needed by external header navigation', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: {
+        items: [{
+          label: 'GitHub',
+          to: 'https://github.com/sewadahapp/selaras',
+          target: '_blank',
+          rel: 'noreferrer',
+          ariaLabel: 'Selaras on GitHub',
+        }],
+      },
+    })
+
+    const link = wrapper.find('a')
+    expect(link.attributes('target')).toBe('_blank')
+    expect(link.attributes('rel')).toBe('noreferrer')
+    expect(link.attributes('aria-label')).toBe('Selaras on GitHub')
+  })
+
   it('marks the item matching the current route active, via Reka\'s own aria-current', async () => {
     const wrapper = await mountSuspended(NavigationMenu, { props: { items }, route: '/docs' })
 

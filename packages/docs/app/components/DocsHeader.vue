@@ -30,17 +30,12 @@ watch(() => route.path, () => {
       <span v-if="showTitle">{{ siteName }}</span>
     </NuxtLink>
     <template #right>
-      <NuxtLink
-        v-for="link in headerLinks"
-        :key="`${link.to}:${link.label ?? link.icon ?? ''}`"
-        :to="link.to"
-        :target="link.target"
-        class="selaras-docs-header-link selaras-docs-header-link--desktop"
-        :aria-label="link.ariaLabel ?? link.label"
-      >
-        <SIcon v-if="link.icon" :name="link.icon" />
-        <span v-if="link.label">{{ link.label }}</span>
-      </NuxtLink>
+      <SNavigationMenu
+        v-if="headerLinks.length"
+        :items="headerLinks"
+        variant="link"
+        :ui="{ root: 'hidden w-auto lg:flex' }"
+      />
       <NuxtLink
         v-if="repositoryUrl"
         :to="repositoryUrl"
