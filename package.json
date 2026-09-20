@@ -111,7 +111,7 @@
     "docs:types": "cd docs && vue-tsc --noEmit",
     "docs-template:dev": "bun run docs-template:prepare && nuxt dev packages/docs/preview",
     "docs-template:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare packages/docs/preview",
-    "release": "bun run lint && bun run test && changelogen --bump && bun run test:release && npm publish --access public && bash scripts/tag-and-push-release.sh && changelogen gh release",
+    "release": "bun run lint && bun run test && changelogen --bump && bun run test:release && npm publish --access public && node scripts/prepare-docs-layer-release.mjs && (cd packages/docs && npm publish --access public) && git checkout -- packages/docs/package.json && bash scripts/tag-and-push-release.sh && changelogen gh release",
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
     "test": "vitest run",

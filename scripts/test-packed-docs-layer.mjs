@@ -9,8 +9,11 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 
+import { prepareDocsLayerForPublish } from './prepare-docs-layer-release.mjs'
+
 const rootDir = fileURLToPath(new URL('..', import.meta.url))
 const docsDir = join(rootDir, 'packages/docs')
+const docsManifestPath = join(docsDir, 'package.json')
 const rootRequire = createRequire(join(rootDir, 'package.json'))
 const nuxtRequire = createRequire(rootRequire.resolve('nuxt/package.json'))
 const consumerDir = mkdtempSync(join(tmpdir(), 'selaras-docs-layer-'))
@@ -195,10 +198,21 @@ async function inspectConsumer({ prefixed, overridden, example }) {
   }
 }
 
+let originalDocsManifest
 try {
+  // `npm pack --ignore-scripts` ships the working-tree dist untouched, so it
+  // must be a real build. Stubs (`nuxt-module-build build --stub`, used by
+  // `docs:dev`/`docs:prepare`) turn dist/runtime and dist/tokens into symlinks
+  // into src, which npm silently omits from the archive.
+  run('build a real module dist', 'bun', ['x', 'nuxt-module-build', 'build'], rootDir)
   const npmCache = join(consumerDir, '.npm-cache')
   const packArguments = ['--cache', npmCache, 'pack', '--ignore-scripts', '--json', '--pack-destination', consumerDir]
   const selarasArchive = readPackedArchive(run('create the Selaras tarball', 'npm', packArguments, rootDir))
+  // The working-tree manifest pins the layer to the local source (`file:../..`),
+  // which npm cannot publish - rewrite it to the released range for the pack,
+  // then restore the tree in the `finally` below.
+  originalDocsManifest = readFileSync(docsManifestPath, 'utf8')
+  prepareDocsLayerForPublish()
   const docsArchive = readPackedArchive(run('create the docs layer tarball', 'npm', packArguments, docsDir))
   for (const archive of [selarasArchive, docsArchive]) {
     assert.ok(!archive.files.some(file => file.path.startsWith('src/') || file.path.startsWith('.notes/')), `${archive.filename} must not ship repository-only files`)
@@ -244,5 +258,7 @@ try {
   }
 }
 finally {
+  if (originalDocsManifest)
+    writeFileSync(docsManifestPath, originalDocsManifest)
   rmSync(consumerDir, { recursive: true, force: true })
 }

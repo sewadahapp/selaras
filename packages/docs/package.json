@@ -27,7 +27,7 @@
   "dependencies": {
     "@nuxt/content": "^3.16.0",
     "@nuxt/kit": "^4.5.2",
-    "@sewadah/selaras": "^0.2.0",
+    "@sewadah/selaras": "file:../..",
     "tailwindcss": "^4.3.0"
   }
 }

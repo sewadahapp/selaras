@@ -120,6 +120,15 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
 
+      # The docs layer is released in lockstep with the root package and
+      # depends on it through `file:../..` for local development - npm cannot
+      # publish that, so sync the layer version to the bumped root version and
+      # rewrite the dependency to a semver range right before publishing.
+      - name: Publish docs layer to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: node scripts/prepare-docs-layer-release.mjs && cd packages/docs && npm publish --access public
+
       # Only reached once the publish above has actually succeeded - now
       # it's safe to commit the version bump, tag it, and push. Same
       # script the local `npm run release` uses, so there's one place
