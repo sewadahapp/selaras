@@ -107,7 +107,7 @@
     "docs:build": "nuxt build docs",
     "docs:dev": "bun run docs:prepare && nuxt dev docs",
     "docs:generate": "nuxt generate docs",
-    "docs:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare docs",
+    "docs:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare docs && bun run scripts/sync-workspace-dist.mjs",
     "docs:types": "cd docs && vue-tsc --noEmit",
     "docs-template:dev": "bun run docs-template:prepare && nuxt dev packages/docs/preview",
     "docs-template:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare packages/docs/preview",

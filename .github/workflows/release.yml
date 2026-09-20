@@ -51,6 +51,9 @@ jobs:
       - name: Playground prepare
         run: bun run dev:prepare
 
+      - name: Docs prepare
+        run: bun run docs:prepare
+
       - name: Lint
         run: bun run lint
 
