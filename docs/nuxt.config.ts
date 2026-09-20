@@ -62,4 +62,18 @@ export default defineNuxtConfig({
       ignore: [isFakeDemoLinkedPath],
     },
   },
+  hooks: {
+    // Same as the playground: @nuxt/content asks Vite to pre-bundle
+    // `@nuxtjs/mdc`'s own dependencies via the nested "pkg > subpkg" syntax,
+    // but in this workspace `@nuxtjs/mdc` resolves nested under @nuxt/content
+    // rather than a hoisted node_modules entry, so every entry is
+    // unresolvable and only spams a [NUXT_B7002] warning.
+    'vite:extendConfig': (config) => {
+      if (config.optimizeDeps?.include) {
+        config.optimizeDeps.include = config.optimizeDeps.include.filter(
+          entry => !entry.startsWith('@nuxtjs/mdc >'),
+        )
+      }
+    },
+  },
 })
