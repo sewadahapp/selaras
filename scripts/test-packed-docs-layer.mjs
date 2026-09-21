@@ -231,7 +231,14 @@ try {
   )
   dependencies['@sewadah/selaras'] = `file:./${selarasArchive.filename}`
   dependencies['@sewadah/selaras-docs'] = `file:./${docsArchive.filename}`
-  writeFileSync(join(consumerDir, 'package.json'), `${JSON.stringify({ name: 'selaras-packed-docs-layer-consumer', private: true, type: 'module', dependencies }, null, 2)}\n`)
+  // The packed layer declares a semver range on the core package (rewritten
+  // from `file:../..` for publishing above). The release candidate under
+  // test is not on the registry yet by design - validation runs before
+  // publish - so pin the transitive dependency to the just-packed core
+  // tarball instead of letting the installer resolve the range remotely.
+  // This mirrors the `overrides` pinning in test-packed-consumer.mjs.
+  const overrides = { '@sewadah/selaras': `file:./${selarasArchive.filename}` }
+  writeFileSync(join(consumerDir, 'package.json'), `${JSON.stringify({ name: 'selaras-packed-docs-layer-consumer', private: true, type: 'module', dependencies, overrides }, null, 2)}\n`)
   run('install both tarballs in an isolated dependency graph', 'bun', ['install', '--ignore-scripts'])
   const consumerRequire = createRequire(join(consumerDir, 'package.json'))
   for (const packageName of ['@sewadah/selaras', '@sewadah/selaras-docs']) {
