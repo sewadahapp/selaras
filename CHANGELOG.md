@@ -1,6 +1,65 @@
 # Changelog
 
 
+## v0.3.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/v0.2.0...v0.3.0)
+
+### 🚀 Enhancements
+
+- **docs:** Add dedicated documentation consumer ([9d2e3bc](https://github.com/sewadahapp/selaras/commit/9d2e3bc))
+- **docs:** Add zero-config layer defaults ([df8a789](https://github.com/sewadahapp/selaras/commit/df8a789))
+- **docs:** Add typed site configuration ([3fa2a91](https://github.com/sewadahapp/selaras/commit/3fa2a91))
+- **theme:** Recalibrate semantic color defaults ([0b09ba1](https://github.com/sewadahapp/selaras/commit/0b09ba1))
+- **docs:** Add default documentation shell ([c6b9f7f](https://github.com/sewadahapp/selaras/commit/c6b9f7f))
+- **docs:** Add local navigation search ([3e4726f](https://github.com/sewadahapp/selaras/commit/3e4726f))
+- **docs:** Migrate documentation corpus ([35b8149](https://github.com/sewadahapp/selaras/commit/35b8149))
+- **docs:** Bundle default template dependencies ([7814c54](https://github.com/sewadahapp/selaras/commit/7814c54))
+- **docs:** Separate template and site typography ([609121c](https://github.com/sewadahapp/selaras/commit/609121c))
+- **docs:** Add template preview ([199e518](https://github.com/sewadahapp/selaras/commit/199e518))
+- **prose-pre:** Add file-type icons ([4130746](https://github.com/sewadahapp/selaras/commit/4130746))
+- **module:** Stop force-bundling default icons in clientBundle ([d723b04](https://github.com/sewadahapp/selaras/commit/d723b04))
+- **docs:** Render header links as navigation menu ([b21e448](https://github.com/sewadahapp/selaras/commit/b21e448))
+
+### 🩹 Fixes
+
+- **docs:** Use native content sqlite ([7ed7c59](https://github.com/sewadahapp/selaras/commit/7ed7c59))
+- **docs:** Restore frontmatter page headers ([91022f0](https://github.com/sewadahapp/selaras/commit/91022f0))
+- **docs:** Offset sticky navigation rails ([e1ccb61](https://github.com/sewadahapp/selaras/commit/e1ccb61))
+- **docs:** Scope site navigation by section ([0ef5607](https://github.com/sewadahapp/selaras/commit/0ef5607))
+- **docs:** Hide desktop links on mobile ([d7f3490](https://github.com/sewadahapp/selaras/commit/d7f3490))
+- **docs:** Use shared color mode toggle ([182cfb8](https://github.com/sewadahapp/selaras/commit/182cfb8))
+- **docs:** Use outlined search trigger ([f38f070](https://github.com/sewadahapp/selaras/commit/f38f070))
+- **docs:** Load configured variable font weights ([00dad42](https://github.com/sewadahapp/selaras/commit/00dad42))
+- **content-toc:** Center rail bends between headings ([bc9dfa6](https://github.com/sewadahapp/selaras/commit/bc9dfa6))
+- **docs-layer:** Publish against the released package, not the workspace copy ([78a4629](https://github.com/sewadahapp/selaras/commit/78a4629))
+- **docs:** Unblock fresh-checkout install and typecheck ([e0eef55](https://github.com/sewadahapp/selaras/commit/e0eef55))
+- **docs:** Strip unresolvable mdc optimizeDeps entries ([edc9099](https://github.com/sewadahapp/selaras/commit/edc9099))
+- **docs:** Move repository link to header action ([bb27520](https://github.com/sewadahapp/selaras/commit/bb27520))
+- **release:** Pin packed core tarball via overrides in docs-layer consumer test ([c59bcd7](https://github.com/sewadahapp/selaras/commit/c59bcd7))
+
+### 💅 Refactors
+
+- **docs:** Use layer defaults ([5c5e625](https://github.com/sewadahapp/selaras/commit/5c5e625))
+
+### 📖 Documentation
+
+- **docs:** Add zero-config bootstrap guide ([ed6eae6](https://github.com/sewadahapp/selaras/commit/ed6eae6))
+- **content:** Update migrated site references ([0773b0f](https://github.com/sewadahapp/selaras/commit/0773b0f))
+
+### 🏡 Chore
+
+- **repo:** Make docs the canonical site with independent docs-layer releases ([8cc2439](https://github.com/sewadahapp/selaras/commit/8cc2439))
+- **release:** Allow per-package bump levels in one release run ([0161259](https://github.com/sewadahapp/selaras/commit/0161259))
+
+### 🎨 Styles
+
+- **docs:** Soften search trigger ([db431e9](https://github.com/sewadahapp/selaras/commit/db431e9))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.2.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/v0.1.1...v0.2.0)
