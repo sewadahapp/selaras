@@ -219,6 +219,7 @@ try {
   }
   assert.ok(docsArchive.files.some(file => file.path === 'nuxt.config.mjs'))
   assert.ok(docsArchive.files.some(file => file.path === 'README.md'), 'the docs layer must publish its zero-config bootstrap guidance')
+  assert.ok(docsArchive.files.some(file => file.path === 'CHANGELOG.md'), 'the docs layer must publish its own release notes')
   assert.ok(docsArchive.files.some(file => file.path === 'content.config.ts'))
   assert.ok(docsArchive.files.some(file => file.path === 'modules/docs.mjs'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/app.vue'))

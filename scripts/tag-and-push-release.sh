@@ -15,8 +15,10 @@ set -euo pipefail
 # `v*` tags, so dropping it would silently change what `--bump` infers.
 #
 # Only the requested packages' manifests (plus CHANGELOG.md when it changed,
-# which only core bumps via changelogen ever touch) are staged - a docs-only
-# release never rewrites the core version, and vice versa.
+# which only core bumps via changelogen ever touch, and
+# packages/docs/CHANGELOG.md when it changed, which only docs bumps via
+# bump-docs-layer.mjs ever touch) are staged - a docs-only release never
+# rewrites the core version, and vice versa.
 
 if [ "$#" -eq 0 ]; then
   echo "Usage: $0 <selaras|selaras-docs> [...]" >&2
@@ -53,6 +55,12 @@ if git diff --quiet -- CHANGELOG.md 2>/dev/null; then
   : # unchanged - only staged when a core bump rewrote it
 else
   stage+=(CHANGELOG.md)
+fi
+
+if git diff --quiet -- packages/docs/CHANGELOG.md 2>/dev/null; then
+  : # unchanged - only staged when a docs bump rewrote it
+else
+  stage+=(packages/docs/CHANGELOG.md)
 fi
 
 git add "${stage[@]}"
