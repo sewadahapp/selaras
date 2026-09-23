@@ -27,6 +27,13 @@
   outline-offset: 2px;
 }
 
+/* Keep the header surface full width while centering its contents on the
+ * same 90rem shell as the page layout. The 1.5rem minimum matches the
+ * content gutters on smaller screens. */
+.selaras-docs-header {
+  padding-inline: max(1.5rem, calc(50vw - 45rem));
+}
+
 .selaras-docs-shell {
   display: flex;
   width: min(100%, 90rem);
@@ -95,7 +102,11 @@
 }
 
 .selaras-docs-footer-inner {
+  box-sizing: border-box;
   display: flex;
+  width: min(100%, 90rem);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;

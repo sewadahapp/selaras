@@ -21,7 +21,7 @@ watch(() => route.path, () => {
 </script>
 
 <template>
-  <SHeader>
+  <SHeader :ui="{ root: 'selaras-docs-header' }">
     <NuxtLink to="/" class="selaras-docs-brand" :aria-label="`${siteName} home`">
       <template v-if="lightLogo">
         <img :src="lightLogo" :alt="logoAlt" class="selaras-docs-logo" :class="{ 'selaras-docs-logo--light': hasDistinctLogos }">
