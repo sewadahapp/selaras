@@ -37,7 +37,11 @@ function isFakeDemoLinkedPath(path: string) {
 }
 
 export default defineNuxtConfig({
-  extends: ['@sewadah/selaras-docs'],
+  // This is the package's own docs app inside the monorepo. Resolve the
+  // workspace layer from its source directory so Nuxt/Vite can watch the
+  // layer files directly during development; packed consumer coverage tests
+  // the public package-name extension path separately.
+  extends: ['../packages/docs'],
   compatibilityDate: 'latest',
   devtools: { enabled: true },
   icon: {
