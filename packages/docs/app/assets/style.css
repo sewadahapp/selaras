@@ -29,7 +29,9 @@
 
 /* Match the main documentation shell's centered width. */
 .selaras-docs-header {
-  position: relative;
+  position: sticky;
+  z-index: 20;
+  top: 0;
   width: min(100%, 90rem);
   margin-inline: auto;
 }
