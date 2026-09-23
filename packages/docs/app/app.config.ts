@@ -17,6 +17,15 @@ export default defineAppConfig({
       enabled: true,
       title: 'On this page',
     },
-    footer: {},
+    footer: {
+      links: [
+        {
+          label: 'Powered by Selaras',
+          to: 'https://sewadahapp.github.io/selaras',
+          target: '_blank',
+          rel: 'noreferrer',
+        },
+      ],
+    },
   },
 })

@@ -16,6 +16,7 @@ const footer = computed(() => docsConfig.value.footer)
           :key="`${link.to}:${link.label ?? link.icon ?? ''}`"
           :to="link.to"
           :target="link.target"
+          :rel="link.rel"
           :aria-label="link.ariaLabel ?? link.label"
         >
           <SIcon v-if="link.icon" :name="link.icon" />

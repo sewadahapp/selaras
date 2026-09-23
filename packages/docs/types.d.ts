@@ -12,6 +12,7 @@ export interface SelarasDocsLink {
   to: string
   icon?: string
   target?: string
+  rel?: string
   ariaLabel?: string
 }
 
