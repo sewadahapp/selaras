@@ -18,15 +18,15 @@ order: 60
 ```
 
 Nothing renders it for you - drop it into
-[DashboardNavbar](/blocks/dashboard/dashboard-navbar)'s `leading` slot
+[DashboardNavbar](/composites/dashboard/dashboard-navbar)'s `leading` slot
 (the common case, shown above), or anywhere else inside the same
-[DashboardGroup](/blocks/dashboard/dashboard-group) that makes sense for a
-given layout - inside [DashboardSidebar](/blocks/dashboard/dashboard-sidebar)'s
+[DashboardGroup](/composites/dashboard/dashboard-group) that makes sense for a
+given layout - inside [DashboardSidebar](/composites/dashboard/dashboard-sidebar)'s
 own header instead of the navbar, say, or a custom toolbar.
 
 Renders nothing until there's an actual sibling
-[DashboardSidebar](/blocks/dashboard/dashboard-sidebar) in the same
-[DashboardGroup](/blocks/dashboard/dashboard-group) to control.
+[DashboardSidebar](/composites/dashboard/dashboard-sidebar) in the same
+[DashboardGroup](/composites/dashboard/dashboard-group) to control.
 
 ### Replacing the button entirely
 

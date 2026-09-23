@@ -20,7 +20,7 @@ order: 20
 
 By default `SPageAside` is `sticky` and fills the viewport height (`h-screen`) -
 meant to sit directly inside a page-level flex row, like this docs site's own
-layout does for both the left nav and right [ContentToc](/blocks/documentation/content-toc)
+layout does for both the left nav and right [ContentToc](/composites/documentation/content-toc)
 rail. The example above overrides `root` via the `ui` prop to a fixed height
 so it fits inline in these docs.
 
@@ -34,9 +34,9 @@ Scrolling is handled by a themed [ScrollArea](/components/layout/scroll-area)
 internally, not a plain `overflow-y-auto` div - so scrollbar styling stays
 consistent with the rest of the library.
 
-Typically wraps a [ContentNavigation](/blocks/documentation/content-navigation)
-(left nav) or a [ContentToc](/blocks/documentation/content-toc) (right rail) -
-see [PageHeader](/blocks/documentation/page-header)'s "Assembling a full page
+Typically wraps a [ContentNavigation](/composites/documentation/content-navigation)
+(left nav) or a [ContentToc](/composites/documentation/content-toc) (right rail) -
+see [PageHeader](/composites/documentation/page-header)'s "Assembling a full page
 layout" section for how all three combine with a main content column into
 one page.
 

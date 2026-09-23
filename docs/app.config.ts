@@ -30,8 +30,8 @@ export default defineAppConfig({
           to: '/components/elements/button',
         },
         {
-          label: 'Blocks',
-          to: '/blocks/documentation/page-header',
+          label: 'Composites',
+          to: '/composites/documentation/page-header',
         },
         {
           label: 'Utilities',

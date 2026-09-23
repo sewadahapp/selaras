@@ -26,10 +26,10 @@ order: 20
 </SDashboardSidebar>
 ```
 
-Must be a direct child of [DashboardGroup](/blocks/dashboard/dashboard-group) -
+Must be a direct child of [DashboardGroup](/composites/dashboard/dashboard-group) -
 see its own page for the resize/collapse/persistence/mobile-drawer behavior,
 all shared across the whole shell rather than owned by the sidebar alone.
-`header`/default/`footer` mirror [PageAside](/blocks/documentation/page-aside)'s
+`header`/default/`footer` mirror [PageAside](/composites/documentation/page-aside)'s
 own slot shape - default content scrolls (via
 [ScrollArea](/components/layout/scroll-area)) independently of the fixed
 header/footer.

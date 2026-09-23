@@ -15,15 +15,15 @@ order: 40
 
 `links` matches `@nuxt/content`'s `page.body.toc.links` shape directly
 (`{ id, text, depth, children? }[]`) - pass it straight through, no adapter
-needed. As with [ContentNavigation](/blocks/documentation/content-navigation), there's
+needed. As with [ContentNavigation](/composites/documentation/content-navigation), there's
 no hard dependency on `@nuxt/content` - build the array yourself if you don't
 use it.
 
-It's normally wrapped in a [PageAside](/blocks/documentation/page-aside)
+It's normally wrapped in a [PageAside](/composites/documentation/page-aside)
 rather than used bare, which supplies the sticky positioning and scrollable
-rail chrome - see [PageHeader](/blocks/documentation/page-header)'s
+rail chrome - see [PageHeader](/composites/documentation/page-header)'s
 "Assembling a full page layout" section for how it and
-[ContentNavigation](/blocks/documentation/content-navigation) fit together
+[ContentNavigation](/composites/documentation/content-navigation) fit together
 with the rest of a page.
 
 The active heading(s) are tracked by comparing scroll position against

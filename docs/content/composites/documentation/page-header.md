@@ -21,11 +21,11 @@ fields previously went completely unused.
 
 `PageHeader` is only the top of the main content column - this docs site
 wraps four components together into the full page shell you're reading right
-now: a left [PageAside](/blocks/documentation/page-aside) wrapping a
-[ContentNavigation](/blocks/documentation/content-navigation) for the section
+now: a left [PageAside](/composites/documentation/page-aside) wrapping a
+[ContentNavigation](/composites/documentation/content-navigation) for the section
 nav, a main column starting with `PageHeader` and followed by the actual
 page content, and a right `PageAside` wrapping a
-[ContentToc](/blocks/documentation/content-toc) for the "on this page" rail.
+[ContentToc](/composites/documentation/content-toc) for the "on this page" rail.
 The Selaras docs application uses this same arrangement, with a responsive
 drawer for the navigation on smaller screens.
 
@@ -47,9 +47,9 @@ drawer for the navigation on smaller screens.
 </div>
 ```
 
-See also [PageAside](/blocks/documentation/page-aside),
-[ContentNavigation](/blocks/documentation/content-navigation) and
-[ContentToc](/blocks/documentation/content-toc).
+See also [PageAside](/composites/documentation/page-aside),
+[ContentNavigation](/composites/documentation/content-navigation) and
+[ContentToc](/composites/documentation/content-toc).
 
 ## Custom `:ui`
 

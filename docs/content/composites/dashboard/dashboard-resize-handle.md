@@ -17,14 +17,14 @@ order: 40
 </SDashboardGroup>
 ```
 
-Placed between [DashboardSidebar](/blocks/dashboard/dashboard-sidebar) and
-[DashboardPanel](/blocks/dashboard/dashboard-panel), both direct children of
-[DashboardGroup](/blocks/dashboard/dashboard-group) - a thin wrapper around
+Placed between [DashboardSidebar](/composites/dashboard/dashboard-sidebar) and
+[DashboardPanel](/composites/dashboard/dashboard-panel), both direct children of
+[DashboardGroup](/composites/dashboard/dashboard-group) - a thin wrapper around
 [SplitterResizeHandle](/components/layout/splitter) (`direction="horizontal"`
 fixed, since a dashboard shell only ever splits left/right) that just adds
 the mobile check: renders nothing below `mobileBreakpoint` - there's
 nothing to drag once the sidebar isn't part of a split layout at all, see
-[DashboardGroup](/blocks/dashboard/dashboard-group)'s own "Mobile" section.
+[DashboardGroup](/composites/dashboard/dashboard-group)'s own "Mobile" section.
 
 ## Custom `:ui`
 

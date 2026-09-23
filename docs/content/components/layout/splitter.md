@@ -22,7 +22,7 @@ Three components used together - `SSplitter` (the group), one
 of panels you want draggable. Sizes are percentages of the group's total by
 default (`sizeUnit="%"` on `SSplitterPanel`); pass `sizeUnit="px"` for
 pixel-based panels instead - see
-[DashboardSidebar](/blocks/dashboard/dashboard-sidebar) for an example, a
+[DashboardSidebar](/composites/dashboard/dashboard-sidebar) for an example, a
 sidebar's width reads more naturally in pixels than as a fraction of
 however wide the page happens to be.
 
@@ -35,7 +35,7 @@ left to the consumer.
 A panel with `collapsible` snaps fully closed once dragged past its own
 `minSize`, down to `collapsedSize` (`0` by default - fully hidden). Call
 `.collapse()`/`.expand()` on a template ref to do the same thing
-programmatically - see [DashboardSidebar](/blocks/dashboard/dashboard-sidebar)'s
+programmatically - see [DashboardSidebar](/composites/dashboard/dashboard-sidebar)'s
 own source for a real example, driven by a button elsewhere on the page
 rather than a drag gesture.
 
@@ -59,7 +59,7 @@ needing a ref at all:
 `autoSaveId` (on `SSplitter`) remembers every panel's size across reloads,
 via `localStorage` by default - pass a custom `storage` object (anything
 shaped `{ getItem, setItem }`) to persist somewhere else instead, the same
-mechanism [DashboardGroup](/blocks/dashboard/dashboard-group) uses to
+mechanism [DashboardGroup](/composites/dashboard/dashboard-group) uses to
 persist to a cookie. Whichever storage is used, the remembered layout only
 applies once mounted, not during SSR - Reka's own layout-restore call runs
 inside a `watch()` callback, which Vue's SSR render pass doesn't flush.

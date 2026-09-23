@@ -24,9 +24,9 @@ order: 10
 ```
 
 `SDashboardGroup` coordinates the whole shell - place a
-[DashboardSidebar](/blocks/dashboard/dashboard-sidebar), a
-[DashboardResizeHandle](/blocks/dashboard/dashboard-resize-handle), and a
-[DashboardPanel](/blocks/dashboard/dashboard-panel) inside it directly (not
+[DashboardSidebar](/composites/dashboard/dashboard-sidebar), a
+[DashboardResizeHandle](/composites/dashboard/dashboard-resize-handle), and a
+[DashboardPanel](/composites/dashboard/dashboard-panel) inside it directly (not
 wrapped in anything else - it needs to see all three as its own children).
 It's a themed wrapper around [Splitter](/components/layout/splitter) -
 `SDashboardSidebar`/`SDashboardPanel` wrap `SSplitterPanel` the same way, so
