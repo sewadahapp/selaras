@@ -51,6 +51,7 @@
         "@sewadah/selaras": "file:..",
         "@sewadah/selaras-docs": "workspace:*",
         "nuxt": "^4.5.2",
+        "shiki": "^4.4.3",
       },
       "devDependencies": {
         "vue-router": "^5.2.0",

@@ -8,3 +8,11 @@
   --font-sans: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 }
+
+.selaras-theme-source-code span {
+  color: var(--shiki-light);
+}
+
+.dark .selaras-theme-source-code span {
+  color: var(--shiki-dark);
+}
