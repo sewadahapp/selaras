@@ -81,12 +81,12 @@ describe('useComboboxSelect - commitCreatableText', () => {
     expect(emit).not.toHaveBeenCalled()
   })
 
-  it('does not commit a partial prefix match either - this was the bug: typing "app" and pressing Enter used to clobber Reka UI\'s own selection of the highlighted "Apple" option by committing the literal "app" text right after', () => {
+  it('commits a partial match as free text when no suggestion was chosen', () => {
     const emit = vi.fn()
     const { commitCreatableText } = useComboboxSelect({ items: fruitItems }, emit, { creatable: true })
 
-    expect(commitCreatableText('app')).toBe(false)
-    expect(emit).not.toHaveBeenCalled()
+    expect(commitCreatableText('app')).toBe(true)
+    expect(emit).toHaveBeenCalledWith('update:modelValue', 'app')
   })
 
   it('is case-insensitive when matching', () => {

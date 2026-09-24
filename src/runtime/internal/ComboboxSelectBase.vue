@@ -309,11 +309,13 @@ const internalSearchText = ref(props.searchTerm ?? (props.creatable && !props.mu
 // Reka synchronizes search text from its root selection. During mode changes,
 // preserve the chosen query/display text through that synchronization flush.
 const modeSearchLock = ref(false)
+const keyboardNavigatedOptions = ref(false)
 const searchText = computed({
   get: () => props.searchTerm ?? internalSearchText.value,
   set: (value: string) => {
     if (modeSearchLock.value)
       return
+    keyboardNavigatedOptions.value = false
     internalSearchText.value = value
     emit('update:searchTerm', value)
   },
@@ -343,29 +345,99 @@ function revertUnmatchedText(): boolean {
 }
 
 function onSearchKeydown(event: KeyboardEvent) {
+  if (event.target !== editableInput.value)
+    return
+  if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && !event.isComposing && !isSearchComposing.value) {
+    keyboardNavigatedOptions.value = true
+    return
+  }
+  if (event.key === 'Backspace' && props.creatable && props.multiple && props.displayMode === 'comma'
+    && !event.isComposing && !isSearchComposing.value && event.keyCode !== 229
+    && !searchText.value && !editableInput.value.value && selectedValues.value.length) {
+    removeValue(selectedValues.value.at(-1)!)
+    event.preventDefault()
+    return
+  }
   // The final IME Enter can follow compositionend with isComposing false.
   // Limit the legacy 229 fallback to Enter so directly typed keys still work.
-  if (event.key !== 'Enter' || event.isComposing || isSearchComposing.value || event.keyCode === 229)
+  if (event.key !== 'Enter')
     return
+  if (event.isComposing || isSearchComposing.value || event.keyCode === 229) {
+    event.stopPropagation()
+    return
+  }
   if (revertUnmatchedText()) {
     // The rejected value was handled here, so Enter must not submit a parent
     // form as a side effect.
     event.preventDefault()
+    event.stopPropagation()
     return
   }
-  if (commitCreatableText(searchText.value)) {
-    searchText.value = ''
-    // Creating a value is this input's Enter action, matching Reka's own
-    // TagsInput behavior for values it adds from a form field.
-    event.preventDefault()
+  if (props.forceSelection)
+    return
+  if (props.creatable && !searchText.value.trim()) {
+    // Reka can retain a highlighted option after a selection clears the
+    // query. An idle Enter must not toggle it, but ArrowDown/Up followed by
+    // Enter should still choose a different, unselected option.
+    const activeId = editableInput.value?.getAttribute('aria-activedescendant')
+    const activeOption = activeId ? document.getElementById(activeId) : null
+    if (keyboardNavigatedOptions.value && activeOption?.getAttribute('aria-selected') === 'false')
+      return
+    // Leave the default action alone so a parent form can still submit.
+    event.stopPropagation()
+    return
   }
+  const activeId = editableInput.value?.getAttribute('aria-activedescendant')
+  const activeOption = activeId ? document.getElementById(activeId) : null
+  if ((!hasMatchingOption(searchText.value) || !activeOption || activeOption.hasAttribute('data-selaras-create-option')) && commitCreatableText(searchText.value)) {
+    // Commit the same "Create" option exposed as aria-activedescendant.
+    // Also handle Enter before a popup option has mounted at all.
+    if (props.multiple)
+      searchText.value = ''
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  // Reka handles either a real suggestion or the create suggestion, so Enter
+  // agrees with the active option announced through aria-activedescendant.
 }
 
+// Pointer selection can blur the editable input before Reka dispatches the
+// option's select event. That blur is part of choosing an option, not a request
+// to create the current query as a separate chip.
+const pointerInSuggestionContent = ref(false)
+function endSuggestionPointer() {
+  pointerInSuggestionContent.value = false
+  window.removeEventListener('pointerup', endSuggestionPointer)
+  window.removeEventListener('pointercancel', endSuggestionPointer)
+}
+function startSuggestionPointer() {
+  pointerInSuggestionContent.value = true
+  window.addEventListener('pointerup', endSuggestionPointer)
+  window.addEventListener('pointercancel', endSuggestionPointer)
+}
+onUnmounted(() => {
+  if (typeof window !== 'undefined')
+    endSuggestionPointer()
+})
+
 function onSearchBlur() {
+  if (pointerInSuggestionContent.value)
+    return
   if (revertUnmatchedText())
     return
-  if (commitCreatableText(searchText.value))
+  if (props.forceSelection)
+    return
+  if (commitCreatableText(searchText.value) && props.multiple)
     searchText.value = ''
+}
+
+function onComboboxValueUpdate(value: ComboboxSelection | null) {
+  setValue(value ?? (props.multiple ? [] : undefined))
+  if (props.creatable && props.multiple) {
+    // Reka clears the editor's DOM value after an item selection, but its
+    // search model can retain the old prefix until another input event.
+    searchText.value = ''
+  }
 }
 
 // The dropdown button is a plain ComboboxTrigger (its own click already
@@ -503,6 +575,11 @@ const field = useFormField()
 const selectId = computed(() => props.id ?? field?.id)
 const selectInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
+const selectedSummaryId = `selaras-autocomplete-selection-${useId()}`
+const searchDescribedBy = computed(() => [
+  describedBy.value,
+  props.creatable && props.multiple && props.displayMode === 'comma' && selectedOptions.value.length ? selectedSummaryId : undefined,
+].filter(Boolean).join(' ') || undefined)
 
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 
@@ -677,6 +754,9 @@ const adaptiveUi = computed(() => ({
 const bodyProps = computed(() => ({
   searchable: props.searchable,
   creatable: props.creatable,
+  multiple: props.multiple,
+  forceSelection: props.forceSelection,
+  selectedValues: selectedValues.value,
   searchText: searchText.value,
   displayValue,
   items: props.items,
@@ -704,13 +784,13 @@ const bodyProps = computed(() => ({
     :model-value="rekaSelection"
     :multiple="multiple"
     :disabled="disabled"
-    :ignore-filter="!searchable"
+    :ignore-filter="!searchable || (creatable && multiple)"
     :reset-search-term-on-blur="resetSearchTermOnBlur"
     :reset-search-term-on-select="resetSearchTermOnSelect"
     :data-selaras-color="colorRoleMarker"
     v-bind="rootProps"
     @update:open="updateOpen($event)"
-    @update:model-value="(value) => setValue(value == null ? (multiple ? [] : undefined) : value as string | number | (string | number)[])"
+    @update:model-value="(value) => onComboboxValueUpdate(value as ComboboxSelection | null)"
   >
     <ComboboxAnchor>
       <!--
@@ -725,6 +805,7 @@ const bodyProps = computed(() => ({
         :data-selaras-field-filled="selectedValues.length ? '' : undefined"
         :data-selaras-field-active="open ? '' : undefined"
         v-bind="triggerProps"
+        @keydown.capture="onSearchKeydown"
       >
         <!--
           TagsInputRoot doesn't own selection truth here - it only reads
@@ -779,6 +860,9 @@ const bodyProps = computed(() => ({
               </template>
             </Chip>
           </TagsInputItem>
+          <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
+            <span v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
+          </Tooltip>
           <ComboboxInput v-model="searchText" as-child>
             <TagsInputInput
               :id="selectId"
@@ -786,31 +870,35 @@ const bodyProps = computed(() => ({
               :display-value="displayValue"
               :placeholder="placeholder"
               :aria-invalid="selectInvalid || undefined"
-              :aria-describedby="describedBy"
+              :aria-describedby="searchDescribedBy"
               :aria-busy="loading || undefined"
               v-bind="searchInputProps"
-              @keydown="onSearchKeydown"
               @blur="onSearchBlur"
             />
           </ComboboxInput>
         </TagsInputRoot>
+        <span v-if="multiple && displayMode === 'comma' && selectedOptions.length" :id="selectedSummaryId" class="sr-only">
+          {{ selectedOptions.map((o) => o.label).join(', ') }}
+        </span>
+        <span v-if="multiple && displayMode === 'comma' && selectedOptions.length" aria-hidden="true" v-bind="commaValueProps">
+          {{ commaText }}
+        </span>
+        <Tooltip v-if="multiple && displayMode === 'comma' && overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
+          <span v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
+        </Tooltip>
         <ComboboxInput
-          v-else
+          v-if="!(multiple && displayMode === 'chip')"
           :id="selectId"
           :ref="setEditableInput"
           v-model="searchText"
           :display-value="displayValue"
-          :placeholder="placeholder"
+          :placeholder="multiple && displayMode === 'comma' && selectedOptions.length ? undefined : placeholder"
           :aria-invalid="selectInvalid || undefined"
-          :aria-describedby="describedBy"
+          :aria-describedby="searchDescribedBy"
           :aria-busy="loading || undefined"
           v-bind="searchInputProps"
-          @keydown="onSearchKeydown"
           @blur="onSearchBlur"
         />
-        <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
-          <span v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
-        </Tooltip>
         <!--
           A plain Button, not ComboboxCancel as-child - this trigger is a
           <div>, so unlike the non-creatable branch below there's no real
@@ -963,8 +1051,10 @@ const bodyProps = computed(() => ({
     <ComboboxPortal v-if="!showMobileSelectModal" v-bind="portalProps">
       <ComboboxContent
         position="popper" :side-offset="4"
+        :hide-when-empty="creatable && !multiple && !forceSelection"
         :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="colorRoleMarker"
         v-bind="showMobileAutocompletePanel ? mergeProps(contentProps, mobilePanelProps) : contentProps"
+        @pointerdown.capture="startSuggestionPointer"
       >
         <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
           <template #header>

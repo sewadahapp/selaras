@@ -11,6 +11,28 @@ const fruitItems = [
 ]
 
 describe('autocomplete', () => {
+  it.each(['keydown', 'blur'] as const)('keeps newly created text visible after %s in a parent-controlled single-value example', async (action) => {
+    const value = ref('')
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Autocomplete<{ value: string, label: string }>, {
+        'items': fruitItems,
+        'modelValue': value.value,
+        'onUpdate:modelValue': (next: unknown) => { value.value = typeof next === 'string' ? next : '' },
+      }),
+    }))
+    try {
+      const input = wrapper.find('input[role="combobox"]')
+      await input.setValue('kiwi')
+      await input.trigger(action, action === 'keydown' ? { key: 'Enter' } : {})
+      await nextTick()
+      expect(value.value).toBe('kiwi')
+      expect((input.element as HTMLInputElement).value).toBe('kiwi')
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
   it('preserves controlled empty ownership when the parent vetoes created text', async () => {
     const wrapper = await mountSuspended(Autocomplete, {
       props: { items: [{ value: 1, label: 'One' }], modelValue: undefined, defaultValue: 1, name: 'query', clearable: true },
@@ -40,6 +62,7 @@ describe('autocomplete', () => {
         for (const action of ['keydown', 'blur']) {
           await input.setValue('Unmatched text')
           await input.trigger(action, action === 'keydown' ? { key: 'Enter' } : {})
+          expect((input.element as HTMLInputElement).value).toBe('')
           expect(wrapper.emitted('update:modelValue')).toBeUndefined()
           expect(wrapper.findAll('input[type="hidden"][name="query"]').map(field => field.attributes('value'))).toEqual(['1'])
         }
@@ -297,7 +320,7 @@ describe('autocomplete', () => {
     expect(wrapper.emitted('update:searchTerm')?.at(-1)).toEqual([''])
   })
 
-  it('selects the highlighted option on the first Enter press, not the second', async () => {
+  it('shows only matching options in single mode and selects one on Enter', async () => {
     const wrapper = await mountSuspended(Autocomplete, {
       props: { items: fruitItems },
     })
@@ -310,6 +333,141 @@ describe('autocomplete', () => {
     await input.trigger('keydown', { key: 'Enter' })
 
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['apple'])
+  })
+
+  it('keeps a selected multiple option when it is chosen again by keyboard or pointer', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: {
+        items: [{ label: 'Apricot selected', value: 'apricot' }, { label: 'Blueberry selected', value: 'blueberry' }],
+        multiple: true,
+        defaultValue: ['blueberry'],
+      },
+    })
+
+    const input = wrapper.find('input[role="combobox"]')
+    await input.setValue('blueberry')
+    await nextTick()
+    await input.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect((input.element as HTMLInputElement).value).toBe('')
+
+    await input.setValue('blue')
+    await nextTick()
+    const selectedOption = [...document.querySelectorAll('[role="option"]')]
+      .find(option => option.textContent === 'Blueberry selected' && option.getAttribute('aria-selected') === 'true')
+    expect(selectedOption).toBeTruthy()
+    selectedOption!.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }))
+    await input.trigger('blur')
+    selectedOption!.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    selectedOption!.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+    await nextTick()
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+    expect((input.element as HTMLInputElement).value).toBe('')
+  })
+
+  it.each(['comma', 'chip'] as const)('continues keyboard selection with an empty query in %s mode', async (displayMode) => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: [...fruitItems, { label: 'Cherry', value: 'cherry' }], multiple: true, defaultValue: ['apple'], displayMode },
+    })
+
+    const input = wrapper.find('input')
+    await input.setValue('bana')
+    await nextTick()
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await input.trigger('keydown', { key: 'Enter' })
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['apple', 'banana']])
+    const updateCount = wrapper.emitted('update:modelValue')?.length
+    await input.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(updateCount ?? 0)
+
+    await nextTick()
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await nextTick()
+    await input.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['apple', 'banana', 'cherry']])
+  })
+
+  it('creates a typed prefix as a chip instead of toggling the suggested option', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: fruitItems, multiple: true, defaultValue: ['apple'], displayMode: 'chip' },
+    })
+
+    const input = wrapper.find('input')
+    await input.setValue('bana')
+    await nextTick()
+    await input.trigger('keydown', { key: 'Enter' })
+
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['apple', 'bana']])
+    const updateCount = wrapper.emitted('update:modelValue')?.length
+    await input.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(updateCount ?? 0)
+  })
+
+  it('shows selected labels in the default multiple display while keeping the query editable', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: fruitItems, multiple: true, defaultValue: ['apple', 'banana'] },
+    })
+
+    const input = wrapper.find('input[role="combobox"]')
+    expect(wrapper.find('[aria-hidden="true"]').text()).toBe('Apple, Banana')
+    const summaryId = input.attributes('aria-describedby')
+    expect(summaryId).toMatch(/^selaras-autocomplete-selection-/)
+    expect(wrapper.find(`[id="${summaryId}"]`).text()).toBe('Apple, Banana')
+
+    await input.setValue('kiwi')
+    await input.trigger('keydown', { key: 'Enter' })
+    await nextTick()
+    expect(wrapper.find('[aria-hidden="true"]').text()).toBe('Apple, Banana, kiwi')
+    expect((input.element as HTMLInputElement).value).toBe('')
+
+    await input.setValue('ch')
+    const updatesBeforeEditing = wrapper.emitted('update:modelValue')?.length
+    await input.trigger('keydown', { key: 'Backspace' })
+    expect(wrapper.emitted('update:modelValue')).toHaveLength(updatesBeforeEditing ?? 0)
+
+    await input.setValue('')
+    await input.trigger('keydown', { key: 'Backspace' })
+    await nextTick()
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['apple', 'banana']])
+    expect(wrapper.find('[aria-hidden="true"]').text()).toBe('Apple, Banana')
+  })
+
+  it('shows available options again when a created chip clears the query', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: {
+        items: [{ label: 'Apricot unique', value: 'apricot' }, { label: 'Blueberry unique', value: 'blueberry' }],
+        multiple: true,
+        defaultValue: ['apricot'],
+      },
+    })
+
+    const input = wrapper.find('input[role="combobox"]')
+    await input.setValue('kiwi')
+    await nextTick()
+    await input.trigger('keydown', { key: 'Enter' })
+    await nextTick()
+
+    expect((input.element as HTMLInputElement).value).toBe('')
+    const optionLabels = [...document.querySelectorAll('[role="option"]')].map(option => option.textContent)
+    expect(optionLabels).toContain('Apricot unique')
+    expect(optionLabels).toContain('Blueberry unique')
+  })
+
+  it('never creates a partial prefix when forceSelection is enabled', async () => {
+    const wrapper = await mountSuspended(Autocomplete, {
+      props: { items: fruitItems, multiple: true, forceSelection: true },
+    })
+
+    const input = wrapper.find('input')
+    await input.setValue('bana')
+    await input.trigger('blur')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+
+    await input.setValue('bana')
+    await nextTick()
+    await input.trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['banana']])
   })
 
   it('clears the selection when clearable and something is picked', async () => {

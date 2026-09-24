@@ -82,6 +82,7 @@ a single object literal covering every key below.
 | `decrement` | `Decrement` | InputNumber's stepper |
 | `noOptions` | `No options` | Select, Autocomplete |
 | `noResultsFound` | `No results found` | Autocomplete, CommandPalette |
+| `createOption(value)` | `Create "${value}"` | Autocomplete's free-text suggestion |
 | `noData` | `No data` | Table |
 | `expandRow` | `Expand row` | Table |
 | `collapseRow` | `Collapse row` | Table |

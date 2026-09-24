@@ -87,11 +87,23 @@ rather than staying scoped to the current filter.
 <SAutocomplete v-model="value" dropdown placeholder="Type or browse" :items="fruitItems" />
 ```
 
-### Multiple, with new tags
+### Multiple values
 
-`multiple` renders selected values as removable chips (`displayMode="chip"`)
-and lets the user create entries that aren't in `items` by pressing Enter -
-each becomes its own chip.
+`multiple` uses a comma-separated display by default, with the editable query
+beside the selected labels. `displayMode="chip"` shows removable chips instead.
+Both modes offer a Create option for text that isn't already in `items`. Press
+Enter to add it, or move to an existing suggestion first. Once the query
+clears, the open list shows all available options again. Choosing an already
+selected option leaves the selection in place; chip mode also offers a remove
+button on each selected value. In comma mode, press Backspace with an empty
+query to remove the last selected value.
+
+::component-example{name="autocomplete-multiple-comma"}
+::
+
+```vue-html
+<SAutocomplete v-model="fruits" multiple :items="fruitItems" />
+```
 
 ::component-example{name="autocomplete-multiple"}
 ::
@@ -150,10 +162,16 @@ for consumers who want Autocomplete's UX (input-as-trigger, inline filtering)
 without actually allowing arbitrary values - if that's the goal from the
 start, [Select](/components/forms/select) does the same job more directly.
 
-Pressing <kbd>Enter</kbd> on unmatched text creates it (or rejects it with
-`forceSelection`) and consumes the key. A matching highlighted suggestion is
-selected by the combobox first. With an empty, idle input and no highlighted
-suggestion, Enter keeps its normal native form-submission behavior.
+In multiple mode, typing `bana` shows **Create "bana"** before the matching
+**Banana** suggestion. <kbd>Enter</kbd> chooses the active option, so you can
+create `bana` immediately or press <kbd>ArrowDown</kbd> then <kbd>Enter</kbd>
+to select `Banana`. Clicking either option works too. In single mode, the list
+shows matching suggestions without a Create row: Enter selects the active
+suggestion, while unmatched text is accepted as free text on Enter or blur.
+When no suggestions match in single mode, the popup hides. <kbd>Tab</kbd> moves
+focus normally. `forceSelection` hides the Create option and rejects unmatched
+text. An idle <kbd>Enter</kbd> does not remove an existing chip and can submit
+a parent form normally.
 
 ::component-example{name="autocomplete-force-selection"}
 ::

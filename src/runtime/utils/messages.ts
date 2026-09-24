@@ -41,6 +41,7 @@ export interface MessageRegistry {
   decrement: string
   noOptions: string
   noResultsFound: string
+  createOption: (value: string) => string
   noData: string
   expandRow: string
   collapseRow: string
@@ -120,6 +121,7 @@ export const defaultMessages: MessageRegistry = {
   decrement: 'Decrement',
   noOptions: 'No options',
   noResultsFound: 'No results found',
+  createOption: value => `Create "${value}"`,
   noData: 'No data',
   expandRow: 'Expand row',
   collapseRow: 'Collapse row',

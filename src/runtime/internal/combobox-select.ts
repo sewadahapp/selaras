@@ -121,23 +121,17 @@ export function useComboboxSelect(
     setValue(selectedValues.value.filter(v => v !== value))
   }
 
-  /**
-   * Substring match, mirroring Reka UI's own `contains`-based filter - not
-   * just an exact match. Enter's default keydown handling both selects the
-   * currently-highlighted (filtered) option AND runs this: if a typed
-   * prefix like "app" only checked for an exact "apple" match, it would
-   * "know" nothing matches and clobber that same-keystroke selection by
-   * committing the raw "app" text right after Reka set "apple".
-   */
+  /** Substring match for forceSelection's incomplete-query handling. */
   function hasMatchingOption(text: string) {
     const lower = text.toLowerCase()
     return flatOptions.value.some(o => String(o.value).toLowerCase().includes(lower) || o.label.toLowerCase().includes(lower))
   }
 
-  /** Commits raw typed text as a new value when it doesn't match an existing option. Only used by creatable (autocomplete) mode. Returns true if it committed. */
+  /** Commits free text unless it is already an option or a selected value. */
   function commitCreatableText(rawText: string): boolean {
     const text = rawText.trim()
-    if (!creatable || !text || hasMatchingOption(text))
+    const lower = text.toLowerCase()
+    if (!creatable || !text || flatOptions.value.some(o => String(o.value).toLowerCase() === lower || o.label.toLowerCase() === lower))
       return false
 
     if (props.multiple) {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const tags = ref<string[]>(['apple'])
+const fruits = ref<string[]>(['apple', 'banana'])
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },
@@ -9,5 +9,5 @@ const fruitItems = [
 </script>
 
 <template>
-  <SAutocomplete v-model="tags" multiple display-mode="chip" :items="fruitItems" />
+  <SAutocomplete v-model="fruits" multiple :items="fruitItems" />
 </template>
