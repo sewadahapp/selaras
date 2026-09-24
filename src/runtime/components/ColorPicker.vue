@@ -183,7 +183,7 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
 </script>
 
 <template>
-  <Popover v-if="!showMobileModal" :open="open" :arrow="arrow" :positioning="positioning" :portal="portal" :ui="popoverUi" @update:open="onUpdateOpen">
+  <Popover v-if="!showMobileModal" :open="open" align="start" :arrow="arrow" :positioning="positioning" :portal="portal" :ui="popoverUi" @update:open="onUpdateOpen">
     <button
       type="button"
       :disabled="disabled"

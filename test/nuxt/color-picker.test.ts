@@ -14,6 +14,19 @@ async function open(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
 }
 
 describe('colorPicker', () => {
+  it('starts its popover at the trigger edge and allows an alignment override', async () => {
+    let wrapper = await mountSuspended(ColorPicker, { props: { open: true } })
+    try {
+      expect(document.body.querySelector('[role=dialog]')?.getAttribute('data-align')).toBe('start')
+      wrapper.unmount()
+      wrapper = await mountSuspended(ColorPicker, { props: { open: true, positioning: { align: 'center' } } })
+      expect(document.body.querySelector('[role=dialog]')?.getAttribute('data-align')).toBe('center')
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
   it('forwards an opt-in arrow to its anchored popover', async () => {
     const wrapper = await mountSuspended(ColorPicker, { props: { open: true, arrow: { width: 16, height: 8, rounded: true } } })
     try {

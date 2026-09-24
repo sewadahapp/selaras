@@ -97,7 +97,9 @@ by default and has no effect on the adaptive modal.
 Use `positioning` to place the anchored picker and `portal` to render it
 inline (`false`) or teleport it to a CSS selector or `HTMLElement`. The
 default portal target is the document body. These props apply to the anchored
-popover; the adaptive modal has its own layout. `ui.content` styles the panel.
+popover, which starts aligned with its trigger by default; the adaptive modal
+has its own layout. Set `positioning.align` to override the alignment.
+`ui.content` styles the panel.
 
 ### Custom `:ui`
 
