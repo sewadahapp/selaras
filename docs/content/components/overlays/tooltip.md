@@ -44,11 +44,13 @@ you want shown (`['⌘', 'S']`, `['Ctrl', 'S']`, ...).
 ### Disabling and the arrow
 
 `disabled` suppresses the tooltip entirely (it never opens); `arrow="false"`
-hides the little pointer triangle for a plain floating tooltip:
+hides the little pointer triangle for a plain floating tooltip. An object can
+set the arrow's width, height, and corner clearance (`padding`):
 
 ```vue-html
 <STooltip text="Won't show" disabled>...</STooltip>
 <STooltip text="No arrow" :arrow="false">...</STooltip>
+<STooltip text="Wide arrow" :arrow="{ width: 16, height: 8, padding: 12 }">...</STooltip>
 ```
 
 ### Custom content
@@ -86,7 +88,7 @@ every slot - here's `Tooltip`'s own theme file:
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `top` |
 | `delayDuration` | `number` | `200` |
 | `kbds` | `string[]` | - |
-| `arrow` | `boolean` | `true` |
+| `arrow` | `boolean \| ArrowConfig` | `true` |
 | `disabled` | `boolean` | `false` |
 | `ui` | `Partial<Record<'content' \| 'arrow' \| 'kbds' \| 'kbd', string \| object>>` | - |
 

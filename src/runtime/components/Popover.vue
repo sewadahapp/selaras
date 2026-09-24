@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { PopoverThemeSlots } from '../theme/popover'
+import type { RoundedArrowConfig } from '../utils/arrow'
 import type { UiProp } from '../utils/ui'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { popoverTheme } from '../theme/popover'
+import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 
 export interface PopoverProps {
@@ -18,8 +20,8 @@ export interface PopoverProps {
   dismissible?: boolean
   /** When `false`, closing the popover no longer returns keyboard focus to its trigger. Reka does this by default regardless of *why* the popover closed, including a purely programmatic `open` change - which matters for a popover that can open via hover rather than a deliberate click/keypress: focus landing back on a trigger nobody meant to focus can itself count as focus moving "outside" whatever *other* popover the pointer has since moved on to, closing that one too. Defaults to `true`, matching Reka's own out-of-the-box behavior. */
   returnFocusOnClose?: boolean
-  /** Shows the little pointer triangle connecting the popover to its trigger. */
-  arrow?: boolean
+  /** Shows the pointer; an object configures its size, rounding, and edge clearance. */
+  arrow?: boolean | RoundedArrowConfig
   ui?: UiProp<PopoverThemeSlots>
 }
 
@@ -90,8 +92,8 @@ const theme = useComponentTheme('popover', popoverTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
-const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow) }))
+const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
 
 // Mirrors Modal.vue's own fullscreen/internalFullscreen pattern - an
 // always-concrete local ref synced with an *optional* external v-model,

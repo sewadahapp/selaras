@@ -71,6 +71,19 @@ describe('tooltip', () => {
     expect(document.body.querySelector('svg')).toBeFalsy()
   })
 
+  it('configures the arrow dimensions', async () => {
+    wrapper = await mountSuspended(withProvider(
+      h(Tooltip, { text: 'Hello', arrow: { width: 16, height: 8, padding: 12 } }, { default: () => h('button', 'Hover me') }),
+    ))
+
+    await wrapper.find('button').trigger('focus')
+    await new Promise(resolve => setTimeout(resolve, 250))
+
+    const arrow = document.body.querySelector('svg')
+    expect(arrow?.getAttribute('width')).toBe('16')
+    expect(arrow?.getAttribute('height')).toBe('8')
+  })
+
   it('never opens when disabled', async () => {
     wrapper = await mountSuspended(withProvider(
       h(Tooltip, { text: 'Hello', disabled: true }, { default: () => h('button', 'Hover me') }),

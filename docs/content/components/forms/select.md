@@ -307,14 +307,16 @@ with everything above them on this page - see [Props](#props).
 
 ### Arrow
 
-`arrow` shows a small pointer triangle connecting the panel to its
-trigger:
+`arrow` shows a small pointer triangle connecting the panel to its trigger.
+An object sets its width, height, rounded tip, or corner clearance
+(`padding`):
 
 ::component-example{name="select-arrow"}
 ::
 
 ```vue-html
 <SSelect v-model="fruit" arrow :items="items" />
+<SSelect v-model="fruit" :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }" :items="items" />
 ```
 
 ### Adaptive presentation
@@ -380,7 +382,7 @@ the same key because both components use this recipe.
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `invalid` | `boolean` | `false` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
-| `arrow` | `boolean` | `false` |
+| `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<SelectSlot, string \| object>>` | - |
 

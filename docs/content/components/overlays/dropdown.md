@@ -70,14 +70,16 @@ one special case:
 
 ### Arrow
 
-`arrow` shows a small pointer triangle connecting the menu to its
-trigger:
+`arrow` shows a small pointer triangle connecting the menu to its trigger.
+Pass an object to configure its width, height, rounded tip, or corner
+clearance (`padding`):
 
 ::component-example{name="dropdown-arrow"}
 ::
 
 ```vue-html
 <SDropdown :items="items" arrow>...</SDropdown>
+<SDropdown :items="items" :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }">...</SDropdown>
 ```
 
 ### Accessibility
@@ -105,7 +107,7 @@ every slot and variant - here's the menu's own theme file:
 | Prop | Type | Default |
 | --- | --- | --- |
 | `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string }[][]` | - |
-| `arrow` | `boolean` | `false` |
+| `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow', string \| object>>` | - |
 
 ## Slots

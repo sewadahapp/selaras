@@ -164,14 +164,16 @@ suggestion, Enter keeps its normal native form-submission behavior.
 
 ### Arrow
 
-`arrow` works the same as [Select's](/components/forms/select#arrow) - a
-small pointer triangle connecting the panel to its trigger:
+`arrow` works the same as [Select's](/components/forms/select#arrow): use
+`true` for the default pointer or an object to configure its size, rounded tip,
+and corner clearance.
 
 ::component-example{name="autocomplete-arrow"}
 ::
 
 ```vue-html
 <SAutocomplete v-model="value" arrow :items="fruitItems" />
+<SAutocomplete v-model="value" :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }" :items="fruitItems" />
 ```
 
 ### Custom option rendering, objects, and groups

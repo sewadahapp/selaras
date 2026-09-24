@@ -58,14 +58,16 @@ along that edge (`start`, `center` default, `end`):
 
 ### Arrow
 
-`arrow` shows a small pointer triangle connecting the panel to its
-trigger:
+`arrow` shows a small pointer triangle connecting the panel to its trigger.
+Pass an object to set its width, height, rounded tip, or minimum clearance
+from the panel corners (`padding`):
 
 ::component-example{name="popover-arrow"}
 ::
 
 ```vue-html
 <SPopover arrow>...</SPopover>
+<SPopover :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }">...</SPopover>
 ```
 
 ### Modal
@@ -134,7 +136,7 @@ every slot and variant - here's the popover's own theme file:
 | `modal` | `boolean` | `false` |
 | `dismissible` | `boolean` | `true` |
 | `returnFocusOnClose` | `boolean` | `true` |
-| `arrow` | `boolean` | `false` |
+| `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `ui` | `Partial<Record<'content' \| 'arrow', string \| object>>` | - |
 
 ## Events

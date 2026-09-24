@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { DropdownThemeSlots } from '../theme/dropdown'
+import type { RoundedArrowConfig } from '../utils/arrow'
 import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { dropdownTheme } from '../theme/dropdown'
+import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -23,8 +25,8 @@ export interface DropdownProps {
   open?: boolean
   /** Initial visibility for an uncontrolled dropdown. Supplying `open` makes the parent authoritative. */
   defaultOpen?: boolean
-  /** Shows a small pointer triangle connecting the menu to its trigger. */
-  arrow?: boolean
+  /** Shows the pointer; an object configures its size, rounding, and edge clearance. */
+  arrow?: boolean | RoundedArrowConfig
   ui?: UiProp<DropdownThemeSlots>
 }
 
@@ -54,8 +56,8 @@ const theme = useComponentTheme('dropdown', dropdownTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
-const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow) }))
+const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
 // Resolved per item (not a single shared computed) - `destructive` can
 // differ between items in the same menu, unlike every other themed slot
 // here which is the same for every item.

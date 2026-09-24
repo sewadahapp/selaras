@@ -1,7 +1,7 @@
 <template>
-  <SPopover arrow>
+  <SPopover :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }">
     <SButton variant="outline">
-      With arrow
+      Custom arrow
     </SButton>
     <template #content>
       Points back at its trigger.

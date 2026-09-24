@@ -144,11 +144,13 @@ describe('dropdown', () => {
 
   it('arrow renders the pointer triangle', async () => {
     wrapper = await mountSuspended(Dropdown, {
-      props: { items: [[{ label: 'Edit' }]], arrow: true },
+      props: { items: [[{ label: 'Edit' }]], arrow: { width: 16, height: 8, rounded: true, padding: 12 } },
       slots: { default: () => h('button', 'Open menu') },
     })
     await openMenu()
 
-    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
+    const arrow = document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')
+    expect(arrow?.getAttribute('width')).toBe('16')
+    expect(arrow?.getAttribute('height')).toBe('8')
   })
 })

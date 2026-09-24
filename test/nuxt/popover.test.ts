@@ -189,11 +189,13 @@ describe('popover', () => {
 
   it('arrow renders the pointer triangle', async () => {
     wrapper = await mountSuspended(Popover, {
-      props: { open: true, arrow: true },
+      props: { open: true, arrow: { width: 16, height: 8, rounded: true, padding: 12 } },
       slots: { content: () => 'Body' },
     })
 
-    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
+    const arrow = document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')
+    expect(arrow?.getAttribute('width')).toBe('16')
+    expect(arrow?.getAttribute('height')).toBe('8')
   })
 
   it('modal="true" hides the rest of the page from assistive tech', async () => {

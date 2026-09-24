@@ -1,5 +1,6 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { selectTheme, SelectThemeSlots } from '../theme/select'
+import type { RoundedArrowConfig } from './arrow'
 import type { ColorRole } from './color-registry'
 import type { UiProp } from './ui'
 
@@ -63,7 +64,7 @@ export interface SelectProps<Entry extends object = { value: SelectValue, label?
   searchTerm?: string
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
-  arrow?: boolean
+  arrow?: boolean | RoundedArrowConfig
   /**
    * Opts into the control's accessible small-screen presentation. Select uses
    * a centered modal; Autocomplete keeps its editable combobox in a wider

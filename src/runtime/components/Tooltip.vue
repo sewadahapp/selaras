@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { TooltipThemeSlots } from '../theme/tooltip'
+import type { ArrowConfig } from '../utils/arrow'
 import type { UiProp } from '../utils/ui'
 import { TooltipArrow, TooltipContent, TooltipPortal, TooltipRoot, TooltipTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { tooltipTheme } from '../theme/tooltip'
+import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 
 export interface TooltipProps {
@@ -12,8 +14,8 @@ export interface TooltipProps {
   delayDuration?: number
   /** Keyboard shortcut hint shown alongside the text, e.g. `['⌘', 'K']` - each entry renders as its own small key badge. Takes the literal display strings, not semantic key names - there's no platform-specific symbol mapping. */
   kbds?: string[]
-  /** Set `false` to hide the little pointer triangle. */
-  arrow?: boolean
+  /** Set `false` to hide the pointer; an object configures its size and edge clearance. */
+  arrow?: boolean | ArrowConfig
   disabled?: boolean
   ui?: UiProp<TooltipThemeSlots>
 }
@@ -28,8 +30,8 @@ const theme = useComponentTheme('tooltip', tooltipTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
-const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow) }))
+const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
 const kbdsProps = computed(() => resolveSlot(ui.value.kbds, props.ui?.kbds))
 const kbdProps = computed(() => resolveSlot(ui.value.kbd, props.ui?.kbd))
 </script>

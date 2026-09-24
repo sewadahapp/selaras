@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { SelectThemeSlots } from '../theme/select'
+import type { RoundedArrowConfig } from '../utils/arrow'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import type { SelectItems, SelectOption } from './combobox-select'
@@ -32,6 +33,7 @@ import { useIcons } from '../composables/use-icons'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
+import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeBindings } from '../utils/ui'
@@ -179,7 +181,7 @@ export interface ComboboxSelectBaseProps {
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
   /** Shows a small pointer triangle connecting the panel to its trigger. */
-  arrow?: boolean
+  arrow?: boolean | RoundedArrowConfig
   /** Opts into the component's accessible small-screen presentation. */
   adaptive?: boolean
   ui?: UiProp<SelectThemeSlots>
@@ -545,8 +547,8 @@ const searchInputProps = computed(() => mergeProps(
   nativeSearchInputAttrs.value,
   { onCompositionstart: onSearchCompositionStart, onCompositionend: onSearchCompositionEnd },
 ))
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
-const arrowProps = computed(() => resolveSlot(ui.value.arrow, props.ui?.arrow))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow) }))
+const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
 const viewportProps = computed(() => resolveSlot(ui.value.viewport, props.ui?.viewport))
 const groupProps = computed(() => resolveSlot(ui.value.group, props.ui?.group))
 const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))

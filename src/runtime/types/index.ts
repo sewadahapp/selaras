@@ -120,6 +120,7 @@ export type { UseSlideoverOpenOptions, UseSlideoverReturn } from '../composables
 export type { TableColumnDef, TableColumnVisibilityState, TableExpandedState, TableGetRowId, TableRowSelectionState, TableSortingState } from '../composables/use-table'
 export type { ToastOptions, UseToastReturn } from '../composables/use-toast'
 export type { ThemeComponentRegistry, ThemeConfiguration, ThemeDefaults, ThemeUiOverrides } from '../theme-config'
+export type { ArrowConfig, RoundedArrowConfig } from '../utils/arrow'
 export type { AutocompleteValue } from '../utils/autocomplete-contracts'
 export type { BuiltinColorName, ColorRecipe, ColorRecipeInput, ColorRole, RuntimeColorOverrides, RuntimeThemeMode, RuntimeTokenOverrides } from '../utils/color-registry'
 export type { FunctionalTokenOverrides, GeometryTokenOverrides, ThemeTokenOverrides } from '../utils/functional-tokens'

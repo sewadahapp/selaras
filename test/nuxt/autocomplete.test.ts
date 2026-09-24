@@ -472,7 +472,7 @@ describe('autocomplete', () => {
   // wires it up too.
   it('arrow renders the pointer triangle', async () => {
     const wrapper = await mountSuspended(Autocomplete, {
-      props: { items: fruitItems, arrow: true },
+      props: { items: fruitItems, arrow: { width: 16, height: 8, rounded: true, padding: 12 } },
     })
 
     const input = wrapper.find('input')
@@ -480,7 +480,9 @@ describe('autocomplete', () => {
     await nextTick()
     await nextTick()
 
-    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
+    const arrow = document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')
+    expect(arrow?.getAttribute('width')).toBe('16')
+    expect(arrow?.getAttribute('height')).toBe('8')
   })
 })
 

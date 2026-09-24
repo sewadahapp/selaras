@@ -293,14 +293,16 @@ the selected day/month/year cell and the Done button:
 
 ### Arrow
 
-`arrow` shows a small pointer triangle connecting the panel to its
-trigger - works the same across single-date, range, and time-only mode:
+`arrow` shows a small pointer triangle connecting the panel to its trigger
+across single-date, range, and time-only modes. Pass an object to configure
+its width, height, rounded tip, or corner clearance (`padding`):
 
 ::component-example{name="date-picker-arrow"}
 ::
 
 ```vue-html
 <SDatePicker v-model="value" arrow />
+<SDatePicker v-model="value" :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }" />
 ```
 
 ### Clearable & disabled
@@ -444,7 +446,7 @@ every slot and variant - here's `DatePicker`'s own theme file:
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
 | `activeColor` | same as `color` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `arrow` | `boolean` | `false` |
+| `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'separator' \| 'content' \| 'mobileContent' \| 'header' \| 'heading' \| 'grids' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'viewGrid' \| 'timeSection' \| 'arrow', string \| object>>` | - |
 

@@ -947,10 +947,12 @@ describe('datePicker', () => {
   })
 
   it('arrow renders the pointer triangle - single date mode', async () => {
-    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), arrow: true } })
+    wrapper = await mountSuspended(DatePicker, { props: { modelValue: new CalendarDate(2024, 1, 15), arrow: { width: 16, height: 8, rounded: true, padding: 12 } } })
     await openCalendar(wrapper)
 
-    expect(document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')).toBeTruthy()
+    const arrow = document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')
+    expect(arrow?.getAttribute('width')).toBe('16')
+    expect(arrow?.getAttribute('height')).toBe('8')
   })
 
   it('arrow renders the pointer triangle - range mode', async () => {
