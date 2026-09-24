@@ -16,6 +16,8 @@ export interface MessageRegistry {
   first: string
   last: string
   pagination: string
+  scrollTabsLeft: string
+  scrollTabsRight: string
   datePicker: string
   datePickerDescription: string
   dateRangePicker: string
@@ -93,6 +95,8 @@ export const defaultMessages: MessageRegistry = {
   first: 'First',
   last: 'Last',
   pagination: 'Pagination',
+  scrollTabsLeft: 'Scroll tabs left',
+  scrollTabsRight: 'Scroll tabs right',
   datePicker: 'Date picker',
   datePickerDescription: 'Use arrow keys to navigate days, enter to select',
   dateRangePicker: 'Date range picker',

@@ -80,6 +80,61 @@ with the sliding indicator as a raised background instead of a bottom bar:
 <STabs v-model="active" :items="items" variant="pill" />
 ```
 
+### Scrollable
+
+Set `scrollable` when a tab list may outgrow its container. Previous and next
+chevrons appear only while the labels overflow. The list also supports touch,
+trackpad, and keyboard navigation, and brings the selected tab into view:
+
+::component-example{name="tabs-scrollable"}
+::
+
+```vue-html
+<STabs v-model="active" :items="items" scrollable />
+```
+
+The controls use neutral ghost `SButton`s by default. Use `ui.scrollButton`
+and `ui.scrollIcon` for styling, or the `scroll-left-icon` and
+`scroll-right-icon` slots to replace only the chevrons. For a different control,
+replace `scroll-left` or `scroll-right` and bind the supplied `buttonProps` so
+the button keeps its click handler, disabled state, type, and accessible label:
+
+```vue-html
+<STabs :items="items" scrollable>
+  <template #scroll-right="{ buttonProps }">
+    <MyIconButton v-bind="buttonProps" />
+  </template>
+</STabs>
+```
+
+The full button slots also expose `scroll`, `disabled`, and `ariaLabel` for
+custom controls that cannot use `v-bind="buttonProps"`.
+
+### Orientation
+
+Set `orientation="vertical"` to place the tab list beside its content. Both
+`underline` and `pill` variants work vertically, and Reka changes arrow-key
+navigation to Up/Down. `scrollable` applies only to horizontal tabs.
+
+::component-example{name="tabs-vertical"}
+::
+
+```vue-html
+<STabs v-model="active" :items="items" orientation="vertical" variant="pill" />
+```
+
+### Keep inactive panels mounted
+
+Inactive panel content is unmounted by default. Set `unmount-on-hide` to
+`false` to keep its local state, such as an unfinished form, while the panel
+is hidden:
+
+```vue-html
+<STabs :items="items" :unmount-on-hide="false">
+  <!-- panel slots -->
+</STabs>
+```
+
 ## In markdown
 
 Every Selaras component is already globally registered under its `S`-prefixed
@@ -115,8 +170,11 @@ every slot and variant - here's `Tabs`'s own theme file:
 | --- | --- | --- |
 | `items` | `{ label: string; value?: string; disabled?: boolean; icon?: string }[]` | - |
 | `variant` | `'underline' \| 'pill'` | `'underline'` |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `scrollable` | `boolean` | `false` |
+| `unmountOnHide` | `boolean` | `true` |
 | `modelValue` | `string` | - |
-| `ui` | `Partial<Record<'root' \| 'list' \| 'trigger' \| 'icon' \| 'indicator' \| 'content', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'scrollRoot' \| 'scrollViewport' \| 'scrollButton' \| 'scrollIcon' \| 'list' \| 'trigger' \| 'icon' \| 'indicator' \| 'content', string \| object>>` | - |
 
 ## Events
 
@@ -130,3 +188,5 @@ every slot and variant - here's `Tabs`'s own theme file:
 | --- | --- | --- |
 | `[item.value]` | - | Content for that tab, one named slot per item |
 | `label` | `{ item, index }` | Replaces a tab's label content |
+| `scroll-left-icon`, `scroll-right-icon` | `{ class }` | Replaces a default control's chevron |
+| `scroll-left`, `scroll-right` | `{ buttonProps, scroll, disabled, ariaLabel }` | Replaces an entire overflow control |

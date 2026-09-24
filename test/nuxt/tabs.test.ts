@@ -72,6 +72,43 @@ describe('tabs', () => {
     expect(wrapper.text()).not.toContain('First panel content')
   })
 
+  it('unmounts inactive panel content by default', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: {
+        items: [{ label: 'One', value: 'a' }, { label: 'Two', value: 'b' }],
+        defaultValue: 'a',
+      },
+      slots: { a: '<input id="first-tab-input">', b: () => 'Second panel content' },
+    })
+    await nextTick()
+
+    expect(wrapper.find('#first-tab-input').exists()).toBe(true)
+    await wrapper.findAll('[role="tab"]')[1]!.trigger('mousedown')
+    await nextTick()
+    expect(wrapper.find('#first-tab-input').exists()).toBe(false)
+  })
+
+  it('keeps inactive panels mounted and hidden when unmountOnHide is false', async () => {
+    const wrapper = await mountSuspended(Tabs, {
+      props: {
+        items: [{ label: 'One', value: 'a' }, { label: 'Two', value: 'b' }],
+        defaultValue: 'a',
+        unmountOnHide: false,
+      },
+      slots: { a: '<input id="first-tab-input">', b: () => 'Second panel content' },
+    })
+    await nextTick()
+
+    const input = wrapper.find<HTMLInputElement>('#first-tab-input')
+    await input.setValue('keep me')
+    await wrapper.findAll('[role="tab"]')[1]!.trigger('mousedown')
+    await nextTick()
+
+    expect(wrapper.find('#first-tab-input').element).toBe(input.element)
+    expect(wrapper.find<HTMLInputElement>('#first-tab-input').element.value).toBe('keep me')
+    expect(wrapper.find('#first-tab-input').element.closest('[role="tabpanel"]')?.hasAttribute('hidden')).toBe(true)
+  })
+
   it('emits update:modelValue with the clicked item\'s explicit value', async () => {
     const wrapper = await mountSuspended(Tabs, {
       props: {

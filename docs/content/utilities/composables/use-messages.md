@@ -57,6 +57,8 @@ a single object literal covering every key below.
 | `first` | `First` | Pagination |
 | `last` | `Last` | Pagination |
 | `pagination` | `Pagination` | Pagination's nav aria-label |
+| `scrollTabsLeft` | `Scroll tabs left` | Tabs' left overflow button |
+| `scrollTabsRight` | `Scroll tabs right` | Tabs' right overflow button |
 | `datePicker` | `Date picker` | DatePicker |
 | `datePickerDescription` | `Use arrow keys to navigate days, enter to select` | DatePicker's adaptive sr-only description |
 | `dateRangePicker` | `Date range picker` | DatePicker (range mode) |

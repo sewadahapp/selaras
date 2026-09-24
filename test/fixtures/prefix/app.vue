@@ -30,6 +30,9 @@ const nestedTokens = ref({
   dark: { colors: { enterprise: { subtle: 'rgb(103 104 105)' } } },
 })
 const radioValues = ref({ primary: 'one', enterprise: 'one' })
+const activeScrollableTab = ref('tab-1')
+const wideTabs = ref(false)
+const scrollableTabs = Array.from({ length: 12 }, (_, index) => ({ label: `Tab ${index + 1}`, value: `tab-${index + 1}` }))
 
 function updateNestedTokens() {
   nestedTokens.value.light.colors.enterprise.subtle = 'rgb(83 84 85)'
@@ -273,6 +276,64 @@ function updateNestedTokens() {
   </form>
   <section id="form-library-fixture">
     <VeeValidateForm />
+  </section>
+  <section v-if="route.query.tabs" id="scrollable-tabs-fixture">
+    <button type="button" @click="activeScrollableTab = 'tab-12'">
+      Select last tab
+    </button>
+    <button type="button" @click="wideTabs = !wideTabs">
+      Toggle tab width
+    </button>
+    <div :style="{ width: wideTabs ? '64rem' : '18rem' }">
+      <STabs
+        v-model="activeScrollableTab"
+        :items="scrollableTabs"
+        :ui="{ scrollButton: { 'data-custom-scroll': 'yes' }, scrollIcon: { 'data-custom-icon': 'yes' } }"
+        scrollable
+      >
+        <template v-for="item in scrollableTabs" :key="item.value" #[item.value]>
+          {{ item.label }} content
+        </template>
+      </STabs>
+    </div>
+  </section>
+  <section v-if="route.query.tabs" id="custom-scrollable-tabs-fixture" style="width: 18rem;">
+    <STabs :items="scrollableTabs" scrollable>
+      <template #scroll-left-icon="{ class: iconClass }">
+        <span data-testid="custom-left-icon" :class="iconClass" aria-hidden="true">‹</span>
+      </template>
+      <template #scroll-right="{ buttonProps, ariaLabel }">
+        <button data-testid="custom-right-button" :data-slot-label="ariaLabel" v-bind="buttonProps">
+          Next tabs
+        </button>
+      </template>
+    </STabs>
+  </section>
+  <section v-if="route.query.tabs" id="vertical-tabs-fixture" style="width: 35rem;">
+    <STabs :items="scrollableTabs.slice(0, 3)" default-value="tab-1" orientation="vertical" variant="pill">
+      <template #tab-1>
+        First vertical panel
+      </template>
+      <template #tab-2>
+        Second vertical panel
+      </template>
+      <template #tab-3>
+        Third vertical panel
+      </template>
+    </STabs>
+  </section>
+  <section v-if="route.query.tabs" id="vertical-underline-tabs-fixture" style="width: 35rem;">
+    <STabs :items="scrollableTabs.slice(0, 3)" default-value="tab-1" orientation="vertical">
+      <template #tab-1>
+        First underline panel
+      </template>
+      <template #tab-2>
+        Second underline panel
+      </template>
+      <template #tab-3>
+        Third underline panel
+      </template>
+    </STabs>
   </section>
   <section v-if="route.query.accessibility" id="datepicker-accessibility-fixture">
     <SFormField id="accessibility-range" label="Booking window" description="Select the arrival and departure dates.">
