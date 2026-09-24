@@ -20,6 +20,23 @@ async function openMenu() {
 }
 
 describe('dropdown', () => {
+  it('keeps the default portal and allows inline positioning', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    expect(wrapper.find('[role=menu]').exists()).toBe(false)
+    expect(document.body.querySelector('[role=menu]')).toBeTruthy()
+    wrapper.unmount()
+    wrapper = undefined
+
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, portal: false, positioning: { side: 'top', align: 'end' }, items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    expect(wrapper.find('[role=menu]').attributes('data-side')).toBe('top')
+  })
+
   it('supports defaultOpen for uncontrolled menus', async () => {
     wrapper = await mountSuspended(Dropdown, {
       props: { defaultOpen: true, items: [[{ label: 'Edit' }]] },

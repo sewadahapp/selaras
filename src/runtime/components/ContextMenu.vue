@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { ContextMenuThemeSlots } from '../theme/context-menu'
+import type { ContextMenuPositioning, OverlayPortal } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { ContextMenuContent, ContextMenuItem, ContextMenuPortal, ContextMenuRoot, ContextMenuSeparator, ContextMenuTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { contextMenuTheme } from '../theme/context-menu'
+import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -18,12 +20,16 @@ export interface ContextMenuItemDef {
   shortcut?: string
 }
 
-const props = defineProps<ContextMenuProps>()
+const props = withDefaults(defineProps<ContextMenuProps>(), { portal: undefined })
 
 defineSlots<ContextMenuSlots>()
 
 export interface ContextMenuProps {
   items: ContextMenuItemDef[][]
+  /** Collision and offset controls for the menu anchored to the right-click point. */
+  positioning?: ContextMenuPositioning
+  /** Teleport target, or `false` to render inline. Defaults to `body`. */
+  portal?: OverlayPortal
   ui?: UiProp<ContextMenuThemeSlots>
 }
 
@@ -37,7 +43,8 @@ const theme = useComponentTheme('contextMenu', contextMenuTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...props.positioning }))
+const portalProps = computed(() => overlayPortalProps(props.portal))
 // Resolved per item (not a single shared computed) - `destructive` can
 // differ between items in the same menu, unlike every other themed slot
 // here which is the same for every item. Mirrors Dropdown.vue's own
@@ -56,7 +63,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
     <ContextMenuTrigger as-child>
       <slot />
     </ContextMenuTrigger>
-    <ContextMenuPortal>
+    <ContextMenuPortal v-bind="portalProps">
       <ContextMenuContent :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
         <template v-for="(group, groupIndex) in items" :key="groupIndex">
           <ContextMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />

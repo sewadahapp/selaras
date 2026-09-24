@@ -7,7 +7,7 @@ import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
 
 export type { SelectEmits, SelectProps, SelectSlots } from '../utils/select-contracts'
 
-const props = defineProps<SelectProps<Entry, Key, Multiple>>()
+const props = withDefaults(defineProps<SelectProps<Entry, Key, Multiple>>(), { portal: undefined })
 const emit = defineEmits<SelectEmits<Entry, Key, Multiple>>()
 const slots = defineSlots<SelectSlots<Entry, Key>>()
 const forwarded = useForwardProps(props)

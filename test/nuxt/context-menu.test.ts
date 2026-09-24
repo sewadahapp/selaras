@@ -22,6 +22,15 @@ async function openMenu() {
 }
 
 describe('contextMenu', () => {
+  it('can render inline while retaining the right-click anchor', async () => {
+    wrapper = await mountSuspended(ContextMenu, {
+      props: { items: [[{ label: 'Edit' }]], portal: false, positioning: { collisionPadding: 12 } },
+      slots: { default: () => h('div', { 'data-testid': 'target' }, 'Right-click me') },
+    })
+    await openMenu()
+    expect(wrapper.find('[role=menu]').text()).toContain('Edit')
+  })
+
   it('opens the menu and lists every item across all groups on right-click', async () => {
     wrapper = await mountSuspended(ContextMenu, {
       props: {

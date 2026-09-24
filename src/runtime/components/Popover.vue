@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { PopoverThemeSlots } from '../theme/popover'
 import type { RoundedArrowConfig } from '../utils/arrow'
+import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { popoverTheme } from '../theme/popover'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
+import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 
 export interface PopoverProps {
@@ -14,6 +16,10 @@ export interface PopoverProps {
   defaultOpen?: boolean
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'start' | 'center' | 'end'
+  /** Anchored panel positioning. Overrides `side` and `align` when supplied. */
+  positioning?: OverlayPositioning
+  /** Teleport target, or `false` to render the panel inline. Defaults to `body`. */
+  portal?: OverlayPortal
   /** Forwarded to Reka UI's own PopoverRoot `modal` prop - `true` traps focus and blocks interaction with the rest of the page, like a lightweight modal dialog. */
   modal?: boolean
   /** When `false`, Escape and an outside click (or, since a popover is non-modal by default, an outside element merely receiving focus) no longer close the popover - the `escapeKeyDown`/`pointerDownOutside`/`focusOutside` events still fire, so a consumer can still react, but none of them close it on their own anymore. */
@@ -50,6 +56,7 @@ const props = withDefaults(defineProps<PopoverProps>(), {
   dismissible: true,
   returnFocusOnClose: true,
   arrow: false,
+  portal: undefined,
 })
 
 const emit = defineEmits<PopoverEmits>()
@@ -92,7 +99,8 @@ const theme = useComponentTheme('popover', popoverTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
-const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow) }))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
+const portalProps = computed(() => overlayPortalProps(props.portal))
 const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
 
 // Mirrors Modal.vue's own fullscreen/internalFullscreen pattern - an
@@ -122,7 +130,7 @@ function onUpdateOpen(value: boolean) {
     <PopoverTrigger v-if="$slots.default" as-child>
       <slot />
     </PopoverTrigger>
-    <PopoverPortal>
+    <PopoverPortal v-bind="portalProps">
       <PopoverContent
         :data-selaras-theme="themeBindings['data-selaras-theme']"
         :data-selaras-mode="themeBindings['data-selaras-mode']"

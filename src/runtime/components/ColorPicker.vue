@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { VariantProps } from 'tailwind-variants'
 import type { ColorPickerThemeSlots } from '../theme/color-picker'
+import type { RoundedArrowConfig } from '../utils/arrow'
 import type { ColorRole } from '../utils/color-registry'
+import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { ColorSwatch } from 'reka-ui'
 import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue'
@@ -18,6 +20,7 @@ type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
 
 const props = withDefaults(defineProps<ColorPickerProps>(), {
   alpha: true,
+  portal: undefined,
 })
 
 const emit = defineEmits<ColorPickerEmits>()
@@ -39,6 +42,12 @@ export interface ColorPickerProps {
   placeholder?: string
   /** Opts into the picker's accessible small-screen modal presentation. */
   adaptive?: boolean
+  /** Shows a pointer on the anchored picker; the adaptive modal has no arrow. */
+  arrow?: boolean | RoundedArrowConfig
+  /** Positioning of the anchored picker (the adaptive modal uses its own layout). */
+  positioning?: OverlayPositioning
+  /** Teleport target for the anchored picker, or `false` to render it inline. */
+  portal?: OverlayPortal
   size?: ColorPickerVariants['size']
   color?: ColorRole
   ui?: UiProp<ColorPickerThemeSlots>
@@ -174,7 +183,7 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
 </script>
 
 <template>
-  <Popover v-if="!showMobileModal" :open="open" :ui="popoverUi" @update:open="onUpdateOpen">
+  <Popover v-if="!showMobileModal" :open="open" :arrow="arrow" :positioning="positioning" :portal="portal" :ui="popoverUi" @update:open="onUpdateOpen">
     <button
       type="button"
       :disabled="disabled"

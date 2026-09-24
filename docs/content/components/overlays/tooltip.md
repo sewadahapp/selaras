@@ -80,12 +80,26 @@ every slot - here's `Tooltip`'s own theme file:
 ::theme-source{name="tooltip"}
 ::
 
+### Positioning and portal
+
+Use `positioning` for the tooltip's side, alignment, offsets, and collision
+behavior. It overrides the older top-level `side` prop when both are supplied.
+`portal` defaults to the document body; set it to `false` to render inline or
+pass a CSS selector or `HTMLElement` as the teleport target. `ui.content`
+controls styling, while `#content` supplies custom content.
+
+```vue-html
+<STooltip text="Help" :positioning="{ side: 'bottom', align: 'end' }" portal="#overlay-root">...</STooltip>
+```
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
 | `text` | `string` | - |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `top` |
+| `positioning` | `OverlayPositioning` | tooltip defaults |
+| `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `delayDuration` | `number` | `200` |
 | `kbds` | `string[]` | - |
 | `arrow` | `boolean \| ArrowConfig` | `true` |

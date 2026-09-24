@@ -126,6 +126,18 @@ every slot and variant - here's the popover's own theme file:
 ::theme-source{name="popover"}
 ::
 
+### Positioning and portal
+
+`positioning` configures the panel's side, alignment, offsets, and collision
+behavior. It overrides the older top-level `side` and `align` props when both
+are supplied. `portal` defaults to the document body; set it to `false` to
+render inline, or pass a CSS selector or `HTMLElement` as the teleport target.
+Use `ui.content` for panel styling and `#content` for its contents.
+
+```vue-html
+<SPopover :positioning="{ side: 'top', align: 'end', sideOffset: 8 }" portal="#overlay-root">...</SPopover>
+```
+
 ## Props
 
 | Prop | Type | Default |
@@ -133,6 +145,8 @@ every slot and variant - here's the popover's own theme file:
 | `open` | `boolean` | - |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` |
 | `align` | `'start' \| 'center' \| 'end'` | `'center'` |
+| `positioning` | `OverlayPositioning` | panel defaults |
+| `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `modal` | `boolean` | `false` |
 | `dismissible` | `boolean` | `true` |
 | `returnFocusOnClose` | `boolean` | `true` |

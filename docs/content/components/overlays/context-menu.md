@@ -87,11 +87,24 @@ every slot - here's `ContextMenu`'s own theme file:
 ::theme-source{name="context-menu"}
 ::
 
+### Positioning and portal
+
+ContextMenu anchors to the right-click point, so it does not accept `side` or
+`align`. Its `positioning` prop controls supported offsets and collision
+behavior. `portal` defaults to the document body; set it to `false` to render
+inline or pass a CSS selector or `HTMLElement` as the teleport target.
+
+```vue-html
+<SContextMenu :items="items" :positioning="{ collisionPadding: 12 }" portal="#overlay-root">...</SContextMenu>
+```
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
 | `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string }[][]` | - |
+| `positioning` | `ContextMenuPositioning` | pointer-anchored defaults |
+| `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator', string \| object>>` | - |
 
 ## Slots

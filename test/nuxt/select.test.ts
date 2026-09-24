@@ -21,6 +21,26 @@ function withTooltipProvider(children: any) {
 }
 
 describe('select', () => {
+  it('keeps the default portal and renders its list inline only when requested', async () => {
+    const defaultWrapper = await mountSuspended(Select, { props: { items: fruitItems, open: true } })
+    try {
+      expect(defaultWrapper.find('[role=listbox]').exists()).toBe(false)
+      expect(document.body.querySelector('[role=listbox]')).toBeTruthy()
+    }
+    finally {
+      defaultWrapper.unmount()
+    }
+
+    const inlineWrapper = await mountSuspended(Select, { props: { items: fruitItems, open: true, portal: false, positioning: { side: 'top', align: 'end' } } })
+    try {
+      expect(inlineWrapper.find('[role=listbox]').exists()).toBe(true)
+      expect(inlineWrapper.find('[role=listbox]').attributes('data-side')).toBe('top')
+    }
+    finally {
+      inlineWrapper.unmount()
+    }
+  })
+
   it('preserves controlled empty ownership through the forwarding boundary', async () => {
     const wrapper = await mountSuspended(Select, {
       props: { items: fruitItems, modelValue: undefined, defaultValue: 'apple', open: true, placeholder: 'Pick a fruit' },

@@ -8,7 +8,7 @@ import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
 
 export type { AutocompleteEmits, AutocompleteProps, AutocompleteSlots } from '../utils/autocomplete-contracts'
 
-const props = defineProps<AutocompleteProps<Entry, Key, Multiple, Forced>>()
+const props = withDefaults(defineProps<AutocompleteProps<Entry, Key, Multiple, Forced>>(), { portal: undefined })
 const emit = defineEmits<AutocompleteEmits<Entry, Key, Multiple, Forced>>()
 const slots = defineSlots<AutocompleteSlots<Entry>>()
 const forwarded = useForwardProps(props)

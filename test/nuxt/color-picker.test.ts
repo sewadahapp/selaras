@@ -14,6 +14,18 @@ async function open(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
 }
 
 describe('colorPicker', () => {
+  it('forwards an opt-in arrow to its anchored popover', async () => {
+    const wrapper = await mountSuspended(ColorPicker, { props: { open: true, arrow: { width: 16, height: 8, rounded: true } } })
+    try {
+      const arrow = document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')
+      expect(arrow?.getAttribute('width')).toBe('16')
+      expect(arrow?.getAttribute('height')).toBe('8')
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
   it('preserves a template-style controlled color on native form reset', async () => {
     const wrapper = await mountSuspended(defineComponent({
       render: () => h('form', {}, [h(ColorPicker, { 'name': 'color', 'model-value': '#ff0000', 'defaultValue': '#00ff00' })]),

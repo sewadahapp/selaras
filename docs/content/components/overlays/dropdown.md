@@ -102,12 +102,25 @@ every slot and variant - here's the menu's own theme file:
 ::theme-source{name="dropdown"}
 ::
 
+### Positioning and portal
+
+Use `positioning` for the menu's side, alignment, offsets, and collision
+behavior. `portal` defaults to the document body; set it to `false` to render
+inline or pass a CSS selector or `HTMLElement` as the teleport target.
+`ui.content` remains the styling override.
+
+```vue-html
+<SDropdown :items="items" :positioning="{ side: 'top', align: 'end' }" portal="#overlay-root">...</SDropdown>
+```
+
 ## Props
 
 | Prop | Type | Default |
 | --- | --- | --- |
 | `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string }[][]` | - |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
+| `positioning` | `OverlayPositioning` | menu defaults |
+| `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow', string \| object>>` | - |
 
 ## Slots

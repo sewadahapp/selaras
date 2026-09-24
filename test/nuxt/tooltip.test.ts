@@ -22,6 +22,15 @@ function withProvider(children: any) {
 }
 
 describe('tooltip', () => {
+  it('supports inline rendering and placement overrides', async () => {
+    wrapper = await mountSuspended(withProvider(
+      h(Tooltip, { text: 'Placed', portal: false, positioning: { side: 'bottom', align: 'end' } }, { default: () => h('button', 'Hover me') }),
+    ))
+    await wrapper.find('button').trigger('focus')
+    await new Promise(resolve => setTimeout(resolve, 250))
+    expect(wrapper.find('[data-side="bottom"]').exists()).toBe(true)
+  })
+
   it('renders its trigger content and opens the content on focus, given a shared TooltipProvider', async () => {
     wrapper = await mountSuspended(withProvider(
       h(Tooltip, { text: 'Hello' }, { default: () => h('button', 'Hover me') }),

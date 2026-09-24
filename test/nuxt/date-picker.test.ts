@@ -48,6 +48,27 @@ async function clickAndWait(el: HTMLElement) {
 }
 
 describe('datePicker', () => {
+  it.each([{ range: false, timeOnly: false }, { range: true, timeOnly: false }, { range: false, timeOnly: true }])('renders its $range/$timeOnly panel inline when portal is false', async (mode) => {
+    wrapper = await mountSuspended(DatePicker, { props: { ...mode, open: true, portal: false, positioning: { side: 'top', align: 'end' } } })
+    expect(wrapper.find('[role=dialog]').exists()).toBe(true)
+    expect(wrapper.find('[role=dialog]').attributes('data-side')).toBe('top')
+  })
+
+  it('uses a caller-provided portal target for its built-in calendar portal', async () => {
+    const target = document.createElement('div')
+    target.id = 'calendar-portal-target'
+    document.body.appendChild(target)
+    try {
+      wrapper = await mountSuspended(DatePicker, { props: { open: true, portal: '#calendar-portal-target' } })
+      expect(target.querySelector('[role=dialog]')).toBeTruthy()
+    }
+    finally {
+      wrapper?.unmount()
+      wrapper = undefined
+      target.remove()
+    }
+  })
+
   it('preserves a template-style controlled value when the parent ignores clearing', async () => {
     wrapper = await mountSuspended(defineComponent({
       render: () => h(DatePicker, {

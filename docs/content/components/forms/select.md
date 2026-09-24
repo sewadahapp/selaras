@@ -329,6 +329,18 @@ chooses the presentation on open, and holds it until close:
 <SSelect v-model="fruit" adaptive placeholder="Pick a fruit" :items="fruitItems" />
 ```
 
+### Panel positioning and portal
+
+Use `positioning` for the anchored list's side, alignment, offsets, and collision
+behavior. `portal` defaults to the document body; set it to `false` to render
+inline, or to a CSS selector or `HTMLElement` to choose a teleport target.
+These options affect the anchored list; the adaptive Select modal has its own
+presentation. Use `ui.content` for visual styling.
+
+```vue-html
+<SSelect :items="fruitItems" :positioning="{ side: 'top', align: 'end', sideOffset: 8 }" portal="#overlay-root" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and
@@ -383,6 +395,8 @@ the same key because both components use this recipe.
 | `invalid` | `boolean` | `false` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
+| `positioning` | `OverlayPositioning` | anchored list defaults |
+| `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<SelectSlot, string \| object>>` | - |
 

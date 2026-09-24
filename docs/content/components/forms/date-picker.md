@@ -305,6 +305,18 @@ its width, height, rounded tip, or corner clearance (`padding`):
 <SDatePicker v-model="value" :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }" />
 ```
 
+`positioning` controls the anchored calendar's side, alignment, offsets, and
+collision behavior. For the single-date calendar, an arrow defaults the panel
+to center alignment so it remains visible; an explicit `positioning.align`
+overrides that choice. `portal` defaults to the document body; set it to
+`false` for inline rendering or pass a CSS selector or `HTMLElement` as the
+teleport target. These props affect the anchored calendar in single, range,
+and time-only modes. The adaptive modal has its own presentation.
+
+```vue-html
+<SDatePicker v-model="value" :positioning="{ side: 'top', align: 'start' }" portal="#overlay-root" />
+```
+
 ### Clearable & disabled
 
 `clearable` adds a dismiss button once a value is set; `disabled` disables
@@ -447,6 +459,8 @@ every slot and variant - here's `DatePicker`'s own theme file:
 | `activeColor` | same as `color` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
+| `positioning` | `OverlayPositioning` | anchored calendar defaults |
+| `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'separator' \| 'content' \| 'mobileContent' \| 'header' \| 'heading' \| 'grids' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'viewGrid' \| 'timeSection' \| 'arrow', string \| object>>` | - |
 

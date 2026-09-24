@@ -5,6 +5,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { DatePickerThemeSlots } from '../theme/date-picker'
 import type { RoundedArrowConfig } from '../utils/arrow'
 import type { ColorRole } from '../utils/color-registry'
+import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { DateFormatter, endOfMonth, endOfYear, getLocalTimeZone, startOfMonth, startOfYear, Time, toCalendarDateTime, today } from '@internationalized/date'
 import {
@@ -42,6 +43,7 @@ import DatePickerRangeCalendarBody from '../internal/DatePickerRangeCalendarBody
 import DatePickerTimeBody from '../internal/DatePickerTimeBody.vue'
 import { datePickerTheme } from '../theme/date-picker'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
+import { overlayPortalProps } from '../utils/overlay'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
 import Button from './Button.vue'
@@ -60,6 +62,7 @@ const props = withDefaults(defineProps<DatePickerProps>(), {
   activeColor: 'primary',
   minuteStep: 1,
   arrow: false,
+  portal: undefined,
 })
 
 const emit = defineEmits<DatePickerEmits>()
@@ -133,6 +136,10 @@ export interface DatePickerProps {
   /** Shows a small pointer triangle connecting the panel to its trigger. */
   /** Shows the pointer; an object configures its size, rounding, and edge clearance. */
   arrow?: boolean | RoundedArrowConfig
+  /** Positioning of the anchored calendar (the adaptive modal uses its own layout). */
+  positioning?: OverlayPositioning
+  /** Teleport target for the anchored calendar, or `false` to render it inline. */
+  portal?: OverlayPortal
   /** Opts into the calendar's accessible small-screen modal presentation. It is selected when the calendar opens and held until close. */
   adaptive?: boolean
   ui?: UiProp<DatePickerThemeSlots>
@@ -575,7 +582,8 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const fieldProps = computed(() => resolveSlot(ui.value.field, props.ui?.field))
 const segmentProps = computed(() => resolveSlot(ui.value.segment, props.ui?.segment))
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
-const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow) }))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
+const portalProps = computed(() => overlayPortalProps(props.portal))
 const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
 const headerProps = computed(() => resolveSlot(ui.value.header, props.ui?.header))
 const headingProps = computed(() => resolveSlot(ui.value.heading, props.ui?.heading))
@@ -801,7 +809,7 @@ const buttonTriggerUi = computed(() => ({
       </div>
     </DateRangePickerAnchor>
 
-    <DateRangePickerContent v-if="!showMobileModal" :side-offset="6" align="start" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
+    <DateRangePickerContent v-if="!showMobileModal" :side-offset="6" align="start" :portal="portalProps" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
       <DatePickerRangeCalendarBody v-bind="rangeBodyProps">
         <template #day="scope">
           <slot name="day" v-bind="scope" />
@@ -929,7 +937,7 @@ const buttonTriggerUi = computed(() => ({
       </div>
     </PopoverAnchor>
 
-    <PopoverPortal v-if="!showMobileModal">
+    <PopoverPortal v-if="!showMobileModal" v-bind="portalProps">
       <PopoverContent :side-offset="6" align="start" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
         <DatePickerTimeBody v-bind="timeBodyProps">
           <template #footer>
@@ -1065,7 +1073,7 @@ const buttonTriggerUi = computed(() => ({
     center without clipping, so it silently hides instead. Centering the
     panel on the trigger only when `arrow` is on sidesteps that without
     changing the default (start-aligned) layout everyone already sees. -->
-    <DatePickerContent v-if="!showMobileModal" :side-offset="6" :align="arrow ? 'center' : 'start'" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
+    <DatePickerContent v-if="!showMobileModal" :side-offset="6" :align="arrow ? 'center' : 'start'" :portal="portalProps" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
       <DatePickerCalendarBody v-bind="calendarBodyProps">
         <template #day="scope">
           <slot name="day" v-bind="scope" />

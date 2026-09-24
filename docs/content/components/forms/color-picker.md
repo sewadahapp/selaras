@@ -84,6 +84,21 @@ contract:
 <SColorPicker v-model="color" adaptive />
 ```
 
+### Arrow
+
+`arrow` adds a pointer between the anchored picker and its trigger. It is off
+by default and has no effect on the adaptive modal.
+
+```vue-html
+<SColorPicker v-model="color" arrow />
+<SColorPicker v-model="color" :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }" />
+```
+
+Use `positioning` to place the anchored picker and `portal` to render it
+inline (`false`) or teleport it to a CSS selector or `HTMLElement`. The
+default portal target is the document body. These props apply to the anchored
+popover; the adaptive modal has its own layout. `ui.content` styles the panel.
+
 ### Custom `:ui`
 
 To see exactly what you'd be overriding - the current default classes for
@@ -107,6 +122,9 @@ every slot and variant - here's `ColorPicker`'s own theme file:
 | `swatches` | `string[]` | - |
 | `placeholder` | `string` | - |
 | `adaptive` | `boolean` | `false` |
+| `arrow` | `boolean \| RoundedArrowConfig` | `false` |
+| `positioning` | `OverlayPositioning` | anchored picker defaults |
+| `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
 | `ui` | `Partial<Record<ColorPickerSlot, string \| object>>` | - |

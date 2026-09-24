@@ -2,6 +2,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { selectTheme, SelectThemeSlots } from '../theme/select'
 import type { RoundedArrowConfig } from './arrow'
 import type { ColorRole } from './color-registry'
+import type { OverlayPortal, OverlayPositioning } from './overlay'
 import type { UiProp } from './ui'
 
 export type SelectValue = string | number
@@ -65,6 +66,10 @@ export interface SelectProps<Entry extends object = { value: SelectValue, label?
   resetSearchTermOnBlur?: boolean
   resetSearchTermOnSelect?: boolean
   arrow?: boolean | RoundedArrowConfig
+  /** Positioning of the anchored list (the adaptive Select modal uses its own layout). */
+  positioning?: OverlayPositioning
+  /** Teleport target for the anchored list, or `false` to render it inline. */
+  portal?: OverlayPortal
   /**
    * Opts into the control's accessible small-screen presentation. Select uses
    * a centered modal; Autocomplete keeps its editable combobox in a wider

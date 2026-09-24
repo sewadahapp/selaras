@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { DropdownThemeSlots } from '../theme/dropdown'
 import type { RoundedArrowConfig } from '../utils/arrow'
+import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { dropdownTheme } from '../theme/dropdown'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
+import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 
@@ -27,6 +29,10 @@ export interface DropdownProps {
   defaultOpen?: boolean
   /** Shows the pointer; an object configures its size, rounding, and edge clearance. */
   arrow?: boolean | RoundedArrowConfig
+  /** Anchored menu placement. */
+  positioning?: OverlayPositioning
+  /** Teleport target, or `false` to render inline. Defaults to `body`. */
+  portal?: OverlayPortal
   ui?: UiProp<DropdownThemeSlots>
 }
 
@@ -37,6 +43,7 @@ export interface DropdownEmits {
 const props = withDefaults(defineProps<DropdownProps>(), {
   open: undefined,
   arrow: false,
+  portal: undefined,
 })
 
 const emit = defineEmits<DropdownEmits>()
@@ -56,7 +63,8 @@ const theme = useComponentTheme('dropdown', dropdownTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
-const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow) }))
+const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
+const portalProps = computed(() => overlayPortalProps(props.portal))
 const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
 // Resolved per item (not a single shared computed) - `destructive` can
 // differ between items in the same menu, unlike every other themed slot
@@ -75,7 +83,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
     <DropdownMenuTrigger as-child>
       <slot />
     </DropdownMenuTrigger>
-    <DropdownMenuPortal>
+    <DropdownMenuPortal v-bind="portalProps">
       <DropdownMenuContent :side-offset="6" align="start" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
         <template v-for="(group, groupIndex) in items" :key="groupIndex">
           <DropdownMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />

@@ -178,6 +178,44 @@ describe('popover', () => {
     expect(content?.getAttribute('data-side')).toBe(side)
   })
 
+  it('lets positioning override legacy side/align while keeping ui.content for styling', async () => {
+    wrapper = await mountSuspended(Popover, {
+      props: { open: true, side: 'bottom', align: 'center', positioning: { side: 'top', align: 'end' }, ui: { content: 'custom-panel' } },
+      slots: { content: () => 'Body' },
+    })
+
+    const content = document.body.querySelector('[role=dialog]')
+    expect(content?.getAttribute('data-side')).toBe('top')
+    expect(content?.getAttribute('data-align')).toBe('end')
+    expect(content?.classList.contains('custom-panel')).toBe(true)
+  })
+
+  it('renders inline when portal is false and supports a custom portal target', async () => {
+    wrapper = await mountSuspended(Popover, {
+      props: { open: true, portal: false },
+      slots: { content: () => 'Inline body' },
+    })
+    expect(wrapper.find('[role=dialog]').text()).toContain('Inline body')
+    wrapper.unmount()
+    wrapper = undefined
+
+    const target = document.createElement('div')
+    target.id = 'popover-target'
+    document.body.appendChild(target)
+    try {
+      wrapper = await mountSuspended(Popover, {
+        props: { open: true, portal: '#popover-target' },
+        slots: { content: () => 'Target body' },
+      })
+      expect(target.querySelector('[role=dialog]')?.textContent).toContain('Target body')
+    }
+    finally {
+      wrapper?.unmount()
+      wrapper = undefined
+      target.remove()
+    }
+  })
+
   it('renders no arrow element by default', async () => {
     wrapper = await mountSuspended(Popover, {
       props: { open: true },

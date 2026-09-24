@@ -253,6 +253,8 @@ Global and scoped overrides use the `ui.select` key for both components.
 Same as [Select](/components/forms/select#props), minus `searchable` (always
 on), plus these Autocomplete-only additions:
 
+`positioning` and `portal` follow [Select's anchored panel contract](/components/forms/select#panel-positioning-and-portal).
+
 | Prop | Type | Default |
 | --- | --- | --- |
 | `dropdown` | `boolean` | `false` |
