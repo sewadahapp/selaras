@@ -9,7 +9,7 @@ export const tabsTheme = tv({
     // z-10 unconditionally (not just for `pill`) - harmless for `underline`
     // (its indicator never overlaps the trigger's own text anyway) and
     // keeps this one class instead of a compound variant.
-    trigger: 'relative z-10 inline-flex items-center gap-1.5 px-1 py-2 text-sm font-medium text-[var(--selaras-resolved-text-muted)] transition-colors hover:text-[var(--selaras-resolved-text-default)] disabled:opacity-50 disabled:pointer-events-none data-[state=active]:text-[var(--_selaras-color-text)]',
+    trigger: 'relative z-10 inline-flex items-center gap-1.5 px-1 py-2 text-sm font-medium text-[var(--selaras-resolved-text-muted)] transition-colors hover:text-[var(--selaras-resolved-text-default)] disabled:opacity-50 disabled:pointer-events-none',
     icon: 'size-4 shrink-0',
     // Positioned via Reka's own TabsIndicator - it measures the active
     // trigger's offsetLeft/offsetWidth itself (ResizeObserver-driven, and
@@ -30,12 +30,13 @@ export const tabsTheme = tv({
     variant: {
       underline: {
         list: 'gap-4',
+        trigger: 'data-[state=active]:text-[var(--_selaras-color-text)]',
         indicator: 'inset-x-0 bottom-0 h-0.5 rounded-full bg-[var(--_selaras-color-fill)]',
       },
       pill: {
-        list: 'gap-1 rounded-[var(--selaras-resolved-radius-md)] border-0 bg-[var(--selaras-resolved-surface-elevated)] p-1',
-        trigger: 'rounded-[var(--selaras-resolved-radius-sm)] px-3',
-        indicator: 'inset-y-1 rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-sm)]',
+        list: 'gap-1 rounded-[var(--selaras-resolved-radius-md)] border-0 bg-[color-mix(in_oklab,var(--selaras-resolved-surface-elevated)_96%,var(--selaras-resolved-surface-inverted))] p-1',
+        trigger: 'justify-center text-center rounded-[var(--selaras-resolved-radius-sm)] px-3 data-[state=active]:text-[var(--_selaras-color-on-fill)]',
+        indicator: 'left-0 inset-y-1 rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--_selaras-color-fill)] shadow-[var(--selaras-resolved-shadow-sm)]',
       },
     },
     color: {
