@@ -56,7 +56,10 @@ export function createBuiltinColorRegistry(classPrefix?: string | null) {
         fill,
         fillHover: hover,
         fillPressed: pressed,
-        onFill: foundation('neutral', brightIntent ? 950 : dark ? 950 : 25),
+        // The vivid light-mode intent fills intentionally use white text.
+        // Dark mode restores the shared dark foreground on its lighter fills.
+        // Consumers can override onFill in their own recipe.
+        onFill: brightIntent && !dark ? '#ffffff' : foundation('neutral', dark ? 950 : 25),
         indicator,
         subtle,
         subtleHover: brightIntent

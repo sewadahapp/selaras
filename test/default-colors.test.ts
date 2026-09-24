@@ -34,7 +34,7 @@ describe('owned default color source', () => {
     expect(registry.secondary.light.fill).toBe('var(--color-selaras-plum-600)')
     expect(registry.success.light.fill).toBe('var(--color-selaras-green-500)')
     expect(registry.warning.light.fill).toBe('var(--color-selaras-yellow-500)')
-    expect(registry.warning.light.onFill).toBe('var(--color-selaras-gray-950)')
+    expect(registry.warning.light.onFill).toBe('#ffffff')
     expect(JSON.stringify(registry)).not.toMatch(/--color-(?:primary|secondary|success|info|warning|danger|neutral)-/)
   })
 

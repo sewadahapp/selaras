@@ -9,7 +9,10 @@ describe('built-in semantic defaults', () => {
     expect(registry.primary.light.fill).toBe('var(--color-selaras-indigo-500)')
     expect(registry.success.light.fill).toBe('var(--color-selaras-green-500)')
     expect(registry.warning.light.fill).toBe('var(--color-selaras-yellow-500)')
-    expect(registry.warning.light.onFill).toBe('var(--color-selaras-gray-950)')
+    for (const role of ['success', 'danger', 'warning'] as const) {
+      expect(registry[role].light.onFill).toBe('#ffffff')
+      expect(registry[role].dark.onFill).toBe('var(--color-selaras-gray-950)')
+    }
     expect(registry.warning.light.indicator).toBe('var(--color-selaras-yellow-700)')
     expect(registry.neutral.light.fill).toBe('var(--color-selaras-gray-950)')
     expect(registry.neutral.dark.fill).toBe('var(--color-selaras-gray-200)')
