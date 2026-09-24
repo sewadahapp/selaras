@@ -20,6 +20,15 @@ test('hydrates the inline calendar and preserves independent meeting content', a
 
   await expect(day).toBeVisible()
   await expect(details).toBeVisible()
+  const layout = await calendar.evaluate((root) => {
+    const columns = [...root.querySelectorAll('table th')]
+    return {
+      width: root.getBoundingClientRect().width,
+      columnWidths: columns.map(column => column.getBoundingClientRect().width),
+    }
+  })
+  expect(layout.width).toBeLessThan(400)
+  expect(Math.max(...layout.columnWidths) - Math.min(...layout.columnWidths)).toBeLessThan(1)
   await expect(day).toHaveAttribute('aria-describedby', await details.locator('..').getAttribute('id') ?? '')
   await expect(day.locator('a')).toHaveCount(0)
   await day.click()

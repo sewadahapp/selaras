@@ -6,9 +6,10 @@ export const calendarTheme = tv({
     header: 'mb-2 flex items-center justify-between gap-2',
     heading: 'text-sm font-medium text-[var(--selaras-resolved-text-default)]',
     grids: 'flex flex-col gap-4 sm:flex-row',
-    // A calendar's seven date columns must keep equal width even when a slot
-    // renders a long meeting title in only one of them.
-    grid: 'w-full table-fixed border-collapse',
+    // Give each month an intrinsic compact width. A percentage width here
+    // expands the inline-block root to its entire container. The fixed table
+    // layout keeps all seven columns equal even with day-details content.
+    grid: 'w-72 table-fixed border-collapse',
     gridHead: '',
     headCell: 'w-[14.285714%] h-8 text-xs font-medium text-[var(--selaras-resolved-text-muted)]',
     cell: 'p-0.5 text-center align-top',

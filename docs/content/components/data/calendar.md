@@ -65,7 +65,7 @@ const meetings: Record<string, string[]> = {
       style="min-width: 42rem"
       :ui="{
         grids: 'block',
-        grid: { style: { tableLayout: 'fixed' } },
+        grid: { class: 'w-full', style: { tableLayout: 'fixed' } },
         headCell: { style: { width: '14.285714%' } },
         cell: { class: 'border border-[var(--selaras-resolved-border-default)] p-1 text-start', style: { height: '8rem' } },
         dayDetails: { class: 'space-y-1 overflow-hidden pt-1 text-xs', style: { overflowWrap: 'anywhere', maxHeight: '5rem' } },
@@ -109,4 +109,6 @@ week-segment calculation, and scoped layout styles are all in the
 `ui` targets `root`, `header`, `heading`, `grids`, `grid`, `gridHead`,
 `headCell`, `cell`, `dayButton`, `dayDetails`, and `footer`. `color` styles
 unselected day/navigation buttons; `active-color` styles the selected day.
-The `#footer` slot adds content below the grids.
+The `#footer` slot adds content below the grids. Each month is compact by
+default; use `class="w-full"` with `:ui="{ grid: 'w-full' }"` for a calendar
+that fills its container.

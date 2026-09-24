@@ -17,7 +17,7 @@ const meetings: Record<string, string[]> = {
       style="min-width: 42rem"
       :ui="{
         grids: 'block',
-        grid: { style: { tableLayout: 'fixed' } },
+        grid: { class: 'w-full', style: { tableLayout: 'fixed' } },
         headCell: { style: { width: '14.285714%' } },
         cell: { class: 'border border-[var(--selaras-resolved-border-default)] p-1 text-start', style: { height: '8rem' } },
         dayDetails: { class: 'space-y-1 overflow-hidden pt-1 text-xs', style: { overflowWrap: 'anywhere', maxHeight: '5rem' } },
