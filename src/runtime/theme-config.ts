@@ -313,7 +313,7 @@ export interface ThemeComponentRegistry {
   }
   formField: {
     slots: FormFieldThemeSlots
-    conditions: Pick<FormFieldVariants, 'size' | 'orientation'>
+    conditions: Pick<FormFieldVariants, 'size' | 'orientation' | 'labelMode'>
   }
   header: {
     slots: HeaderThemeSlots

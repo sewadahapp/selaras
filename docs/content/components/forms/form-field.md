@@ -87,6 +87,34 @@ full-width below the row either way:
 </SFormField>
 ```
 
+### Floating label
+
+`label-mode="floating"` places the label over an empty control and moves it
+above the border when the control is focused or has a value. It keeps the same
+native label association, hint, and error behavior. Input and Textarea detect
+their native value state; Select, Autocomplete, and DatePicker expose their
+selection state to the field. For a custom control, pass `:filled` when it has
+a value. Floating mode uses the vertical layout even if `orientation` is set
+to `horizontal`. DatePicker's editable segmented field keeps the label raised
+while empty so its day, month, and year placeholders remain visible and typeable.
+
+::component-example{name="form-field-floating"}
+::
+
+```vue-html
+<SFormField label="Email" label-mode="floating" hint="We'll send your receipt here.">
+  <SInput v-model="email" type="email" />
+</SFormField>
+```
+
+An `SInputGroup` containing one Input or Select plus an addon button also
+works when the control comes first. For two editable controls, wrap **each**
+input in its own `SFormField` so both have independent labels, names, and
+validation state. This works with either InputGroup orientation:
+
+::component-example{name="form-field-grouped"}
+::
+
 ### Works with any control
 
 ```vue-html
@@ -124,6 +152,8 @@ every slot and variant - here's `FormField`'s own theme file:
 | `required` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | - |
 | `orientation` | `'vertical' \| 'horizontal'` | `vertical` |
+| `labelMode` | `'static' \| 'floating'` | `static` |
+| `filled` | `boolean` | `false` |
 | `ui` | `Partial<Record<'root' \| 'body' \| 'header' \| 'label' \| 'required' \| 'description' \| 'container' \| 'hint' \| 'error', string \| object>>` | - |
 
 ## Slots

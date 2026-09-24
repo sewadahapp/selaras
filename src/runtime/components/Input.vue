@@ -46,6 +46,7 @@ export interface InputEmits {
 }
 
 const field = useFormField()
+const effectivePlaceholder = computed(() => props.placeholder || (field?.floatingLabel.value ? ' ' : undefined))
 const inputId = computed(() => props.id ?? field?.id)
 const inputInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
@@ -89,7 +90,7 @@ const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.v
 </script>
 
 <template>
-  <div :data-selaras-color="inputInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
+  <div :data-selaras-color="inputInvalid ? 'danger' : effectiveColor" :data-selaras-field-leading="icon ? '' : undefined" v-bind="rootProps">
     <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <input
       :id="inputId"
@@ -97,7 +98,7 @@ const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.v
       :value="modelValue"
       :type="type"
       :name="name ?? field?.name"
-      :placeholder="placeholder"
+      :placeholder="effectivePlaceholder"
       :disabled="disabled"
       :aria-invalid="inputInvalid || undefined"
       :aria-describedby="describedBy"

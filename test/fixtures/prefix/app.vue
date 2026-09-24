@@ -1,6 +1,6 @@
 <script setup>
 import { CalendarDate, CalendarDateTime, Time } from '@internationalized/date'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import AutocompleteGenericForm from '../../nuxt/fixtures/AutocompleteGenericForm.vue'
 import ComboboxModeForm from '../../nuxt/fixtures/ComboboxModeForm.vue'
 import VeeValidateForm from '../../nuxt/fixtures/VeeValidateForm.vue'
@@ -8,6 +8,12 @@ import VeeValidateForm from '../../nuxt/fixtures/VeeValidateForm.vue'
 const route = useRoute()
 const unknownRole = /** @type {any} */ ('not-registered')
 const scopedDate = new CalendarDate(2024, 1, 15)
+const floatingEmail = ref('')
+const floatingPlan = ref()
+const floatingDate = shallowRef()
+const floatingSegmentedDate = shallowRef()
+const floatingSearch = ref('')
+const floatingPlans = [{ label: 'Starter', value: 'starter' }, { label: 'Team', value: 'team' }]
 const nativeFormDate = new CalendarDate(2024, 2, 20)
 const semanticRecipe = {
   fill: 'rgb(10 20 30)',
@@ -108,6 +114,28 @@ function updateNestedTokens() {
         <a v-if="date.toString() === '2024-01-18'" href="#meeting-18">Design review</a>
       </template>
     </SCalendar>
+    <div id="floating-field-fixture">
+      <SFormField id="floating-email" label="Email" label-mode="floating" hint="Use your work address">
+        <SInput v-model="floatingEmail" type="email" />
+      </SFormField>
+      <SFormField id="floating-plan" label="Plan" label-mode="floating">
+        <SSelect v-model="floatingPlan" :items="floatingPlans" />
+      </SFormField>
+      <SFormField id="floating-date" label="Appointment" label-mode="floating">
+        <SDatePicker v-model="floatingDate" trigger-mode="button" />
+      </SFormField>
+      <SFormField id="floating-segmented-date" label="Due date" label-mode="floating">
+        <SDatePicker v-model="floatingSegmentedDate" />
+      </SFormField>
+      <SFormField id="floating-search" label="Search" label-mode="floating">
+        <SInputGroup>
+          <SInput v-model="floatingSearch" />
+          <SButton type="button">
+            Go
+          </SButton>
+        </SInputGroup>
+      </SFormField>
+    </div>
     <SApp dir="rtl">
       <div id="rtl-probe">
         RTL probe

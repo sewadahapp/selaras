@@ -29,10 +29,15 @@ export const formFieldTheme = tv({
       vertical: {},
       horizontal: { body: 'flex-row items-start gap-3', header: 'shrink-0', container: 'flex-1 min-w-0' },
     },
+    labelMode: {
+      static: {},
+      floating: { container: 'relative' },
+    },
   },
   defaultVariants: {
     size: 'md',
     orientation: 'vertical',
+    labelMode: 'static',
   },
 })
 

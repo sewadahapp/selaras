@@ -6,6 +6,7 @@ export interface FormFieldContext {
   labelId?: string
   name?: string
   size?: 'sm' | 'md' | 'lg'
+  floatingLabel: ComputedRef<boolean>
   invalid: ComputedRef<boolean>
   describedBy: ComputedRef<string | undefined>
 }

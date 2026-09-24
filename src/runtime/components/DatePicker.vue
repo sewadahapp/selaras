@@ -719,7 +719,7 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(value)"
   >
     <DateRangePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" :data-selaras-color="fieldColor" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <DateRangePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="segment in segments.start" :key="`start-${segment.part}`">
             <DateRangePickerInput as="span" type="start" :part="segment.part" v-bind="segmentProps">
@@ -760,9 +760,10 @@ const buttonTriggerUi = computed(() => ({
         </div>
       </div>
 
-      <div v-else :class="applyClassPrefix('relative inline-block w-full')">
+      <div v-else :class="applyClassPrefix('relative inline-block w-full')" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined">
         <DateRangePickerTrigger as-child>
           <Button
+            :id="datePickerId"
             variant="text"
             :color="color"
             :size="effectiveSize"
@@ -771,7 +772,7 @@ const buttonTriggerUi = computed(() => ({
             :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
-            {{ hasValue ? formattedValue : messages.pickDate }}
+            {{ hasValue ? formattedValue : field?.floatingLabel.value ? '' : messages.pickDate }}
             <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
               <slot name="trigger-icon">
                 <Icon :name="icons.calendar" :class="iconClass" />
@@ -837,7 +838,7 @@ const buttonTriggerUi = computed(() => ({
 
   <PopoverRoot v-else-if="timeOnly" :open="open" :data-selaras-color="fieldColor" @update:open="onUpdateOpen">
     <PopoverAnchor as-child>
-      <div v-if="triggerMode === 'field'" :data-selaras-color="fieldColor" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <TimeFieldRoot
           :id="datePickerId"
           v-slot="{ segments }"
@@ -887,9 +888,10 @@ const buttonTriggerUi = computed(() => ({
         </div>
       </div>
 
-      <div v-else :class="applyClassPrefix('relative inline-block w-full')">
+      <div v-else :class="applyClassPrefix('relative inline-block w-full')" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined">
         <PopoverTrigger as-child>
           <Button
+            :id="datePickerId"
             variant="text"
             :color="color"
             :size="effectiveSize"
@@ -898,7 +900,7 @@ const buttonTriggerUi = computed(() => ({
             :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
-            {{ hasValue ? formattedTimeValue : messages.pickTime }}
+            {{ hasValue ? formattedTimeValue : field?.floatingLabel.value ? '' : messages.pickTime }}
             <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
               <slot name="trigger-icon">
                 <Icon :name="icons.clock" :class="iconClass" />
@@ -980,7 +982,7 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(normalizeForGranularity(value as DateValue | undefined))"
   >
     <DatePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" :data-selaras-color="fieldColor" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <DatePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="(segment, index) in visibleSegments(segments)" :key="`${segment.part}-${index}`">
             <DatePickerInput as="span" :part="segment.part" v-bind="segmentProps">
@@ -1015,9 +1017,10 @@ const buttonTriggerUi = computed(() => ({
         </div>
       </div>
 
-      <div v-else :class="applyClassPrefix('relative inline-block w-full')">
+      <div v-else :class="applyClassPrefix('relative inline-block w-full')" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined">
         <DatePickerTrigger as-child>
           <Button
+            :id="datePickerId"
             variant="text"
             :color="color"
             :size="effectiveSize"
@@ -1026,7 +1029,7 @@ const buttonTriggerUi = computed(() => ({
             :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
-            {{ hasValue ? formattedValue : messages.pickDate }}
+            {{ hasValue ? formattedValue : field?.floatingLabel.value ? '' : messages.pickDate }}
             <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
               <slot name="trigger-icon">
                 <Icon :name="icons.calendar" :class="iconClass" />

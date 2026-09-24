@@ -51,6 +51,7 @@ export interface TextareaEmits {
 }
 
 const field = useFormField()
+const effectivePlaceholder = computed(() => props.placeholder || (field?.floatingLabel.value ? ' ' : undefined))
 
 const textareaId = computed(() => props.id ?? field?.id)
 const textareaInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
@@ -117,7 +118,7 @@ watch(() => props.modelValue, resize)
 </script>
 
 <template>
-  <div :data-selaras-color="textareaInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
+  <div :data-selaras-color="textareaInvalid ? 'danger' : effectiveColor" :data-selaras-field-leading="icon ? '' : undefined" v-bind="rootProps">
     <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <textarea
       :id="textareaId"
@@ -125,7 +126,7 @@ watch(() => props.modelValue, resize)
       data-ui-group-item
       :value="modelValue"
       :name="name ?? field?.name"
-      :placeholder="placeholder"
+      :placeholder="effectivePlaceholder"
       :rows="rows"
       :disabled="disabled"
       :aria-invalid="textareaInvalid || undefined"

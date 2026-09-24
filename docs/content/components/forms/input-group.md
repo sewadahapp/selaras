@@ -47,13 +47,22 @@ Any groupable component works, not just Input and Button - here a
 
 ### Vertical
 
+With two editable controls, give each its own `SFormField` so the labels and
+form names remain independent. The group joins their borders vertically. See
+[FormField's grouped example](/components/forms/form-field#floating-label) for
+the same pair in both orientations.
+
 ::component-example{name="input-group-vertical"}
 ::
 
 ```vue-html
 <SInputGroup orientation="vertical">
-  <SInput placeholder="First name" />
-  <SInput placeholder="Last name" />
+  <SFormField label="First name" name="firstName" label-mode="floating">
+    <SInput v-model="firstName" autocomplete="given-name" />
+  </SFormField>
+  <SFormField label="Last name" name="lastName" label-mode="floating">
+    <SInput v-model="lastName" autocomplete="family-name" />
+  </SFormField>
 </SInputGroup>
 ```
 

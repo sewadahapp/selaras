@@ -714,6 +714,8 @@ const bodyProps = computed(() => ({
       <div
         v-if="creatable"
         data-ui-group-item
+        :data-selaras-field-filled="selectedValues.length ? '' : undefined"
+        :data-selaras-field-active="open ? '' : undefined"
         v-bind="triggerProps"
       >
         <!--
@@ -843,6 +845,8 @@ const bodyProps = computed(() => ({
         :id="selectId"
         ref="selectTrigger"
         data-ui-group-item
+        :data-selaras-field-filled="selectedValues.length ? '' : undefined"
+        :data-selaras-field-active="open ? '' : undefined"
         :aria-invalid="selectInvalid || undefined"
         :aria-describedby="describedBy"
         :aria-busy="loading || undefined"

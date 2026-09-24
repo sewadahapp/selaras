@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { h } from 'vue'
 import FormField from '../../src/runtime/components/FormField.vue'
 import Input from '../../src/runtime/components/Input.vue'
+import Textarea from '../../src/runtime/components/Textarea.vue'
 
 describe('formField', () => {
   it('renders no error paragraph and no aria-describedby when neither error nor hint is set', async () => {
@@ -152,5 +153,30 @@ describe('formField', () => {
       slots: { default: () => h(Input) },
     })
     expect(bodyClasses(wrapper)).toContain('flex-row')
+  })
+
+  it('keeps native label, hint, and input associations in floating mode', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { id: 'floating-email', label: 'Email', labelMode: 'floating', hint: 'Use your work address' },
+      slots: { default: () => h(Input) },
+    })
+    const label = wrapper.find('[data-selaras-floating-label]')
+    const input = wrapper.find('input')
+    expect(label.attributes('for')).toBe('floating-email')
+    expect(input.attributes('id')).toBe('floating-email')
+    expect(input.attributes('placeholder')).toBe(' ')
+    expect(input.attributes('aria-describedby')).toBe(wrapper.find('p').attributes('id'))
+    expect(label.element.parentElement?.contains(input.element)).toBe(true)
+  })
+
+  it('gives a floating Textarea a native empty-state placeholder and retains explicit filled state', async () => {
+    const wrapper = await mountSuspended(FormField, {
+      props: { label: 'Notes', labelMode: 'floating', filled: true },
+      slots: { default: () => h(Textarea) },
+    })
+    expect(wrapper.find('textarea').attributes('placeholder')).toBe(' ')
+    expect(wrapper.find('[data-selaras-label-mode="floating"]').attributes('data-filled')).toBe('true')
+    await wrapper.setProps({ filled: false })
+    expect(wrapper.find('[data-selaras-label-mode="floating"]').attributes('data-filled')).toBeUndefined()
   })
 })
