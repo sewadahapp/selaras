@@ -8,6 +8,7 @@ import type { badgeTheme, BadgeThemeSlots } from './theme/badge'
 import type { breadcrumbTheme, BreadcrumbThemeSlots } from './theme/breadcrumb'
 import type { buttonTheme, ButtonThemeSlots } from './theme/button'
 import type { buttonGroupTheme, ButtonGroupThemeSlots } from './theme/button-group'
+import type { calendarTheme, CalendarThemeSlots } from './theme/calendar'
 import type { calloutTheme, CalloutThemeSlots } from './theme/callout'
 import type { cardTheme, CardThemeSlots } from './theme/card'
 import type { cardGroupTheme, CardGroupThemeSlots } from './theme/card-group'
@@ -145,6 +146,10 @@ export interface ThemeComponentRegistry {
   alertDialog: {
     slots: AlertDialogThemeSlots
     conditions: Pick<VariantProps<typeof alertDialogTheme>, 'transition'>
+  }
+  calendar: {
+    slots: CalendarThemeSlots
+    conditions: Pick<VariantProps<typeof calendarTheme>, never>
   }
   codeButton: {
     slots: CodeButtonThemeSlots

@@ -103,6 +103,11 @@ function updateNestedTokens() {
         <SDatePicker :model-value="scopedDate" active-color="enterprise" />
       </div>
     </STheme>
+    <SCalendar id="calendar-fixture" :default-placeholder="new CalendarDate(2024, 1, 15)" calendar-label="Meeting calendar">
+      <template #day-details="{ date }">
+        <a v-if="date.toString() === '2024-01-18'" href="#meeting-18">Design review</a>
+      </template>
+    </SCalendar>
     <SApp dir="rtl">
       <div id="rtl-probe">
         RTL probe
