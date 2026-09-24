@@ -55,10 +55,6 @@
   margin: 0 auto;
 }
 
-.selaras-docs-sidebar {
-  border-inline-end: 1px solid var(--selaras-resolved-border-default);
-}
-
 .selaras-docs-main {
   min-width: 0;
   flex: 1;
