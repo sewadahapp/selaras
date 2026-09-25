@@ -106,6 +106,8 @@ Selaras can also provide small DOM behaviors through directives, such as:
 <SButton v-ripple>
   Save
 </SButton>
+
+<SInput v-mask="'(###) ###-####'" inputmode="tel" />
 ```
 
 ## Where to start

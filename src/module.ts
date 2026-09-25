@@ -172,6 +172,11 @@ export default defineNuxtModule<ModuleOptions>({
       from: resolver.resolve('./runtime/directives/ripple'),
       meta: { vueDirective: true },
     })
+    addImports({
+      name: 'vMask',
+      from: resolver.resolve('./runtime/directives/mask'),
+      meta: { vueDirective: true },
+    })
 
     // Threads `classPrefix` from this build-time module option into runtime
     // code (`applyClassPrefix` in runtime/utils/ui.ts) via a virtual
