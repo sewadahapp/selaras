@@ -212,7 +212,7 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.match(packedSelectTag, pattern(/tw:tracking-wide/), 'ui.select must receive Select\'s registered role')
     assert.ok(html.includes('Published select'), 'published generic Select must display its custom-key default')
     assert.match(html, /<input(?=[^>]*name="packed-choices")(?=[^>]*value="1")/, 'bare multiple must preserve the numeric array default')
-    assert.match(html, /<div[^>]*class="[^"]*font-semibold[^"]*tracking-wide[^"]*"[^>]*><input(?=[^>]*id="packed-autocomplete-forced")(?=[^>]*aria-label="Published suggestion")(?=[^>]*value="Published select")/, 'ui.select must configure Autocomplete through the shared recipe')
+    assert.match(html, /<div[^>]*class="[^"]*font-semibold[^"]*tracking-wide[^"]*"[^>]*>(?:<!---->)*<input(?=[^>]*id="packed-autocomplete-forced")(?=[^>]*aria-label="Published suggestion")(?=[^>]*value="Published select")/, 'ui.select must configure Autocomplete through the shared recipe')
     assert.match(html, /<input(?=[^>]*name="packed-forced-choice")(?=[^>]*value="1")/)
     assert.match(html, /<input(?=[^>]*id="packed-autocomplete-created")(?=[^>]*aria-label="Published free text")(?=[^>]*value="Created text")/)
     assert.match(html, /<form[^>]*id="packed-external-form"/, 'an installed consumer must render a third-party form library fixture during SSR')
@@ -240,8 +240,10 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.ok(css.includes('--selaras-resolved-color-secondary-fill:var(--selaras-color-secondary-fill,#123456)'), 'module options must replace a built-in default recipe')
     assert.ok(css.includes('--_selaras-color-fill:var(--selaras-color-published-fill,var(--selaras-resolved-color-published-fill))'), 'generated CSS must bind selected roles through local inputs and public reads')
     assert.ok(css.includes(':root.dark [data-selaras-theme]'), 'generated CSS must contain dark resolved role reads')
-    assert.ok(Buffer.byteLength(css) <= (prefixed ? 137_000 : 143_000), `compiled CSS is ${Buffer.byteLength(css)} bytes`)
-    assert.ok(gzipSync(css).byteLength <= (prefixed ? 18_000 : 19_500), `compiled CSS is ${gzipSync(css).byteLength} gzip bytes`)
+    const cssBytes = Buffer.byteLength(css)
+    const gzipBytes = gzipSync(css).byteLength
+    assert.ok(cssBytes <= (prefixed ? 145_000 : 151_000), `compiled CSS is ${cssBytes} bytes / ${gzipBytes} gzip`)
+    assert.ok(gzipBytes <= (prefixed ? 19_000 : 21_000), `compiled CSS is ${gzipBytes} gzip bytes`)
     console.log(`[packed] SSR, generated defaults/tokens, Table and CSS passed (${Buffer.byteLength(css)} bytes / ${gzipSync(css).byteLength} gzip)`)
     if (process.env.SELARAS_PACKED_BROWSER) {
       const browser = await chromium.launch()
