@@ -102,10 +102,11 @@ describe('classPrefix', async () => {
   it('keeps the packed consumer stylesheet within the initial size budget', async () => {
     const css = await fetchCss()
     // Resolved public token names are intentionally repeated in Tailwind's
-    // arbitrary-value selectors. Keep a budget, but allow that explicit API
-    // contract rather than restoring a private short-name compatibility layer.
-    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(135_000)
-    expect(gzipSync(css).byteLength).toBeLessThanOrEqual(18_000)
+    // arbitrary-value selectors. Recent Calendar, Tabs, and floating-field
+    // styles grew the generated utility set, so keep modest headroom while
+    // retaining a stricter compressed-size guard for delivered CSS.
+    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(140_000)
+    expect(gzipSync(css).byteLength).toBeLessThanOrEqual(18_500)
   })
 
   it('lets a :ui override actually win over a conflicting base class - the real bug: tailwind-merge has no concept of tw:-style prefixes, so without normalizing the override before merging, both the base and the override class would survive and Selaras\'s own default (loaded first) would win the cascade', async () => {
