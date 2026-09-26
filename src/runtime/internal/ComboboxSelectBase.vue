@@ -347,7 +347,8 @@ function revertUnmatchedText(): boolean {
 function onSearchKeydown(event: KeyboardEvent) {
   if (event.target !== editableInput.value)
     return
-  if ((event.key === 'ArrowDown' || event.key === 'ArrowUp') && !event.isComposing && !isSearchComposing.value) {
+  // The same keys Reka's combobox input uses to move the highlight.
+  if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key) && !event.isComposing && !isSearchComposing.value) {
     keyboardNavigatedOptions.value = true
     return
   }
@@ -377,8 +378,9 @@ function onSearchKeydown(event: KeyboardEvent) {
     return
   if (props.creatable && !searchText.value.trim()) {
     // Reka can retain a highlighted option after a selection clears the
-    // query. An idle Enter must not toggle it, but ArrowDown/Up followed by
-    // Enter should still choose a different, unselected option.
+    // query. An idle Enter must not toggle it, but moving the highlight (arrows,
+    // Home, End) and then pressing Enter should still choose a different,
+    // unselected option.
     const activeId = editableInput.value?.getAttribute('aria-activedescendant')
     const activeOption = activeId ? document.getElementById(activeId) : null
     if (keyboardNavigatedOptions.value && activeOption?.getAttribute('aria-selected') === 'false')

@@ -1,9 +1,30 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import Autocomplete from '../../src/runtime/components/Autocomplete.vue'
 import FormField from '../../src/runtime/components/FormField.vue'
 import './helpers/adaptive-breakpoint'
+
+// Popovers teleport into document.body, and each mount is its own app, so
+// generated ids repeat across tests. Unmount everything after each test so a
+// stale popover from an earlier test can't be found by id.
+const mounted: { unmount: () => void }[] = []
+const mount: typeof mountSuspended = async (...args) => {
+  const wrapper = await mountSuspended(...args)
+  const unmount = wrapper.unmount.bind(wrapper)
+  let done = false
+  wrapper.unmount = () => {
+    if (done)
+      return
+    done = true
+    unmount()
+  }
+  mounted.push(wrapper)
+  return wrapper
+}
+afterEach(() => {
+  mounted.splice(0).forEach(wrapper => wrapper.unmount())
+})
 
 const fruitItems = [
   { label: 'Apple', value: 'apple' },
@@ -13,7 +34,7 @@ const fruitItems = [
 describe('autocomplete', () => {
   it.each(['keydown', 'blur'] as const)('keeps newly created text visible after %s in a parent-controlled single-value example', async (action) => {
     const value = ref('')
-    const wrapper = await mountSuspended(defineComponent({
+    const wrapper = await mount(defineComponent({
       render: () => h(Autocomplete<{ value: string, label: string }>, {
         'items': fruitItems,
         'modelValue': value.value,
@@ -34,7 +55,7 @@ describe('autocomplete', () => {
   })
 
   it('preserves controlled empty ownership when the parent vetoes created text', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: [{ value: 1, label: 'One' }], modelValue: undefined, defaultValue: 1, name: 'query', clearable: true },
     })
     try {
@@ -54,7 +75,7 @@ describe('autocomplete', () => {
 
   it('blocks unmatched numeric-suggestion text on Enter and blur in both selection modes', async () => {
     for (const multiple of [false, true]) {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: [{ value: 1, label: 'One' }], defaultValue: multiple ? [1] : 1, multiple, forceSelection: true, name: 'query' },
       })
       try {
@@ -74,7 +95,7 @@ describe('autocomplete', () => {
   })
 
   it('proposes the numeric custom-key identity while an empty controlled parent vetoes selection', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: [{ id: 0, title: 'Zero' }], valueKey: 'id', labelKey: 'title', forceSelection: true, modelValue: undefined, open: true, name: 'query' },
     })
     try {
@@ -96,7 +117,7 @@ describe('autocomplete', () => {
     interface Row { id: number, title: string }
     for (const multiple of [false, true]) {
       const proposals: (number | number[] | undefined)[] = []
-      const wrapper = await mountSuspended(defineComponent({
+      const wrapper = await mount(defineComponent({
         render: () => h('form', {}, [h(Autocomplete<Row, 'id', boolean, true>, {
           'items': [{ id: 1, title: 'One' }],
           'valueKey': 'id',
@@ -128,7 +149,7 @@ describe('autocomplete', () => {
   })
 
   it('retains forced async identities and blocks creation after a dynamic mode change', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: [], valueKey: 'id', labelKey: 'title', modelValue: 7, forceSelection: true, name: 'query' },
     })
     try {
@@ -158,7 +179,7 @@ describe('autocomplete', () => {
 
   it('keeps active and parent-controlled queries when async labels arrive', async () => {
     for (const controlled of [false, true]) {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: [], valueKey: 'id', labelKey: 'title', modelValue: 7, ...(controlled ? { searchTerm: 'Parent query' } : { open: true }) },
       })
       try {
@@ -179,7 +200,7 @@ describe('autocomplete', () => {
   it('retains previously created strings and their reset target when forcing selection dynamically', async () => {
     const forced = ref(false)
     const proposals: (number | string | undefined)[] = []
-    const wrapper = await mountSuspended(defineComponent({
+    const wrapper = await mount(defineComponent({
       render: () => h('form', {}, [h(Autocomplete<{ value: number, label: string }, 'value', false, boolean>, {
         'items': [{ value: 1, label: 'One' }],
         'forceSelection': forced.value,
@@ -210,7 +231,7 @@ describe('autocomplete', () => {
 
   it('routes accessible naming and descriptions to the editable input', async () => {
     const attrs = { 'aria-label': 'Search fruit', 'aria-labelledby': 'fruit-label', 'aria-describedby': 'fruit-help', 'aria-errormessage': 'fruit-error', 'aria-details': 'fruit-details' }
-    const wrapper = await mountSuspended(Autocomplete, { attrs, props: { items: fruitItems } })
+    const wrapper = await mount(Autocomplete, { attrs, props: { items: fruitItems } })
     try {
       const input = wrapper.find('input[role="combobox"]')
       for (const [key, value] of Object.entries(attrs)) {
@@ -224,7 +245,7 @@ describe('autocomplete', () => {
   })
 
   it('renders created chips without passing fabricated records to the item slot', async () => {
-    const wrapper = await mountSuspended(Autocomplete<{ value: number, label: string, title: string }, 'value', true>, {
+    const wrapper = await mount(Autocomplete<{ value: number, label: string, title: string }, 'value', true>, {
       props: { items: [{ value: 1, label: 'One', title: 'Suggestion' }], defaultValue: [1, 'Created text'], multiple: true, displayMode: 'chip' },
       slots: { item: ({ item }: { item: { title: string } }) => item.title.toUpperCase() },
     })
@@ -240,7 +261,7 @@ describe('autocomplete', () => {
   })
 
   it('supports a controlled open state and emits close requests', async () => {
-    const wrapper = await mountSuspended(Autocomplete, { props: { items: fruitItems, open: true, dropdown: true } })
+    const wrapper = await mount(Autocomplete, { props: { items: fruitItems, open: true, dropdown: true } })
     const trigger = wrapper.find('[aria-haspopup="listbox"]')
     expect(trigger.attributes('aria-expanded')).toBe('true')
     await trigger.trigger('click')
@@ -250,7 +271,7 @@ describe('autocomplete', () => {
   })
 
   it('uses native required validity for an empty selection', async () => {
-    const wrapper = await mountSuspended(defineComponent({
+    const wrapper = await mount(defineComponent({
       render: () => h('form', {}, [
         h(Autocomplete<(typeof fruitItems)[number]>, { name: 'query', items: fruitItems, required: true }),
       ]),
@@ -261,7 +282,7 @@ describe('autocomplete', () => {
   })
 
   it('forwards native search input attributes to the editable field', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       attrs: { autocomplete: 'email', inputmode: 'email', readonly: true },
       props: { items: fruitItems },
     })
@@ -274,7 +295,7 @@ describe('autocomplete', () => {
   })
 
   it('associates a FormField label with the actual editable input', async () => {
-    const wrapper = await mountSuspended(FormField, {
+    const wrapper = await mount(FormField, {
       props: { label: 'Fruit' },
       slots: { default: () => h(Autocomplete<(typeof fruitItems)[number]>, { items: fruitItems }) },
     })
@@ -286,7 +307,7 @@ describe('autocomplete', () => {
   })
 
   it('displays the label for numeric zero without treating it as empty', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: [{ label: 'Numeric zero', value: 0 }, { label: 'Text zero', value: '0' }], modelValue: 0 },
     })
     await nextTick()
@@ -294,19 +315,19 @@ describe('autocomplete', () => {
   })
 
   it('binds a custom semantic role to the trigger root', async () => {
-    const wrapper = await mountSuspended(Autocomplete, { props: { items: [{ label: 'One', value: 'one' }], color: 'premium' as any } })
+    const wrapper = await mount(Autocomplete, { props: { items: [{ label: 'One', value: 'one' }], color: 'premium' as any } })
     expect(wrapper.find('[data-selaras-color="premium"]').exists()).toBe(true)
   })
 
   it('does not render a dropdown button by default', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems },
     })
     expect(wrapper.find('[aria-haspopup="listbox"]').exists()).toBe(false)
   })
 
   it('renders a dropdown button that opens the popover and blanks the current filter', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems, dropdown: true, searchTerm: 'xyz' },
     })
 
@@ -321,7 +342,7 @@ describe('autocomplete', () => {
   })
 
   it('shows only matching options in single mode and selects one on Enter', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems },
     })
 
@@ -336,7 +357,7 @@ describe('autocomplete', () => {
   })
 
   it('keeps a selected multiple option when it is chosen again by keyboard or pointer', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: {
         items: [{ label: 'Apricot selected', value: 'apricot' }, { label: 'Blueberry selected', value: 'blueberry' }],
         multiple: true,
@@ -366,7 +387,7 @@ describe('autocomplete', () => {
   })
 
   it.each(['comma', 'chip'] as const)('continues keyboard selection with an empty query in %s mode', async (displayMode) => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: [...fruitItems, { label: 'Cherry', value: 'cherry' }], multiple: true, defaultValue: ['apple'], displayMode },
     })
 
@@ -388,8 +409,34 @@ describe('autocomplete', () => {
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['apple', 'banana', 'cherry']])
   })
 
+  it.each(['End', 'Home'] as const)('selects the option highlighted with %s right after a selection in a creatable multiple field', async (key) => {
+    const items = [{ label: 'Apple', value: 'apple' }, { label: 'Banana', value: 'banana' }, { label: 'Cherry', value: 'cherry' }]
+    const wrapper = await mount(Autocomplete, { props: { items, multiple: true, creatable: true } })
+    const input = wrapper.find('input[role="combobox"]')
+    const press = async (pressed: string) => {
+      await input.trigger('keydown', { key: pressed })
+      await nextTick()
+    }
+
+    // Select one end of the list; the selection clears the query.
+    await press('ArrowDown')
+    if (key === 'Home') {
+      await press('ArrowDown')
+      await press('ArrowDown')
+    }
+    await press('Enter')
+    const first = key === 'End' ? 'apple' : 'cherry'
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([[first]])
+
+    // Jump to the other end with no arrow key in between, then Enter.
+    await press(key)
+    await press('Enter')
+    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([[first, key === 'End' ? 'cherry' : 'apple']])
+    wrapper.unmount()
+  })
+
   it('creates a typed prefix as a chip instead of toggling the suggested option', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems, multiple: true, defaultValue: ['apple'], displayMode: 'chip' },
     })
 
@@ -405,7 +452,7 @@ describe('autocomplete', () => {
   })
 
   it('shows selected labels in the default multiple display while keeping the query editable', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems, multiple: true, defaultValue: ['apple', 'banana'] },
     })
 
@@ -434,7 +481,7 @@ describe('autocomplete', () => {
   })
 
   it('shows available options again when a created chip clears the query', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: {
         items: [{ label: 'Apricot unique', value: 'apricot' }, { label: 'Blueberry unique', value: 'blueberry' }],
         multiple: true,
@@ -455,7 +502,7 @@ describe('autocomplete', () => {
   })
 
   it('never creates a partial prefix when forceSelection is enabled', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems, multiple: true, forceSelection: true },
     })
 
@@ -471,7 +518,7 @@ describe('autocomplete', () => {
   })
 
   it('clears the selection when clearable and something is picked', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems, modelValue: 'apple', clearable: true },
     })
 
@@ -481,7 +528,7 @@ describe('autocomplete', () => {
   })
 
   it('commits unmatched typed text as a new value by default (no forceSelection)', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems },
     })
 
@@ -493,7 +540,7 @@ describe('autocomplete', () => {
   })
 
   it('leaves Enter to IME composition, then consumes creation and forced rejection', async () => {
-    const wrapper = await mountSuspended(Autocomplete, { props: { items: fruitItems } })
+    const wrapper = await mount(Autocomplete, { props: { items: fruitItems } })
     try {
       const input = wrapper.find('input')
       await input.setValue('created')
@@ -523,7 +570,7 @@ describe('autocomplete', () => {
       wrapper.unmount()
     }
 
-    const forced = await mountSuspended(Autocomplete, { props: { items: fruitItems, forceSelection: true } })
+    const forced = await mount(Autocomplete, { props: { items: fruitItems, forceSelection: true } })
     try {
       const input = forced.find('input')
       await input.setValue('rejected')
@@ -546,7 +593,7 @@ describe('autocomplete', () => {
 
   it('creates strings alongside numeric suggestions in single and multiple modes', async () => {
     for (const multiple of [false, true]) {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: [{ label: 'One', value: 1 }], multiple, defaultValue: multiple ? [1] : 1 },
       })
       try {
@@ -562,7 +609,7 @@ describe('autocomplete', () => {
   })
 
   it('reverts unmatched typed text on blur instead of committing it when forceSelection is on', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems, forceSelection: true },
     })
 
@@ -576,7 +623,7 @@ describe('autocomplete', () => {
 
   describe('icon slots', () => {
     it('replaces the clear icon via the clear-icon slot', async () => {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: fruitItems, modelValue: 'apple', clearable: true },
         slots: { 'clear-icon': '<span class="my-clear-icon">x</span>' },
       })
@@ -584,7 +631,7 @@ describe('autocomplete', () => {
     })
 
     it('replaces the dropdown chevron via the dropdown-icon slot', async () => {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: fruitItems, dropdown: true },
         slots: { 'dropdown-icon': '<span class="my-dropdown-icon">v</span>' },
       })
@@ -592,7 +639,7 @@ describe('autocomplete', () => {
     })
 
     it('replaces the loading spinner via the loading-icon slot', async () => {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: fruitItems, loading: true },
         slots: { 'loading-icon': '<span class="my-loading-icon">...</span>' },
       })
@@ -605,7 +652,7 @@ describe('autocomplete', () => {
   // unlike Select's plain-button trigger which has no input to attach to.
   describe('chip mode (multiple, TagsInputRoot-driven)', () => {
     it('renders a chip with an accessible delete button for each selected value', async () => {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
       })
       const removeButtons = wrapper.findAll('button').filter(b => b.attributes('aria-label')?.startsWith('Remove'))
@@ -614,7 +661,7 @@ describe('autocomplete', () => {
     })
 
     it('removes a chip via its delete button and emits the remaining values', async () => {
-      const wrapper = await mountSuspended(Autocomplete, {
+      const wrapper = await mount(Autocomplete, {
         props: { items: fruitItems, modelValue: ['apple', 'banana'], multiple: true, displayMode: 'chip' },
       })
       const removeButton = wrapper.findAll('button').find(b => b.attributes('aria-label') === 'Remove Apple')
@@ -629,7 +676,7 @@ describe('autocomplete', () => {
   // same coverage, but that doesn't prove this component's own forwarding
   // wires it up too.
   it('arrow renders the pointer triangle', async () => {
-    const wrapper = await mountSuspended(Autocomplete, {
+    const wrapper = await mount(Autocomplete, {
       props: { items: fruitItems, arrow: { width: 16, height: 8, rounded: true, padding: 12 } },
     })
 
@@ -677,7 +724,7 @@ describe('autocomplete (adaptive)', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    const wrapper = await mountSuspended(Autocomplete, { attachTo: container, props: { items: fruitItems, adaptive: true } })
+    const wrapper = await mount(Autocomplete, { attachTo: container, props: { items: fruitItems, adaptive: true } })
 
     const input = wrapper.find('input')
     input.element.focus()
