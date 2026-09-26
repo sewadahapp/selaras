@@ -13,6 +13,11 @@ describe('ssr', async () => {
     expect(html).toContain('<div>basic</div>')
   })
 
+  it('renders a page whose setup adds a toast', async () => {
+    const html = await $fetch('/')
+    expect(html).toContain('<div>basic</div>')
+  })
+
   it('keeps native form attributes on the input and defaults action buttons to type=button', async () => {
     const html = await $fetch('/')
     expect(html).toMatch(/<form id="native-form" action="\/submit" method="post">/)

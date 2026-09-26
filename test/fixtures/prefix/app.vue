@@ -6,6 +6,9 @@ import ComboboxModeForm from '../../nuxt/fixtures/ComboboxModeForm.vue'
 import VeeValidateForm from '../../nuxt/fixtures/VeeValidateForm.vue'
 
 const route = useRoute()
+// Adds a toast during setup, which also runs on the server.
+if (route.query.setupToast)
+  useToast().add({ title: 'Toast from setup' })
 const unknownRole = /** @type {any} */ ('not-registered')
 const scopedDate = new CalendarDate(2024, 1, 15)
 const floatingEmail = ref('')

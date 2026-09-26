@@ -22,8 +22,11 @@ export function useToast(): UseToastReturn {
   const snapshotTheme = useProgrammaticThemeSnapshot()
 
   function add(toast: ToastOptions) {
+    // Toasts are client-only state. A call made from `setup` runs again in
+    // the browser during hydration, and that call shows the toast - so the
+    // server render just skips it rather than failing the page.
     if (import.meta.server)
-      throw new Error('[useToast] add() is client-only. Render server-visible status content declaratively.')
+      return -1
     const id = service.nextId()
     service.toasts.value.push({ ...toast, id, _theme: snapshotTheme() })
     return id

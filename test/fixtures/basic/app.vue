@@ -1,4 +1,6 @@
 <script setup>
+// A toast added during setup must not fail the server render.
+useToast().add({ title: 'Saved' })
 </script>
 
 <template>
