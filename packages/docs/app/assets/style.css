@@ -166,6 +166,14 @@
     display: none;
   }
 
+  /* Reserve the sidebar's width for the brand, so the header menu's first
+     label lines up with the page content: sidebar (16rem) + the content's
+     inset from it (4rem), less the header's own padding (1.5rem), the
+     brand-to-menu gap (0.5rem), and the menu link's own padding (0.625rem). */
+  .selaras-docs-brand-area {
+    min-width: 17.375rem;
+  }
+
   .selaras-docs-page-grid {
     grid-template-columns: minmax(0, 1fr) 14rem;
   }

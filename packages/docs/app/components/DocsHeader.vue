@@ -16,16 +16,18 @@ watch(() => route.path, () => {
 
 <template>
   <SHeader :ui="{ root: 'selaras-docs-header' }">
-    <NuxtLink to="/" class="selaras-docs-brand" :aria-label="`${siteName} home`">
-      <DocsHeaderBrand />
-    </NuxtLink>
+    <div class="selaras-docs-brand-area">
+      <NuxtLink to="/" class="selaras-docs-brand" :aria-label="`${siteName} home`">
+        <DocsHeaderBrand />
+      </NuxtLink>
+    </div>
+    <SNavigationMenu
+      v-if="headerLinks.length"
+      :items="headerLinks"
+      variant="link"
+      :ui="{ root: 'hidden w-auto lg:flex' }"
+    />
     <template #right>
-      <SNavigationMenu
-        v-if="headerLinks.length"
-        :items="headerLinks"
-        variant="link"
-        :ui="{ root: 'hidden w-auto lg:flex' }"
-      />
       <DocsSearchButton v-if="docsConfig.header?.search !== false" />
       <SColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
       <SButton
