@@ -54,7 +54,7 @@ test('submits typed user selections and synchronizes native controls on library 
   await plan.click()
   await page.getByRole('option', { name: 'Free', exact: true }).click()
   await fixture.getByRole('button', { name: 'Date picker', exact: true }).click()
-  await page.locator('td button').filter({ hasText: /^20$/ }).click()
+  await page.getByRole('dialog', { name: 'Date picker' }).locator('td button').filter({ hasText: /^20$/ }).click()
   await fixture.locator('#integration-files').setInputFiles({ name: 'proof.txt', mimeType: 'text/plain', buffer: Buffer.from('proof') })
   await fixture.getByRole('button', { name: 'Submit', exact: true }).click()
   await expect.poll(() => fixture.locator('[data-test="submitted"]').evaluate(el => el.textContent ? JSON.parse(el.textContent) : null)).toEqual({
