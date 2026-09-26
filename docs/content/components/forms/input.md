@@ -77,6 +77,20 @@ See the [Props](#props) table below.
 <SInput v-model="danger" color="danger" placeholder="Danger" />
 ```
 
+### Masking
+
+Use the [`v-mask`](/utilities/directives/mask) directive to format the text as
+it's typed. `v-model` keeps the raw value, while the field shows the
+formatted one - typing `5551234567` below shows `(555) 123-4567`, and
+`phone` is `5551234567`:
+
+::component-example{name="input-masked"}
+::
+
+```vue-html
+<SInput v-model="phone" v-mask="'(###) ###-####'" inputmode="tel" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid`

@@ -38,6 +38,7 @@ const nestedTokens = ref({
 const radioValues = ref({ primary: 'one', enterprise: 'one' })
 const activeScrollableTab = ref('tab-1')
 const wideTabs = ref(false)
+const maskedPhone = ref('')
 const scrollableTabs = Array.from({ length: 12 }, (_, index) => ({ label: `Tab ${index + 1}`, value: `tab-${index + 1}` }))
 
 function updateNestedTokens() {
@@ -329,6 +330,13 @@ function updateNestedTokens() {
         </template>
       </STabs>
     </div>
+  </section>
+  <section v-if="route.query.mask" id="mask-fixture">
+    <SInput id="masked-phone" v-model="maskedPhone" v-mask="'(###) ###-####'" />
+    <output id="masked-phone-value">{{ maskedPhone }}</output>
+    <button type="button" @click="maskedPhone = '5551234567'">
+      Set phone
+    </button>
   </section>
   <section v-if="route.query.tabs" id="custom-scrollable-tabs-fixture" style="width: 18rem;">
     <STabs :items="scrollableTabs" scrollable>
