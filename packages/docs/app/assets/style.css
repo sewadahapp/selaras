@@ -206,7 +206,9 @@
 
 .selaras-docs-brand {
   gap: 0.625rem;
+  font-size: 1.125rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .selaras-docs-logo {
