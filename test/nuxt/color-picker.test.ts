@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import ColorPicker from '../../src/runtime/components/ColorPicker.vue'
+import FormField from '../../src/runtime/components/FormField.vue'
 import './helpers/adaptive-breakpoint'
 
 function trigger(wrapper: Awaited<ReturnType<typeof mountSuspended>>) {
@@ -48,6 +49,24 @@ describe('colorPicker', () => {
     await nextTick()
     await nextTick()
     expect(new FormData(form).get('color')).toBe('#ff0000')
+    wrapper.unmount()
+  })
+
+  it('does not submit a value while disabled, like a disabled native control', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [h(ColorPicker, { name: 'color', defaultValue: '#00ff00', disabled: true })]),
+    }))
+    expect(new FormData(wrapper.find('form').element).has('color')).toBe(false)
+    wrapper.unmount()
+  })
+
+  it('submits under the enclosing FormField name when it has none of its own', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(FormField, { label: 'Brand', name: 'brand' }, () => h(ColorPicker, { defaultValue: '#00ff00' })),
+      ]),
+    }))
+    expect(new FormData(wrapper.find('form').element).get('brand')).toBe('#00ff00')
     wrapper.unmount()
   })
 
@@ -314,6 +333,27 @@ describe('colorPicker (adaptive)', () => {
     await nextTick()
 
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['#00ff00'])
+
+    wrapper.unmount()
+    restore()
+  })
+
+  it('keeps a single trigger mounted and returns focus to it when the adaptive modal closes', async () => {
+    const restore = mockMatchMedia(true)
+    const wrapper = await mountSuspended(ColorPicker, { props: { modelValue: '#7c3aed', adaptive: true }, attachTo: document.body })
+    const button = trigger(wrapper).element as HTMLButtonElement
+    button.focus()
+    await open(wrapper)
+    expect(hasModalOverlay()).toBe(true)
+    expect(document.body.querySelectorAll('[role="application"]')).toHaveLength(1)
+
+    document.activeElement?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
+    await nextTick()
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(trigger(wrapper).element).toBe(button)
+    expect(button.isConnected).toBe(true)
+    expect(document.activeElement).toBe(button)
 
     wrapper.unmount()
     restore()

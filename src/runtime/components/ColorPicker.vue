@@ -5,16 +5,19 @@ import type { RoundedArrowConfig } from '../utils/arrow'
 import type { ColorRole } from '../utils/color-registry'
 import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
-import { ColorSwatch } from 'reka-ui'
+import { ColorSwatch, PopoverArrow, PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useFormField } from '../composables/use-form-field'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import ColorPickerBody from '../internal/ColorPickerBody.vue'
 import { colorPickerTheme } from '../theme/color-picker'
+import { popoverTheme } from '../theme/popover'
+import { arrowContentProps, arrowElementProps } from '../utils/arrow'
+import { overlayPortalProps } from '../utils/overlay'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Modal from './Modal.vue'
-import Popover from './Popover.vue'
 
 type ColorPickerVariants = VariantProps<typeof colorPickerTheme>
 
@@ -59,6 +62,8 @@ export interface ColorPickerEmits {
 }
 
 const messages = useMessages()
+const field = useFormField()
+const formName = computed(() => props.name ?? field?.name)
 const instance = getCurrentInstance()!
 const formAnchor = ref<HTMLInputElement>()
 const initialColor = props.defaultValue ?? '#000000'
@@ -168,10 +173,18 @@ const bodyProps = computed(() => ({
   colorRoleMarker: colorRoleMarker.value,
 }))
 
-// Passed to Popover's own `ui.content` override - none of Popover's own
-// content chrome needs to change, only its size/padding for this picker's
-// own layout, same as ComboboxSelectBase's mobile Modal content override.
-const popoverUi = computed(() => ({ content: resolveSlot(ui.value.content, props.ui?.content) }))
+// The anchored picker renders Reka's popover primitives directly, with
+// SPopover's own theme, so the content can be removed outright (not
+// animated closed) when the adaptive modal takes over.
+const popoverThemeFn = useComponentTheme('popover', popoverTheme)
+const popoverUi = computed(() => popoverThemeFn.value())
+const popoverContentProps = computed(() => ({
+  ...resolveSlot(popoverUi.value.content, resolveSlot(ui.value.content, props.ui?.content)),
+  ...arrowContentProps(props.arrow),
+  ...props.positioning,
+}))
+const popoverArrowProps = computed(() => ({ ...resolveSlot(popoverUi.value.arrow, undefined), ...arrowElementProps(props.arrow) }))
+const popoverPortalProps = computed(() => overlayPortalProps(props.portal))
 // Same radius-matching override as Select/Autocomplete/DatePicker's own
 // mobile Modal - Modal's own default content radius (--selaras-resolved-radius-lg) is
 // visibly larger than every desktop popover's own (--selaras-resolved-radius-md).
@@ -183,49 +196,54 @@ const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, pr
 </script>
 
 <template>
-  <Popover v-if="!showMobileModal" :open="open" align="start" :arrow="arrow" :positioning="positioning" :portal="portal" :ui="popoverUi" @update:open="onUpdateOpen">
-    <button
-      type="button"
-      :disabled="disabled"
-      :aria-label="messages.colorPicker"
-      :data-selaras-color="colorRoleMarker"
-      :data-selaras-theme="themeBindings['data-selaras-theme']"
-      :data-selaras-mode="themeBindings['data-selaras-mode']"
-      :style="themeBindings.style"
-      v-bind="triggerProps"
-    >
-      <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
-      <span v-bind="triggerValueProps">{{ internalColor }}</span>
-    </button>
+  <!--
+    The root and trigger stay mounted for both presentations. Only the
+    content switches: the anchored panel is removed outright while the
+    adaptive Modal is showing, and the Modal returns focus to this same
+    trigger on close.
+  -->
+  <PopoverRoot :open="open" @update:open="onUpdateOpen">
+    <PopoverTrigger as-child>
+      <button
+        type="button"
+        :disabled="disabled"
+        :aria-label="messages.colorPicker"
+        :data-selaras-color="colorRoleMarker"
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
+        v-bind="triggerProps"
+      >
+        <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
+        <span v-bind="triggerValueProps">{{ internalColor }}</span>
+      </button>
+    </PopoverTrigger>
 
-    <template #content>
-      <ColorPickerBody v-bind="bodyProps" @update:model-value="onUpdateColor" />
-    </template>
-  </Popover>
-
-  <Modal
-    v-else :open="open" :title="messages.colorPicker" :description="messages.colorPickerDescription"
-    :ui="adaptiveUi" @update:open="onUpdateOpen"
-  >
-    <button
-      type="button"
-      :disabled="disabled"
-      :aria-label="messages.colorPicker"
-      :data-selaras-color="colorRoleMarker"
-      :data-selaras-theme="themeBindings['data-selaras-theme']"
-      :data-selaras-mode="themeBindings['data-selaras-mode']"
-      :style="themeBindings.style"
-      v-bind="triggerProps"
-    >
-      <ColorSwatch :color="internalColor" v-bind="triggerSwatchProps" />
-      <span v-bind="triggerValueProps">{{ internalColor }}</span>
-    </button>
-
-    <template #content>
-      <div v-bind="mobileContentProps">
+    <PopoverPortal v-if="!showMobileModal" v-bind="popoverPortalProps">
+      <PopoverContent
+        :data-selaras-theme="themeBindings['data-selaras-theme']"
+        :data-selaras-mode="themeBindings['data-selaras-mode']"
+        :style="themeBindings.style"
+        side="bottom"
+        align="start"
+        :side-offset="8"
+        v-bind="popoverContentProps"
+      >
         <ColorPickerBody v-bind="bodyProps" @update:model-value="onUpdateColor" />
-      </div>
-    </template>
-  </Modal>
-  <input ref="formAnchor" type="hidden" :name="name" :form="form" :value="internalColor">
+        <PopoverArrow v-if="arrow" v-bind="popoverArrowProps" />
+      </PopoverContent>
+    </PopoverPortal>
+
+    <Modal
+      v-else :open="open" :title="messages.colorPicker" :description="messages.colorPickerDescription"
+      :ui="adaptiveUi" @update:open="onUpdateOpen"
+    >
+      <template #content>
+        <div v-bind="mobileContentProps">
+          <ColorPickerBody v-bind="bodyProps" @update:model-value="onUpdateColor" />
+        </div>
+      </template>
+    </Modal>
+  </PopoverRoot>
+  <input ref="formAnchor" type="hidden" :name="formName" :form="form" :value="internalColor" :disabled="disabled">
 </template>
