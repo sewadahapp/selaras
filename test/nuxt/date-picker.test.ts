@@ -92,6 +92,15 @@ describe('datePicker', () => {
     expect(new FormData(form).get('date')).toBe('2024-01-15')
   })
 
+  it('does not submit a value while disabled, like a disabled native control', async () => {
+    wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, [
+        h(DatePicker, { name: 'date', disabled: true, modelValue: new CalendarDate(2024, 1, 15) }),
+      ]),
+    }))
+    expect(new FormData(wrapper.find('form').element).has('date')).toBe(false)
+  })
+
   it('restores an uncontrolled default value on native form reset', async () => {
     wrapper = await mountSuspended(defineComponent({
       render: () => h('form', {}, [

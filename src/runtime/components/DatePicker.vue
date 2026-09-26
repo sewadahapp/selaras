@@ -1103,5 +1103,5 @@ const buttonTriggerUi = computed(() => ({
       </template>
     </Modal>
   </DatePickerRoot>
-  <input ref="formAnchor" type="hidden" :name="formName" :form="form" :value="nativeFormValue">
+  <input ref="formAnchor" type="hidden" :name="formName" :form="form" :value="nativeFormValue" :disabled="disabled">
 </template>
