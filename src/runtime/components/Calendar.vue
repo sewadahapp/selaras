@@ -160,7 +160,7 @@ const dayDetailsId = (month: DateValue, date: DateValue) => `${detailsId}-${mont
         <CalendarGrid v-for="month in grid" :key="month.value.toString()" v-bind="gridProps">
           <CalendarGridHead v-bind="gridHeadProps">
             <CalendarGridRow>
-              <CalendarHeadCell v-for="day in weekDays" :key="day" v-bind="headCellProps">
+              <CalendarHeadCell v-for="(day, index) in weekDays" :key="index" v-bind="headCellProps">
                 {{ day }}
               </CalendarHeadCell>
             </CalendarGridRow>

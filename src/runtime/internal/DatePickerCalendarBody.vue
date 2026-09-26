@@ -138,7 +138,7 @@ const cellTriggerUi = {
       <DatePickerGrid v-for="month in grid" :key="month.value.toString()" v-bind="gridProps">
         <DatePickerGridHead v-bind="gridHeadProps">
           <DatePickerGridRow>
-            <DatePickerHeadCell v-for="day in weekDays" :key="day" v-bind="headCellProps">
+            <DatePickerHeadCell v-for="(day, index) in weekDays" :key="index" v-bind="headCellProps">
               {{ day }}
             </DatePickerHeadCell>
           </DatePickerGridRow>

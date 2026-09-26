@@ -1,13 +1,27 @@
 import type { DateValue } from '@internationalized/date'
 import { CalendarDate } from '@internationalized/date'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import Calendar from '../../src/runtime/components/Calendar.vue'
 
 const january = new CalendarDate(2024, 1, 15)
 
 describe('calendar', () => {
+  it('re-renders repeated narrow weekday labels without duplicate keys', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = await mountSuspended(Calendar, { props: { defaultPlaceholder: january, weekStartsOn: 0 } })
+    expect(wrapper.findAll('th').map(cell => cell.text())).toEqual(['S', 'M', 'T', 'W', 'T', 'F', 'S'])
+
+    await wrapper.setProps({ weekStartsOn: 1 })
+    await nextTick()
+
+    expect(wrapper.findAll('th').map(cell => cell.text())).toEqual(['M', 'T', 'W', 'T', 'F', 'S', 'S'])
+    expect(warn.mock.calls.flat().join(' ')).not.toMatch(/duplicate keys/i)
+    warn.mockRestore()
+    wrapper.unmount()
+  })
+
   it('renders an inline date grid and updates uncontrolled selection', async () => {
     const wrapper = await mountSuspended(Calendar, { props: { defaultPlaceholder: january } })
     const day = wrapper.find('[data-value="2024-01-18"]')

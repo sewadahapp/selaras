@@ -71,7 +71,7 @@ const rangeCellTriggerUi = {
       <DateRangePickerGrid v-for="month in grid" :key="month.value.toString()" v-bind="gridProps">
         <DateRangePickerGridHead v-bind="gridHeadProps">
           <DateRangePickerGridRow>
-            <DateRangePickerHeadCell v-for="day in weekDays" :key="day" v-bind="headCellProps">
+            <DateRangePickerHeadCell v-for="(day, index) in weekDays" :key="index" v-bind="headCellProps">
               {{ day }}
             </DateRangePickerHeadCell>
           </DateRangePickerGridRow>
