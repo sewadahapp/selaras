@@ -9,6 +9,12 @@ export default defineAppConfig({
     site: {
       name: 'Selaras',
       description: 'Nuxt-first components for adaptable design systems.',
+      logo: {
+        light: '/logo.svg',
+        dark: '/logo-dark.svg',
+        alt: 'Selaras',
+      },
+      favicon: '/favicon.svg',
     },
     repository: {
       url: 'https://github.com/sewadahapp/selaras',
