@@ -165,8 +165,8 @@ export default defineNuxtModule<ModuleOptions>({
     // console warnings) with a bare v-ripple and zero explicit import
     // anywhere. Consumers can still `import { vRipple } from
     // '@sewadah/selaras/directives'` explicitly too (see its own barrel file) -
-    // the two aren't mutually exclusive, and the explicit path stays
-    // useful for a non-Nuxt Vue app, or one with autoImport disabled.
+    // the two aren't mutually exclusive, and the explicit path is what a
+    // Nuxt app with auto-imports disabled uses.
     addImports({
       name: 'vRipple',
       from: resolver.resolve('./runtime/directives/ripple'),

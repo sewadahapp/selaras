@@ -69,15 +69,6 @@ const rippleEnabled = useRippleEnabled()
 </template>
 ```
 
-## Outside a Nuxt app
-
-`v-ripple` is also exported explicitly, for a plain Vue app or one with
-auto-imports disabled:
-
-```ts
-import { vRipple } from '@sewadah/selaras/directives'
-```
-
 ## Behavior notes
 
 - The host element gets `position: relative; overflow: hidden` applied

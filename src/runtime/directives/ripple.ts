@@ -15,12 +15,12 @@ import type { Directive } from 'vue'
 //   before finding addImports' meta option).
 // - Explicit `import { vRipple } from '../directives/ripple'` (or, for an
 //   external consumer, `from '@sewadah/selaras/directives'`) still works too, and
-//   stays useful outside a Nuxt app entirely, or one with autoImport
-//   disabled - Vue (3.3+) auto-registers any `<script setup>` import
-//   matching the vXxx naming convention as a local directive under that
-//   name, no explicit directive registration needed on top of the import
-//   itself. Icon.vue in this codebase is imported explicitly the same
-//   way, rather than relying on Nuxt's own auto-registered global <Icon>.
+//   is what a Nuxt app with auto-imports disabled uses - Vue (3.3+)
+//   auto-registers any `<script setup>` import matching the vXxx naming
+//   convention as a local directive under that name, no explicit directive
+//   registration needed on top of the import itself. Icon.vue in this
+//   codebase is imported explicitly the same way, rather than relying on
+//   Nuxt's own auto-registered global <Icon>.
 
 export interface RippleOptions {
   /** Fill color for the ripple. @default 'currentColor' */
