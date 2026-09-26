@@ -47,6 +47,9 @@ export default defineAppConfig({
     site: {
       name: 'My project',
       description: 'Documentation for my project.',
+      // Files in public/. Use one path, or separate light and dark images.
+      logo: { light: '/logo.svg', dark: '/logo-dark.svg' },
+      favicon: '/favicon.svg',
     },
     repository: {
       url: 'https://github.com/example/project',
@@ -69,7 +72,18 @@ export default defineAppConfig({
 ```
 
 Create an application component with the same name as a layer component, such
-as `components/DocsHeader.vue`, to replace that part of the shell. For a host
-that owns Tailwind compilation or uses a class prefix, set
+as `components/DocsHeader.vue`, to replace that part of the shell. Smaller
+pieces can be replaced on their own:
+
+| Component | Controls | Default |
+| --- | --- | --- |
+| `DocsHeaderBrand` | The header's home link content | `site.logo` and the site name |
+| `DocsFooterBrand` | The start of the footer | `footer.text` |
+| `DocsLogo` | The logo image, used by `DocsHeaderBrand` | `site.logo`, switching light/dark; size it with `--selaras-docs-logo-height` |
+
+For example, a `components/DocsFooterBrand.vue` containing `<DocsLogo />` adds
+the logo to the footer while leaving the header as configured.
+
+For a host that owns Tailwind compilation or uses a class prefix, set
 `selarasDocs: { css: false }` in `nuxt.config.ts` and import Selaras and the
 docs stylesheet from the host CSS entry.

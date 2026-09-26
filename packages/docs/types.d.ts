@@ -39,7 +39,10 @@ export interface SelarasDocsAppConfig {
   site?: {
     name?: string
     description?: string
+    /** Shown in the header and footer. A `/`-rooted path is served from `public/` under the app's base URL. */
     logo?: string | SelarasDocsLogo
+    /** The browser tab icon, e.g. `/favicon.svg`, resolved like `logo`. */
+    favicon?: string
   }
   repository?: {
     url?: string

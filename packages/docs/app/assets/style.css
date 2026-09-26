@@ -204,7 +204,7 @@
 .selaras-docs-logo {
   display: block;
   width: auto;
-  height: 1.75rem;
+  height: var(--selaras-docs-logo-height, 1.75rem);
 }
 
 .selaras-docs-logo--dark {

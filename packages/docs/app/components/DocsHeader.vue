@@ -6,12 +6,6 @@ const navigationOpen = ref(false)
 
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
 const siteName = computed(() => docsConfig.value.header?.title ?? docsConfig.value.site?.name ?? 'Documentation')
-const showTitle = computed(() => docsConfig.value.header?.showTitle !== false)
-const logo = computed(() => docsConfig.value.site?.logo)
-const logoAlt = computed(() => typeof logo.value === 'object' ? (logo.value.alt ?? siteName.value) : siteName.value)
-const lightLogo = computed(() => typeof logo.value === 'string' ? logo.value : (logo.value?.light ?? logo.value?.dark))
-const darkLogo = computed(() => typeof logo.value === 'object' ? (logo.value.dark ?? logo.value.light) : logo.value)
-const hasDistinctLogos = computed(() => Boolean(lightLogo.value && darkLogo.value && lightLogo.value !== darkLogo.value))
 const headerLinks = computed(() => docsConfig.value.header?.links ?? [])
 const repositoryUrl = computed(() => docsConfig.value.repository?.url)
 
@@ -23,11 +17,7 @@ watch(() => route.path, () => {
 <template>
   <SHeader :ui="{ root: 'selaras-docs-header' }">
     <NuxtLink to="/" class="selaras-docs-brand" :aria-label="`${siteName} home`">
-      <template v-if="lightLogo">
-        <img :src="lightLogo" :alt="logoAlt" class="selaras-docs-logo" :class="{ 'selaras-docs-logo--light': hasDistinctLogos }">
-        <img v-if="hasDistinctLogos" :src="darkLogo" :alt="logoAlt" class="selaras-docs-logo selaras-docs-logo--dark">
-      </template>
-      <span v-if="showTitle">{{ siteName }}</span>
+      <DocsHeaderBrand />
     </NuxtLink>
     <template #right>
       <SNavigationMenu
