@@ -4,7 +4,7 @@ import type { TabsThemeSlots } from '../theme/tabs'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { TabsContent, TabsIndicator, TabsList, TabsRoot, TabsTrigger } from 'reka-ui'
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { tabsTheme } from '../theme/tabs'
@@ -148,8 +148,15 @@ function scrollActiveIntoView(behavior: ScrollBehavior = 'auto') {
     viewport.scrollBy({ left: delta, behavior })
 }
 
+// With v-model, the modelValue watcher below reveals the new tab - scrolling
+// here too would start a second scroll that cuts the first one short.
+const instance = getCurrentInstance()
+const isControlled = () => Object.hasOwn(instance?.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance?.vnode.props ?? {}, 'model-value')
+
 async function onValueChange(value: string) {
   emit('update:modelValue', value)
+  if (isControlled())
+    return
   await nextTick()
   scrollActiveIntoView(scrollBehavior())
 }
@@ -179,7 +186,7 @@ onUnmounted(() => {
 
 watch(() => props.modelValue, async () => {
   await nextTick()
-  scrollActiveIntoView()
+  scrollActiveIntoView(scrollBehavior())
 })
 
 watch(horizontalScrollable, async () => {
