@@ -67,6 +67,7 @@ import type { switchTheme, SwitchThemeSlots } from './theme/switch'
 import type { tableTheme, TableThemeSlots } from './theme/table'
 import type { tabsTheme, TabsThemeSlots } from './theme/tabs'
 import type { textareaTheme, TextareaThemeSlots } from './theme/textarea'
+import type { timelineTheme, TimelineThemeSlots } from './theme/timeline'
 import type { toastTheme, ToastThemeSlots } from './theme/toast'
 import type { toggleTheme, ToggleThemeSlots } from './theme/toggle'
 import type { toggleGroupTheme, ToggleGroupThemeSlots } from './theme/toggle-group'
@@ -118,6 +119,7 @@ type SkeletonVariants = VariantProps<typeof skeletonTheme>
 type SliderVariants = VariantProps<typeof sliderTheme>
 type SwitchVariants = VariantProps<typeof switchTheme>
 type StepperVariants = VariantProps<typeof stepperTheme>
+type TimelineVariants = VariantProps<typeof timelineTheme>
 type TabsVariants = VariantProps<typeof tabsTheme>
 type TextareaVariants = VariantProps<typeof textareaTheme>
 type ToastVariants = VariantProps<typeof toastTheme>
@@ -399,6 +401,10 @@ export interface ThemeComponentRegistry {
   stepper: {
     slots: StepperThemeSlots
     conditions: WithRegisteredColor<Pick<StepperVariants, 'color' | 'size' | 'orientation'>>
+  }
+  timeline: {
+    slots: TimelineThemeSlots
+    conditions: WithRegisteredColor<Pick<TimelineVariants, 'color' | 'size' | 'orientation' | 'align'>>
   }
   tabs: {
     slots: TabsThemeSlots
