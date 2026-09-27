@@ -9,7 +9,7 @@ export const tableTheme = tv({
     tr: 'border-b border-[var(--selaras-resolved-border-default)] last:border-b-0',
     th: 'text-start font-medium text-[var(--selaras-resolved-text-muted)] whitespace-nowrap data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--selaras-resolved-surface-elevated)]',
     thSortable: 'cursor-pointer select-none hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--_selaras-color-focus)]',
-    sortIcon: 'ms-1 inline-block size-3.5 align-text-bottom text-[var(--selaras-resolved-text-muted)]',
+    sortIcon: 'ms-1 inline-block size-3.5 align-text-bottom text-[var(--selaras-resolved-text-muted)] data-[sort-state=none]:opacity-50',
     td: 'text-[var(--selaras-resolved-text-default)] data-[pinned]:sticky data-[pinned]:z-[1] data-[pinned]:bg-[var(--selaras-resolved-surface-default)]',
     tfoot: 'bg-[var(--selaras-resolved-surface-elevated)] font-medium',
     emptyState: 'px-3 py-8 text-center text-sm text-[var(--selaras-resolved-text-muted)]',

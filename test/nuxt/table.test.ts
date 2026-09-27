@@ -38,6 +38,42 @@ describe('table', () => {
     expect(rows[1]!.text()).toBe('Bob')
   })
 
+  it('does not make raw accessor columns sortable by default', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Charlie' }, { name: 'Alice' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+      },
+    })
+    const header = wrapper.find('th')
+
+    expect(header.attributes('tabindex')).toBeUndefined()
+    expect(header.attributes('aria-sort')).toBeUndefined()
+    expect(header.find('[data-sort-state]').exists()).toBe(false)
+
+    await header.trigger('click')
+    await nextTick()
+    expect(wrapper.emitted('update:sorting')).toBeUndefined()
+    expect(wrapper.findAll('tbody tr').map(row => row.text())).toEqual(['Charlie', 'Alice'])
+  })
+
+  it('defaults SColumn to non-sortable and enables it when sortable is set', async () => {
+    const data = [{ name: 'Charlie' }, { name: 'Alice' }]
+    const makeTable = (sortable?: boolean) => mountSuspended(Table, {
+      props: { data },
+      slots: {
+        default: () => h(Column, { field: 'name', header: 'Name', ...(sortable ? { sortable } : {}) }),
+      },
+    })
+
+    const plain = await makeTable()
+    const optedIn = await makeTable(true)
+
+    expect(plain.find('th').attributes('tabindex')).toBeUndefined()
+    expect(optedIn.find('th').attributes('tabindex')).toBe('0')
+    expect(optedIn.find('[data-sort-state="none"]').exists()).toBe(true)
+  })
+
   it('shows the empty slot when there is no data', async () => {
     const wrapper = await mountSuspended(Table, {
       props: { data: [], columns: [{ accessorKey: 'name', header: 'Name' }] },
@@ -83,16 +119,25 @@ describe('table', () => {
 
     expect(header.attributes('tabindex')).toBe('0')
     expect(header.attributes('aria-sort')).toBe('none')
+    expect(header.find('[data-sort-state="none"]').exists()).toBe(true)
 
     await header.trigger('keydown.enter')
     await nextTick()
     expect(rowText()).toEqual(['Alice', 'Bob', 'Charlie'])
     expect(header.attributes('aria-sort')).toBe('ascending')
+    expect(header.find('[data-sort-state="asc"]').exists()).toBe(true)
 
     await header.trigger('keydown.space')
     await nextTick()
     expect(rowText()).toEqual(['Charlie', 'Bob', 'Alice'])
     expect(header.attributes('aria-sort')).toBe('descending')
+    expect(header.find('[data-sort-state="desc"]').exists()).toBe(true)
+
+    await header.trigger('click')
+    await nextTick()
+    expect(rowText()).toEqual(['Charlie', 'Alice', 'Bob'])
+    expect(header.attributes('aria-sort')).toBe('none')
+    expect(header.find('[data-sort-state="none"]').exists()).toBe(true)
   })
 
   it('does not reorder rows from a header click when sorting is controlled by the parent', async () => {

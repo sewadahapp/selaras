@@ -10,6 +10,7 @@ export interface IconRegistry {
   chevronsRight: string
   loading: string
   search: string
+  sortUnsorted: string
   sortAscending: string
   sortDescending: string
   columns: string
@@ -62,6 +63,7 @@ export const defaultIcons: IconRegistry = {
   chevronsRight: 'hugeicons:next',
   loading: 'hugeicons:loading-02',
   search: 'hugeicons:search-01',
+  sortUnsorted: 'hugeicons:sorting-05',
   // "arrow-*-02" (shaft + arrowhead) - kept visually distinct from the
   // plain chevrons above, matching the original caret-vs-arrow split.
   sortAscending: 'hugeicons:arrow-up-02',

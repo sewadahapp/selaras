@@ -27,7 +27,7 @@ const globalFilter = ref('')
       selectable
       :page-size="3"
     >
-      <SColumn field="name" header="Name" filterable />
+      <SColumn field="name" header="Name" filterable sortable />
       <SColumn field="email" header="Email" />
       <SColumn field="role" header="Role" />
     </STable>

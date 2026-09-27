@@ -164,6 +164,9 @@ export function useTable<TData extends RowData>(props: UseTableProps<TData>, emi
   const table = useAppTable<TData>({
     data: computed(() => props.data),
     columns,
+    // TanStack enables sorting by default for accessor columns. Selaras opts
+    // columns into sorting explicitly, matching the declarative SColumn API.
+    defaultColumn: { enableSorting: false },
     enableRowSelection: computed(() => !!props.selectable),
     getRowId: props.getRowId,
     // Row expansion otherwise only allows expanding rows that already have

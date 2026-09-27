@@ -115,7 +115,7 @@ export function convertChildrenToColumns(vnodes: VNode[] | undefined): any[] {
           accessorKey: props.field,
           header: buildHeaderOrFooter(slots.header, props.header ?? props.field),
           footer: buildHeaderOrFooter(slots.footer, props.footer),
-          enableSorting: toBooleanProp(props.sortable, true),
+          enableSorting: toBooleanProp(props.sortable, false),
           sortFn: 'alphanumeric',
           enableColumnFilter: toBooleanProp(props.filterable, false),
           filterFn: 'includesString',

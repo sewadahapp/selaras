@@ -29,7 +29,7 @@ export default defineComponent({
     },
     sortable: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     filterable: {
       type: Boolean,

@@ -23,10 +23,15 @@ describe('convertChildrenToColumns', () => {
   })
 
   describe('bare boolean shorthand handling', () => {
-    it('treats an absent prop as its own default (sortable: true, filterable: false)', () => {
+    it('treats an absent prop as its own default (sortable: false, filterable: false)', () => {
       const [col] = convertChildrenToColumns([h(Column, { field: 'x' })])
-      expect(col.enableSorting).toBe(true)
+      expect(col.enableSorting).toBe(false)
       expect(col.enableColumnFilter).toBe(false)
+    })
+
+    it('enables sorting for an explicit bare sortable prop', () => {
+      const [col] = convertChildrenToColumns([h(Column, { field: 'x', sortable: '' as any })])
+      expect(col.enableSorting).toBe(true)
     })
 
     it('treats an explicit empty-string prop value as true - the compiled shape of a bare `<SColumn filterable />` shorthand, since the decoy component never mounts to let Vue cast it', () => {
@@ -34,7 +39,7 @@ describe('convertChildrenToColumns', () => {
       expect(col.enableColumnFilter).toBe(true)
     })
 
-    it('respects an explicit false even though the default is true', () => {
+    it('respects an explicit false', () => {
       const [col] = convertChildrenToColumns([h(Column, { field: 'x', sortable: false })])
       expect(col.enableSorting).toBe(false)
     })

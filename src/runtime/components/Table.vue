@@ -296,13 +296,9 @@ defineExpose({
                 <template v-if="!header.isPlaceholder || header.rowSpan > 1">
                   <FlexRender :header="header" />
                   <Icon
-                    v-if="header.column.getIsSorted() === 'asc'"
-                    :name="icons.sortAscending"
-                    v-bind="sortIconProps"
-                  />
-                  <Icon
-                    v-else-if="header.column.getIsSorted() === 'desc'"
-                    :name="icons.sortDescending"
+                    v-if="header.column.getCanSort()"
+                    :name="header.column.getIsSorted() === 'asc' ? icons.sortAscending : header.column.getIsSorted() === 'desc' ? icons.sortDescending : icons.sortUnsorted"
+                    :data-sort-state="header.column.getIsSorted() || 'none'"
                     v-bind="sortIconProps"
                   />
                   <div v-if="header.column.getCanFilter()">

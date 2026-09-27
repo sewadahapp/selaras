@@ -48,8 +48,9 @@ together, rather than needing a separate override for each.
 | `chevronsRight` | `hugeicons:next` | Pagination's last-page control |
 | `loading` | `hugeicons:loading-02` | Button/Switch's loading spinner |
 | `search` | `hugeicons:search-01` | CommandPalette, Autocomplete |
-| `sortAscending` | `hugeicons:arrow-up-02` | Table's sortable column headers |
-| `sortDescending` | `hugeicons:arrow-down-02` | Table's sortable column headers |
+| `sortUnsorted` | `hugeicons:sorting-05` | Table's sortable column headers when not sorted |
+| `sortAscending` | `hugeicons:arrow-up-02` | Table's ascending sort state |
+| `sortDescending` | `hugeicons:arrow-down-02` | Table's descending sort state |
 | `columns` | `hugeicons:table-columns-split` | Table's column-toggle control |
 | `copy` | `hugeicons:copy` | CodeButton |
 | `lightMode` | `hugeicons:sun-01` | ColorModeToggle |

@@ -36,22 +36,21 @@ const getUserId = (user: User) => user.email
     selectable
     :page-size="3"
   >
-    <SColumn field="name" header="Name" filterable />
+    <SColumn field="name" header="Name" filterable sortable />
     <SColumn field="email" header="Email" />
     <SColumn field="role" header="Role" />
   </STable>
 </template>
 ```
 
-Every column is sortable by default (click a header, or focus it and press
-<kbd>Enter</kbd>/<kbd>Space</kbd>, to cycle ascending/descending/none) - set
-`sortable="false"` on a column to opt out. Shift-click a second sortable
-header to add it as a secondary sort without clearing the first (a third
-click on the same header clears its own sort instead of cycling back to
-ascending) - both come from TanStack Table's own defaults, not something
-`STable` implements itself. `filterable` adds a per-column text filter
-input to that column's header. `selectable` adds a leading checkbox column
-wired to `v-model:row-selection`.
+Columns are not sortable by default. Add `sortable` to an `<SColumn>` to
+enable sorting; an adjacent icon shows its current state (unsorted, ascending,
+or descending). Click a sortable header, or focus it and press
+<kbd>Enter</kbd>/<kbd>Space</kbd>, to cycle through those states. Shift-click
+a second sortable header to add it as a secondary sort without clearing the
+first. `filterable` adds a per-column text filter input to that column's
+header. `selectable` adds a leading checkbox column wired to
+`v-model:row-selection`.
 
 Use `select-on-row-click` alongside `selectable` to toggle selection by
 clicking anywhere on a row. Clicks on controls inside cells (such as links,
@@ -132,7 +131,7 @@ change it freely afterward:
 
 ```vue-html
 <STable :data="users" :default-sorting="[{ id: 'name', desc: false }]">
-  <SColumn field="name" header="Name" />
+  <SColumn field="name" header="Name" sortable />
 </STable>
 ```
 
@@ -411,8 +410,8 @@ watch([sorting, pageIndex], async () => {
     manual-sorting
     manual-pagination
   >
-    <SColumn field="name" header="Name" />
-    <SColumn field="email" header="Email" />
+    <SColumn field="name" header="Name" sortable />
+    <SColumn field="email" header="Email" sortable />
   </STable>
   <SPagination
     :page="pageIndex + 1"
@@ -426,9 +425,11 @@ watch([sorting, pageIndex], async () => {
 ### Escape hatch: raw column defs
 
 For full TanStack type inference (or features `<SColumn>` doesn't expose),
-pass a `columns` prop instead of `<SColumn>` children. `STable` infers its row
-type from `data`, and `TableColumnDef<TData>` checks accessor keys and render
-contexts against that same type. `createTableColumnHelper<TData>()` is
+pass a `columns` prop instead of `<SColumn>` children. Raw column definitions
+also start non-sortable; set `enableSorting: true` on columns that should sort.
+`STable` infers its row type from `data`, and `TableColumnDef<TData>` checks
+accessor keys and render contexts against that same type.
+`createTableColumnHelper<TData>()` is
 auto-imported by the Nuxt module and binds TanStack v9's feature generic to the
 fixed feature set used by `STable`:
 
@@ -438,9 +439,10 @@ interface User { id: string, name: string, age: number }
 
 const column = createTableColumnHelper<User>()
 const columns = column.columns([
-  column.accessor('name', { header: 'Name' }),
+  column.accessor('name', { header: 'Name', enableSorting: true }),
   column.accessor('age', {
     header: 'Age',
+    enableSorting: true,
     cell: context => context.getValue().toFixed(0),
   }),
 ])
@@ -543,7 +545,7 @@ slot - here's `Table`'s own theme file:
 | `field` | `string` | - (required) |
 | `header` | `string` | - |
 | `footer` | `string` | - |
-| `sortable` | `boolean` | `true` |
+| `sortable` | `boolean` | `false` |
 | `filterable` | `boolean` | `false` |
 | `pinned` | `'left' \| 'right'` | - |
 
