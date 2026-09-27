@@ -34,8 +34,8 @@ Give an item an `icon` and it renders before its label:
 
 An item with `children` renders as a trigger instead of a link - clicking
 (or hovering) it opens a dropdown. Every open dropdown teleports into one
-shared floating panel that smoothly resizes and cross-fades as you move
-between different top-level items - Reka UI's own real navigation-menu
+shared viewport within the NavigationMenu. The viewport smoothly resizes
+and cross-fades as you move between different top-level items - Reka UI's own real navigation-menu
 mechanism, not an independent popover per item. The panel always spans
 the **full width** of the nav bar, flowing children into as many columns
 as comfortably fit - matching two comparable references directly (one's
@@ -49,8 +49,8 @@ narrow popover sized to its own content:
 ```vue-html
 <SNavigationMenu :items="[
   { label: 'Products', children: [
-    { label: 'Analytics', to: '/products/analytics' },
-    { label: 'Automation', to: '/products/automation' },
+    { label: 'Analytics', to: '/components/data/table' },
+    { label: 'Automation', to: '/components/forms/validation' },
   ] },
 ]" />
 ```
@@ -233,6 +233,9 @@ data - `item-leading`/`item-label`/`item-trailing` replace one piece at a
 time, `item` replaces a whole item's content, and `item-content` replaces
 an entire dropdown's body, letting you build a genuine multi-column mega
 menu instead of the default single-column list:
+
+Open **Products** to see the generic `item-content` layout, or **Help** to
+see the per-item `help-content` override.
 
 ::component-example{name="navigation-menu-custom"}
 ::

@@ -2,15 +2,15 @@
 const items = [
   { label: 'Home', to: '/' },
   { label: 'Products', children: [
-    { label: 'Analytics', to: '/products/analytics', icon: 'hugeicons:chart-line-data-01', description: 'Track usage across your app.' },
-    { label: 'Automation', to: '/products/automation', icon: 'hugeicons:workflow-square-05', description: 'Trigger workflows on events.' },
-    { label: 'Integrations', to: '/products/integrations', icon: 'hugeicons:plug-01', description: 'Connect your existing tools.' },
-    { label: 'Reporting', to: '/products/reporting', icon: 'hugeicons:file-01', description: 'Export data on a schedule.' },
+    { label: 'Analytics', to: '/components/data/table', icon: 'hugeicons:chart-line-data-01', description: 'Track usage across your app.' },
+    { label: 'Automation', to: '/components/forms/validation', icon: 'hugeicons:workflow-square-05', description: 'Trigger workflows on events.' },
+    { label: 'Integrations', to: '/components/overlays/dropdown', icon: 'hugeicons:plug-01', description: 'Connect your existing tools.' },
+    { label: 'Reporting', to: '/components/typography/code-group', icon: 'hugeicons:file-01', description: 'Export data on a schedule.' },
   ] },
   // `slot: 'help'` targets #help-content specifically, ahead of the
   // generic #item-content every other item with children falls back to.
   { label: 'Help', slot: 'help', children: [
-    { label: 'Docs', to: '/help/docs' },
+    { label: 'Docs', to: '/components/overlays/command-palette' },
   ] },
 ]
 </script>

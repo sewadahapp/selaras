@@ -12,6 +12,15 @@ const props = defineProps<{
   name: string
 }>()
 
+// Horizontal NavigationMenu flyouts live in the menu's own viewport rather
+// than a body portal. The general example wrapper scrolls horizontally, which
+// also clips vertical overflow; allow these panels to float outside the card.
+const hasNavigationFlyout = computed(() => [
+  'navigation-menu-children',
+  'navigation-menu-full',
+  'navigation-menu-custom',
+].includes(props.name))
+
 const exampleModules = import.meta.glob('~/components/content/examples/**/*.vue')
 
 function pascalCase(value: string) {
@@ -36,7 +45,10 @@ const resolvedComponent = computed(() => {
     it drags the entire page into horizontal scroll instead of just this
     box.
   -->
-  <div class="not-prose flex flex-wrap items-center gap-3 overflow-x-auto rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-6">
+  <div
+    class="not-prose flex flex-wrap items-center gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-6"
+    :class="hasNavigationFlyout ? 'overflow-visible' : 'overflow-x-auto'"
+  >
     <component :is="resolvedComponent" v-if="resolvedComponent" />
     <div v-else class="text-sm text-[var(--selaras-resolved-color-danger-text)]">
       Example "{{ name }}" not found

@@ -2,13 +2,13 @@
 const items = [
   { label: 'Home', to: '/' },
   { label: 'Products', children: [
-    { label: 'Analytics', to: '/products/analytics' },
-    { label: 'Automation', to: '/products/automation' },
-    { label: 'Integrations', to: '/products/integrations' },
+    { label: 'Analytics', to: '/components/data/table' },
+    { label: 'Automation', to: '/components/forms/validation' },
+    { label: 'Integrations', to: '/components/overlays/dropdown' },
   ] },
   { label: 'Company', children: [
-    { label: 'About', to: '/company/about' },
-    { label: 'Careers', to: '/company/careers' },
+    { label: 'About', to: '/components/navigation/navigation-menu' },
+    { label: 'Careers', to: '/components/layout/header' },
   ] },
 ]
 </script>
