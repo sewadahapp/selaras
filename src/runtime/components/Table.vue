@@ -41,6 +41,7 @@ const ui = computed(() => theme.value({
   gridlines: props.gridlines,
   striped: props.striped,
   scrollable: !!props.scrollHeight,
+  rowHover: props.rowHover,
 }))
 
 const selectColumn = {
@@ -113,7 +114,8 @@ const trProps = computed(() => resolveSlot(ui.value.tr, props.ui?.tr))
 // dependency) so it reflects whichever vnode this specific render pass has.
 const instance = getCurrentInstance()
 function isRowClickable() {
-  return !!(instance?.vnode.props as Record<string, unknown> | null)?.onRowClick
+  return (!!props.selectable && props.selectOnRowClick)
+    || !!(instance?.vnode.props as Record<string, unknown> | null)?.onRowClick
 }
 function bodyRowProps(rowOriginal: TData) {
   const extraClass = [
@@ -124,7 +126,13 @@ function bodyRowProps(rowOriginal: TData) {
   const rowStyle = props.rowStyle?.(rowOriginal)
   return rowStyle ? { ...base, style: { ...(base as { style?: Record<string, string> }).style, ...rowStyle } } : base
 }
-function onRowClick(rowOriginal: TData, event: MouseEvent) {
+function onRowClick(rowOriginal: TData, event: MouseEvent, toggleSelection?: () => void) {
+  const target = event.target
+  const clickedControl = target instanceof Element && target.closest(
+    'a, button, input, select, textarea, [role="button"], [role="checkbox"], [role="radio"], [role="link"], [contenteditable="true"], [data-row-click-ignore]',
+  )
+  if (props.selectable && props.selectOnRowClick && !clickedControl)
+    toggleSelection?.()
   emit('rowClick', rowOriginal, event)
 }
 function onRowContextmenu(rowOriginal: TData, event: MouseEvent) {
@@ -320,7 +328,7 @@ defineExpose({
           <template v-for="row in visibleRows" :key="row.id">
             <tr
               v-bind="bodyRowProps(row.original)"
-              @click="onRowClick(row.original, $event)"
+              @click="onRowClick(row.original, $event, row.getCanSelect() ? () => row.toggleSelected() : undefined)"
               @contextmenu="onRowContextmenu(row.original, $event)"
             >
               <td

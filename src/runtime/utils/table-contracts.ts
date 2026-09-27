@@ -15,6 +15,10 @@ export interface TableProps<TData extends RowData = RowData> {
   data: TData[]
   columns?: TableColumnDef<TData>[]
   selectable?: boolean
+  /** Highlights body rows on hover. @default false */
+  rowHover?: boolean
+  /** Toggles selection when a selectable body row is clicked. Interactive controls inside cells are ignored. @default false */
+  selectOnRowClick?: boolean
   pageSize?: number
   loading?: boolean
   sorting?: TableSortingState

@@ -144,6 +144,51 @@ describe('table', () => {
     expect(wrapper.emitted('update:rowSelection')?.[0]?.[0]).toEqual({ 'user-b': true })
   })
 
+  it('toggles row selection from row clicks only when enabled', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ id: 'alice', name: 'Alice' }, { id: 'bob', name: 'Bob' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        selectable: true,
+        selectOnRowClick: true,
+        getRowId: (row: any) => row.id,
+      },
+    })
+
+    await wrapper.findAll('tbody tr')[1]!.trigger('click')
+
+    expect(wrapper.emitted('update:rowSelection')?.[0]?.[0]).toEqual({ bob: true })
+    expect(wrapper.emitted('rowClick')?.[0]?.[0]).toEqual({ id: 'bob', name: 'Bob' })
+  })
+
+  it('does not toggle row selection again when a selection checkbox is clicked', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        selectable: true,
+        selectOnRowClick: true,
+      },
+    })
+
+    await wrapper.find('tbody [role="checkbox"]').trigger('click')
+
+    expect(wrapper.emitted('update:rowSelection')).toHaveLength(1)
+    expect(wrapper.emitted('update:rowSelection')?.[0]?.[0]).toEqual({ 0: true })
+  })
+
+  it('adds hover styling only when rowHover is enabled', async () => {
+    const props = {
+      data: [{ name: 'Alice' }],
+      columns: [{ accessorKey: 'name', header: 'Name' }],
+    }
+    const plain = await mountSuspended(Table, { props })
+    const hovered = await mountSuspended(Table, { props: { ...props, rowHover: true } })
+
+    expect(plain.find('tbody tr').classes().some(className => className.includes('hover:bg-'))).toBe(false)
+    expect(hovered.find('tbody tr').classes().some(className => className.includes('hover:bg-'))).toBe(true)
+  })
+
   it('paginates by pageSize and disables Previous/Next at the boundaries', async () => {
     const wrapper = await mountSuspended(Table, {
       props: {

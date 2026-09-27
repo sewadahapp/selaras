@@ -53,6 +53,28 @@ ascending) - both come from TanStack Table's own defaults, not something
 input to that column's header. `selectable` adds a leading checkbox column
 wired to `v-model:row-selection`.
 
+Use `select-on-row-click` alongside `selectable` to toggle selection by
+clicking anywhere on a row. Clicks on controls inside cells (such as links,
+buttons, and checkboxes) keep their normal behavior. `row-hover` adds a subtle
+theme-aware background while the pointer is over a body row:
+
+::component-example{name="table-row-click-selection"}
+::
+
+```vue-html
+<STable
+  v-model:row-selection="rowSelection"
+  :data="users"
+  :get-row-id="user => user.email"
+  selectable
+  select-on-row-click
+  row-hover
+>
+  <SColumn field="name" header="Name" />
+  <SColumn field="email" header="Email" />
+</STable>
+```
+
 Selection and expansion use TanStack's positional row ids by default. For
 data that can be sorted, filtered, refreshed, or paginated by a server, provide
 `get-row-id` so controlled state follows the record rather than its current
@@ -475,6 +497,8 @@ slot - here's `Table`'s own theme file:
 | `data` | `TData[]` | - |
 | `columns` | `TableColumnDef<TData>[]` | - |
 | `selectable` | `boolean` | `false` |
+| `selectOnRowClick` | `boolean` | `false` |
+| `rowHover` | `boolean` | `false` |
 | `pageSize` | `number` | - (no pagination until set) |
 | `loading` | `boolean` | `false` |
 | `sorting` | `SortingState` | - |

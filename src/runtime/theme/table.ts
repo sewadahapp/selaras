@@ -59,6 +59,12 @@ export const tableTheme = tv({
     striped: {
       true: { table: '[&>tbody>tr:nth-child(even)]:bg-[var(--selaras-resolved-surface-elevated)]' },
     },
+    rowHover: {
+      true: {
+        tr: 'group transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)]',
+        td: 'group-hover:bg-[var(--selaras-resolved-surface-elevated)]',
+      },
+    },
     scrollable: {
       true: { wrapper: 'overflow-y-auto', thead: 'sticky top-0 z-[1]' },
     },
