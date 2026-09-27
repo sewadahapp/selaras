@@ -56,6 +56,14 @@ const iconName = computed(() => {
   return props.icon ?? icons.value[DEFAULT_ICON[props.type ?? 'note']]
 })
 
+const colorForType = {
+  note: 'info',
+  tip: 'success',
+  warning: 'warning',
+  danger: 'danger',
+} as const
+const effectiveColor = computed(() => colorForType[props.type ?? 'note'])
+
 const theme = useComponentTheme('callout', calloutTheme)
 const ui = computed(() => theme.value({ type: props.type }))
 
@@ -66,7 +74,7 @@ const titleProps = computed(() => resolveSlot(ui.value.title, props.ui?.title))
 </script>
 
 <template>
-  <div v-bind="rootProps" role="note">
+  <div v-bind="rootProps" data-selaras-callout :data-selaras-color="effectiveColor" role="note">
     <Icon v-if="iconName" :name="iconName" v-bind="iconProps" />
     <div v-bind="contentProps">
       <p v-if="title || $slots.title" v-bind="titleProps">
@@ -78,3 +86,11 @@ const titleProps = computed(() => resolveSlot(ui.value.title, props.ui?.title))
     </div>
   </div>
 </template>
+
+<style scoped>
+[data-selaras-callout]::before {
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+</style>

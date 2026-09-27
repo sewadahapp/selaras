@@ -21,6 +21,13 @@ describe('callout', () => {
     expect(danger.find('.iconify').classes()).toContain('i-hugeicons:cancel-circle')
   })
 
+  it('maps admonition types to the matching Alert semantic color roles', async () => {
+    for (const [type, color] of [['note', 'info'], ['tip', 'success'], ['warning', 'warning'], ['danger', 'danger']] as const) {
+      const wrapper = await mountSuspended(Callout, { props: { type } })
+      expect(wrapper.attributes('data-selaras-color')).toBe(color)
+    }
+  })
+
   it('an explicit icon overrides the type\'s own default', async () => {
     const wrapper = await mountSuspended(Callout, { props: { type: 'tip', icon: 'lucide:bug' } })
 

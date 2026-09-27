@@ -17,10 +17,11 @@ order: 72
 
 `type` picks both the accent color and the default icon - `note` (the
 default), `tip`, `warning`, and `danger`, matching the four admonition
-levels most docs sites converge on. Unlike [Alert](/components/elements/alert),
-a callout has no `variant`/`closable` - it's meant to sit inline in a stretch
-of prose, not stand alone as a page-level notice, so it stays a plain
-border-accented box with no background fill or dismiss behavior.
+levels most docs sites converge on. It shares Alert's soft surface and
+semantic color treatment. Hovering it, or focusing content inside it, reveals
+a 2px striped border in that color. Unlike [Alert](/components/elements/alert),
+a callout has no `variant`/`closable` - it is meant to sit inline in prose and
+has no dismiss behavior.
 
 ## In markdown
 
