@@ -25,12 +25,46 @@ order: 51
 ```
 
 Items are an array of groups — a separator is rendered between each group.
+Items can run `onSelect` actions or navigate through `to` (including
+external URLs, with `target`/`rel` when needed). `shortcut` renders a Kbd
+hint; set `hotkey: true` to bind it while the dropdown is open.
+
+### Shortcuts and links
+
+`shortcut` only displays the hint. Add `hotkey: true` to activate the item
+with that key while this dropdown is open. Use `mod` for the platform's
+primary modifier (⌘ on macOS, Ctrl elsewhere). Items with `to` navigate as
+links by mouse, keyboard selection, or shortcut; action items call
+`onSelect` through the same selection path.
+
+::component-example{name="dropdown-shortcuts"}
+::
+
+```vue
+<script setup lang="ts">
+const lastAction = ref('')
+const items = [[
+  { label: 'Save draft', icon: 'hugeicons:floppy-disk', shortcut: 'mod+s', hotkey: true, onSelect: () => lastAction.value = 'Saved draft' },
+  { label: 'Preview', shortcut: 'mod+p', onSelect: () => lastAction.value = 'Preview opened' },
+  { label: 'Documentation', to: '/components/overlays/context-menu', shortcut: 'mod+shift+d', hotkey: true },
+]]
+</script>
+
+<template>
+  <SDropdown :items="items">
+    <SButton variant="outline">Open actions</SButton>
+  </SDropdown>
+</template>
+```
+
+In this example, `Save draft` and `Documentation` respond to their shortcuts;
+`Preview` shows a hint only. Open the dropdown before pressing a menu shortcut.
 
 ### Custom item content
 
-The `item` slot replaces an item's plain-text label with anything -
-scoped with `item`, so a single template can vary per item (here, a
-right-aligned keyboard-shortcut hint):
+The `item` slot replaces an item's plain-text label with anything,
+scoped with `item`, so a single template can vary per item. The component
+continues to render `shortcut` after the slot content automatically:
 
 ::component-example{name="dropdown-custom-item"}
 ::
@@ -38,10 +72,7 @@ right-aligned keyboard-shortcut hint):
 ```vue-html
 <SDropdown :items="items">
   <template #item="{ item }">
-    <span class="flex flex-1 items-center justify-between gap-4">
-      {{ item.label }}
-      <span class="text-xs text-[var(--selaras-resolved-text-muted)]">{{ item.shortcut }}</span>
-    </span>
+    <span class="flex-1">{{ item.label }}</span>
   </template>
   ...
 </SDropdown>
@@ -115,9 +146,12 @@ inline or pass a CSS selector or `HTMLElement` as the teleport target.
 
 ## Props
 
+For link items, use `to` with optional `target` and `rel`. Shortcut hints
+are display-only unless `hotkey: true` is set.
+
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string }[][]` | - |
+| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; to?: string; target?: string; rel?: string; shortcut?: string; hotkey?: boolean }[][]` | - |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `positioning` | `OverlayPositioning` | menu defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HotkeyOptions } from '../directives/hotkey'
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
@@ -6,12 +7,14 @@ import type { UiProp } from '../utils/ui'
 import { computed } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
+import { vHotkey } from '../directives/hotkey'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
+import ShortcutHint from './ShortcutHint.vue'
 
 // A collapsed rail's own flyout (see NavigationMenu.vue) has nowhere
 // further to collapse to - a child inside it that itself has children (a
@@ -55,6 +58,12 @@ const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiv
 function linkProps(item: NavigationMenuItem) {
   return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
+
+function hotkeyFor(item: NavigationMenuItem): HotkeyOptions | undefined {
+  return item.hotkey && item.shortcut && !item.disabled
+    ? { keys: item.shortcut, when: (element, event) => element.ownerDocument.activeElement === element || element.contains(element.ownerDocument.activeElement) || event.composedPath().includes(element) }
+    : undefined
+}
 </script>
 
 <template>
@@ -62,12 +71,13 @@ function linkProps(item: NavigationMenuItem) {
     <li v-for="item in items" :key="item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
       <NavigationMenuAccordionItem v-if="item.children?.length" :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui" />
       <component
-        :is="item.to ? NuxtLink : 'button'" v-else :to="item.to" :type="item.to ? undefined : 'button'"
-        :disabled="item.to ? undefined : item.disabled" v-bind="linkProps(item)"
-        :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
+        :is="item.to ? NuxtLink : 'button'" v-else v-hotkey="hotkeyFor(item)" :to="item.to"
+        :type="item.to ? undefined : 'button'" :disabled="item.to ? undefined : item.disabled"
+        v-bind="linkProps(item)" :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
       >
         <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
         <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
+        <ShortcutHint :shortcut="item.shortcut" />
       </component>
     </li>
   </ul>

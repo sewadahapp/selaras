@@ -1,13 +1,16 @@
 <script setup lang="ts">
+import type { HotkeyOptions } from '../directives/hotkey'
 import type { ContextMenuThemeSlots } from '../theme/context-menu'
 import type { ContextMenuPositioning, OverlayPortal } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { ContextMenuContent, ContextMenuItem, ContextMenuPortal, ContextMenuRoot, ContextMenuSeparator, ContextMenuTrigger } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { vHotkey } from '../directives/hotkey'
 import { contextMenuTheme } from '../theme/context-menu'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
+import ShortcutHint from './ShortcutHint.vue'
 
 export interface ContextMenuItemDef {
   label: string
@@ -16,8 +19,10 @@ export interface ContextMenuItemDef {
   /** Styles this item for a delete/remove-style action (danger text, danger-tinted hover) - matches Dropdown's own `destructive` flag. */
   destructive?: boolean
   onSelect?: () => void
-  /** Not read by ContextMenu's own default item rendering - carried purely so a custom #item slot override can display one. */
+  /** Displays a keyboard shortcut hint. */
   shortcut?: string
+  /** Bind `shortcut` while this menu is open; activation follows the normal menu item click path. */
+  hotkey?: boolean
 }
 
 const props = withDefaults(defineProps<ContextMenuProps>(), { portal: undefined })
@@ -40,6 +45,7 @@ export interface ContextMenuSlots {
 }
 
 const theme = useComponentTheme('contextMenu', contextMenuTheme)
+const open = ref(false)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
@@ -56,10 +62,15 @@ function iconPropsFor(item: ContextMenuItemDef) {
   return resolveSlot(theme.value({ destructive: item.destructive }).icon, props.ui?.icon)
 }
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
+function hotkeyFor(item: ContextMenuItemDef): HotkeyOptions | undefined {
+  return item.hotkey && item.shortcut && !item.disabled
+    ? { keys: item.shortcut, when: () => open.value }
+    : undefined
+}
 </script>
 
 <template>
-  <ContextMenuRoot>
+  <ContextMenuRoot :open="open" @update:open="open = $event">
     <ContextMenuTrigger as-child>
       <slot />
     </ContextMenuTrigger>
@@ -70,6 +81,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
           <ContextMenuItem
             v-for="(item, itemIndex) in group"
             :key="itemIndex"
+            v-hotkey="hotkeyFor(item)"
             :disabled="item.disabled"
             v-bind="itemPropsFor(item)"
             @select="item.onSelect?.()"
@@ -78,6 +90,7 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
             <slot name="item" :item="item">
               {{ item.label }}
             </slot>
+            <ShortcutHint :shortcut="item.shortcut" />
           </ContextMenuItem>
         </template>
       </ContextMenuContent>

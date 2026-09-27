@@ -184,6 +184,35 @@ navigation, no `onSelect`, marked `aria-disabled`:
 <SNavigationMenu :items="[{ label: 'Coming soon', disabled: true }]" />
 ```
 
+### Shortcuts
+
+`shortcut` displays a Kbd hint next to a leaf item. Set `hotkey: true` to
+activate that item while it or one of its descendants has focus; the key
+does not run globally. This keeps page-level shortcuts from firing while
+someone is typing elsewhere. `mod` maps to ⌘ on macOS and Ctrl on other
+platforms. A leaf can navigate with `to` or run `onSelect` like a button.
+
+::component-example{name="navigation-menu-shortcuts"}
+::
+
+```vue
+<script setup lang="ts">
+const lastAction = ref('')
+const items = [
+  { label: 'Overview', shortcut: 'mod+1', hotkey: true, onSelect: () => lastAction.value = 'Overview selected' },
+  { label: 'Settings', shortcut: 'mod+2', hotkey: true, onSelect: () => lastAction.value = 'Settings selected' },
+  { label: 'Help', shortcut: 'mod+/', onSelect: () => lastAction.value = 'Help selected' },
+]
+</script>
+
+<template>
+  <SNavigationMenu :items="items" />
+</template>
+```
+
+Focus a menu item before using its enabled shortcut. `Help` shows a hint but
+does not bind the key because it omits `hotkey: true`.
+
 ### Color
 
 `color` follows the same palette as every other component here
@@ -285,6 +314,8 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | `children` | `NavigationMenuItem[]` | One level for horizontal; arbitrary depth for vertical. |
 | `description` | `string` | Not read by NavigationMenu's own default rendering - carried purely so a custom `#item-content`/`#{slot}-content` slot override can display one (a "mega menu" style description under each link, say) - see [Customizing content](#customizing-content), whose own live example already renders this field. |
 | `onSelect` | `(event: Event) => void` | Fired when a leaf item is activated. |
+| `shortcut` | `string` | Displays a Kbd hint beside the item. |
+| `hotkey` | `boolean` | Binds `shortcut` while this item or one of its descendants has focus. |
 | `slot` | `string` | Targets this item's own named slots ahead of the generic ones - see [Customizing content](#customizing-content). |
 | `type` | `'link' \| 'label' \| 'separator'` | `'link'` unless set - see [Labels and separators](#labels-and-separators). |
 

@@ -152,6 +152,20 @@ describe('commandPalette', () => {
     expect(document.body.querySelector('[role="dialog"][data-state="open"]')).toBeFalsy()
   })
 
+  it('activates opted-in item shortcuts while the palette is open', async () => {
+    const onSelect = vi.fn()
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, {
+      props: { groups: [{ items: [{ label: 'New file', shortcut: 'mod+n', hotkey: true, onSelect }] }] },
+    })
+    await macrotask()
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'n', ctrlKey: true, bubbles: true, cancelable: true }))
+    await macrotask()
+    expect(onSelect).toHaveBeenCalledOnce()
+    expect(document.body.querySelector('[role="dialog"][data-state="open"]')).toBeFalsy()
+  })
+
   it('a disabled item cannot be selected by click', async () => {
     const onSelectDisabled = vi.fn()
     useCommandPalette().open()

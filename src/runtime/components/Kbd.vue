@@ -2,7 +2,7 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { KbdThemeSlots } from '../theme/kbd'
 import type { UiProp } from '../utils/ui'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { kbdTheme } from '../theme/kbd'
 import { useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -11,6 +11,10 @@ type KbdVariants = VariantProps<typeof kbdTheme>
 defineOptions({ inheritAttrs: false })
 
 const props = defineProps<KbdProps>()
+const isMacPlatform = ref(false)
+onMounted(() => {
+  isMacPlatform.value = /mac|iphone|ipad|ipod/i.test(navigator.platform || '')
+})
 
 // A small, fixed set of universally-recognized keyboard symbols - resolved
 // only for the `value` prop (a plain string this component can transform);
@@ -47,7 +51,13 @@ export interface KbdProps {
   ui?: UiProp<KbdThemeSlots>
 }
 
-const resolvedValue = computed(() => props.value ? (KEY_SYMBOLS[props.value.toLowerCase()] ?? props.value) : undefined)
+const resolvedValue = computed(() => {
+  if (!props.value)
+    return undefined
+  if (props.value.toLowerCase() === 'mod')
+    return isMacPlatform.value ? KEY_SYMBOLS.meta : KEY_SYMBOLS.ctrl
+  return KEY_SYMBOLS[props.value.toLowerCase()] ?? props.value
+})
 
 const theme = useComponentTheme('kbd', kbdTheme)
 const ui = computed(() => theme.value({ size: props.size }))

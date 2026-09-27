@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HotkeyOptions } from '../directives/hotkey'
 import type { CommandPaletteThemeSlots } from '../theme/command-palette'
 import type { UiProp } from '../utils/ui'
 import { DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogRoot, DialogTitle } from 'reka-ui'
@@ -6,6 +7,7 @@ import { computed, onMounted, onUnmounted, ref, useId, watch } from 'vue'
 import { useCommandPalette } from '../composables/use-command-palette'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
+import { vHotkey } from '../directives/hotkey'
 import { commandPaletteTheme } from '../theme/command-palette'
 import { fuzzyScore } from '../utils/fuzzy-match'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
@@ -15,8 +17,10 @@ import Kbd from './Kbd.vue'
 export interface CommandPaletteItem {
   label: string
   icon?: string
-  /** Rendered via Kbd - a display hint only, this component doesn't bind the key itself. */
+  /** Displayed via Kbd. */
   shortcut?: string
+  /** Bind `shortcut` while this palette is open; activation uses this item's normal selection behavior. */
+  hotkey?: boolean
   disabled?: boolean
   onSelect?: () => void
 }
@@ -95,6 +99,12 @@ const query = ref('')
 const highlightedIndex = ref(0)
 const inputRef = ref<HTMLInputElement>()
 const listboxId = `selaras-command-palette-list-${useId()}`
+
+function hotkeyFor(item: CommandPaletteItem): HotkeyOptions | undefined {
+  return item.hotkey && item.shortcut && !item.disabled
+    ? { keys: item.shortcut, when: () => isOpen.value, allowInEditable: true }
+    : undefined
+}
 
 watch(isOpen, (open) => {
   if (!open) {
@@ -270,6 +280,7 @@ function itemId(index: number) {
                 v-for="item in group.items"
                 :id="itemId(allItems.indexOf(item))"
                 :key="item.label"
+                v-hotkey="hotkeyFor(item)"
                 role="option"
                 :aria-selected="isHighlighted(item)"
                 :aria-disabled="item.disabled"

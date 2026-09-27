@@ -1,6 +1,6 @@
 import type { NavigationMenuItem } from '../../src/runtime/utils/navigation-menu'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import NavigationMenu from '../../src/runtime/components/NavigationMenu.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
@@ -42,6 +42,30 @@ describe('navigationMenu (horizontal)', () => {
     const link = wrapper.find('a[href="/docs"]')
     expect(link.exists()).toBe(true)
     expect(link.text()).toBe('Docs')
+  })
+
+  it('shows an item shortcut and activates it while the navigation link is focused', async () => {
+    const onSelect = vi.fn()
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items: [{ label: 'Docs', to: '/docs', shortcut: 'mod+d', hotkey: true, onSelect }] },
+    })
+    const link = wrapper.find('a[href="/docs"]')
+    expect(link.text()).toContain('Docs')
+    expect(link.text()).toContain('D')
+    const linkElement = link.element as HTMLAnchorElement
+    document.body.append(linkElement)
+    linkElement.focus()
+
+    linkElement.dispatchEvent(new KeyboardEvent('keydown', {
+      key: 'd',
+      ctrlKey: !/mac|iphone|ipad|ipod/i.test(navigator.platform),
+      metaKey: /mac|iphone|ipad|ipod/i.test(navigator.platform),
+      bubbles: true,
+      cancelable: true,
+    }))
+    expect(onSelect).toHaveBeenCalledOnce()
+    linkElement.remove()
+    wrapper.unmount()
   })
 
   it('forwards link attributes needed by external header navigation', async () => {

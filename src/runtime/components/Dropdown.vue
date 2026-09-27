@@ -1,15 +1,19 @@
 <script setup lang="ts">
+import type { HotkeyOptions } from '../directives/hotkey'
 import type { DropdownThemeSlots } from '../theme/dropdown'
 import type { RoundedArrowConfig } from '../utils/arrow'
 import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
 import { computed, getCurrentInstance, ref, watch } from 'vue'
+import { NuxtLink } from '#components'
+import { vHotkey } from '../directives/hotkey'
 import { dropdownTheme } from '../theme/dropdown'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
+import ShortcutHint from './ShortcutHint.vue'
 
 export interface DropdownItem {
   label: string
@@ -18,8 +22,15 @@ export interface DropdownItem {
   /** Styles this item for a delete/remove-style action (danger text, danger-tinted hover) - just this one flag rather than the full color palette, since a menu item realistically only ever needs this one special case. */
   destructive?: boolean
   onSelect?: () => void
-  /** Not read by Dropdown's own default item rendering - carried purely so a custom #item slot override can display one. */
+  /** Displays a keyboard shortcut hint. */
   shortcut?: string
+  /** Bind `shortcut` while this menu is open; activation follows the normal menu item click path. */
+  hotkey?: boolean
+  /** Nuxt route or URL to navigate to instead of rendering an action item. */
+  to?: string
+  /** Link target, for example `_blank`. */
+  target?: string
+  rel?: string
 }
 
 export interface DropdownProps {
@@ -75,6 +86,11 @@ function itemPropsFor(item: DropdownItem) {
 function iconPropsFor(item: DropdownItem) {
   return resolveSlot(theme.value({ destructive: item.destructive }).icon, props.ui?.icon)
 }
+function hotkeyFor(item: DropdownItem): HotkeyOptions | undefined {
+  return item.hotkey && item.shortcut && !item.disabled
+    ? { keys: item.shortcut, when: () => internalOpen.value }
+    : undefined
+}
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
 </script>
 
@@ -90,14 +106,26 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
           <DropdownMenuItem
             v-for="(item, itemIndex) in group"
             :key="itemIndex"
+            v-hotkey="hotkeyFor(item)"
             :disabled="item.disabled"
+            :as-child="Boolean(item.to)"
             v-bind="itemPropsFor(item)"
             @select="item.onSelect?.()"
           >
-            <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
-            <slot name="item" :item="item">
-              {{ item.label }}
-            </slot>
+            <NuxtLink v-if="item.to" :to="item.to" :target="item.target" :rel="item.rel">
+              <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
+              <slot name="item" :item="item">
+                {{ item.label }}
+              </slot>
+              <ShortcutHint :shortcut="item.shortcut" />
+            </NuxtLink>
+            <template v-else>
+              <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
+              <slot name="item" :item="item">
+                {{ item.label }}
+              </slot>
+              <ShortcutHint :shortcut="item.shortcut" />
+            </template>
           </DropdownMenuItem>
         </template>
         <DropdownMenuArrow v-if="arrow" v-bind="arrowProps" />

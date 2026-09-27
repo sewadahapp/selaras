@@ -1,3 +1,4 @@
+export * from './hotkey'
 // Public entry point for this library's directives (exported at
 // package.json's ./directives subpath) - a consumer building their own
 // component imports from here (`import { vRipple } from '@sewadah/selaras/directives'`),

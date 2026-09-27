@@ -28,12 +28,40 @@ the way `Dropdown` does:
 
 Items are an array of groups — a separator is rendered between each group,
 same shape as [Dropdown](/components/overlays/dropdown).
+`shortcut` renders a Kbd hint; set `hotkey: true` to activate it while the
+context menu is open.
+
+### Shortcuts
+
+`shortcut` is a display hint by itself. Add `hotkey: true` to run the item's
+normal `onSelect` action while the context menu is open. Use `mod` for ⌘ on
+macOS or Ctrl on other platforms. Right-click the example area first, then
+try the enabled shortcut; the item with only `shortcut` does not bind a key.
+
+::component-example{name="context-menu-shortcuts"}
+::
+
+```vue
+<script setup lang="ts">
+const lastAction = ref('')
+const items = [[
+  { label: 'Rename', shortcut: 'mod+e', hotkey: true, onSelect: () => lastAction.value = 'Rename selected' },
+  { label: 'Share', shortcut: 'mod+shift+s', onSelect: () => lastAction.value = 'Share selected' },
+]]
+</script>
+
+<template>
+  <SContextMenu :items="items">
+    <div>Right-click here</div>
+  </SContextMenu>
+</template>
+```
 
 ### Custom item content
 
-The `item` slot replaces an item's plain-text label with anything -
-scoped with `item`, so a single template can vary per item (here, a
-right-aligned keyboard-shortcut hint):
+The `item` slot replaces an item's plain-text label with anything,
+scoped with `item`, so a single template can vary per item. The component
+continues to render `shortcut` after the slot content automatically:
 
 ::component-example{name="context-menu-custom-item"}
 ::
@@ -41,10 +69,7 @@ right-aligned keyboard-shortcut hint):
 ```vue-html
 <SContextMenu :items="items">
   <template #item="{ item }">
-    <span class="flex flex-1 items-center justify-between gap-4">
-      {{ item.label }}
-      <span class="text-xs text-[var(--selaras-resolved-text-muted)]">{{ item.shortcut }}</span>
-    </span>
+    <span class="flex-1">{{ item.label }}</span>
   </template>
   ...
 </SContextMenu>
@@ -100,9 +125,12 @@ inline or pass a CSS selector or `HTMLElement` as the teleport target.
 
 ## Props
 
+Set `hotkey: true` alongside `shortcut` to register the displayed key while
+the context menu is open. Otherwise the shortcut is a visual hint only.
+
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string }[][]` | - |
+| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string; hotkey?: boolean }[][]` | - |
 | `positioning` | `ContextMenuPositioning` | pointer-anchored defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator', string \| object>>` | - |

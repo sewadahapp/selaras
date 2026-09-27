@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HotkeyOptions } from '../directives/hotkey'
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
@@ -16,6 +17,7 @@ import { computed, ref, useSlots } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { useIcons } from '../composables/use-icons'
+import { vHotkey } from '../directives/hotkey'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
@@ -23,6 +25,7 @@ import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
 import NavigationMenuFlyoutTrigger from './NavigationMenuFlyoutTrigger.vue'
+import ShortcutHint from './ShortcutHint.vue'
 
 export interface NavigationMenuProps {
   items: NavigationMenuItem[]
@@ -76,6 +79,12 @@ function linkProps(item: NavigationMenuItem) {
 
 function childLinkProps(item: NavigationMenuItem) {
   return resolveSlot(theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
+}
+
+function hotkeyFor(item: NavigationMenuItem): HotkeyOptions | undefined {
+  return item.hotkey && item.shortcut && !item.disabled
+    ? { keys: item.shortcut, when: (element, event) => element.ownerDocument.activeElement === element || element.contains(element.ownerDocument.activeElement) || event.composedPath().includes(element) }
+    : undefined
 }
 
 // A collapsed rail's own flyout triggers (see NavigationMenuFlyoutTrigger.vue)
@@ -171,10 +180,10 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                   <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
                     <NavigationMenuLink as-child :active="isActive(child)">
                       <component
-                        :is="child.to ? NuxtLink : 'button'" :to="child.to" :type="child.to ? undefined : 'button'"
-                        :disabled="child.to ? undefined : child.disabled" v-bind="childLinkProps(child)"
-                        :target="child.target" :rel="child.rel" :aria-label="child.ariaLabel"
-                        :aria-disabled="child.to && child.disabled ? 'true' : undefined" @click="onSelect(child, $event)"
+                        :is="child.to ? NuxtLink : 'button'" v-hotkey="hotkeyFor(child)" :to="child.to"
+                        :type="child.to ? undefined : 'button'" :disabled="child.to ? undefined : child.disabled"
+                        v-bind="childLinkProps(child)" :target="child.target" :rel="child.rel"
+                        :aria-label="child.ariaLabel" :aria-disabled="child.to && child.disabled ? 'true' : undefined" @click="onSelect(child, $event)"
                       >
                         <slot :name="slotName(child, '')" :item="child" :active="isActive(child)">
                           <slot :name="slotName(child, '-leading')" :item="child" :active="isActive(child)">
@@ -185,6 +194,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                           </slot>
                           <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
                         </slot>
+                        <ShortcutHint :shortcut="child.shortcut" />
                       </component>
                     </NavigationMenuLink>
                   </li>
@@ -194,10 +204,10 @@ function onSelect(item: NavigationMenuItem, event: Event) {
           </template>
           <NavigationMenuLink v-else as-child :active="isActive(item)">
             <component
-              :is="item.to ? NuxtLink : 'button'" :to="item.to" :type="item.to ? undefined : 'button'"
-              :disabled="item.to ? undefined : item.disabled" v-bind="linkProps(item)"
-              :target="item.target" :rel="item.rel" :aria-label="item.ariaLabel"
-              :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
+              :is="item.to ? NuxtLink : 'button'" v-hotkey="hotkeyFor(item)" :to="item.to"
+              :type="item.to ? undefined : 'button'" :disabled="item.to ? undefined : item.disabled"
+              v-bind="linkProps(item)" :target="item.target" :rel="item.rel"
+              :aria-label="item.ariaLabel" :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
             >
               <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
                 <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
@@ -209,6 +219,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                 </slot>
                 <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)" />
               </slot>
+              <ShortcutHint :shortcut="item.shortcut" />
             </component>
           </NavigationMenuLink>
         </RekaNavigationMenuItem>

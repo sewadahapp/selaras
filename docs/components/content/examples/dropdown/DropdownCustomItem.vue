@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const items = [
   [
-    { label: 'Edit', icon: 'hugeicons:pencil', shortcut: '⌘E' },
-    { label: 'Duplicate', icon: 'hugeicons:copy', shortcut: '⌘D' },
+    { label: 'Edit', icon: 'hugeicons:pencil', shortcut: 'mod+e', hotkey: true },
+    { label: 'Duplicate', icon: 'hugeicons:copy', shortcut: 'mod+d', hotkey: true },
   ],
 ]
 </script>
@@ -10,10 +10,7 @@ const items = [
 <template>
   <SDropdown :items="items">
     <template #item="{ item }">
-      <span class="flex flex-1 items-center justify-between gap-4">
-        {{ item.label }}
-        <span class="text-xs text-[var(--selaras-resolved-text-muted)]">{{ item.shortcut }}</span>
-      </span>
+      <span class="flex-1">{{ item.label }}</span>
     </template>
     <SButton variant="outline">
       Open dropdown

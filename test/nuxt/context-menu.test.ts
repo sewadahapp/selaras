@@ -72,6 +72,22 @@ describe('contextMenu', () => {
     expect(onSelect).toHaveBeenCalledOnce()
   })
 
+  it('shows shortcut hints and activates opted-in shortcuts only while open', async () => {
+    const onSelect = vi.fn()
+    wrapper = await mountSuspended(ContextMenu, {
+      props: { items: [[{ label: 'Edit', shortcut: 'mod+e', hotkey: true, onSelect }]], portal: false },
+      slots: { default: () => h('div', { 'data-testid': 'target' }, 'Right-click me') },
+    })
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', ctrlKey: true, bubbles: true, cancelable: true }))
+    expect(onSelect).not.toHaveBeenCalled()
+    await openMenu()
+    expect(wrapper.find('[role="menuitem"]').text()).toContain('Edit')
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', ctrlKey: true, bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 30))
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
   it('marks a disabled item so it cannot be selected', async () => {
     const onSelect = vi.fn()
     wrapper = await mountSuspended(ContextMenu, {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { HotkeyOptions } from '../directives/hotkey'
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
@@ -6,6 +7,7 @@ import type { UiProp } from '../utils/ui'
 import { computed, useId, useSlots } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
+import { vHotkey } from '../directives/hotkey'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
@@ -18,6 +20,7 @@ import Icon from './Icon.vue'
 // self-recursion resolution the way ContentNavigation.vue does; importing
 // itself directly works regardless, via plain SFC self-recursion.
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
+import ShortcutHint from './ShortcutHint.vue'
 
 // Reka's real NavigationMenuContent/Viewport is a shallow, single-level
 // flyout (see NavigationMenu.vue's own top-of-file note) - arbitrary-depth
@@ -96,6 +99,12 @@ function linkProps(child: NavigationMenuItem) {
   return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
 }
 
+function hotkeyFor(item: NavigationMenuItem): HotkeyOptions | undefined {
+  return item.hotkey && item.shortcut && !item.disabled
+    ? { keys: item.shortcut, when: (element, event) => element.ownerDocument.activeElement === element || element.contains(element.ownerDocument.activeElement) || event.composedPath().includes(element) }
+    : undefined
+}
+
 // Reka's real NavigationMenuLink has no `disabled` prop - a disabled leaf
 // link stays visually/aria disabled and simply swallows the click rather
 // than navigating or firing onSelect. Mirrors NavigationMenu.vue's own
@@ -140,6 +149,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
             <component
               :is="child.to ? NuxtLink : 'button'"
               v-else
+              v-hotkey="hotkeyFor(child)"
               :to="child.to"
               :type="child.to ? undefined : 'button'"
               :disabled="child.to ? undefined : child.disabled"
@@ -156,6 +166,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                 </slot>
                 <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
               </slot>
+              <ShortcutHint :shortcut="child.shortcut" />
             </component>
           </li>
         </ul>

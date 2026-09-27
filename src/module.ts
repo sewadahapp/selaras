@@ -177,6 +177,11 @@ export default defineNuxtModule<ModuleOptions>({
       from: resolver.resolve('./runtime/directives/mask'),
       meta: { vueDirective: true },
     })
+    addImports({
+      name: 'vHotkey',
+      from: resolver.resolve('./runtime/directives/hotkey'),
+      meta: { vueDirective: true },
+    })
 
     // Threads `classPrefix` from this build-time module option into runtime
     // code (`applyClassPrefix` in runtime/utils/ui.ts) via a virtual

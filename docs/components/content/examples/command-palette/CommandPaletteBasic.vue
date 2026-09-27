@@ -6,14 +6,14 @@ const groups = [
   {
     label: 'Actions',
     items: [
-      { label: 'New file', icon: 'hugeicons:file-add', shortcut: 'meta+n', onSelect: () => result.value = 'New file' },
+      { label: 'New file', icon: 'hugeicons:file-add', shortcut: 'mod+n', hotkey: true, onSelect: () => result.value = 'New file' },
       { label: 'New folder', icon: 'hugeicons:folder-add', onSelect: () => result.value = 'New folder' },
     ],
   },
   {
     label: 'Navigation',
     items: [
-      { label: 'Go to settings', icon: 'hugeicons:settings-01', shortcut: 'meta+,', onSelect: () => result.value = 'Go to settings' },
+      { label: 'Go to settings', icon: 'hugeicons:settings-01', shortcut: 'mod+,', hotkey: true, onSelect: () => result.value = 'Go to settings' },
       { label: 'Go to profile', icon: 'hugeicons:user', onSelect: () => result.value = 'Go to profile' },
     ],
   },

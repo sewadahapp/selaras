@@ -113,6 +113,70 @@ describe('dropdown', () => {
     expect(item.getAttribute('data-disabled')).not.toBeNull()
   })
 
+  it('renders a Nuxt link item with its destination and target', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Documentation', to: '/docs', target: '_blank', shortcut: 'mod+d' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+
+    const link = document.body.querySelector<HTMLAnchorElement>('[role="menuitem"]')!
+    expect(link.tagName).toBe('A')
+    expect(link.getAttribute('href')).toBe('/docs')
+    expect(link.getAttribute('target')).toBe('_blank')
+    expect(link.textContent).toContain('Documentation')
+    expect(link.textContent).toContain('⌃')
+    expect(link.textContent).toContain('d')
+  })
+
+  it('activates a link item shortcut through the link and item selection path', async () => {
+    const onSelect = vi.fn()
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Documentation', to: '/docs', shortcut: 'mod+d', hotkey: true, onSelect }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'd', ctrlKey: true, bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
+  it('does not activate a disabled item shortcut', async () => {
+    const onSelect = vi.fn()
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Locked', shortcut: 'mod+l', hotkey: true, disabled: true, onSelect }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'l', ctrlKey: true, bubbles: true, cancelable: true }))
+    expect(onSelect).not.toHaveBeenCalled()
+  })
+
+  it('fires an opted-in item shortcut through the normal selection path', async () => {
+    const onSelect = vi.fn()
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Archive', shortcut: 'mod+e', hotkey: true, onSelect }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', ctrlKey: true, bubbles: true, cancelable: true }))
+    await new Promise(resolve => setTimeout(resolve, 50))
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
+  it('keeps a displayed shortcut inactive unless hotkey is enabled', async () => {
+    const onSelect = vi.fn()
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Archive', shortcut: 'mod+e', onSelect }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'e', ctrlKey: true, bubbles: true, cancelable: true }))
+    expect(onSelect).not.toHaveBeenCalled()
+    expect(document.body.querySelector('[role="menuitem"]')?.textContent).toContain('Archive')
+  })
+
   it('the item slot replaces an item\'s label content, scoped with item', async () => {
     wrapper = await mountSuspended(Dropdown, {
       props: { items: [[{ label: 'Edit' }]] },

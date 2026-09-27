@@ -23,8 +23,15 @@ const groups = [
   {
     label: 'Actions',
     items: [
-      { label: 'New file', icon: 'hugeicons:file-add', shortcut: 'meta+n', onSelect: () => {} },
+      { label: 'New file', icon: 'hugeicons:file-add', shortcut: 'mod+n', hotkey: true, onSelect: () => {} },
       { label: 'New folder', icon: 'hugeicons:folder-add', onSelect: () => {} },
+    ],
+  },
+  {
+    label: 'Navigation',
+    items: [
+      { label: 'Go to settings', icon: 'hugeicons:settings-01', shortcut: 'mod+,', hotkey: true, onSelect: () => {} },
+      { label: 'Go to profile', icon: 'hugeicons:user', onSelect: () => {} },
     ],
   },
 ]
@@ -46,15 +53,17 @@ substring check) - "nf" matches "New File" - and results re-rank live
 as the query changes; an empty search keeps each group's own
 authoring order rather than reshuffling the default view.
 
-### Shortcut hints
+### Item shortcuts
 
-An item's own `shortcut` renders via [Kbd](/components/elements/kbd) -
-a display hint only, this component doesn't bind that key itself
-(`meta+n` above is just shown next to "New file", pressing it does
-nothing on its own):
+An item's own `shortcut` renders via [Kbd](/components/elements/kbd) as a
+display hint. Add `hotkey: true` to bind it while the palette is open; the
+item's normal selection behavior runs and the palette closes. Use `mod` to
+show ⌘ on macOS and Ctrl on other platforms. The live example above includes
+enabled shortcuts for creating a file and opening settings, plus items that
+show no hint and therefore have no item-specific shortcut:
 
 ```vue-html
-{ label: 'New file', shortcut: 'meta+n', onSelect: () => {} }
+{ label: 'New file', shortcut: 'mod+n', hotkey: true, onSelect: () => {} }
 ```
 
 ### Disabling the built-in shortcut
@@ -87,7 +96,7 @@ every slot and variant - here's the palette's own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `groups` | `{ label?: string; items: { label: string; icon?: string; shortcut?: string; disabled?: boolean; onSelect?: () => void }[] }[]` | - |
+| `groups` | `{ label?: string; items: { label: string; icon?: string; shortcut?: string; hotkey?: boolean; disabled?: boolean; onSelect?: () => void }[] }[]` | - |
 | `open` | `boolean` | - |
 | `shortcut` | `boolean` | `true` |
 | `ui` | `Partial<Record<CommandPaletteSlot, string \| object>>` | - |
