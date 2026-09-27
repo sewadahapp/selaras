@@ -4,6 +4,7 @@ import type {
   TableColumnVisibilityState,
   TableExpandedState,
   TableGetRowId,
+  TableGetSubRows,
   TableRowSelectionState,
   TableSortingState,
 } from '../composables/use-table'
@@ -32,6 +33,10 @@ export interface TableProps<TData extends RowData = RowData> {
   gridlines?: boolean
   striped?: boolean
   expandable?: boolean
+  /** Displays hierarchical rows from `subRows` by default. Set `getSubRows` to read children from another field. @default false */
+  tree?: boolean
+  /** Returns a row's child rows when `tree` is enabled. Defaults to `row.subRows`. */
+  getSubRows?: TableGetSubRows<TData>
   expanded?: TableExpandedState
   columnVisibility?: TableColumnVisibilityState
   columnToggle?: boolean

@@ -342,6 +342,50 @@ describe('table', () => {
     expect(wrapper.find('button[aria-label="Collapse row"]').exists()).toBe(true)
   })
 
+  it('tree: expands nested subRows inline with indentation and does not show controls on leaves', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [
+          { name: 'Engineering', subRows: [{ name: 'Platform', subRows: [{ name: 'Runtime' }] }] },
+          { name: 'Sales' },
+        ],
+        columns: [{ accessorKey: 'name', header: 'Team' }],
+        tree: true,
+        getRowId: (row: any) => row.name,
+      },
+    })
+
+    const rowNames = () => wrapper.findAll('tbody tr').map(row => row.text())
+    expect(rowNames()).toEqual(['Engineering', 'Sales'])
+
+    await wrapper.find('button[aria-label="Expand row"]').trigger('click')
+    await nextTick()
+    expect(rowNames()).toEqual(['Engineering', 'Platform', 'Sales'])
+    expect(wrapper.find('tbody button[aria-label="Collapse row"]').attributes('aria-expanded')).toBe('true')
+    expect(wrapper.find('tbody tr:nth-child(2) td > div').attributes('style')).toContain('padding-inline-start: 1.25rem')
+
+    await wrapper.findAll('button[aria-label="Expand row"]')[0]!.trigger('click')
+    await nextTick()
+    expect(rowNames()).toEqual(['Engineering', 'Platform', 'Runtime', 'Sales'])
+    expect(wrapper.findAll('tbody button[aria-label="Expand row"]')).toHaveLength(0)
+    expect(wrapper.findAll('tbody button[aria-label="Collapse row"]')).toHaveLength(2)
+  })
+
+  it('tree: reads children from a custom field through getSubRows', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Parent', children: [{ name: 'Child' }] }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        tree: true,
+        getSubRows: (row: any) => row.children,
+      },
+    })
+
+    await wrapper.find('button[aria-label="Expand row"]').trigger('click')
+    await nextTick()
+    expect(wrapper.findAll('tbody tr').map(row => row.text())).toEqual(['Parent', 'Child'])
+  })
+
   it('columnToggle: hides a column from every row when its checkbox is unchecked', async () => {
     const wrapper = await mountSuspended(Table, {
       props: {

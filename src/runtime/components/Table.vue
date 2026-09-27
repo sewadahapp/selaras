@@ -77,7 +77,7 @@ const expandColumn = {
 
 const columns = computed<TableColumnDef<TData>[]>(() => {
   const base = props.columns ?? convertChildrenToColumns(slots.default?.()) as TableColumnDef<TData>[]
-  const withExpand = props.expandable ? [expandColumn, ...base] : base
+  const withExpand = props.expandable && !props.tree ? [expandColumn, ...base] : base
   return (props.selectable ? [selectColumn, ...withExpand] : withExpand) as TableColumnDef<TData>[]
 })
 
@@ -164,6 +164,8 @@ const columnToggleItemProps = computed(() => resolveSlot(ui.value.columnToggleIt
 const hasFooter = computed(() =>
   table.getFooterGroups().some(group => group.headers.some(header => header.column.columnDef.footer)),
 )
+const treeColumnId = computed(() => table.getVisibleLeafColumns().find(column => !column.id.startsWith('__'))?.id)
+const treeCellProps = computed(() => resolveSlot(ui.value.treeCell, props.ui?.treeCell))
 
 // --- column pinning: sticky offsets, measured from real rendered widths ---
 // (TanStack's own getStart()/getAfter() assume columnSizingFeature is
@@ -372,10 +374,32 @@ defineExpose({
                 :data-pinned="cell.column.getIsPinned() || undefined"
                 :style="pinnedStyle(cell)"
               >
-                <FlexRender :cell="cell" />
+                <div
+                  v-if="tree && cell.column.id === treeColumnId"
+                  v-bind="treeCellProps"
+                  :style="{ paddingInlineStart: `${row.depth * 1.25}rem` }"
+                >
+                  <button
+                    v-if="row.getCanExpand()"
+                    type="button"
+                    v-bind="resolveSlot(ui.expandButton, props.ui?.expandButton)"
+                    :aria-label="row.getIsExpanded() ? messages.collapseRow : messages.expandRow"
+                    :aria-expanded="row.getIsExpanded()"
+                    @click.stop="row.toggleExpanded()"
+                  >
+                    <Icon
+                      :name="icons.chevronRight"
+                      v-bind="resolveSlot(ui.expandChevron, props.ui?.expandChevron)"
+                      :data-expanded="row.getIsExpanded() || undefined"
+                    />
+                  </button>
+                  <span v-else :class="resolveSlot(ui.expandButton, props.ui?.expandButton).class" aria-hidden="true" />
+                  <FlexRender :cell="cell" />
+                </div>
+                <FlexRender v-else :cell="cell" />
               </td>
             </tr>
-            <tr v-if="row.getIsExpanded()" v-bind="expandedRowProps">
+            <tr v-if="row.getIsExpanded() && !tree" v-bind="expandedRowProps">
               <td :colspan="row.getVisibleCells().length" v-bind="expandedCellProps">
                 <slot name="expanded" :row="row.original" />
               </td>

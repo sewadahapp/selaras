@@ -61,6 +61,7 @@ export type TableRowSelectionState = RowSelectionState
 export type TableExpandedState = ExpandedState
 export type TableColumnVisibilityState = ColumnVisibilityState
 export type TableGetRowId<TData extends RowData = RowData> = (row: TData, index: number) => string
+export type TableGetSubRows<TData extends RowData = RowData> = (row: TData, index: number) => readonly TData[] | undefined
 
 /** Creates TanStack v9 column definitions bound to STable's fixed feature set. */
 export const createTableColumnHelper = tableHook.createAppColumnHelper
@@ -78,6 +79,8 @@ interface UseTableProps<TData extends RowData> {
   expanded?: TableExpandedState
   columnVisibility?: TableColumnVisibilityState
   getRowId?: TableGetRowId<TData>
+  tree?: boolean
+  getSubRows?: TableGetSubRows<TData>
   manualSorting?: boolean
   manualFiltering?: boolean
   manualPagination?: boolean
@@ -169,10 +172,15 @@ export function useTable<TData extends RowData>(props: UseTableProps<TData>, emi
     defaultColumn: { enableSorting: false },
     enableRowSelection: computed(() => !!props.selectable),
     getRowId: props.getRowId,
-    // Row expansion otherwise only allows expanding rows that already have
-    // real hierarchical subRows - this table's own expansion is manual
-    // (detail content via the `expanded` slot), not a subRow tree.
-    getRowCanExpand: () => true,
+    getSubRows: props.tree
+      ? props.getSubRows ?? ((row: TData) => (row as TData & { subRows?: TData[] }).subRows)
+      : () => undefined,
+    // Tree rows expand when they have children; detail expansion remains
+    // available on every row when tree mode is off.
+    getRowCanExpand: (row: any) => props.tree ? !!row.subRows?.length : true,
+    // Paginate tree roots as a unit so expanding one root does not hide later
+    // roots simply because its children consume the page-size row count.
+    paginateExpandedRows: false,
     // Opts out of the local sorted/filtered/paginated row models - state
     // still lives here (sorting/globalFilter/pageIndex above, still
     // emitting their own update:* events the normal way), only the row

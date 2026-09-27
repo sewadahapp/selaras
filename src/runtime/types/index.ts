@@ -118,7 +118,7 @@ export type { UseCommandPaletteReturn } from '../composables/use-command-palette
 export type { UseDrawerOpenOptions, UseDrawerReturn } from '../composables/use-drawer'
 export type { UseModalOpenOptions, UseModalReturn } from '../composables/use-modal'
 export type { UseSlideoverOpenOptions, UseSlideoverReturn } from '../composables/use-slideover'
-export type { TableColumnDef, TableColumnVisibilityState, TableExpandedState, TableGetRowId, TableRowSelectionState, TableSortingState } from '../composables/use-table'
+export type { TableColumnDef, TableColumnVisibilityState, TableExpandedState, TableGetRowId, TableGetSubRows, TableRowSelectionState, TableSortingState } from '../composables/use-table'
 export type { ToastOptions, UseToastReturn } from '../composables/use-toast'
 export type { ThemeComponentRegistry, ThemeConfiguration, ThemeDefaults, ThemeUiOverrides } from '../theme-config'
 export type { ArrowConfig, RoundedArrowConfig } from '../utils/arrow'

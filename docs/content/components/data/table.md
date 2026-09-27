@@ -196,6 +196,28 @@ for the detail content, receiving `{ row }` (the row's original data object):
 Expansion state is uncontrolled by default; bind `v-model:expanded` if you
 need to read or drive it yourself (e.g. to expand a row programmatically).
 
+### Tree data
+
+Set `tree` to render hierarchical rows from each row's `subRows` array. Parent
+rows get an inline expand control in the first visible data column, and nested
+rows are indented by depth. For another child property, pass `get-sub-rows`.
+Use stable `get-row-id` values when the same table may expand, select, or sort
+tree rows. Tree mode uses `expanded` for child visibility, so it cannot be
+combined with the detail `#expanded` slot.
+
+::component-example{name="table-tree"}
+::
+
+```vue-html
+<STable :data="teams" tree :get-row-id="team => team.name">
+  <SColumn field="name" header="Team" />
+  <SColumn field="lead" header="Lead" />
+</STable>
+```
+
+For a different nested field, return each row's children with
+`get-sub-rows="row => row.children"`.
+
 ### Row click
 
 `@row-click`/`@row-contextmenu` fire with the row's original data object
@@ -514,6 +536,8 @@ slot - here's `Table`'s own theme file:
 | `gridlines` | `boolean` | `false` |
 | `striped` | `boolean` | `false` |
 | `expandable` | `boolean` | `false` |
+| `tree` | `boolean` | `false` |
+| `getSubRows` | `(row: TData, index: number) => readonly TData[] \| undefined` | `row => row.subRows` when `tree` is enabled |
 | `expanded` | `TableExpandedState` | - |
 | `columnVisibility` | `TableColumnVisibilityState` | - |
 | `columnToggle` | `boolean` | `false` |

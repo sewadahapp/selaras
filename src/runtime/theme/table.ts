@@ -31,6 +31,7 @@ export const tableTheme = tv({
     // for the one case where both conditions hold at once, rather than
     // leaving the outcome to rely on Tailwind's variant cascade order.
     expandChevron: 'size-4 transition-transform rtl:rotate-180 data-[expanded]:rotate-90 rtl:data-[expanded]:rotate-90',
+    treeCell: 'flex items-center gap-1',
     expandedRow: 'border-b border-[var(--selaras-resolved-border-default)] last:border-b-0',
     expandedCell: 'bg-[var(--selaras-resolved-surface-elevated)] px-3 py-3 text-[var(--selaras-resolved-text-default)]',
     columnToggle: 'relative',
