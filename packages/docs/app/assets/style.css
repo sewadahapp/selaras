@@ -4,8 +4,19 @@
   color: inherit;
 }
 
+:root {
+  color-scheme: light;
+  background: var(--selaras-resolved-surface-canvas, var(--selaras-resolved-surface-default));
+  scrollbar-color: var(--selaras-resolved-border-default) var(--selaras-resolved-surface-canvas, var(--selaras-resolved-surface-default));
+}
+
+:root.dark {
+  color-scheme: dark;
+}
+
 .selaras-docs-root {
   background: var(--selaras-resolved-surface-canvas, var(--selaras-resolved-surface-default));
+  scrollbar-color: var(--selaras-resolved-border-default) var(--selaras-resolved-surface-canvas, var(--selaras-resolved-surface-default));
 }
 
 .selaras-docs-skip-link {
