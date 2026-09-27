@@ -17,6 +17,7 @@ useHead(() => {
     </NuxtLayout>
     <ClientOnly>
       <DocsSearch />
+      <SToast />
     </ClientOnly>
   </SApp>
 </template>

@@ -116,6 +116,8 @@ export const defaultFileIcons: Record<string, string> = {
   'git': 'vscode-icons:file-type-git',
   'gitignore': 'vscode-icons:file-type-git',
   'npm': 'vscode-icons:file-type-npm',
+  'pnpm': 'vscode-icons:file-type-pnpm',
+  'yarn': 'vscode-icons:file-type-yarn',
   'nuxt': 'vscode-icons:file-type-nuxt',
   'ansible': 'vscode-icons:file-type-ansible',
   'bicep': 'vscode-icons:file-type-bicep',

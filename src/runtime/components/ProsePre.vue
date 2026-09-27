@@ -10,7 +10,9 @@ import Icon from './Icon.vue'
 
 defineOptions({ inheritAttrs: false })
 
-const props = defineProps<ProsePreProps>()
+const props = withDefaults(defineProps<ProsePreProps>(), {
+  showHeader: true,
+})
 
 export interface ProsePreProps {
   code?: string
@@ -18,6 +20,8 @@ export interface ProsePreProps {
   filename?: string
   /** Overrides the file-type icon resolved from `filename`/`language`. */
   icon?: string
+  /** Renders the metadata and copy row above the code. @default true */
+  showHeader?: boolean
   highlights?: number[]
   meta?: string
 }
@@ -49,7 +53,7 @@ async function copy() {
 
 <template>
   <div v-bind="resolveSlot(ui.preWrapper, undefined)">
-    <div v-if="filename || language || code" v-bind="resolveSlot(ui.preHeader, undefined)">
+    <div v-if="showHeader && (filename || language || code)" v-bind="resolveSlot(ui.preHeader, undefined)">
       <span v-bind="resolveSlot(ui.preLabel, undefined)">
         <Icon v-if="fileIcon" :name="fileIcon" v-bind="resolveSlot(ui.preIcon, undefined)" />
         <span v-if="filename" v-bind="resolveSlot(ui.preFilename, undefined)">{{ filename }}</span>

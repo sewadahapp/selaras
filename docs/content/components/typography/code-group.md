@@ -24,9 +24,10 @@ pnpm add @sewadah/selaras
 children, not just [Prose](/components/typography/prose) ones) and renders each as a tab
 via [Tabs](/components/navigation/tabs) - the label comes from each child's `filename`
 prop, falling back to `language`, falling back to `Tab 1`/`Tab 2`/... (by
-position) for a child with neither. It doesn't wrap or re-render its
-children's content, so anything already working standalone (like
-[ProsePre](/components/typography/prose)'s copy button) keeps working inside a group.
+position) for a child with neither. Known filename/language icons appear in
+the tab as well. When a child is `SProsePre`, its header row is hidden so the
+label isn't repeated above the panel; this also hides that row's copy button.
+Other child content is rendered as provided.
 
 ### In markdown
 

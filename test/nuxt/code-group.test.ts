@@ -2,6 +2,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { Fragment, h, nextTick } from 'vue'
 import CodeGroup from '../../src/runtime/components/CodeGroup.vue'
+import ProsePre from '../../src/runtime/components/ProsePre.vue'
 
 describe('codeGroup', () => {
   it('labels a tab from the filename prop when present', async () => {
@@ -26,6 +27,27 @@ describe('codeGroup', () => {
     })
     await nextTick()
     expect(wrapper.find('[role="tab"]').text()).toBe('Tab 1')
+  })
+
+  it('moves ProsePre file metadata into the tab and hides its duplicate header', async () => {
+    const wrapper = await mountSuspended(CodeGroup, {
+      slots: {
+        default: () => [
+          h(ProsePre, { filename: 'npm', language: 'bash', code: 'npm install package' }, () => 'npm install package'),
+          h(ProsePre, { filename: 'pnpm', language: 'bash', code: 'pnpm add package' }, () => 'pnpm add package'),
+          h(ProsePre, { filename: 'yarn', language: 'bash', code: 'yarn add package' }, () => 'yarn add package'),
+        ],
+      },
+    })
+    await nextTick()
+
+    const tabs = wrapper.findAll('[role="tab"]')
+    expect(tabs.map(tab => tab.text())).toEqual(['npm', 'pnpm', 'yarn'])
+    expect(tabs[0]!.find('.iconify.i-vscode-icons\\:file-type-npm').exists()).toBe(true)
+    expect(tabs[1]!.find('.iconify.i-vscode-icons\\:file-type-pnpm').exists()).toBe(true)
+    expect(tabs[2]!.find('.iconify.i-vscode-icons\\:file-type-yarn').exists()).toBe(true)
+    expect(wrapper.find('[role="tabpanel"] .border-b').exists()).toBe(false)
+    expect(wrapper.find('[role="tabpanel"] button').exists()).toBe(false)
   })
 
   it('flattens a v-for-produced Fragment child into individual tabs, skipping Comment/Text siblings', async () => {

@@ -79,13 +79,16 @@ Both are usable directly, the same as any other component:
 | `language` | `string` | - |
 | `filename` | `string` | - |
 | `icon` | `string` | resolved from `filename`/`language` |
+| `showHeader` | `boolean` | `true` |
 | `highlights` | `number[]` | - |
 | `meta` | `string` | - |
 
 `code` drives the copy button (nothing renders if it's unset) and is also
 copied verbatim, regardless of what's in the default slot. The header bar
 shows `filename` if set, else a `Badge` for `language` if that's set, else
-nothing. Beside either, a file-type icon is resolved from the filename's
+nothing; set `showHeader` to `false` to hide the whole metadata/copy row.
+CodeGroup does this automatically and moves the filename and file-type icon
+into its tab. Beside either, a file-type icon is resolved from the filename's
 extension first, then the fence language - for example `vue` renders the
 `vscode-icons:file-type-vue` glyph - with no icon for an unrecognized
 type. Pass `icon` to override that resolution, or `ui.preIcon` to restyle
