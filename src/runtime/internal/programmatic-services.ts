@@ -69,7 +69,9 @@ export interface ProgrammaticOverlayService<T extends ProgrammaticOverlayInstanc
 
 export interface ToastService {
   toasts: Ref<ToastItem[]>
+  max: Ref<number>
   nextId: () => number
+  setMax: (max: number) => void
   remove: (id: number) => void
   dispose: () => void
 }
@@ -124,6 +126,7 @@ export const useSlideoverService = createOverlayService<SlideoverInstance>()
 
 const useToastState = createAppScopedState(() => ({
   toasts: ref<ToastItem[]>([]),
+  max: ref(5),
   counter: 0,
 }))
 
@@ -131,7 +134,13 @@ export function useToastService(): ToastService {
   const state = useToastState()
   return {
     toasts: state.toasts,
+    max: state.max,
     nextId: () => state.counter++,
+    setMax(max: number) {
+      const limit = Number.isFinite(max) ? Math.max(0, Math.floor(max)) : 5
+      state.max.value = limit
+      state.toasts.value = limit > 0 ? state.toasts.value.slice(-limit) : []
+    },
     remove(id: number) {
       const index = state.toasts.value.findIndex(toast => toast.id === id)
       if (index !== -1)
@@ -139,6 +148,7 @@ export function useToastService(): ToastService {
     },
     dispose() {
       state.toasts.value = []
+      state.max.value = 5
     },
   }
 }

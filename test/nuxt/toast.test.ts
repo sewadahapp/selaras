@@ -1,11 +1,13 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { ToastProvider } from 'reka-ui'
+import { ToastProvider, ToastRoot } from 'reka-ui'
 import { afterEach, describe, expect, it } from 'vitest'
-import { defineComponent, h, ref } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 import Toast from '../../src/runtime/components/Toast.vue'
+import ToastItemRenderer from '../../src/runtime/internal/ToastItemRenderer.vue'
 import { useToast } from '../../src/runtime/composables/use-toast'
 import { useToastService } from '../../src/runtime/internal/programmatic-services'
+import { getToastStackMargin } from '../../src/runtime/internal/toast-stack'
 
 // Toast.vue only injects a ToastProviderContext - it doesn't provide one
 // itself, since in the real app SApp's own ToastProvider ancestor does that
@@ -13,6 +15,14 @@ import { useToastService } from '../../src/runtime/internal/programmatic-service
 // wrap it in a real ToastProvider the same way SApp does.
 const ToastHarness = defineComponent({
   render: () => h(ToastProvider, () => h(Toast)),
+})
+
+const ConfiguredToastHarness = defineComponent({
+  render: () => h(ToastProvider, () => h(Toast, { position: 'top-center', expand: false, max: 2 })),
+})
+
+const TimedToastHarness = defineComponent({
+  render: () => h(ToastProvider, () => h(Toast, { duration: 9000 })),
 })
 
 const ScopedToastTrigger = defineComponent({
@@ -146,6 +156,61 @@ describe('toast', () => {
 
     expect(document.body.textContent).toContain('First')
     expect(document.body.textContent).toContain('Second')
+  })
+
+  it('supports positioned, collapsed toast stacks', async () => {
+    const { add } = useToast()
+    add({ title: 'First' })
+    add({ title: 'Second' })
+    add({ title: 'Third' })
+    wrapper = await mountSuspended(ConfiguredToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const root = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
+    const frontRoot = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Third'))
+    const displayedTitles = Array.from(document.body.querySelectorAll('[data-state="open"]'))
+      .map(element => ['First', 'Second', 'Third'].find(title => element.textContent?.includes(title)))
+      .filter((title): title is string => title !== undefined)
+    expect(document.body.textContent).not.toContain('First')
+    expect(document.body.textContent).toContain('Third')
+    expect(displayedTitles).toEqual(['Third', 'Second'])
+    expect(root?.className).toContain('transition-[margin,transform,opacity]')
+    expect((root as HTMLElement | undefined)?.style.marginBlockStart).toBe('-36px')
+    expect(frontRoot?.className).toContain('first:z-10')
+    expect(root?.className).toContain('data-[state=open]:slide-in-from-top-2')
+    expect(root?.className).toContain('data-[state=closed]:slide-out-to-top-2')
+    expect(root?.parentElement?.className).toContain('top-0')
+    expect(root?.parentElement?.className).toContain('left-1/2')
+    expect(root?.parentElement?.className).toContain('-translate-x-1/2')
+    expect(root?.parentElement?.className).toContain('gap-2')
+
+    root?.parentElement?.dispatchEvent(new MouseEvent('mouseenter'))
+    await nextTick()
+    const expandedRoot = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
+    expect((expandedRoot as HTMLElement | undefined)?.style.marginBlockStart).toBe('')
+
+    expandedRoot?.parentElement?.dispatchEvent(new MouseEvent('mouseleave'))
+    await nextTick()
+    const collapsedRoot = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
+    expect((collapsedRoot as HTMLElement | undefined)?.style.marginBlockStart).toBe('-36px')
+  })
+
+  it('keeps the same narrow reveal for short and tall stacked toasts', () => {
+    expect(getToastStackMargin(52)).toBe('-36px')
+    expect(getToastStackMargin(194)).toBe('-178px')
+  })
+
+  it('uses the renderer duration as a fallback and lets each toast override it', async () => {
+    const { add } = useToast()
+    add({ title: 'Default duration' })
+    add({ title: 'Custom duration', duration: 2500 })
+    wrapper = await mountSuspended(TimedToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const rendered = wrapper.findAllComponents(ToastItemRenderer)
+    expect(rendered).toHaveLength(2)
+    expect(rendered[0]!.findComponent(ToastRoot).props('duration')).toBe(9000)
+    expect(rendered[1]!.findComponent(ToastRoot).props('duration')).toBe(2500)
   })
 
   it('removes the toast from state when its close button is clicked', async () => {

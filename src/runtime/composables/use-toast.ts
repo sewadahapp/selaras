@@ -28,7 +28,12 @@ export function useToast(): UseToastReturn {
     if (import.meta.server)
       return -1
     const id = service.nextId()
+    if (service.max.value <= 0)
+      return id
+
     service.toasts.value.push({ ...toast, id, _theme: snapshotTheme() })
+    if (service.toasts.value.length > service.max.value)
+      service.toasts.value.splice(0, service.toasts.value.length - service.max.value)
     return id
   }
 

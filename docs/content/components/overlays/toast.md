@@ -69,6 +69,32 @@ use neutral fallbacks:
 </SButton>
 ```
 
+### Position and stacking
+
+Set `position` on the single `<SToast />` renderer to choose any screen corner
+or center edge. The default is `bottom-right`. `expand` controls how multiple
+toasts are presented: it defaults to `true` for the separated layout; set it to
+`false` to layer them into a compact stack that fans open on hover.
+
+```vue-html
+<ClientOnly>
+  <SToast position="top-center" :expand="false" />
+</ClientOnly>
+```
+
+### Timing and count
+
+`duration` sets the default time in milliseconds that each toast stays visible;
+the `duration` passed to `add()` overrides it for that toast. `max` limits how
+many are visible at once. When the limit is reached, the oldest toast is
+removed so newer notifications can appear without building a hidden backlog.
+
+```vue-html
+<ClientOnly>
+  <SToast :duration="8000" :max="3" />
+</ClientOnly>
+```
+
 ### Accessibility
 
 Toast renders Reka UI's Toast primitive, so the accessibility semantics
@@ -97,3 +123,7 @@ every slot and variant - here's the toast's own theme file:
 | Prop | Type | Default |
 | --- | --- | --- |
 | `ui` | `Partial<Record<'viewport' \| 'root' \| 'title' \| 'description' \| 'icon' \| 'close', string \| object>>` | - |
+| `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` |
+| `expand` | `boolean` | `true` |
+| `duration` | `number` | `5000` |
+| `max` | `number` | `5` |
