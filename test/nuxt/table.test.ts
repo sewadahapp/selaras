@@ -106,6 +106,33 @@ describe('table', () => {
     expect(rowText()).toEqual(['Charlie', 'Bob', 'Alice'])
   })
 
+  it('opens per-column filters from a separate header trigger and filters rows live', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ name: 'Alice' }, { name: 'Bob' }],
+      },
+      slots: {
+        default: () => h(Column, { field: 'name', header: 'Name', filterable: true, sortable: true }),
+      },
+    })
+
+    const header = wrapper.find('th')
+    const filterButton = wrapper.find('button[aria-label="Filter Name"]')
+    expect(filterButton.exists()).toBe(true)
+    expect(header.find('input').exists()).toBe(false)
+
+    await filterButton.trigger('click')
+    await nextTick()
+    const filterInput = document.body.querySelector<HTMLInputElement>('input[aria-label="Filter Name"]')
+    expect(filterInput).not.toBeNull()
+    expect(wrapper.emitted('update:sorting')).toBeUndefined()
+
+    filterInput!.value = 'ali'
+    filterInput!.dispatchEvent(new Event('input', { bubbles: true }))
+    await nextTick()
+    expect(wrapper.findAll('tbody tr').map(row => row.text())).toEqual(['Alice'])
+  })
+
   it('sorts on Enter/Space and exposes aria-sort, so sortable headers work without a mouse', async () => {
     const wrapper = await mountSuspended(Table, {
       props: {

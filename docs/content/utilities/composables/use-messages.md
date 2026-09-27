@@ -52,6 +52,7 @@ a single object literal covering every key below.
 | `searchDescription` | `Type to filter, then use arrow keys and enter to select` | Select/Autocomplete's adaptive sr-only description |
 | `columns` | `Columns` | Table's column-toggle control |
 | `filterPlaceholder` | `Filter...` | Table's filter input |
+| `filterColumn` | `column => \`Filter ${column}\`` | Accessible label and heading for a Table column filter |
 | `previous` | `Previous` | Pagination, ContentSurround |
 | `next` | `Next` | Pagination, ContentSurround |
 | `first` | `First` | Pagination |

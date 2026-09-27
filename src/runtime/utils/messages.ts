@@ -11,6 +11,7 @@ export interface MessageRegistry {
   searchDescription: string
   columns: string
   filterPlaceholder: string
+  filterColumn: (column: string) => string
   previous: string
   next: string
   first: string
@@ -93,6 +94,7 @@ export const defaultMessages: MessageRegistry = {
   searchDescription: 'Type to filter, then use arrow keys and enter to select',
   columns: 'Columns',
   filterPlaceholder: 'Filter...',
+  filterColumn: column => `Filter ${column}`,
   previous: 'Previous',
   next: 'Next',
   first: 'First',

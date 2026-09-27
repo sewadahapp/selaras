@@ -19,6 +19,7 @@ import Checkbox from './Checkbox.vue'
 import Icon from './Icon.vue'
 import Input from './Input.vue'
 import Pagination from './Pagination.vue'
+import Popover from './Popover.vue'
 
 type TableVariants = VariantProps<typeof tableTheme>
 
@@ -146,6 +147,9 @@ const tdProps = computed(() => resolveSlot(ui.value.td, props.ui?.td))
 const tfootProps = computed(() => resolveSlot(ui.value.tfoot, props.ui?.tfoot))
 const emptyStateProps = computed(() => resolveSlot(ui.value.emptyState, props.ui?.emptyState))
 const filterInputProps = computed(() => resolveSlot(ui.value.filterInput, props.ui?.filterInput))
+const filterButtonProps = computed(() => resolveSlot(ui.value.filterButton, props.ui?.filterButton))
+const filterIconProps = computed(() => resolveSlot(ui.value.filterIcon, props.ui?.filterIcon))
+const filterPopoverProps = computed(() => resolveSlot(ui.value.filterPopover, props.ui?.filterPopover))
 const paginationWrapperProps = computed(() => resolveSlot(ui.value.paginationWrapper, props.ui?.paginationWrapper))
 const paginationInfoProps = computed(() => resolveSlot(ui.value.paginationInfo, props.ui?.paginationInfo))
 const paginationButtonsProps = computed(() => resolveSlot(ui.value.paginationButtons, props.ui?.paginationButtons))
@@ -294,22 +298,56 @@ defineExpose({
                 @keydown.space.prevent="header.column.getToggleSortingHandler()?.($event)"
               >
                 <template v-if="!header.isPlaceholder || header.rowSpan > 1">
-                  <FlexRender :header="header" />
-                  <Icon
-                    v-if="header.column.getCanSort()"
-                    :name="header.column.getIsSorted() === 'asc' ? icons.sortAscending : header.column.getIsSorted() === 'desc' ? icons.sortDescending : icons.sortUnsorted"
-                    :data-sort-state="header.column.getIsSorted() || 'none'"
-                    v-bind="sortIconProps"
-                  />
-                  <div v-if="header.column.getCanFilter()">
-                    <Input
-                      size="sm"
-                      :model-value="(header.column.getFilterValue() as string) ?? ''"
-                      :placeholder="messages.filterPlaceholder"
-                      v-bind="filterInputProps"
-                      @click.stop
-                      @update:model-value="(value) => header.column.setFilterValue(value)"
+                  <div :class="applyClassPrefix('inline-flex items-center gap-1')">
+                    <FlexRender :header="header" />
+                    <Icon
+                      v-if="header.column.getCanSort()"
+                      :name="header.column.getIsSorted() === 'asc' ? icons.sortAscending : header.column.getIsSorted() === 'desc' ? icons.sortDescending : icons.sortUnsorted"
+                      :data-sort-state="header.column.getIsSorted() || 'none'"
+                      v-bind="sortIconProps"
                     />
+                    <Popover v-if="header.column.getCanFilter()" side="bottom" align="start" :ui="{ content: filterPopoverProps }">
+                      <Button
+                        v-bind="filterButtonProps"
+                        variant="ghost"
+                        :color="header.column.getIsFiltered() ? 'primary' : 'neutral'"
+                        size="sm"
+                        square
+                        :aria-label="messages.filterColumn(typeof header.column.columnDef.header === 'string' ? header.column.columnDef.header : header.column.id)"
+                        :aria-pressed="header.column.getIsFiltered()"
+                        @click.stop
+                        @keydown.stop
+                      >
+                        <Icon :name="icons.filter" v-bind="filterIconProps" />
+                      </Button>
+                      <template #content>
+                        <div :class="applyClassPrefix('flex flex-col gap-2')">
+                          <div :class="applyClassPrefix('flex items-center justify-between gap-2')">
+                            <span :class="applyClassPrefix('text-sm font-medium text-[var(--selaras-resolved-text-default)]')">
+                              {{ messages.filterColumn(typeof header.column.columnDef.header === 'string' ? header.column.columnDef.header : header.column.id) }}
+                            </span>
+                            <Button
+                              variant="text"
+                              color="neutral"
+                              size="sm"
+                              :disabled="!header.column.getIsFiltered()"
+                              @click.stop="header.column.setFilterValue(undefined)"
+                            >
+                              {{ messages.clear }}
+                            </Button>
+                          </div>
+                          <Input
+                            size="sm"
+                            :model-value="(header.column.getFilterValue() as string) ?? ''"
+                            :placeholder="messages.filterPlaceholder"
+                            :aria-label="messages.filterColumn(typeof header.column.columnDef.header === 'string' ? header.column.columnDef.header : header.column.id)"
+                            v-bind="filterInputProps"
+                            @click.stop
+                            @update:model-value="(value) => header.column.setFilterValue(value)"
+                          />
+                        </div>
+                      </template>
+                    </Popover>
                   </div>
                 </template>
               </th>

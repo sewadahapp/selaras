@@ -13,6 +13,7 @@ export interface IconRegistry {
   sortUnsorted: string
   sortAscending: string
   sortDescending: string
+  filter: string
   columns: string
   copy: string
   lightMode: string
@@ -68,6 +69,7 @@ export const defaultIcons: IconRegistry = {
   // plain chevrons above, matching the original caret-vs-arrow split.
   sortAscending: 'hugeicons:arrow-up-02',
   sortDescending: 'hugeicons:arrow-down-02',
+  filter: 'hugeicons:filter',
   columns: 'hugeicons:table-columns-split',
   copy: 'hugeicons:copy',
   lightMode: 'hugeicons:sun-01',

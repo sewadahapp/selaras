@@ -48,8 +48,8 @@ enable sorting; an adjacent icon shows its current state (unsorted, ascending,
 or descending). Click a sortable header, or focus it and press
 <kbd>Enter</kbd>/<kbd>Space</kbd>, to cycle through those states. Shift-click
 a second sortable header to add it as a secondary sort without clearing the
-first. `filterable` adds a per-column text filter input to that column's
-header. `selectable` adds a leading checkbox column wired to
+first. `filterable` adds a funnel button beside that column's header; it opens
+a popover with a live text filter and a Clear action. `selectable` adds a leading checkbox column wired to
 `v-model:row-selection`.
 
 Use `select-on-row-click` alongside `selectable` to toggle selection by
@@ -474,6 +474,8 @@ Sortable headers are keyboard-operable (<kbd>Enter</kbd>/<kbd>Space</kbd>
 toggle the sort, same as a click) and expose `aria-sort` reflecting the
 current state. The row-expansion toggle is a real `<button>` with an
 `aria-label` of "Expand row"/"Collapse row" that updates with its state.
+Each filterable column has a labeled filter button that opens its text filter
+in a popover; its Clear action resets that column's filter.
 Column-visibility checkboxes are standard `SCheckbox` elements, and
 pagination is a nested [SPagination](/components/navigation/pagination), so
 both inherit those components' own accessibility behavior rather than

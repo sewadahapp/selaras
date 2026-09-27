@@ -51,6 +51,7 @@ together, rather than needing a separate override for each.
 | `sortUnsorted` | `hugeicons:sorting-05` | Table's sortable column headers when not sorted |
 | `sortAscending` | `hugeicons:arrow-up-02` | Table's ascending sort state |
 | `sortDescending` | `hugeicons:arrow-down-02` | Table's descending sort state |
+| `filter` | `hugeicons:filter` | Table column filter trigger |
 | `columns` | `hugeicons:table-columns-split` | Table's column-toggle control |
 | `copy` | `hugeicons:copy` | CodeButton |
 | `lightMode` | `hugeicons:sun-01` | ColorModeToggle |
