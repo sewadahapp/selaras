@@ -236,9 +236,8 @@ below.
 must remain the combobox focus owner, Autocomplete uses a wider nonmodal panel
 rather than a dialog:
 
-```vue-html
-<SAutocomplete v-model="value" adaptive placeholder="Type anything" :items="fruitItems" />
-```
+::component-example{name="autocomplete-adaptive"}
+::
 
 ### Forms integration
 

@@ -1,22 +1,42 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { h } from 'vue'
+import { h, nextTick } from 'vue'
 import Dropdown from '../../src/runtime/components/Dropdown.vue'
+import './helpers/adaptive-breakpoint'
 
 // DropdownMenuContent renders through a real Teleport to document.body once
 // opened (not stubbed in this test environment), same as Modal's
 // DialogContent - query document.body directly instead of wrapper.find.
 let wrapper: Awaited<ReturnType<typeof mountSuspended>> | undefined
+let restoreMatchMedia: (() => void) | undefined
 
 afterEach(() => {
   wrapper?.unmount()
   wrapper = undefined
+  restoreMatchMedia?.()
+  restoreMatchMedia = undefined
 })
 
 async function openMenu() {
   const trigger = wrapper!.find('button')
   await trigger.trigger('click')
   await new Promise(resolve => setTimeout(resolve, 50))
+}
+
+function mockMatchMedia(matches: boolean) {
+  const original = window.matchMedia
+  const mediaQuery = {
+    matches,
+    media: '(width < 48rem)',
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  } as unknown as MediaQueryList
+  window.matchMedia = (() => mediaQuery) as unknown as typeof window.matchMedia
+  return () => window.matchMedia = original
 }
 
 describe('dropdown', () => {
@@ -233,5 +253,39 @@ describe('dropdown', () => {
     const arrow = document.body.querySelector('.fill-\\[var\\(--selaras-resolved-surface-default\\)\\]')
     expect(arrow?.getAttribute('width')).toBe('16')
     expect(arrow?.getAttribute('height')).toBe('8')
+  })
+
+  it('adaptive stays an anchored menu on desktop', async () => {
+    restoreMatchMedia = mockMatchMedia(false)
+    wrapper = await mountSuspended(Dropdown, {
+      props: { adaptive: true, items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await wrapper.find('button').trigger('click')
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    expect(document.body.querySelector('[role="menu"]')).toBeTruthy()
+    expect(document.body.querySelector('[role="dialog"]')).toBeFalsy()
+  })
+
+  it('adaptive opens a mobile action dialog and runs action items', async () => {
+    restoreMatchMedia = mockMatchMedia(true)
+    const onSelect = vi.fn()
+    wrapper = await mountSuspended(Dropdown, {
+      props: { adaptive: true, items: [[{ label: 'Edit', onSelect }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    const trigger = wrapper.find('button')
+    expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+    await trigger.trigger('click')
+    await nextTick()
+
+    expect(document.body.querySelector('[role="dialog"]')?.textContent).toContain('Edit')
+    expect(document.body.querySelector('[role="menu"]')).toBeFalsy()
+    document.body.querySelector<HTMLButtonElement>('[role="dialog"] button:not([aria-label])')?.click()
+    await nextTick()
+
+    expect(onSelect).toHaveBeenCalledOnce()
+    expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
   })
 })

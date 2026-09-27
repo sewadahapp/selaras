@@ -385,9 +385,8 @@ mode only) `selectionStart`/`selectionEnd`/`highlighted`:
 It is opt-in (defaults `false`), chooses the presentation on open, and works
 across single-date, range, and time-only mode:
 
-```vue-html
-<SDatePicker v-model="date" adaptive />
-```
+::component-example{name="date-picker-adaptive"}
+::
 
 ### Forms integration
 

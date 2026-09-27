@@ -65,6 +65,8 @@ export interface MessageRegistry {
   showHiddenBreadcrumbItems: string
   commandPalette: string
   commandPaletteDescription: string
+  dropdownMenu: string
+  dropdownMenuDescription: string
   navigate: string
   select: string
   onThisPage: string
@@ -144,6 +146,8 @@ export const defaultMessages: MessageRegistry = {
   showHiddenBreadcrumbItems: 'Show hidden breadcrumb items',
   commandPalette: 'Command palette',
   commandPaletteDescription: 'Search for a command and press enter',
+  dropdownMenu: 'Actions',
+  dropdownMenuDescription: 'Choose an action',
   navigate: 'Navigate',
   select: 'Select',
   onThisPage: 'On this page',

@@ -325,9 +325,8 @@ An object sets its width, height, rounded tip, or corner clearance
 below your configured adaptive breakpoint. It is opt-in (defaults `false`),
 chooses the presentation on open, and holds it until close:
 
-```vue-html
-<SSelect v-model="fruit" adaptive placeholder="Pick a fruit" :items="fruitItems" />
-```
+::component-example{name="select-adaptive"}
+::
 
 ### Panel positioning and portal
 

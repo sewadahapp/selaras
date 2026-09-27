@@ -80,9 +80,8 @@ a centered [Modal](/components/overlays/modal) instead of a small anchored
 panel. It is opt-in (defaults `false`) and follows the shared adaptive
 contract:
 
-```vue-html
-<SColorPicker v-model="color" adaptive />
-```
+::component-example{name="color-picker-adaptive"}
+::
 
 ### Arrow
 

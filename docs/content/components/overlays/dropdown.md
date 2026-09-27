@@ -113,6 +113,18 @@ clearance (`padding`):
 <SDropdown :items="items" :arrow="{ width: 16, height: 8, rounded: true, padding: 12 }">...</SDropdown>
 ```
 
+### Adaptive mobile presentation
+
+Set `adaptive` to show the action list in a modal on small screens while
+keeping the anchored menu on larger screens. This is opt-in; links, action
+handlers, groups, item slots, and shortcut hints work in either presentation.
+The modal uses normal buttons and links, so touch users get larger targets and
+keyboard users can move through actions with Tab. Escape and the backdrop close
+it and return focus to the trigger.
+
+::component-example{name="dropdown-adaptive"}
+::
+
 ### Accessibility
 
 Dropdown renders Reka UI's DropdownMenu primitive, so the accessibility
@@ -123,7 +135,9 @@ trigger exposes `aria-haspopup`/`aria-expanded`, the menu itself is
 typing a letter jumps to the next matching item, and
 <kbd>Enter</kbd>/<kbd>Space</kbd> selects the highlighted one -
 <kbd>Escape</kbd> or an outside click closes the menu and returns focus
-to the trigger.
+to the trigger. With `adaptive` on a small screen, the action list becomes a
+dialog containing native links and buttons; focus follows the dialog's normal
+Tab order instead of menu arrow-key navigation.
 
 ### Custom `:ui`
 
@@ -155,6 +169,7 @@ are display-only unless `hotkey: true` is set.
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `positioning` | `OverlayPositioning` | menu defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
+| `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow', string \| object>>` | - |
 
 ## Slots

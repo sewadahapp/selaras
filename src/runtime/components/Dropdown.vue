@@ -5,14 +5,17 @@ import type { RoundedArrowConfig } from '../utils/arrow'
 import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { UiProp } from '../utils/ui'
 import { DropdownMenuArrow, DropdownMenuContent, DropdownMenuItem, DropdownMenuPortal, DropdownMenuRoot, DropdownMenuSeparator, DropdownMenuTrigger } from 'reka-ui'
-import { computed, getCurrentInstance, ref, watch } from 'vue'
+import { computed, getCurrentInstance, onMounted, ref, useId, watch, watchPostEffect } from 'vue'
 import { NuxtLink } from '#components'
+import { useIsMobile } from '../composables/use-media-query'
+import { useMessages } from '../composables/use-messages'
 import { vHotkey } from '../directives/hotkey'
 import { dropdownTheme } from '../theme/dropdown'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
+import Modal from './Modal.vue'
 import ShortcutHint from './ShortcutHint.vue'
 
 export interface DropdownItem {
@@ -44,6 +47,8 @@ export interface DropdownProps {
   positioning?: OverlayPositioning
   /** Teleport target, or `false` to render inline. Defaults to `body`. */
   portal?: OverlayPortal
+  /** Opens a dialog-style action list on mobile instead of the anchored menu. */
+  adaptive?: boolean
   ui?: UiProp<DropdownThemeSlots>
 }
 
@@ -72,6 +77,10 @@ function onUpdateOpen(value: boolean) {
 
 const theme = useComponentTheme('dropdown', dropdownTheme)
 const themeBindings = useThemeBindings()
+const messages = useMessages()
+const isMobile = useIsMobile()
+const modalId = `selaras-dropdown-modal-${useId()}`
+const triggerElement = ref<{ $el?: HTMLElement } | HTMLElement>()
 const ui = computed(() => theme.value())
 
 const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
@@ -92,14 +101,76 @@ function hotkeyFor(item: DropdownItem): HotkeyOptions | undefined {
     : undefined
 }
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
+
+// Keep one open state while choosing the presentation at open time. Switching
+// a live menu focus scope into a dialog during a resize can strand focus, so
+// the next opening samples the current breakpoint again.
+const mobilePresentation = ref(false)
+const isOpen = computed(() => isControlled ? props.open ?? false : internalOpen.value)
+watch(isOpen, (open) => {
+  if (open)
+    mobilePresentation.value = !!props.adaptive && isMobile.value
+})
+onMounted(() => {
+  if (isOpen.value)
+    mobilePresentation.value = !!props.adaptive && isMobile.value
+})
+
+function onUpdateMenuOpen(value: boolean) {
+  onUpdateOpen(value)
+}
+
+const desktopOpen = computed(() => isOpen.value && !mobilePresentation.value)
+const mobileOpen = computed(() => isOpen.value && mobilePresentation.value)
+const adaptiveUi = computed(() => ({
+  content: {
+    class: 'rounded-[var(--selaras-resolved-radius-md)]',
+    id: modalId,
+  },
+}))
+
+// Reka's menu trigger always declares aria-haspopup="menu" and its expanded
+// state follows the anchored menu root. In adaptive mode, mirror the mobile
+// dialog that actually opens so assistive technology gets the right target.
+watchPostEffect(() => {
+  if (!props.adaptive || !isMobile.value)
+    return
+  const element = triggerElement.value instanceof HTMLElement ? triggerElement.value : triggerElement.value?.$el
+  if (!element)
+    return
+  element.setAttribute('aria-haspopup', 'dialog')
+  element.setAttribute('aria-expanded', String(isOpen.value))
+  if (isOpen.value)
+    element.setAttribute('aria-controls', modalId)
+  else
+    element.removeAttribute('aria-controls')
+})
+
+function selectMobileItem(item: DropdownItem) {
+  item.onSelect?.()
+  onUpdateOpen(false)
+}
+
+function onModalAfterLeave() {
+  if (!isOpen.value)
+    mobilePresentation.value = false
+}
+
+function selectMobileLink(event: MouseEvent, item: DropdownItem) {
+  if (item.disabled) {
+    event.preventDefault()
+    return
+  }
+  selectMobileItem(item)
+}
 </script>
 
 <template>
-  <DropdownMenuRoot :open="internalOpen" @update:open="onUpdateOpen">
-    <DropdownMenuTrigger as-child>
+  <DropdownMenuRoot :open="desktopOpen" @update:open="onUpdateMenuOpen">
+    <DropdownMenuTrigger ref="triggerElement" as-child>
       <slot />
     </DropdownMenuTrigger>
-    <DropdownMenuPortal v-bind="portalProps">
+    <DropdownMenuPortal v-if="!mobilePresentation" v-bind="portalProps">
       <DropdownMenuContent :side-offset="6" align="start" :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" v-bind="contentProps">
         <template v-for="(group, groupIndex) in items" :key="groupIndex">
           <DropdownMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />
@@ -132,4 +203,62 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
       </DropdownMenuContent>
     </DropdownMenuPortal>
   </DropdownMenuRoot>
+
+  <Modal
+    v-if="mobilePresentation"
+    :open="mobileOpen"
+    :title="messages.dropdownMenu"
+    :description="messages.dropdownMenuDescription"
+    :close="false"
+    :ui="adaptiveUi"
+    @update:open="onUpdateOpen"
+    @after-leave="onModalAfterLeave"
+  >
+    <template #content>
+      <div class="max-h-[calc(100dvh-8rem)] overflow-y-auto p-2">
+        <template v-for="(group, groupIndex) in items" :key="groupIndex">
+          <div v-if="groupIndex > 0" role="separator" v-bind="separatorProps" />
+          <div class="flex flex-col gap-1">
+            <template v-for="(item, itemIndex) in group" :key="itemIndex">
+              <NuxtLink
+                v-if="item.to"
+                v-hotkey="hotkeyFor(item)"
+                :to="item.to"
+                :target="item.target"
+                :rel="item.rel"
+                :aria-disabled="item.disabled || undefined"
+                :tabindex="item.disabled ? -1 : undefined"
+                class="flex min-h-11 w-full items-center gap-3 rounded-[var(--selaras-resolved-radius-sm)] px-3 py-2 text-start text-base outline-none transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:ring-2 focus-visible:ring-[var(--selaras-resolved-color-primary-fill)]"
+                :class="item.destructive ? 'hover:bg-[var(--selaras-resolved-color-danger-subtle-hover)] hover:text-[var(--selaras-resolved-color-danger-on-subtle)]' : undefined"
+                v-bind="itemPropsFor(item)"
+                @click="selectMobileLink($event, item)"
+              >
+                <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
+                <slot name="item" :item="item">
+                  {{ item.label }}
+                </slot>
+                <ShortcutHint :shortcut="item.shortcut" />
+              </NuxtLink>
+              <button
+                v-else
+                v-hotkey="hotkeyFor(item)"
+                type="button"
+                :disabled="item.disabled"
+                class="flex min-h-11 w-full items-center gap-3 rounded-[var(--selaras-resolved-radius-sm)] px-3 py-2 text-start text-base outline-none transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:ring-2 focus-visible:ring-[var(--selaras-resolved-color-primary-fill)] disabled:pointer-events-none disabled:opacity-50"
+                :class="item.destructive ? 'hover:bg-[var(--selaras-resolved-color-danger-subtle-hover)] hover:text-[var(--selaras-resolved-color-danger-on-subtle)]' : undefined"
+                v-bind="itemPropsFor(item)"
+                @click="selectMobileItem(item)"
+              >
+                <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
+                <slot name="item" :item="item">
+                  {{ item.label }}
+                </slot>
+                <ShortcutHint :shortcut="item.shortcut" />
+              </button>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
+  </Modal>
 </template>
