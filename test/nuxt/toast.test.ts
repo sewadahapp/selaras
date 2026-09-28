@@ -206,6 +206,21 @@ describe('toast', () => {
     expect((collapsedRoot as HTMLElement | undefined)?.style.marginBlockStart).toBe('-36px')
   })
 
+  it.each([
+    ['stacks by default', ToastHarness, '-36px'],
+    ['shows every toast separately with expand', defineComponent({ render: () => h(ToastProvider, () => h(Toast, { expand: true })) }), ''],
+  ] as const)('%s', async (_, harness, secondMargin) => {
+    const { add } = useToast()
+    add({ title: 'First' })
+    add({ title: 'Second' })
+    wrapper = await mountSuspended(harness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    // At the default bottom position the newer toast is the one layered over the first.
+    const layered = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
+    expect((layered as HTMLElement | undefined)?.style.marginBlockStart).toBe(secondMargin)
+  })
+
   it('keeps the same narrow reveal for short and tall stacked toasts', () => {
     expect(getToastStackMargin(52)).toBe('-36px')
     expect(getToastStackMargin(194)).toBe('-178px')

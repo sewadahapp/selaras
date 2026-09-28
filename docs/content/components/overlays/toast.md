@@ -72,13 +72,13 @@ a neutral surface and an explicit icon uses a neutral color:
 ### Position and stacking
 
 Set `position` on the single `<SToast />` renderer to choose any screen corner
-or center edge. The default is `bottom-right`. `expand` controls how multiple
-toasts are presented: it defaults to `true` for the separated layout; set it to
-`false` to layer them into a compact stack that fans open on hover.
+or center edge. The default is `bottom-right`. Multiple toasts layer into a
+compact stack that fans open on hover; set `expand` to show every toast
+separately instead.
 
 ```vue-html
 <ClientOnly>
-  <SToast position="top-center" :expand="false" />
+  <SToast position="top-center" expand />
 </ClientOnly>
 ```
 
@@ -124,6 +124,6 @@ every slot and variant - here's the toast's own theme file:
 | --- | --- | --- |
 | `ui` | `Partial<Record<'viewport' \| 'root' \| 'title' \| 'description' \| 'icon' \| 'close', string \| object>>` | - |
 | `position` | `'top-left' \| 'top-center' \| 'top-right' \| 'bottom-left' \| 'bottom-center' \| 'bottom-right'` | `'bottom-right'` |
-| `expand` | `boolean` | `true` |
+| `expand` | `boolean` | `false` |
 | `duration` | `number` | `5000` |
 | `max` | `number` | `5` |
