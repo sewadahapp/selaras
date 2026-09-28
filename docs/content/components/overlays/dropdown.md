@@ -172,7 +172,7 @@ are display-only unless `hotkey: true` is set.
 | `positioning` | `OverlayPositioning` | menu defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `adaptive` | `boolean` | `false` |
-| `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow', string \| object>>` | - |
+| `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow' \| 'mobileList' \| 'mobileGroup', string \| object>>` | - |
 
 ## Slots
 

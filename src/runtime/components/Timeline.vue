@@ -5,7 +5,7 @@ import type { TimelineItem, TimelineProps, TimelineSlotProps, TimelineSlots } fr
 import { computed } from 'vue'
 import { timelineTheme } from '../theme/timeline'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
 
 type TimelineVariants = VariantProps<typeof timelineTheme>
@@ -39,11 +39,11 @@ function itemUi(item: TimelineItem, slot: TimelineThemeSlots) {
 }
 
 function contentPlacement(index: number) {
-  if (props.align === 'alternate') {
-    if (isHorizontal.value)
-      return index % 2 === 0 ? 'row-start-1' : 'row-start-3'
-    return index % 2 === 0 ? 'col-start-3 text-start' : 'col-start-1 text-end'
-  }
+  if (props.align !== 'alternate')
+    return undefined
+  if (isHorizontal.value)
+    return applyClassPrefix(index % 2 === 0 ? 'row-start-1' : 'row-start-3')
+  return applyClassPrefix(index % 2 === 0 ? 'col-start-3 text-start' : 'col-start-1 text-end')
 }
 </script>
 

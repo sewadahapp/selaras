@@ -7,6 +7,9 @@ export const dropdownTheme = tv({
     icon: 'size-4 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     separator: '-mx-1 my-1 h-px bg-[var(--selaras-resolved-border-default)]',
     arrow: 'fill-[var(--selaras-resolved-surface-default)] stroke-[var(--selaras-resolved-border-default)] stroke-1',
+    // The adaptive small-screen dialog's scrolling list and each item group in it.
+    mobileList: 'max-h-[calc(100dvh-8rem)] overflow-y-auto p-2',
+    mobileGroup: 'flex flex-col gap-1',
   },
   variants: {
     // For a delete/remove-style action - deliberately just this one flag
@@ -18,7 +21,17 @@ export const dropdownTheme = tv({
         icon: 'text-current',
       },
     },
+    // Items in the adaptive dialog: larger touch targets, and real hover/focus
+    // states, since they aren't menu items with a highlighted state.
+    mobile: {
+      true: {
+        item: 'min-h-11 w-full gap-3 px-3 py-2 text-start text-base transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:ring-2 focus-visible:ring-[var(--selaras-resolved-color-primary-fill)] disabled:pointer-events-none disabled:opacity-50',
+      },
+    },
   },
+  compoundVariants: [
+    { mobile: true, destructive: true, class: { item: 'hover:bg-[var(--selaras-resolved-color-danger-subtle-hover)] hover:text-[var(--selaras-resolved-color-danger-on-subtle)]' } },
+  ],
 })
 
 export type DropdownThemeSlots = keyof (typeof dropdownTheme)['slots']

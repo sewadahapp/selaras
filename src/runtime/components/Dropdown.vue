@@ -92,6 +92,11 @@ const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.ar
 function itemPropsFor(item: DropdownItem) {
   return resolveSlot(theme.value({ destructive: item.destructive }).item, props.ui?.item)
 }
+function mobileItemPropsFor(item: DropdownItem) {
+  return resolveSlot(theme.value({ destructive: item.destructive, mobile: true }).item, props.ui?.item)
+}
+const mobileListProps = computed(() => resolveSlot(ui.value.mobileList, props.ui?.mobileList))
+const mobileGroupProps = computed(() => resolveSlot(ui.value.mobileGroup, props.ui?.mobileGroup))
 function iconPropsFor(item: DropdownItem) {
   return resolveSlot(theme.value({ destructive: item.destructive }).icon, props.ui?.icon)
 }
@@ -210,10 +215,10 @@ function onModalAfterLeave() {
     @after-leave="onModalAfterLeave"
   >
     <template #content>
-      <div class="max-h-[calc(100dvh-8rem)] overflow-y-auto p-2">
+      <div v-bind="mobileListProps">
         <template v-for="(group, groupIndex) in items" :key="groupIndex">
           <div v-if="groupIndex > 0" role="separator" v-bind="separatorProps" />
-          <div class="flex flex-col gap-1">
+          <div v-bind="mobileGroupProps">
             <template v-for="(item, itemIndex) in group" :key="itemIndex">
               <!-- A disabled link renders as the disabled button below, which is inert. -->
               <NuxtLink
@@ -222,9 +227,7 @@ function onModalAfterLeave() {
                 :to="item.to"
                 :target="item.target"
                 :rel="item.rel"
-                class="flex min-h-11 w-full items-center gap-3 rounded-[var(--selaras-resolved-radius-sm)] px-3 py-2 text-start text-base outline-none transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:ring-2 focus-visible:ring-[var(--selaras-resolved-color-primary-fill)]"
-                :class="item.destructive ? 'hover:bg-[var(--selaras-resolved-color-danger-subtle-hover)] hover:text-[var(--selaras-resolved-color-danger-on-subtle)]' : undefined"
-                v-bind="itemPropsFor(item)"
+                v-bind="mobileItemPropsFor(item)"
                 @click="selectMobileItem(item)"
               >
                 <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
@@ -238,9 +241,7 @@ function onModalAfterLeave() {
                 v-hotkey="hotkeyFor(item)"
                 type="button"
                 :disabled="item.disabled"
-                class="flex min-h-11 w-full items-center gap-3 rounded-[var(--selaras-resolved-radius-sm)] px-3 py-2 text-start text-base outline-none transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:ring-2 focus-visible:ring-[var(--selaras-resolved-color-primary-fill)] disabled:pointer-events-none disabled:opacity-50"
-                :class="item.destructive ? 'hover:bg-[var(--selaras-resolved-color-danger-subtle-hover)] hover:text-[var(--selaras-resolved-color-danger-on-subtle)]' : undefined"
-                v-bind="itemPropsFor(item)"
+                v-bind="mobileItemPropsFor(item)"
                 @click="selectMobileItem(item)"
               >
                 <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />

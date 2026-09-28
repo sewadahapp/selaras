@@ -377,4 +377,20 @@ describe('dropdown', () => {
     expect(trigger.attributes('aria-haspopup')).toBe('menu')
     expect(trigger.attributes('aria-expanded')).toBe('false')
   })
+
+  it('adaptive items merge their mobile sizing over the desktop item classes', async () => {
+    restoreMatchMedia = mockMatchMedia(true)
+    wrapper = await mountSuspended(Dropdown, {
+      props: { adaptive: true, items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await wrapper.find('button').trigger('click')
+    await nextTick()
+
+    const item = Array.from(document.body.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')).find(button => button.textContent?.includes('Edit'))!
+    const classes = item.className.split(/\s+/)
+    expect(classes).toEqual(expect.arrayContaining(['min-h-11', 'px-3', 'py-2', 'text-base']))
+    expect(classes).not.toContain('px-2')
+    expect(classes).not.toContain('text-sm')
+  })
 })
