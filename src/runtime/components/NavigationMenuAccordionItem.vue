@@ -8,6 +8,7 @@ import { computed, useId, useSlots } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { vHotkey } from '../directives/hotkey'
+import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
@@ -20,7 +21,6 @@ import Icon from './Icon.vue'
 // self-recursion resolution the way ContentNavigation.vue does; importing
 // itself directly works regardless, via plain SFC self-recursion.
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
-import ShortcutHint from './ShortcutHint.vue'
 
 // Reka's real NavigationMenuContent/Viewport is a shallow, single-level
 // flyout (see NavigationMenu.vue's own top-of-file note) - arbitrary-depth
@@ -165,8 +165,8 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                   <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ child.label }}</span>
                 </slot>
                 <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
+                <ShortcutHint :shortcut="child.shortcut" />
               </slot>
-              <ShortcutHint :shortcut="child.shortcut" />
             </component>
           </li>
         </ul>

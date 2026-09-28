@@ -439,6 +439,17 @@ describe('navigationMenu (collapsed)', () => {
     wrapper.unmount()
   })
 
+  it('leaves the shortcut hint out of the icon rail, which has no room for it', async () => {
+    const items: NavigationMenuItem[] = [{ label: 'Docs', icon: 'lucide:book', to: '/docs', shortcut: 'mod+1' }]
+    const collapsed = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })
+    expect(collapsed.find('a[href="/docs"] kbd').exists()).toBe(false)
+    collapsed.unmount()
+
+    const expanded = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical' } })
+    expect(expanded.find('a[href="/docs"] kbd').exists()).toBe(true)
+    expanded.unmount()
+  })
+
   it('visually hides a leaf item\'s label (sr-only, not removed) while keeping its icon', async () => {
     const items: NavigationMenuItem[] = [{ label: 'Docs', icon: 'lucide:book', to: '/docs' }]
     const wrapper = await mountSuspended(NavigationMenu, { props: { items, orientation: 'vertical', collapsed: true } })

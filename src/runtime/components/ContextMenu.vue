@@ -6,11 +6,11 @@ import type { UiProp } from '../utils/ui'
 import { ContextMenuContent, ContextMenuItem, ContextMenuPortal, ContextMenuRoot, ContextMenuSeparator, ContextMenuTrigger } from 'reka-ui'
 import { computed, ref } from 'vue'
 import { vHotkey } from '../directives/hotkey'
+import ShortcutHint from '../internal/ShortcutHint.vue'
 import { contextMenuTheme } from '../theme/context-menu'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
-import ShortcutHint from './ShortcutHint.vue'
 
 export interface ContextMenuItemDef {
   label: string
@@ -89,8 +89,8 @@ function hotkeyFor(item: ContextMenuItemDef): HotkeyOptions | undefined {
             <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
             <slot name="item" :item="item">
               {{ item.label }}
+              <ShortcutHint :shortcut="item.shortcut" />
             </slot>
-            <ShortcutHint :shortcut="item.shortcut" />
           </ContextMenuItem>
         </template>
       </ContextMenuContent>

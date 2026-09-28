@@ -1,7 +1,7 @@
-import { useRouter } from '#app'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
+import { useRouter } from '#app'
 import Dropdown from '../../src/runtime/components/Dropdown.vue'
 import './helpers/adaptive-breakpoint'
 
@@ -209,6 +209,26 @@ describe('dropdown', () => {
     await openMenu()
 
     expect(document.body.querySelector('[role="menuitem"]')?.textContent?.trim()).toBe('[Edit]')
+  })
+
+  it('shows the shortcut hint by default, and leaves a custom item slot in full control of it', async () => {
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Archive', shortcut: 'mod+e' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    expect(document.body.querySelectorAll('[role="menuitem"] kbd').length).toBeGreaterThan(0)
+    wrapper.unmount()
+
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, items: [[{ label: 'Archive', shortcut: 'mod+e' }]] },
+      slots: {
+        default: () => h('button', 'Open menu'),
+        item: '<template #item="{ item }">{{ item.label }} ({{ item.shortcut }})</template>',
+      },
+    })
+    const item = document.body.querySelector('[role="menuitem"]')!
+    expect(item.querySelectorAll('kbd')).toHaveLength(0)
+    expect(item.textContent?.trim()).toBe('Archive (mod+e)')
   })
 
   it('falls back to the plain label when the item slot is unset', async () => {

@@ -10,13 +10,13 @@ import { NuxtLink } from '#components'
 import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { vHotkey } from '../directives/hotkey'
+import ShortcutHint from '../internal/ShortcutHint.vue'
 import { dropdownTheme } from '../theme/dropdown'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 import Modal from './Modal.vue'
-import ShortcutHint from './ShortcutHint.vue'
 
 export interface DropdownItem {
   label: string
@@ -155,7 +155,6 @@ function onModalAfterLeave() {
   if (!isOpen.value)
     mobilePresentation.value = false
 }
-
 </script>
 
 <template>
@@ -180,15 +179,15 @@ function onModalAfterLeave() {
               <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
               <slot name="item" :item="item">
                 {{ item.label }}
+                <ShortcutHint :shortcut="item.shortcut" />
               </slot>
-              <ShortcutHint :shortcut="item.shortcut" />
             </NuxtLink>
             <template v-else>
               <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
               <slot name="item" :item="item">
                 {{ item.label }}
+                <ShortcutHint :shortcut="item.shortcut" />
               </slot>
-              <ShortcutHint :shortcut="item.shortcut" />
             </template>
           </DropdownMenuItem>
         </template>
@@ -228,8 +227,8 @@ function onModalAfterLeave() {
                 <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
                 <slot name="item" :item="item">
                   {{ item.label }}
+                  <ShortcutHint :shortcut="item.shortcut" />
                 </slot>
-                <ShortcutHint :shortcut="item.shortcut" />
               </NuxtLink>
               <button
                 v-else
@@ -244,8 +243,8 @@ function onModalAfterLeave() {
                 <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
                 <slot name="item" :item="item">
                   {{ item.label }}
+                  <ShortcutHint :shortcut="item.shortcut" />
                 </slot>
-                <ShortcutHint :shortcut="item.shortcut" />
               </button>
             </template>
           </div>

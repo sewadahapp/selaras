@@ -8,13 +8,13 @@ import { computed } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { vHotkey } from '../directives/hotkey'
+import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
-import ShortcutHint from './ShortcutHint.vue'
 
 // A collapsed rail's own flyout (see NavigationMenu.vue) has nowhere
 // further to collapse to - a child inside it that itself has children (a

@@ -18,6 +18,7 @@ import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { vHotkey } from '../directives/hotkey'
+import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
@@ -25,7 +26,6 @@ import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
 import NavigationMenuFlyoutTrigger from './NavigationMenuFlyoutTrigger.vue'
-import ShortcutHint from './ShortcutHint.vue'
 
 export interface NavigationMenuProps {
   items: NavigationMenuItem[]
@@ -193,8 +193,8 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                             <span v-bind="resolveSlot(ui.childLinkLabel, props.ui?.childLinkLabel)">{{ child.label }}</span>
                           </slot>
                           <slot :name="slotName(child, '-trailing')" :item="child" :active="isActive(child)" />
+                          <ShortcutHint :shortcut="child.shortcut" />
                         </slot>
-                        <ShortcutHint :shortcut="child.shortcut" />
                       </component>
                     </NavigationMenuLink>
                   </li>
@@ -218,8 +218,8 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                   <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
                 </slot>
                 <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)" />
+                <ShortcutHint :shortcut="collapsed ? undefined : item.shortcut" />
               </slot>
-              <ShortcutHint :shortcut="item.shortcut" />
             </component>
           </NavigationMenuLink>
         </RekaNavigationMenuItem>
