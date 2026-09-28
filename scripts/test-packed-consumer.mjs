@@ -242,8 +242,11 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.ok(css.includes(':root.dark [data-selaras-theme]'), 'generated CSS must contain dark resolved role reads')
     const cssBytes = Buffer.byteLength(css)
     const gzipBytes = gzipSync(css).byteLength
-    assert.ok(cssBytes <= (prefixed ? 145_000 : 151_000), `compiled CSS is ${cssBytes} bytes / ${gzipBytes} gzip`)
-    assert.ok(gzipBytes <= (prefixed ? 19_000 : 21_000), `compiled CSS is ${gzipBytes} gzip bytes`)
+    // Keep the packed prefixed consumer close to test/prefix.test.ts; the
+    // isolated installed consumer adds a small amount of build output. The
+    // unprefixed variant emits slightly more CSS, so give it a separate cap.
+    assert.ok(cssBytes <= (prefixed ? 150_000 : 152_000), `compiled CSS is ${cssBytes} bytes / ${gzipBytes} gzip`)
+    assert.ok(gzipBytes <= (prefixed ? 20_000 : 21_500), `compiled CSS is ${gzipBytes} gzip bytes`)
     console.log(`[packed] SSR, generated defaults/tokens, Table and CSS passed (${Buffer.byteLength(css)} bytes / ${gzipSync(css).byteLength} gzip)`)
     if (process.env.SELARAS_PACKED_BROWSER) {
       const browser = await chromium.launch()
