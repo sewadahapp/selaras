@@ -59,6 +59,7 @@ jobs:
         with:
           node-version: 24.19.0
           registry-url: https://registry.npmjs.org
+          package-manager-cache: false
 
       # Trusted publishing (OIDC, see the Publish step below) needs npm CLI
       # >= 11.5.1 - not guaranteed to be what Node 24.19.0 happens to bundle.
@@ -144,18 +145,11 @@ jobs:
         if: inputs.package != 'selaras-docs'
         run: bun run prepack
 
-      # BOOTSTRAP ONLY: npm wouldn't let a trusted publisher be configured
-      # for "selaras" before it exists, so this first release still
-      # authenticates with the NPM_TOKEN secret (an Automation token).
-      # Once this release succeeds, go configure Trusted Publishers on the
-      # package's own Settings page on npmjs.com (GitHub Actions -> org
-      # "sewadahapp", repo "selaras", workflow filename "release.yml"),
-      # then delete the `env:` block below and the NPM_TOKEN secret - the
-      # `id-token: write` permission above is already in place for it.
+      # Each package must have its own npm Trusted Publisher configured for
+      # this GitHub repository and workflow. Publishing authenticates through
+      # GitHub OIDC; no long-lived npm token is needed.
       - name: Publish to npm
         if: inputs.package != 'selaras-docs'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
 
       # The docs layer depends on the core package through `file:../..` for
@@ -177,8 +171,6 @@ jobs:
 
       - name: Publish docs layer to npm
         if: inputs.package != 'selaras'
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: cd packages/docs && npm publish --access public
 
       - name: Restore docs layer workspace dependency
