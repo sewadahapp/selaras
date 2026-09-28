@@ -4,6 +4,7 @@ import { degungThemeUi } from './utils/degung-theme-ui'
 const appConfig = useAppConfig()
 const assetUrl = useDocsAssetUrl()
 const preset = useDocsThemePreset()
+const toastPosition = useDocsToastPosition()
 const activeUi = computed(() => preset.value === 'degung' ? degungThemeUi : undefined)
 
 useHead(() => {
@@ -22,7 +23,7 @@ useHead(() => {
       </NuxtLayout>
       <ClientOnly>
         <DocsSearch />
-        <SToast />
+        <SToast :position="toastPosition" />
       </ClientOnly>
     </STheme>
   </SApp>

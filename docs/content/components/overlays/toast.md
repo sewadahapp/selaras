@@ -73,8 +73,14 @@ a neutral surface and an explicit icon uses a neutral color:
 
 Set `position` on the single `<SToast />` renderer to choose any screen corner
 or center edge. The default is `bottom-right`. Multiple toasts layer into a
-compact stack that fans open on hover; set `expand` to show every toast
-separately instead.
+compact stack: each new toast slides in at the front and pushes the older
+ones back, with up to three cards visible. The stack fans open while the
+pointer or keyboard focus is inside it; set `expand` to show every toast
+separately instead. Click a position a few times to see the stack build up,
+then hover it:
+
+::component-example{name="toast-positions"}
+::
 
 ```vue-html
 <ClientOnly>
