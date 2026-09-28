@@ -81,7 +81,8 @@ test('retains the caller theme scope on a queued Toast', async ({ page, goto }) 
   const toast = page.locator('[data-selaras-color="enterprise"]', { hasText: 'Scoped toast' })
   await expect(toast).toBeVisible()
   await expect.poll(async () => toast.getAttribute('data-selaras-theme')).not.toBe('')
-  await expect.poll(async () => toast.evaluate(element => getComputedStyle(element).borderInlineStartColor)).toBe('rgb(90, 91, 92)')
+  await expect.poll(async () => toast.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(93, 94, 95)')
+  await expect(toast).toHaveCSS('border-inline-start-width', '0px')
 })
 
 test('does not let a scoped light override win in dark mode', async ({ page, goto }) => {

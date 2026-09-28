@@ -4,10 +4,10 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import Theme from '../../src/runtime/components/Theme.vue'
 import Toast from '../../src/runtime/components/Toast.vue'
-import ToastItemRenderer from '../../src/runtime/internal/ToastItemRenderer.vue'
 import { useToast } from '../../src/runtime/composables/use-toast'
 import { useToastService } from '../../src/runtime/internal/programmatic-services'
 import { getToastStackMargin } from '../../src/runtime/internal/toast-stack'
+import ToastItemRenderer from '../../src/runtime/internal/ToastItemRenderer.vue'
 
 // Toast.vue only injects a ToastProviderContext - it doesn't provide one
 // itself, since in the real app SApp's own ToastProvider ancestor does that
@@ -90,6 +90,17 @@ describe('toast', () => {
     expect(statusIcons()).toHaveLength(0)
   })
 
+  it('uses the toast semantic color for its close button', async () => {
+    const { add } = useToast()
+    add({ title: 'Saved', color: 'success' })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const toast = document.body.querySelector('[data-selaras-color="success"]')
+    const closeButton = toast?.querySelector('button')
+    expect(closeButton?.getAttribute('data-selaras-color')).toBe('success')
+  })
+
   it('passes a custom semantic role to scoped recipe conditions', async () => {
     wrapper = await mountSuspended(ThemedToastHarness)
     await wrapper.find('[data-testid="scoped-toast-trigger"]').trigger('click')
@@ -106,7 +117,7 @@ describe('toast', () => {
 
     const root = Array.from(document.body.querySelectorAll('[data-state]')).find(element => element.textContent?.includes('Plain'))
     expect(root?.hasAttribute('data-selaras-color')).toBe(false)
-    expect(statusIcons()[0]?.classList).toContain('text-[var(--_selaras-color-fill,var(--selaras-resolved-text-muted))]')
+    expect(statusIcons()[0]?.classList).toContain('text-[var(--_selaras-color-text,var(--selaras-resolved-text-muted))]')
   })
 
   it('owns a snapshot of the nearest explicit theme when the toast is added', async () => {

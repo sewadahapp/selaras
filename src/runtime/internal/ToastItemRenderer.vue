@@ -31,7 +31,7 @@ const emit = defineEmits<{
 }>()
 
 const rootElement = ref<HTMLElement | null>(null)
-const setRootElement = (instance: unknown) => {
+function setRootElement(instance: unknown) {
   if (typeof HTMLElement === 'undefined')
     return
   const element = instance instanceof HTMLElement
@@ -101,7 +101,7 @@ const iconName = computed(() => props.toast.icon ?? (
       </ToastDescription>
     </div>
     <ToastClose as-child>
-      <Button size="sm" variant="ghost" color="neutral" :icon="icons.close" :aria-label="messages.close" v-bind="closeProps" />
+      <Button size="sm" variant="ghost" :color="effectiveColor ?? 'neutral'" :icon="icons.close" :aria-label="messages.close" v-bind="closeProps" />
     </ToastClose>
   </ToastRoot>
 </template>

@@ -7,7 +7,8 @@ test('applies global managed tokens to an unscoped programmatic toast', async ({
   await goto('/', { waitUntil: 'hydration' })
   await page.locator('#global-toast').evaluate(element => (element as HTMLButtonElement).click())
   const toast = page.locator('[data-selaras-color="primary"]').filter({ has: page.getByText('Global theme toast', { exact: true }) })
-  await expect(toast).toHaveCSS('border-inline-start-color', 'rgb(1, 2, 3)')
+  await expect(toast).toHaveCSS('background-color', 'rgb(4, 5, 6)')
+  await expect(toast).toHaveCSS('border-inline-start-width', '0px')
 })
 
 test('keeps programmatic theme snapshots after their caller scope unmounts', async ({ page, goto }) => {
@@ -18,7 +19,6 @@ test('keeps programmatic theme snapshots after their caller scope unmounts', asy
   const toast = page.getByText('Snapshotted toast', { exact: true }).locator('..').locator('..')
   await expect(button).toHaveCSS('background-color', 'rgb(40, 50, 60)')
   await expect(button).toHaveCSS('height', '44px')
-  await expect(toast).toHaveCSS('border-inline-start-color', 'rgb(40, 50, 60)')
   const modalScope = await button.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme'))
   const toastScope = await toast.getAttribute('data-selaras-theme')
   expect(modalScope).toMatch(/^p/)
@@ -29,13 +29,12 @@ test('keeps programmatic theme snapshots after their caller scope unmounts', asy
   await expect(page.locator('#outer-fill')).toHaveCount(0)
   await expect(button).toHaveCSS('background-color', 'rgb(40, 50, 60)')
   await expect(button).toHaveCSS('height', '44px')
-  await expect(toast).toHaveCSS('border-inline-start-color', 'rgb(40, 50, 60)')
   expect(await button.evaluate(element => element.closest('[data-selaras-theme]')?.getAttribute('data-selaras-theme'))).toBe(modalScope)
   expect(await toast.getAttribute('data-selaras-theme')).toBe(toastScope)
 
   await page.locator('#open-nested-programmatic-toast').click()
   const nestedToast = page.getByText('Nested snapshotted toast', { exact: true }).locator('..').locator('..')
-  await expect(nestedToast).toHaveCSS('border-inline-start-color', 'rgb(40, 50, 60)')
+  await expect(nestedToast).toHaveCSS('border-inline-start-width', '0px')
   await expect(nestedToast).toHaveAttribute('data-selaras-mode', 'light')
 })
 

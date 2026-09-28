@@ -148,7 +148,7 @@ function updateNestedTokens() {
       </div>
       <STheme
         as="section"
-        :tokens="{ light: { colors: { enterprise: { fill: 'rgb(90 91 92)' } } } }"
+        :tokens="{ light: { colors: { enterprise: { fill: 'rgb(90 91 92)', subtle: 'rgb(93 94 95)' } } } }"
       >
         <ScopedToastTrigger />
       </STheme>

@@ -54,11 +54,11 @@ function save() {
 
 ### Colors
 
-`color` accepts any registered semantic role and tints the toast's icon and
-left-edge accent. The built-in `success`, `danger`, `warning`, and `info`
-intents select matching default icons. Other roles do not guess an icon; set
-`icon` explicitly when needed. With no color, the accent and an explicit icon
-use neutral fallbacks:
+`color` accepts any registered semantic role and applies its soft background,
+matching the color treatment used by `SAlert`. The built-in `success`, `danger`,
+`warning`, and `info` intents select matching default icons. Other roles do not
+guess an icon; set `icon` explicitly when needed. With no color, the toast keeps
+a neutral surface and an explicit icon uses a neutral color:
 
 ::component-example{name="toast-colors"}
 ::
