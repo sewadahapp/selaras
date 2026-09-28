@@ -1,0 +1,59 @@
+name: deploy docs
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.19.0
+          package-manager-cache: false
+
+      - name: Enable Corepack
+        run: npm i -g --force corepack@latest && corepack enable
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Prepare docs
+        run: bun run docs:prepare
+
+      - name: Generate static docs site
+        run: bun run docs:generate
+        env:
+          NUXT_APP_BASE_URL: /selaras/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.output/public
+
+      - uses: actions/deploy-pages@v4
+        id: deployment
