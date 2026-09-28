@@ -52,7 +52,9 @@ const items = [[
 
 <template>
   <SDropdown :items="items">
-    <SButton variant="outline">Open actions</SButton>
+    <SButton variant="outline">
+      Open actions
+    </SButton>
   </SDropdown>
 </template>
 ```

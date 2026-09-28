@@ -65,8 +65,12 @@ function updateNestedTokens() {
     <SProgress id="progress-invalid" :model-value="50" color="enterprise" />
     <SStepper id="stepper-invalid" :items="[{ title: 'One' }, { title: 'Two' }]" :default-value="2" color="enterprise" />
     <SAlert id="alert-invalid" color="enterprise" variant="solid" title="Alert" />
-    <SCallout id="callout-note" type="note" title="Note">Callout body</SCallout>
-    <SCallout id="callout-focus" type="tip" title="Tip"><a href="#callout-focus">Focusable callout content</a></SCallout>
+    <SCallout id="callout-note" type="note" title="Note">
+      Callout body
+    </SCallout>
+    <SCallout id="callout-focus" type="tip" title="Tip">
+      <a href="#callout-focus">Focusable callout content</a>
+    </SCallout>
     <SInput id="input-invalid" color="enterprise" invalid model-value="value" />
     <STextarea id="textarea-invalid" color="enterprise" invalid model-value="value" />
     <SInputNumber id="input-number-invalid" color="enterprise" invalid :model-value="5" />

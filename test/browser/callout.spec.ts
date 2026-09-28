@@ -7,7 +7,7 @@ test('Callout shares Alert soft styling and reveals a striped border on hover or
   await expect(note).toHaveAttribute('data-selaras-color', 'info')
   await expect(note).toHaveClass(/bg-\[var\(--_selaras-color-subtle\)\]/)
 
-  const before = async (id: string) => page.locator(id).evaluate(element => {
+  const before = async (id: string) => page.locator(id).evaluate((element) => {
     const style = getComputedStyle(element, '::before')
     return { opacity: style.opacity, image: style.backgroundImage, mask: style.maskComposite }
   })
