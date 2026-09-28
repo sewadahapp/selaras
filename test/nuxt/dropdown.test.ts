@@ -1,3 +1,4 @@
+import { useRouter } from '#app'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
@@ -287,5 +288,26 @@ describe('dropdown', () => {
 
     expect(onSelect).toHaveBeenCalledOnce()
     expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+  })
+
+  it('adaptive renders a disabled link item as an inert control that cannot navigate', async () => {
+    restoreMatchMedia = mockMatchMedia(true)
+    const onSelect = vi.fn()
+    wrapper = await mountSuspended(Dropdown, {
+      props: { adaptive: true, items: [[{ label: 'Docs', to: '/disabled-destination', disabled: true, onSelect }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await wrapper.find('button').trigger('click')
+    await nextTick()
+
+    const dialog = document.body.querySelector('[role="dialog"]')!
+    expect(dialog.querySelector('a[href="/disabled-destination"]')).toBeFalsy()
+    const item = Array.from(dialog.querySelectorAll<HTMLButtonElement>('button')).find(button => button.textContent?.includes('Docs'))!
+    expect(item.disabled).toBe(true)
+    item.click()
+    await nextTick()
+
+    expect(onSelect).not.toHaveBeenCalled()
+    expect(useRouter().currentRoute.value.path).not.toBe('/disabled-destination')
   })
 })

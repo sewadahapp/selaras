@@ -156,13 +156,6 @@ function onModalAfterLeave() {
     mobilePresentation.value = false
 }
 
-function selectMobileLink(event: MouseEvent, item: DropdownItem) {
-  if (item.disabled) {
-    event.preventDefault()
-    return
-  }
-  selectMobileItem(item)
-}
 </script>
 
 <template>
@@ -220,18 +213,17 @@ function selectMobileLink(event: MouseEvent, item: DropdownItem) {
           <div v-if="groupIndex > 0" role="separator" v-bind="separatorProps" />
           <div class="flex flex-col gap-1">
             <template v-for="(item, itemIndex) in group" :key="itemIndex">
+              <!-- A disabled link renders as the disabled button below, which is inert. -->
               <NuxtLink
-                v-if="item.to"
+                v-if="item.to && !item.disabled"
                 v-hotkey="hotkeyFor(item)"
                 :to="item.to"
                 :target="item.target"
                 :rel="item.rel"
-                :aria-disabled="item.disabled || undefined"
-                :tabindex="item.disabled ? -1 : undefined"
                 class="flex min-h-11 w-full items-center gap-3 rounded-[var(--selaras-resolved-radius-sm)] px-3 py-2 text-start text-base outline-none transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:bg-[var(--selaras-resolved-surface-elevated)] focus-visible:ring-2 focus-visible:ring-[var(--selaras-resolved-color-primary-fill)]"
                 :class="item.destructive ? 'hover:bg-[var(--selaras-resolved-color-danger-subtle-hover)] hover:text-[var(--selaras-resolved-color-danger-on-subtle)]' : undefined"
                 v-bind="itemPropsFor(item)"
-                @click="selectMobileLink($event, item)"
+                @click="selectMobileItem(item)"
               >
                 <Icon v-if="item.icon" :name="item.icon" v-bind="iconPropsFor(item)" />
                 <slot name="item" :item="item">
