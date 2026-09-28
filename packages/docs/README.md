@@ -50,7 +50,8 @@ export default defineAppConfig({
       titleTemplate: '%s · My project',
       url: 'https://example.com',
       // Files in public/. Use one path, or separate light and dark images.
-      logo: { light: '/logo.svg', dark: '/logo-dark.svg' },
+      // `tint: true` colors a monochrome SVG with the active primary theme color.
+      logo: { light: '/logo.svg', dark: '/logo-dark.svg', tint: true },
       favicon: '/favicon.svg',
     },
     repository: {

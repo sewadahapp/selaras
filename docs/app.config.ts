@@ -13,6 +13,7 @@ export default defineAppConfig({
         light: '/logo.svg',
         dark: '/logo-dark.svg',
         alt: 'Selaras',
+        tint: true,
       },
       favicon: '/favicon.svg',
     },

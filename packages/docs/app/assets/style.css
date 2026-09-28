@@ -252,6 +252,16 @@
   height: var(--selaras-docs-logo-height, 1.75rem);
 }
 
+.selaras-docs-logo--tinted {
+  width: var(--selaras-docs-logo-height, 1.75rem);
+  flex: none;
+  background-color: var(--selaras-resolved-color-primary-fill);
+  mask-image: var(--selaras-docs-logo-mask);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
 .selaras-docs-logo--dark {
   display: none;
 }

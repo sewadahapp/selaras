@@ -24,6 +24,7 @@ export function useDocsLogo() {
       dark,
       alt: typeof logo === 'object' ? (logo.alt ?? name) : name,
       distinct: Boolean(light && dark && light !== dark),
+      tint: typeof logo === 'object' && logo.tint === true,
     }
   })
 }

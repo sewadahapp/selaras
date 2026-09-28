@@ -33,6 +33,8 @@ export interface SelarasDocsLogo {
   light?: string
   dark?: string
   alt?: string
+  /** Tint a monochrome SVG with the active primary theme color. */
+  tint?: boolean
 }
 
 export interface SelarasDocsAppConfig {
