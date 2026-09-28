@@ -71,7 +71,13 @@ function languageFor(file: CodeTreeFile) {
   return languageByExtension[extension] ?? 'text'
 }
 
-watch(selected, async (file) => {
+watch(selected, async (file, _previous, onCleanup) => {
+  // A newer selection makes this run stale, so a slow highlight for an
+  // earlier file can't overwrite the one now shown.
+  let stale = false
+  onCleanup(() => {
+    stale = true
+  })
   highlightedCode.value = ''
   if (!file?.code)
     return
@@ -83,12 +89,15 @@ watch(selected, async (file) => {
       themes: { light: 'github-light', dark: 'github-dark' },
       defaultColor: false,
     })
+    if (stale)
+      return
     highlightedCode.value = html.match(/<code(?:\s[^>]*)?>([\s\S]*?)<\/code>/)?.[1] ?? ''
   }
   catch {
     // Preserve readable plain text if a language is unsupported or the
     // highlighter fails to load in a constrained environment.
-    highlightedCode.value = ''
+    if (!stale)
+      highlightedCode.value = ''
   }
 }, { immediate: true })
 
