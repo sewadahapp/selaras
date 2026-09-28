@@ -31,6 +31,7 @@ watch(() => route.path, () => {
     <template #right>
       <DocsSearchButton v-if="docsConfig.header?.search !== false" />
       <SColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
+      <DocsThemePicker v-if="docsConfig.header?.themePicker" />
       <SButton
         v-if="repositoryUrl"
         as="a"

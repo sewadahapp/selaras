@@ -58,6 +58,8 @@ export interface SelarasDocsAppConfig {
     showTitle?: boolean
     search?: boolean
     colorMode?: boolean
+    /** Show the consuming site's visual preset picker. @default false */
+    themePicker?: boolean
     /** Let the header span the viewport instead of the docs shell width. */
     fluid?: boolean
     links?: SelarasDocsNavigationItem[]

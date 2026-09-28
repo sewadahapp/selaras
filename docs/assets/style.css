@@ -16,3 +16,95 @@
 .dark .selaras-theme-source-code span {
   color: var(--shiki-dark);
 }
+
+/* Slendro is a CSS-only preset. Replacing selected foundation stops lets the
+   built-in role recipes continue deriving hover, pressed, subtle, and text
+   states without a JavaScript color helper. */
+:root[data-selaras-preset="slendro"] {
+  --selaras-radius-base: 6px;
+
+  --color-selaras-gray-25: #fff;
+  --color-selaras-gray-50: #f8fafc;
+  --color-selaras-gray-100: #f1f5f9;
+  --color-selaras-gray-200: #e2e8f0;
+  --color-selaras-gray-300: #cbd5e1;
+  --color-selaras-gray-400: #94a3b8;
+  --color-selaras-gray-500: #64748b;
+  --color-selaras-gray-600: #475569;
+  --color-selaras-gray-700: #334155;
+  --color-selaras-gray-800: #1e293b;
+  --color-selaras-gray-900: #0f172a;
+  --color-selaras-gray-950: #020617;
+
+  --color-selaras-indigo-50: #fff3f2;
+  --color-selaras-indigo-100: #ffe1df;
+  --color-selaras-indigo-200: #ffc3bf;
+  --color-selaras-indigo-300: #ff9e96;
+  --color-selaras-indigo-400: #ff7d73;
+  --color-selaras-indigo-500: #fd5e53;
+  --color-selaras-indigo-600: #e84b42;
+  --color-selaras-indigo-700: #cf3e37;
+  --color-selaras-indigo-800: #a9322d;
+  --color-selaras-indigo-900: #852824;
+  --color-selaras-indigo-950: #641b18;
+
+  --color-selaras-plum-50: #f1f5f2;
+  --color-selaras-plum-100: #e2ebe5;
+  --color-selaras-plum-200: #c6d8cd;
+  --color-selaras-plum-300: #a5c1b0;
+  --color-selaras-plum-400: #7ba18d;
+  --color-selaras-plum-500: #527b65;
+  --color-selaras-plum-600: #2d4a3e;
+  --color-selaras-plum-700: #243d33;
+  --color-selaras-plum-800: #1b3027;
+  --color-selaras-plum-900: #13231c;
+  --color-selaras-plum-950: #0b1711;
+
+  --color-selaras-green-50: #e2fcdc;
+  --color-selaras-green-300: #83bc70;
+  --color-selaras-green-400: #559640;
+  --color-selaras-green-500: #107010;
+
+  --color-selaras-yellow-50: #fdf5db;
+  --color-selaras-yellow-300: #f2d674;
+  --color-selaras-yellow-400: #ecc94b;
+  --color-selaras-yellow-500: #f7cc49;
+  --color-selaras-yellow-700: #d6aa31;
+  --color-selaras-yellow-800: #856c24;
+
+  --color-selaras-red-50: #f5e2e1;
+  --color-selaras-red-300: #d98b86;
+  --color-selaras-red-400: #c96b64;
+  --color-selaras-red-500: #bc3433;
+  --color-selaras-red-700: #8d332e;
+
+  --color-selaras-blue-50: #f7fafe;
+  --color-selaras-blue-100: #e5ecfc;
+  --color-selaras-blue-200: #acbdf3;
+  --color-selaras-blue-300: #83a2f0;
+  --color-selaras-blue-400: #5b89f7;
+  --color-selaras-blue-500: #4c82f5;
+  --color-selaras-blue-600: #3272f6;
+  --color-selaras-blue-700: #2d61cf;
+  --color-selaras-blue-800: #244fa8;
+
+  --selaras-color-primary-on-fill: #fff;
+  --selaras-color-primary-text: #bf4038;
+  --selaras-color-primary-text-hover: #a7352f;
+  --selaras-color-primary-text-pressed: #8c2c27;
+  --selaras-color-warning-on-fill: #33280c;
+  --selaras-color-success-on-fill: #fff;
+  --selaras-color-danger-on-fill: #fff;
+  --selaras-color-info-on-fill: #fff;
+}
+
+:root.dark[data-selaras-preset="slendro"] {
+  --selaras-color-primary-on-fill: #fff;
+  --selaras-color-primary-text: #ff9e96;
+  --selaras-color-primary-text-hover: #ffbcb6;
+  --selaras-color-primary-text-pressed: #ffd4d0;
+  --selaras-color-warning-on-fill: #33280c;
+  --selaras-color-success-on-fill: #fff;
+  --selaras-color-danger-on-fill: #fff;
+  --selaras-color-info-on-fill: #101a32;
+}

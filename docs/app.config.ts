@@ -26,6 +26,7 @@ export default defineAppConfig({
       showTitle: true,
       search: true,
       colorMode: true,
+      themePicker: true,
       links: [
         {
           label: 'Overview',
