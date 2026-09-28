@@ -5,7 +5,7 @@ const footer = computed(() => docsConfig.value.footer)
 </script>
 
 <template>
-  <footer v-if="footer?.text || footer?.links?.length" class="selaras-docs-footer">
+  <footer v-if="footer?.text || footer?.links?.length" class="selaras-docs-footer" :class="{ 'selaras-docs-footer--fluid': footer?.fluid }">
     <SContainer size="full" class="selaras-docs-footer-inner">
       <DocsFooterBrand />
       <nav v-if="footer?.links?.length" class="selaras-docs-footer-links" aria-label="Footer navigation">

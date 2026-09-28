@@ -39,6 +39,9 @@ export interface SelarasDocsAppConfig {
   site?: {
     name?: string
     description?: string
+    /** Applied to browser titles; `%s` is replaced with the current page title. */
+    titleTemplate?: string
+    url?: string
     /** Shown in the header and footer. A `/`-rooted path is served from `public/` under the app's base URL. */
     logo?: string | SelarasDocsLogo
     /** The browser tab icon, e.g. `/favicon.svg`, resolved like `logo`. */
@@ -55,7 +58,23 @@ export interface SelarasDocsAppConfig {
     showTitle?: boolean
     search?: boolean
     colorMode?: boolean
+    /** Let the header span the viewport instead of the docs shell width. */
+    fluid?: boolean
     links?: SelarasDocsNavigationItem[]
+  }
+  main?: {
+    /** Let the content area use the available width. @default false */
+    fluid?: boolean
+    /** Remove the default content inset. @default false */
+    padded?: boolean
+  }
+  sidebar?: {
+    /** Hide the desktop sidebar and its mobile navigation control. @default true */
+    enabled?: boolean
+    /** Start folder groups collapsed. Folder `.navigation.yml` can override this. @default false */
+    collapsed?: boolean
+    /** Exact page paths to omit from the sidebar. */
+    exclude?: string[]
   }
   toc?: {
     enabled?: boolean
@@ -64,7 +83,18 @@ export interface SelarasDocsAppConfig {
   footer?: {
     text?: string
     links?: SelarasDocsLink[]
+    /** Let the footer span the viewport instead of the docs shell width. */
+    fluid?: boolean
   }
+}
+
+/** Metadata accepted in a content page's `.navigation.yml` folder config. */
+export interface SelarasDocsContentNavigationItem {
+  title?: string
+  icon?: string | false
+  order?: number
+  collapse?: boolean
+  navBadges?: Array<string | { text: string }>
 }
 
 declare module '@nuxt/schema' {

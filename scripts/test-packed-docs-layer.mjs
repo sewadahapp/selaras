@@ -110,6 +110,8 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     }
     else if (!prefixed) {
       assert.match(html, /Documentation home/, 'the layer must provide a useful default site identity')
+      assert.match(html, /Guide library/, 'folder navigation YAML must be loaded and override the generated group label')
+      assert.match(html, /Beta/, 'folder navigation YAML must expose its navigation badge')
     }
     if (example)
       assert.match(html, /id="consumer-example"/, 'the layer Content component must resolve a consumer-owned example')

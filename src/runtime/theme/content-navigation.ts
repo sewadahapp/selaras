@@ -13,6 +13,7 @@ export const contentNavigationTheme = tv({
     // A separate slot from label - this styles the icon a link/group-header
     // shows before its title, not the title text itself.
     icon: 'size-4 shrink-0 text-[var(--selaras-resolved-text-muted)]',
+    badge: 'ms-auto inline-flex shrink-0 items-center rounded-full bg-[var(--selaras-resolved-surface-elevated)] px-2 py-0.5 text-xs font-medium text-[var(--selaras-resolved-text-muted)]',
     chevron: 'size-4 shrink-0 text-[var(--selaras-resolved-text-muted)] transition-transform group-data-[state=open]:rotate-180',
     // `ps-4` (16px) reserves the gutter each child's own trunk segment
     // and elbow (on the `item` slot above) reach back into - the trunk

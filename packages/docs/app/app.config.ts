@@ -12,12 +12,22 @@ export default defineAppConfig({
       showTitle: true,
       search: true,
       colorMode: true,
+      fluid: false,
+    },
+    main: {
+      fluid: false,
+      padded: true,
+    },
+    sidebar: {
+      enabled: true,
+      collapsed: false,
     },
     toc: {
       enabled: true,
       title: 'On this page',
     },
     footer: {
+      fluid: false,
       links: [
         {
           label: 'Powered by Selaras',

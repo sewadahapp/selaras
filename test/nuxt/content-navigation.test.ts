@@ -7,6 +7,8 @@ interface ContentNavigationLink {
   title: string
   path: string
   icon?: string
+  collapse?: boolean
+  navBadges?: string[]
   children?: ContentNavigationLink[]
 }
 
@@ -88,6 +90,27 @@ describe('contentNavigation', () => {
     const icon = wrapper.find('.iconify')
     expect(icon.exists()).toBe(true)
     expect(icon.classes()).toContain('i-lucide:square')
+  })
+
+  it('renders navigation badges and honors collapsed group metadata', async () => {
+    const withMetadata: ContentNavigationLink[] = [
+      {
+        title: 'Guides',
+        path: '/guides',
+        collapse: true,
+        navBadges: ['New'],
+        children: [{ title: 'Start', path: '/guides/start' }],
+      },
+    ]
+    const wrapper = await mountSuspended(ContentNavigation, {
+      props: { navigation: withMetadata },
+      route: '/guides/start',
+    })
+    await nextTick()
+
+    expect(wrapper.text()).toContain('New')
+    expect(wrapper.find('a[href="/guides/start"]').exists()).toBe(false)
+    expect(wrapper.find('button').attributes('aria-expanded')).toBe('false')
   })
 
   it('the link slot replaces a leaf link\'s content, scoped with link and active', async () => {

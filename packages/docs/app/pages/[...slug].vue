@@ -18,6 +18,12 @@ if (!page.value) {
 
 definePageMeta({ layout: 'selaras-docs' })
 useSeoMeta({ title: page.value.title, description: page.value.description ?? appConfig.selarasDocs?.site?.description })
+useHead(() => ({
+  ...(appConfig.selarasDocs?.site?.titleTemplate && { titleTemplate: appConfig.selarasDocs.site.titleTemplate }),
+  ...(appConfig.selarasDocs?.site?.url && {
+    link: [{ rel: 'canonical', href: new URL(route.path, appConfig.selarasDocs.site.url).href }],
+  }),
+}))
 
 const proseComponents = {
   h1: ProseH1,
@@ -34,17 +40,22 @@ const surround = useDocsSurround()
 </script>
 
 <template>
-  <SContainer size="full" class="selaras-docs-page">
+  <SContainer size="full" class="selaras-docs-page" :class="{ 'selaras-docs-page--fluid': appConfig.selarasDocs?.main?.fluid }">
     <div class="selaras-docs-page-grid">
       <article class="selaras-docs-article">
         <p v-if="page!.description" class="selaras-docs-description">
           {{ page!.description }}
         </p>
         <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose" />
-        <DocsEditLink :path="route.path" />
-        <SContentSurround :prev="surround.prev" :next="surround.next" class="selaras-docs-surround" />
+        <DocsEditLink v-if="page!.editLink !== false" :path="route.path" />
+        <SContentSurround
+          v-if="page!.prevNext !== false"
+          :prev="surround.prev"
+          :next="surround.next"
+          class="selaras-docs-surround"
+        />
       </article>
-      <DocsTableOfContents :links="tocLinks" />
+      <DocsTableOfContents v-if="page!.toc !== false && page!.aside !== false" :links="tocLinks" />
     </div>
   </SContainer>
 </template>

@@ -47,6 +47,10 @@
   margin-inline: auto;
 }
 
+.selaras-docs-header--fluid {
+  width: 100%;
+}
+
 .selaras-docs-header::after {
   position: absolute;
   z-index: 1;
@@ -66,15 +70,27 @@
   margin: 0 auto;
 }
 
+.selaras-docs-root--fluid .selaras-docs-shell {
+  width: 100%;
+}
+
 .selaras-docs-main {
   min-width: 0;
   flex: 1;
   padding: 2rem;
 }
 
+.selaras-docs-main--unpadded {
+  padding: 0;
+}
+
 .selaras-docs-page {
   max-width: 78rem;
   margin: 0 auto;
+}
+
+.selaras-docs-page--fluid {
+  max-width: none;
 }
 
 .selaras-docs-page-grid {
@@ -122,6 +138,10 @@
   position: relative;
   width: min(100%, 90rem);
   margin-inline: auto;
+}
+
+.selaras-docs-footer--fluid {
+  width: 100%;
 }
 
 .selaras-docs-footer::before {
@@ -193,6 +213,10 @@
 @media (max-width: 63.999rem) {
   .selaras-docs-main {
     padding: 1.5rem;
+  }
+
+  .selaras-docs-main--unpadded {
+    padding: 0;
   }
 
   .selaras-docs-header-link.selaras-docs-header-link--desktop {

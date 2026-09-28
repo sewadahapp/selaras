@@ -16,7 +16,10 @@ type ContentNavigationVariants = VariantProps<typeof contentNavigationTheme>
 export interface ContentNavigationLink {
   title: string
   path: string
-  icon?: string
+  icon?: string | false
+  order?: number
+  collapse?: boolean
+  navBadges?: Array<string | { text: string }>
   children?: ContentNavigationLink[]
 }
 
@@ -30,6 +33,8 @@ export interface ContentNavigationProps {
   navigation: ContentNavigationLink[]
   /** The active-link accent. @default 'primary' */
   color?: ColorRole
+  /** Collapse every group initially unless the item's own `collapse` metadata overrides it. @default false */
+  collapsed?: boolean
   /** Set only by this component's own recursive self-call, one level down for each nested group - gates the tree-connector rail (see `content-navigation.ts`'s own `isNested` variant), since a root-level entry has no parent trunk to its left to branch off of. */
   isNested?: boolean
   ui?: UiProp<ContentNavigationThemeSlots>
@@ -73,19 +78,22 @@ const groupUi = computed(() => ({
       <Accordion
         v-if="link.children?.length"
         :items="[{ value: link.path, label: link.title }]"
-        :default-value="[link.path]"
+        :default-value="(link.collapse ?? collapsed) ? [] : [link.path]"
         :ui="groupUi"
       >
         <template #label>
           <slot name="link" :link="link" :active="false">
             <Icon v-if="link.icon" :name="link.icon" v-bind="resolveSlot(ui.icon, props.ui?.icon)" />
             {{ link.title }}
+            <span v-for="(badge, index) in link.navBadges" :key="`${link.path}:badge:${index}`" v-bind="resolveSlot(ui.badge, props.ui?.badge)">
+              {{ typeof badge === 'string' ? badge : badge.text }}
+            </span>
           </slot>
         </template>
         <template #[link.path]>
           <!-- Vue's SFC self-recursion resolves by this file's own bare name -
                keep it unprefixed even though the public component is SContentNavigation. -->
-          <ContentNavigation :navigation="link.children!" is-nested :color="color" :ui="props.ui">
+          <ContentNavigation :navigation="link.children!" is-nested :color="color" :collapsed="collapsed" :ui="props.ui">
             <template #link="scope">
               <slot name="link" v-bind="scope" />
             </template>
@@ -96,6 +104,9 @@ const groupUi = computed(() => ({
         <slot name="link" :link="link" :active="isActive(link)">
           <Icon v-if="link.icon" :name="link.icon" v-bind="resolveSlot(ui.icon, props.ui?.icon)" />
           {{ link.title }}
+          <span v-for="(badge, index) in link.navBadges" :key="`${link.path}:badge:${index}`" v-bind="resolveSlot(ui.badge, props.ui?.badge)">
+            {{ typeof badge === 'string' ? badge : badge.text }}
+          </span>
         </slot>
       </NuxtLink>
     </li>

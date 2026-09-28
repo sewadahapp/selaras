@@ -47,6 +47,8 @@ export default defineAppConfig({
     site: {
       name: 'My project',
       description: 'Documentation for my project.',
+      titleTemplate: '%s · My project',
+      url: 'https://example.com',
       // Files in public/. Use one path, or separate light and dark images.
       logo: { light: '/logo.svg', dark: '/logo-dark.svg' },
       favicon: '/favicon.svg',
@@ -56,6 +58,9 @@ export default defineAppConfig({
       editLinks: true,
     },
     header: {
+      search: true,
+      colorMode: true,
+      fluid: false,
       links: [
         { label: 'Guide', to: '/guide/getting-started' },
         {
@@ -67,9 +72,38 @@ export default defineAppConfig({
         },
       ],
     },
+    main: { fluid: false, padded: true },
+    sidebar: {
+      enabled: true,
+      collapsed: false,
+      exclude: ['/internal/draft'],
+    },
+    toc: { enabled: true, title: 'On this page' },
+    footer: { text: '© 2026 My project', fluid: false },
   },
 })
 ```
+
+Folder navigation can be configured with a `.navigation.yml` file alongside
+the Markdown pages in that folder:
+
+```yaml
+title: Getting started
+icon: hugeicons:rocket
+order: 1
+collapse: false
+navBadges:
+  - New
+```
+
+Use `navigation: false` in a page's frontmatter to omit it from navigation, or
+set `navigation` to an object to override its navigation `title`, `icon`,
+`order`, and `navBadges`. Page frontmatter can also set `toc: false`,
+`aside: false`, `editLink: false`, or `prevNext: false` to hide those parts of
+the page shell. The sidebar also accepts an app-wide `collapsed` default; a
+folder's `collapse` value takes precedence. `main.fluid` expands the
+content width, `main.padded: false` removes its outer inset, and `header.fluid`
+and `footer.fluid` allow those regions to span the viewport.
 
 Create an application component with the same name as a layer component, such
 as `components/DocsHeader.vue`, to replace that part of the shell. Smaller
