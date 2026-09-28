@@ -64,10 +64,9 @@ export const tableTheme = tv({
       true: { table: '[&>tbody>tr:nth-child(even)]:bg-[var(--selaras-resolved-surface-elevated)]' },
     },
     rowHover: {
-      true: {
-        tr: 'group transition-colors hover:bg-[var(--selaras-resolved-surface-elevated)]',
-        td: 'group-hover:bg-[var(--selaras-resolved-surface-elevated)]',
-      },
+      // Body rows only, like `striped` - header and footer rows share the `tr`
+      // slot but aren't selectable. Cells repaint too, for pinned columns.
+      true: { table: '[&>tbody>tr]:transition-colors [&>tbody>tr:hover]:bg-[var(--selaras-resolved-surface-elevated)] [&>tbody>tr:hover>td]:bg-[var(--selaras-resolved-surface-elevated)]' },
     },
     scrollable: {
       true: { wrapper: 'overflow-y-auto', thead: 'sticky top-0 z-[1]' },

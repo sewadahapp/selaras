@@ -257,8 +257,17 @@ describe('table', () => {
     const plain = await mountSuspended(Table, { props })
     const hovered = await mountSuspended(Table, { props: { ...props, rowHover: true } })
 
-    expect(plain.find('tbody tr').classes().some(className => className.includes('hover:bg-'))).toBe(false)
-    expect(hovered.find('tbody tr').classes().some(className => className.includes('hover:bg-'))).toBe(true)
+    const hoverClass = (wrapper: typeof plain) => wrapper.find('table').classes().find(className => className.includes('tbody>tr:hover'))
+    expect(hoverClass(plain)).toBeUndefined()
+    expect(hoverClass(hovered)).toBeDefined()
+  })
+
+  it('keeps header and footer rows out of the row hover styling', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: { data: [{ name: 'Alice' }], columns: [{ accessorKey: 'name', header: 'Name', footer: 'Total' }], rowHover: true },
+    })
+    for (const row of wrapper.findAll('thead tr, tfoot tr'))
+      expect(row.classes().some(className => className.includes('hover') || className === 'group')).toBe(false)
   })
 
   it('paginates by pageSize and disables Previous/Next at the boundaries', async () => {
