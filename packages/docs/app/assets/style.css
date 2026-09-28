@@ -45,6 +45,8 @@
   top: 0;
   width: min(100%, 90rem);
   margin-inline: auto;
+  background: var(--selaras-resolved-surface-canvas, var(--selaras-resolved-surface-default));
+  border-bottom: 0;
 }
 
 .selaras-docs-header--fluid {

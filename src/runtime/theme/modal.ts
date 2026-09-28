@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const modalTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)] backdrop-blur-[2px]',
     // flex flex-col + the header/footer's own shrink-0 (native to a flex
     // child, no extra class needed) let a tall body scroll internally via
     // its own overflow-y-auto below, capped to the viewport height so a

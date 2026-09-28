@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const slideoverTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)] backdrop-blur-[2px]',
     content: 'fixed z-[var(--selaras-resolved-z-modal)] flex flex-col bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none',
     header: 'flex items-start justify-between gap-4 p-4 sm:px-6',
     title: 'text-base font-semibold text-[var(--selaras-resolved-text-default)]',

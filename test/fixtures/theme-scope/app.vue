@@ -33,6 +33,7 @@ const outerTokens = {
       <div id="default-dark-surface" class="functional-sample">
         Default dark surface
       </div>
+      <div id="default-dark-scrim" class="functional-scrim" />
       <STheme as="section" mode="light">
         <div id="default-light-surface" class="functional-sample">
           Default light surface

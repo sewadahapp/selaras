@@ -2,7 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const drawerTheme = tv({
   slots: {
-    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)] backdrop-blur-[2px]',
     content: 'fixed z-[var(--selaras-resolved-z-modal)] flex flex-col bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none',
     // A small rounded grip bar - purely visual, signals "draggable" the
     // same way a real bottom sheet's handle does. Centered via the

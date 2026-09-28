@@ -71,6 +71,8 @@ test('keeps functional colors coherent through nested modes, real portals and re
   await goto('/', { waitUntil: 'hydration' })
   const modal = page.getByTestId('functional-modal')
   await expect(page.locator('#global-surface')).toHaveCSS('background-color', 'rgb(240, 241, 242)')
+  await expect(page.locator('#default-dark-scrim')).toHaveCSS('background-color', 'rgba(255, 255, 255, 0.05)')
+  await expect(page.getByTestId('functional-scrim')).toHaveCSS('backdrop-filter', 'blur(2px)')
   const popover = page.locator('#portal-surface').locator('..')
   for (const surface of [page.locator('#inner-surface'), page.locator('#portal-surface'), modal, popover, page.locator('#functional-input')]) {
     await expect(surface).toHaveCSS('background-color', 'rgb(24, 25, 26)')

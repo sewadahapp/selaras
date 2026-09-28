@@ -6,7 +6,7 @@ export const alertDialogTheme = tv({
     // same kind of centered, blocking surface, just a distinct semantic
     // (Reka's AlertDialogContent unconditionally blocks outside-click
     // dismissal itself, so there's no need for a second z-index tier).
-    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)]',
+    overlay: 'fixed inset-0 z-[var(--selaras-resolved-z-modal-overlay)] bg-[var(--selaras-resolved-scrim)] backdrop-blur-[2px]',
     content: 'fixed left-1/2 top-1/2 z-[var(--selaras-resolved-z-modal)] flex max-h-[calc(100vh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-4 rounded-[var(--selaras-resolved-radius-lg)] bg-[var(--selaras-resolved-surface-default)] p-6 shadow-[var(--selaras-resolved-shadow-lg)] focus:outline-none',
     header: 'flex flex-col gap-1',
     title: 'text-base font-semibold text-[var(--selaras-resolved-text-default)]',

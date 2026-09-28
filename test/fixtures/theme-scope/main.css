@@ -24,6 +24,10 @@
   background-color: var(--selaras-resolved-surface-elevated);
 }
 
+.functional-scrim {
+  background-color: var(--selaras-resolved-scrim);
+}
+
 .geometry-read {
   border-radius: var(--selaras-resolved-radius-md);
   box-shadow: var(--selaras-resolved-shadow-md);
