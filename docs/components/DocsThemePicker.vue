@@ -12,10 +12,14 @@ const items = computed(() => [[
     label: 'Slendro',
     onSelect: () => preset.value = 'slendro',
   },
+  {
+    label: 'Degung',
+    onSelect: () => preset.value = 'degung',
+  },
 ]])
 
 function swatchColor(theme: DocsThemePreset) {
-  return theme === 'slendro' ? '#fd5e53' : '#4d02e1'
+  return theme === 'slendro' ? '#fd5e53' : theme === 'degung' ? '#2f6bff' : '#4d02e1'
 }
 </script>
 

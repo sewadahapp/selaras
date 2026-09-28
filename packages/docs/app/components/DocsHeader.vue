@@ -16,7 +16,13 @@ watch(() => route.path, () => {
 </script>
 
 <template>
-  <SHeader :ui="{ root: docsConfig.header?.fluid ? 'selaras-docs-header selaras-docs-header--fluid' : 'selaras-docs-header' }">
+  <SHeader
+    :ui="{
+      root: 'selaras-docs-header',
+      left: docsConfig.header?.fluid ? 'selaras-docs-header-inner selaras-docs-header-inner--fluid' : 'selaras-docs-header-inner',
+      right: 'hidden',
+    }"
+  >
     <div class="selaras-docs-brand-area">
       <NuxtLink to="/" class="selaras-docs-brand" :aria-label="`${siteName} home`">
         <DocsHeaderBrand />
@@ -28,7 +34,7 @@ watch(() => route.path, () => {
       variant="link"
       :ui="{ root: 'hidden w-auto lg:flex' }"
     />
-    <template #right>
+    <div class="selaras-docs-header-actions">
       <DocsSearchButton v-if="docsConfig.header?.search !== false" />
       <SColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
       <DocsThemePicker v-if="docsConfig.header?.themePicker" />
@@ -54,7 +60,7 @@ watch(() => route.path, () => {
       >
         Menu
       </SButton>
-    </template>
+    </div>
   </SHeader>
   <SDrawer v-if="sidebarEnabled" v-model:open="navigationOpen" side="left" title="Documentation navigation" :handle="false">
     <template #body>

@@ -1,4 +1,4 @@
-export type DocsThemePreset = 'pelog' | 'slendro'
+export type DocsThemePreset = 'pelog' | 'slendro' | 'degung'
 
 /** The docs-only visual preset, persisted so page navigation keeps the choice. */
 export function useDocsThemePreset() {
@@ -8,7 +8,7 @@ export function useDocsThemePreset() {
   })
 
   return computed<DocsThemePreset>({
-    get: () => stored.value === 'slendro' ? 'slendro' : 'pelog',
+    get: () => stored.value === 'slendro' || stored.value === 'degung' ? stored.value : 'pelog',
     set: value => stored.value = value,
   })
 }
