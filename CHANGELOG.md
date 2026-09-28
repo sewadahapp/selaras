@@ -1,6 +1,111 @@
 # Changelog
 
 
+## v0.3.1
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.0.0...v0.3.1)
+
+### 🚀 Enhancements
+
+- **release:** Ship a changelog with the docs layer ([8fe893c](https://github.com/sewadahapp/selaras/commit/8fe893c))
+- **docs:** Add default powered by footer ([5a9b881](https://github.com/sewadahapp/selaras/commit/5a9b881))
+- **tabs:** Add scrolling, vertical layout, and panel retention ([5b86c32](https://github.com/sewadahapp/selaras/commit/5b86c32))
+- **theme:** Use white text for light intent fills ([f382884](https://github.com/sewadahapp/selaras/commit/f382884))
+- **calendar:** Add composable schedule examples ([fc85fd0](https://github.com/sewadahapp/selaras/commit/fc85fd0))
+- **form-field:** Add floating labels and grouped examples ([d5f8c9c](https://github.com/sewadahapp/selaras/commit/d5f8c9c))
+- **overlay:** Support configurable arrows ([2606363](https://github.com/sewadahapp/selaras/commit/2606363))
+- **overlay:** Expose arrow and positioning controls ([7a89248](https://github.com/sewadahapp/selaras/commit/7a89248))
+- **directives:** Add v-mask input masking ([bf93ddc](https://github.com/sewadahapp/selaras/commit/bf93ddc))
+- **docs:** Add brand override points and a favicon option ([78a1ac7](https://github.com/sewadahapp/selaras/commit/78a1ac7))
+- **docs:** Place header navigation beside the brand ([cdf95ef](https://github.com/sewadahapp/selaras/commit/cdf95ef))
+- **docs:** Add temporary logo ([18bf96f](https://github.com/sewadahapp/selaras/commit/18bf96f))
+- **code-group:** Show icons in tabs ([be3f024](https://github.com/sewadahapp/selaras/commit/be3f024))
+- **toast:** Add positioning and stack controls ([9ff6a45](https://github.com/sewadahapp/selaras/commit/9ff6a45))
+- Add keyboard shortcuts to menu items ([748a869](https://github.com/sewadahapp/selaras/commit/748a869))
+- **timeline:** Add timeline component ([92438fe](https://github.com/sewadahapp/selaras/commit/92438fe))
+- **dropdown:** Add adaptive mobile mode ([6403583](https://github.com/sewadahapp/selaras/commit/6403583))
+- **table:** Add row hover and click selection ([2dd2a7c](https://github.com/sewadahapp/selaras/commit/2dd2a7c))
+- **table:** Make column sorting opt-in ([0cd56fb](https://github.com/sewadahapp/selaras/commit/0cd56fb))
+- **table:** Move column filters to popovers ([12d2e88](https://github.com/sewadahapp/selaras/commit/12d2e88))
+- **table:** Support hierarchical tree rows ([fee43bb](https://github.com/sewadahapp/selaras/commit/fee43bb))
+- **docs:** Add app and navigation config ([9d71ef6](https://github.com/sewadahapp/selaras/commit/9d71ef6))
+- Refine code tree viewer ([ef27831](https://github.com/sewadahapp/selaras/commit/ef27831))
+- **docs:** Add Pelog and Slendro theme presets ([90dfe04](https://github.com/sewadahapp/selaras/commit/90dfe04))
+- **docs:** Tint logo with active theme color ([102f525](https://github.com/sewadahapp/selaras/commit/102f525))
+- **docs:** Add Degung theme preset ([9af1f54](https://github.com/sewadahapp/selaras/commit/9af1f54))
+
+### 🩹 Fixes
+
+- **docs:** Preserve full width rules and layer hmr ([94ec893](https://github.com/sewadahapp/selaras/commit/94ec893))
+- **docs:** Keep centered header sticky ([0bf8504](https://github.com/sewadahapp/selaras/commit/0bf8504))
+- **calendar:** Keep default grid compact ([4962470](https://github.com/sewadahapp/selaras/commit/4962470))
+- **color-picker:** Align popover to trigger start ([28c39a3](https://github.com/sewadahapp/selaras/commit/28c39a3))
+- **autocomplete:** Improve multiple selection behavior ([66c8a86](https://github.com/sewadahapp/selaras/commit/66c8a86))
+- **directives:** Rewrite v-mask without a third-party dependency ([9d91636](https://github.com/sewadahapp/selaras/commit/9d91636))
+- **color-picker:** Keep one trigger mounted and respect form state ([2f7bd82](https://github.com/sewadahapp/selaras/commit/2f7bd82))
+- **date-picker:** Skip form submission while disabled ([9330b38](https://github.com/sewadahapp/selaras/commit/9330b38))
+- **toast:** Skip toasts added during server render ([8995cb4](https://github.com/sewadahapp/selaras/commit/8995cb4))
+- **autocomplete:** Select after home/end navigation ([12259f4](https://github.com/sewadahapp/selaras/commit/12259f4))
+- **tabs:** Scroll a controlled tab into view once ([80aaeae](https://github.com/sewadahapp/selaras/commit/80aaeae))
+- **calendar:** Key weekday headers by index ([94943d6](https://github.com/sewadahapp/selaras/commit/94943d6))
+- **docs:** Hide the search shortcut hint on small screens ([ec811bd](https://github.com/sewadahapp/selaras/commit/ec811bd))
+- **docs:** Show navigation menu flyouts ([9330c39](https://github.com/sewadahapp/selaras/commit/9330c39))
+- **docs:** Theme native scrollbars ([5903f0f](https://github.com/sewadahapp/selaras/commit/5903f0f))
+- **toast:** Make stacking the documented default ([0ae4f40](https://github.com/sewadahapp/selaras/commit/0ae4f40))
+- **code-tree:** Ignore highlights for a file no longer selected ([40136c2](https://github.com/sewadahapp/selaras/commit/40136c2))
+- **dropdown:** Keep disabled mobile link items inert ([c0a5c86](https://github.com/sewadahapp/selaras/commit/c0a5c86))
+- **menus:** Keep shortcut hints inside item slots ([bcffe01](https://github.com/sewadahapp/selaras/commit/bcffe01))
+- **hotkey:** Match shifted symbols and option chords ([b7a5acb](https://github.com/sewadahapp/selaras/commit/b7a5acb))
+- **navigation-menu:** Bind item hotkeys page-wide like other menus ([5bbc6d5](https://github.com/sewadahapp/selaras/commit/5bbc6d5))
+- **table:** Limit row hover to body rows ([16762ec](https://github.com/sewadahapp/selaras/commit/16762ec))
+- **dropdown:** Keep adaptive trigger aria in sync after a resize ([15d1a59](https://github.com/sewadahapp/selaras/commit/15d1a59))
+- **dropdown,timeline:** Route new layout classes through the theme and class prefix ([08c65d6](https://github.com/sewadahapp/selaras/commit/08c65d6))
+- **code-tree:** Follow scoped light and dark themes for syntax colors ([a98c8fb](https://github.com/sewadahapp/selaras/commit/a98c8fb))
+- **toast:** Layer toasts into a scaled stack with enter and exit motion ([9e0f922](https://github.com/sewadahapp/selaras/commit/9e0f922))
+- **docs:** Enable default page navigation ([cf07fbb](https://github.com/sewadahapp/selaras/commit/cf07fbb))
+
+### 📖 Documentation
+
+- Rename blocks group to composites ([e14a727](https://github.com/sewadahapp/selaras/commit/e14a727))
+- Clarify square button example ([349ea36](https://github.com/sewadahapp/selaras/commit/349ea36))
+- Highlight theme source snippets ([de7519c](https://github.com/sewadahapp/selaras/commit/de7519c))
+- **directives:** Drop plain Vue usage notes ([b6b514e](https://github.com/sewadahapp/selaras/commit/b6b514e))
+- Add the selaras logo and favicon ([7bd2e9f](https://github.com/sewadahapp/selaras/commit/7bd2e9f))
+- Add a landing page with a live theming demo ([3d456c7](https://github.com/sewadahapp/selaras/commit/3d456c7))
+- **toast:** Add a live position example ([8b2cc7d](https://github.com/sewadahapp/selaras/commit/8b2cc7d))
+
+### ✅ Tests
+
+- **css:** Update prefixed stylesheet budget ([122133f](https://github.com/sewadahapp/selaras/commit/122133f))
+- **compat:** Fix packed consumer checks ([7e9d501](https://github.com/sewadahapp/selaras/commit/7e9d501))
+- **form-library:** Scope the date cell click to the picker ([4644ae6](https://github.com/sewadahapp/selaras/commit/4644ae6))
+- **css:** Raise the prefixed stylesheet budget ([d501562](https://github.com/sewadahapp/selaras/commit/d501562))
+- **compat:** Align packed CSS budgets ([cdced95](https://github.com/sewadahapp/selaras/commit/cdced95))
+- **compat:** Allow unprefixed CSS size variance ([f55d537](https://github.com/sewadahapp/selaras/commit/f55d537))
+- **docs:** Align packed consumer content schema ([818cce7](https://github.com/sewadahapp/selaras/commit/818cce7))
+- Align packed checks with component defaults ([75c3eb9](https://github.com/sewadahapp/selaras/commit/75c3eb9))
+
+### 🎨 Styles
+
+- **docs:** Center header and footer content ([3ec7f9c](https://github.com/sewadahapp/selaras/commit/3ec7f9c))
+- **docs:** Constrain header and footer shells ([723afe6](https://github.com/sewadahapp/selaras/commit/723afe6))
+- **tabs:** Refine pill variant ([09b9ee6](https://github.com/sewadahapp/selaras/commit/09b9ee6))
+- **docs:** Remove sidebar border ([864d33c](https://github.com/sewadahapp/selaras/commit/864d33c))
+- **docs:** Enlarge the brand name and search button ([e49a97d](https://github.com/sewadahapp/selaras/commit/e49a97d))
+- **callout:** Match alert surface ([0269454](https://github.com/sewadahapp/selaras/commit/0269454))
+- **docs:** Refine dark modal scrim and docs header ([5cd1e22](https://github.com/sewadahapp/selaras/commit/5cd1e22))
+- **toast:** Refine semantic toast styling ([dd879f6](https://github.com/sewadahapp/selaras/commit/dd879f6))
+- Fix lint errors from recent changes ([9e7054c](https://github.com/sewadahapp/selaras/commit/9e7054c))
+
+### 🤖 CI
+
+- Use npm trusted publishing ([e5f3dd7](https://github.com/sewadahapp/selaras/commit/e5f3dd7))
+- **docs:** Add standalone pages deployment ([f322dcb](https://github.com/sewadahapp/selaras/commit/f322dcb))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.3.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/v0.2.0...v0.3.0)
