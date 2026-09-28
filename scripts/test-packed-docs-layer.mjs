@@ -227,7 +227,13 @@ try {
   assert.ok(docsArchive.files.some(file => file.path === 'app/app.vue'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsExample.vue'))
   assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')
-  cpSync(fixtureDir, consumerDir, { recursive: true })
+  cpSync(fixtureDir, consumerDir, {
+    recursive: true,
+    filter: (source) => {
+      const path = relative(fixtureDir, source)
+      return !path.split(/[\\/]/).some(segment => ['.nuxt', '.output', 'node_modules'].includes(segment))
+    },
+  })
   const dependencies = Object.fromEntries(
     ['nuxt', 'vue', 'typescript', 'vue-tsc']
       .map(name => [name, installedManifest(name).version]),
