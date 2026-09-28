@@ -28,7 +28,7 @@ const alertOpen = ref(false)
     </SSplitter>
     <STable
       id="remaining-table"
-      :data="[{ id: 'row' }]" :columns="[{ accessorKey: 'id', header: 'ID' }]"
+      :data="[{ id: 'row' }]" :columns="[{ accessorKey: 'id', header: 'ID', enableSorting: true }]"
       color="published" size="sm" striped gridlines expandable scroll-height="10rem"
     />
     <STree id="remaining-tree" :items="[{ label: 'Leaf', value: 'leaf' }]" size="sm" color="published" />

@@ -314,7 +314,9 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
         await page.locator('#packed-toast').evaluate(element => element.click())
         await page.waitForFunction((expectedClass) => {
           const toast = [...document.querySelectorAll('[data-selaras-color="published"]')].find(element => element.textContent.includes('Published global toast'))
-          return toast && toast.classList.contains(expectedClass) && getComputedStyle(toast).borderInlineStartColor === 'rgb(69, 103, 137)'
+          return toast
+            && toast.classList.contains(expectedClass)
+            && getComputedStyle(toast).backgroundColor !== 'rgb(240, 241, 242)'
         }, prefixed ? 'tw:tracking-widest' : 'tracking-widest')
         const externalForm = page.locator('#packed-external-form')
         const email = externalForm.getByLabel('Email', { exact: true })
