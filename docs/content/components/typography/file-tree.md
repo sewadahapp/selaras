@@ -20,7 +20,8 @@ A node with `children` renders as a directory (click to expand/collapse), one
 without renders as a file (click to select it, emitting `update:selected`
 with that node). Pass `selected` back in to highlight the active row - a
 controlled pattern, the same shape [CodeTree](/components/typography/code-tree)
-builds on for its own file-to-content pairing.
+builds on for its own file-to-content pairing. File rows use the matching VS
+Code icon when the filename is recognized; `icon` always overrides it.
 
 ### Controlled selection
 
@@ -52,6 +53,10 @@ every slot and variant - here's `FileTree`'s own theme file:
 | `selected` | `FileTreeNode` | - |
 | `defaultExpanded` | `boolean` | `true` |
 | `ui` | `Partial<Record<FileTreeSlot, string \| object>>` | - |
+
+Each node accepts `name`, optional `children`, optional `icon`, and optional
+`language`. `language` is used as a fallback hint when the filename does not
+identify a VS Code file icon.
 
 ## Emits
 

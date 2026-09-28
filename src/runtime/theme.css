@@ -5,3 +5,13 @@
  */
 @import "./default-colors.css";
 @import "./structural.css";
+
+/* Shiki emits both light and dark token colors; use the active color mode
+   so CodeTree syntax highlighting follows the surrounding Selaras theme. */
+.selaras-code-tree-code span {
+  color: var(--shiki-light);
+}
+
+.dark .selaras-code-tree-code span {
+  color: var(--shiki-dark);
+}

@@ -3,9 +3,10 @@ import type { VariantProps } from 'tailwind-variants'
 import type { FileTreeThemeSlots } from '../theme/file-tree'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
-import { computed, ref } from 'vue'
+import { computed, ref, toRaw } from 'vue'
 import { useIcons } from '../composables/use-icons'
 import { fileTreeTheme } from '../theme/file-tree'
+import { resolveFileIcon } from '../utils/file-icons'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -17,6 +18,8 @@ export interface FileTreeNode {
   /** A node with children renders as a directory, one without as a file - the same convention ContentNavigation's own tree uses. */
   children?: FileTreeNode[]
   icon?: string
+  /** Optional language hint for resolving a file-type icon when the filename is not recognized. */
+  language?: string
 }
 
 defineOptions({ inheritAttrs: false })
@@ -75,11 +78,15 @@ function selectFile(node: FileTreeNode) {
   emit('update:selected', node)
 }
 
+function isSelected(node: FileTreeNode) {
+  return props.selected != null && toRaw(props.selected) === toRaw(node)
+}
+
 function iconFor(node: FileTreeNode, index: number) {
   if (node.icon)
     return node.icon
   if (!node.children)
-    return icons.value.file
+    return resolveFileIcon(node.language, node.name) ?? icons.value.file
   return isExpanded(index) ? icons.value.folderOpen : icons.value.folder
 }
 
@@ -100,14 +107,14 @@ const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const labelProps = computed(() => resolveSlot(ui.value.label, props.ui?.label))
 
 function rowProps(node: FileTreeNode) {
-  return resolveSlot(theme.value({ isNested: props.isNested, selected: props.selected === node, color: effectiveColor.value as FileTreeVariants['color'] }).row, props.ui?.row)
+  return resolveSlot(theme.value({ isNested: props.isNested, selected: isSelected(node), color: effectiveColor.value as FileTreeVariants['color'] }).row, props.ui?.row)
 }
 </script>
 
 <template>
   <ul :data-selaras-color="effectiveColor" v-bind="rootProps">
     <li v-for="(node, index) in items" :key="node.name" v-bind="itemProps">
-      <button type="button" v-bind="rowProps(node)" @click="node.children ? toggle(index) : selectFile(node)">
+      <button type="button" :aria-current="isSelected(node) ? 'true' : undefined" v-bind="rowProps(node)" @click="node.children ? toggle(index) : selectFile(node)">
         <Icon :name="iconFor(node, index)" v-bind="iconProps" />
         <span v-bind="labelProps">{{ node.name }}</span>
       </button>

@@ -8,6 +8,7 @@ const items = [
     name: 'src',
     children: [
       { name: 'index.ts', code: 'export default 1' },
+      { name: 'App.vue', code: '<template>\n  <p>Hello</p>\n</template>' },
     ],
   },
   { name: 'package.json', code: '{}' },
@@ -18,6 +19,23 @@ describe('codeTree', () => {
     const wrapper = await mountSuspended(CodeTree, { props: { items } })
 
     expect(wrapper.find('pre').text()).toBe('export default 1')
+    expect(wrapper.findAll('button').find(button => button.text().includes('index.ts'))!.attributes('aria-current')).toBe('true')
+  })
+
+  it('uses VS Code file icons inferred from each filename', async () => {
+    const wrapper = await mountSuspended(CodeTree, { props: { items } })
+
+    expect(wrapper.findAll('button').find(button => button.text().includes('index.ts'))!.html()).toContain('vscode-icons:file-type-typescript')
+    expect(wrapper.findAll('button').find(button => button.text().includes('App.vue'))!.html()).toContain('vscode-icons:file-type-vue')
+  })
+
+  it('highlights each line in the open file', async () => {
+    const wrapper = await mountSuspended(CodeTree, { props: { items } })
+
+    await wrapper.findAll('button').find(button => button.text().includes('App.vue'))!.trigger('click')
+    await flushPromises()
+
+    expect(wrapper.findAll('pre code .line')).toHaveLength(3)
   })
 
   it('clicking a different file swaps the shown content', async () => {
@@ -26,6 +44,8 @@ describe('codeTree', () => {
     await wrapper.findAll('button').find(b => b.text() === 'package.json')!.trigger('click')
 
     expect(wrapper.find('pre').text()).toBe('{}')
+    expect(wrapper.findAll('button').find(button => button.text() === 'package.json')!.attributes('aria-current')).toBe('true')
+    expect(wrapper.findAll('button').find(button => button.text().includes('index.ts'))!.attributes('aria-current')).toBeUndefined()
   })
 
   it('shows the empty-state message when there are no files at all', async () => {

@@ -19,7 +19,7 @@ export const fileTreeTheme = tv({
   },
   variants: {
     selected: {
-      true: { row: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle)] hover:text-[var(--_selaras-color-text)]' },
+      true: { row: 'bg-[var(--_selaras-color-subtle)] font-medium text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle)] hover:text-[var(--_selaras-color-text)]' },
     },
     color: {
       primary: '',
