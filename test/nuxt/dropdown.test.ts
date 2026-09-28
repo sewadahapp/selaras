@@ -40,6 +40,30 @@ function mockMatchMedia(matches: boolean) {
   return () => window.matchMedia = original
 }
 
+function mockResponsiveMatchMedia(matches: boolean) {
+  const original = window.matchMedia
+  let current = matches
+  const listeners = new Set<(event: MediaQueryListEvent) => void>()
+  const mediaQuery = {
+    get matches() { return current },
+    media: '(width < 48rem)',
+    onchange: null,
+    addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.add(listener),
+    removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.delete(listener),
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => false,
+  } as unknown as MediaQueryList
+  window.matchMedia = (() => mediaQuery) as unknown as typeof window.matchMedia
+  return {
+    setMatches(value: boolean) {
+      current = value
+      listeners.forEach(listener => listener({ matches: value } as MediaQueryListEvent))
+    },
+    restore: () => window.matchMedia = original,
+  }
+}
+
 describe('dropdown', () => {
   it('keeps the default portal and allows inline positioning', async () => {
     wrapper = await mountSuspended(Dropdown, {
@@ -329,5 +353,28 @@ describe('dropdown', () => {
 
     expect(onSelect).not.toHaveBeenCalled()
     expect(useRouter().currentRoute.value.path).not.toBe('/disabled-destination')
+  })
+
+  it('adaptive keeps the trigger describing the surface it opens across a resize', async () => {
+    const media = mockResponsiveMatchMedia(false)
+    restoreMatchMedia = media.restore
+    wrapper = await mountSuspended(Dropdown, {
+      props: { adaptive: true, items: [[{ label: 'Edit' }]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    const trigger = wrapper.find('button')
+    await nextTick()
+    expect(trigger.attributes('aria-haspopup')).toBe('menu')
+
+    media.setMatches(true)
+    await nextTick()
+    await nextTick()
+    expect(trigger.attributes('aria-haspopup')).toBe('dialog')
+
+    media.setMatches(false)
+    await nextTick()
+    await nextTick()
+    expect(trigger.attributes('aria-haspopup')).toBe('menu')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
   })
 })

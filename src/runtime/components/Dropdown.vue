@@ -130,19 +130,22 @@ const adaptiveUi = computed(() => ({
 }))
 
 // Reka's menu trigger always declares aria-haspopup="menu" and its expanded
-// state follows the anchored menu root. In adaptive mode, mirror the mobile
-// dialog that actually opens so assistive technology gets the right target.
+// state follows the anchored menu root. In adaptive mode the trigger can open
+// either surface, so describe the one that is open - or, while closed, the one
+// the next open will choose. Vue won't re-apply Reka's own static values after
+// they're overwritten, so both directions are set here, not just the dialog one.
 watchPostEffect(() => {
-  if (!props.adaptive || !isMobile.value)
+  if (!props.adaptive)
     return
   const element = triggerElement.value instanceof HTMLElement ? triggerElement.value : triggerElement.value?.$el
   if (!element)
     return
-  element.setAttribute('aria-haspopup', 'dialog')
+  const dialog = isOpen.value ? mobilePresentation.value : isMobile.value
+  element.setAttribute('aria-haspopup', dialog ? 'dialog' : 'menu')
   element.setAttribute('aria-expanded', String(isOpen.value))
-  if (isOpen.value)
+  if (dialog && isOpen.value)
     element.setAttribute('aria-controls', modalId)
-  else
+  else if (element.getAttribute('aria-controls') === modalId)
     element.removeAttribute('aria-controls')
 })
 
