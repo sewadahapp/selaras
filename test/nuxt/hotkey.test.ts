@@ -68,6 +68,52 @@ describe('v-hotkey', () => {
     expect(handler).not.toHaveBeenCalled()
   })
 
+  it('matches a symbol that needs Shift to type', async () => {
+    const handler = vi.fn()
+    wrapper = await mountSuspended(defineComponent({
+      setup: () => () => withDirectives(h('button', 'Help'), [[vHotkey, { keys: '?', handler }]]),
+    }), { attachTo: document.body })
+    const button = wrapper.find('button').element as HTMLButtonElement
+    button.focus()
+
+    press('?', { shiftKey: true }, button)
+    expect(handler).toHaveBeenCalledOnce()
+  })
+
+  it('still requires an exact Shift match for letters', async () => {
+    const handler = vi.fn()
+    wrapper = await mountSuspended(defineComponent({
+      setup: () => () => withDirectives(h('button', 'Open'), [[vHotkey, { keys: 'mod+k', handler }]]),
+    }))
+
+    press('K', { ctrlKey: true, shiftKey: true })
+    expect(handler).not.toHaveBeenCalled()
+  })
+
+  it('matches an Option chord on a Mac, where Option changes the typed character', async () => {
+    const handler = vi.fn()
+    wrapper = await mountSuspended(defineComponent({
+      setup: () => () => withDirectives(h('button', 'Print'), [[vHotkey, { keys: 'alt+p', handler }]]),
+    }))
+
+    press('π', { altKey: true, code: 'KeyP' })
+    expect(handler).toHaveBeenCalledOnce()
+  })
+
+  it('fires only one binding when two share a chord', async () => {
+    const first = vi.fn()
+    const second = vi.fn()
+    wrapper = await mountSuspended(defineComponent({
+      setup: () => () => h('div', [
+        withDirectives(h('button', 'First'), [[vHotkey, { keys: 'mod+k', handler: first }]]),
+        withDirectives(h('button', 'Second'), [[vHotkey, { keys: 'mod+k', handler: second }]]),
+      ]),
+    }))
+
+    press('k', { ctrlKey: true })
+    expect(first.mock.calls.length + second.mock.calls.length).toBe(1)
+  })
+
   it('obeys a live when condition and removes its listener on unmount', async () => {
     const active = ref(false)
     const handler = vi.fn()

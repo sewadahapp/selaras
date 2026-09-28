@@ -74,12 +74,23 @@ function isEditable(target: EventTarget | null) {
   return Boolean(target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])'))
 }
 
+// The physical letter or digit behind a key, for when Option/Alt changes the
+// character it types (Option+P types "π" on a Mac).
+function physicalKey(code: string) {
+  return /^Key([A-Z])$/.exec(code)?.[1]?.toLowerCase() ?? /^Digit(\d)$/.exec(code)?.[1]
+}
+
 function matches(event: KeyboardEvent, hotkey: ParsedHotkey) {
-  return canonicalKey(event.key) === hotkey.key
+  const keyMatches = canonicalKey(event.key) === hotkey.key
+    || (event.altKey && physicalKey(event.code) === hotkey.key)
+  // Symbols such as "?" need Shift to type, so the character already says
+  // whether Shift was held; only compare Shift for letters, digits and names.
+  const symbol = hotkey.key.length === 1 && hotkey.key !== ' ' && !/[a-z0-9]/.test(hotkey.key)
+  return keyMatches
     && event.ctrlKey === hotkey.ctrl
     && event.metaKey === hotkey.meta
     && event.altKey === hotkey.alt
-    && event.shiftKey === hotkey.shift
+    && (symbol && !hotkey.shift ? true : event.shiftKey === hotkey.shift)
 }
 
 function normalizeBinding<T extends HTMLElement>(value: HotkeyValue<T>) {
@@ -95,7 +106,8 @@ function install<T extends HTMLElement>(element: T, value: HotkeyValue<T>) {
     return undefined
 
   const listener = (event: KeyboardEvent) => {
-    if (!matches(event, parsed))
+    // Something already handled this key press, e.g. another binding for the same chord.
+    if (event.defaultPrevented || !matches(event, parsed))
       return
     if (typeof options.when === 'boolean' && !options.when)
       return
