@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { HotkeyOptions } from '../directives/hotkey'
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
@@ -10,7 +9,7 @@ import { useRoute } from '#imports'
 import { vHotkey } from '../directives/hotkey'
 import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isNavigationMenuItemActive } from '../utils/navigation-menu'
+import { isNavigationMenuItemActive, navigationMenuHotkey } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Accordion from './Accordion.vue'
@@ -99,12 +98,6 @@ function linkProps(child: NavigationMenuItem) {
   return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
 }
 
-function hotkeyFor(item: NavigationMenuItem): HotkeyOptions | undefined {
-  return item.hotkey && item.shortcut && !item.disabled
-    ? { keys: item.shortcut, when: (element, event) => element.ownerDocument.activeElement === element || element.contains(element.ownerDocument.activeElement) || event.composedPath().includes(element) }
-    : undefined
-}
-
 // Reka's real NavigationMenuLink has no `disabled` prop - a disabled leaf
 // link stays visually/aria disabled and simply swallows the click rather
 // than navigating or firing onSelect. Mirrors NavigationMenu.vue's own
@@ -149,7 +142,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
             <component
               :is="child.to ? NuxtLink : 'button'"
               v-else
-              v-hotkey="hotkeyFor(child)"
+              v-hotkey="navigationMenuHotkey(child)"
               :to="child.to"
               :type="child.to ? undefined : 'button'"
               :disabled="child.to ? undefined : child.disabled"

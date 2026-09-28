@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { HotkeyOptions } from '../directives/hotkey'
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
@@ -10,7 +9,7 @@ import { useRoute } from '#imports'
 import { vHotkey } from '../directives/hotkey'
 import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isNavigationMenuItemActive } from '../utils/navigation-menu'
+import { isNavigationMenuItemActive, navigationMenuHotkey } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -58,12 +57,6 @@ const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiv
 function linkProps(item: NavigationMenuItem) {
   return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
-
-function hotkeyFor(item: NavigationMenuItem): HotkeyOptions | undefined {
-  return item.hotkey && item.shortcut && !item.disabled
-    ? { keys: item.shortcut, when: (element, event) => element.ownerDocument.activeElement === element || element.contains(element.ownerDocument.activeElement) || event.composedPath().includes(element) }
-    : undefined
-}
 </script>
 
 <template>
@@ -71,7 +64,7 @@ function hotkeyFor(item: NavigationMenuItem): HotkeyOptions | undefined {
     <li v-for="item in items" :key="item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
       <NavigationMenuAccordionItem v-if="item.children?.length" :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui" />
       <component
-        :is="item.to ? NuxtLink : 'button'" v-else v-hotkey="hotkeyFor(item)" :to="item.to"
+        :is="item.to ? NuxtLink : 'button'" v-else v-hotkey="navigationMenuHotkey(item)" :to="item.to"
         :type="item.to ? undefined : 'button'" :disabled="item.to ? undefined : item.disabled"
         v-bind="linkProps(item)" :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
       >

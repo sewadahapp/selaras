@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { HotkeyOptions } from '../directives/hotkey'
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem } from '../utils/navigation-menu'
@@ -20,7 +19,7 @@ import { useIcons } from '../composables/use-icons'
 import { vHotkey } from '../directives/hotkey'
 import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isNavigationMenuItemActive } from '../utils/navigation-menu'
+import { isNavigationMenuItemActive, navigationMenuHotkey } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -79,12 +78,6 @@ function linkProps(item: NavigationMenuItem) {
 
 function childLinkProps(item: NavigationMenuItem) {
   return resolveSlot(theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
-}
-
-function hotkeyFor(item: NavigationMenuItem): HotkeyOptions | undefined {
-  return item.hotkey && item.shortcut && !item.disabled
-    ? { keys: item.shortcut, when: (element, event) => element.ownerDocument.activeElement === element || element.contains(element.ownerDocument.activeElement) || event.composedPath().includes(element) }
-    : undefined
 }
 
 // A collapsed rail's own flyout triggers (see NavigationMenuFlyoutTrigger.vue)
@@ -180,7 +173,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
                   <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
                     <NavigationMenuLink as-child :active="isActive(child)">
                       <component
-                        :is="child.to ? NuxtLink : 'button'" v-hotkey="hotkeyFor(child)" :to="child.to"
+                        :is="child.to ? NuxtLink : 'button'" v-hotkey="navigationMenuHotkey(child)" :to="child.to"
                         :type="child.to ? undefined : 'button'" :disabled="child.to ? undefined : child.disabled"
                         v-bind="childLinkProps(child)" :target="child.target" :rel="child.rel"
                         :aria-label="child.ariaLabel" :aria-disabled="child.to && child.disabled ? 'true' : undefined" @click="onSelect(child, $event)"
@@ -204,7 +197,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
           </template>
           <NavigationMenuLink v-else as-child :active="isActive(item)">
             <component
-              :is="item.to ? NuxtLink : 'button'" v-hotkey="hotkeyFor(item)" :to="item.to"
+              :is="item.to ? NuxtLink : 'button'" v-hotkey="navigationMenuHotkey(item)" :to="item.to"
               :type="item.to ? undefined : 'button'" :disabled="item.to ? undefined : item.disabled"
               v-bind="linkProps(item)" :target="item.target" :rel="item.rel"
               :aria-label="item.ariaLabel" :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"

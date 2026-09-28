@@ -44,6 +44,25 @@ describe('navigationMenu (horizontal)', () => {
     expect(link.text()).toBe('Docs')
   })
 
+  it('activates an item shortcut from anywhere on the page, but not while typing in a field', async () => {
+    const onSelect = vi.fn()
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items: [{ label: 'Settings', shortcut: 'mod+2', hotkey: true, onSelect }] },
+    })
+    const mac = /mac|iphone|ipad|ipod/i.test(navigator.platform)
+    const press = (target: EventTarget) => target.dispatchEvent(new KeyboardEvent('keydown', { key: '2', ctrlKey: !mac, metaKey: mac, bubbles: true, cancelable: true }))
+
+    press(document.body)
+    expect(onSelect).toHaveBeenCalledOnce()
+
+    const input = document.createElement('input')
+    document.body.append(input)
+    press(input)
+    expect(onSelect).toHaveBeenCalledOnce()
+    input.remove()
+    wrapper.unmount()
+  })
+
   it('shows an item shortcut and activates it while the navigation link is focused', async () => {
     const onSelect = vi.fn()
     const wrapper = await mountSuspended(NavigationMenu, {

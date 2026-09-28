@@ -187,10 +187,10 @@ navigation, no `onSelect`, marked `aria-disabled`:
 ### Shortcuts
 
 `shortcut` displays a Kbd hint next to a leaf item. Set `hotkey: true` to
-activate that item while it or one of its descendants has focus; the key
-does not run globally. This keeps page-level shortcuts from firing while
-someone is typing elsewhere. `mod` maps to ⌘ on macOS and Ctrl on other
-platforms. A leaf can navigate with `to` or run `onSelect` like a button.
+bind it, so the key activates that item from anywhere on the page. It stays
+inactive while someone is typing in a field. `mod` maps to ⌘ on macOS and Ctrl
+on other platforms. A leaf can navigate with `to` or run `onSelect` like a
+button.
 
 ::component-example{name="navigation-menu-shortcuts"}
 ::
@@ -210,8 +210,8 @@ const items = [
 </template>
 ```
 
-Focus a menu item before using its enabled shortcut. `Help` shows a hint but
-does not bind the key because it omits `hotkey: true`.
+Press ⌘1 or ⌘2 (Ctrl on other platforms) to select an item. `Help` shows a
+hint but does not bind the key because it omits `hotkey: true`.
 
 ### Color
 
@@ -318,7 +318,7 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | `description` | `string` | Not read by NavigationMenu's own default rendering - carried purely so a custom `#item-content`/`#{slot}-content` slot override can display one (a "mega menu" style description under each link, say) - see [Customizing content](#customizing-content), whose own live example already renders this field. |
 | `onSelect` | `(event: Event) => void` | Fired when a leaf item is activated. |
 | `shortcut` | `string` | Displays a Kbd hint beside the item. |
-| `hotkey` | `boolean` | Binds `shortcut` while this item or one of its descendants has focus. |
+| `hotkey` | `boolean` | Binds `shortcut` page-wide, except while typing in a field. |
 | `slot` | `string` | Targets this item's own named slots ahead of the generic ones - see [Customizing content](#customizing-content). |
 | `type` | `'link' \| 'label' \| 'separator'` | `'link'` unless set - see [Labels and separators](#labels-and-separators). |
 

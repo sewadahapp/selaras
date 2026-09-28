@@ -1,3 +1,5 @@
+import type { HotkeyOptions } from '../directives/hotkey'
+
 export interface NavigationMenuItem {
   label: string
   icon?: string
@@ -13,7 +15,7 @@ export interface NavigationMenuItem {
   onSelect?: (event: Event) => void
   /** Display a keyboard shortcut hint beside this item's label. */
   shortcut?: string
-  /** Bind `shortcut` while this navigation item itself has focus. */
+  /** Bind `shortcut` page-wide, so the key activates this item from anywhere except while typing in a field. */
   hotkey?: boolean
   /** Targets this item's own named slots (`#{slot}`, `#{slot}-leading`, `#{slot}-label`, `#{slot}-trailing`, `#{slot}-content`) ahead of the generic `#item`/`#item-leading`/etc, when the named one is actually provided. */
   slot?: string
@@ -47,4 +49,9 @@ export function isNavigationMenuItemActive(item: NavigationMenuItem, currentPath
   if (item.active !== undefined)
     return item.active
   return item.to !== undefined && item.to === currentPath
+}
+
+/** The v-hotkey binding for an item that opts in with `hotkey: true`. */
+export function navigationMenuHotkey(item: NavigationMenuItem): HotkeyOptions | undefined {
+  return item.hotkey && item.shortcut && !item.disabled ? { keys: item.shortcut } : undefined
 }
