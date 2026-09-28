@@ -1,7 +1,9 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import CodeTree from '../../src/runtime/components/CodeTree.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 
 const items = [
   {
@@ -70,5 +72,18 @@ describe('codeTree', () => {
     const wrapper = await mountSuspended(CodeTree, { props: { items, ui: { root: 'custom-class' } } })
 
     expect(wrapper.classes()).toContain('custom-class')
+  })
+
+  it.each([
+    ['follows the page by default', undefined, 'root'],
+    ['follows a scoped dark theme', 'dark', 'dark'],
+    ['follows a scoped light theme', 'light', 'light'],
+  ] as const)('highlighted code %s', async (_, mode, expected) => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => mode ? h(Theme, { as: 'section', mode }, () => h(CodeTree, { items })) : h(CodeTree, { items }),
+    }))
+    await flushPromises()
+
+    expect(wrapper.find('code.selaras-code-tree-code').attributes('data-selaras-code-mode')).toBe(expected)
   })
 })

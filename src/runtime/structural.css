@@ -325,3 +325,15 @@
     --selaras-resolved-border-hover: var(--selaras-border-hover, var(--_selaras-default-border-hover));
   }
 }
+
+/* CodeTree: Shiki emits both light and dark token colors. Pick the pair for
+   the code's own resolved mode, so a scoped light or dark STheme applies at
+   any nesting depth, not just the page's color mode. */
+.selaras-code-tree-code span {
+  color: var(--shiki-light);
+}
+
+:root.dark .selaras-code-tree-code:where([data-selaras-code-mode="root"]) span,
+.selaras-code-tree-code:where([data-selaras-code-mode="dark"]) span {
+  color: var(--shiki-dark);
+}

@@ -114,6 +114,9 @@ const theme = useComponentTheme('codeTree', codeTreeTheme)
 const ui = computed(() => theme.value())
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
+// The mode this CodeTree resolves to from its nearest theme scope, so the
+// syntax colors follow a scoped light/dark STheme rather than the page.
+const codeMode = computed(() => rootProps.value['data-selaras-mode'])
 const treeProps = computed(() => resolveSlot(ui.value.tree, props.ui?.tree))
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const preProps = computed(() => resolveSlot(ui.value.pre, props.ui?.pre))
@@ -138,7 +141,7 @@ const fileTreeUi = { root: 'rounded-none border-0 bg-transparent p-0' }
       />
     </div>
     <div v-if="selected" v-bind="contentProps">
-      <pre v-bind="preProps"><code v-if="highlightedCode" class="selaras-code-tree-code" v-html="highlightedCode" /><code v-else>{{ selected.code }}</code></pre>
+      <pre v-bind="preProps"><code v-if="highlightedCode" class="selaras-code-tree-code" :data-selaras-code-mode="codeMode" v-html="highlightedCode" /><code v-else>{{ selected.code }}</code></pre>
     </div>
     <div v-else v-bind="emptyProps">
       {{ messages.selectFile }}
