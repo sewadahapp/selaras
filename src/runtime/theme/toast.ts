@@ -3,10 +3,16 @@ import { tv } from 'tailwind-variants'
 
 export const toastTheme = tv({
   slots: {
-    viewport: 'fixed z-[var(--selaras-resolved-z-toast)] flex w-full max-w-sm flex-col gap-2 p-4 outline-none',
+    // The cards are absolutely positioned inside it and moved with transforms
+    // (see internal/toast-stack.ts); Toast.vue sizes it to fit the stack.
+    viewport: 'fixed z-[var(--selaras-resolved-z-toast)] w-full max-w-sm p-4 outline-none',
     // Registered roles tint the surface softly; an uncolored toast falls
     // back to the regular surface. Text stays neutral for readability.
-    root: 'relative flex items-start gap-3 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--_selaras-color-subtle,var(--selaras-resolved-surface-default))] p-4 pe-10 shadow-[var(--selaras-resolved-shadow-lg)] ring-1 ring-[var(--selaras-resolved-border-default)] transition-[margin,transform,opacity] duration-300 ease-out motion-reduce:transition-none motion-reduce:animate-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=closed]:animate-out data-[state=closed]:fade-out-0',
+    //
+    // Cards behind the front one cover their own content with an overlay
+    // of the card surface (after:), so they read as a clean pile and fade
+    // their content back in when they move to the front or fan out.
+    root: 'absolute inset-x-4 flex items-start gap-3 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--_selaras-color-subtle,var(--selaras-resolved-surface-default))] p-4 pe-10 shadow-[var(--selaras-resolved-shadow-lg)] ring-1 ring-[var(--selaras-resolved-border-default)] transition-[transform,opacity,height] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:bg-[inherit] after:opacity-0 after:transition-opacity after:duration-400 data-[stack=behind]:overflow-hidden data-[stack=behind]:after:opacity-100 data-[stack=hidden]:pointer-events-none data-[stack=hidden]:overflow-hidden data-[stack=hidden]:opacity-0 data-[stack=hidden]:after:opacity-100 data-[state=open]:animate-[selaras-toast-in_400ms_cubic-bezier(0.22,1,0.36,1)] data-[state=closed]:animate-[selaras-toast-out_200ms_ease-in_forwards] data-[stack=behind]:[--_selaras-toast-exit:-25%] data-[stack=hidden]:[--_selaras-toast-exit:-25%] motion-reduce:transition-none motion-reduce:animate-none motion-reduce:after:transition-none',
     title: 'text-sm font-medium text-[var(--selaras-resolved-text-default)]',
     description: 'mt-1 text-sm text-[var(--selaras-resolved-text-muted)]',
     // Base (no color set) is a plain neutral glyph - only shown at all when
@@ -22,12 +28,12 @@ export const toastTheme = tv({
   },
   variants: {
     position: {
-      'top-left': { viewport: 'top-0 start-0', root: 'data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2' },
-      'top-center': { viewport: 'top-0 left-1/2 -translate-x-1/2', root: 'data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2' },
-      'top-right': { viewport: 'top-0 end-0', root: 'data-[state=open]:slide-in-from-top-2 data-[state=closed]:slide-out-to-top-2' },
-      'bottom-left': { viewport: 'bottom-0 start-0', root: 'data-[state=open]:slide-in-from-bottom-2 data-[state=closed]:slide-out-to-bottom-2' },
-      'bottom-center': { viewport: 'bottom-0 left-1/2 -translate-x-1/2', root: 'data-[state=open]:slide-in-from-bottom-2 data-[state=closed]:slide-out-to-bottom-2' },
-      'bottom-right': { viewport: 'bottom-0 end-0', root: 'data-[state=open]:slide-in-from-bottom-2 data-[state=closed]:slide-out-to-bottom-2' },
+      'top-left': { viewport: 'top-0 start-0', root: 'top-4 origin-top [--_selaras-toast-lift:1]' },
+      'top-center': { viewport: 'top-0 left-1/2 -translate-x-1/2', root: 'top-4 origin-top [--_selaras-toast-lift:1]' },
+      'top-right': { viewport: 'top-0 end-0', root: 'top-4 origin-top [--_selaras-toast-lift:1]' },
+      'bottom-left': { viewport: 'bottom-0 start-0', root: 'bottom-4 origin-bottom [--_selaras-toast-lift:-1]' },
+      'bottom-center': { viewport: 'bottom-0 left-1/2 -translate-x-1/2', root: 'bottom-4 origin-bottom [--_selaras-toast-lift:-1]' },
+      'bottom-right': { viewport: 'bottom-0 end-0', root: 'bottom-4 origin-bottom [--_selaras-toast-lift:-1]' },
     },
     expand: {
       true: {},
@@ -44,18 +50,8 @@ export const toastTheme = tv({
   },
   defaultVariants: {
     position: 'bottom-right',
-    expand: true,
+    expand: false,
   },
-  compoundVariants: [
-    // Keep the newest toast above the stacked cards; measured overlap spacing
-    // is applied per item so long descriptions do not expose most of a card.
-    { position: 'top-left', expand: false, class: { root: 'first:z-10' } },
-    { position: 'top-center', expand: false, class: { root: 'first:z-10' } },
-    { position: 'top-right', expand: false, class: { root: 'first:z-10' } },
-    { position: 'bottom-left', expand: false, class: { root: 'last:z-10' } },
-    { position: 'bottom-center', expand: false, class: { root: 'last:z-10' } },
-    { position: 'bottom-right', expand: false, class: { root: 'last:z-10' } },
-  ],
 })
 
 export type ToastThemeSlots = keyof (typeof toastTheme)['slots']

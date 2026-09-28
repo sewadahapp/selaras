@@ -4,6 +4,7 @@ import type { ToastPosition, ToastThemeSlots } from '../theme/toast'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import type { ToastItem } from './programmatic-services'
+import type { ToastStackItem } from './toast-stack'
 import { ToastClose, ToastDescription, ToastRoot, ToastTitle } from 'reka-ui'
 import { computed, ref, watch } from 'vue'
 import Button from '../components/Button.vue'
@@ -23,7 +24,8 @@ const props = defineProps<{
   duration: number
   expand: boolean
   position: ToastPosition
-  stackMargin: string | undefined
+  placement: ToastStackItem | undefined
+  leaving: boolean
 }>()
 const emit = defineEmits<{
   remove: [id: number]
@@ -41,10 +43,26 @@ function setRootElement(instance: unknown) {
     rootElement.value = element
 }
 
+// A leaving card keeps the spot it had, so it animates out from there
+// while the cards behind it move forward.
+const placement = ref(props.placement)
+watch(() => [props.placement, props.leaving] as const, ([next, leaving]) => {
+  if (!leaving && next)
+    placement.value = next
+})
+
+// While a card borrows the front card's height its own size says nothing
+// about its content, so only a card at its natural height is measured. The
+// layout box is read rather than the bounding rect, which the stack's scale
+// transform would shrink.
+const clamped = computed(() => placement.value?.height !== undefined)
 watch(rootElement, (element, _previous, onCleanup) => {
   if (!element)
     return
-  const updateHeight = () => emit('resize', element.getBoundingClientRect().height)
+  const updateHeight = () => {
+    if (!clamped.value && !props.leaving)
+      emit('resize', element.offsetHeight)
+  }
   updateHeight()
   if (typeof ResizeObserver === 'undefined')
     return
@@ -68,7 +86,12 @@ const itemUi = computed(() => theme.value({
 const rootProps = computed(() => resolveSlot(itemUi.value.root, props.ui?.root))
 const rootBindings = computed(() => ({
   ...rootProps.value,
-  style: [themeBindings.value.style, { marginBlockStart: props.stackMargin }, rootProps.value.style],
+  'data-stack': placement.value?.state,
+  'style': [
+    themeBindings.value.style,
+    placement.value && { transform: placement.value.transform, height: placement.value.height, zIndex: placement.value.zIndex },
+    rootProps.value.style,
+  ],
 }))
 const iconProps = computed(() => resolveSlot(itemUi.value.icon, props.ui?.icon))
 const titleProps = computed(() => resolveSlot(itemUi.value.title, props.ui?.title))
@@ -88,6 +111,7 @@ const iconName = computed(() => props.toast.icon ?? (
     :data-selaras-theme="themeBindings['data-selaras-theme']"
     :data-selaras-mode="themeBindings['data-selaras-mode']"
     :data-selaras-color="effectiveColor"
+    :open="!leaving"
     v-bind="rootBindings"
     @update:open="(open) => !open && emit('remove', toast.id)"
   >

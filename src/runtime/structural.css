@@ -115,6 +115,24 @@
   }
 }
 
+/* Enter and exit motion for Toast. They move the independent `translate`
+   property, so they add to the stack position the card's inline `transform`
+   sets instead of replacing it. --_selaras-toast-lift is -1 for a stack
+   anchored at the bottom and 1 for one at the top; a card leaving from
+   behind the front one sets a shorter --_selaras-toast-exit. */
+@keyframes selaras-toast-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--_selaras-toast-lift, -1) * -100%);
+  }
+}
+@keyframes selaras-toast-out {
+  to {
+    opacity: 0;
+    translate: 0 calc(var(--_selaras-toast-lift, -1) * var(--_selaras-toast-exit, -100%));
+  }
+}
+
 /* Sweep motion for Skeleton's shimmer animation - the theme sets a
    200%-wide gradient background (theme/skeleton.ts), this just slides its
    position so the lighter band travels left to right across the block. */

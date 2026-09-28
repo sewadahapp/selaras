@@ -6,7 +6,7 @@ import Theme from '../../src/runtime/components/Theme.vue'
 import Toast from '../../src/runtime/components/Toast.vue'
 import { useToast } from '../../src/runtime/composables/use-toast'
 import { useToastService } from '../../src/runtime/internal/programmatic-services'
-import { getToastStackMargin } from '../../src/runtime/internal/toast-stack'
+import { layoutToastStack, placeToast, TOAST_PEEK } from '../../src/runtime/internal/toast-stack'
 import ToastItemRenderer from '../../src/runtime/internal/ToastItemRenderer.vue'
 
 // Toast.vue only injects a ToastProviderContext - it doesn't provide one
@@ -169,6 +169,10 @@ describe('toast', () => {
     expect(document.body.textContent).toContain('Second')
   })
 
+  function rootFor(title: string) {
+    return Array.from(document.body.querySelectorAll<HTMLElement>('[data-state="open"]')).find(element => element.textContent?.includes(title))
+  }
+
   it('supports positioned, collapsed toast stacks', async () => {
     const { add } = useToast()
     add({ title: 'First' })
@@ -177,53 +181,85 @@ describe('toast', () => {
     wrapper = await mountSuspended(ConfiguredToastHarness)
     await new Promise(resolve => setTimeout(resolve, 50))
 
-    const root = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
-    const frontRoot = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Third'))
-    const displayedTitles = Array.from(document.body.querySelectorAll('[data-state="open"]'))
-      .map(element => ['First', 'Second', 'Third'].find(title => element.textContent?.includes(title)))
-      .filter((title): title is string => title !== undefined)
+    const root = rootFor('Second')
+    const frontRoot = rootFor('Third')
     expect(document.body.textContent).not.toContain('First')
-    expect(document.body.textContent).toContain('Third')
-    expect(displayedTitles).toEqual(['Third', 'Second'])
-    expect(root?.className).toContain('transition-[margin,transform,opacity]')
-    expect((root as HTMLElement | undefined)?.style.marginBlockStart).toBe('-36px')
-    expect(frontRoot?.className).toContain('first:z-10')
-    expect(root?.className).toContain('data-[state=open]:slide-in-from-top-2')
-    expect(root?.className).toContain('data-[state=closed]:slide-out-to-top-2')
+    expect(frontRoot?.dataset.stack).toBe('front')
+    expect(root?.dataset.stack).toBe('behind')
+    // A top stack grows downward, so the card behind peeks out below.
+    expect(root?.style.transform).toBe(`translateY(${TOAST_PEEK}px) scale(0.95)`)
+    expect(Number(frontRoot?.style.zIndex)).toBeGreaterThan(Number(root?.style.zIndex))
+    expect(root?.style.height).toMatch(/px$/)
+    expect(frontRoot?.style.height).toBe('')
+    expect(root?.className).toContain('top-4')
     expect(root?.parentElement?.className).toContain('top-0')
     expect(root?.parentElement?.className).toContain('left-1/2')
     expect(root?.parentElement?.className).toContain('-translate-x-1/2')
-    expect(root?.parentElement?.className).toContain('gap-2')
 
     root?.parentElement?.dispatchEvent(new MouseEvent('mouseenter'))
     await nextTick()
-    const expandedRoot = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
-    expect((expandedRoot as HTMLElement | undefined)?.style.marginBlockStart).toBe('')
+    expect(rootFor('Second')?.dataset.stack).toBe('expanded')
+    expect(rootFor('Second')?.style.height).toBe('')
 
-    expandedRoot?.parentElement?.dispatchEvent(new MouseEvent('mouseleave'))
+    rootFor('Second')?.parentElement?.dispatchEvent(new MouseEvent('mouseleave'))
     await nextTick()
-    const collapsedRoot = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
-    expect((collapsedRoot as HTMLElement | undefined)?.style.marginBlockStart).toBe('-36px')
+    expect(rootFor('Second')?.dataset.stack).toBe('behind')
   })
 
   it.each([
-    ['stacks by default', ToastHarness, '-36px'],
-    ['shows every toast separately with expand', defineComponent({ render: () => h(ToastProvider, () => h(Toast, { expand: true })) }), ''],
-  ] as const)('%s', async (_, harness, secondMargin) => {
+    ['stacks by default', ToastHarness, 'behind'],
+    ['shows every toast separately with expand', defineComponent({ render: () => h(ToastProvider, () => h(Toast, { expand: true })) }), 'expanded'],
+  ] as const)('%s', async (_, harness, olderState) => {
     const { add } = useToast()
     add({ title: 'First' })
     add({ title: 'Second' })
     wrapper = await mountSuspended(harness)
     await new Promise(resolve => setTimeout(resolve, 50))
 
-    // At the default bottom position the newer toast is the one layered over the first.
-    const layered = Array.from(document.body.querySelectorAll('[data-state="open"]')).find(element => element.textContent?.includes('Second'))
-    expect((layered as HTMLElement | undefined)?.style.marginBlockStart).toBe(secondMargin)
+    expect(rootFor('First')?.dataset.stack).toBe(olderState)
   })
 
-  it('keeps the same narrow reveal for short and tall stacked toasts', () => {
-    expect(getToastStackMargin(52)).toBe('-36px')
-    expect(getToastStackMargin(194)).toBe('-178px')
+  it('expands while focus is inside the stack', async () => {
+    const { add } = useToast()
+    add({ title: 'First' })
+    add({ title: 'Second' })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    rootFor('Second')?.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+    await nextTick()
+    expect(rootFor('First')?.dataset.stack).toBe('expanded')
+  })
+
+  it('keeps a dismissed toast mounted while it animates out', async () => {
+    const { add, remove } = useToast()
+    add({ title: 'First' })
+    const second = add({ title: 'Second' })
+    wrapper = await mountSuspended(ToastHarness)
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    remove(second)
+    await nextTick()
+    await nextTick()
+    // The older card moves to the front straight away...
+    expect(rootFor('First')?.dataset.stack).toBe('front')
+    // ...while the dismissed one is still in the page, closing.
+    expect(document.body.textContent).toContain('Second')
+    await new Promise(resolve => setTimeout(resolve, 400))
+    expect(document.body.textContent).not.toContain('Second')
+  })
+
+  it('lays out a stack by depth and fans it out by measured height', () => {
+    const collapsed = layoutToastStack([60, 100, 80, 70], false)
+    expect(collapsed.height).toBe(60 + 2 * TOAST_PEEK)
+    expect(placeToast(1, collapsed, false, -1)).toMatchObject({ state: 'behind', height: '60px', transform: `translateY(-${TOAST_PEEK}px) scale(0.95)` })
+    // Cards past the visible depth wait in the last slot.
+    expect(placeToast(3, collapsed, false, -1)).toMatchObject({ state: 'hidden', transform: placeToast(2, collapsed, false, -1).transform })
+
+    const expanded = layoutToastStack([60, 100, 80], true)
+    expect(expanded.offsets).toEqual([0, 72, 184])
+    expect(expanded.height).toBe(264)
+    expect(placeToast(2, expanded, true, 1)).toMatchObject({ state: 'expanded', height: undefined, transform: 'translateY(184px) scale(1)' })
   })
 
   it('uses the renderer duration as a fallback and lets each toast override it', async () => {
