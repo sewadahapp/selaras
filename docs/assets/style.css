@@ -476,12 +476,27 @@
 
 /* The tree-connector rail (trunk + elbow lines joining nested nav rows)
    reads as wireframe/technical - out of place against this theme's glossy
-   hardware look, so it's turned off across the preset. Each row's own
-   `ps-4` indent is left alone, so the nesting is still legible from
-   indentation, just without the joining line. */
+   hardware look, so it's turned off across the preset. */
 :root[data-selaras-preset="degung"] .selaras-nav-elbow::before,
 :root[data-selaras-preset="degung"] .selaras-nav-elbow::after {
   display: none;
+}
+
+/* The rail geometry reserves a gutter for the line to draw into: `ms-6
+   ps-1.5` on NavigationMenu's own nested list, or (ContentNavigation
+   recurses through a real Accordion for each group, so this one lands on
+   the Accordion's own content wrapper instead of the list itself) `ms-3
+   ps-4`. With the line itself turned off above, that gutter is just dead
+   space with nothing in it, throwing off a nested row's own left/right
+   balance. `:has()` finds the reserving element by an elbow item
+   somewhere inside it, since neither carries any other hook naming it
+   for this. Collapsed to a small flat indent instead - still legible as
+   nesting, without reserving room for a line that no longer draws
+   there. */
+:root[data-selaras-preset="degung"] .ms-3.ps-4:has(.selaras-nav-elbow--content-navigation),
+:root[data-selaras-preset="degung"] .ms-6.ps-1\.5:has(.selaras-nav-elbow--navigation-menu) {
+  margin-inline-start: 0;
+  padding-inline-start: 0.5rem;
 }
 
 /* The sidebar reads as a playlist window: a title strip over a navy
