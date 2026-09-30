@@ -268,7 +268,7 @@ export interface ThemeComponentRegistry {
   }
   chip: {
     slots: ChipThemeSlots
-    conditions: WithRegisteredColor<Pick<ChipVariants, 'color' | 'size'>>
+    conditions: WithRegisteredColor<Pick<ChipVariants, 'color' | 'variant' | 'size'>>
     defaults: WithRegisteredColor<Pick<ChipVariants, 'color' | 'size'>>
   }
   collapsible: {
