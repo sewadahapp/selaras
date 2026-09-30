@@ -192,7 +192,7 @@
   --degung-display-edge: #172d62;
   --degung-display-text: #eef3ff;
   --degung-display-muted: #a9bce6;
-  --degung-glow: 0 0 6px color-mix(in oklab, var(--degung-display-text) 70%, transparent);
+  --degung-glow: 0 0 1.5px color-mix(in oklab, var(--degung-display-text) 45%, transparent);
   --degung-panel: linear-gradient(180deg, rgb(255 255 255 / 0.7) 0%, rgb(255 255 255 / 0) 36%, rgb(10 20 50 / 0.05) 100%);
 }
 
@@ -270,7 +270,7 @@
   --degung-display-edge: #000;
   --degung-display-text: #e8eaee;
   --degung-display-muted: #9fb6bf;
-  --degung-glow: 0 0 6px color-mix(in oklab, var(--degung-display-text) 70%, transparent);
+  --degung-glow: 0 0 1.5px color-mix(in oklab, var(--degung-display-text) 45%, transparent);
   --degung-panel: linear-gradient(180deg, rgb(255 255 255 / 0.07) 0%, rgb(255 255 255 / 0) 30%, rgb(0 0 0 / 0.15) 100%);
 }
 
