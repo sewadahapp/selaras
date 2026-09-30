@@ -8,7 +8,10 @@ import type { ThemeUiOverrides } from '@sewadah/selaras/theme'
  * instead of painting over them.
  */
 export const degungThemeUi = {
-  accordion: { slots: { item: 'selaras-degung-panel', trigger: 'selaras-degung-accordion-trigger', content: 'selaras-degung-accordion-content' } },
+  // Its own class, not the shared `selaras-degung-panel` Card/Table also
+  // use - an accordion item is a lit display panel (navy, not silver),
+  // and needs independent control from those still-silver surfaces.
+  accordion: { slots: { item: 'selaras-degung-accordion-item', trigger: 'selaras-degung-accordion-trigger', content: 'selaras-degung-accordion-content' } },
   alert: {
     compoundVariants: [
       { variant: 'solid', class: { root: 'selaras-degung-glass selaras-degung-glass--solid' } },

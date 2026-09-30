@@ -457,10 +457,62 @@
   box-shadow: inset 0 1px 0 var(--degung-edge);
 }
 
-/* Accordion items: a raised panel with a chrome header strip. */
+/* A collapsible group's own header strip - the same navy chrome as a
+   card/table header (`.selaras-degung-titlebar`), just reusing the
+   accordion trigger's own hook instead of a second class. Unscoped, so
+   this is every group header everywhere, not only the docs site's own
+   sidebar - ContentNavigation and NavigationMenu never had their own
+   entry in this theme; what chrome they show has only ever come from the
+   `Accordion` they both build their groups out of internally. */
 :root[data-selaras-preset="degung"] .selaras-degung-accordion-trigger {
-  background-image: var(--degung-chrome);
-  box-shadow: inset 0 -1px 0 var(--degung-edge);
+  --selaras-text-default: var(--degung-strip-text);
+  --selaras-text-muted: var(--degung-strip-muted);
+  --selaras-resolved-text-default: var(--degung-strip-text);
+  --selaras-resolved-text-muted: var(--degung-strip-muted);
+  background-image: var(--degung-strip);
+  color: var(--degung-strip-text);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.35);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3), inset 0 -1px 0 var(--degung-strip-edge);
+}
+
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-trigger svg,
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-trigger [class*="iconify"] {
+  color: var(--degung-strip-muted);
+}
+
+/* A group nested *inside* an already-open display (a sub-group under
+   "Account", say) is a row within that display, not a second chrome
+   strip stacked on top of it - flattened back to plain display text,
+   the same treatment its sibling leaf rows already get, with only its
+   chevron marking it as collapsible. Only the outermost header per
+   display keeps the raised strip above. */
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-content .selaras-degung-accordion-trigger {
+  background-image: none;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+  text-shadow: var(--degung-glow);
+  box-shadow: none;
+}
+
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-content .selaras-degung-accordion-trigger svg,
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-content .selaras-degung-accordion-trigger [class*="iconify"] {
+  color: inherit;
+}
+
+/* Its own wrapping panel (the raised card edge an accordion item's `item`
+   slot draws around the trigger+content pair) is flattened the same way -
+   a floating panel edge nested inside a display reads as a rendering
+   glitch, not a second surface. */
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-content .selaras-degung-accordion-item {
+  border-color: transparent;
+  background-image: none;
+  box-shadow: none;
 }
 
 /* Alerts and toasts: tinted glass, so each color keeps its own tint. */
@@ -499,26 +551,20 @@
   padding-inline-start: 0.5rem;
 }
 
-/* The sidebar reads as a playlist window: a title strip over a navy
-   display listing the pages. */
-:root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-panel {
+/* A collapsible group reads as a playlist window: a title strip over a
+   navy display listing its rows - every Accordion in this preset, not
+   just the docs site's own sidebar (ContentNavigation and NavigationMenu
+   both build their groups out of one internally, same as the sidebar's
+   own tree does - see the trigger/content rules above and below). */
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-item {
   border-radius: 12px;
+  border-color: var(--degung-edge);
   background-image: var(--degung-display);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.8), 0 0 0 1px var(--degung-edge), 0 4px 12px rgb(18 30 62 / 0.18);
 }
 
-:root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-accordion-trigger {
-  background-image: var(--degung-strip);
-  color: var(--degung-strip-text);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 1px rgb(0 0 0 / 0.35);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.3), inset 0 -1px 0 var(--degung-strip-edge);
-}
-
-:root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-accordion-trigger svg,
-:root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-accordion-trigger [class*="iconify"] {
-  color: var(--degung-strip-muted);
+:root.dark[data-selaras-preset="degung"] .selaras-degung-accordion-item {
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.1), 0 0 0 1px var(--degung-edge), 0 6px 18px rgb(0 0 0 / 0.6);
 }
 
 /* Sets the *public* tokens, not just their resolved forms - a nested
@@ -528,7 +574,7 @@
    contract). Overriding only the resolved var here would get clobbered
    right back to the light default at that nested root, which is what made
    a link's hover fill render opaque white instead of this tint. */
-:root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-accordion-content {
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-content {
   --selaras-text-default: var(--degung-display-text);
   --selaras-text-muted: var(--degung-display-muted);
   --selaras-border-default: rgb(255 255 255 / 0.28);
@@ -542,7 +588,7 @@
   text-shadow: var(--degung-glow);
 }
 
-:root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-accordion-content a[aria-current="page"] {
+:root[data-selaras-preset="degung"] .selaras-degung-accordion-content a[aria-current="page"] {
   background-color: rgb(255 255 255 / 0.2);
   color: #fff;
 }
