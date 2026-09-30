@@ -188,7 +188,10 @@
   --degung-strip-muted: #c9d3ea;
   /* A radial highlight over the linear well reads as glass catching light,
      rather than a flat fill - same idea as a CRT/LCD panel's curved sheen. */
-  --degung-display: radial-gradient(120% 140% at 50% 0%, color-mix(in oklab, #3558a8 55%, white 45%) 0%, transparent 55%), linear-gradient(180deg, #3558a8 0%, #27468f 30%, #1e3a7d 100%);
+  /* Two vertical highlight bands, one near each side, rather than one
+     glow centered up top - a closer match to how the reference display's
+     own curved glass actually catches light along its edges. */
+  --degung-display: linear-gradient(90deg, transparent 3%, color-mix(in oklab, #3558a8 45%, white 55%) 13%, transparent 28%, transparent 72%, color-mix(in oklab, #3558a8 45%, white 55%) 87%, transparent 97%), linear-gradient(180deg, #3558a8 0%, #27468f 30%, #1e3a7d 100%);
   --degung-display-edge: #172d62;
   --degung-display-text: #eef3ff;
   --degung-display-muted: #a9bce6;
@@ -266,7 +269,7 @@
   --degung-strip-edge: #0d0d0f;
   --degung-strip-text: #e3e5e9;
   --degung-strip-muted: #a4b4bc;
-  --degung-display: radial-gradient(120% 140% at 50% 0%, color-mix(in oklab, #111214 70%, white 12%) 0%, transparent 55%), linear-gradient(180deg, #111214 0%, #070708 40%, #000 100%);
+  --degung-display: linear-gradient(90deg, transparent 3%, color-mix(in oklab, #111214 75%, white 25%) 13%, transparent 28%, transparent 72%, color-mix(in oklab, #111214 75%, white 25%) 87%, transparent 97%), linear-gradient(180deg, #111214 0%, #070708 40%, #000 100%);
   --degung-display-edge: #000;
   --degung-display-text: #e8eaee;
   --degung-display-muted: #9fb6bf;
@@ -407,6 +410,25 @@
   background-color: #e9ecf1;
   background-image: var(--degung-chrome);
   box-shadow: var(--degung-raise), 0 0 0 1px var(--degung-edge);
+}
+
+/* Slider thumb: a small chrome pill standing on the groove, not a disc -
+   overrides the component's own square `size-*` and `rounded-full`
+   (same-specificity plain classes, so this wins by coming later in the
+   cascade, the same as every other override in this file). Its own
+   color ring is dropped along with it - a plain chrome nub, like the
+   reference's own pan/volume sliders. */
+:root[data-selaras-preset="degung"] .selaras-degung-slider-thumb {
+  width: 10px;
+  height: 18px;
+  border-radius: 5px;
+  background-color: #e9ecf1;
+  background-image: var(--degung-chrome);
+  box-shadow: var(--degung-raise), 0 0 0 1px var(--degung-edge);
+}
+
+:root[data-selaras-preset="degung"] .selaras-degung-slider-thumb:active {
+  box-shadow: var(--degung-press), 0 0 0 1px var(--degung-edge);
 }
 
 /* Progress, slider and pill tabs: a groove with a lit fill. */

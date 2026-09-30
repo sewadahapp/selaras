@@ -53,7 +53,9 @@ export const degungThemeUi = {
   prose: { slots: { preWrapper: 'selaras-degung-code-frame', preHeader: 'selaras-degung-code-header', pre: 'selaras-degung-display' } },
   radioGroup: { slots: { item: 'selaras-degung-radio' } },
   select: { slots: { trigger: 'selaras-degung-field', content: 'selaras-degung-panel' } },
-  slider: { slots: { track: 'selaras-degung-groove', range: 'selaras-degung-lit', thumb: 'selaras-degung-knob' } },
+  // Its own thumb class, not the switch's circular `selaras-degung-knob` -
+  // this one is an elongated pill standing on the track, not a disc.
+  slider: { slots: { track: 'selaras-degung-groove', range: 'selaras-degung-lit', thumb: 'selaras-degung-slider-thumb' } },
   switch: { slots: { track: 'selaras-degung-switch', thumb: 'selaras-degung-knob' } },
   table: { slots: { wrapper: 'selaras-degung-panel', thead: 'selaras-degung-titlebar' } },
   tabs: {
