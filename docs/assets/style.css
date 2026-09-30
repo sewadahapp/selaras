@@ -462,6 +462,16 @@
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), 0 0 0 1px color-mix(in srgb, var(--_selaras-color-fill) 65%, #050b1d), 0 4px 12px rgb(18 30 62 / 0.2);
 }
 
+/* The tree-connector rail (trunk + elbow lines joining nested nav rows)
+   reads as wireframe/technical - out of place against this theme's glossy
+   hardware look, so it's turned off across the preset. Each row's own
+   `ps-4` indent is left alone, so the nesting is still legible from
+   indentation, just without the joining line. */
+:root[data-selaras-preset="degung"] .selaras-nav-elbow::before,
+:root[data-selaras-preset="degung"] .selaras-nav-elbow::after {
+  display: none;
+}
+
 /* The sidebar reads as a playlist window: a title strip over a navy
    display listing the pages. */
 :root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-panel {
@@ -484,9 +494,18 @@
   color: var(--degung-strip-muted);
 }
 
+/* Sets the *public* tokens, not just their resolved forms - a nested
+   link list is itself a themed component root ([data-selaras-theme]), and
+   that attribute re-resolves every `--selaras-resolved-*` var from its own
+   public token on the way down (see structural.css's own comment on that
+   contract). Overriding only the resolved var here would get clobbered
+   right back to the light default at that nested root, which is what made
+   a link's hover fill render opaque white instead of this tint. */
 :root[data-selaras-preset="degung"] .selaras-docs-sidebar .selaras-degung-accordion-content {
   --selaras-text-default: var(--degung-display-text);
   --selaras-text-muted: var(--degung-display-muted);
+  --selaras-border-default: rgb(255 255 255 / 0.28);
+  --selaras-surface-elevated: rgb(255 255 255 / 0.12);
   --selaras-resolved-text-default: var(--degung-display-text);
   --selaras-resolved-text-muted: var(--degung-display-muted);
   --selaras-resolved-border-default: rgb(255 255 255 / 0.28);
