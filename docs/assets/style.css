@@ -191,12 +191,12 @@
   /* Two vertical highlight bands, one near each side, rather than one
      glow centered up top - a closer match to how the reference display's
      own curved glass actually catches light along its edges. */
-  /* A hairline rim-light right at each of the four edges - just enough
-     for each edge to read as a tucked-in, rounded lip catching light,
-     almost a line rather than a visible band. The horizontal and vertical rims are two independent
+  /* A hairline rim-light inset a touch from each of the four edges,
+     rather than sitting right on the boundary pixel - reads as a tucked-in,
+     rounded lip catching light, almost a line rather than a visible band. The horizontal and vertical rims are two independent
      layers stacked over the base fill, so a corner (where both cross)
      reads brighter still, matching a real beveled edge. */
-  --degung-display: linear-gradient(90deg, color-mix(in oklab, #3558a8 45%, white 55%) 0%, transparent 1.5%, transparent 98.5%, color-mix(in oklab, #3558a8 45%, white 55%) 100%), linear-gradient(180deg, color-mix(in oklab, #3558a8 45%, white 55%) 0%, transparent 1.5%, transparent 98%, color-mix(in oklab, #3558a8 45%, white 55%) 100%), linear-gradient(180deg, #3558a8 0%, #27468f 30%, #1e3a7d 100%);
+  --degung-display: linear-gradient(90deg, transparent 0%, color-mix(in oklab, #3558a8 45%, white 55%) 3%, transparent 5%, transparent 95%, color-mix(in oklab, #3558a8 45%, white 55%) 97%, transparent 100%), linear-gradient(180deg, transparent 0%, color-mix(in oklab, #3558a8 45%, white 55%) 3%, transparent 5%, transparent 94%, color-mix(in oklab, #3558a8 45%, white 55%) 96%, transparent 100%), linear-gradient(180deg, #3558a8 0%, #27468f 30%, #1e3a7d 100%);
   --degung-display-edge: #172d62;
   --degung-display-text: #eef3ff;
   --degung-display-muted: #a9bce6;
@@ -274,7 +274,7 @@
   --degung-strip-edge: #0d0d0f;
   --degung-strip-text: #e3e5e9;
   --degung-strip-muted: #a4b4bc;
-  --degung-display: linear-gradient(90deg, color-mix(in oklab, #111214 75%, white 25%) 0%, transparent 1.5%, transparent 98.5%, color-mix(in oklab, #111214 75%, white 25%) 100%), linear-gradient(180deg, color-mix(in oklab, #111214 75%, white 25%) 0%, transparent 1.5%, transparent 98%, color-mix(in oklab, #111214 75%, white 25%) 100%), linear-gradient(180deg, #111214 0%, #070708 40%, #000 100%);
+  --degung-display: linear-gradient(90deg, transparent 0%, color-mix(in oklab, #111214 75%, white 25%) 3%, transparent 5%, transparent 95%, color-mix(in oklab, #111214 75%, white 25%) 97%, transparent 100%), linear-gradient(180deg, transparent 0%, color-mix(in oklab, #111214 75%, white 25%) 3%, transparent 5%, transparent 94%, color-mix(in oklab, #111214 75%, white 25%) 96%, transparent 100%), linear-gradient(180deg, #111214 0%, #070708 40%, #000 100%);
   --degung-display-edge: #000;
   --degung-display-text: #e8eaee;
   --degung-display-muted: #9fb6bf;
@@ -424,9 +424,9 @@
    color ring is dropped along with it - a plain chrome nub, like the
    reference's own pan/volume sliders. */
 :root[data-selaras-preset="degung"] .selaras-degung-slider-thumb {
-  width: 16px;
-  height: 9px;
-  border-radius: 4px;
+  width: 20px;
+  height: 11px;
+  border-radius: 5px;
   background-color: #e9ecf1;
   background-image: var(--degung-chrome);
   box-shadow: var(--degung-raise), 0 0 0 1px var(--degung-edge);
