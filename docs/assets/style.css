@@ -191,16 +191,17 @@
   /* Two vertical highlight bands, one near each side, rather than one
      glow centered up top - a closer match to how the reference display's
      own curved glass actually catches light along its edges. */
-  /* A hairline rim-light along each of the four edges, one small ellipse
-     per edge centered on it - a fixed few pixels deep (so the inset
-     stays a constant hairline on a tall panel, not scaling up into a
-     wide band), but *not* stretched the full length of that edge, so it
-     tapers off before reaching a corner instead of crossing the
-     perpendicular edge's own highlight there (which read as a fence of
-     intersecting lines when both were drawn full-length). The horizontal and vertical rims are two independent
+  /* A rim-light along each of the four edges, one thin ellipse per edge
+     centered on it - a fixed few pixels deep (so the inset stays a
+     constant hairline on a tall panel, not scaling up into a wide band),
+     held at full brightness partway out (rather than fading from its
+     very center) so it reads as a long streak, then tapering off before
+     it reaches a corner - stopping short of the full edge, so it never
+     crosses the perpendicular edge's own highlight there (full-length
+     ones read as a fence of intersecting lines). The horizontal and vertical rims are two independent
      layers stacked over the base fill, so a corner (where both cross)
      reads brighter still, matching a real beveled edge. */
-  --degung-display: radial-gradient(6px 42% at 0 50%, color-mix(in oklab, #3558a8 45%, white 55%) 0%, transparent 100%), radial-gradient(6px 42% at 100% 50%, color-mix(in oklab, #3558a8 45%, white 55%) 0%, transparent 100%), radial-gradient(42% 6px at 50% 0, color-mix(in oklab, #3558a8 45%, white 55%) 0%, transparent 100%), radial-gradient(42% 6px at 50% 100%, color-mix(in oklab, #3558a8 45%, white 55%) 0%, transparent 100%), linear-gradient(180deg, #3558a8 0%, #27468f 30%, #1e3a7d 100%);
+  --degung-display: radial-gradient(4px 46% at 0 50%, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), radial-gradient(4px 46% at 100% 50%, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 0, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 100%, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), linear-gradient(180deg, #3558a8 0%, #27468f 30%, #1e3a7d 100%);
   --degung-display-edge: #172d62;
   --degung-display-text: #eef3ff;
   --degung-display-muted: #a9bce6;
@@ -278,7 +279,7 @@
   --degung-strip-edge: #0d0d0f;
   --degung-strip-text: #e3e5e9;
   --degung-strip-muted: #a4b4bc;
-  --degung-display: radial-gradient(6px 42% at 0 50%, color-mix(in oklab, #111214 75%, white 25%) 0%, transparent 100%), radial-gradient(6px 42% at 100% 50%, color-mix(in oklab, #111214 75%, white 25%) 0%, transparent 100%), radial-gradient(42% 6px at 50% 0, color-mix(in oklab, #111214 75%, white 25%) 0%, transparent 100%), radial-gradient(42% 6px at 50% 100%, color-mix(in oklab, #111214 75%, white 25%) 0%, transparent 100%), linear-gradient(180deg, #111214 0%, #070708 40%, #000 100%);
+  --degung-display: radial-gradient(4px 46% at 0 50%, color-mix(in oklab, #111214 65%, white 35%) 0%, color-mix(in oklab, #111214 65%, white 35%) 45%, transparent 100%), radial-gradient(4px 46% at 100% 50%, color-mix(in oklab, #111214 65%, white 35%) 0%, color-mix(in oklab, #111214 65%, white 35%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 0, color-mix(in oklab, #111214 65%, white 35%) 0%, color-mix(in oklab, #111214 65%, white 35%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 100%, color-mix(in oklab, #111214 65%, white 35%) 0%, color-mix(in oklab, #111214 65%, white 35%) 45%, transparent 100%), linear-gradient(180deg, #111214 0%, #070708 40%, #000 100%);
   --degung-display-edge: #000;
   --degung-display-text: #e8eaee;
   --degung-display-muted: #9fb6bf;
