@@ -35,6 +35,17 @@ export const degungThemeUi = {
     ],
   },
   card: { slots: { root: 'selaras-degung-panel', header: 'selaras-degung-titlebar', footer: 'selaras-degung-panel-footer' } },
+  // Its own class so the stylesheet can re-square each grouped button's
+  // shared inner corner - the unconditional pill radius below would
+  // otherwise override ButtonGroup's own rounded-s-none/e-none (theme/
+  // button-group.ts), leaving every button its own separate pill instead
+  // of one joined segmented one.
+  buttonGroup: {
+    slots: { root: 'selaras-degung-button-group' },
+    compoundVariants: [
+      { orientation: 'vertical', class: { root: 'selaras-degung-button-group--vertical' } },
+    ],
+  },
   checkbox: { slots: { box: 'selaras-degung-check' } },
   chip: {
     slots: { root: 'selaras-degung-pill' },

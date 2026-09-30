@@ -325,9 +325,34 @@
 /* Buttons: rounded pills. Solid is lit glass in its own color, soft is
    tinted glass, outline is a silver button ringed in its color, and ghost
    and text stay flat. */
-:root[data-selaras-preset="degung"] .selaras-degung-button:not([data-ui-group-item]),
+:root[data-selaras-preset="degung"] .selaras-degung-button,
 :root[data-selaras-preset="degung"] .selaras-degung-pill {
   border-radius: 9999px;
+}
+
+/* A button inside a ButtonGroup only rounds its own outer end - the edge
+   it shares with its neighbor stays square, so the group reads as one
+   joined pill instead of separate ones touching. Button carries no
+   `data-ui-group-item` hook of its own (unlike Input/Textarea, which
+   need one to reach a nested real control - see input-group.ts's own
+   comment on that), so this instead mirrors ButtonGroup's own
+   `rounded-s-none`/`e-none` selectors (theme/button-group.ts) directly,
+   which the unconditional pill radius above would otherwise win over. */
+:root[data-selaras-preset="degung"] .selaras-degung-button-group:not(.selaras-degung-button-group--vertical) > .selaras-degung-button:not(:first-child) {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+:root[data-selaras-preset="degung"] .selaras-degung-button-group:not(.selaras-degung-button-group--vertical) > .selaras-degung-button:not(:last-child) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+:root[data-selaras-preset="degung"] .selaras-degung-button-group--vertical > .selaras-degung-button:not(:first-child) {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+:root[data-selaras-preset="degung"] .selaras-degung-button-group--vertical > .selaras-degung-button:not(:last-child) {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
 }
 
 :root[data-selaras-preset="degung"] .selaras-degung-lit {
