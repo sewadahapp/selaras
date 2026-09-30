@@ -51,5 +51,8 @@ export default defineAppConfig({
       enabled: true,
       title: 'On this page',
     },
+    footer: {
+      text: '© 2026 Sewadah · Open source under the MIT License',
+    },
   },
 })

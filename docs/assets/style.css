@@ -9,12 +9,40 @@
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 }
 
+.selaras-docs-footer-inner.selaras-site-footer-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.selaras-site-footer-copyright {
+  justify-self: end;
+  text-align: end;
+}
+
+.selaras-site-footer-inner > .selaras-docs-footer-links {
+  justify-self: end;
+}
+
 .selaras-theme-source-code span {
   color: var(--shiki-light);
 }
 
 .dark .selaras-theme-source-code span {
   color: var(--shiki-dark);
+}
+
+@media (max-width: 63.999rem) {
+  .selaras-docs-footer-inner.selaras-site-footer-inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+
+  .selaras-site-footer-copyright {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: end;
+  }
 }
 
 /* Slendro is a CSS-only preset. Replacing selected foundation stops lets the
