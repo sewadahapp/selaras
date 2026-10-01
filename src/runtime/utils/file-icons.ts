@@ -118,6 +118,7 @@ export const defaultFileIcons: Record<string, string> = {
   'npm': 'vscode-icons:file-type-npm',
   'pnpm': 'vscode-icons:file-type-pnpm',
   'yarn': 'vscode-icons:file-type-yarn',
+  'bun': 'vscode-icons:file-type-bun',
   'nuxt': 'vscode-icons:file-type-nuxt',
   'ansible': 'vscode-icons:file-type-ansible',
   'bicep': 'vscode-icons:file-type-bicep',

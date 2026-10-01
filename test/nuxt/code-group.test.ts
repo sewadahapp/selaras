@@ -36,16 +36,18 @@ describe('codeGroup', () => {
           h(ProsePre, { filename: 'npm', language: 'bash', code: 'npm install package' }, () => 'npm install package'),
           h(ProsePre, { filename: 'pnpm', language: 'bash', code: 'pnpm add package' }, () => 'pnpm add package'),
           h(ProsePre, { filename: 'yarn', language: 'bash', code: 'yarn add package' }, () => 'yarn add package'),
+          h(ProsePre, { filename: 'bun', language: 'bash', code: 'bun add package' }, () => 'bun add package'),
         ],
       },
     })
     await nextTick()
 
     const tabs = wrapper.findAll('[role="tab"]')
-    expect(tabs.map(tab => tab.text())).toEqual(['npm', 'pnpm', 'yarn'])
+    expect(tabs.map(tab => tab.text())).toEqual(['npm', 'pnpm', 'yarn', 'bun'])
     expect(tabs[0]!.find('.iconify.i-vscode-icons\\:file-type-npm').exists()).toBe(true)
     expect(tabs[1]!.find('.iconify.i-vscode-icons\\:file-type-pnpm').exists()).toBe(true)
     expect(tabs[2]!.find('.iconify.i-vscode-icons\\:file-type-yarn').exists()).toBe(true)
+    expect(tabs[3]!.find('.iconify.i-vscode-icons\\:file-type-bun').exists()).toBe(true)
     expect(wrapper.find('[role="tabpanel"] .border-b').exists()).toBe(false)
     expect(wrapper.find('[role="tabpanel"] button').exists()).toBe(false)
   })
