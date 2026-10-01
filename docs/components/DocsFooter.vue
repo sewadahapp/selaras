@@ -2,18 +2,19 @@
 const appConfig = useAppConfig()
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
 const footer = computed(() => docsConfig.value.footer)
+const links = computed(() => footer.value?.links?.filter(link => link.label !== 'Powered by Selaras') ?? [])
 </script>
 
 <template>
-  <footer v-if="footer?.text || footer?.links?.length" class="selaras-docs-footer" :class="{ 'selaras-docs-footer--fluid': footer?.fluid }">
+  <footer v-if="footer?.text || links.length" class="selaras-docs-footer" :class="{ 'selaras-docs-footer--fluid': footer?.fluid }">
     <SContainer size="full" class="selaras-docs-footer-inner selaras-site-footer-inner">
       <DocsFooterBrand />
       <p v-if="footer?.text" class="selaras-docs-footer-text selaras-site-footer-copyright">
         {{ footer.text }}
       </p>
-      <nav v-if="footer?.links?.length" class="selaras-docs-footer-links" aria-label="Footer navigation">
+      <nav v-if="links.length" class="selaras-docs-footer-links" aria-label="Footer navigation">
         <NuxtLink
-          v-for="link in footer.links"
+          v-for="link in links"
           :key="`${link.to}:${link.label ?? link.icon ?? ''}`"
           :to="link.to"
           :target="link.target"
