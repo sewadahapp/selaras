@@ -52,6 +52,9 @@ coverage
 # MiMoCode
 .mimocode
 
+#codex
+.codex
+
 # OSX
 .DS_Store
 .AppleDouble
@@ -61,3 +64,6 @@ coverage
 Network Trash Folder
 Temporary Items
 .apdisk
+
+#notes
+.notes
