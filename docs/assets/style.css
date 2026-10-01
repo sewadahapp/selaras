@@ -214,22 +214,8 @@
   --degung-strip-edge: #2c3f70;
   --degung-strip-text: #f1f4fb;
   --degung-strip-muted: #c9d3ea;
-  /* A radial highlight over the linear well reads as glass catching light,
-     rather than a flat fill - same idea as a CRT/LCD panel's curved sheen. */
-  /* Two vertical highlight bands, one near each side, rather than one
-     glow centered up top - a closer match to how the reference display's
-     own curved glass actually catches light along its edges. */
-  /* A rim-light along each of the four edges, one thin ellipse per edge
-     centered on it - a fixed few pixels deep (so the inset stays a
-     constant hairline on a tall panel, not scaling up into a wide band),
-     held at full brightness partway out (rather than fading from its
-     very center) so it reads as a long streak, then tapering off before
-     it reaches a corner - stopping short of the full edge, so it never
-     crosses the perpendicular edge's own highlight there (full-length
-     ones read as a fence of intersecting lines). The horizontal and vertical rims are two independent
-     layers stacked over the base fill, so a corner (where both cross)
-     reads brighter still, matching a real beveled edge. */
-  --degung-display: radial-gradient(4px 46% at 0 50%, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), radial-gradient(4px 46% at 100% 50%, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 0, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 100%, color-mix(in oklab, #3558a8 35%, white 65%) 0%, color-mix(in oklab, #3558a8 35%, white 65%) 45%, transparent 100%), linear-gradient(180deg, #3558a8 0%, #27468f 30%, #1e3a7d 100%);
+  /* Soft edge highlights on a saturated blue display gradient. */
+  --degung-display: radial-gradient(4px 50% at 0 50%, color-mix(in oklab, #3558a8 25%, white 75%) 0%, color-mix(in oklab, #3558a8 25%, white 75%) 45%, transparent 100%), radial-gradient(4px 50% at 100% 50%, color-mix(in oklab, #3558a8 25%, white 75%) 0%, color-mix(in oklab, #3558a8 25%, white 75%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 0, color-mix(in oklab, #3558a8 25%, white 75%) 0%, color-mix(in oklab, #3558a8 25%, white 75%) 45%, transparent 100%), radial-gradient(46% 4px at 50% 100%, color-mix(in oklab, #3558a8 25%, white 75%) 0%, color-mix(in oklab, #3558a8 25%, white 75%) 45%, transparent 100%), linear-gradient(180deg, #456fba 0%, #3558a8 38%, #27468f 76%, #1e3a7d 100%);
   --degung-display-edge: #172d62;
   --degung-display-text: #eef3ff;
   --degung-display-muted: #a9bce6;
