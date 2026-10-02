@@ -6,24 +6,34 @@ import type { OverlayPortal, OverlayPositioning } from './overlay'
 import type { UiProp } from './ui'
 
 export type SelectValue = string | number
+export type SelectModelValue = SelectValue | object
+export type SelectEntry = SelectValue | object
 
-export interface SelectGroup<Item extends object> {
+export interface SelectGroup<Item extends SelectEntry> {
   label: string
   items: readonly Item[]
 }
 
 /** Infer options from the entry array before unwrapping one group level. */
 export type SelectEntryItem<Entry> = Entry extends SelectGroup<infer Item> ? Item : Entry
-export type SelectEntryGroup<Entry> = Extract<Entry, SelectGroup<object>>
-export type SelectIdentityKeys<Item> = {
-  [Key in keyof Item]-?: Item[Key] extends SelectValue ? Key : never
-}[keyof Item] & string
-export type SelectIdentity<Entry, Key extends string> = SelectEntryItem<Entry>[Key & keyof SelectEntryItem<Entry>] & SelectValue
+export type SelectEntryGroup<Entry> = Extract<Entry, SelectGroup<SelectEntry>>
+export type SelectIdentityKeys<Item> = [Item] extends [object] ? {
+  [Key in keyof Item]-?: Item[Key] extends SelectModelValue ? Key : never
+}[keyof Item] & string : never
+type DefaultObjectIdentity<Item extends object> = 'value' extends keyof Item
+  ? Item extends { value: infer Value } ? Value : NonNullable<Item['value' & keyof Item]> | Item
+  : Item
+type ItemIdentity<Item, Key extends string> = Item extends SelectValue
+  ? Item
+  : Key extends 'value'
+    ? Item extends object ? DefaultObjectIdentity<Item> : never
+    : Key extends keyof Item ? Item[Key] : never
+export type SelectIdentity<Entry, Key extends string = 'value'> = ItemIdentity<SelectEntryItem<Entry>, Key>
 export type SelectModel<Value, Multiple extends boolean> = Multiple extends true ? Value[] : Value | undefined
 
 type ValidEntry<Entry, Key extends string> = Entry extends SelectGroup<infer Item>
-  ? SelectGroup<Item & Record<Key, SelectValue>>
-  : Entry & Record<Key, SelectValue>
+  ? SelectGroup<Item extends SelectValue ? Item : Key extends 'value' ? Item : Item & Record<Key, SelectModelValue>>
+  : Entry extends SelectValue ? Entry : Key extends 'value' ? Entry : Entry & Record<Key, SelectModelValue>
 
 export interface SelectResolvedOption<Entry, Key extends string = 'value'> {
   value: SelectIdentity<Entry, Key>
@@ -33,13 +43,15 @@ export interface SelectResolvedOption<Entry, Key extends string = 'value'> {
   raw: SelectEntryItem<Entry> | undefined
 }
 
-export interface SelectProps<Entry extends object = { value: SelectValue, label?: string, disabled?: boolean }, Key extends string = 'value', Multiple extends boolean = false> {
+export interface SelectProps<Entry extends SelectEntry = { value: SelectValue, label?: string, disabled?: boolean }, Key extends string = 'value', Multiple extends boolean = false> {
   id?: string
   name?: string
   /** ID of an associated form outside the component's ancestors. */
   form?: string
   items: readonly Entry[] & NoInfer<readonly ValidEntry<Entry, Key>[]>
+  /** Uses an option's `value` field by default, or the whole object if absent. */
   valueKey?: Key & SelectIdentityKeys<SelectEntryItem<Entry>>
+  /** Object field used for display; defaults to `label`. */
   labelKey?: keyof SelectEntryItem<Entry> & string
   open?: boolean
   /** Initial uncontrolled open state. */
@@ -80,13 +92,13 @@ export interface SelectProps<Entry extends object = { value: SelectValue, label?
   ui?: UiProp<SelectThemeSlots>
 }
 
-export interface SelectEmits<Entry extends object = { value: SelectValue }, Key extends string = 'value', Multiple extends boolean = false> {
+export interface SelectEmits<Entry extends SelectEntry = { value: SelectValue }, Key extends string = 'value', Multiple extends boolean = false> {
   'update:open': [value: boolean]
   'update:modelValue': [value: SelectModel<SelectIdentity<Entry, Key>, Multiple>]
   'update:searchTerm': [value: string]
 }
 
-export interface SelectSlots<Entry extends object, Key extends string = 'value'> {
+export interface SelectSlots<Entry extends SelectEntry, Key extends string = 'value'> {
   'item'?: (props: { item: SelectEntryItem<Entry> }) => any
   'group'?: (props: { group: SelectEntryGroup<Entry> }) => any
   'value'?: (props: { selected: SelectResolvedOption<Entry, Key> | undefined }) => any

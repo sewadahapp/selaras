@@ -6,15 +6,34 @@ order: 22
 
 ## Usage
 
-Option values may be strings or finite numbers. Numeric `1` and string `"1"`
-are distinct selections. Missing option identities and object values are rejected.
+`items` accepts primitive string/number arrays or option objects. A primitive
+is both its displayed label and model value; numbers must be finite, and
+numeric `1` and string `"1"` remain distinct. Object options display `label`
+by default. If an object has a `value` field, that field is its model value;
+otherwise the complete object is the model value. Set `labelKey` or `valueKey`
+to use different fields.
+
+```vue
+<script setup lang="ts">
+const role = ref('admin')
+const count = ref(0)
+const roles = ['admin', 'editor', 'viewer']
+const counts = [0, 1, 2]
+</script>
+
+<template>
+  <SSelect v-model="role" :items="roles" />
+  <SSelect v-model="count" :items="counts" />
+</template>
+```
 
 Use `modelValue` for parent-controlled selection or `defaultValue` for an
 uncontrolled initial selection. A form reset restores `defaultValue` (or the
 empty selection) and emits an update; a controlled parent decides whether to
-accept it. Pass `name` to submit one string-valued field per selected value.
-An empty selection submits no fields; disabled controls submit none. Use
-`form` to associate the control with an external form ID.
+accept it. Pass `name` to submit one field per selected value. Primitive values
+are submitted as strings and object values as JSON. An empty selection submits
+no fields; disabled controls submit none. Use `form` to associate the control
+with an external form ID.
 
 ::component-example{name="select-basic"}
 ::
@@ -163,26 +182,28 @@ more than plain text end to end:
 
 ### Custom objects
 
-Select infers its model and update event from the option identity field. A
-required string or number field can be used as `valueKey`; `labelKey` names a
-top-level option field. Single selection emits that identity or `undefined`,
-`multiple` emits an array, and a dynamic boolean accepts either shape. Readonly
-arrays and groups are supported. Every identity must be unique across the
-whole list, including disabled options and options in different groups; a
-duplicate throws when Select reads the options. Numeric `1` and string `'1'`
-are distinct identities.
+Select infers its model and update event from the option identity field. Set
+`valueKey` to use a specific field; without it, `value` is used when present,
+and the complete object is used when it is absent. `labelKey` defaults to
+`label`. Single selection emits the selected identity or object, `multiple`
+emits an array, and a dynamic boolean accepts either shape. Readonly arrays
+and groups are supported. Every identity must be unique across the whole list,
+including disabled options and options in different groups; a duplicate throws
+when Select reads the options. Numeric `1` and string `'1'` are distinct
+identities.
 Records with both a string `label` and an `items` array represent groups; avoid
 that reserved combination on individual options.
 
 For async options, declare the item type even when the array starts empty.
-Missing selected identities retain their value and display its text until the
-option loads. The `value` slot receives `selected.raw` as `undefined` during that
-time; use optional chaining when reading metadata. The `item` slot receives a
-complete option, and unresolved chips use the identity's text as their fallback.
+Missing selected values remain intact until an option loads. The `value` slot
+receives `selected.raw` as `undefined` during that time; use optional chaining
+when reading metadata. The `item` slot receives a complete option, and an
+unresolved object selection can still display its configured label field.
 
-The exported types take an option entry type: replace `SelectProps<number>`
-with `SelectProps<{ value: number, label: string }>`. Author items as a
-readonly `Row[]`, or as `readonly (Row | SelectGroup<Row>)[]` when mixing
+The exported types take an option entry type: `SelectProps<number>` describes
+numeric primitive items, while `SelectProps<{ value: number, label: string }>`
+describes option records. Author object items as a readonly `Row[]`, or as
+`readonly (Row | SelectGroup<Row>)[]` when mixing
 options and groups; there are no separate `SelectItems`, `SelectOption`, or
 `SelectOptionGroup` authoring aliases. A wrapper that needs the exact validated
 items type can use `SelectProps<Row, 'id'>['items']`. Custom keys and multiple
@@ -214,14 +235,14 @@ whatever fields your data already has:
 
 ### Grouped options
 
-Nest options under `{ label, items }` entries:
+Nest string, number, or object options under `{ label, items }` entries:
 
 ::component-example{name="select-grouped"}
 ::
 
 ```js
 const items = [
-  { label: 'Fruits', items: [{ label: 'Apple', value: 'apple' }] },
+  { label: 'Fruits', items: ['Apple', 'Banana'] },
   { label: 'Vegetables', items: [{ label: 'Carrot', value: 'carrot' }] },
 ]
 ```
@@ -376,7 +397,7 @@ the same key because both components use this recipe.
 | `id` | `string` | - |
 | `name` | `string` | - |
 | `items` | `readonly Entry[]` | - |
-| `valueKey` / `labelKey` | `string` | `'value'` / `'label'` |
+| `valueKey` / `labelKey` | `string` | `'value'` when present, otherwise the option object / `'label'` |
 | `modelValue` | identity, identity array, or `undefined` | - |
 | `multiple` | `boolean` | `false` |
 | `searchable` | `boolean` | `false` |

@@ -1,7 +1,7 @@
-<script setup lang="ts" generic="Entry extends object, Key extends string = 'value', Multiple extends boolean = false, Forced extends boolean = false">
+<script setup lang="ts" generic="Entry extends SelectEntry, Key extends string = 'value', Multiple extends boolean = false, Forced extends boolean = false">
 import type { SelectItems, SelectOption, SelectOptionGroup } from '../internal/combobox-select'
 import type { AutocompleteEmits, AutocompleteProps, AutocompleteSlots, AutocompleteValue } from '../utils/autocomplete-contracts'
-import type { SelectEntryGroup, SelectEntryItem, SelectModel, SelectValue } from '../utils/select-contracts'
+import type { SelectEntry, SelectEntryGroup, SelectEntryItem, SelectModel, SelectModelValue } from '../utils/select-contracts'
 import { useForwardProps } from 'reka-ui'
 import { getCurrentInstance } from 'vue'
 import ComboboxSelectBase from '../internal/ComboboxSelectBase.vue'
@@ -23,10 +23,10 @@ function baseProps() {
   }
 }
 // Restore option metadata and the model contract at the erased Reka boundary.
-function updateValue(value: SelectValue | SelectValue[] | undefined) {
+function updateValue(value: SelectModelValue | SelectModelValue[] | undefined) {
   emit('update:modelValue', value as SelectModel<AutocompleteValue<Entry, Key, Forced>, Multiple>)
 }
-function itemData(item: SelectOption) {
+function itemData(item: SelectOption | SelectModelValue) {
   return item as SelectEntryItem<Entry>
 }
 function groupData(group: SelectOptionGroup) {

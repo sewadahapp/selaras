@@ -1,100 +1,123 @@
 import type { ComputedRef } from 'vue'
-import type { SelectValue } from '../utils/select-contracts'
+import type { SelectModelValue } from '../utils/select-contracts'
 import { computed } from 'vue'
 
-function optionValue(value: unknown): SelectValue {
+function optionValue(value: unknown): SelectModelValue {
   if (typeof value === 'string' || (typeof value === 'number' && Number.isFinite(value)))
     return value
-  throw new TypeError('[selaras] Select option values must be strings or finite numbers.')
+  if (typeof value === 'object' && value !== null && !Array.isArray(value))
+    return value as Record<string, unknown>
+  throw new TypeError('[selaras] Select option values must be strings, finite numbers, or objects.')
 }
 
 /** Erased runtime records for the shared implementation, not authoring types. */
-export interface SelectOption<Value extends SelectValue = SelectValue> {
+export interface SelectOption<Value extends SelectModelValue = SelectModelValue> {
   [key: string]: unknown
-  /** The default option key. Custom `valueKey` fields use the same primitive contract. */
+  /** The default option key. Custom `valueKey` fields use the same identity contract. */
   value?: Value
   disabled?: boolean
 }
 
-export interface SelectOptionGroup<Value extends SelectValue = SelectValue> {
+export interface SelectOptionGroup<Value extends SelectModelValue = SelectModelValue> {
   label: string
-  items: readonly SelectOption<Value>[]
+  items: readonly (Value | SelectOption<Value>)[]
 }
 
-export type SelectItems<Value extends SelectValue = SelectValue> = readonly (SelectOption<Value> | SelectOptionGroup<Value>)[]
+export type SelectItems<Value extends SelectModelValue = SelectModelValue> = readonly (Value | SelectOption<Value> | SelectOptionGroup<Value>)[]
 
-export function isOptionGroup<Value extends SelectValue = SelectValue>(entry: SelectOption<Value> | SelectOptionGroup<Value>): entry is SelectOptionGroup<Value> {
-  return typeof entry.label === 'string' && 'items' in entry && Array.isArray((entry as SelectOptionGroup).items)
+export function isOptionGroup(entry: unknown): entry is SelectOptionGroup {
+  return typeof entry === 'object' && entry !== null && !Array.isArray(entry) && 'label' in entry && typeof entry.label === 'string' && 'items' in entry && Array.isArray(entry.items)
 }
 
 /** Flattens groups into a plain option list - groups lose their header when virtualized. */
-export function flattenItems<Value extends SelectValue = SelectValue>(items: SelectItems<Value>): SelectOption<Value>[] {
-  return items.flatMap(entry => isOptionGroup(entry) ? entry.items : [entry])
+export function flattenItems(items: SelectItems): (SelectModelValue | SelectOption)[] {
+  return items.flatMap(entry => isOptionGroup(entry) ? entry.items as (SelectModelValue | SelectOption)[] : [entry as SelectModelValue | SelectOption])
 }
 
 interface SelectLikeProps {
   items: SelectItems
   valueKey?: string
   labelKey?: string
-  modelValue?: SelectValue | SelectValue[]
+  modelValue?: SelectModelValue | SelectModelValue[]
   multiple?: boolean
   displayMode?: 'comma' | 'chip'
   maxChips?: number
 }
 
 export interface ResolvedOption {
-  value: SelectValue
+  value: SelectModelValue
+  key: string | number
   label: string
   disabled: boolean
-  raw: SelectOption | undefined
+  raw: SelectOption | SelectModelValue | undefined
 }
 
 export interface ResolvedItemOption extends ResolvedOption {
-  raw: SelectOption
+  raw: SelectOption | SelectModelValue
 }
 
 export function useComboboxSelect(
   props: SelectLikeProps,
-  emit: (event: 'update:modelValue', value: SelectValue | SelectValue[] | undefined) => void,
+  emit: (event: 'update:modelValue', value: SelectModelValue | SelectModelValue[] | undefined) => void,
   { creatable = false }: { creatable?: boolean } = {},
 ) {
-  const valueKey = computed(() => props.valueKey ?? 'value')
+  const valueKey = computed(() => props.valueKey)
   const labelKey = computed(() => props.labelKey ?? 'label')
 
   const flatOptions: ComputedRef<ResolvedItemOption[]> = computed(() => {
-    const identities = new Set<SelectValue>()
-    return flattenItems(props.items).map((raw) => {
-      const value = optionValue(raw[valueKey.value])
+    const identities = new Set<SelectModelValue>()
+    return flattenItems(props.items).map((raw, index) => {
+      if (typeof raw === 'string' || typeof raw === 'number') {
+        const value = optionValue(raw)
+        if (identities.has(value))
+          throw new TypeError(`[selaras] Select option identities must be unique across all groups. Duplicate value: ${typeof value} ${JSON.stringify(value)}.`)
+        identities.add(value)
+        return { value, key: `${typeof value}:${String(value)}`, label: String(value), disabled: false, raw }
+      }
+      const option = raw as SelectOption
+      const key = valueKey.value ?? (option.value !== undefined ? 'value' : undefined)
+      const value = optionValue(key === undefined ? option : option[key])
       if (identities.has(value)) {
-        throw new TypeError(`[selaras] Select option identities must be unique across all groups. Duplicate ${valueKey.value}: ${typeof value} ${JSON.stringify(value)}.`)
+        throw new TypeError(`[selaras] Select option identities must be unique across all groups. Duplicate ${key ?? 'object identity'}: ${typeof value} ${JSON.stringify(value)}.`)
       }
       identities.add(value)
       return {
         value,
-        label: String(raw[labelKey.value] ?? value),
-        disabled: !!raw.disabled,
-        raw,
+        key: typeof value === 'object' ? `object:${index}` : `${typeof value}:${String(value)}`,
+        label: String(option[labelKey.value] ?? (typeof value === 'object' ? '' : value)),
+        disabled: !!option.disabled,
+        raw: option,
       }
     })
   })
 
-  const selectedValues = computed<SelectValue[]>(() => {
+  const selectedValues = computed<SelectModelValue[]>(() => {
     const v = props.modelValue
     if (v === undefined)
       return []
     return Array.isArray(v) ? v : [v]
   })
 
-  function resolveOption(value: SelectValue): ResolvedOption {
-    return flatOptions.value.find(o => o.value === value) ?? { value, label: String(value), disabled: false, raw: undefined }
+  function resolveOption(value: SelectModelValue): ResolvedOption {
+    const option = flatOptions.value.find(o => o.value === value)
+    if (option)
+      return option
+    const label = typeof value === 'object' ? (value as Record<string, unknown>)[labelKey.value] : value
+    return { value, key: typeof value === 'object' ? 'missing-object' : `${typeof value}:${String(value)}`, label: String(label ?? ''), disabled: false, raw: undefined }
   }
 
-  function toOption(raw: SelectOption): ResolvedItemOption {
+  function toOption(raw: SelectOption | SelectModelValue): ResolvedItemOption {
+    if (typeof raw === 'string' || typeof raw === 'number')
+      return { value: optionValue(raw), key: `${typeof raw}:${String(raw)}`, label: String(raw), disabled: false, raw }
+    const option = raw as SelectOption
+    const key = valueKey.value ?? (option.value !== undefined ? 'value' : undefined)
+    const value = optionValue(key === undefined ? option : option[key])
     return {
-      value: optionValue(raw[valueKey.value]),
-      label: String(raw[labelKey.value] ?? raw[valueKey.value] ?? ''),
-      disabled: !!raw.disabled,
-      raw,
+      value,
+      key: typeof value === 'object' ? 'object:unknown' : `${typeof value}:${String(value)}`,
+      label: String(option[labelKey.value] ?? (typeof value === 'object' ? '' : value)),
+      disabled: !!option.disabled,
+      raw: option,
     }
   }
 
@@ -109,11 +132,11 @@ export function useComboboxSelect(
   const overflowOptions = computed(() => selectedOptions.value.slice(maxChips.value))
   const commaText = computed(() => visibleOptions.value.map(o => o.label).join(', '))
 
-  function setValue(value: SelectValue | SelectValue[] | undefined) {
+  function setValue(value: SelectModelValue | SelectModelValue[] | undefined) {
     emit('update:modelValue', value)
   }
 
-  function removeValue(value: SelectValue) {
+  function removeValue(value: SelectModelValue) {
     if (!props.multiple) {
       setValue(undefined)
       return

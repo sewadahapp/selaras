@@ -89,6 +89,30 @@ const numericSelect: SelectProps<{ label: string, value: number }> = {
   items: [{ label: 'One', value: 1 }],
   modelValue: 1,
 }
+interface WholeOption { id: string, title: string }
+const wholeOption: WholeOption = { id: 'whole', title: 'Whole option' }
+const wholeObjectSelect: SelectProps<WholeOption> = {
+  items: [wholeOption],
+  modelValue: wholeOption,
+}
+const optionalValueSelect: SelectProps<{ label: string, value?: number }> = {
+  items: [{ label: 'Object fallback' }],
+  modelValue: { label: 'Object fallback' },
+}
+const wholeObjectAutocomplete: AutocompleteProps<WholeOption, 'value', false, true> = {
+  items: [wholeOption],
+  forceSelection: true,
+  modelValue: wholeOption,
+}
+const explicitValueKeySelect: SelectProps<{ id: string, value: string, label: string }, 'id'> = {
+  items: [{ id: 'id', value: 'field-value', label: 'Option' }],
+  valueKey: 'id',
+  modelValue: 'id',
+}
+void wholeObjectSelect
+void optionalValueSelect
+void wholeObjectAutocomplete
+void explicitValueKeySelect
 const stringAutocomplete: AutocompleteProps<{ label: string, value: string }> = {
   items: [{ label: 'One', value: 'one' }],
   modelValue: 'one',

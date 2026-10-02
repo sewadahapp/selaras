@@ -4,6 +4,7 @@ import type { SelectThemeSlots } from '../theme/select'
 import type { RoundedArrowConfig } from '../utils/arrow'
 import type { ColorRole } from '../utils/color-registry'
 import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
+import type { SelectModelValue } from '../utils/select-contracts'
 import type { UiProp } from '../utils/ui'
 import type { SelectItems, SelectOption } from './combobox-select'
 import {
@@ -59,7 +60,7 @@ const props = withDefaults(defineProps<ComboboxSelectBaseProps>(), {
 const emit = defineEmits<ComboboxSelectBaseEmits>()
 
 const instance = getCurrentInstance()!
-type ComboboxSelection = string | number | (string | number)[] | undefined
+type ComboboxSelection = SelectModelValue | SelectModelValue[] | undefined
 const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue] : props.defaultValue
 const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
 
@@ -89,7 +90,7 @@ function assertUniqueMultipleSelection(value: ComboboxSelection, property: 'mode
   if (!Array.isArray(value))
     return
 
-  const values = new Set<string | number>()
+  const values = new Set<SelectModelValue>()
   for (const selectedValue of value) {
     if (values.has(selectedValue))
       throw new TypeError(`[selaras] A multiple Select or Autocomplete requires unique ${property} values.`)
@@ -111,7 +112,7 @@ const selection = computed(() => {
 // its internal selection controlled by Selaras so rejected proposals cannot
 // become selected ARIA state. Null is only the internal single-empty sentinel.
 const rekaSelection = computed(() => selection.value ?? (props.multiple ? [] : null))
-function updateSelection(event: 'update:modelValue', value: string | number | (string | number)[] | undefined) {
+function updateSelection(event: 'update:modelValue', value: SelectModelValue | SelectModelValue[] | undefined) {
   if (!isControlled())
     localValue.value = value
   emit(event, value)
@@ -160,9 +161,9 @@ export interface ComboboxSelectBaseProps {
   open?: boolean
   /** Initial uncontrolled open state. */
   defaultOpen?: boolean
-  modelValue?: string | number | (string | number)[]
+  modelValue?: SelectModelValue | SelectModelValue[]
   /** Initial uncontrolled selection and native form reset target. */
-  defaultValue?: string | number | (string | number)[]
+  defaultValue?: SelectModelValue | SelectModelValue[]
   multiple?: boolean
   searchable?: boolean
   virtualize?: boolean | { estimateSize?: number, overscan?: number }
@@ -194,7 +195,7 @@ export interface ComboboxSelectBaseProps {
 
 export interface ComboboxSelectBaseEmits {
   'update:open': [value: boolean]
-  'update:modelValue': [value: string | number | (string | number)[] | undefined]
+  'update:modelValue': [value: SelectModelValue | SelectModelValue[] | undefined]
   'update:searchTerm': [value: string]
 }
 
@@ -230,7 +231,7 @@ function clear() {
 // that ArrowLeft/Right moves between, and Backspace/Delete removes,
 // selecting the last chip on a first Backspace rather than removing
 // immediately (matching Reka's own two-step convention).
-const selectedChipValue = ref<string | number>()
+const selectedChipValue = ref<SelectModelValue>()
 const dir = useDirection()
 
 function onTriggerKeydown(event: KeyboardEvent) {
@@ -461,7 +462,7 @@ function onDropdownClick() {
 function displayValue(value: unknown) {
   if (!props.creatable || props.multiple || value == null || Array.isArray(value))
     return ''
-  return resolveOption(value as string | number).label
+  return resolveOption(value as SelectModelValue).label
 }
 
 function singleSelectionLabel(value: ComboboxSelection) {
@@ -568,7 +569,7 @@ const virtualizedOptions = computed(() => {
   return flatOptions.value.filter(option => option.label.toLowerCase().includes(needle))
 })
 
-function groupOptions(group: { items: readonly SelectOption[] }) {
+function groupOptions(group: { items: readonly (SelectOption | SelectModelValue)[] }) {
   return group.items.map(toOption)
 }
 
@@ -725,9 +726,19 @@ const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showM
   ? { 'aria-haspopup': 'dialog', 'aria-controls': modalId }
   : {})
 function onModalSelection(value: unknown) {
-  setValue(value == null ? (props.multiple ? [] : undefined) : value as string | number | (string | number)[])
+  setValue(value == null ? (props.multiple ? [] : undefined) : value as SelectModelValue | SelectModelValue[])
   if (!props.multiple)
     updateOpen(false)
+}
+function serializeFormValue(value: SelectModelValue) {
+  if (typeof value !== 'object')
+    return String(value)
+  try {
+    return JSON.stringify(value) ?? ''
+  }
+  catch {
+    return String(value)
+  }
 }
 const adaptiveUi = computed(() => ({
   content: {
@@ -836,7 +847,7 @@ const bodyProps = computed(() => ({
           -->
           <TagsInputItem
             v-for="option in visibleOptions"
-            :key="option.value"
+            :key="option.key"
             :value="option.value"
             as-child
           >
@@ -848,7 +859,7 @@ const bodyProps = computed(() => ({
               :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--_selaras-color-fill)]' }"
             >
               <TagsInputItemText as="span">
-                <slot v-if="option.raw" name="item" :item="option.raw">
+                <slot v-if="option.raw !== undefined" name="item" :item="option.raw">
                   {{ option.label }}
                 </slot>
                 <template v-else>
@@ -964,7 +975,7 @@ const bodyProps = computed(() => ({
           <div v-if="displayMode === 'chip'" class="flex flex-1 flex-wrap items-center gap-1.5">
             <Chip
               v-for="option in visibleOptions"
-              :key="option.value"
+              :key="option.key"
               size="sm"
               color="primary"
               variant="soft"
@@ -973,7 +984,7 @@ const bodyProps = computed(() => ({
               :aria-current="option.value === selectedChipValue || undefined"
               :ui="{ root: 'data-[state=active]:ring-2 data-[state=active]:ring-[var(--_selaras-color-fill)]' }"
             >
-              <slot v-if="option.raw" name="item" :item="option.raw">
+              <slot v-if="option.raw !== undefined" name="item" :item="option.raw">
                 {{ option.label }}
               </slot>
               <template v-else>
@@ -1141,7 +1152,7 @@ const bodyProps = computed(() => ({
       type="hidden"
       :name="name ?? field?.name"
       :form="form"
-      :value="String(value)"
+      :value="serializeFormValue(value)"
       :disabled="disabled"
       :required="required && !disabled && index === 0"
     >

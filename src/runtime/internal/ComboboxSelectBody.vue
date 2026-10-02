@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SelectModelValue } from '../utils/select-contracts'
 import type { ResolvedItemOption, SelectItems, SelectOption } from './combobox-select'
 import {
   ComboboxEmpty,
@@ -38,15 +39,15 @@ export interface ComboboxSelectBodyProps {
   creatable?: boolean
   multiple?: boolean
   forceSelection?: boolean
-  selectedValues?: (string | number)[]
+  selectedValues?: SelectModelValue[]
   searchText: string
   displayValue: (value: unknown) => string
   items: SelectItems
   flatOptions: ResolvedItemOption[]
   virtualizeConfig: { estimateSize: number, overscan: number } | null
   virtualizedOptions: ResolvedItemOption[]
-  toOption: (entry: SelectOption) => ResolvedItemOption
-  groupOptions: (group: { items: readonly SelectOption[] }) => ResolvedItemOption[]
+  toOption: (entry: SelectOption | SelectModelValue) => ResolvedItemOption
+  groupOptions: (group: { items: readonly (SelectOption | SelectModelValue)[] }) => ResolvedItemOption[]
   onSearchKeydown: (event: KeyboardEvent) => void
   onSearchBlur: () => void
   searchWrapperProps?: Record<string, unknown>
@@ -88,10 +89,10 @@ const createText = computed(() => {
 const virtualOptions = computed(() => {
   const options = props.listbox ? visibleOptions.value : props.virtualizedOptions
   return createText.value
-    ? [{ value: createText.value, label: messages.value.createOption(createText.value), disabled: false, raw: undefined }, ...options]
+    ? [{ value: createText.value, key: `create:${createText.value}`, label: messages.value.createOption(createText.value), disabled: false, raw: undefined }, ...options]
     : options
 })
-function onItemSelect(event: Event, value: string | number) {
+function onItemSelect(event: Event, value: SelectModelValue) {
   if (!props.creatable || !props.multiple || !props.selectedValues?.includes(value))
     return
   // Autocomplete chips own removal. Choosing a suggestion that's already a
@@ -170,12 +171,12 @@ defineExpose({ focusSearch })
           :key="String(virtualItem.key)"
           :value="option.value"
           :disabled="option.disabled"
-          :data-selaras-create-option="!option.raw || undefined"
+          :data-selaras-create-option="option.raw === undefined || undefined"
           :style="{ position: 'absolute', top: 0, left: 0, right: 0, transform: `translateY(${virtualItem.start}px)`, height: `${virtualItem.size}px` }"
           v-bind="itemProps"
           @select="onItemSelect($event, option.value)"
         >
-          <template v-if="!option.raw">
+          <template v-if="option.raw === undefined">
             {{ option.label }}
           </template>
           <template v-else>
@@ -204,7 +205,7 @@ defineExpose({ focusSearch })
           <component
             :is="primitives.item"
             v-for="option in groupOptions(entry).filter(matches)"
-            :key="option.value"
+            :key="option.key"
             :value="option.value"
             :disabled="option.disabled"
             v-bind="itemProps"

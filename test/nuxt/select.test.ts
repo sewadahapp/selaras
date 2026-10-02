@@ -61,6 +61,53 @@ describe('select', () => {
     }
   })
 
+  it('returns whole object options when no value field is available', async () => {
+    interface Row { id: string, title: string }
+    const row = { id: 'row-1', title: 'Whole object' }
+    const wrapper = await mountSuspended(Select<Row>, {
+      props: { items: [row], labelKey: 'title', modelValue: undefined, open: true },
+    })
+    try {
+      const option = document.body.querySelector<HTMLElement>('[role="option"]')
+      expect(option?.textContent).toContain('Whole object')
+      option?.click()
+      await nextTick()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toBe(row)
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('serializes whole object form values as JSON', async () => {
+    interface Row { id: string, title: string }
+    const row = { id: 'row-1', title: 'Whole object' }
+    const wrapper = await mountSuspended(Select<Row>, {
+      props: { items: [row], labelKey: 'title', modelValue: row, name: 'choice' },
+    })
+    try {
+      expect(wrapper.find('input[type="hidden"][name="choice"]').attributes('value')).toBe(JSON.stringify(row))
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('prefers an explicit valueKey over an option value field', async () => {
+    const row = { id: 17, label: 'Explicit identity', value: 'incidental' }
+    const wrapper = await mountSuspended(Select<typeof row, 'id'>, {
+      props: { items: [row], valueKey: 'id', modelValue: undefined, open: true },
+    })
+    try {
+      document.body.querySelector<HTMLElement>('[role="option"]')?.click()
+      await nextTick()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([17])
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
   it('routes accessible naming and descriptions to the selection trigger in both search modes', async () => {
     for (const searchable of [false, true]) {
       const attrs = { 'aria-label': 'Choose fruit', 'aria-labelledby': 'fruit-label', 'aria-describedby': 'fruit-help', 'aria-errormessage': 'fruit-error', 'aria-details': 'fruit-details' }

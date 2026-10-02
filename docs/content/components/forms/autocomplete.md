@@ -6,10 +6,13 @@ order: 23
 
 ## Usage
 
-Existing suggestions preserve string or finite-number identities, including
-the distinction between numeric `1` and string `"1"`. Newly created free text
-is always a string; numeric suggestions do not cause typed text to be coerced.
-Use `forceSelection` to disallow creating values.
+Suggestions accept string/number arrays or option objects. A primitive is both
+its label and value. Objects display `label` by default; their `value` field is
+used when present, and objects without it are themselves the model value. Set
+`labelKey` or `valueKey` to choose other fields. Existing suggestions preserve
+numeric `1` versus string `"1"`. Newly created free text is always a string;
+numeric suggestions do not cause typed text to be coerced. Use `forceSelection`
+to disallow creating values.
 
 Autocomplete infers models and update events from its suggestion identity field.
 Numeric suggestions allow `number | string | undefined` in single mode and
@@ -21,9 +24,10 @@ including disabled suggestions and suggestions in different groups; a duplicate
 throws when Autocomplete reads the options. Numeric `1` and string `'1'` remain
 distinct. Declare the item type for initially empty async arrays.
 
-The exported types use option entries: replace `AutocompleteProps<number>` with
-`AutocompleteProps<{ value: number, label: string }>`. The parameters are entry,
-identity key, multiple mode and forced mode.
+The exported types use an option entry type: `AutocompleteProps<number>`
+describes numeric primitive items, while
+`AutocompleteProps<{ value: number, label: string }>` describes option records.
+The parameters are entry, identity key, multiple mode and forced mode.
 
 Author suggestions as a readonly `Row[]`, or as `readonly (Row | SelectGroup<Row>)[]`
 when mixing suggestions and groups; there are no separate `SelectItems`,
@@ -43,9 +47,9 @@ label when options load; active queries and parent-controlled `searchTerm`
 retain their text.
 
 `defaultValue` initializes uncontrolled selection and is the native form reset
-target. `modelValue` remains parent-controlled. With `name`, selected values
-submit as repeated string-valued fields; empty or disabled selections submit
-none. `form` may reference an external form ID.
+target. `modelValue` remains parent-controlled. With `name`, each selected value
+submits as a field; primitives are strings and objects are JSON. Empty or
+disabled selections submit none. `form` may reference an external form ID.
 
 Unlike [Select](/components/forms/select), whatever the user types can become the
 value even if it doesn't match a suggestion - picking a suggestion is a

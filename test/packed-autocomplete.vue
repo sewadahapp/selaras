@@ -8,6 +8,8 @@ const rows: Row[] = [{ id: 1, title: 'One', disabled: false }]
 const emptyRows: Row[] = []
 const authoredEntries: AutocompleteProps<Row | SelectGroup<Row>, 'id'>['items'] = [{ label: 'Authored group', items: rows }]
 const options = [{ value: 1, label: 'One' }]
+const stringItems = ['admin', 'user'] as const
+const numberItems: number[] = [0, 1, 2]
 const groups = [{ label: 'Group', items: rows, description: 'Metadata' }]
 const mixed = [rows[0]!, groups[0]!]
 const literals = [{ value: 'one', label: 'One' }, { value: 'two', label: 'Two' }] as const
@@ -16,23 +18,31 @@ const optionalIds: { id?: number }[] = []
 const nullableIds: { id: number | null }[] = []
 const inconsistentIds: ({ id: number } | { id: boolean })[] = []
 const selected = ref<number>()
+const selectedString = ref<string>()
+const selectedNumberOrText = ref<number | string>()
 const created = ref<number | string>()
 const many = ref<(number | string)[]>([])
 const forcedMany = ref<number[]>([])
 const dynamic = ref(false)
 const dynamicValue = ref<number | string | (number | string)[]>()
 const expectNumber = (value: number | undefined) => value
+const expectString = (value: string | undefined) => value
 const expectCreated = (value: number | string | undefined) => value
 const expectNumbers = (value: number[]) => value
 </script>
 
 <template>
   <SAutocomplete v-model="created" :items="options" @update:model-value="expectCreated" />
+  <SAutocomplete v-model="selectedString" :items="stringItems" @update:model-value="expectString" />
+  <SAutocomplete v-model="selectedNumberOrText" :items="numberItems" @update:model-value="expectCreated" />
+  <SAutocomplete v-model="selected" :items="numberItems" force-selection @update:model-value="expectNumber" />
+  <SAutocomplete :items="[{ label: 'Roles', items: stringItems }]" model-value="user" force-selection />
   <SAutocomplete v-model="created" :items="rows" value-key="id" label-key="title" @update:model-value="expectCreated">
     <template #item="{ item }">
       {{ item.title.toUpperCase() }} {{ item.id.toFixed() }}
     </template>
   </SAutocomplete>
+  <SAutocomplete :items="rows" :model-value="rows[0]" force-selection />
   <SAutocomplete v-model="created" :items="emptyRows" value-key="id" @update:model-value="expectCreated" />
   <SAutocomplete v-model="created" :items="authoredEntries" value-key="id" @update:model-value="expectCreated" />
   <SAutocomplete v-model="created" :items="groups" value-key="id" @update:model-value="expectCreated">
@@ -66,13 +76,11 @@ const expectNumbers = (value: number[]) => value
   <SAutocomplete :items="rows" value-key="missing" />
   <!-- @vue-expect-error boolean fields are not identities -->
   <SAutocomplete :items="rows" value-key="disabled" />
-  <!-- @vue-expect-error default identity requires value on every option -->
-  <SAutocomplete :items="rows" />
   <!-- @vue-expect-error optional identities are not safe -->
   <SAutocomplete :items="optionalIds" value-key="id" />
   <!-- @vue-expect-error nullable identities are not safe -->
   <SAutocomplete :items="nullableIds" value-key="id" />
-  <!-- @vue-expect-error every union member needs a primitive identity -->
+  <!-- @vue-expect-error every union member needs the configured identity -->
   <SAutocomplete :items="inconsistentIds" value-key="id" />
   <SAutocomplete :items="rows" value-key="id">
     <template #item="{ item }">

@@ -113,6 +113,22 @@ describe('autocomplete', () => {
     }
   })
 
+  it('uses an object option as the selected value when it has no value field', async () => {
+    interface Row { id: string, title: string }
+    const row = { id: 'row-1', title: 'Whole object' }
+    const wrapper = await mount(Autocomplete<Row, 'value', false, true>, {
+      props: { items: [row], labelKey: 'title', forceSelection: true, modelValue: undefined, open: true },
+    })
+    try {
+      document.body.querySelector<HTMLElement>('[role="option"]')?.click()
+      await nextTick()
+      expect(wrapper.emitted('update:modelValue')?.at(-1)?.[0]).toBe(row)
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
   it('keeps forced clear and native reset proposals numeric in both selection modes', async () => {
     interface Row { id: number, title: string }
     for (const multiple of [false, true]) {

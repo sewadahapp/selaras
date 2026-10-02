@@ -9,6 +9,8 @@ const emptyRows: Row[] = []
 const authoredEntries: SelectProps<Row | SelectGroup<Row>, 'id'>['items'] = [{ label: 'Authored group', items: rows }]
 const nestedRows = [{ id: 1, title: 'Parent option', items: [{ id: 2 }] }]
 const options = [{ value: 1, label: 'One' }]
+const stringItems = ['admin', 'user'] as const
+const numberItems: number[] = [0, 1, 2]
 const groups = [{ label: 'Group', items: rows, description: 'Metadata' }]
 const mixed = [rows[0]!, groups[0]!]
 const literals = [{ value: 'one', label: 'One' }, { value: 'two', label: 'Two' }] as const
@@ -18,6 +20,10 @@ const nullableIds: { id: number | null }[] = []
 const objectIds: { id: { key: number } }[] = []
 const inconsistentIds: ({ id: number } | { id: boolean })[] = []
 const selected = ref<number>()
+const selectedObjectId = ref<{ key: number }>()
+const selectedString = ref<'admin' | 'user'>('admin')
+const selectedNumber = ref<number>(0)
+const selectedNumbers = ref<number[]>([])
 const many = ref<number[]>([])
 const dynamic = ref(false)
 const dynamicValue = ref<number | number[]>()
@@ -27,6 +33,13 @@ const expectNumbers = (value: number[]) => value
 
 <template>
   <SSelect v-model="selected" :items="options" @update:model-value="expectNumber" />
+  <SSelect v-model="selectedString" :items="stringItems" @update:model-value="value => value?.toUpperCase()" />
+  <SSelect v-model="selectedNumber" :items="numberItems" @update:model-value="value => value?.toFixed()" />
+  <SSelect v-model="selectedNumbers" :items="numberItems" multiple @update:model-value="value => value.map(item => item.toFixed())" />
+  <SSelect :items="['admin', 'user']" model-value="user" />
+  <SSelect :items="[0, 1, 2]" :model-value="0" />
+  <SSelect :items="[{ label: 'Roles', items: stringItems }]" model-value="user" />
+  <SSelect :items="[{ label: 'Counts', items: numberItems }]" :model-value="0" />
   <SSelect v-model="selected" :items="rows" value-key="id" label-key="title" @update:model-value="expectNumber">
     <template #item="{ item }">
       {{ item.title.toUpperCase() }} {{ item.id.toFixed() }}
@@ -35,6 +48,8 @@ const expectNumbers = (value: number[]) => value
       {{ option?.value.toFixed() }} {{ option?.raw?.title.toUpperCase() }}
     </template>
   </SSelect>
+  <SSelect :items="rows" :model-value="rows[0]" />
+  <SSelect v-model="selectedObjectId" :items="objectIds" value-key="id" />
   <SSelect v-model="selected" :items="emptyRows" value-key="id" @update:model-value="expectNumber" />
   <SSelect v-model="selected" :items="authoredEntries" value-key="id" @update:model-value="expectNumber" />
   <SSelect v-model="selected" :items="nestedRows" value-key="id" label-key="title" @update:model-value="expectNumber" />
@@ -77,16 +92,12 @@ const expectNumbers = (value: number[]) => value
   <SSelect :items="rows" value-key="id" label-key="missing" />
   <!-- @vue-expect-error boolean keys are not identities -->
   <SSelect :items="rows" value-key="disabled" />
-  <!-- @vue-expect-error default identity requires a value property -->
-  <SSelect :items="rows" />
   <!-- @vue-expect-error optional identities are not safe -->
   <SSelect :items="optionalIds" value-key="id" />
   <!-- @vue-expect-error nullable identities are not safe -->
   <SSelect :items="nullableIds" value-key="id" />
-  <!-- @vue-expect-error every union member must have a primitive identity -->
+  <!-- @vue-expect-error every union member must have the configured identity -->
   <SSelect :items="inconsistentIds" value-key="id" />
-  <!-- @vue-expect-error object identities are unsupported -->
-  <SSelect :items="objectIds" value-key="id" />
   <!-- @vue-expect-error dynamic multiple can emit arrays -->
   <SSelect :items="rows" value-key="id" :multiple="dynamic" @update:model-value="expectNumber" />
 </template>

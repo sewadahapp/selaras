@@ -8,6 +8,54 @@ const fruitItems = [
 ]
 
 describe('useComboboxSelect - option records', () => {
+  it('uses bare string and number items as both their values and labels', () => {
+    const { flatOptions, selectedOptions } = useComboboxSelect({ items: ['admin', 0, 42], modelValue: [0, 42] }, vi.fn())
+
+    expect(flatOptions.value.map(({ value, label, raw }) => ({ value, label, raw }))).toEqual([
+      { value: 'admin', label: 'admin', raw: 'admin' },
+      { value: 0, label: '0', raw: 0 },
+      { value: 42, label: '42', raw: 42 },
+    ])
+    expect(selectedOptions.value.map(option => option.label)).toEqual(['0', '42'])
+  })
+
+  it('uses an existing value field by default and preserves object options without one', () => {
+    const withValue = { label: 'Number option', title: 'Number option', value: 12, id: 'n' }
+    const withoutValue = { title: 'Whole object option', id: 'object-1' }
+    const unsetValue = { label: 'Unset value is treated as missing', value: undefined, id: 'object-2' }
+    const keyed = useComboboxSelect({ items: [withValue], modelValue: 12 }, vi.fn())
+    const whole = useComboboxSelect({ items: [withoutValue], labelKey: 'title', modelValue: withoutValue }, vi.fn())
+
+    expect(keyed.flatOptions.value[0]?.value).toBe(12)
+    expect(keyed.flatOptions.value[0]?.label).toBe('Number option')
+    expect(whole.flatOptions.value[0]?.value).toBe(withoutValue)
+    expect(whole.flatOptions.value[0]?.label).toBe('Whole object option')
+    expect(whole.selectedOptions.value[0]?.raw).toBe(withoutValue)
+
+    const unset = useComboboxSelect({ items: [unsetValue] }, vi.fn())
+    expect(unset.flatOptions.value[0]?.value).toBe(unsetValue)
+  })
+
+  it('uses an explicitly configured valueKey even when an option also has a value field', () => {
+    const row = { label: 'Row label', value: 'display-value', id: 9 }
+    const { flatOptions } = useComboboxSelect({ items: [row], valueKey: 'id' }, vi.fn())
+
+    expect(flatOptions.value[0]?.value).toBe(9)
+    expect(flatOptions.value[0]?.label).toBe('Row label')
+  })
+
+  it('normalizes primitive entries inside groups and rejects cross-group duplicates', () => {
+    const { flatOptions } = useComboboxSelect({ items: [{ label: 'Roles', items: ['admin', 'user', 0] }] }, vi.fn())
+    expect(flatOptions.value.map(({ value, label }) => [value, label])).toEqual([
+      ['admin', 'admin'],
+      ['user', 'user'],
+      [0, '0'],
+    ])
+
+    const duplicate = useComboboxSelect({ items: ['admin', { label: 'More roles', items: ['admin'] }] }, vi.fn())
+    expect(() => duplicate.flatOptions.value).toThrow('Duplicate value: string "admin"')
+  })
+
   it('keeps an option with nested items when it has no group label', () => {
     const row = { id: 1, title: 'Parent option', items: [{ id: 2 }] }
     const { selectedOptions } = useComboboxSelect({ items: [row], valueKey: 'id', labelKey: 'title', modelValue: 1 }, vi.fn())
@@ -18,7 +66,7 @@ describe('useComboboxSelect - option records', () => {
   it('rejects non-finite identities even though their static type is number', () => {
     for (const value of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
       const { flatOptions } = useComboboxSelect({ items: [{ value }] }, vi.fn())
-      expect(() => flatOptions.value).toThrow('strings or finite numbers')
+      expect(() => flatOptions.value).toThrow('finite numbers')
     }
   })
 
