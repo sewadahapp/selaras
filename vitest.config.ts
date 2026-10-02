@@ -3,8 +3,6 @@ import { defineVitestConfig } from '@nuxt/test-utils/config'
 
 export default defineVitestConfig({
   test: {
-    // Keep local test runs from occupying every available CPU core.
-    maxWorkers: 2,
     exclude: ['test/browser/**'],
     environmentOptions: {
       nuxt: {
