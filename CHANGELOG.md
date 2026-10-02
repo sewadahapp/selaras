@@ -1,6 +1,59 @@
 # Changelog
 
 
+## v0.3.2
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.0.1...v0.3.2)
+
+### 🚀 Enhancements
+
+- **docs:** Redesign theme picker ([22cc5f2](https://github.com/sewadahapp/selaras/commit/22cc5f2))
+- **code-group:** Add Bun package manager icon ([4d8c927](https://github.com/sewadahapp/selaras/commit/4d8c927))
+- **select:** Support object options as values ([be2ae38](https://github.com/sewadahapp/selaras/commit/be2ae38))
+- Add confirm service and refine component behavior ([f3cf73b](https://github.com/sewadahapp/selaras/commit/f3cf73b))
+- **button:** Add subtle variant and underline links on hover ([62e77b3](https://github.com/sewadahapp/selaras/commit/62e77b3))
+- **color-mode-switch:** Add switch for light and dark modes ([0fea5d4](https://github.com/sewadahapp/selaras/commit/0fea5d4))
+
+### 🩹 Fixes
+
+- **toast:** Carry a card's full background into its stacked cover ([d7c7562](https://github.com/sewadahapp/selaras/commit/d7c7562))
+- **degung:** Drop the tree-connector rail and readable nav hover ([f712787](https://github.com/sewadahapp/selaras/commit/f712787))
+- **degung:** Tone down the display text glow for readability ([a65a32a](https://github.com/sewadahapp/selaras/commit/a65a32a))
+- **degung:** Collapse the rail's leftover gutter on nested nav rows ([e138ce8](https://github.com/sewadahapp/selaras/commit/e138ce8))
+- **degung:** Apply the display look to every accordion, flatten nested groups ([38b8d20](https://github.com/sewadahapp/selaras/commit/38b8d20))
+- **degung:** Use a fixed-pixel display rim inset instead of a percentage ([ac6567d](https://github.com/sewadahapp/selaras/commit/ac6567d))
+- **degung:** Taper each display rim before its own corner ([4e025fe](https://github.com/sewadahapp/selaras/commit/4e025fe))
+- **degung:** Join grouped buttons back into one segmented pill ([ca3a14e](https://github.com/sewadahapp/selaras/commit/ca3a14e))
+- **theme:** Allow chip variant conditions ([2ecefb0](https://github.com/sewadahapp/selaras/commit/2ecefb0))
+- **docs:** Remove default footer attribution ([5cd46ba](https://github.com/sewadahapp/selaras/commit/5cd46ba))
+- **button:** Strengthen text variant hover colors ([586d38c](https://github.com/sewadahapp/selaras/commit/586d38c))
+- **ci:** Allow headroom in packed consumer CSS budgets ([d1bd54a](https://github.com/sewadahapp/selaras/commit/d1bd54a))
+
+### 📖 Documentation
+
+- **degung:** Restyle the preset as rounded glossy hardware ([9be8a84](https://github.com/sewadahapp/selaras/commit/9be8a84))
+
+### 🏡 Chore
+
+- **dev:** Add Nix shell and limit test workers ([055c03d](https://github.com/sewadahapp/selaras/commit/055c03d))
+- **scripts:** Run docs template from docs dev ([f743ad4](https://github.com/sewadahapp/selaras/commit/f743ad4))
+- **test:** Restore default worker parallelism ([e4b7f59](https://github.com/sewadahapp/selaras/commit/e4b7f59))
+
+### 🎨 Styles
+
+- **degung:** Add display glow, screen highlight and selection color ([5a2897e](https://github.com/sewadahapp/selaras/commit/5a2897e))
+- **degung:** Twin-edge display highlight, chrome pill slider thumb ([c385bb9](https://github.com/sewadahapp/selaras/commit/c385bb9))
+- **degung:** Widen the slider thumb, tuck the display rim to all four edges ([8d51891](https://github.com/sewadahapp/selaras/commit/8d51891))
+- **degung:** Tighten the display rim to a hairline ([ed8d531](https://github.com/sewadahapp/selaras/commit/ed8d531))
+- **degung:** Enlarge the slider thumb, inset the display rim from the edge ([7530118](https://github.com/sewadahapp/selaras/commit/7530118))
+- **degung:** Brighten, lengthen and thin the display rim highlight ([413cad5](https://github.com/sewadahapp/selaras/commit/413cad5))
+- **docs:** Refine footer content and alignment ([d29b947](https://github.com/sewadahapp/selaras/commit/d29b947))
+- **docs:** Refine footer and display finish ([31a9dae](https://github.com/sewadahapp/selaras/commit/31a9dae))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.3.1
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.0.0...v0.3.1)

@@ -1,5 +1,53 @@
 # Changelog
 
+## v1.1.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.0.1...selaras-docs-v1.1.0)
+
+### 🚀 Enhancements
+
+- **feat(color-mode-switch):** add switch for light and dark modes ([0fea5d4](https://github.com/sewadahapp/selaras/commit/0fea5d4cfcdd1be2fcdad10241d0e5dabbaf720a))
+- **feat(button):** add subtle variant and underline links on hover ([62e77b3](https://github.com/sewadahapp/selaras/commit/62e77b312a6a32c53cab0127006fd27305658f37))
+- **feat:** add confirm service and refine component behavior ([f3cf73b](https://github.com/sewadahapp/selaras/commit/f3cf73b9f492f7cb8ed44a4ded4c26ec6b165e19))
+- **feat(select):** support object options as values ([be2ae38](https://github.com/sewadahapp/selaras/commit/be2ae38485110f2fa1e6cfdfc2e12eecf69885e4))
+- **feat(code-group):** add Bun package manager icon ([4d8c927](https://github.com/sewadahapp/selaras/commit/4d8c927d4a2f8058d0a1a6a61e2996609bf4550a))
+- **feat(docs):** redesign theme picker ([22cc5f2](https://github.com/sewadahapp/selaras/commit/22cc5f229eba4aae0dc65a7104d0d6d26a74a42d))
+
+### 🩹 Fixes
+
+- **fix(ci):** allow headroom in packed consumer CSS budgets ([d1bd54a](https://github.com/sewadahapp/selaras/commit/d1bd54adb2247945e9ec05477fa6b944ac4a1a41))
+- **fix(button):** strengthen text variant hover colors ([586d38c](https://github.com/sewadahapp/selaras/commit/586d38c570b7e19ff5cd5f167319a2cd098d26ff))
+- **fix(docs):** remove default footer attribution ([5cd46ba](https://github.com/sewadahapp/selaras/commit/5cd46ba3a538ccbe37ef12177fcf49babce459b3))
+- **fix(theme):** allow chip variant conditions ([2ecefb0](https://github.com/sewadahapp/selaras/commit/2ecefb0425083d08cea9447d212278291407f7c3))
+- **fix(degung):** join grouped buttons back into one segmented pill ([ca3a14e](https://github.com/sewadahapp/selaras/commit/ca3a14e0a8a7c1083b2f1da2bc904aae133cbdf2))
+- **fix(degung):** taper each display rim before its own corner ([4e025fe](https://github.com/sewadahapp/selaras/commit/4e025feb87f70c0f8e66c555ebe08aa7b53b05c6))
+- **fix(degung):** use a fixed-pixel display rim inset instead of a percentage ([ac6567d](https://github.com/sewadahapp/selaras/commit/ac6567dd1d042686ec3cf432a09e9a87397c61b9))
+- **fix(degung):** apply the display look to every accordion, flatten nested groups ([38b8d20](https://github.com/sewadahapp/selaras/commit/38b8d2058478ac80e58d724d8b6a886860416e14))
+- **fix(degung):** collapse the rail's leftover gutter on nested nav rows ([e138ce8](https://github.com/sewadahapp/selaras/commit/e138ce80f178cefe5470340f63a16df249a8c3e3))
+- **fix(degung):** tone down the display text glow for readability ([a65a32a](https://github.com/sewadahapp/selaras/commit/a65a32a038e93bc0ace34d4d19daf2ef23eda9d9))
+- **fix(degung):** drop the tree-connector rail and readable nav hover ([f712787](https://github.com/sewadahapp/selaras/commit/f71278758a3a686229f589dac0de9242d0fc259a))
+- **fix(toast):** carry a card's full background into its stacked cover ([d7c7562](https://github.com/sewadahapp/selaras/commit/d7c7562e6a3f32bbec646eaafbdc51c40c0df9e7))
+
+### 📖 Documentation
+
+- **docs(degung):** restyle the preset as rounded glossy hardware ([9be8a84](https://github.com/sewadahapp/selaras/commit/9be8a84cdd37706a982a05c80c093cf3636ecbc1))
+
+### 🤖 Other changes
+
+- **chore(test):** restore default worker parallelism ([e4b7f59](https://github.com/sewadahapp/selaras/commit/e4b7f59a6628a0de1567a5ef61e5e29870394d17))
+- **chore(scripts):** run docs template from docs dev ([f743ad4](https://github.com/sewadahapp/selaras/commit/f743ad4e99bcdeff581c18f287cb3dc3729b03b5))
+- **chore(dev):** add Nix shell and limit test workers ([055c03d](https://github.com/sewadahapp/selaras/commit/055c03dcbbe7b6b5fab37210c59b36f03c1a6580))
+- **style(docs):** refine footer and display finish ([31a9dae](https://github.com/sewadahapp/selaras/commit/31a9dae7d7fa23a22d6dbad1e19d5d0616552453))
+- **style(docs):** refine footer content and alignment ([d29b947](https://github.com/sewadahapp/selaras/commit/d29b9479a86caca36c39d1d66d1580257f74b184))
+- **style(degung):** brighten, lengthen and thin the display rim highlight ([413cad5](https://github.com/sewadahapp/selaras/commit/413cad5fae769b5338f45b0c9537f65bc17aa9ab))
+- **style(degung):** enlarge the slider thumb, inset the display rim from the edge ([7530118](https://github.com/sewadahapp/selaras/commit/75301182347d14d16d5b2d7aa1ad7e4381e94465))
+- **style(degung):** tighten the display rim to a hairline ([ed8d531](https://github.com/sewadahapp/selaras/commit/ed8d53190907fa630aff7c2db26eb1333b47702f))
+- **style(degung):** widen the slider thumb, tuck the display rim to all four edges ([8d51891](https://github.com/sewadahapp/selaras/commit/8d51891c41a5323b0713d50568b88fef281e886b))
+- **style(degung):** twin-edge display highlight, chrome pill slider thumb ([c385bb9](https://github.com/sewadahapp/selaras/commit/c385bb948194bfd04f0c3aca3d34e1b9eb7ae911))
+- **style(degung):** add display glow, screen highlight and selection color ([5a2897e](https://github.com/sewadahapp/selaras/commit/5a2897e627f90acf134f4bfc07f35d8bb4365a58))
+
+Published against `@sewadah/selaras` ^0.3.2.
+
 ## v1.0.1
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.0.0...selaras-docs-v1.0.1)
