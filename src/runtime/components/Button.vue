@@ -5,7 +5,8 @@ import type { ButtonThemeSlots } from '../theme/button'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { Primitive } from 'reka-ui'
-import { computed, useSlots } from 'vue'
+import { computed, getCurrentInstance, useSlots } from 'vue'
+import { NuxtLink } from '#components'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { useRippleEnabled } from '../composables/use-ripple'
@@ -34,6 +35,8 @@ const props = withDefaults(defineProps<ButtonProps>(), {
 export interface ButtonProps {
   /** A tag name ('a', 'span', ...) or a component reference (e.g. NuxtLink, via resolveComponent) - Primitive renders whichever is given. */
   as?: string | Component
+  /** Nuxt route or URL. Renders NuxtLink unless an explicit `as` overrides it. */
+  to?: string
   /** Native button type when `as="button"`. Defaults to `button` so actions inside forms do not submit accidentally. */
   type?: 'button' | 'submit' | 'reset'
   color?: ColorRole
@@ -53,6 +56,16 @@ export interface ButtonProps {
 }
 
 const slots = useSlots()
+const hasExplicitAs = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'as')
+const resolvedAs = computed(() => hasExplicitAs ? props.as : props.to ? NuxtLink : props.as)
+const isNativeButton = computed(() => resolvedAs.value === 'button')
+
+function onClick(event: MouseEvent) {
+  if (props.disabled && !isNativeButton.value) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+}
 
 // No default slot content at all (just an icon, or just a loading spinner)
 // - shape it as a square instead of a text button's asymmetric horizontal
@@ -69,7 +82,7 @@ const rippleEnabledSetting = useRippleEnabled()
 // a ripple is itself a transient background fill, so it would reintroduce
 // the exact "fill competing with an adjacent border" look that variant
 // exists to avoid.
-const rippleEnabled = computed(() => rippleEnabledSetting.value && props.variant !== 'text')
+const rippleEnabled = computed(() => rippleEnabledSetting.value && props.variant !== 'text' && props.variant !== 'link')
 const theme = useComponentTheme('button', buttonTheme)
 const themeProps = useThemeProps('button')
 
@@ -88,7 +101,7 @@ const rootProps = useRootProps(() => ui.value.base, () => props.ui?.base)
 </script>
 
 <template>
-  <Primitive v-ripple="rippleEnabled" :as="as" :type="as === 'button' ? type : undefined" :disabled="disabled" :aria-busy="loading || undefined" :data-selaras-color="effectiveColor" v-bind="rootProps">
+  <Primitive v-ripple="rippleEnabled" :as="resolvedAs" :to="resolvedAs === NuxtLink || typeof resolvedAs !== 'string' ? to : undefined" :type="isNativeButton ? type : undefined" :disabled="isNativeButton ? disabled : undefined" :aria-disabled="!isNativeButton && disabled ? 'true' : undefined" :tabindex="!isNativeButton && disabled ? -1 : undefined" :aria-busy="loading || undefined" :data-selaras-color="effectiveColor" v-bind="rootProps" @click="onClick">
     <Icon v-if="loading" :name="icons.loading" :class="applyClassPrefix('animate-spin')" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <!--
       A named slot (not just the `icon` prop) so a consumer building a

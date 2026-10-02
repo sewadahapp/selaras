@@ -88,6 +88,9 @@ button.
 </div>
 ```
 
+`link` is the underlined text-action variant. Use it for an action that
+navigates; `text` is the unadorned text action.
+
 ### Loading
 
 `loading` swaps the leading icon for a spinner. It doesn't imply `disabled` -
@@ -107,9 +110,10 @@ for their own `loading` prop.
 
 ### As a link
 
-`as` renders the button as any tag or component - a plain anchor for an
-external link, or a resolved `NuxtLink` reference for client-side navigation
-(see below for why a bare `"NuxtLink"` string doesn't work).
+`to` renders a NuxtLink for client-side navigation. Use `as="a"` with
+`href` for external links, or set `as` explicitly to override automatic
+routing. Disabled routed buttons expose `aria-disabled`, leave the tab order,
+and ignore clicks.
 
 ::component-example{name="button-link"}
 ::
@@ -118,11 +122,13 @@ external link, or a resolved `NuxtLink` reference for client-side navigation
 <SButton as="a" href="https://github.com" target="_blank" rel="noopener" trailing-icon="hugeicons:square-arrow-up-right">
   Open a link
 </SButton>
+<SButton to="/account">Account</SButton>
+<SButton variant="link" to="/forgot-password">Forgot password?</SButton>
 ```
 
-For an internal route with client-side navigation, resolve the component
-reference first - `Primitive` renders whatever `as` is given via `h()`, which
-doesn't look up global component names the way a compiled template does:
+For the common internal-route case, `to` handles NuxtLink automatically. If
+you need another routing component, pass its resolved component reference in
+`as` - `Primitive` renders the explicit component via `h()`:
 
 ```vue
 <script setup lang="ts">
@@ -206,7 +212,8 @@ shown above.
 | --- | --- | --- |
 | `as` | `string \| Component` | `'button'` |
 | `color` | `ColorRole` (built-in and registered roles) | `primary` |
-| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'text'` | `solid` |
+| `to` | `string` | - |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'text' \| 'link'` | `solid` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `block` | `boolean` | `false` |
 | `raised` | `boolean` | `false` |

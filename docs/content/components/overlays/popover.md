@@ -153,6 +153,9 @@ Use `ui.content` for panel styling and `#content` for its contents.
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `ui` | `Partial<Record<'content' \| 'arrow', string \| object>>` | - |
 
+
+A `class` passed to `<SPopover>` is merged into its default-slot trigger element. Use `ui.content` to style the floating panel.
+
 ## Events
 
 | Event | Payload | Description |

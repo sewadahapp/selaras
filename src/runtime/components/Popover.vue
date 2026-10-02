@@ -8,7 +8,7 @@ import { computed, getCurrentInstance, ref, watch } from 'vue'
 import { popoverTheme } from '../theme/popover'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { overlayPortalProps } from '../utils/overlay'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughProps, useThemeBindings } from '../utils/ui'
 
 export interface PopoverProps {
   open?: boolean
@@ -47,6 +47,7 @@ export interface PopoverSlots {
   content?: () => any
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<PopoverProps>(), {
   // Preserve omission so defaultOpen can initialize uncontrolled state.
   open: undefined,
@@ -58,7 +59,6 @@ const props = withDefaults(defineProps<PopoverProps>(), {
   arrow: false,
   portal: undefined,
 })
-
 const emit = defineEmits<PopoverEmits>()
 defineSlots<PopoverSlots>()
 
@@ -99,6 +99,8 @@ const theme = useComponentTheme('popover', popoverTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
 
+const triggerProps = useFallthroughProps()
+
 const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
 const portalProps = computed(() => overlayPortalProps(props.portal))
 const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
@@ -127,7 +129,7 @@ function onUpdateOpen(value: boolean) {
 
 <template>
   <PopoverRoot :open="internalOpen" :modal="modal" @update:open="onUpdateOpen">
-    <PopoverTrigger v-if="$slots.default" as-child>
+    <PopoverTrigger v-if="$slots.default" as-child v-bind="triggerProps">
       <slot />
     </PopoverTrigger>
     <PopoverPortal v-bind="portalProps">

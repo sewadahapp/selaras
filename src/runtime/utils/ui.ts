@@ -162,6 +162,15 @@ export function useRootProps<T extends AnySlotFn>(slotFn: () => T, override: () 
   ))
 }
 
+/** Routes fallthrough attrs to a chosen non-root target without theme bindings. */
+export function useFallthroughProps(override?: () => UiSlotValue | undefined) {
+  const { fallthroughClass, attrsWithoutClass } = useRootFallthrough()
+  return computed(() => mergeProps(
+    attrsWithoutClass.value,
+    resolveSlot(options => options?.class ?? '', withFallthroughClass(fallthroughClass.value, override?.())),
+  ))
+}
+
 /**
  * Returns fallthrough attributes selected for a component's real interactive
  * element. Wrapped controls use this alongside useRootProps: layout and
@@ -212,7 +221,69 @@ export function useComponentTheme<T extends (...args: any[]) => any>(key: string
       result = tv({ extend: result, ...globalOverride } as any)
     for (const override of collectThemeChain(themeContext?.value, c => c.ui, key))
       result = tv({ extend: result, ...override } as any)
-    return result as T
+    return withVariantFallback(result, key) as T
+  })
+}
+
+const warnedThemeValues = new Set<string>()
+
+/**
+ * Tailwind Variants drops the classes for an axis when its supplied value is
+ * unknown. Keep malformed runtime props usable by resolving them to the
+ * active theme's own default, and report the mistake once in development.
+ * Theme-configured variant values and compound-variant values stay valid.
+ */
+export function withVariantFallback<T extends (...args: any[]) => any>(theme: T, key: string): T {
+  return new Proxy(theme, {
+    apply(target, thisArg, args: [Record<string, unknown>?, ...unknown[]]) {
+      const supplied = args[0]
+      if (!supplied || typeof supplied !== 'object')
+        return Reflect.apply(target, thisArg, args)
+
+      let resolved: Record<string, unknown> | undefined
+      for (const axis of ['variant', 'size'] as const) {
+        const value = supplied[axis]
+        if (value === undefined)
+          continue
+
+        const values = (target as any).variants?.[axis] as Record<string, unknown> | undefined
+        if (!values)
+          continue
+
+        const accepted = new Set(Object.keys(values))
+        for (const compound of ((target as any).compoundVariants ?? []) as Record<string, unknown>[]) {
+          const condition = compound[axis]
+          if (Array.isArray(condition)) {
+            for (const entry of condition)
+              accepted.add(String(entry))
+          }
+          else if (condition !== undefined) {
+            accepted.add(String(condition))
+          }
+        }
+
+        if (accepted.has(String(value)))
+          continue
+
+        const defaults = (target as any).defaultVariants as Record<string, unknown> | undefined
+        const fallback = defaults?.[axis]
+        resolved ??= { ...supplied }
+        resolved[axis] = fallback
+
+        if (import.meta.dev) {
+          const signature = `${key}:${axis}:${String(value)}`
+          if (!warnedThemeValues.has(signature)) {
+            warnedThemeValues.add(signature)
+            const component = `${key[0]?.toUpperCase() ?? ''}${key.slice(1)}`
+            const values = [...accepted].join(', ')
+            const fallbackMessage = fallback === undefined ? 'the default styling' : `"${String(fallback)}"`
+            console.warn(`[Selaras ${component}] Unknown ${axis} "${String(value)}"; using ${fallbackMessage}. Valid values: ${values}.`)
+          }
+        }
+      }
+
+      return Reflect.apply(target, thisArg, resolved ? [resolved, ...args.slice(1)] : args)
+    },
   })
 }
 

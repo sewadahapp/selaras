@@ -106,6 +106,9 @@ controls styling, while `#content` supplies custom content.
 | `disabled` | `boolean` | `false` |
 | `ui` | `Partial<Record<'content' \| 'arrow' \| 'kbds' \| 'kbd', string \| object>>` | - |
 
+
+A `class` passed to `<STooltip>` is merged into its default-slot trigger element. Use `ui.content` to style the floating tooltip.
+
 ## Slots
 
 | Slot | Description |

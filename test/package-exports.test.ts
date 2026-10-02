@@ -16,6 +16,7 @@ describe('public component export boundary', () => {
     const ignored = [...ignoredNames].sort()
 
     expect(ignored).toEqual([
+      'ConfirmRenderer',
       'DrawerRenderer',
       'ModalRenderer',
       'NavigationMenuAccordionItem',
@@ -43,7 +44,7 @@ describe('public component export boundary', () => {
 
   it('auto-imports only the intentional consumer composables', () => {
     expect(moduleSource).not.toContain('addImportsDir')
-    for (const name of ['useCommandPalette', 'useDrawer', 'useIcons', 'useLocale', 'useMessages', 'useModal', 'useRippleEnabled', 'useSlideover', 'createTableColumnHelper', 'useToast'])
+    for (const name of ['useCommandPalette', 'useConfirm', 'useDrawer', 'useIcons', 'useLocale', 'useMessages', 'useModal', 'useRippleEnabled', 'useSlideover', 'createTableColumnHelper', 'useToast'])
       expect(moduleSource).toContain(`name: '${name}'`)
     for (const name of ['provideFormField', 'useFormField', 'useIsMobile', 'useTable'])
       expect(moduleSource).not.toContain(`name: '${name}'`)

@@ -9,7 +9,7 @@ import { vHotkey } from '../directives/hotkey'
 import ShortcutHint from '../internal/ShortcutHint.vue'
 import { contextMenuTheme } from '../theme/context-menu'
 import { overlayPortalProps } from '../utils/overlay'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughProps, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 
 export interface ContextMenuItemDef {
@@ -25,8 +25,8 @@ export interface ContextMenuItemDef {
   hotkey?: boolean
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<ContextMenuProps>(), { portal: undefined })
-
 defineSlots<ContextMenuSlots>()
 
 export interface ContextMenuProps {
@@ -48,6 +48,8 @@ const theme = useComponentTheme('contextMenu', contextMenuTheme)
 const open = ref(false)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
+
+const triggerProps = useFallthroughProps()
 
 const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...props.positioning }))
 const portalProps = computed(() => overlayPortalProps(props.portal))
@@ -71,7 +73,7 @@ function hotkeyFor(item: ContextMenuItemDef): HotkeyOptions | undefined {
 
 <template>
   <ContextMenuRoot :open="open" @update:open="open = $event">
-    <ContextMenuTrigger as-child>
+    <ContextMenuTrigger as-child v-bind="triggerProps">
       <slot />
     </ContextMenuTrigger>
     <ContextMenuPortal v-bind="portalProps">

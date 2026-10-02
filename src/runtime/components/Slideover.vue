@@ -6,7 +6,7 @@ import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { slideoverTheme } from '../theme/slideover'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -42,6 +42,7 @@ export interface SlideoverEmits {
   'afterLeave': []
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<SlideoverProps>(), {
   open: undefined,
   side: 'right',
@@ -52,7 +53,6 @@ const props = withDefaults(defineProps<SlideoverProps>(), {
   overlay: true,
   transition: true,
 })
-
 const emit = defineEmits<SlideoverEmits>()
 
 function onEscapeKeyDown(event: KeyboardEvent) {
@@ -133,8 +133,9 @@ const theme = useComponentTheme('slideover', slideoverTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value({ side: props.side, inset: props.inset, transition: props.transition }))
 
+const contentProps = useRootProps(() => ui.value.content, () => props.ui?.content)
+
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const headerProps = computed(() => resolveSlot(ui.value.header, props.ui?.header))
 const titleProps = computed(() => resolveSlot(ui.value.title, props.ui?.title))
 const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))

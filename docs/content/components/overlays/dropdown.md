@@ -174,6 +174,9 @@ are display-only unless `hotkey: true` is set.
 | `adaptive` | `boolean` | `false` |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator' \| 'arrow' \| 'mobileList' \| 'mobileGroup', string \| object>>` | - |
 
+
+A `class` passed to `<SDropdown>` is merged into its default-slot trigger element. Use `ui.content` to style the floating menu.
+
 ## Slots
 
 | Slot | Props | Description |

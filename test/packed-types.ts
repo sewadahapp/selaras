@@ -6,11 +6,13 @@ import type {
   AutocompleteEmits,
   AutocompleteProps,
   AutocompleteSlots,
+  BadgeProps,
   ButtonProps,
   ColorPickerProps,
   ColorRole,
   DrawerProps,
   InputGroupProps,
+  NavigationMenuItem,
   SelectEmits,
   SelectGroup,
   SelectIdentity,
@@ -29,6 +31,8 @@ import type {
   ToastOptions,
   TreeProps,
   UseCommandPaletteReturn,
+  UseConfirmOptions,
+  UseConfirmReturn,
   UseDrawerOpenOptions,
   UseDrawerReturn,
   UseModalOpenOptions,
@@ -49,11 +53,20 @@ interface PackedUser {
 type PrivateRendererContract = ModalRendererProps
 void (undefined as unknown as PrivateRendererContract)
 
-const packedButton: ButtonProps = { color: 'primary' }
+const packedButton: ButtonProps = { color: 'primary', to: '/settings', variant: 'link' }
+const packedBadge: BadgeProps = { label: 'New', variant: 'subtle' }
+const packedConfirm: UseConfirmOptions = { title: 'Confirm', confirmColor: 'danger' }
+type PackedConfirmContract = UseConfirmReturn
+void packedBadge
+void packedConfirm
+void (undefined as unknown as PackedConfirmContract)
+const packedNavigationItem: NavigationMenuItem = { label: 'Docs', to: '/docs', shortcut: 'mod+d', hotkey: true }
+void packedNavigationItem
 type PreviouslyMissingComponentContracts = AlertDialogProps & ColorPickerProps & DrawerProps & InputGroupProps & SliderProps & TreeProps
 type PublicComposableContracts
   = UseCommandPaletteReturn
     & UseDrawerReturn
+    & UseConfirmReturn
     & UseModalReturn
     & UseSlideoverReturn
     & UseToastReturn

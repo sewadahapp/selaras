@@ -128,7 +128,10 @@ See the full [Theming guide](./docs/content/overview/theming.md).
   # Generate type stubs and prepare the docs site
   npm run docs:prepare
 
-  # Develop with the docs site (documentation + component showcase)
+  # Develop with the Selaras documentation site in /docs
+  npm run dev
+
+  # Develop the standalone documentation template preview
   npm run docs:dev
 
   # Generate the static docs site

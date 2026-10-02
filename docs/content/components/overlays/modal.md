@@ -250,6 +250,9 @@ await modal.open(ModalConfirmDialog, { dismissible: false })
 | `transition` | `boolean` | `true` |
 | `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'headerActions' \| 'title' \| 'description' \| 'close' \| 'maximize' \| 'body' \| 'footer', string \| object>>` | - |
 
+
+A `class` passed to `<SModal>` is merged into the dialog panel. Use `ui.content` for the same panel, or put a class directly on the default-slot trigger to style that trigger.
+
 ## Events
 
 | Event | Payload | Description |

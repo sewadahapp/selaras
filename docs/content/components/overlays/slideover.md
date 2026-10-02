@@ -217,6 +217,9 @@ await slideover.open(SlideoverFilterPanel, { side: 'left' })
 | `transition` | `boolean` | `true` |
 | `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'title' \| 'description' \| 'close' \| 'body' \| 'footer', string \| object>>` | - |
 
+
+A `class` passed to `<SSlideover>` is merged into the slideover panel. Use `ui.content` for the same panel, or put a class directly on the default-slot trigger to style that trigger.
+
 ## Events
 
 | Event | Payload | Description |

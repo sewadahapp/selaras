@@ -8,7 +8,7 @@ import { computed } from 'vue'
 import { tooltipTheme } from '../theme/tooltip'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { overlayPortalProps } from '../utils/overlay'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughProps, useThemeBindings } from '../utils/ui'
 
 export interface TooltipProps {
   text?: string
@@ -26,16 +26,18 @@ export interface TooltipProps {
   ui?: UiProp<TooltipThemeSlots>
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<TooltipProps>(), {
   side: 'top',
   delayDuration: 200,
   arrow: true,
   portal: undefined,
 })
-
 const theme = useComponentTheme('tooltip', tooltipTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value())
+
+const triggerProps = useFallthroughProps()
 
 const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
 const portalProps = computed(() => overlayPortalProps(props.portal))
@@ -46,7 +48,7 @@ const kbdProps = computed(() => resolveSlot(ui.value.kbd, props.ui?.kbd))
 
 <template>
   <TooltipRoot :delay-duration="delayDuration" :disabled="disabled">
-    <TooltipTrigger as-child>
+    <TooltipTrigger as-child v-bind="triggerProps">
       <slot />
     </TooltipTrigger>
     <TooltipPortal v-bind="portalProps">

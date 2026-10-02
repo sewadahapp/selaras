@@ -1,5 +1,6 @@
 import type { Component, Ref } from 'vue'
 import type { ToastOptions } from '../composables/use-toast'
+import type { ColorRole } from '../utils/color-registry'
 import type { ProgrammaticThemeSnapshot } from '../utils/programmatic-theme'
 import { ref } from 'vue'
 import { createAppScopedState } from '../utils/app-scoped-state'
@@ -51,6 +52,16 @@ export interface SlideoverInstance extends ProgrammaticOverlayInstance {
   modal?: boolean
   overlay?: boolean
   transition?: boolean
+  _theme: ProgrammaticThemeSnapshot
+}
+
+export interface ConfirmInstance extends ProgrammaticOverlayInstance {
+  title: string
+  description?: string
+  confirmLabel?: string
+  cancelLabel?: string
+  confirmColor?: ColorRole
+  icon?: string
   _theme: ProgrammaticThemeSnapshot
 }
 
@@ -123,6 +134,7 @@ function createOverlayService<T extends ProgrammaticOverlayInstance>(): () => Pr
 export const useModalService = createOverlayService<ModalInstance>()
 export const useDrawerService = createOverlayService<DrawerInstance>()
 export const useSlideoverService = createOverlayService<SlideoverInstance>()
+export const useConfirmService = createOverlayService<ConfirmInstance>()
 
 const useToastState = createAppScopedState(() => ({
   toasts: ref<ToastItem[]>([]),

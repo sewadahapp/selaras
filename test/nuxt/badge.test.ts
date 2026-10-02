@@ -3,6 +3,11 @@ import { describe, expect, it } from 'vitest'
 import Badge from '../../src/runtime/components/Badge.vue'
 
 describe('badge', () => {
+  it('renders the subtle variant with an elevated surface and border', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { variant: 'subtle', label: 'New' } })
+    expect(wrapper.classes()).toContain('bg-[var(--selaras-resolved-surface-elevated)]')
+    expect(wrapper.classes()).toContain('ring-1')
+  })
   it('binds a custom semantic role directly', async () => {
     const wrapper = await mountSuspended(Badge, { props: { color: 'premium', label: 'Pro' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')

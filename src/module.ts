@@ -74,10 +74,11 @@ export default defineNuxtModule<ModuleOptions>({
       path: resolver.resolve('./runtime/components'),
       prefix: options.prefix,
       pathPrefix: false,
-      // SColumn/SColumnGroup are plain .ts files (never render real DOM), not
-      // .vue SFCs - addComponentsDir only scans .vue by default.
-      extensions: ['vue', 'ts'],
-      // ModalRenderer is App.vue's own internal render loop for useModal(),
+      // SColumn/SColumnGroup are plain render-function modules (never render
+      // real DOM). Source uses .ts; the published build emits .js.
+      extensions: ['vue', 'ts', 'js'],
+      // ModalRenderer/ConfirmRenderer are App.vue's internal render loops for
+      // useModal()/useConfirm(),
       // mirroring the same un-exported overlay-provider pattern other Nuxt
       // component libraries commonly use internally - not meant to be
       // placed by a consumer (App.vue already mounts one; a second copy
@@ -90,7 +91,7 @@ export default defineNuxtModule<ModuleOptions>({
       // meant to be placed directly either. SlideoverRenderer/DrawerRenderer
       // are useSlideover()'s/useDrawer()'s own render loops, same reasoning
       // as ModalRenderer.
-      ignore: ['**/ModalRenderer.vue', '**/NavigationMenuAccordionItem.vue', '**/NavigationMenuFlyoutList.vue', '**/NavigationMenuFlyoutTrigger.vue', '**/SlideoverRenderer.vue', '**/DrawerRenderer.vue'],
+      ignore: ['**/ModalRenderer.vue', '**/ConfirmRenderer.vue', '**/NavigationMenuAccordionItem.vue', '**/NavigationMenuFlyoutList.vue', '**/NavigationMenuFlyoutTrigger.vue', '**/SlideoverRenderer.vue', '**/DrawerRenderer.vue'],
     })
 
     // ProsePre/ProseH1-H6 are the only two Prose*.vue components with real
@@ -135,6 +136,7 @@ export default defineNuxtModule<ModuleOptions>({
     // public value from use-table and also has an explicit package entry.
     addImports([
       { name: 'useCommandPalette', from: resolver.resolve('./runtime/composables/use-command-palette') },
+      { name: 'useConfirm', from: resolver.resolve('./runtime/composables/use-confirm') },
       { name: 'useDrawer', from: resolver.resolve('./runtime/composables/use-drawer') },
       { name: 'useIcons', from: resolver.resolve('./runtime/composables/use-icons') },
       { name: 'useLocale', from: resolver.resolve('./runtime/composables/use-locale') },

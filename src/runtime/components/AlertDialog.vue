@@ -6,8 +6,9 @@ import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDe
 import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 'vue'
 import { useMessages } from '../composables/use-messages'
 import { alertDialogTheme } from '../theme/alert-dialog'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
 import Button from './Button.vue'
+import Icon from './Icon.vue'
 
 export interface AlertDialogProps {
   open?: boolean
@@ -15,6 +16,8 @@ export interface AlertDialogProps {
   defaultOpen?: boolean
   title?: string
   description?: string
+  /** Optional icon shown beside the dialog heading. */
+  icon?: string
   /** Label for the default Cancel button - only rendered when no `footer` slot is given. @default 'Cancel' */
   cancelLabel?: string
   /** Label for the default action button - only rendered when no `footer` slot is given. @default 'Continue' */
@@ -43,13 +46,13 @@ export interface AlertDialogEmits {
   'afterLeave': []
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<AlertDialogProps>(), {
   open: undefined,
   dismissible: true,
   overlay: true,
   transition: true,
 })
-
 const emit = defineEmits<AlertDialogEmits>()
 
 function onEscapeKeyDown(event: KeyboardEvent) {
@@ -128,8 +131,9 @@ const theme = useComponentTheme('alertDialog', alertDialogTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value({ transition: props.transition }))
 
+const contentProps = useRootProps(() => ui.value.content, () => props.ui?.content)
+
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const headerProps = computed(() => resolveSlot(ui.value.header, props.ui?.header))
 const titleProps = computed(() => resolveSlot(ui.value.title, props.ui?.title))
 const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
@@ -159,14 +163,19 @@ const footerProps = computed(() => resolveSlot(ui.value.footer, props.ui?.footer
         @pointer-down-outside="onPointerDownOutside"
         @animationend="onContentAnimationEnd"
       >
-        <div v-if="title || description || $slots.header" v-bind="headerProps">
+        <div v-if="title || description || icon || $slots.header" v-bind="headerProps">
           <slot name="header">
-            <AlertDialogTitle v-if="title" v-bind="titleProps">
-              {{ title }}
-            </AlertDialogTitle>
-            <AlertDialogDescription v-if="description" v-bind="descriptionProps">
-              {{ description }}
-            </AlertDialogDescription>
+            <div class="flex items-start gap-3">
+              <Icon v-if="icon" :name="icon" class="mt-0.5 size-5 shrink-0" aria-hidden="true" />
+              <div class="min-w-0">
+                <AlertDialogTitle v-if="title" v-bind="titleProps">
+                  {{ title }}
+                </AlertDialogTitle>
+                <AlertDialogDescription v-if="description" v-bind="descriptionProps">
+                  {{ description }}
+                </AlertDialogDescription>
+              </div>
+            </div>
           </slot>
         </div>
         <div v-if="$slots.body" v-bind="bodyProps">

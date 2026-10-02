@@ -13,6 +13,7 @@ order: 11
 <SBadge label="Primary" color="primary" />
 <SBadge label="Solid" color="primary" variant="solid" />
 <SBadge label="Outline" color="danger" variant="outline" />
+<SBadge label="Subtle" color="primary" variant="subtle" />
 ```
 
 ### Icons
@@ -99,7 +100,7 @@ every slot and variant - here's `Badge`'s own theme file:
 | `trailingIcon` | `string` | - |
 | `dot` | `boolean` | `false` |
 | `color` | `ColorRole` (built-in or registered semantic role) | `'neutral'` |
-| `variant` | `'solid' \| 'soft' \| 'outline'` | `'soft'` |
+| `variant` | `'solid' \| 'soft' \| 'outline' \| 'subtle'` | `'soft'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `ui` | `Partial<Record<BadgeSlot, string \| object>>` | - |
 

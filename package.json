@@ -45,6 +45,7 @@
       "import": "./dist/runtime/theme-api.js"
     },
     "./components/DrawerRenderer*": {},
+    "./components/ConfirmRenderer*": {},
     "./components/ModalRenderer*": {},
     "./components/NavigationMenuAccordionItem*": {},
     "./components/NavigationMenuFlyoutList*": {},
@@ -76,6 +77,7 @@
         "./dist/runtime/theme-api.d.ts"
       ],
       "components/DrawerRenderer*": [],
+      "components/ConfirmRenderer*": [],
       "components/ModalRenderer*": [],
       "components/NavigationMenuAccordionItem*": [],
       "components/NavigationMenuFlyoutList*": [],
@@ -98,7 +100,7 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
-    "dev": "bun run docs:dev",
+    "dev": "bun run docs:prepare && nuxt dev docs",
     "dev:build": "bun run docs:build",
     "dev:generate": "bun run docs:generate",
     "dev:preview": "bunx nuxt preview docs",

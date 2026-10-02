@@ -6,7 +6,7 @@ import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { modalTheme } from '../theme/modal'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -45,6 +45,7 @@ export interface ModalEmits {
   'afterLeave': []
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<ModalProps>(), {
   open: undefined,
   dismissible: true,
@@ -54,7 +55,6 @@ const props = withDefaults(defineProps<ModalProps>(), {
   transition: true,
   autoFocus: true,
 })
-
 const emit = defineEmits<ModalEmits>()
 
 function onEscapeKeyDown(event: KeyboardEvent) {
@@ -158,8 +158,9 @@ const theme = useComponentTheme('modal', modalTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value({ fullscreen: internalFullscreen.value, transition: props.transition }))
 
+const contentProps = useRootProps(() => ui.value.content, () => props.ui?.content)
+
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const headerProps = computed(() => resolveSlot(ui.value.header, props.ui?.header))
 const headerActionsProps = computed(() => resolveSlot(ui.value.headerActions, props.ui?.headerActions))
 const titleProps = computed(() => resolveSlot(ui.value.title, props.ui?.title))

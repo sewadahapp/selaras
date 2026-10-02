@@ -7,7 +7,7 @@ import { computed, getCurrentInstance, ref, useSlots, watch, watchEffect } from 
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { drawerTheme } from '../theme/drawer'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -50,6 +50,7 @@ export interface DrawerEmits {
   'afterLeave': []
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<DrawerProps>(), {
   open: undefined,
   side: 'bottom',
@@ -60,7 +61,6 @@ const props = withDefaults(defineProps<DrawerProps>(), {
   overlay: true,
   transition: true,
 })
-
 const emit = defineEmits<DrawerEmits>()
 
 // The edge a drawer sits on is the direction you'd naturally swipe it back
@@ -148,8 +148,9 @@ const theme = useComponentTheme('drawer', drawerTheme)
 const themeBindings = useThemeBindings()
 const ui = computed(() => theme.value({ side: props.side, transition: props.transition }))
 
+const contentProps = useRootProps(() => ui.value.content, () => props.ui?.content)
+
 const overlayProps = computed(() => resolveSlot(ui.value.overlay, props.ui?.overlay))
-const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const handleProps = computed(() => resolveSlot(ui.value.handle, props.ui?.handle))
 const headerProps = computed(() => resolveSlot(ui.value.header, props.ui?.header))
 const titleProps = computed(() => resolveSlot(ui.value.title, props.ui?.title))

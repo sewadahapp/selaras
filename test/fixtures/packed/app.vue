@@ -10,6 +10,7 @@ const packedLocale = useLocale()
 const packedMessages = useMessages()
 const packedRipple = useRippleEnabled()
 const { add: addPublishedToast } = useToast()
+const { confirm: requestConfirmation } = useConfirm()
 const hyphenatedRole: ColorRole = 'published-accent'
 const button: ButtonProps = { color: role }
 const navigationItems = [{ label: 'Published navigation', to: '/', active: true }]
@@ -43,10 +44,13 @@ void invalidConditions
 const helper = createTableColumnHelper<{ id: string }>()
 const column = helper.accessor('id', { header: 'ID' })
 const choices = [{ id: 1, title: 'Published select' }]
+const primitiveStrings = ['admin', 'editor']
+const primitiveNumbers = [0, 1, 2]
 const config: NonNullable<AppConfig['selaras']> = { tokens: { light: { colors: { published: { fill: '#123456' } } } } }
 // @ts-expect-error generated AppConfig augmentation must reject unknown token roles
 const invalidConfig: NonNullable<AppConfig['selaras']> = { tokens: { light: { colors: { 'not-published': { fill: '#123456' } } } } }
 const completeConfig: NonNullable<AppConfig['selaras']> = { icons: { close: 'packed:close' }, locale: 'en-GB', messages: { close: 'Packed close' }, ripple: false }
+void requestConfirmation
 // @ts-expect-error Selaras settings no longer pollute generic AppConfig keys
 const legacyConfig: AppConfig = { locale: 'en-GB' }
 // @ts-expect-error generated registry must reject roles absent from this consumer
@@ -73,6 +77,9 @@ void hyphenatedRole
     <SToast />
     <SButton id="packed-default" v-bind="button">
       Published default
+    </SButton>
+    <SButton id="packed-link-button" to="/packed-destination" variant="link">
+      Open destination
     </SButton>
     <SButton id="packed-seed" :color="seededRole">
       Seeded role
@@ -159,8 +166,11 @@ void hyphenatedRole
       </template>
     </STabs>
     <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" :color="role" aria-label="Published selection" />
+    <SSelect id="packed-select-primitive-string" name="packed-role" :items="primitiveStrings" default-value="admin" aria-label="Primitive role" />
+    <SSelect id="packed-select-primitive-number" name="packed-count" :items="primitiveNumbers" :default-value="0" aria-label="Primitive count" />
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />
     <SAutocomplete id="packed-autocomplete-forced" name="packed-forced-choice" :items="choices" value-key="id" label-key="title" force-selection :default-value="1" :color="role" aria-label="Published suggestion" />
+    <SAutocomplete id="packed-autocomplete-primitive" name="packed-primitive-suggestion" :items="primitiveNumbers" force-selection :default-value="0" aria-label="Primitive suggestion" />
     <SAutocomplete id="packed-autocomplete-created" name="packed-created-choice" :items="choices" value-key="id" label-key="title" default-value="Created text" aria-label="Published free text" />
     <ExternalForm />
   </SApp>

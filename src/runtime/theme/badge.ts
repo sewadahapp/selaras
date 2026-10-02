@@ -27,6 +27,7 @@ export const badgeTheme = tv({
       solid: { base: 'bg-[var(--_selaras-color-fill)] text-[var(--_selaras-color-on-fill)]' },
       soft: { base: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-on-subtle)]' },
       outline: { base: 'ring-1 ring-inset ring-[var(--_selaras-color-border)] text-[var(--_selaras-color-text)]' },
+      subtle: { base: 'bg-[var(--selaras-resolved-surface-elevated)] ring-1 ring-[var(--selaras-resolved-border-default)] text-[var(--_selaras-color-text)]' },
     },
     size: {
       sm: { base: 'h-4 px-1 text-xs', leadingIcon: 'size-2.5', trailingIcon: 'size-2.5', dot: 'size-1.5' },

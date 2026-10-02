@@ -3,6 +3,7 @@ export interface MessageRegistry {
   clear: string
   close: string
   cancel: string
+  confirmation: string
   continue: string
   colorModeToggle: string
   colorPicker: string
@@ -86,6 +87,7 @@ export const defaultMessages: MessageRegistry = {
   clear: 'Clear',
   close: 'Close',
   cancel: 'Cancel',
+  confirmation: 'Confirm action',
   continue: 'Continue',
   colorModeToggle: 'Toggle color mode',
   colorPicker: 'Color picker',

@@ -207,6 +207,9 @@ every slot and variant - here's the panel's own theme file:
 | `transition` | `boolean` | `true` |
 | `ui` | `Partial<Record<DrawerSlot, string \| object>>` | - |
 
+
+A `class` passed to `<SDrawer>` is merged into the drawer panel. Use `ui.content` for the same panel, or put a class directly on the default-slot trigger to style that trigger.
+
 ## Events
 
 | Event | Payload | Description |

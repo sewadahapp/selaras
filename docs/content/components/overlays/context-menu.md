@@ -135,6 +135,9 @@ the context menu is open. Otherwise the shortcut is a visual hint only.
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator', string \| object>>` | - |
 
+
+A `class` passed to `<SContextMenu>` is merged into its default-slot context target. Use `ui.content` to style the floating menu.
+
 ## Slots
 
 | Slot | Props | Description |

@@ -4,6 +4,33 @@ import { defineComponent, h } from 'vue'
 import Button from '../../src/runtime/components/Button.vue'
 
 describe('button', () => {
+  it('renders NuxtLink for to when as is omitted', async () => {
+    const wrapper = await mountSuspended(Button, { props: { to: '/forgot-password' }, slots: { default: 'Forgot password?' } })
+
+    const link = wrapper.find('a')
+    expect(link.exists()).toBe(true)
+    expect(link.attributes('href')).toBe('/forgot-password')
+    expect(link.text()).toContain('Forgot password?')
+  })
+
+  it('lets an explicit as override automatic NuxtLink routing', async () => {
+    const wrapper = await mountSuspended(Button, { props: { as: 'button', to: '/ignored' }, slots: { default: 'Action' } })
+
+    expect(wrapper.find('button').exists()).toBe(true)
+    expect(wrapper.find('a').exists()).toBe(false)
+  })
+
+  it('keeps disabled routed buttons from navigating', async () => {
+    const wrapper = await mountSuspended(Button, { props: { to: '/disabled', disabled: true }, slots: { default: 'Disabled' } })
+
+    const link = wrapper.find('a')
+    expect(link.attributes('aria-disabled')).toBe('true')
+    expect(link.attributes('tabindex')).toBe('-1')
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true })
+    link.element.dispatchEvent(event)
+    expect(event.defaultPrevented).toBe(true)
+  })
+
   it('renders as a plain button by default', async () => {
     const wrapper = await mountSuspended(Button, { slots: { default: () => 'Click me' } })
     expect(wrapper.element.tagName).toBe('BUTTON')
@@ -127,6 +154,12 @@ describe('button', () => {
     expect(wrapper.classes().some(c => c.includes('bg-'))).toBe(false)
     expect(wrapper.classes().some(c => c.includes('ring-') || c.startsWith('border'))).toBe(false)
     expect(wrapper.classes()).toContain('hover:text-[var(--_selaras-color-text-hover)]')
+  })
+
+  it('renders the link variant as underlined text without fill or border chrome', async () => {
+    const wrapper = await mountSuspended(Button, { props: { variant: 'link' }, slots: { default: () => 'Learn more' } })
+    expect(wrapper.classes()).toContain('underline')
+    expect(wrapper.classes().some(name => name.startsWith('bg-') || name.startsWith('ring-'))).toBe(false)
   })
 
   it('does not spawn a ripple for the `text` variant, since it would reintroduce a background fill', async () => {

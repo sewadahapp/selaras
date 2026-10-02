@@ -14,7 +14,7 @@ import ShortcutHint from '../internal/ShortcutHint.vue'
 import { dropdownTheme } from '../theme/dropdown'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { overlayPortalProps } from '../utils/overlay'
-import { resolveSlot, useComponentTheme, useThemeBindings } from '../utils/ui'
+import { resolveSlot, useComponentTheme, useFallthroughProps, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 import Modal from './Modal.vue'
 
@@ -56,12 +56,12 @@ export interface DropdownEmits {
   'update:open': [value: boolean]
 }
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<DropdownProps>(), {
   open: undefined,
   arrow: false,
   portal: undefined,
 })
-
 const emit = defineEmits<DropdownEmits>()
 const isControlled = Object.hasOwn(getCurrentInstance()?.vnode.props ?? {}, 'open')
 const internalOpen = ref(props.open ?? props.defaultOpen ?? false)
@@ -82,6 +82,8 @@ const isMobile = useIsMobile()
 const modalId = `selaras-dropdown-modal-${useId()}`
 const triggerElement = ref<{ $el?: HTMLElement } | HTMLElement>()
 const ui = computed(() => theme.value())
+
+const triggerProps = useFallthroughProps()
 
 const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
 const portalProps = computed(() => overlayPortalProps(props.portal))
@@ -167,7 +169,7 @@ function onModalAfterLeave() {
 
 <template>
   <DropdownMenuRoot :open="desktopOpen" @update:open="onUpdateMenuOpen">
-    <DropdownMenuTrigger ref="triggerElement" as-child>
+    <DropdownMenuTrigger ref="triggerElement" as-child v-bind="triggerProps">
       <slot />
     </DropdownMenuTrigger>
     <DropdownMenuPortal v-if="!mobilePresentation" v-bind="portalProps">

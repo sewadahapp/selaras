@@ -24,6 +24,8 @@ export const buttonTheme = tv({
       ghost: { base: 'text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle-hover)] active:bg-[var(--_selaras-color-subtle-pressed)]' },
       // Text actions never paint a background, including their interaction states.
       text: { base: 'text-[var(--_selaras-color-text)] hover:text-[var(--_selaras-color-text-hover)] active:text-[var(--_selaras-color-text-pressed)]' },
+      // Link actions add an underline while keeping text's unfilled interaction treatment.
+      link: { base: 'text-[var(--_selaras-color-text)] underline underline-offset-4 hover:text-[var(--_selaras-color-text-hover)] active:text-[var(--_selaras-color-text-pressed)]' },
     },
     size: {
       sm: { base: 'h-8 px-3 text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4' },

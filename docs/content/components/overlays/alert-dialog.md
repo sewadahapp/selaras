@@ -116,6 +116,7 @@ every slot and variant - here's the dialog's own theme file:
 | `defaultOpen` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
+| `icon` | `string` | - |
 | `cancelLabel` | `string` | `'Cancel'` |
 | `actionLabel` | `string` | `'Continue'` |
 | `actionColor` | `'primary' \| 'secondary' \| 'success' \| 'danger' \| 'warning' \| 'info' \| 'neutral'` | - |
@@ -123,6 +124,9 @@ every slot and variant - here's the dialog's own theme file:
 | `overlay` | `boolean` | `true` |
 | `transition` | `boolean` | `true` |
 | `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'title' \| 'description' \| 'body' \| 'footer', string \| object>>` | - |
+
+
+A `class` passed to `<SAlertDialog>` is merged into the alert dialog panel. Use `ui.content` for the same panel, or put a class directly on the default-slot trigger to style that trigger.
 
 ## Events
 

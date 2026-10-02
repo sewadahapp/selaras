@@ -5,6 +5,7 @@ import { computed } from 'vue'
 import { useAppConfig, useHead } from '#imports'
 import { useLocale } from '../composables/use-locale'
 import { generateRuntimeTokenOverrideCss } from '../utils/color-registry'
+import ConfirmRenderer from './ConfirmRenderer.vue'
 import DrawerRenderer from './DrawerRenderer.vue'
 import ModalRenderer from './ModalRenderer.vue'
 import SlideoverRenderer from './SlideoverRenderer.vue'
@@ -56,5 +57,6 @@ useHead({
     <ModalRenderer />
     <SlideoverRenderer />
     <DrawerRenderer />
+    <ConfirmRenderer />
   </ConfigProvider>
 </template>
