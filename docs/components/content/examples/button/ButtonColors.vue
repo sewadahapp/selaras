@@ -12,6 +12,9 @@ const colors = ['primary', 'secondary', 'success', 'danger', 'info', 'warning', 
       <SButton :color="color" variant="soft">
         Soft
       </SButton>
+      <SButton :color="color" variant="subtle">
+        Subtle
+      </SButton>
       <SButton :color="color" variant="outline">
         Outline
       </SButton>
@@ -20,6 +23,9 @@ const colors = ['primary', 'secondary', 'success', 'danger', 'info', 'warning', 
       </SButton>
       <SButton :color="color" variant="text">
         Text
+      </SButton>
+      <SButton :color="color" variant="link">
+        Link
       </SButton>
     </div>
   </div>

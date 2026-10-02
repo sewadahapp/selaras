@@ -11,6 +11,9 @@ order: 10
 
 ### Variants
 
+`subtle` combines the tinted background of `soft` with a border. `link` uses
+the same text color transitions as `text` and adds an underline on hover.
+
 ::component-example{name="button-variants"}
 ::
 
@@ -213,7 +216,7 @@ shown above.
 | `as` | `string \| Component` | `'button'` |
 | `color` | `ColorRole` (built-in and registered roles) | `primary` |
 | `to` | `string` | - |
-| `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'text' \| 'link'` | `solid` |
+| `variant` | `'solid' \| 'soft' \| 'subtle' \| 'outline' \| 'ghost' \| 'text' \| 'link'` | `solid` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `block` | `boolean` | `false` |
 | `raised` | `boolean` | `false` |

@@ -6,6 +6,9 @@
     <SButton variant="soft">
       Soft
     </SButton>
+    <SButton variant="subtle">
+      Subtle
+    </SButton>
     <SButton variant="outline">
       Outline
     </SButton>
@@ -14,6 +17,9 @@
     </SButton>
     <SButton variant="text">
       Text
+    </SButton>
+    <SButton variant="link">
+      Link
     </SButton>
   </div>
 </template>

@@ -31,6 +31,7 @@ export const degungThemeUi = {
     compoundVariants: [
       { variant: 'solid', class: { base: 'selaras-degung-lit' } },
       { variant: 'soft', class: { base: 'selaras-degung-tint' } },
+      { variant: 'subtle', class: { base: 'selaras-degung-tint' } },
       { variant: 'outline', class: { base: 'selaras-degung-chrome selaras-degung-chrome--ringed' } },
     ],
   },

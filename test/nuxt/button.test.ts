@@ -156,9 +156,10 @@ describe('button', () => {
     expect(wrapper.classes()).toContain('hover:text-[color-mix(in_srgb,var(--_selaras-color-text-hover)_60%,var(--selaras-resolved-text-default))]')
   })
 
-  it('renders the link variant as underlined text without fill or border chrome', async () => {
+  it('renders the link variant with an underline on hover without fill or border chrome', async () => {
     const wrapper = await mountSuspended(Button, { props: { variant: 'link' }, slots: { default: () => 'Learn more' } })
-    expect(wrapper.classes()).toContain('underline')
+    expect(wrapper.classes()).toContain('hover:underline')
+    expect(wrapper.classes()).not.toContain('underline')
     expect(wrapper.classes().some(name => name.startsWith('bg-') || name.startsWith('ring-'))).toBe(false)
   })
 

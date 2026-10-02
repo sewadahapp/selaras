@@ -20,12 +20,13 @@ export const buttonTheme = tv({
     variant: {
       solid: { base: 'bg-[var(--_selaras-color-fill)] text-[var(--_selaras-color-on-fill)] hover:bg-[var(--_selaras-color-fill-hover)] active:bg-[var(--_selaras-color-fill-pressed)]' },
       soft: { base: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-on-subtle)] hover:bg-[var(--_selaras-color-subtle-hover)] active:bg-[var(--_selaras-color-subtle-pressed)]' },
+      subtle: { base: 'bg-[var(--_selaras-color-subtle)] text-[var(--_selaras-color-on-subtle)] ring-1 ring-inset ring-[var(--_selaras-color-border)] hover:bg-[var(--_selaras-color-subtle-hover)] active:bg-[var(--_selaras-color-subtle-pressed)]' },
       outline: { base: 'ring-1 ring-inset ring-[var(--_selaras-color-border)] text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle-hover)] active:bg-[var(--_selaras-color-subtle-pressed)]' },
       ghost: { base: 'text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle-hover)] active:bg-[var(--_selaras-color-subtle-pressed)]' },
       // Text actions never paint a background, including their interaction states.
       text: { base: 'text-[var(--_selaras-color-text)] hover:text-[color-mix(in_srgb,var(--_selaras-color-text-hover)_60%,var(--selaras-resolved-text-default))] active:text-[color-mix(in_srgb,var(--_selaras-color-text-pressed)_40%,var(--selaras-resolved-text-default))]' },
-      // Link actions add an underline while keeping text's unfilled interaction treatment.
-      link: { base: 'text-[var(--_selaras-color-text)] underline underline-offset-4 hover:text-[var(--_selaras-color-text-hover)] active:text-[var(--_selaras-color-text-pressed)]' },
+      // Link actions underline on hover while keeping text's interaction treatment.
+      link: { base: 'text-[var(--_selaras-color-text)] underline-offset-4 hover:underline hover:text-[color-mix(in_srgb,var(--_selaras-color-text-hover)_60%,var(--selaras-resolved-text-default))] active:text-[color-mix(in_srgb,var(--_selaras-color-text-pressed)_40%,var(--selaras-resolved-text-default))]' },
     },
     size: {
       sm: { base: 'h-8 px-3 text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4' },
