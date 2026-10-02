@@ -1,11 +1,8 @@
 ---
-navigation: false
 title: Migrating to 1.0
 description: Update pre-1.0 Selaras themes, configuration, and adaptive controls.
-order: 50
+order: 90
 ---
-
-This guide has moved to [the updated documentation](/overview/getting-started/migrating-to-1). Existing examples and anchors remain available below.
 
 Selaras 1.0 makes the theme and component contracts explicit. Most applications
 can keep the usual installation and component usage. Review this guide if you
@@ -34,7 +31,7 @@ the structural entry instead:
 
 Structural CSS is an explicit complete-theme contract. It does not fall back
 to Selaras palette values or diagnose omitted roles at runtime. See
-[Theming](/overview/theming) for the required semantic recipes and functional
+[Theming](/overview/theming/overview) for the required semantic recipes and functional
 inputs.
 
 ## 2. Use the public token namespaces
@@ -145,7 +142,7 @@ presentation with `adaptive`:
 The presentation is selected when the control opens and remains stable until it
 closes. Autocomplete intentionally uses a nonmodal mobile panel so its editable
 combobox keeps focus. The module reads the Tailwind breakpoint selected by
-`selaras.adaptive.breakpoint`; see [Installation](/overview/installation#adaptive-breakpoint).
+`selaras.adaptive.breakpoint`; see [Installation](/overview/getting-started/nuxt-configuration#adaptive-breakpoint).
 
 ## 6. Follow controlled and native-control conventions
 
@@ -174,6 +171,6 @@ composables, raw recipe files, or generated implementation files from `dist`.
 Those paths were never stable integration points and are intentionally outside
 the 1.0 public API.
 
-Read the [Installation](/overview/installation), [Theming](/overview/theming),
+Read the [Installation](/overview/getting-started/installation), [Theming](/overview/theming/overview),
 and individual component pages for the resulting API reference. The generated
 changelog remains a historical record; this page is the migration contract.

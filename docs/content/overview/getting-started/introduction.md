@@ -1,12 +1,9 @@
 ---
-navigation: false
 
 title: Introduction
 description: Learn what Selaras is, what it provides, and how you can customize it.
 order: 10
 ---
-
-This guide has moved to [the updated documentation](/overview/getting-started/introduction). Existing examples and anchors remain available below.
 
 Selaras is a UI component library for Nuxt.
 
@@ -37,7 +34,7 @@ You do not need JavaScript or Nuxt configuration for normal theme changes.
 
 Use Nuxt configuration only when Selaras needs build-time information. For example, use it when you add a new color role such as `tertiary`.
 
-See [Theming](/overview/theming) for all theme options.
+See [Theming](/overview/theming/overview) for all theme options.
 
 ### Predictable component customization
 
@@ -115,9 +112,9 @@ Selaras can also provide small DOM behaviors through directives, such as:
 
 ## Where to start
 
-Start with [Installation](/overview/installation).
+Start with [Installation](/overview/getting-started/installation).
 
-Then read [Theming](/overview/theming) to learn how to customize Selaras with CSS.
+Then read [Theming](/overview/theming/overview) to learn how to customize Selaras with CSS.
 
 Use the component documentation when you need the props, slots, events, variants, and `:ui` options for a specific component.
 

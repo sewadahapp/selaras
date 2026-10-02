@@ -14,6 +14,7 @@
     "@sewadah/selaras": "file:..",
     "@sewadah/selaras-docs": "workspace:*",
     "nuxt": "^4.5.2",
+    "nuxt-llms": "^0.2.0",
     "shiki": "^4.4.3"
   },
   "devDependencies": {

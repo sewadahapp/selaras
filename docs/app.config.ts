@@ -31,7 +31,7 @@ export default defineAppConfig({
       links: [
         {
           label: 'Overview',
-          to: '/overview/introduction',
+          to: '/overview/getting-started/introduction',
         },
         {
           label: 'Components',

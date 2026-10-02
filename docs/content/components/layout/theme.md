@@ -20,11 +20,11 @@ explicit DOM boundary.
 </STheme>
 ```
 
-This is the same override shape as [`app.config.selaras.ui`](/overview/theming#4-global-overrides)
+This is the same override shape as [`app.config.selaras.ui`](/overview/theming/global-configuration)
 - `{ <componentKey>: { slots: { <slotName>: '...' } } }`, merged onto the
 component's base theme the same way (`tv()`'s own `extend`) - just scoped
 to this subtree instead of the whole app. See
-[Theming](/overview/theming) for the full precedence order and how
+[Theming](/overview/theming/overview) for the full precedence order and how
 `:ui`/`app.config.selaras.ui`/`STheme` all fit together.
 
 ### Prop defaults

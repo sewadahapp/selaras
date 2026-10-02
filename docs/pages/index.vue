@@ -74,12 +74,12 @@ function save() {
 }
 
 const principles = [
-  { title: 'Themed with CSS variables', text: 'Every color, radius and shadow is a custom property. Recolor a role by changing one value.', to: '/overview/theming', link: 'How theming works' },
-  { title: 'One prop to customize', text: 'Pass classes to any part of a component through its ui prop. They merge with the defaults instead of fighting them.', to: '/overview/theming', link: 'Customize a component' },
-  { title: 'Accessible primitives', text: 'Built on Reka UI, so keyboard support, focus management and ARIA come with every component.', to: '/overview/introduction#accessible-primitives', link: 'Accessibility approach' },
+  { title: 'Themed with CSS variables', text: 'Every color, radius and shadow is a custom property. Recolor a role by changing one value.', to: '/overview/theming/overview', link: 'How theming works' },
+  { title: 'One prop to customize', text: 'Pass classes to any part of a component through its ui prop. They merge with the defaults instead of fighting them.', to: '/overview/theming/overview', link: 'Customize a component' },
+  { title: 'Accessible primitives', text: 'Built on Reka UI, so keyboard support, focus management and ARIA come with every component.', to: '/overview/getting-started/introduction#accessible-primitives', link: 'Accessibility approach' },
   { title: 'Ready for small screens', text: 'Select, date and color pickers can switch to a full modal on phones, where a popover is too cramped.', to: '/components/forms/select', link: 'See Select' },
-  { title: 'Motion in CSS', text: 'Open, close and hover transitions run on data attributes, and respect reduced-motion settings.', to: '/overview/introduction#css-based-motion', link: 'How motion works' },
-  { title: 'Typed throughout', text: 'Props, emits and slots are exported for every component, for wrappers that stay in sync.', to: '/overview/typescript', link: 'TypeScript guide' },
+  { title: 'Motion in CSS', text: 'Open, close and hover transitions run on data attributes, and respect reduced-motion settings.', to: '/overview/getting-started/introduction#css-based-motion', link: 'How motion works' },
+  { title: 'Typed throughout', text: 'Props, emits and slots are exported for every component, for wrappers that stay in sync.', to: '/overview/getting-started/typescript', link: 'TypeScript guide' },
 ]
 
 // Guides that live beside the components but aren't components themselves.
@@ -132,7 +132,7 @@ const steps = [
             take on your brand instead of imposing one.
           </p>
           <div class="home-actions">
-            <SButton :as="NuxtLink" to="/overview/installation" size="lg">
+            <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg">
               Get started
             </SButton>
             <SButton :as="NuxtLink" to="/components/elements/button" size="lg" variant="outline" color="neutral">
@@ -250,7 +250,7 @@ const steps = [
             </SProsePre>
           </li>
         </ol>
-        <NuxtLink to="/overview/installation" class="home-link">
+        <NuxtLink to="/overview/getting-started/installation" class="home-link">
           Read the full installation guide
         </NuxtLink>
       </div>

@@ -1,4 +1,5 @@
 ---
+navigation: false
 title: Installation
 description: Add Selaras to a Nuxt project.
 order: 20
@@ -136,7 +137,11 @@ export default defineNuxtConfig({
 ```
 
 | Option | Type | Default | Description |
-| --- | --- | --- | --- |
+| --- | --- | --- | ---
+
+This guide has moved to [the updated documentation](/overview/getting-started/installation). Existing examples and anchors remain available below.
+
+|
 | `prefix` | `string` | `'S'` | Prefix used for auto-imported components (`SButton`, `SModal`, ...). |
 | `classPrefix` | `string` | none | Namespaces every class Selaras's own components render - see below. |
 | `adaptive.breakpoint` | `string` | `'md'` | Selects a Tailwind `--breakpoint-*` token for adaptive presentation. |

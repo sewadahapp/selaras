@@ -10,5 +10,5 @@ and CSS custom properties.
 It provides accessible components, semantic theme contracts, typed Nuxt
 integration, and composables for application-level UI.
 
-Start with [Introduction](/overview/introduction), then follow
-[Installation](/overview/installation) and [Theming](/overview/theming).
+Start with [Introduction](/overview/getting-started/introduction), then follow
+[Installation](/overview/getting-started/installation) and [Theming](/overview/theming/overview).

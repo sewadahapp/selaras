@@ -8,8 +8,8 @@
 // NuxtLink) can actually resolve them instead of 404ing.
 const navigation = [
   { title: 'Guide', path: '/overview', children: [
-    { title: 'Introduction', path: '/overview/introduction' },
-    { title: 'Installation', path: '/overview/installation' },
+    { title: 'Introduction', path: '/overview/getting-started/introduction' },
+    { title: 'Installation', path: '/overview/getting-started/installation' },
   ] },
   { title: 'Components', path: '/components', children: [
     { title: 'Button', path: '/components/elements/button' },

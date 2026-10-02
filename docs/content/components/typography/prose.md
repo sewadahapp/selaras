@@ -22,7 +22,7 @@ class for consistent long-form typography, no components or
 ```
 
 It's a separate, opt-in stylesheet - not bundled into `theme.css` (which
-you already import yourself, see [Installation](/overview/installation))
+you already import yourself, see [Installation](/overview/getting-started/installation))
 - so a project with no long-form content never pays for it:
 
 ```css

@@ -33,7 +33,7 @@ This isn't optional for most of what Selaras ships - without it:
   need this - only the `useX()` composable versions do.
 
 If you generated your project via `npx nuxt module add @sewadah/selaras`, or copied
-the Quick Setup snippet from the [installation guide](/overview/installation),
+the Quick Setup snippet from the [installation guide](/overview/getting-started/installation),
 this is already done for you.
 
 ### Toast and CommandPalette still need to be placed yourself

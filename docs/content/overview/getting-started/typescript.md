@@ -1,11 +1,8 @@
 ---
-navigation: false
 title: TypeScript
 description: Importing a component's Props, Emits and Slots types.
-order: 40
+order: 80
 ---
-
-This guide has moved to [the updated documentation](/overview/getting-started/typescript). Existing examples and anchors remain available below.
 
 Every component exports named, documented `Props`/`Emits`/`Slots`
 interfaces (`ButtonProps`, `ModalEmits`, `PopoverSlots`, ...) - useful when
@@ -32,7 +29,7 @@ import type { PopoverProps } from '@sewadah/selaras/components/Popover.vue'
 ## Module options
 
 The module's own configuration type (the shape of the `selaras` key in
-`nuxt.config.ts`, see [Installation](/overview/installation)) is exported
+`nuxt.config.ts`, see [Installation](/overview/getting-started/installation)) is exported
 from the package root:
 
 ```ts

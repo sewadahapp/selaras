@@ -8,8 +8,8 @@ order: 50
 
 ```vue-html
 <SContentSurround
-  :prev="{ title: 'Installation', path: '/overview/installation' }"
-  :next="{ title: 'Theming', path: '/overview/theming' }"
+  :prev="{ title: 'Installation', path: '/overview/getting-started/installation' }"
+  :next="{ title: 'Theming', path: '/overview/theming/overview' }"
 />
 ```
 

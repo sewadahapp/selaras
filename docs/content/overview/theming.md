@@ -1,4 +1,5 @@
 ---
+navigation: false
 title: Theming
 description: Customize Selaras with CSS first. Use Nuxt config and helpers only when you need them.
 order: 30
@@ -106,7 +107,11 @@ Selaras supplies these roles:
 The default theme maps these roles to foundation palettes:
 
 | Role | Default foundation |
-| --- | --- |
+| --- | ---
+
+This guide has moved to [Theming](/overview/theming/overview). Existing examples and anchors remain available below.
+
+|
 | `primary` | `indigo` |
 | `secondary` | `plum` |
 | `success` | `green` |
