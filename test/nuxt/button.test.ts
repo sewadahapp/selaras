@@ -153,7 +153,7 @@ describe('button', () => {
     const wrapper = await mountSuspended(Button, { props: { variant: 'text', color: 'neutral' }, slots: { default: () => 'Clear' } })
     expect(wrapper.classes().some(c => c.includes('bg-'))).toBe(false)
     expect(wrapper.classes().some(c => c.includes('ring-') || c.startsWith('border'))).toBe(false)
-    expect(wrapper.classes()).toContain('hover:text-[var(--_selaras-color-text-hover)]')
+    expect(wrapper.classes()).toContain('hover:text-[color-mix(in_srgb,var(--_selaras-color-text-hover)_60%,var(--selaras-resolved-text-default))]')
   })
 
   it('renders the link variant as underlined text without fill or border chrome', async () => {

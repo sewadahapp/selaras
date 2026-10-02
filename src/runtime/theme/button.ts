@@ -23,7 +23,7 @@ export const buttonTheme = tv({
       outline: { base: 'ring-1 ring-inset ring-[var(--_selaras-color-border)] text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle-hover)] active:bg-[var(--_selaras-color-subtle-pressed)]' },
       ghost: { base: 'text-[var(--_selaras-color-text)] hover:bg-[var(--_selaras-color-subtle-hover)] active:bg-[var(--_selaras-color-subtle-pressed)]' },
       // Text actions never paint a background, including their interaction states.
-      text: { base: 'text-[var(--_selaras-color-text)] hover:text-[var(--_selaras-color-text-hover)] active:text-[var(--_selaras-color-text-pressed)]' },
+      text: { base: 'text-[var(--_selaras-color-text)] hover:text-[color-mix(in_srgb,var(--_selaras-color-text-hover)_60%,var(--selaras-resolved-text-default))] active:text-[color-mix(in_srgb,var(--_selaras-color-text-pressed)_40%,var(--selaras-resolved-text-default))]' },
       // Link actions add an underline while keeping text's unfilled interaction treatment.
       link: { base: 'text-[var(--_selaras-color-text)] underline underline-offset-4 hover:text-[var(--_selaras-color-text-hover)] active:text-[var(--_selaras-color-text-pressed)]' },
     },
