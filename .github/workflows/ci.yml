@@ -48,6 +48,9 @@ jobs:
       - name: Build packages
         run: bun run prepack
 
+      - name: Validate packaged agent support
+        run: bun run test:agent
+
       - name: Validate docs layer publish manifest
         run: |
           node scripts/prepare-docs-layer-release.mjs

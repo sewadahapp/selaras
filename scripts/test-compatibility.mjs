@@ -61,6 +61,12 @@ run(
 )
 
 run(
+  'exercise packaged skill and MCP contracts',
+  'scripts/test-agent-support.mjs',
+  [],
+)
+
+run(
   'type-check the published public surface',
   'node_modules/vue-tsc/bin/vue-tsc.js',
   ['--project', 'test/tsconfig.packed.json'],

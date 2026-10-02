@@ -22,4 +22,6 @@ Build custom components only when the catalog does not cover the required behavi
 
 ## Skills and MCP
 
-A dedicated distributable skill and MCP server are not available yet. The documentation exports are the current integration; this section will grow as those capabilities are implemented.
+Use the [Selaras skill](/overview/agent-support/skills) to guide component selection, API discovery, and customization. Connect the [local MCP server](/overview/agent-support/mcp) for structured search and access to documentation bundled with your installed package version.
+
+The skill can work with public documentation alone. MCP is optional and does not need hosting or authentication. These integrations become available from the repository when pushed and from npm in a release containing them.
