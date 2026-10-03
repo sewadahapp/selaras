@@ -18,6 +18,8 @@
     "shiki": "^4.4.3"
   },
   "devDependencies": {
+    "@iconify-json/hugeicons": "^1.2.35",
+    "@iconify-json/vscode-icons": "^1.2.84",
     "vue-router": "^5.2.0"
   }
 }
