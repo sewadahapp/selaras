@@ -1,5 +1,30 @@
 # Changelog
 
+## v1.2.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.1.0...selaras-docs-v1.2.0)
+
+### 🚀 Enhancements
+
+- **feat(docs):** provide reusable viewport preview component ([ccead99](https://github.com/sewadahapp/selaras/commit/ccead99a5c07c1eb11e573285ad362d23ee3263a))
+- **feat(docs):** add device previews for adaptive interfaces ([dcd620f](https://github.com/sewadahapp/selaras/commit/dcd620fb331fbe7df1d443ce5d5219be665cf714))
+- **feat(docs):** replace logo and favicon ([0ba8a12](https://github.com/sewadahapp/selaras/commit/0ba8a1234c5395682261d7170c18aeca60ee7dc5))
+- **feat(agent):** add Selaras skill and local MCP server ([b15bc01](https://github.com/sewadahapp/selaras/commit/b15bc0181e86981d902640d7608554072bf095f0))
+
+### 🩹 Fixes
+
+- **fix(autocomplete):** use a modal for adaptive mobile editing ([330540f](https://github.com/sewadahapp/selaras/commit/330540f8073cd9b28782f01492f93e990b2d9ed1))
+
+### 📖 Documentation
+
+- **docs:** organize overview guides and add agent documentation exports ([3f5537b](https://github.com/sewadahapp/selaras/commit/3f5537b3138c5bc345da0d88dabb620f73dcd176))
+
+### 🤖 Other changes
+
+- **build(docs):** install local icon collections ([5f4fcaa](https://github.com/sewadahapp/selaras/commit/5f4fcaa9ccb403b4fccdf6debbe11ca78c1a739d))
+
+Published against `@sewadah/selaras` ^0.4.0.
+
 ## v1.1.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.0.1...selaras-docs-v1.1.0)
