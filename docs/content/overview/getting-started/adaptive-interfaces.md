@@ -8,7 +8,7 @@ The `adaptive` prop enables mobile presentation below the configured breakpoint.
 
 ## Try it
 
-Open these controls on a mobile viewport, or narrow your browser before opening them.
+Use the device buttons to switch between desktop, tablet, and mobile viewports. Open a control to compare its popup and modal presentations. The preview uses a real embedded viewport, so you can try mobile behavior without resizing your browser.
 
 ::component-example{name="adaptive-interfaces-basic"}
 ::

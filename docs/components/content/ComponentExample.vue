@@ -45,7 +45,9 @@ const resolvedComponent = computed(() => {
     it drags the entire page into horizontal scroll instead of just this
     box.
   -->
+  <AdaptiveViewportPreview v-if="name === 'adaptive-interfaces-basic'" class="w-full" />
   <div
+    v-else
     class="not-prose flex flex-wrap items-center gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-6"
     :class="hasNavigationFlyout ? 'overflow-visible' : 'overflow-x-auto'"
   >
