@@ -159,8 +159,15 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         // interactive checks wait for the hydrated UI they actually need.
         await page.goto(pageUrl.href, { waitUntil: 'domcontentloaded' })
         await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
-        if (example)
+        if (example) {
           await page.locator('#consumer-example').waitFor()
+          const preview = page.locator('#consumer-viewport')
+          await preview.getByRole('button', { name: 'Wide', exact: true }).click()
+          await page.waitForFunction(() => document.querySelector('#viewport-selection')?.textContent === 'wide:1000')
+          assert.equal(await preview.locator('iframe').evaluate(element => element.contentWindow.innerWidth), 1000, 'custom viewports must retain their width even inside a narrower documentation column')
+          await preview.getByRole('button', { name: 'Compact', exact: true }).click()
+          await page.waitForFunction(() => document.querySelector('#viewport-selection')?.textContent === 'compact:360')
+        }
         if (prefixed && !overridden) {
           await page.getByRole('link', { name: 'Packed documentation home', exact: true }).waitFor()
           await page.getByRole('img', { name: 'Packed mark', exact: true }).waitFor()
@@ -226,6 +233,7 @@ try {
   assert.ok(docsArchive.files.some(file => file.path === 'modules/docs.mjs'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/app.vue'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsExample.vue'))
+  assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsViewportPreview.vue'), 'the docs layer must publish its reusable viewport preview')
   assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')
   cpSync(fixtureDir, consumerDir, {
     recursive: true,

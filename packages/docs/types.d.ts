@@ -128,3 +128,11 @@ declare module 'nuxt/schema' {
     selarasDocs: SelarasDocsModuleOptions
   }
 }
+
+/** A viewport offered by DocsViewportPreview. Width is measured in CSS pixels. */
+export interface SelarasDocsViewportDevice {
+  value: string
+  label: string
+  width: number
+  icon?: string
+}

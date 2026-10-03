@@ -122,3 +122,56 @@ the logo to the footer while leaving the header as configured.
 For a host that owns Tailwind compilation or uses a class prefix, set
 `selarasDocs: { css: false }` in `nuxt.config.ts` and import Selaras and the
 docs stylesheet from the host CSS entry.
+
+## Viewport previews
+
+`DocsViewportPreview` embeds an example page in a real iframe viewport. Device
+buttons change its width, so media queries and Selaras' `adaptive` controls
+respond without resizing the documentation browser. It is available in Vue
+components and Markdown:
+
+```md
+::docs-viewport-preview{src="/examples/team-picker" title="Team picker" :height="540"}
+::
+```
+
+Create the example route in your application's `pages/` directory (or
+`app/pages/` with Nuxt's default directory structure). Use `layout: false` to
+render only the example:
+
+```vue
+<script setup lang="ts">
+definePageMeta({ layout: false })
+const team = ref<string>()
+</script>
+
+<template>
+  <main class="p-6">
+    <SSelect v-model="team" :items="['Design', 'Engineering']" adaptive />
+  </main>
+</template>
+```
+
+Root-relative `src` paths automatically include the application's `baseURL`.
+When generating a static site, add example routes to `nitro.prerender.routes`;
+iframe URLs are not ordinary navigation links for the prerender crawler.
+
+| Prop / model | Default | Purpose |
+| --- | --- | --- |
+| `src` | Required | URL of the example page. |
+| `title` | `Responsive example` | Accessible preview label and iframe title. |
+| `devices` | Desktop 1024px, tablet 768px, mobile 390px | Entries with `value`, `label`, `width`, and optional `icon`. Widths are CSS pixels. |
+| `defaultDevice` | `mobile` | Initial selection; an unknown value falls back to the first device. |
+| `v-model:device` | Uncontrolled | Read or control the selected device value. |
+| `height` | `540` | Iframe height in CSS pixels. |
+| `reloadKey` | Unset | Change this to reload the embedded page, for example after a theme change. |
+
+The frame scrolls horizontally when the chosen viewport is wider than its
+container. Changing devices preserves the embedded page's state; changing
+`reloadKey` remounts it. The example page controls its own theme and providers.
+An empty `devices` array uses the default devices.
+
+`toolbar-start` and `toolbar-end` accept additional toolbar content and receive
+`{ device }`. The `toolbar` slot replaces the entire toolbar and receives
+`{ device, devices, selectDevice }`. Custom device entries can use the exported
+`SelarasDocsViewportDevice` type from `@sewadah/selaras-docs`.
