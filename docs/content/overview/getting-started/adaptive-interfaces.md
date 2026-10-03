@@ -1,10 +1,10 @@
 ---
 title: Adaptive interfaces
-description: Opt into mobile modal presentation for common controls.
+description: Opt into mobile presentation for common controls.
 order: 70
 ---
 
-The `adaptive` prop switches supported controls from their desktop popup to modal presentation below the configured breakpoint. It is opt-in; its default is `false`.
+The `adaptive` prop enables mobile presentation below the configured breakpoint. Supported controls open a modal suited to their content. It is opt-in; its default is `false`.
 
 ## Try it
 
@@ -18,7 +18,7 @@ Open these controls on a mobile viewport, or narrow your browser before opening 
 | Component | Adaptive behavior |
 | --- | --- |
 | [Select](/components/forms/select) | Selection popup becomes a modal. |
-| [Autocomplete](/components/forms/autocomplete) | Search and selection appear in a modal. |
+| [Autocomplete](/components/forms/autocomplete) | A modal contains the input, suggestions, and selected values. |
 | [Dropdown](/components/overlays/dropdown) | Menu actions appear in a modal. |
 | [DatePicker](/components/forms/date-picker) | Date and time picker content appears in a modal. |
 | [ColorPicker](/components/forms/color-picker) | Color controls appear in a modal. |

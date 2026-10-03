@@ -3,6 +3,8 @@ import { computed, ref } from 'vue'
 
 const route = useRoute()
 const controlled = route.query.controlled === 'true'
+const multiple = route.query.multiple === 'true'
+const forced = route.query.forced === 'true'
 const parentOpen = ref(route.query.initial === 'true')
 const parentValue = ref()
 const requests = ref([])
@@ -38,7 +40,7 @@ function proposeValue(value) {
     <STheme as="section" :tokens="{ light: { colors: { enterprise: { fill: 'rgb(11 34 51)' } } } }">
       <SAutocomplete
         id="autocomplete-input" aria-label="Find a number" name="number" form="autocomplete-form"
-        :items="items" color="enterprise" adaptive
+        :items="items" color="enterprise" adaptive :multiple="multiple" :force-selection="forced" :virtualize="route.query.virtual === 'true'" :display-mode="route.query.chips === 'true' ? 'chip' : 'comma'"
         :ui="{ mobilePanel: { 'data-test': 'autocomplete-mobile-panel' } }"
         v-bind="bindings" @update:open="requestOpen" @update:model-value="proposeValue"
       />

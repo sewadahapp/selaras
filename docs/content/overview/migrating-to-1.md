@@ -143,8 +143,7 @@ presentation with `adaptive`:
 ```
 
 The presentation is selected when the control opens and remains stable until it
-closes. Autocomplete intentionally uses a nonmodal mobile panel so its editable
-combobox keeps focus. The module reads the Tailwind breakpoint selected by
+closes. Autocomplete places its input and suggestions inside the mobile modal. The module reads the Tailwind breakpoint selected by
 `selaras.adaptive.breakpoint`; see [Installation](/overview/installation#adaptive-breakpoint).
 
 ## 6. Follow controlled and native-control conventions

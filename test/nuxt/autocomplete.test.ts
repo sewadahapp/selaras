@@ -732,10 +732,9 @@ function mockMatchMedia(matches: boolean) {
 }
 
 // Autocomplete's own trigger is the search input typed into continuously.
-// On mobile it remains the Combobox focus owner and opens a wider nonmodal
-// panel; putting that editor outside a modal would hide it from AT.
+// Mobile presentation owns a second editor inside the modal focus scope.
 describe('autocomplete (adaptive)', () => {
-  it('adaptive=true on a mobile-matching viewport keeps the editable combobox and opens a nonmodal panel', async () => {
+  it('adaptive=true on mobile moves editing into a modal and restores the opener', async () => {
     const restore = mockMatchMedia(true)
     const container = document.createElement('div')
     document.body.appendChild(container)
@@ -743,14 +742,19 @@ describe('autocomplete (adaptive)', () => {
     const wrapper = await mount(Autocomplete, { attachTo: container, props: { items: fruitItems, adaptive: true } })
 
     const input = wrapper.find('input')
-    input.element.focus()
-    await input.setValue('a')
+    await input.trigger('click')
     await nextTick()
     await macrotask()
 
-    expect(document.body.querySelector('[role="dialog"]')).toBeFalsy()
-    expect(document.body.querySelector('[role="listbox"]')).toBeTruthy()
-    expect(document.activeElement).toBe(input.element)
+    const dialog = document.body.querySelector('[role="dialog"]')
+    expect(dialog).toBeTruthy()
+    const editor = dialog!.querySelector('input')!
+    expect(document.activeElement).toBe(editor)
+    editor.value = 'a'
+    editor.dispatchEvent(new Event('input', { bubbles: true }))
+    await nextTick()
+    expect(dialog!.querySelector('[role="listbox"]')).toBeTruthy()
+    expect(wrapper.emitted('update:searchTerm')?.at(-1)).toEqual(['a'])
 
     wrapper.unmount()
     container.remove()

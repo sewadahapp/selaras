@@ -236,9 +236,10 @@ below.
 ### Adaptive presentation
 
 `adaptive` uses the same breakpoint and open-time latch as
-[Select](/components/forms/select#adaptive-presentation). Because its editor
-must remain the combobox focus owner, Autocomplete uses a wider nonmodal panel
-rather than a dialog:
+[Select](/components/forms/select#adaptive-presentation). On small screens, the
+field opens a modal containing an input and suggestions. Single selection closes
+the modal; multiple selection and free-text entry also provide a Done button.
+The modal shares the field’s query and selection and restores focus when closed:
 
 ::component-example{name="autocomplete-adaptive"}
 ::

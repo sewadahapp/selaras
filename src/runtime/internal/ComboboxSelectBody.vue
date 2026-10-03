@@ -113,13 +113,13 @@ function focusSearch() {
   element.focus()
   return true
 }
-defineExpose({ focusSearch })
+defineExpose({ focusSearch, searchElement: computed(() => searchInput.value?.$el as HTMLInputElement | undefined) })
 </script>
 
 <template>
   <slot name="header" />
 
-  <div v-if="searchable && !creatable" v-bind="searchWrapperProps">
+  <div v-if="searchable && (!creatable || listbox)" v-bind="searchWrapperProps">
     <slot name="filter-icon">
       <Icon :name="icons.search" class="size-4 text-[var(--selaras-resolved-text-muted)]" />
     </slot>

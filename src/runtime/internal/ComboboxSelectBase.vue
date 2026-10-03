@@ -118,10 +118,19 @@ function updateSelection(event: 'update:modelValue', value: SelectModelValue | S
   emit(event, value)
 }
 
-// Capture the editable Autocomplete input itself, rather than its wrapper:
-// switching multiple changes ComboboxInput into TagsInputInput and replaces
-// that input node. Reka exposes the rendered element through `$el` here.
+// One open state drives both presentations. A controlled parent may veto a close.
+const localOpen = ref(props.defaultOpen ?? false)
+const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
+const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
+const isMobile = useIsMobile()
+const mobilePresentation = ref(false)
+const showMobileModal = computed(() => mobilePresentation.value)
+const showMobileAutocompleteModal = computed(() => mobilePresentation.value && !!props.creatable)
+const modalBody = ref<InstanceType<typeof ComboboxSelectBody>>()
+// Capture the rendered editor rather than its wrapper; changing multiple
+// replaces the desktop input. The modal owns a separate editor.
 const editableInput = ref<HTMLInputElement>()
+const activeEditableInput = computed(() => showMobileAutocompleteModal.value ? modalBody.value?.searchElement : editableInput.value)
 const comboboxRootKey = ref(0)
 function setEditableInput(element: unknown) {
   const candidate = typeof HTMLInputElement !== 'undefined' && element instanceof HTMLInputElement
@@ -346,7 +355,7 @@ function revertUnmatchedText(): boolean {
 }
 
 function onSearchKeydown(event: KeyboardEvent) {
-  if (event.target !== editableInput.value)
+  if (event.target !== activeEditableInput.value)
     return
   // The same keys Reka's combobox input uses to move the highlight.
   if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key) && !event.isComposing && !isSearchComposing.value) {
@@ -355,7 +364,7 @@ function onSearchKeydown(event: KeyboardEvent) {
   }
   if (event.key === 'Backspace' && props.creatable && props.multiple && props.displayMode === 'comma'
     && !event.isComposing && !isSearchComposing.value && event.keyCode !== 229
-    && !searchText.value && !editableInput.value.value && selectedValues.value.length) {
+    && !searchText.value && !activeEditableInput.value?.value && selectedValues.value.length) {
     removeValue(selectedValues.value.at(-1)!)
     event.preventDefault()
     return
@@ -382,7 +391,7 @@ function onSearchKeydown(event: KeyboardEvent) {
     // query. An idle Enter must not toggle it, but moving the highlight (arrows,
     // Home, End) and then pressing Enter should still choose a different,
     // unselected option.
-    const activeId = editableInput.value?.getAttribute('aria-activedescendant')
+    const activeId = activeEditableInput.value?.getAttribute('aria-activedescendant')
     const activeOption = activeId ? document.getElementById(activeId) : null
     if (keyboardNavigatedOptions.value && activeOption?.getAttribute('aria-selected') === 'false')
       return
@@ -390,13 +399,15 @@ function onSearchKeydown(event: KeyboardEvent) {
     event.stopPropagation()
     return
   }
-  const activeId = editableInput.value?.getAttribute('aria-activedescendant')
+  const activeId = activeEditableInput.value?.getAttribute('aria-activedescendant')
   const activeOption = activeId ? document.getElementById(activeId) : null
   if ((!hasMatchingOption(searchText.value) || !activeOption || activeOption.hasAttribute('data-selaras-create-option')) && commitCreatableText(searchText.value)) {
     // Commit the same "Create" option exposed as aria-activedescendant.
     // Also handle Enter before a popup option has mounted at all.
     if (props.multiple)
       searchText.value = ''
+    else if (showMobileAutocompleteModal.value)
+      updateOpen(false)
     event.preventDefault()
     event.stopPropagation()
   }
@@ -423,7 +434,11 @@ onUnmounted(() => {
     endSuggestionPointer()
 })
 
-function onSearchBlur() {
+function onSearchBlur(event?: FocusEvent) {
+  // Modal entry is committed explicitly with Enter or Done, not when focus
+  // moves to a suggestion, another modal control, or the restored opener.
+  if (props.creatable && event?.target !== editableInput.value)
+    return
   if (pointerInSuggestionContent.value)
     return
   if (revertUnmatchedText())
@@ -482,7 +497,7 @@ watch(
 
     const wasEditableFocused = props.creatable
       && typeof document !== 'undefined'
-      && document.activeElement === editableInput.value
+      && document.activeElement === activeEditableInput.value
     const abortingComposition = !!props.creatable && isSearchComposing.value
     const previouslyIdle = props.creatable && props.searchTerm === undefined
       && searchText.value === (previousMultiple || !props.resetSearchTermOnSelect ? '' : singleSelectionLabel(previousValue))
@@ -526,7 +541,7 @@ watch(
         internalSearchText.value = nextSearchText
     }
 
-    const priorInput = editableInput.value
+    const priorInput = activeEditableInput.value
     nextTick(() => {
       if (props.creatable || props.searchable) {
         // Win over the newly mounted Reka input's selection-display sync, then
@@ -545,7 +560,7 @@ watch(
       // input. A detached old input normally leaves focus on document.body.
       if (document.activeElement !== document.body && document.activeElement !== priorInput)
         return
-      editableInput.value?.focus()
+      activeEditableInput.value?.focus()
     })
   },
   { flush: 'pre' },
@@ -640,24 +655,10 @@ const groupProps = computed(() => resolveSlot(ui.value.group, props.ui?.group))
 const itemProps = computed(() => resolveSlot(ui.value.item, props.ui?.item))
 const itemIndicatorProps = computed(() => resolveSlot(ui.value.itemIndicator, props.ui?.itemIndicator))
 const emptyProps = computed(() => resolveSlot(ui.value.empty, props.ui?.empty))
-const mobileContentProps = computed(() => resolveSlot(ui.value.mobileContent, props.ui?.mobileContent))
-const mobilePanelProps = computed(() => mergeProps(
-  {
-    style: {
-      width: 'min(calc(100vw - 2rem), 36rem)',
-      minWidth: '0',
-      maxHeight: 'min(50vh, 28rem)',
-    },
-  },
-  resolveSlot(ui.value.mobilePanel, props.ui?.mobilePanel),
+const mobileContentProps = computed(() => mergeProps(
+  resolveSlot(ui.value.mobileContent, props.ui?.mobileContent),
+  props.creatable ? resolveSlot(ui.value.mobilePanel, props.ui?.mobilePanel) : {},
 ))
-
-// One open state drives both the desktop Popover and mobile Modal branches.
-// When `open` is supplied, the parent owns the value and may veto a close by
-// leaving it true after the emitted update.
-const localOpen = ref(props.defaultOpen ?? false)
-const isOpenControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'open')
-const open = computed(() => isOpenControlled() ? props.open ?? false : localOpen.value)
 
 // Reka refreshes displayValue when selection changes, not when async option
 // metadata changes. Update an idle selected label without replacing a query.
@@ -689,15 +690,13 @@ function resetSelection(event: Event) {
   })
 }
 
-const isMobile = useIsMobile()
 // Choose the presentation when opening and hold it until close. Swapping a
 // live focus trap between Popover and Modal during a resize can lose focus and
 // leave two interaction trees competing for the same Reka root. The next open
 // samples the current breakpoint again.
-const mobilePresentation = ref(false)
 watch(open, (open) => {
-  if (!open && mobilePresentation.value && !props.creatable && props.resetSearchTermOnBlur)
-    searchText.value = ''
+  if (!open && mobilePresentation.value && props.resetSearchTermOnBlur)
+    searchText.value = props.creatable && !props.multiple ? singleSelectionLabel(selection.value) : ''
   mobilePresentation.value = open && !!props.adaptive && isMobile.value
 })
 // Keep server and first-client markup deterministic, then sample the actual
@@ -707,29 +706,45 @@ onMounted(() => {
   if (!open.value)
     return
   mobilePresentation.value = !!props.adaptive && isMobile.value
-  // An initially-open mobile Autocomplete has no trigger interaction to put
-  // focus in its editor. Once its client-only presentation is chosen, make
-  // that persistent editable combobox the active owner without issuing an
-  // open request or introducing a modal focus scope around it.
-  if (mobilePresentation.value && props.creatable && !props.disabled) {
-    nextTick(() => {
-      editableInput.value?.focus()
-    })
-  }
 })
-const showMobileSelectModal = computed(() => mobilePresentation.value && !props.creatable)
-const showMobileAutocompletePanel = computed(() => mobilePresentation.value && !!props.creatable)
+const useMobileAutocompleteTrigger = computed(() => props.creatable && (open.value ? showMobileAutocompleteModal.value : props.adaptive && isMobile.value))
 const modalId = `selaras-select-modal-${useId()}`
 const selectTrigger = ref<{ $el: HTMLElement }>()
-const modalBody = ref<InstanceType<typeof ComboboxSelectBody>>()
-const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showMobileSelectModal.value : props.adaptive && isMobile.value)
+const modalTriggerAttrs = computed(() => !props.creatable && (open.value ? showMobileModal.value : props.adaptive && isMobile.value)
   ? { 'aria-haspopup': 'dialog', 'aria-controls': modalId }
   : {})
 function onModalSelection(value: unknown) {
   setValue(value == null ? (props.multiple ? [] : undefined) : value as SelectModelValue | SelectModelValue[])
+  if (props.creatable) {
+    nextTick(() => {
+      if (props.resetSearchTermOnSelect)
+        searchText.value = props.multiple ? '' : singleSelectionLabel(selection.value)
+    })
+  }
   if (!props.multiple)
     updateOpen(false)
 }
+
+watch(selection, () => {
+  if (useMobileAutocompleteTrigger.value && !open.value && props.resetSearchTermOnSelect && props.searchTerm === undefined)
+    internalSearchText.value = props.multiple ? '' : singleSelectionLabel(selection.value)
+})
+
+function openMobileAutocomplete(event?: KeyboardEvent) {
+  if (props.disabled || (event && !['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)))
+    return
+  event?.preventDefault()
+  updateOpen(true)
+}
+
+function finishMobileAutocomplete() {
+  if (isSearchComposing.value)
+    return
+  if (!revertUnmatchedText() && !props.forceSelection)
+    commitCreatableText(searchText.value)
+  updateOpen(false)
+}
+
 function serializeFormValue(value: SelectModelValue) {
   if (typeof value !== 'object')
     return String(value)
@@ -742,28 +757,33 @@ function serializeFormValue(value: SelectModelValue) {
 }
 const adaptiveUi = computed(() => ({
   content: {
-    class: 'rounded-[var(--selaras-resolved-radius-md)]',
-    ...(!props.creatable
-      ? {
-          'id': modalId,
-          'aria-modal': true,
-          'onOpenAutoFocus': (event: Event) => {
-            if (props.searchable && modalBody.value?.focusSearch())
-              event.preventDefault()
-          },
-          'onCloseAutoFocus': (event: Event) => {
-            event.preventDefault()
-            if (!props.disabled && selectTrigger.value?.$el?.isConnected)
-              selectTrigger.value.$el.focus()
-          },
-        }
-      : {}),
+    'class': 'rounded-[var(--selaras-resolved-radius-md)]',
+    'id': modalId,
+    'aria-modal': true,
+    'onOpenAutoFocus': (event: Event) => {
+      if (props.searchable && modalBody.value?.focusSearch())
+        event.preventDefault()
+    },
+    'onCloseAutoFocus': (event: Event) => {
+      event.preventDefault()
+      if (props.disabled)
+        return
+      // Closing after a resize can replace the opener in this same render.
+      nextTick(() => {
+        const target = props.creatable ? editableInput.value : selectTrigger.value?.$el
+        if (target?.isConnected)
+          target.focus()
+      })
+    },
   },
 }))
 
+const modalSearchInputProps = computed(() => mergeProps(searchInputProps.value, props.creatable
+  ? { 'id': `${selectId.value ?? modalId}-input`, 'aria-label': nativeSearchInputAttrs.value['aria-label'] ?? props.placeholder ?? messages.value.search }
+  : {}))
+
 // Single source of truth for ComboboxSelectBody's own (large) prop surface,
-// shared by the desktop popup, the nonmodal Autocomplete panel, and Select's
-// modal Listbox adapter.
+// shared by desktop popups and the mobile modal Listbox adapter.
 const bodyProps = computed(() => ({
   searchable: props.searchable,
   creatable: props.creatable,
@@ -793,7 +813,7 @@ const bodyProps = computed(() => ({
 <template>
   <ComboboxRoot
     :key="comboboxRootKey"
-    :open="open"
+    :open="useMobileAutocompleteTrigger ? false : open"
     :model-value="rekaSelection"
     :multiple="multiple"
     :disabled="disabled"
@@ -813,7 +833,7 @@ const bodyProps = computed(() => ({
         typing is always available without opening anything first.
       -->
       <div
-        v-if="creatable"
+        v-if="creatable && !useMobileAutocompleteTrigger"
         data-ui-group-item
         :data-selaras-field-filled="selectedValues.length ? '' : undefined"
         :data-selaras-field-active="open ? '' : undefined"
@@ -949,6 +969,49 @@ const bodyProps = computed(() => ({
         </ComboboxTrigger>
       </div>
 
+      <div
+        v-else-if="creatable"
+        data-ui-group-item
+        :data-selaras-field-filled="selectedValues.length ? '' : undefined"
+        :data-selaras-field-active="open ? '' : undefined"
+        v-bind="triggerProps"
+        @click="openMobileAutocomplete()"
+      >
+        <span v-if="multiple && selectedOptions.length" v-bind="commaValueProps">{{ commaText }}</span>
+        <input
+          :id="selectId"
+          :ref="setEditableInput"
+          :value="multiple ? '' : searchText"
+          :placeholder="multiple && selectedOptions.length ? undefined : placeholder"
+          :disabled="disabled"
+          :aria-invalid="selectInvalid || undefined"
+          :aria-describedby="searchDescribedBy"
+          :aria-busy="loading || undefined"
+          v-bind="searchInputProps"
+          readonly
+          aria-haspopup="dialog"
+          :aria-expanded="open"
+          :aria-controls="modalId"
+          @keydown="openMobileAutocomplete"
+        >
+        <Button v-if="clearable && !disabled && selectedOptions.length" :size="clearSize" variant="text" color="neutral" tabindex="-1" :aria-label="messages.clear" v-bind="clearProps" @click.stop="clear">
+          <template #icon>
+            <slot name="clear-icon">
+              <Icon :name="icons.close" class="size-4" />
+            </slot>
+          </template>
+        </Button>
+        <slot v-if="loading" name="loading-icon">
+          <Icon :name="icons.loading" class="size-4 animate-spin" v-bind="iconProps" />
+        </slot>
+        <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
+        <button v-if="dropdown" type="button" tabindex="-1" :disabled="disabled" :aria-label="messages.search" v-bind="dropdownProps" @click.stop="onDropdownClick(); openMobileAutocomplete()">
+          <slot name="dropdown-icon">
+            <Icon :name="icons.chevronDown" class="size-4" />
+          </slot>
+        </button>
+      </div>
+
       <ComboboxTrigger
         v-else
         :id="selectId"
@@ -1061,12 +1124,12 @@ const bodyProps = computed(() => ({
       </ComboboxTrigger>
     </ComboboxAnchor>
 
-    <ComboboxPortal v-if="!showMobileSelectModal" v-bind="portalProps">
+    <ComboboxPortal v-if="!showMobileModal" v-bind="portalProps">
       <ComboboxContent
         position="popper" :side-offset="4"
         :hide-when-empty="creatable && !multiple && !forceSelection"
         :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="colorRoleMarker"
-        v-bind="showMobileAutocompletePanel ? mergeProps(contentProps, mobilePanelProps) : contentProps"
+        v-bind="contentProps"
         @pointerdown.capture="startSuggestionPointer"
       >
         <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
@@ -1096,10 +1159,8 @@ const bodyProps = computed(() => ({
       </ComboboxContent>
     </ComboboxPortal>
     <!--
-      Modal owns Select's focus/dismissal; Listbox only supplies selection.
-      The content slot retains Modal's registered title/description.
-      Autocomplete stays in the nonmodal ComboboxContent branch above: its
-      editable input is the one focus and dismissal owner for that surface.
+      Modal owns focus and dismissal; Listbox supplies selection and the
+      Autocomplete editor inside the same accessible dialog surface.
     -->
     <Modal
       v-else :open="open" :title="placeholder || messages.search" :description="messages.searchDescription"
@@ -1108,14 +1169,25 @@ const bodyProps = computed(() => ({
     >
       <template #content>
         <ListboxRoot
-          v-if="!creatable"
           :model-value="rekaSelection" :multiple="multiple" :disabled="disabled"
           :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="colorRoleMarker" v-bind="mobileContentProps"
+          @pointerdown.capture="startSuggestionPointer"
+          @keydown.capture="onSearchKeydown"
           @update:model-value="onModalSelection"
         >
-          <ComboboxSelectBody ref="modalBody" v-bind="bodyProps" listbox @update:search-text="searchText = $event">
-            <template v-for="slotName in ['header', 'filter-icon', 'empty', 'empty-filter', 'footer'].filter(slotName => $slots[slotName])" #[slotName]>
+          <ComboboxSelectBody ref="modalBody" v-bind="bodyProps" :search-input-props="modalSearchInputProps" listbox @update:search-text="searchText = $event">
+            <template v-for="slotName in ['filter-icon', 'empty', 'empty-filter', 'footer'].filter(slotName => $slots[slotName])" #[slotName]>
               <slot :name="slotName" />
+            </template>
+            <template #header>
+              <slot name="header" />
+              <div v-if="creatable && multiple && selectedOptions.length" class="flex flex-wrap gap-1.5 px-3 pt-3">
+                <template v-if="displayMode === 'chip'">
+                  <Chip v-for="option in visibleOptions" :key="option.key" :label="option.label" size="sm" removable @remove="removeValue(option.value)" />
+                  <span v-if="overflowOptions.length" v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
+                </template>
+                <span v-else v-bind="valueProps">{{ commaText }}</span>
+              </div>
             </template>
             <template v-if="$slots.item" #item="scope">
               <slot name="item" v-bind="scope" />
@@ -1125,10 +1197,13 @@ const bodyProps = computed(() => ({
             </template>
           </ComboboxSelectBody>
         </ListboxRoot>
-        <div v-if="!creatable" class="flex justify-end p-2">
-          <DialogClose as-child>
+        <div v-if="creatable || multiple" class="flex justify-end p-2">
+          <Button v-if="creatable" variant="ghost" color="neutral" @click="finishMobileAutocomplete">
+            {{ messages.done }}
+          </Button>
+          <DialogClose v-else as-child>
             <Button variant="ghost" color="neutral">
-              {{ multiple ? messages.done : messages.cancel }}
+              {{ messages.done }}
             </Button>
           </DialogClose>
         </div>
