@@ -24,7 +24,10 @@ It defines:
 - `danger`
 - `neutral`
 
-It also defines separate light and dark values.
+It also defines separate light and dark values. When adapting this example,
+check visible borders against the surfaces they touch in each mode. Surface
+and border tokens are independent; see
+[Check borders against their surfaces](/overview/theming/css-tokens#check-borders-against-their-surfaces).
 
 These values are examples. Use the values that match your product.
 

@@ -71,6 +71,25 @@ For dark mode, override the same inputs under `:root.dark`:
 
 Selaras follows the `.dark` class on `<html>` for the document theme.
 
+### Check borders against their surfaces
+
+`--selaras-surface-*` and `--selaras-border-*` are independent inputs. Component
+themes choose which ones to pair. For example,
+[DashboardSidebar](/composites/dashboard/dashboard-sidebar) paints its background
+with `surface-elevated` and draws its footer divider with `border-default`.
+If both resolve to the same color, the divider blends into that background.
+
+When a border should be visible, give it enough contrast against the surfaces
+it touches. Check the actual component in both light and dark modes, including
+hover and focus states, after changing either token or its foundation palette.
+Different token names or different scale steps alone do not guarantee a visible
+boundary. An intentionally blended border is also a valid design choice; each
+border does not need to differ from every surface in your theme.
+
+Selaras does not automatically adjust border colors or validate their contrast
+when you override CSS variables. For transparent components, check the actual
+background showing through, which may be your application's canvas.
+
 ### Change a complete foundation palette
 
 The default foundations are Tailwind v4 theme variables.
@@ -148,6 +167,36 @@ For example, your design system can use a `10` to `100` scale:
   --selaras-color-primary-focus: var(--company-brand-60);
 }
 ```
+
+Map the neutral foundations as well as component color roles. For example,
+if your existing system exposes these surface and divider tokens:
+
+```css
+:root {
+  --selaras-surface-canvas: var(--company-canvas-light);
+  --selaras-surface-default: var(--company-panel-light);
+  --selaras-surface-elevated: var(--company-sidebar-light);
+
+  --selaras-border-default: var(--company-divider-light);
+  --selaras-border-muted: var(--company-divider-subtle-light);
+  --selaras-border-hover: var(--company-divider-hover-light);
+}
+
+:root.dark {
+  --selaras-surface-canvas: var(--company-canvas-dark);
+  --selaras-surface-default: var(--company-panel-dark);
+  --selaras-surface-elevated: var(--company-sidebar-dark);
+
+  --selaras-border-default: var(--company-divider-dark);
+  --selaras-border-muted: var(--company-divider-subtle-dark);
+  --selaras-border-hover: var(--company-divider-hover-dark);
+}
+```
+
+Define the `--company-*` variables in your own system. Choose divider values
+that remain visible on the panels and sidebar where you need a boundary; do
+not automatically map a border to the same scale entry as its background.
+See [Check borders against their surfaces](#check-borders-against-their-surfaces).
 
 Your design system stays the source of truth. The `--selaras-*` variables are
 the mapping layer.
