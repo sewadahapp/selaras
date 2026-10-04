@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.5.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.0...v0.5.0)
+
+### 🩹 Fixes
+
+- **dashboard:** Remove resize handle background stripe ([60e6f53](https://github.com/sewadahapp/selaras/commit/60e6f53))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.4.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.1.0...v0.4.0)
