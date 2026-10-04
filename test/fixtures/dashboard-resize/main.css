@@ -1,0 +1,4 @@
+@import "../prefix/assets/css/main.css";
+
+/* Consumer-authored overrides must be included in the prefixed compilation. */
+@source inline("tw:opacity-0 tw:transition-opacity tw:group-hover:opacity-100 tw:group-focus-visible:opacity-100 tw:group-data-[state=drag]:opacity-100");

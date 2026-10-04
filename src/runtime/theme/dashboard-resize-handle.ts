@@ -2,18 +2,10 @@ import { tv } from 'tailwind-variants'
 
 export const dashboardResizeHandleTheme = tv({
   slots: {
-    // SplitterResizeHandle's own hit area is deliberately wider than its
-    // visible line (a comfortable grab target, invisible padding on
-    // either side) - harmless when both adjacent panels share one
-    // background, but once DashboardSidebar's own root reads as
-    // --selaras-resolved-surface-elevated (a step apart from DashboardPanel's own plain
-    // --selaras-resolved-surface-default), that "invisible" padding stops being invisible: it reads
-    // as a sliver of the wrong background bleeding through right at the
-    // sidebar's own edge. A background split exactly down the middle -
-    // matching each side's real background - makes the hit area blend
-    // into whichever panel it happens to be sitting over instead of
-    // showing through as its own separate strip.
-    root: 'bg-[linear-gradient(to_right,var(--selaras-resolved-surface-elevated)_50%,var(--selaras-resolved-surface-default)_50%)]',
+    // Overlap the panel boundary without consuming layout space or painting
+    // either surface. Both panels keep their own backgrounds beneath the target.
+    root: 'z-10 -mx-1 w-2 bg-transparent',
+    line: 'rtl:translate-x-1/2 group-focus-visible:bg-[var(--_selaras-color-indicator)]',
   },
 })
 

@@ -19,16 +19,11 @@ const isMobile = computed(() => dashboard?.isMobile.value ?? false)
 const theme = useComponentTheme('dashboardResizeHandle', dashboardResizeHandleTheme)
 const ui = computed(() => theme.value())
 
-// Forwarded into SplitterResizeHandle's own `ui` prop (not bound to an
-// element directly here) - resolveSlot's returned {class, ...attrs} shape
-// is itself a valid UiSlotValue, so this default background plus whatever
-// a consumer overrides via `:ui.root` on DashboardResizeHandle itself both
-// still land correctly. `line` passes straight through untouched -
-// SplitterResizeHandle merges its own default there the same way it
-// always has.
+// Merge the dashboard defaults before forwarding each slot to the splitter.
 const rootUi = computed(() => resolveSlot(ui.value.root, props.ui?.root))
+const lineUi = computed(() => resolveSlot(ui.value.line, props.ui?.line))
 </script>
 
 <template>
-  <SplitterResizeHandle v-if="!isMobile" direction="horizontal" :ui="{ root: rootUi, line: props.ui?.line }" />
+  <SplitterResizeHandle v-if="!isMobile" direction="horizontal" :ui="{ root: rootUi, line: lineUi }" />
 </template>
