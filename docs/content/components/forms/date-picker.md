@@ -413,6 +413,16 @@ every slot and variant - here's `DatePicker`'s own theme file:
 ::theme-source{name="date-picker"}
 ::
 
+### Time section styling
+
+`ui.timeSection` styles the time controls below a calendar, including their divider.
+`ui.timeSectionStandalone` styles time-only controls without adding a divider or
+spacing for an absent calendar. Both slots also support global theme overrides.
+
+```vue-html
+<SDatePicker time-only :ui="{ timeSectionStandalone: 'gap-3' }" />
+```
+
 ## Props
 
 | Prop | Type | Default |

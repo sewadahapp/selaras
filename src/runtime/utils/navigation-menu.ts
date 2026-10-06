@@ -1,4 +1,8 @@
+import type { PopoverProps } from '../components/Popover.vue'
+import type { TooltipProps } from '../components/Tooltip.vue'
 import type { HotkeyOptions } from '../directives/hotkey'
+
+export type NavigationMenuPopover = Pick<PopoverProps, 'side' | 'align' | 'positioning' | 'portal' | 'arrow' | 'ui'>
 
 export interface NavigationMenuItem {
   label: string
@@ -7,6 +11,10 @@ export interface NavigationMenuItem {
   target?: string
   rel?: string
   ariaLabel?: string
+  /** Collapsed leaf tooltip override. `false` disables this item's tooltip. */
+  tooltip?: boolean | TooltipProps
+  /** Presentation of this item's collapsed child flyout. */
+  popover?: NavigationMenuPopover
   disabled?: boolean
   /** Force active state - otherwise auto-detected against the current route when `to` is set. */
   active?: boolean

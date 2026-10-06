@@ -50,6 +50,7 @@ export const datePickerTheme = tv({
     viewGrid: 'grid grid-cols-3 gap-1',
     // Hour/minute granularity only - sits below the day grid, separated by
     // a divider so it doesn't read as part of the grid itself.
+    timeSectionStandalone: 'flex items-center justify-center gap-1.5',
     timeSection: 'mt-3 flex items-center justify-center gap-1.5 border-t border-[var(--selaras-resolved-border-default)] pt-3',
     arrow: 'fill-[var(--selaras-resolved-surface-default)] stroke-[var(--selaras-resolved-border-default)] stroke-1',
   },

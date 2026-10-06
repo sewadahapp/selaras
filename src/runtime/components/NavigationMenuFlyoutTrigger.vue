@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
-import type { NavigationMenuItem } from '../utils/navigation-menu'
+import type { NavigationMenuItem, NavigationMenuPopover } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
+import { useDirection } from 'reka-ui'
 import { computed, ref, useSlots } from 'vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
@@ -59,6 +60,7 @@ import Popover from './Popover.vue'
 // later the first's return-focus silently closed the second as well).
 export interface NavigationMenuFlyoutTriggerProps {
   item: NavigationMenuItem
+  popover?: NavigationMenuPopover
   color?: ColorRole
   variant?: 'pill' | 'link'
   highlight?: boolean
@@ -77,6 +79,14 @@ const props = defineProps<NavigationMenuFlyoutTriggerProps>()
 const emit = defineEmits<NavigationMenuFlyoutTriggerEmits>()
 
 const slots = useSlots()
+const direction = useDirection()
+const popoverProps = computed(() => ({
+  side: direction.value === 'rtl' ? 'left' as const : 'right' as const,
+  align: 'start' as const,
+  ...props.popover,
+  ...props.item.popover,
+  ui: { content: 'p-2', ...props.popover?.ui, ...props.item.popover?.ui },
+}))
 
 // Same resolver as NavigationMenu.vue/NavigationMenuAccordionItem.vue -
 // duplicated, not shared, matching this trio's existing precedent.
@@ -193,7 +203,7 @@ function onContentKeydown(event: KeyboardEvent) {
 
 <template>
   <Popover
-    :open="open" side="right" align="start" :return-focus-on-close="!anotherFlyoutOpen" :ui="{ content: 'p-2' }"
+    v-bind="popoverProps" :open="open" :return-focus-on-close="!anotherFlyoutOpen"
     @update:open="emit('update:open', $event)" @open-auto-focus="onOpenAutoFocus"
   >
     <button

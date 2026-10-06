@@ -42,6 +42,27 @@ below `mobileBreakpoint`, the same content renders inside a
 sidebar's width reads more naturally in pixels than as a fraction of
 however wide the page happens to be.
 
+## Control collapse from outside
+
+Bind `v-model:collapsed` to set the desktop rail state and receive updates from
+resizing or `DashboardSidebarToggle`. An explicit value takes precedence over
+saved collapse state. Omit it to keep the existing uncontrolled sizing and persistence.
+
+::component-example{name="dashboard-controlled"}
+::
+
+```vue-html
+<SDashboardSidebar v-model:collapsed="collapsed" />
+```
+
+A component ref also exposes `collapse()`, `expand()`, `toggle()`, and
+`isCollapsed`. `collapse()` and `expand()` operate on the desktop panel and restore
+its previous expanded width. They do nothing on mobile or when `collapsible` is
+`false`. `toggle()` retains the normal mobile drawer behavior. The `collapsed`
+model does not control the mobile drawer; its value is applied when returning to desktop.
+Use the model to capture the user's current choice before temporarily collapsing
+for a page, then restore that choice when leaving.
+
 ## Custom `:ui`
 
 To see exactly what you'd be overriding - the current default classes for
@@ -54,6 +75,7 @@ every slot - here's `DashboardSidebar`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `collapsed` | `boolean` | - |
 | `defaultSize` | `number` | `260` |
 | `minSize` | `number` | `200` |
 | `maxSize` | `number` | `400` |
@@ -75,3 +97,9 @@ just the drawer open or closed. Use it to swap a header's logo to a narrower
 mark, or hide a nav item's label text, once the sidebar collapses to its icon
 rail - the live example above does both, along with hiding the footer's name
 next to the avatar.
+
+## Events
+
+| Event | Payload | Description |
+| --- | --- | --- |
+| `update:collapsed` | `boolean` | Desktop collapse state changed through resizing, the toggle, or a component method. |

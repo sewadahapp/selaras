@@ -667,7 +667,7 @@ const timeBodyProps = computed(() => ({
   closeOnSelect: props.closeOnSelect,
   activeColor: props.activeColor,
   close: () => { onUpdateOpen(false) },
-  timeSectionProps: timeSectionProps.value,
+  timeSectionProps: resolveSlot(ui.value.timeSectionStandalone, props.ui?.timeSectionStandalone),
 }))
 
 // The button-mode trigger's own look - Input-style ring/bg/hover, but using

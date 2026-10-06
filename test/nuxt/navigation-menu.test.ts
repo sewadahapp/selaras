@@ -1,5 +1,6 @@
 import type { NavigationMenuItem } from '../../src/runtime/utils/navigation-menu'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { TooltipProvider } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import NavigationMenu from '../../src/runtime/components/NavigationMenu.vue'
@@ -961,5 +962,40 @@ describe('navigationMenu (collapsed flyout Tab boundary)', () => {
 
     wrapper.unmount()
     container.remove()
+  })
+})
+
+describe('navigationMenu collapsed tooltip configuration', () => {
+  it('keeps the actual link as trigger and merges item settings', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(TooltipProvider, null, () => h(NavigationMenu, {
+        orientation: 'vertical',
+        collapsed: true,
+        tooltip: { portal: false, delayDuration: 0, arrow: false },
+        items: [{ label: 'Account', to: '/account', ariaLabel: 'Account settings', tooltip: { text: 'Manage account', side: 'left' } }],
+      })),
+    }))
+    const link = wrapper.find('a[href="/account"]')
+    expect(link.attributes('aria-label')).toBe('Account settings')
+    expect(link.find('.sr-only').text()).toBe('Account')
+    await link.trigger('focus')
+    await macrotask()
+    expect(wrapper.find('[data-side="left"]').exists()).toBe(true)
+    expect(wrapper.find('[role="tooltip"]').text()).toBe('Manage account')
+    wrapper.unmount()
+  })
+
+  it.each([
+    { collapsed: false, orientation: 'vertical' },
+    { collapsed: true, orientation: 'horizontal' },
+    { collapsed: true, orientation: 'vertical', item: { tooltip: false } },
+    { collapsed: true, orientation: 'vertical', item: { disabled: true } },
+  ] as const)('does not attach a tooltip outside an eligible leaf: %j', async (settings) => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { ...settings, tooltip: true, items: [{ label: 'Account', to: '/account', ...('item' in settings ? settings.item : {}) }] },
+    })
+    expect(wrapper.find('[data-state="closed"]').exists()).toBe(false)
+    expect(wrapper.find('a[href="/account"]').exists()).toBe(true)
+    wrapper.unmount()
   })
 })

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const collapsed = ref(false)
+const collapsed = ref(true)
 
 const items = [
   { label: 'Overview', icon: 'hugeicons:dashboard-square-01', to: '/overview' },
@@ -17,7 +17,7 @@ const items = [
       {{ collapsed ? 'Expand' : 'Collapse' }}
     </SButton>
     <div :class="collapsed ? 'w-16' : 'w-64'">
-      <SNavigationMenu :items="items" orientation="vertical" :collapsed="collapsed" />
+      <SNavigationMenu :items="items" orientation="vertical" :collapsed="collapsed" tooltip />
     </div>
   </div>
 </template>

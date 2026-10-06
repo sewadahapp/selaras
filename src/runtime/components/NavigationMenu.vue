@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
-import type { NavigationMenuItem } from '../utils/navigation-menu'
+import type { NavigationMenuItem, NavigationMenuPopover } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
+import type { TooltipProps } from './Tooltip.vue'
 import {
   NavigationMenuContent,
   NavigationMenuLink,
@@ -11,12 +12,14 @@ import {
   NavigationMenuTrigger,
   NavigationMenuViewport,
   NavigationMenuItem as RekaNavigationMenuItem,
+  useDirection,
 } from 'reka-ui'
 import { computed, ref, useSlots } from 'vue'
 import { NuxtLink } from '#components'
 import { useRoute } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { vHotkey } from '../directives/hotkey'
+import NavigationMenuTooltip from '../internal/NavigationMenuTooltip.vue'
 import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
 import { isNavigationMenuItemActive, navigationMenuHotkey } from '../utils/navigation-menu'
@@ -36,6 +39,10 @@ export interface NavigationMenuProps {
   highlight?: boolean
   /** Icon-only rail mode (vertical only) - labels stay in the DOM for assistive tech (`sr-only`, not removed) but visually collapse to just each item's own leading icon. A parent with children renders as a themed Popover trigger instead of an expandable accordion row - no room for a nested list in an icon rail, so its children surface in a flyout next to the icon instead (the common "collapsed sidebar" pattern - VSCode's activity bar, Linear, Notion). */
   collapsed?: boolean
+  /** Labels for collapsed vertical leaf items. An object customizes Tooltip props. @default false */
+  tooltip?: boolean | TooltipProps
+  /** Presentation of collapsed child flyouts; item settings override these defaults. */
+  popover?: NavigationMenuPopover
   ui?: UiProp<NavigationMenuThemeSlots>
 }
 
@@ -44,6 +51,7 @@ const props = withDefaults(defineProps<NavigationMenuProps>(), {
   variant: 'pill',
 })
 
+const direction = useDirection()
 const route = useRoute()
 const icons = useIcons()
 const slots = useSlots()
@@ -65,6 +73,19 @@ const ui = computed(() => theme.value({ orientation: props.orientation, color: e
 
 const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
+
+function tooltipProps(item: NavigationMenuItem): TooltipProps | undefined {
+  const setting = item.tooltip ?? props.tooltip
+  if (props.orientation !== 'vertical' || !props.collapsed || item.disabled || !setting)
+    return undefined
+  return {
+    text: item.ariaLabel ?? item.label,
+    side: direction.value === 'rtl' ? 'left' : 'right',
+    delayDuration: 0,
+    ...(typeof props.tooltip === 'object' ? props.tooltip : {}),
+    ...(typeof item.tooltip === 'object' ? item.tooltip : {}),
+  }
+}
 
 function isActive(item: NavigationMenuItem) {
   return isNavigationMenuItemActive(item, route.path)
@@ -144,7 +165,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
           </template>
           <template v-else-if="orientation === 'vertical' && item.children?.length && collapsed">
             <NavigationMenuFlyoutTrigger
-              :item="item" :color="color" :variant="variant" :highlight="highlight" :on-select="onSelect" :ui="props.ui"
+              :item="item" :color="color" :variant="variant" :highlight="highlight" :on-select="onSelect" :ui="props.ui" :popover="props.popover"
               :open="openFlyoutLabel === item.label" :another-flyout-open="anotherFlyoutOpen(item)"
               @update:open="onFlyoutOpenChange(item, $event)"
             >
@@ -195,26 +216,28 @@ function onSelect(item: NavigationMenuItem, event: Event) {
               </slot>
             </NavigationMenuContent>
           </template>
-          <NavigationMenuLink v-else as-child :active="isActive(item)">
-            <component
-              :is="item.to ? NuxtLink : 'button'" v-hotkey="navigationMenuHotkey(item)" :to="item.to"
-              :type="item.to ? undefined : 'button'" :disabled="item.to ? undefined : item.disabled"
-              v-bind="linkProps(item)" :target="item.target" :rel="item.rel"
-              :aria-label="item.ariaLabel" :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
-            >
-              <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
-                <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
-                  <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
-                  <span v-else-if="collapsed" v-bind="resolveSlot(ui.linkIconFallback, props.ui?.linkIconFallback)" aria-hidden="true">{{ item.label.charAt(0) }}</span>
+          <NavigationMenuTooltip v-else :tooltip="tooltipProps(item)">
+            <NavigationMenuLink as-child :active="isActive(item)">
+              <component
+                :is="item.to ? NuxtLink : 'button'" v-hotkey="navigationMenuHotkey(item)" :to="item.to"
+                :type="item.to ? undefined : 'button'" :disabled="item.to ? undefined : item.disabled"
+                v-bind="linkProps(item)" :target="item.target" :rel="item.rel"
+                :aria-label="item.ariaLabel" :aria-disabled="item.to && item.disabled ? 'true' : undefined" @click="onSelect(item, $event)"
+              >
+                <slot :name="slotName(item, '')" :item="item" :active="isActive(item)">
+                  <slot :name="slotName(item, '-leading')" :item="item" :active="isActive(item)">
+                    <Icon v-if="item.icon" :name="item.icon" v-bind="resolveSlot(ui.linkIcon, props.ui?.linkIcon)" />
+                    <span v-else-if="collapsed" v-bind="resolveSlot(ui.linkIconFallback, props.ui?.linkIconFallback)" aria-hidden="true">{{ item.label.charAt(0) }}</span>
+                  </slot>
+                  <slot :name="slotName(item, '-label')" :item="item" :active="isActive(item)">
+                    <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
+                  </slot>
+                  <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)" />
+                  <ShortcutHint :shortcut="collapsed ? undefined : item.shortcut" />
                 </slot>
-                <slot :name="slotName(item, '-label')" :item="item" :active="isActive(item)">
-                  <span v-bind="resolveSlot(ui.linkLabel, props.ui?.linkLabel)">{{ item.label }}</span>
-                </slot>
-                <slot :name="slotName(item, '-trailing')" :item="item" :active="isActive(item)" />
-                <ShortcutHint :shortcut="collapsed ? undefined : item.shortcut" />
-              </slot>
-            </component>
-          </NavigationMenuLink>
+              </component>
+            </NavigationMenuLink>
+          </NavigationMenuTooltip>
         </RekaNavigationMenuItem>
       </template>
     </NavigationMenuList>

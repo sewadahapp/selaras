@@ -117,8 +117,36 @@ pattern a collapsed sidebar commonly uses elsewhere:
 ::
 
 ```vue-html
-<SNavigationMenu :items="items" orientation="vertical" collapsed />
+<SNavigationMenu :items="items" orientation="vertical" collapsed tooltip />
 ```
+
+### Collapsed labels and flyouts
+
+Add `tooltip` to show a collapsed leaf's label on hover or keyboard focus.
+Its text defaults to `ariaLabel`, then `label`. Disabled items, group labels,
+and separators do not show tooltips. Expanded and horizontal menus are unaffected.
+Wrap your application in `SApp` to provide the shared tooltip context.
+
+```vue-html
+<SNavigationMenu
+  :items="items"
+  orientation="vertical"
+  collapsed
+  :tooltip="{ delayDuration: 150, arrow: false }"
+  :popover="{ side: 'right', positioning: { sideOffset: 10 } }"
+/>
+```
+
+Use an item's `tooltip: false` to opt out, or an object such as
+`tooltip: { text: 'Account settings', side: 'left' }` to override that item.
+Global and item tooltip settings are merged, with item settings taking priority.
+Tooltips default to an immediate opening on the right in LTR and left in RTL.
+The link remains the trigger, preserving navigation, shortcuts, and custom item slots.
+
+Items with children keep their child flyout rather than adding a competing tooltip.
+`popover` configures its side, alignment, positioning, portal, arrow, and `ui`;
+an item's `popover` overrides the menu settings. Flyouts remain enabled and retain
+hover, click, and keyboard behavior. Their default side also follows text direction.
 
 ### Labels and separators
 
@@ -303,6 +331,8 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | `variant` | `'pill' \| 'link'` | `'pill'` |
 | `highlight` | `boolean` | `false` |
 | `collapsed` | `boolean` | `false` |
+| `tooltip` | `boolean \| TooltipProps` | `false` |
+| `popover` | `NavigationMenuPopover` | - |
 | `ui` | `Partial<Record<NavigationMenuSlot, string \| object>>` | - |
 
 `NavigationMenuItem`:

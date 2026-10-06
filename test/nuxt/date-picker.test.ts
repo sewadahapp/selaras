@@ -1093,12 +1093,15 @@ describe('datePicker (adaptive)', () => {
 
   it('adaptive=true, timeOnly mode, mobile viewport: renders a Modal containing the time stepper', async () => {
     const restore = mockMatchMedia(true)
-    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, adaptive: true } })
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, adaptive: true, ui: { timeSectionStandalone: { 'data-time-section': 'adaptive' } } } })
     await openTimePicker(wrapper)
 
     expect(hasModalOverlay()).toBe(true)
     expect(document.body.textContent).toContain('Done')
 
+    const timeSection = document.body.querySelector('[data-time-section="adaptive"]')!
+    expect(timeSection).toBeTruthy()
+    expect(timeSection.classList.contains('border-t')).toBe(false)
     restore()
   })
 
@@ -1112,5 +1115,38 @@ describe('datePicker (adaptive)', () => {
     expect(dialog?.classList.contains('rounded-[var(--selaras-resolved-radius-lg)]')).toBe(false)
 
     restore()
+  })
+})
+
+describe('datePicker time section boundaries', () => {
+  it.each(['field', 'button'] as const)('has no calendar divider in time-only %s mode', async (triggerMode) => {
+    wrapper = await mountSuspended(DatePicker, { props: {
+      timeOnly: true,
+      triggerMode,
+      modelValue: new Time(14, 30),
+      ui: { timeSectionStandalone: { 'data-time-section': 'standalone' } },
+    } })
+    if (triggerMode === 'button') {
+      await wrapper.find('button').trigger('click')
+      await new Promise(resolve => setTimeout(resolve, 50))
+    }
+    else {
+      await openTimePicker(wrapper)
+    }
+    const section = document.body.querySelector('[data-time-section="standalone"]')!
+    expect(section).toBeTruthy()
+    expect(section.classList.contains('border-t')).toBe(false)
+    expect(section.classList.contains('mt-3')).toBe(false)
+    expect(section.classList.contains('pt-3')).toBe(false)
+  })
+
+  it('retains the divider below the date-time calendar', async () => {
+    wrapper = await mountSuspended(DatePicker, { props: {
+      granularity: 'minute',
+      modelValue: new CalendarDateTime(2024, 1, 1, 14, 30),
+      ui: { timeSection: { 'data-time-section': 'calendar' } },
+    } })
+    await openCalendar(wrapper)
+    expect(document.body.querySelector('[data-time-section="calendar"]')?.classList.contains('border-t')).toBe(true)
   })
 })

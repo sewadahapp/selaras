@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DashboardSidebarThemeSlots } from '../theme/dashboard-sidebar'
 import type { UiProp } from '../utils/ui'
-import { computed, inject, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, inject, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { dashboardSidebarTheme } from '../theme/dashboard-sidebar'
 import { DASHBOARD_INJECTION_KEY } from '../utils/injection-keys'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
@@ -18,11 +18,14 @@ const props = withDefaults(defineProps<DashboardSidebarProps>(), {
   collapsedSize: 64,
   collapsible: true,
   sizeUnit: 'px',
+  collapsed: undefined,
 })
 
+const emit = defineEmits<DashboardSidebarEmits>()
 defineSlots<DashboardSidebarSlots>()
-
 export interface DashboardSidebarProps {
+  /** Controlled desktop collapse state. Omit to keep resizing and persistence uncontrolled. */
+  collapsed?: boolean
   /** @default 260 */
   defaultSize?: number
   /** @default 200 */
@@ -38,6 +41,10 @@ export interface DashboardSidebarProps {
   ui?: UiProp<DashboardSidebarThemeSlots>
 }
 
+export interface DashboardSidebarEmits {
+  'update:collapsed': [value: boolean]
+}
+
 export interface DashboardSidebarSlots {
   /** `isCollapsed` lets a header (a logo mark, say) swap to a narrower version once the sidebar collapses to its icon rail - always `false` on mobile, where there's no in-between state, just the drawer open or closed. */
   header?: (props: { isCollapsed: boolean }) => any
@@ -51,16 +58,35 @@ const isMobile = computed(() => dashboard?.isMobile.value ?? false)
 
 const panelRef = ref<InstanceType<typeof SplitterPanel>>()
 const mobileOpen = ref(false)
+let panelReady = false
+
+function setCollapsed(value: boolean) {
+  if (isMobile.value || !props.collapsible || !panelReady)
+    return
+  if (value)
+    panelRef.value?.collapse()
+  else
+    panelRef.value?.expand()
+}
+
+watch(() => props.collapsed, (value) => {
+  if (value !== undefined)
+    setCollapsed(value)
+})
+
+defineExpose({
+  collapse: () => setCollapsed(true),
+  expand: () => setCollapsed(false),
+  toggle,
+  isCollapsed: computed(() => panelRef.value?.isCollapsed ?? false),
+})
 
 function toggle() {
   if (isMobile.value) {
     mobileOpen.value = !mobileOpen.value
     return
   }
-  if (panelRef.value?.isCollapsed)
-    panelRef.value.expand()
-  else
-    panelRef.value?.collapse()
+  setCollapsed(!panelRef.value?.isCollapsed)
 }
 
 // DashboardGroup's own `v-if="!isMobile"`/`v-else` (see its own file)
@@ -91,6 +117,16 @@ function toggle() {
 // itself sizeUnit-aware (px in, px out), so this stays accurate
 // regardless of what Reka's own percentage did.
 function handleResize(size: number) {
+  // The first resize confirms that the panel has a measured, registered layout.
+  if (!panelReady) {
+    nextTick(() => {
+      if (!panelRef.value || panelReady)
+        return
+      panelReady = true
+      if (props.collapsed !== undefined)
+        setCollapsed(props.collapsed)
+    })
+  }
   if (dashboard)
     dashboard.lastDesktopWidthPx.value = size
 }
@@ -106,7 +142,8 @@ onMounted(() => {
   // (confirmed empirically: a `nextTick`-only version of this ran too
   // early and got clobbered by Reka's own calibration immediately after).
   setTimeout(() => {
-    panelRef.value?.resize(targetWidthPx)
+    if (props.collapsed === undefined)
+      panelRef.value?.resize(targetWidthPx)
   }, 50)
 })
 
@@ -117,6 +154,17 @@ onMounted(() => {
 // provide() from here would never reach it. See injection-keys.ts.
 if (dashboard)
   dashboard.toggleSidebar.value = toggle
+
+watch(() => panelRef.value?.isCollapsed, (value) => {
+  if (!panelReady || isMobile.value || value === undefined)
+    return
+  if (value !== props.collapsed)
+    emit('update:collapsed', value)
+  nextTick(() => {
+    if (props.collapsed !== undefined && panelRef.value?.isCollapsed !== props.collapsed)
+      setCollapsed(props.collapsed)
+  })
+}, { flush: 'post' })
 
 // Same reasoning, kept in sync via watch (rather than assigned once)
 // since this one changes over the sidebar's lifetime, not just at mount -
