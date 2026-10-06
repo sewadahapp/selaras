@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.6.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v0.5.0...v0.6.0)
+
+### 🩹 Fixes
+
+- Improve collapsed navigation and sidebar controls ([6d071cb](https://github.com/sewadahapp/selaras/commit/6d071cb))
+
+### 📖 Documentation
+
+- **theming:** Explain border and surface contrast ([e0018de](https://github.com/sewadahapp/selaras/commit/e0018de))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.5.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.0...v0.5.0)

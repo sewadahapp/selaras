@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.2.1
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.0...selaras-docs-v1.2.1)
+
+### 🩹 Fixes
+
+- **fix:** improve collapsed navigation and sidebar controls ([6d071cb](https://github.com/sewadahapp/selaras/commit/6d071cb4c7308d25c062f4a502f45038861daf9c))
+- **fix(dashboard):** remove resize handle background stripe ([60e6f53](https://github.com/sewadahapp/selaras/commit/60e6f53aa56b7b97b955057641e3c5fab28b2bfe))
+
+### 📖 Documentation
+
+- **docs(theming):** explain border and surface contrast ([e0018de](https://github.com/sewadahapp/selaras/commit/e0018de8bd671196be1795e7af71e21522799d2f))
+
+Published against `@sewadah/selaras` ^0.6.0.
+
 ## v1.2.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.1.0...selaras-docs-v1.2.0)
