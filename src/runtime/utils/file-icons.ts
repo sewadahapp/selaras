@@ -10,6 +10,7 @@
 // language-driven and open-ended.
 export const defaultFileIcons: Record<string, string> = {
   'vue': 'vscode-icons:file-type-vue',
+  'vue-html': 'vscode-icons:file-type-vue',
   'ts': 'vscode-icons:file-type-typescript',
   'typescript': 'vscode-icons:file-type-typescript',
   'mts': 'vscode-icons:file-type-typescript',

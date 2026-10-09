@@ -56,8 +56,7 @@ should look different:
 Two elements have real interactive behavior a CSS class can't
 replicate, so they're still real components: `SProsePre` (a
 copy-to-clipboard button, via [Button](/components/elements/button),
-plus a filename/language header bar, via
-[Badge](/components/elements/badge) and a file-type
+plus a plain filename/language header with a file-type
 [Icon](/components/elements/icon)) and `SProseH1`-`SProseH6` (wraps
 heading content in a self-anchor `<a href="#id">` when given an `id` -
 this page's own headings work exactly this way).
@@ -85,14 +84,20 @@ Both are usable directly, the same as any other component:
 
 `code` drives the copy button (nothing renders if it's unset) and is also
 copied verbatim, regardless of what's in the default slot. The header bar
-shows `filename` if set, else a `Badge` for `language` if that's set, else
+shows `filename` if set, else a plain label for `language` if that's set, else
 nothing; set `showHeader` to `false` to hide the whole metadata/copy row.
 CodeGroup does this automatically and moves the filename and file-type icon
 into its tab. Beside either, a file-type icon is resolved from the filename's
 extension first, then the fence language - for example `vue` renders the
 `vscode-icons:file-type-vue` glyph - with no icon for an unrecognized
-type. Pass `icon` to override that resolution, or `ui.preIcon` to restyle
-it. `highlights` and `meta` are accepted but currently have no
+type. Pass `icon` to override that resolution. Long filenames truncate in
+the header, with the full path available on hover. Copying changes the button
+to a success-colored check; its labels come from `copyCode` and `codeCopied`
+in the [message registry](/utilities/composables/use-messages).
+
+Customize the header through the `prose` theme's `preHeader`, `preLabel`,
+`preIcon`, `preFilename`, `preLanguage`, and `preCopyButton` slots in
+`app.config.selaras.ui` or `STheme`. `highlights` and `meta` are accepted but currently have no
 effect - there's no line-highlighting logic wired up yet anywhere in the
 component, so passing either does nothing visible today. They're reserved
 for that feature landing later; don't wire them up expecting output.

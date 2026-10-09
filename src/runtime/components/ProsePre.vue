@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
 import { proseTheme } from '../theme/prose'
 import { resolveFileIcon } from '../utils/file-icons'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
-import Badge from './Badge.vue'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
@@ -27,6 +27,7 @@ export interface ProsePreProps {
 }
 
 const icons = useIcons()
+const messages = useMessages()
 const fileIcon = computed(() => props.icon ?? resolveFileIcon(props.language, props.filename))
 const theme = useComponentTheme('prose', proseTheme)
 const ui = computed(() => theme.value())
@@ -39,13 +40,16 @@ const ui = computed(() => theme.value())
 const preProps = useRootProps(() => ui.value.pre, () => undefined)
 
 const copied = ref(false)
+let copyTimer: ReturnType<typeof setTimeout> | undefined
+onBeforeUnmount(() => clearTimeout(copyTimer))
 
 async function copy() {
   if (!props.code)
     return
   await navigator.clipboard.writeText(props.code)
+  clearTimeout(copyTimer)
   copied.value = true
-  setTimeout(() => {
+  copyTimer = setTimeout(() => {
     copied.value = false
   }, 1500)
 }
@@ -56,16 +60,19 @@ async function copy() {
     <div v-if="showHeader && (filename || language || code)" v-bind="resolveSlot(ui.preHeader, undefined)">
       <span v-bind="resolveSlot(ui.preLabel, undefined)">
         <Icon v-if="fileIcon" :name="fileIcon" v-bind="resolveSlot(ui.preIcon, undefined)" />
-        <span v-if="filename" v-bind="resolveSlot(ui.preFilename, undefined)">{{ filename }}</span>
-        <Badge v-else-if="language" :label="language" size="sm" variant="outline" />
+        <span v-if="filename" :title="filename" v-bind="resolveSlot(ui.preFilename, undefined)">{{ filename }}</span>
+        <span v-else-if="language" v-bind="resolveSlot(ui.preLanguage, undefined)">{{ language }}</span>
       </span>
       <Button
         v-if="code"
         v-bind="resolveSlot(ui.preCopyButton, undefined)"
         size="sm"
+        square
         variant="ghost"
-        color="neutral"
+        :color="copied ? 'success' : 'neutral'"
         :icon="copied ? icons.check : icons.copy"
+        :aria-label="copied ? messages.codeCopied : messages.copyCode"
+        :title="copied ? messages.codeCopied : messages.copyCode"
         @click="copy"
       />
     </div>

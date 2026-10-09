@@ -96,6 +96,8 @@ a single object literal covering every key below.
 | `avatarGroupOverflow(count)` | `+${count}` | AvatarGroup's overflow indicator |
 | `paginationInfo(page, total)` | `Page ${page} of ${total}` | Pagination |
 | `codeTabFallback(index)` | `Tab ${index}` | Tabs (code block group) |
+| `copyCode` | `Copy code` | Code block copy button |
+| `codeCopied` | `Copied!` | Code block copy feedback |
 | `dropFiles` | `Drop files here or click to browse` | FileUpload |
 | `invalidFileType(name)` | `${name}: invalid file type` | FileUpload |
 | `invalidFileSize(name, max)` | `${name}: exceeds the ${max} size limit` | FileUpload |

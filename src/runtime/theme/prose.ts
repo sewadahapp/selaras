@@ -14,13 +14,14 @@ export const proseTheme = tv({
     h6: 'text-sm font-semibold text-[var(--selaras-resolved-text-default)] scroll-mt-20',
     headingAnchor: 'no-underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
 
-    preWrapper: 'overflow-hidden rounded-[var(--selaras-resolved-radius-md)] ring-1 ring-[var(--selaras-resolved-border-default)]',
-    preHeader: 'flex items-center justify-between gap-2 border-b border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-elevated)] px-3 py-1.5',
-    preLabel: 'flex min-w-0 items-center gap-2',
-    preIcon: 'size-4',
-    preFilename: 'font-mono text-xs text-[var(--selaras-resolved-text-muted)]',
+    preWrapper: 'min-w-0 overflow-hidden rounded-[var(--selaras-resolved-radius-lg)] bg-[var(--selaras-resolved-surface-elevated)] ring-1 ring-[var(--selaras-resolved-border-default)]',
+    preHeader: 'flex min-h-11 items-center justify-between gap-3 border-b border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-default)] px-4 py-1.5',
+    preLabel: 'flex min-w-0 items-center gap-2.5',
+    preIcon: 'size-4 shrink-0',
+    preFilename: 'truncate font-mono text-xs font-medium text-[var(--selaras-resolved-text-default)]',
+    preLanguage: 'truncate font-mono text-xs text-[var(--selaras-resolved-text-muted)]',
     preCopyButton: 'shrink-0',
-    pre: 'overflow-x-auto bg-[var(--selaras-resolved-surface-elevated)] p-4 font-mono text-sm leading-relaxed',
+    pre: 'm-0 overflow-x-auto rounded-none bg-[var(--selaras-resolved-surface-elevated)] p-4 font-mono text-sm leading-relaxed text-[var(--selaras-resolved-text-default)]',
   },
   variants: {
     color: {

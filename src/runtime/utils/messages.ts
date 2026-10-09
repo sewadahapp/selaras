@@ -57,6 +57,8 @@ export interface MessageRegistry {
   avatarGroupOverflow: (count: number) => string
   paginationInfo: (page: number, total: number) => string
   codeTabFallback: (index: number) => string
+  copyCode: string
+  codeCopied: string
   dropFiles: string
   invalidFileType: (name: string) => string
   invalidFileSize: (name: string, max: string) => string
@@ -142,6 +144,8 @@ export const defaultMessages: MessageRegistry = {
   avatarGroupOverflow: count => `+${count}`,
   paginationInfo: (page, total) => `Page ${page} of ${total}`,
   codeTabFallback: index => `Tab ${index}`,
+  copyCode: 'Copy code',
+  codeCopied: 'Copied!',
   dropFiles: 'Drop files here or click to browse',
   invalidFileType: name => `${name}: invalid file type`,
   invalidFileSize: (name, max) => `${name}: exceeds the ${max} size limit`,
