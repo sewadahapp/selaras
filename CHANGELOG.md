@@ -1,6 +1,33 @@
 # Changelog
 
 
+## v0.7.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.1...v0.7.0)
+
+### 🚀 Enhancements
+
+- **navigation-menu:** Add compact dropdown layout and alignment ([7f52659](https://github.com/sewadahapp/selaras/commit/7f52659))
+- **prose:** Modernize code block headers and copy feedback ([134460a](https://github.com/sewadahapp/selaras/commit/134460a))
+
+### 🩹 Fixes
+
+- **navigation-menu:** Preserve collapsed section boundaries ([73d3027](https://github.com/sewadahapp/selaras/commit/73d3027))
+- **table:** Draw one outer frame with gridlines ([a934012](https://github.com/sewadahapp/selaras/commit/a934012))
+- **stepper:** Localize progress announcements ([3e076a3](https://github.com/sewadahapp/selaras/commit/3e076a3))
+- **dev:** Sync local module before preparing docs ([cd92afa](https://github.com/sewadahapp/selaras/commit/cd92afa))
+- **navigation:** Align connectors and reduce corner rounding ([86cb8d1](https://github.com/sewadahapp/selaras/commit/86cb8d1))
+- **splitter:** Preserve pixel defaults before hydration ([a59596b](https://github.com/sewadahapp/selaras/commit/a59596b))
+- **test:** Share CSS size budgets across consumer checks ([e39da81](https://github.com/sewadahapp/selaras/commit/e39da81))
+
+### 📖 Documentation
+
+- **dropdown:** Explain groups and separators ([ab6fde3](https://github.com/sewadahapp/selaras/commit/ab6fde3))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.6.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v0.5.0...v0.6.0)
