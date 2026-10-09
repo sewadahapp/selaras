@@ -1,6 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
+import { updateAppConfig } from '#app'
 import Stepper from '../../src/runtime/components/Stepper.vue'
 
 describe('stepper', () => {
@@ -150,5 +151,54 @@ describe('stepper', () => {
     await nextTick()
 
     expect(wrapper.find('.custom-class').exists()).toBe(true)
+  })
+})
+
+describe('stepper progress announcements', () => {
+  it('renders one default announcement and updates it for uncontrolled step changes', async () => {
+    const wrapper = await mountSuspended(Stepper, { props: { items: [{ title: 'One' }, { title: 'Two' }] } })
+    expect(wrapper.findAll('[role="status"]')).toHaveLength(1)
+    expect(wrapper.find('[role="status"]').text()).toBe('Step 1 of 2')
+    expect(wrapper.find('[role="status"]').attributes('aria-live')).toBe('polite')
+    await wrapper.findAll('button')[1]!.trigger('mousedown')
+    expect(wrapper.find('[role="status"]').text()).toBe('Step 2 of 2')
+    wrapper.unmount()
+  })
+
+  it('reacts to translated messages, controlled steps, and item counts without an English duplicate', async () => {
+    await updateAppConfig({ selaras: { messages: {
+      stepper: 'Progres',
+      stepperProgress: (step: number, total: number) => `Langkah ${step} dari ${total}`,
+    } } })
+    const wrapper = await mountSuspended(Stepper, { props: { items: [{ title: 'Satu' }, { title: 'Dua' }], modelValue: 1 } })
+    try {
+      expect(wrapper.attributes('aria-label')).toBe('Progres')
+      expect(wrapper.findAll('[role="status"]')).toHaveLength(1)
+      expect(wrapper.find('[role="status"]').text()).toBe('Langkah 1 dari 2')
+      expect(wrapper.text()).not.toContain('Step ')
+      await wrapper.setProps({ 'modelValue': 2, 'items': [{ title: 'Satu' }, { title: 'Dua' }, { title: 'Tiga' }], 'aria-label': 'Custom progress' } as any)
+      expect(wrapper.find('[role="status"]').text()).toBe('Langkah 2 dari 3')
+      expect(wrapper.attributes('aria-label')).toBe('Custom progress')
+      await updateAppConfig({ selaras: { messages: { stepperProgress: (step: number, total: number) => `Étape ${step} sur ${total}` } } })
+      await nextTick()
+      expect(wrapper.find('[role="status"]').text()).toBe('Étape 2 sur 3')
+    }
+    finally {
+      wrapper.unmount()
+      await updateAppConfig({ selaras: undefined })
+    }
+  })
+
+  it('allows an instance progress slot and stays silent for an empty list', async () => {
+    const wrapper = await mountSuspended(Stepper, {
+      props: { items: [{ title: 'One' }], defaultValue: 1 },
+      slots: { progress: '<template #progress="{ step, total }">Stage {{ step }}/{{ total }}</template>' },
+    })
+    expect(wrapper.findAll('[role="status"]')).toHaveLength(1)
+    expect(wrapper.find('[role="status"]').text()).toBe('Stage 1/1')
+    wrapper.unmount()
+    const empty = await mountSuspended(Stepper, { props: { items: [] } })
+    expect(empty.find('[role="status"]').text()).toBe('')
+    empty.unmount()
   })
 })

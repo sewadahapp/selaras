@@ -5,7 +5,7 @@ export default defineAppConfig({
   selaras: {
     icons: { close: 'packed:close' },
     locale: 'en-GB',
-    messages: { close: 'Packed close' },
+    messages: { close: 'Packed close', stepperProgress: (step: number, total: number) => `Packed step ${step} of ${total}` },
     ripple: false,
     defaults: { button: { size: 'lg', color: 'published' } },
     ui: {

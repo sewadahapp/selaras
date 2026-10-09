@@ -200,6 +200,8 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.match(html, /id="packed-separator"/, 'the published Separator must render during SSR')
     assert.match(html, pattern(/tw:opacity-75/), 'registered roles must reach Separator recipe conditions')
     assert.match(html, pattern(/id="packed-stepper"(?=[^>]*tw:outline-double)/), 'registered roles must reach Stepper recipe conditions')
+    assert.match(html, /Packed step 1 of 1/, 'published Stepper progress must use the message formatter during SSR')
+    assert.doesNotMatch(html, />\s*Step \d+ of /, 'published Stepper must not retain the fixed English announcement')
     assert.match(html, pattern(/<nav(?=[^>]*id="packed-pagination")(?=[^>]*tw:outline-offset-4)/), 'Pagination layout conditions must reach its own recipe')
     assert.match(html, pattern(/id="packed-tabs"(?=[^>]*tw:outline-solid)/), 'registered roles must reach Tabs recipe conditions')
     assert.ok(html.includes('--selaras-color-primary-fill: #6789ab;'), 'built-in runtime tokens must appear in SSR head')

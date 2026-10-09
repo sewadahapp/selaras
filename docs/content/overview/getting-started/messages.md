@@ -25,6 +25,11 @@ export default defineAppConfig({
 
 Messages include accessible labels as well as visible text. Function-valued messages must remain functions with the documented arguments. See [useMessages](/utilities/composables/use-messages) for every key and its default.
 
+For interpolated announcements such as Stepper progress, keep the message as a
+function: `` stepperProgress: (step, total) => `Langkah ${step} dari ${total}` ``.
+The [Stepper progress slot](/components/navigation/stepper#progress-announcements)
+also allows an individual instance to supply its own text.
+
 ## Local content
 
 ```vue-html

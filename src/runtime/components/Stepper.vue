@@ -6,6 +6,8 @@ import type { UiProp } from '../utils/ui'
 import { StepperDescription, StepperIndicator, StepperItem, StepperRoot, StepperSeparator, StepperTitle, StepperTrigger } from 'reka-ui'
 import { computed } from 'vue'
 import { useIcons } from '../composables/use-icons'
+import { useMessages } from '../composables/use-messages'
+import StepperRootElement from '../internal/stepper-root-element'
 import { stepperTheme } from '../theme/stepper'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
@@ -53,12 +55,15 @@ export interface StepperEmits {
 }
 
 export interface StepperSlots {
+  /** Replaces the live-region text for this instance. Keep the content concise. */
+  progress?: (props: { step: number | undefined, total: number }) => any
   indicator?: (props: { item: Step, index: number, state: StepState }) => any
   title?: (props: { item: Step, index: number, state: StepState }) => any
   description?: (props: { item: Step, index: number, state: StepState }) => any
 }
 
 const icons = useIcons()
+const messages = useMessages()
 
 const theme = useComponentTheme('stepper', stepperTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
@@ -77,11 +82,15 @@ const iconProps = computed(() => resolveSlot(ui.value.icon, props.ui?.icon))
 const labelsProps = computed(() => resolveSlot(ui.value.labels, props.ui?.labels))
 const titleProps = computed(() => resolveSlot(ui.value.title, props.ui?.title))
 const descriptionProps = computed(() => resolveSlot(ui.value.description, props.ui?.description))
+const progressProps = computed(() => resolveSlot(ui.value.progress, props.ui?.progress))
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
 </script>
 
 <template>
   <StepperRoot
+    v-slot="{ modelValue: currentStep }"
+    :as="StepperRootElement"
+    :aria-label="messages.stepper"
     :model-value="modelValue"
     :default-value="defaultValue"
     :linear="linear"
@@ -141,5 +150,10 @@ const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.
         </StepperDescription>
       </div>
     </StepperItem>
+    <span role="status" aria-live="polite" aria-atomic="true" v-bind="progressProps">
+      <slot name="progress" :step="currentStep" :total="items.length">
+        {{ currentStep !== undefined && items.length ? messages.stepperProgress(currentStep, items.length) : '' }}
+      </slot>
+    </span>
   </StepperRoot>
 </template>

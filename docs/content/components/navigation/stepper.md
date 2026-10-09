@@ -105,6 +105,44 @@ checkmark once completed) or annotating the active step:
 <SStepper :items="items" color="success" />
 ```
 
+## Progress announcements
+
+Stepper has one visually hidden, polite live region announcing the current step.
+Its English default is `Step 1 of 2`. Translate it globally through the
+[message registry](/overview/getting-started/messages):
+
+```ts
+export default defineAppConfig({
+  selaras: {
+    messages: {
+      stepper: 'Progres',
+      stepperProgress: (step, total) => `Langkah ${step} dari ${total}`,
+    },
+  },
+})
+```
+
+`stepper` names the root group; an explicit `aria-label` on the component takes
+priority. `stepperProgress(step, total)` formats the live-region message.
+Changing `selaras.locale` formats locale-aware values but does not translate UI
+messages automatically. Update the message registry when switching languages;
+announcements react to those changes and to step or item-count changes.
+
+For one instance, the `progress` slot replaces only the announcement text.
+Keep it concise; the component supplies the live-region semantics and hiding.
+An empty item list has no default announcement.
+
+::component-example{name="stepper-progress"}
+::
+
+```vue-html
+<SStepper v-model="step" :items="items" aria-label="Progres pembuatan kunci">
+  <template #progress="{ step: currentStep, total }">
+    Langkah {{ currentStep }} dari {{ total }}
+  </template>
+</SStepper>
+```
+
 ## In markdown
 
 Every Selaras component is already globally registered under its `S`-prefixed
@@ -157,6 +195,7 @@ every slot and variant - here's `Stepper`'s own theme file:
 
 | Slot | Props | Description |
 | --- | --- | --- |
+| `progress` | `{ step, total }` | Replaces the screen-reader progress text; `step` may be undefined when no step is active |
 | `indicator` | `{ item, index, state }` | Replaces the indicator's content (default: a checkmark once completed, else the item's `icon`, else the step number) |
 | `title` | `{ item, index, state }` | Replaces the title text |
 | `description` | `{ item, index, state }` | Replaces the description text |

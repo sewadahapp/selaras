@@ -18,6 +18,8 @@ export interface MessageRegistry {
   first: string
   last: string
   pagination: string
+  stepper: string
+  stepperProgress: (step: number, total: number) => string
   scrollTabsLeft: string
   scrollTabsRight: string
   datePicker: string
@@ -102,6 +104,8 @@ export const defaultMessages: MessageRegistry = {
   first: 'First',
   last: 'Last',
   pagination: 'Pagination',
+  stepper: 'Progress',
+  stepperProgress: (step, total) => `Step ${step} of ${total}`,
   scrollTabsLeft: 'Scroll tabs left',
   scrollTabsRight: 'Scroll tabs right',
   datePicker: 'Date picker',

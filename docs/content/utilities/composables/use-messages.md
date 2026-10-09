@@ -57,6 +57,8 @@ a single object literal covering every key below.
 | `next` | `Next` | Pagination, ContentSurround |
 | `first` | `First` | Pagination |
 | `last` | `Last` | Pagination |
+| `stepper` | `Progress` | Stepper group accessible name |
+| `stepperProgress` | `` (step, total) => `Step ${step} of ${total}` `` | Stepper live-region announcement |
 | `pagination` | `Pagination` | Pagination's nav aria-label |
 | `scrollTabsLeft` | `Scroll tabs left` | Tabs' left overflow button |
 | `scrollTabsRight` | `Scroll tabs right` | Tabs' right overflow button |

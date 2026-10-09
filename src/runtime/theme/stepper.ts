@@ -2,6 +2,7 @@ import { tv } from 'tailwind-variants'
 
 export const stepperTheme = tv({
   slots: {
+    progress: 'sr-only',
     root: 'flex w-full items-start',
     // flex-1 (not sized to its own content) - items sit edge-to-edge with
     // no gap between them so the separator living inside the *current*
