@@ -36,6 +36,10 @@ element selector combined with one more thing, always win. No
 `!important`, and nothing to override one rule at a time on a page
 where the defaults don't fit.
 
+Tables fill the content width by default. When columns need more space,
+the table scrolls horizontally without widening the page. Headers and
+body cells keep their columns aligned.
+
 ### Fonts
 
 `selaras-prose` doesn't hardcode a font stack - it follows whatever

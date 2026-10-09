@@ -242,19 +242,9 @@
   font-size: 1em;
 }
 
-/*
- * `width: 100%` is only a suggestion, not a hard cap - a table's default
- * `table-layout: auto` still grows columns past that to fit unwrappable
- * cell content (a long TypeScript union in a Props table's own "Type"
- * column is exactly this in practice), which drags the whole page into
- * horizontal scroll on a narrow viewport instead of just the table.
- * `display: block` + `overflow-x: auto` is the standard fix for a plain
- * markdown table with no wrapping element of its own to put the scroll
- * on instead (the same technique GitHub's own markdown rendering uses) -
- * it doesn't touch how thead/tbody/tr/td lay out relative to each other,
- * since those keep their own tag-implied table-part display roles
- * regardless of what the outer table's own display is set to.
- */
+/* Keep wide tables scrollable without widening the page. The block table
+   creates an anonymous inner table; percentage cell widths below make that
+   inner table fill the available width while retaining automatic columns. */
 .selaras-prose :where(table):not(:where(.not-prose, .not-prose *)) {
   display: block;
   overflow-x: auto;
@@ -265,6 +255,10 @@
 
 .selaras-prose :where(thead):not(:where(.not-prose, .not-prose *)) {
   background-color: var(--selaras-resolved-surface-elevated);
+}
+
+.selaras-prose :where(th, td):not(:where(.not-prose, .not-prose *)) {
+  width: 1%;
 }
 
 .selaras-prose :where(th):not(:where(.not-prose, .not-prose *)) {
