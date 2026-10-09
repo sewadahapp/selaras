@@ -43,15 +43,11 @@ server-readable, portable across a full page reload rather than just
 client-side navigation, and works with privacy tooling that blocks
 `localStorage` but allows first-party cookies.
 
-That said, the remembered width still applies after mounting, not
-before - confirmed by reading Reka UI's own source: its layout-restore
-call runs inside a `watch()` callback triggered by a panel registering
-itself, which Vue's SSR render pass never flushes, so it doesn't run
-server-side regardless of what the storage backend returns. A returning
-visitor's very first server-rendered response shows the default width,
-correcting to the remembered one shortly after - the same class of
-pre-existing, upstream-only limitation as [Prose](/components/typography/prose)'s
-own documented SSR caveat, not something fixable from here.
+The server-rendered sidebar uses its configured pixel default, keeping
+the main panel visible before hydration. Remembered width and collapse
+state apply after mounting: the splitter restores them when its panels
+register and the container can be measured. A returning visitor first sees
+the default width, then the saved layout.
 
 ### Mobile
 

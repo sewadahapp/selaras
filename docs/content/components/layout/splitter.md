@@ -21,10 +21,10 @@ Three components used together - `SSplitter` (the group), one
 `SSplitterPanel` per pane, and an `SSplitterResizeHandle` between each pair
 of panels you want draggable. Sizes are percentages of the group's total by
 default (`sizeUnit="%"` on `SSplitterPanel`); pass `sizeUnit="px"` for
-pixel-based panels instead - see
-[DashboardSidebar](/composites/dashboard/dashboard-sidebar) for an example, a
-sidebar's width reads more naturally in pixels than as a fraction of
-however wide the page happens to be.
+pixel-based panels instead. A pixel `defaultSize` also applies in the
+server-rendered layout, before the group measures its container.
+[DashboardSidebar](/composites/dashboard/dashboard-sidebar) uses this to
+keep its default width at 260px while the main panel fills the remaining space.
 
 `SSplitterPanel` has no visual styling of its own beyond clipping its own
 overflow - what a panel looks like depends entirely on what it's used for,

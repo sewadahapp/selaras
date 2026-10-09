@@ -3,6 +3,21 @@ import { expect, test } from '@nuxt/test-utils/playwright'
 
 test.use({ nuxt: { rootDir: fileURLToPath(new URL('../fixtures/dashboard-resize', import.meta.url)) } })
 
+test.describe('server rendering', () => {
+  test.use({ javaScriptEnabled: false })
+
+  test('keeps pixel sidebar defaults usable before hydration', async ({ page, goto }) => {
+    await page.setViewportSize({ width: 1200, height: 800 })
+    await goto('/', { waitUntil: 'domcontentloaded' })
+    const sidebar = (await page.locator('#sidebar').boundingBox())!
+    const panel = (await page.locator('#panel').boundingBox())!
+    expect(sidebar.width).toBeCloseTo(260, 0)
+    expect(panel.width).toBeCloseTo(740, 0)
+    expect(panel.x).toBeCloseTo(sidebar.x + sidebar.width, 0)
+    await expect(page.locator('#sidebar-toggle')).toBeVisible()
+  })
+})
+
 for (const query of ['', '?dark=true', '?same=true', '?rtl=true']) {
   test(`leaves panel backgrounds and the boundary intact ${query}`, async ({ page, goto }) => {
     await page.setViewportSize({ width: 1200, height: 800 })
@@ -145,6 +160,26 @@ test('keeps uncontrolled collapse persisted and lets an explicit value override 
   await goto('/?controlled=false', { waitUntil: 'hydration' })
   await expect(sidebar).toHaveAttribute('data-state', 'expanded')
   await expect(page.locator('#collapse-model')).toHaveText('false')
+})
+
+test('restores a resized width after the initial pixel default', async ({ page, goto, context }) => {
+  await page.setViewportSize({ width: 1200, height: 800 })
+  await goto('/', { waitUntil: 'hydration' })
+  const sidebar = page.locator('#sidebar')
+  const savedCookie = async () => (await context.cookies()).find(cookie => cookie.name === 'resize-regression')?.value
+  await expect.poll(savedCookie).toBeDefined()
+  const initialCookie = await savedCookie()
+  await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeCloseTo(260, 0)
+  const handle = (await page.locator('#resize-handle').boundingBox())!
+  await page.mouse.move(handle.x + handle.width / 2, handle.y + 100)
+  await page.mouse.down()
+  await page.mouse.move(handle.x + handle.width / 2 + 60, handle.y + 100)
+  await page.mouse.up()
+  await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeCloseTo(320, 0)
+  const resizedWidth = (await sidebar.boundingBox())!.width
+  await expect.poll(savedCookie).not.toBe(initialCookie)
+  await page.reload()
+  await expect.poll(async () => (await sidebar.boundingBox())!.width).toBeCloseTo(resizedWidth, 0)
 })
 
 test('places collapsed tooltips on the left in RTL', async ({ page, goto }) => {

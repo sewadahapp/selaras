@@ -2,7 +2,7 @@
 import type { SplitterPanelThemeSlots } from '../theme/splitter-panel'
 import type { UiProp } from '../utils/ui'
 import { SplitterPanel as RekaSplitterPanel } from 'reka-ui'
-import { computed, ref } from 'vue'
+import { computed, mergeProps, nextTick, onBeforeUnmount, ref } from 'vue'
 import { splitterPanelTheme } from '../theme/splitter-panel'
 import { useComponentTheme, useRootProps } from '../utils/ui'
 
@@ -55,6 +55,40 @@ const theme = useComponentTheme('splitterPanel', splitterPanelTheme)
 const ui = computed(() => theme.value())
 
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
+
+// Pixel defaults must stay in pixels until the group measures its layout.
+// Otherwise its initial flex weight treats a 260px panel as 260 shares.
+const hasMeasuredLayout = ref(false)
+const initialLayoutSettled = ref(false)
+let layoutFrame: number | undefined
+const panelProps = computed(() => mergeProps({
+  style: props.sizeUnit === 'px' && props.defaultSize !== undefined
+    ? {
+        ...(!hasMeasuredLayout.value && { flexBasis: `${props.defaultSize}px`, flexGrow: 0 }),
+        ...(!initialLayoutSettled.value && { transition: 'none' }),
+      }
+    : undefined,
+}, rootProps.value))
+
+function handleResize(size: number) {
+  if (!hasMeasuredLayout.value) {
+    hasMeasuredLayout.value = true
+    // Paint the calibrated layout before enabling any collapse transition.
+    nextTick(() => {
+      layoutFrame = requestAnimationFrame(() => {
+        layoutFrame = requestAnimationFrame(() => {
+          initialLayoutSettled.value = true
+        })
+      })
+    })
+  }
+  emit('resize', size)
+}
+
+onBeforeUnmount(() => {
+  if (layoutFrame !== undefined)
+    cancelAnimationFrame(layoutFrame)
+})
 </script>
 
 <template>
@@ -67,10 +101,10 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
     :collapsible="collapsible"
     :size-unit="sizeUnit"
     :order="order"
-    v-bind="rootProps"
+    v-bind="panelProps"
     @collapse="emit('collapse')"
     @expand="emit('expand')"
-    @resize="(size) => emit('resize', size)"
+    @resize="handleResize"
   >
     <template #default="{ isCollapsed, isExpanded, collapse, expand }">
       <slot :is-collapsed="isCollapsed" :is-expanded="isExpanded" :collapse="collapse" :expand="expand" />
