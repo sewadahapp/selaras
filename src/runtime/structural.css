@@ -179,119 +179,52 @@
   }
 }
 
-/*
- * Tree-connector rail for a nested nav group's own children
- * (ContentNavigation.vue's `item` slot, NavigationMenu's own `childItem`
- * slot in vertical mode) - a trunk line plus one curved "elbow" per row,
- * branching off it toward each item.
- *
- * Both the trunk and the elbow live entirely on the *item* (the per-row
- * wrapper `<li>`), not on the list that wraps all of them - two earlier
- * versions of this got that wrong in opposite ways:
- * - v1 drew trunk+elbow together as a single tile, tiled down the
- *   *list* via `mask-repeat: repeat-y`, on the assumption every row is
- *   the same fixed height - broken the moment a child is itself an
- *   expanded group, since its own nested subtree adds height without
- *   adding a "row", and the tile kept repeating elbow marks straight
- *   through that nested space.
- * - v2 fixed that by moving the elbow onto the item (this file's own
- *   `::before` below) but left the trunk as a plain `border-s` on the
- *   *list* - which is correct-height for a flat list, but wrong the
- *   moment the *last* child is itself expanded: the list's own box
- *   height then includes that child's whole nested subtree, so a
- *   border spanning "100% of the list" ran straight past the last
- *   child's own elbow, all the way down to whatever follows the entire
- *   group in the DOM (visually reaching toward the *next sibling of
- *   the group itself*, not stopping at the group's own last row).
- *
- * The fix: give every item its own trunk segment (`::after` below,
- * `top: 0` down to its own bottom edge, extended slightly further via
- * a negative `bottom` to bridge the list's own row gap so consecutive
- * segments read as one unbroken line) - except the *last* item in the
- * list (plain CSS `:last-child`, no JS needed), whose segment instead
- * stops at a small fixed height matching where its own elbow curve
- * begins bending away. That short stop is what makes the trunk end
- * exactly at the group's own last row regardless of how tall that
- * row's own expanded content makes it, since the segment's height is a
- * fixed constant, never a percentage of anything nested inside it.
- *
- * Both pseudo-elements get their real color from `--selaras-resolved-border-default` (the
- * elbow via `mask-image` over black-on-transparent SVG geometry - the
- * same "colored div, SVG-as-mask" technique ContentToc's own rail
- * already uses; the trunk is a plain colored bar, no mask needed since
- * it's just a straight line). `inset-inline-start` on both reaches back
- * into the `ps-4` gutter `content`/`childList` reserve for them.
- */
+/* Nested navigation and file-tree guides share a one-pixel trunk and a
+ * branch with a small rounded corner. Each item owns its segment so an expanded last
+ * child still ends the parent guide at its own row, above its subtree.
+ * The SVG starts at x=1; the trunk's half-pixel offset puts its center
+ * on that same axis. Row height and gap vary by component. */
 .selaras-nav-elbow {
+  --_selaras-nav-row-height: 40px;
+  --_selaras-nav-row-gap: 2px;
   position: relative;
 }
-.selaras-nav-elbow::before {
-  content: '';
-  position: absolute;
-  inset-inline-start: -16px;
-  top: 0;
-  width: 16px;
-  background-color: var(--selaras-resolved-border-default);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-}
+.selaras-nav-elbow::before,
 .selaras-nav-elbow::after {
   content: '';
   position: absolute;
-  inset-inline-start: -15px;
+  pointer-events: none;
+  background-color: color-mix(in srgb, var(--selaras-resolved-text-muted) 25%, transparent);
+}
+.selaras-nav-elbow::before {
+  inset-inline-start: -16px;
+  top: calc(var(--_selaras-nav-row-height) / 2 - 2px);
+  width: 16px;
+  height: 16px;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1 0A2 2 0 0 0 3 2H14' stroke='black' stroke-width='1' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1 0A2 2 0 0 0 3 2H14' stroke='black' stroke-width='1' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+.selaras-nav-elbow:dir(rtl)::before {
+  transform: scaleX(-1);
+}
+.selaras-nav-elbow::after {
+  inset-inline-start: -15.5px;
   top: 0;
-  width: 1.5px;
-  background-color: var(--selaras-resolved-border-default);
+  bottom: calc(-1 * var(--_selaras-nav-row-gap));
+  width: 1px;
 }
-/* Row height 40px (py-2.5 + text-sm's 20px line-height); elbow curves
-   from the trunk down to the row's own midpoint (y=20). List gap is
-   2px (gap-0.5), so a non-last row's own trunk segment extends 2px
-   past its own bottom edge to meet the next row's segment flush; the
-   last row's own segment instead stops at y=14, exactly where its
-   elbow curve (below) begins bending away from vertical. */
-.selaras-nav-elbow--content-navigation::before {
-  height: 40px;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 40'%3E%3Cpath d='M1 14A6 6 0 0 0 7 20L14 20' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 40'%3E%3Cpath d='M1 14A6 6 0 0 0 7 20L14 20' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-.selaras-nav-elbow--content-navigation::after {
-  bottom: -2px;
-}
-.selaras-nav-elbow--content-navigation:last-child::after {
+.selaras-nav-elbow:last-child::after {
   bottom: auto;
-  height: 14px;
+  height: calc(var(--_selaras-nav-row-height) / 2 - 2px);
 }
-/* Row height 32px (py-1.5 + text-sm's 20px line-height); elbow curves
-   down to the row's own midpoint (y=16). List gap is 4px (gap-1); the
-   last row's own trunk segment stops at y=10, matching its elbow
-   curve's own start. */
-.selaras-nav-elbow--navigation-menu::before {
-  height: 32px;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 32'%3E%3Cpath d='M1 10A6 6 0 0 0 7 16L14 16' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 32'%3E%3Cpath d='M1 10A6 6 0 0 0 7 16L14 16' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+.selaras-nav-elbow--navigation-menu {
+  --_selaras-nav-row-height: 32px;
+  --_selaras-nav-row-gap: 4px;
 }
-.selaras-nav-elbow--navigation-menu::after {
-  bottom: -4px;
-}
-.selaras-nav-elbow--navigation-menu:last-child::after {
-  bottom: auto;
-  height: 10px;
-}
-/* Row height 28px (py-1 + text-sm's 20px line-height); elbow curves
-   down to the row's own midpoint (y=14). List gap is 2px (gap-0.5); the
-   last row's own trunk segment stops at y=8, matching its elbow
-   curve's own start. */
-.selaras-nav-elbow--file-tree::before {
-  height: 28px;
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 28'%3E%3Cpath d='M1 8A6 6 0 0 0 7 14L14 14' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 28'%3E%3Cpath d='M1 8A6 6 0 0 0 7 14L14 14' stroke='black' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-}
-.selaras-nav-elbow--file-tree::after {
-  bottom: -2px;
-}
-.selaras-nav-elbow--file-tree:last-child::after {
-  bottom: auto;
-  height: 8px;
+.selaras-nav-elbow--file-tree {
+  --_selaras-nav-row-height: 28px;
 }
 
 
