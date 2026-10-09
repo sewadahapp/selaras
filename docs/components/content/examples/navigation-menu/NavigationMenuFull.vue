@@ -25,5 +25,5 @@ const items = [
 </script>
 
 <template>
-  <SNavigationMenu :items="items" />
+  <SNavigationMenu :items="items" content-orientation="horizontal" />
 </template>

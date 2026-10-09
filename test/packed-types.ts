@@ -13,6 +13,8 @@ import type {
   DrawerProps,
   InputGroupProps,
   NavigationMenuItem,
+  NavigationMenuPositioning,
+  NavigationMenuProps,
   SelectEmits,
   SelectGroup,
   SelectIdentity,
@@ -62,6 +64,12 @@ void packedConfirm
 void (undefined as unknown as PackedConfirmContract)
 const packedNavigationItem: NavigationMenuItem = { label: 'Docs', to: '/docs', shortcut: 'mod+d', hotkey: true }
 void packedNavigationItem
+const packedNavigationPositioning: NavigationMenuPositioning = { align: 'start' }
+const packedCompactNavigation: NavigationMenuProps = { items: [packedNavigationItem], contentOrientation: 'vertical', positioning: packedNavigationPositioning }
+// @ts-expect-error the navigation viewport does not support floating panel side placement
+const invalidNavigationPositioning: NavigationMenuPositioning = { side: 'right' }
+void packedCompactNavigation
+void invalidNavigationPositioning
 type PreviouslyMissingComponentContracts = AlertDialogProps & ColorPickerProps & DrawerProps & InputGroupProps & SliderProps & TreeProps
 type PublicComposableContracts
   = UseCommandPaletteReturn
@@ -217,7 +225,7 @@ const packedThemeConfiguration: ThemeConfiguration = {
     inputNumber: { compoundVariants: [{ color: 'info', orientation: 'vertical', class: { input: 'tabular-nums' } }] },
     kbd: { compoundVariants: [{ size: 'sm', class: { base: 'font-semibold' } }] },
     modal: { compoundVariants: [{ fullscreen: true, transition: false, class: { content: 'rounded-none' } }] },
-    navigationMenu: { compoundVariants: [{ color: 'primary', active: true, variant: 'pill', class: { link: 'font-semibold' } }] },
+    navigationMenu: { compoundVariants: [{ color: 'primary', active: true, variant: 'pill', contentOrientation: 'vertical', class: { link: 'font-semibold' } }] },
     pagination: { compoundVariants: [{ size: 'lg', class: { root: 'gap-3' } }] },
     pageHeader: { slots: { root: 'pb-4' } },
     pageAside: { slots: { root: 'ps-2' } },

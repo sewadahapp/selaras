@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
-import type { NavigationMenuItem, NavigationMenuPopover } from '../utils/navigation-menu'
+import type { NavigationMenuItem, NavigationMenuPopover, NavigationMenuPositioning } from '../utils/navigation-menu'
 import type { UiProp } from '../utils/ui'
 import type { TooltipProps } from './Tooltip.vue'
 import {
@@ -33,6 +33,10 @@ export interface NavigationMenuProps {
   items: NavigationMenuItem[]
   /** Horizontal uses Reka's real shared-viewport flyout for a single level of dropdown children. Vertical falls back to a recursive accordion (see NavigationMenuAccordionItem.vue) for arbitrary depth - Reka's own NavigationMenuContent isn't built for deep nested trees. */
   orientation?: 'horizontal' | 'vertical'
+  /** Dropdown layout for horizontal navigation. @default 'vertical' */
+  contentOrientation?: 'horizontal' | 'vertical'
+  /** Alignment to the active trigger when contentOrientation is vertical. @default { align: 'center' } */
+  positioning?: NavigationMenuPositioning
   color?: ColorRole
   variant?: 'pill' | 'link'
   /** Draws a bar/underline next to the active item, in addition to its own color styling. */
@@ -50,6 +54,7 @@ export interface NavigationMenuProps {
 
 const props = withDefaults(defineProps<NavigationMenuProps>(), {
   orientation: 'horizontal',
+  contentOrientation: 'vertical',
   variant: 'pill',
   collapsedGroups: 'separator',
 })
@@ -59,6 +64,12 @@ const route = useRoute()
 const icons = useIcons()
 const slots = useSlots()
 const collapsedVertical = computed(() => props.orientation === 'vertical' && props.collapsed)
+const effectiveContentOrientation = computed(() => props.orientation === 'horizontal' ? props.contentOrientation : 'horizontal')
+const viewportAlign = computed(() => {
+  const align = props.positioning?.align ?? 'center'
+  // The viewport primitive uses physical edges; the public API uses logical edges.
+  return direction.value === 'rtl' && align !== 'center' ? (align === 'start' ? 'end' : 'start') : align
+})
 const entries = computed(() => collapsedVertical.value
   ? collapsedNavigationMenuEntries(props.items, props.collapsedGroups)
   : props.items.map(item => ({ item, boundary: false as const })))
@@ -76,7 +87,7 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const ui = computed(() => theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed }))
+const ui = computed(() => theme.value({ orientation: props.orientation, contentOrientation: effectiveContentOrientation.value, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed }))
 
 const rootProps = computed(() => resolveSlot(ui.value.root, props.ui?.root))
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
@@ -101,11 +112,11 @@ function isActive(item: NavigationMenuItem) {
 // Recomputed per item, not a single shared `ui` - active/disabled vary
 // row-to-row (same reasoning as Dropdown.vue's own itemPropsFor).
 function linkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: props.orientation, contentOrientation: effectiveContentOrientation.value, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
 
 function childLinkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: props.orientation, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
+  return resolveSlot(theme.value({ orientation: props.orientation, contentOrientation: effectiveContentOrientation.value, color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: props.collapsed, active: isActive(item), disabled: item.disabled }).childLink, props.ui?.childLink)
 }
 
 // A collapsed rail's own flyout triggers (see NavigationMenuFlyoutTrigger.vue)
@@ -251,6 +262,6 @@ function onSelect(item: NavigationMenuItem, event: Event) {
     </NavigationMenuList>
     <slot name="list-trailing" />
 
-    <NavigationMenuViewport v-if="orientation === 'horizontal'" v-bind="resolveSlot(ui.viewport, props.ui?.viewport)" />
+    <NavigationMenuViewport v-if="orientation === 'horizontal'" :align="viewportAlign" v-bind="resolveSlot(ui.viewport, props.ui?.viewport)" />
   </NavigationMenuRoot>
 </template>

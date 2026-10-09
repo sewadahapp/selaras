@@ -3,16 +3,8 @@ import { tv } from 'tailwind-variants'
 
 export const navigationMenuTheme = tv({
   slots: {
-    // w-full - without it, Root shrink-wraps to just its own trigger
-    // buttons' natural width inside whatever flex/grid container it sits
-    // in (confirmed: inside the docs site's own demo wrapper, a bare
-    // `flex` nav ended up narrower than its own dropdown content). Since
-    // `viewport` below is sized `w-full` *relative to Root*, a narrow
-    // Root clipped any dropdown content wider than the nav's own row -
-    // visible as text cut off mid-word in a custom-content example wider
-    // than the default trigger row. A real navbar spans its container's
-    // width anyway (the standard pattern), so this is correct regardless
-    // of the clipping bug it also happens to fix.
+    // Keep the full navigation width available for wide panels. Compact
+    // panels measure their content and follow the active trigger instead.
     root: 'flex w-full',
     list: 'flex list-none',
     item: 'min-w-0',
@@ -69,25 +61,14 @@ export const navigationMenuTheme = tv({
     separator: 'my-1 h-px bg-[var(--selaras-resolved-border-default)]',
   },
   variants: {
+    contentOrientation: {
+      horizontal: {},
+      vertical: {},
+    },
     orientation: {
-      // `content`: full width of the nav bar, not sized to its own
-      // content - confirmed directly against two comparable references
-      // (one's own real theme sizes this `w-full`; the other's own
-      // mega-menu-style wide panel component - not its own separate
-      // narrow cascading-submenu component - does the same). Each open
-      // item's own panel stacks absolutely inside the shared viewport
-      // (only one visible via Presence), rather than sizing the
-      // viewport to whichever is active.
-      // `childList`: adaptive column count (not a fixed grid-cols-2 like
-      // a comparable reference's own default) - a fixed count leaves an
-      // awkward empty cell for an odd number of children. `auto-fit`,
-      // not `auto-fill` - fill reserves empty phantom tracks for
-      // however many columns WOULD fit the container width, leaving
-      // that much dead space when there are fewer actual children than
-      // that - exactly what showed up as a wide empty gap next to a
-      // 4-item grid in a very wide panel. `auto-fit` collapses those
-      // phantom tracks to 0 instead, so existing children always
-      // stretch to fill the full width.
+      // Wide panels fill the navigation bar. Auto-fit collapses unused
+      // columns so the links fill the available space. The compact-content
+      // compound variant below replaces the width and column count.
       horizontal: {
         root: 'relative items-center',
         list: 'items-center gap-1',
@@ -194,6 +175,15 @@ export const navigationMenuTheme = tv({
     },
   },
   compoundVariants: [
+    {
+      orientation: 'horizontal',
+      contentOrientation: 'vertical',
+      class: {
+        content: 'inset-x-auto left-0 w-[min(20rem,calc(100vw-1.25rem))]',
+        viewport: 'inset-x-auto left-[var(--reka-navigation-menu-viewport-left)] w-[var(--reka-navigation-menu-viewport-width)]',
+        childList: 'grid-cols-1',
+      },
+    },
     { variant: 'pill', active: false, class: { link: 'hover:bg-[var(--selaras-resolved-surface-elevated)]', childLink: 'hover:bg-[var(--selaras-resolved-surface-elevated)]' } },
     // All registered non-neutral roles use the selected semantic recipe.
     // Neutral follows these entries so its functional-token classes win via
@@ -222,6 +212,7 @@ export const navigationMenuTheme = tv({
   ],
   defaultVariants: {
     orientation: 'horizontal',
+    contentOrientation: 'vertical',
     color: 'primary',
     variant: 'pill',
   },

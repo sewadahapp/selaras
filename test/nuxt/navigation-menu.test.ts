@@ -1,6 +1,6 @@
 import type { NavigationMenuItem } from '../../src/runtime/utils/navigation-menu'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { TooltipProvider } from 'reka-ui'
+import { NavigationMenuViewport, TooltipProvider } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import NavigationMenu from '../../src/runtime/components/NavigationMenu.vue'
@@ -177,8 +177,8 @@ describe('navigationMenu (horizontal)', () => {
     expect(link.classes()).not.toContain('text-[var(--_selaras-color-text)]')
   })
 
-  it('the dropdown spans the full width of the nav bar - regression, it used to size itself to the narrowest possible content (120px for a short child list)', async () => {
-    const wrapper = await mountSuspended(NavigationMenu, { props: { items } })
+  it('explicit horizontal content spans the full width of the nav bar', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items, contentOrientation: 'horizontal' } })
 
     const trigger = wrapper.find('button')
     trigger.element.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
@@ -187,6 +187,62 @@ describe('navigationMenu (horizontal)', () => {
 
     const viewport = wrapper.find('a[href="/guides/getting-started"]').element.closest('[class*="z-\\[var(--selaras-resolved-z-dropdown)\\]"]')
     expect(viewport?.className).toContain('w-full')
+  })
+})
+
+describe('navigationMenu (content layout)', () => {
+  const items: NavigationMenuItem[] = [{ label: 'Products', children: [{ label: 'Analytics', to: '/analytics' }] }]
+
+  it('defaults to compact content and centered alignment, and forwards reactive alignment', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items } })
+    expect(wrapper.props('contentOrientation')).toBe('vertical')
+    expect(wrapper.findComponent(NavigationMenuViewport).props('align')).toBe('center')
+    await wrapper.setProps({ positioning: { align: 'end' } })
+    expect(wrapper.findComponent(NavigationMenuViewport).props('align')).toBe('end')
+    wrapper.unmount()
+  })
+
+  it('uses a compact single-column panel, preserves custom styling, and switches back to wide content', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items, ui: { content: 'w-72', viewport: 'rounded-none' } },
+    })
+    await wrapper.find('button').trigger('click')
+    await macrotask()
+    const content = wrapper.find('a[href="/analytics"]').element.closest('[data-state="open"]')!
+    expect(content.classList.contains('w-72')).toBe(true)
+    const list = wrapper.find('a[href="/analytics"]').element.closest('ul')!
+    expect(list.classList.contains('grid-cols-1')).toBe(true)
+    expect(wrapper.findComponent(NavigationMenuViewport).attributes('class')).toContain('rounded-none')
+    await wrapper.setProps({ contentOrientation: 'horizontal', ui: undefined })
+    expect(list.classList.contains('grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]')).toBe(true)
+    wrapper.unmount()
+  })
+
+  it('leaves vertical accordion layout unchanged when dropdown settings are supplied', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items, orientation: 'vertical', contentOrientation: 'vertical', positioning: { align: 'end' } },
+    })
+    expect(wrapper.findComponent(NavigationMenuViewport).exists()).toBe(false)
+    await wrapper.find('button').trigger('click')
+    await macrotask()
+    const list = wrapper.find('ul ul')
+    expect(list.classes()).toContain('ms-6')
+    expect(list.classes()).not.toContain('grid-cols-1')
+    wrapper.unmount()
+  })
+
+  it.each(['horizontal', 'vertical'] as const)('applies scoped compact-content recipes only to %s dropdowns', async (orientation) => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { navigationMenu: {
+        compoundVariants: [{ contentOrientation: 'vertical', class: { link: 'tracking-widest', childLink: 'tracking-widest' } }],
+      } } }, () => h(NavigationMenu, { items, orientation, contentOrientation: 'vertical' })),
+    }))
+    const trigger = wrapper.find('button')
+    expect(trigger.classes().includes('tracking-widest')).toBe(orientation === 'horizontal')
+    await trigger.trigger('click')
+    await macrotask()
+    expect(wrapper.find('a[href="/analytics"]').classes().includes('tracking-widest')).toBe(orientation === 'horizontal')
+    wrapper.unmount()
   })
 })
 

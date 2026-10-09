@@ -17,6 +17,7 @@ const props = defineProps<{
 // also clips vertical overflow; allow these panels to float outside the card.
 const hasNavigationFlyout = computed(() => [
   'navigation-menu-children',
+  'navigation-menu-content-orientation',
   'navigation-menu-full',
   'navigation-menu-custom',
 ].includes(props.name))

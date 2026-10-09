@@ -337,7 +337,7 @@ export interface ThemeComponentRegistry {
   /** Shared by the public component and its recursive accordion/flyout renderers. */
   navigationMenu: {
     slots: NavigationMenuThemeSlots
-    conditions: WithRegisteredColor<Pick<NavigationMenuVariants, 'orientation' | 'color' | 'variant' | 'active' | 'disabled' | 'highlight' | 'collapsed' | 'flyoutRoot'>>
+    conditions: WithRegisteredColor<Pick<NavigationMenuVariants, 'orientation' | 'contentOrientation' | 'color' | 'variant' | 'active' | 'disabled' | 'highlight' | 'collapsed' | 'flyoutRoot'>>
   }
   /** Page controls are Button recipes; this key owns wrapper and ellipsis layout. */
   pagination: {

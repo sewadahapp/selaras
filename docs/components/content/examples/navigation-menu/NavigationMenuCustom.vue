@@ -16,7 +16,7 @@ const items = [
 </script>
 
 <template>
-  <SNavigationMenu :items="items">
+  <SNavigationMenu :items="items" content-orientation="horizontal">
     <template #item-content="{ item }">
       <ul class="grid w-full grid-cols-[repeat(auto-fit,minmax(14rem,1fr))] gap-2 p-2">
         <li v-for="child in item.children" :key="child.label">

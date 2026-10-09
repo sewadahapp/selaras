@@ -33,15 +33,10 @@ Give an item an `icon` and it renders before its label:
 ### With children
 
 An item with `children` renders as a trigger instead of a link - clicking
-(or hovering) it opens a dropdown. Every open dropdown teleports into one
-shared viewport within the NavigationMenu. The viewport smoothly resizes
-and cross-fades as you move between different top-level items - Reka UI's own real navigation-menu
-mechanism, not an independent popover per item. The panel always spans
-the **full width** of the nav bar, flowing children into as many columns
-as comfortably fit - matching two comparable references directly (one's
-own default, and the other's own mega-menu-style wide panel component -
-not its own separate narrow/cascading submenu component), rather than a
-narrow popover sized to its own content:
+(or hovering) it opens a dropdown. Open dropdowns render in one shared
+viewport within the NavigationMenu. By default, the panel is a compact,
+single-column list beneath its active trigger. The viewport resizes as
+you move between top-level items:
 
 ::component-example{name="navigation-menu-children"}
 ::
@@ -59,11 +54,43 @@ This is a single level of children only - Reka's own shared-viewport
 dropdown isn't built for deeper nesting. For an arbitrary-depth tree, use
 [Vertical](#vertical) instead.
 
-At a larger scale - more items, more children each, with icons - the same
-default rendering (no custom slot needed) holds up on its own:
+For a wide, multi-column panel, set `contentOrientation="horizontal"`.
+This example shows that layout with more items, children, and icons:
 
 ::component-example{name="navigation-menu-full"}
 ::
+
+```vue-html
+<SNavigationMenu :items="items" content-orientation="horizontal" />
+```
+
+### Content orientation and alignment
+
+For a horizontal navigation bar, `contentOrientation="vertical"` is the
+default: a compact, single-column dropdown beneath its active trigger.
+`contentOrientation="horizontal"` switches to a full-width, multi-column
+dropdown. The navigation bar itself stays horizontal in both layouts.
+
+::component-example{name="navigation-menu-content-orientation"}
+::
+
+```vue-html
+<SNavigationMenu
+  :items="items"
+  :positioning="{ align: 'start' }"
+/>
+```
+
+`positioning.align` accepts `start`, `center` (the default), or `end`.
+Start and end follow the reading direction, and the compact panel shifts
+at screen edges to stay visible. Use `ui.content` to customize its width;
+the viewport measures each open panel and resizes with it.
+
+These settings apply only to horizontal navigation; alignment affects
+only its compact dropdown. They do not change vertical accordions or
+collapsed sidebar flyouts. Configure those flyouts through `popover`.
+NavigationMenu's `positioning` currently supports only `align`, rather than
+the full set of positioning options available on Popover and Dropdown.
 
 ### Active item
 
@@ -285,7 +312,7 @@ see the per-item `help-content` override.
 ::
 
 ```vue-html
-<SNavigationMenu :items="items">
+<SNavigationMenu :items="items" content-orientation="horizontal">
   <template #item-content="{ item }">
     <ul class="grid w-96 grid-cols-2 gap-2 p-2">
       <li v-for="child in item.children" :key="child.label">
@@ -343,6 +370,8 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | --- | --- | --- |
 | `items` | `NavigationMenuItem[]` | - (required) |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
+| `contentOrientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
+| `positioning` | `NavigationMenuPositioning` (`{ align?: 'start' \| 'center' \| 'end' }`) | `{ align: 'center' }` |
 | `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
 | `variant` | `'pill' \| 'link'` | `'pill'` |
 | `highlight` | `boolean` | `false` |

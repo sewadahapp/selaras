@@ -1,8 +1,11 @@
 import type { PopoverProps } from '../components/Popover.vue'
 import type { TooltipProps } from '../components/Tooltip.vue'
 import type { HotkeyOptions } from '../directives/hotkey'
+import type { OverlayPositioning } from './overlay'
 
 export type NavigationMenuPopover = Pick<PopoverProps, 'side' | 'align' | 'positioning' | 'portal' | 'arrow' | 'ui'>
+/** Alignment of a horizontal navigation menu's compact dropdown. */
+export type NavigationMenuPositioning = Pick<OverlayPositioning, 'align'>
 
 export interface NavigationMenuItem {
   label: string

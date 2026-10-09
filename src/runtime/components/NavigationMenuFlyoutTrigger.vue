@@ -100,7 +100,7 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: true, active: false, disabled: props.item.disabled }))
+const ui = computed(() => theme.value({ orientation: 'vertical', contentOrientation: 'horizontal', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: true, active: false, disabled: props.item.disabled }))
 
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 

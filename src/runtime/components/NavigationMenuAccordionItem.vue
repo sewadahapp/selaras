@@ -66,7 +66,7 @@ function slotName(item: NavigationMenuItem, suffix: '' | '-leading' | '-label' |
 
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight }))
+const ui = computed(() => theme.value({ orientation: 'vertical', contentOrientation: 'horizontal', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight }))
 
 const accordionValue = useId()
 const accordionItems = computed(() => [{ value: accordionValue, label: props.item.label, disabled: props.item.disabled }])
@@ -95,7 +95,7 @@ function isActive(item: NavigationMenuItem) {
 // `theme.value(...)` there would try to read `.value` off the already-
 // unwrapped function itself.
 function linkProps(child: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: 'vertical', contentOrientation: 'horizontal', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, active: isActive(child), disabled: child.disabled }).link, props.ui?.link)
 }
 
 // Reka's real NavigationMenuLink has no `disabled` prop - a disabled leaf

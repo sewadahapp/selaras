@@ -52,10 +52,10 @@ function isActive(item: NavigationMenuItem) {
 const theme = useComponentTheme('navigationMenu', navigationMenuTheme)
 const themeBindings = useThemeBindings()
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
-const ui = computed(() => theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
+const ui = computed(() => theme.value({ orientation: 'vertical', contentOrientation: 'horizontal', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, flyoutRoot: props.root }))
 
 function linkProps(item: NavigationMenuItem) {
-  return resolveSlot(theme.value({ orientation: 'vertical', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
+  return resolveSlot(theme.value({ orientation: 'vertical', contentOrientation: 'horizontal', color: effectiveColor.value as NavigationMenuThemeVariants['color'], variant: props.variant, highlight: props.highlight, collapsed: false, active: isActive(item), disabled: item.disabled }).link, props.ui?.link)
 }
 </script>
 
