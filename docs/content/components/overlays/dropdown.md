@@ -29,6 +29,49 @@ Items can run `onSelect` actions or navigate through `to` (including
 external URLs, with `target`/`rel` when needed). `shortcut` renders a Kbd
 hint; set `hotkey: true` to bind it while the dropdown is open.
 
+### Groups and separators
+
+`items` is a `DropdownItem[][]`: each inner array is one group. Selaras adds a
+separator between groups; items in the same group have no separator between them.
+There is no separate `type: 'separator'` item in this API. Split the items into
+another inner array wherever a boundary belongs.
+
+::component-example{name="dropdown-groups"}
+::
+
+```vue
+<script setup lang="ts">
+const lastAction = ref('')
+const profile = { label: 'Profile', onSelect: () => lastAction.value = 'Profile selected' }
+const signOut = { label: 'Sign out', onSelect: () => lastAction.value = 'Sign out selected' }
+</script>
+
+<template>
+  <!-- Two groups: a separator appears between Profile and Sign out. -->
+  <SDropdown :items="[[profile], [signOut]]">
+    <SButton variant="outline">
+      Two groups
+    </SButton>
+  </SDropdown>
+
+  <!-- One group: no separator appears between the two items. -->
+  <SDropdown :items="[[profile, signOut]]">
+    <SButton variant="outline">
+      One group
+    </SButton>
+  </SDropdown>
+</template>
+```
+
+Use `ui.separator` to change the separator's styling. This applies to the
+anchored menu and the adaptive mobile modal:
+
+```vue-html
+<SDropdown :items="[[profile], [signOut]]" :ui="{ separator: 'my-2' }">
+  <SButton>Account</SButton>
+</SDropdown>
+```
+
 ### Shortcuts and links
 
 `shortcut` only displays the hint. Add `hotkey: true` to activate the item
@@ -162,12 +205,13 @@ inline or pass a CSS selector or `HTMLElement` as the teleport target.
 
 ## Props
 
+For the `items` array shape, see [Groups and separators](#groups-and-separators).
 For link items, use `to` with optional `target` and `rel`. Shortcut hints
 are display-only unless `hotkey: true` is set.
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; to?: string; target?: string; rel?: string; shortcut?: string; hotkey?: boolean }[][]` | - |
+| [`items`](#groups-and-separators) | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; to?: string; target?: string; rel?: string; shortcut?: string; hotkey?: boolean }[][]` | - |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `positioning` | `OverlayPositioning` | menu defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
