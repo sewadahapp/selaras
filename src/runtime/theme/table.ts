@@ -55,9 +55,11 @@ export const tableTheme = tv({
     },
     gridlines: {
       true: {
-        table: 'border border-[var(--selaras-resolved-border-default)]',
-        th: 'border border-[var(--selaras-resolved-border-default)]',
-        td: 'border border-[var(--selaras-resolved-border-default)]',
+        // The wrapper supplies the outer frame, including empty and scrolling states.
+        thead: '[&>tr>th]:border-b',
+        th: 'border-e border-[var(--selaras-resolved-border-default)] data-[last-column]:border-e-0',
+        td: 'border-e border-[var(--selaras-resolved-border-default)] last:border-e-0',
+        tfoot: 'border-t border-[var(--selaras-resolved-border-default)]',
       },
     },
     striped: {

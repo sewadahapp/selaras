@@ -314,7 +314,11 @@ describe('table', () => {
       },
     })
     expect(wrapper.find('th').classes().some(c => c.includes('text-base'))).toBe(true)
-    expect(wrapper.find('table').classes().includes('border')).toBe(true)
+    expect(wrapper.find('table').classes()).not.toContain('border')
+    expect(wrapper.find('th').classes()).toContain('border-e')
+    expect(wrapper.find('td').classes()).toContain('border-e')
+    expect(wrapper.find('th').classes()).toContain('data-[last-column]:border-e-0')
+    expect(wrapper.find('th').attributes('data-last-column')).toBe('true')
     expect(wrapper.find('table').classes().some(c => c.includes('nth-child(even)'))).toBe(true)
   })
 

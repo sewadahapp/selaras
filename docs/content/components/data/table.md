@@ -342,6 +342,11 @@ alternates row backgrounds:
 ::component-example{name="table-styling"}
 ::
 
+Gridline tables keep one rounded outer frame around the scroll viewport, with
+lines between columns and rows. The same frame remains around empty and loading
+states; no extra table border is added. Use `ui.wrapper` to customize the frame
+and `ui.th` / `ui.td` for cell lines.
+
 ```vue-html
 <STable :data="users" gridlines striped size="sm">
   <SColumn field="name" header="Name" />

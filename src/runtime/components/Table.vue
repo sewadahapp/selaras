@@ -140,6 +140,11 @@ function onRowContextmenu(rowOriginal: TData, event: MouseEvent) {
   emit('rowContextmenu', rowOriginal, event)
 }
 
+function isLastHeader(header: { column: { getLeafColumns: () => { id: string }[] } }) {
+  const lastColumn = table.getVisibleLeafColumns().at(-1)
+  return header.column.getLeafColumns().some(column => column.id === lastColumn?.id)
+}
+
 const thProps = computed(() => resolveSlot(ui.value.th, props.ui?.th))
 const thSortableClass = computed(() => resolveSlot(ui.value.thSortable, props.ui?.thSortable).class)
 const sortIconProps = computed(() => resolveSlot(ui.value.sortIcon, props.ui?.sortIcon))
@@ -289,6 +294,7 @@ defineExpose({
                 :ref="(el: unknown) => setHeaderRef(header.column.id, el)"
                 :colspan="header.colSpan"
                 :rowspan="header.rowSpan"
+                :data-last-column="isLastHeader(header) || undefined"
                 v-bind="thProps"
                 :class="header.column.getCanSort() ? thSortableClass : undefined"
                 :data-pinned="header.column.getIsPinned() || undefined"
@@ -412,7 +418,7 @@ defineExpose({
 
         <tfoot v-if="hasFooter" v-bind="tfootProps">
           <tr v-for="footerGroup in table.getFooterGroups()" :key="footerGroup.id" v-bind="trProps">
-            <th v-for="header in footerGroup.headers" :key="header.id" :colspan="header.colSpan" v-bind="thProps">
+            <th v-for="header in footerGroup.headers" :key="header.id" :colspan="header.colSpan" :data-last-column="isLastHeader(header) || undefined" v-bind="thProps">
               <FlexRender v-if="!header.isPlaceholder" :footer="header" />
             </th>
           </tr>
