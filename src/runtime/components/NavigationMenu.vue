@@ -22,7 +22,7 @@ import { vHotkey } from '../directives/hotkey'
 import NavigationMenuTooltip from '../internal/NavigationMenuTooltip.vue'
 import ShortcutHint from '../internal/ShortcutHint.vue'
 import { navigationMenuTheme } from '../theme/navigation-menu'
-import { isNavigationMenuItemActive, navigationMenuHotkey } from '../utils/navigation-menu'
+import { collapsedNavigationMenuEntries, isNavigationMenuItemActive, navigationMenuHotkey } from '../utils/navigation-menu'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -39,6 +39,8 @@ export interface NavigationMenuProps {
   highlight?: boolean
   /** Icon-only rail mode (vertical only) - labels stay in the DOM for assistive tech (`sr-only`, not removed) but visually collapse to just each item's own leading icon. A parent with children renders as a themed Popover trigger instead of an expandable accordion row - no room for a nested list in an icon rail, so its children surface in a flyout next to the icon instead (the common "collapsed sidebar" pattern - VSCode's activity bar, Linear, Notion). */
   collapsed?: boolean
+  /** Presentation of section headings in a collapsed vertical rail. @default 'separator' */
+  collapsedGroups?: 'separator' | 'spacing' | 'none'
   /** Labels for collapsed vertical leaf items. An object customizes Tooltip props. @default false */
   tooltip?: boolean | TooltipProps
   /** Presentation of collapsed child flyouts; item settings override these defaults. */
@@ -49,12 +51,17 @@ export interface NavigationMenuProps {
 const props = withDefaults(defineProps<NavigationMenuProps>(), {
   orientation: 'horizontal',
   variant: 'pill',
+  collapsedGroups: 'separator',
 })
 
 const direction = useDirection()
 const route = useRoute()
 const icons = useIcons()
 const slots = useSlots()
+const collapsedVertical = computed(() => props.orientation === 'vertical' && props.collapsed)
+const entries = computed(() => collapsedVertical.value
+  ? collapsedNavigationMenuEntries(props.items, props.collapsedGroups)
+  : props.items.map(item => ({ item, boundary: false as const })))
 
 // Mirrors a comparable reference's own per-item slot override: an item can set
 // `slot: 'myName'` to target `#myName-content` etc ahead of the generic
@@ -148,9 +155,10 @@ function onSelect(item: NavigationMenuItem, event: Event) {
   <NavigationMenuRoot :orientation="orientation" :data-selaras-color="effectiveColor" v-bind="rootProps">
     <slot name="list-leading" />
     <NavigationMenuList v-bind="listProps">
-      <template v-for="item in items" :key="item.label">
-        <li v-if="item.type === 'separator'" role="separator" v-bind="resolveSlot(ui.separator, props.ui?.separator)" />
-        <li v-else-if="item.type === 'label'" v-bind="resolveSlot(ui.groupLabel, props.ui?.groupLabel)">
+      <template v-for="({ item, boundary }, index) in entries" :key="boundary ? `boundary-${index}` : `item-${item.label}`">
+        <li v-if="boundary === 'spacing'" aria-hidden="true" v-bind="resolveSlot(ui.groupSpacer, props.ui?.groupSpacer)" />
+        <li v-else-if="item.type === 'separator'" role="separator" v-bind="resolveSlot(ui.separator, props.ui?.separator)" />
+        <li v-else-if="item.type === 'label'" v-bind="collapsedVertical ? resolveSlot(ui.collapsedGroupLabel, props.ui?.collapsedGroupLabel) : resolveSlot(ui.groupLabel, props.ui?.groupLabel)">
           <slot :name="slotName(item, '-label')" :item="item" :active="false">
             {{ item.label }}
           </slot>

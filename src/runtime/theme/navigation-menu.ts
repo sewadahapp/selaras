@@ -64,6 +64,8 @@ export const navigationMenuTheme = tv({
     // link's, so a "Links"-style heading sits flush with the real items
     // below it.
     groupLabel: 'px-2.5 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-[var(--selaras-resolved-text-muted)] first:pt-0',
+    collapsedGroupLabel: 'sr-only',
+    groupSpacer: 'h-2',
     separator: 'my-1 h-px bg-[var(--selaras-resolved-border-default)]',
   },
   variants: {

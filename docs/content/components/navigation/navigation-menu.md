@@ -170,6 +170,22 @@ items it introduces:
 ]" orientation="vertical" />
 ```
 
+In a collapsed vertical rail, headings stay in the DOM but are visually hidden.
+By default, `collapsedGroups="separator"` adds a thin line between populated
+sections. Use `"spacing"` for a gap or `"none"` for no automatic boundary.
+The same `items` array works when expanding and collapsing. Explicit separator
+items still draw lines in all three modes; collapsed rails remove leading,
+trailing, and repeated separators. Empty sections do not add visible boundaries.
+Horizontal menus are unchanged.
+
+```vue-html
+<SNavigationMenu :items="items" orientation="vertical" collapsed collapsed-groups="spacing" tooltip />
+```
+
+Use `ui.separator`, `ui.groupSpacer`, and `ui.collapsedGroupLabel` to customize
+the line, gap, and visually hidden heading respectively. None become focusable
+menu actions; link labels and tooltips retain their existing behavior.
+
 A `separator` item still needs a unique `label` even though it's never
 displayed - every item's `label` doubles as its list key. Top-level only:
 a `children` array doesn't check `type`, so a nested tree can't group its
@@ -331,6 +347,7 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | `variant` | `'pill' \| 'link'` | `'pill'` |
 | `highlight` | `boolean` | `false` |
 | `collapsed` | `boolean` | `false` |
+| `collapsedGroups` | `'separator' \| 'spacing' \| 'none'` | `'separator'` |
 | `tooltip` | `boolean \| TooltipProps` | `false` |
 | `popover` | `NavigationMenuPopover` | - |
 | `ui` | `Partial<Record<NavigationMenuSlot, string \| object>>` | - |

@@ -999,3 +999,58 @@ describe('navigationMenu collapsed tooltip configuration', () => {
     wrapper.unmount()
   })
 })
+
+describe('navigationMenu collapsed groups', () => {
+  const groupedItems: NavigationMenuItem[] = [
+    { label: 'Leading', type: 'separator' },
+    { label: 'Workspace', type: 'label' },
+    { label: 'Overview', to: '/dashboard' },
+    { label: 'Settings', type: 'label' },
+    { label: 'Empty', type: 'label' },
+    { label: 'Before security', type: 'separator' },
+    { label: 'Duplicate', type: 'separator' },
+    { label: 'Security', to: '/security' },
+    { label: 'Last', type: 'separator' },
+  ]
+
+  it('switches headings to hidden labels and deduplicates boundaries on collapse', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, { props: { items: groupedItems, orientation: 'vertical' } })
+    expect(wrapper.findAll('li[role="separator"]')).toHaveLength(4)
+    expect(wrapper.findAll('li.sr-only')).toHaveLength(0)
+    await wrapper.setProps({ collapsed: true })
+    expect(wrapper.findAll('li.sr-only')).toHaveLength(3)
+    expect(wrapper.findAll('li[role="separator"]')).toHaveLength(1)
+    expect(wrapper.find('a[href="/dashboard"]').text()).toContain('Overview')
+    expect(wrapper.find('a[href="/security"]').find('.sr-only').text()).toBe('Security')
+    expect(wrapper.find('li[role="separator"]').attributes('tabindex')).toBeUndefined()
+    await wrapper.setProps({ collapsed: false })
+    expect(wrapper.findAll('li.sr-only')).toHaveLength(0)
+    expect(wrapper.findAll('li[role="separator"]')).toHaveLength(4)
+    wrapper.unmount()
+  })
+
+  it.each(['separator', 'spacing', 'none'] as const)('supports %s boundaries while preserving explicit separators', async (collapsedGroups) => {
+    const wrapper = await mountSuspended(NavigationMenu, { props: {
+      orientation: 'vertical',
+      collapsed: true,
+      collapsedGroups,
+      items: [...groupedItems.slice(1, 5), { label: 'Preferences', to: '/preferences' }, ...groupedItems.slice(5)],
+    } })
+    expect(wrapper.findAll('[role="separator"]')).toHaveLength(collapsedGroups === 'separator' ? 2 : 1)
+    expect(wrapper.findAll('li[aria-hidden="true"]')).toHaveLength(collapsedGroups === 'spacing' ? 1 : 0)
+    wrapper.unmount()
+  })
+
+  it('does not insert a boundary for a single section or change horizontal headings', async () => {
+    const wrapper = await mountSuspended(NavigationMenu, { props: {
+      items: groupedItems.slice(1, 3),
+      orientation: 'vertical',
+      collapsed: true,
+    } })
+    expect(wrapper.find('[role="separator"]').exists()).toBe(false)
+    await wrapper.setProps({ orientation: 'horizontal' })
+    expect(wrapper.find('li.sr-only').exists()).toBe(false)
+    expect(wrapper.text()).toContain('Workspace')
+    wrapper.unmount()
+  })
+})

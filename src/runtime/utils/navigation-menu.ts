@@ -63,3 +63,35 @@ export function isNavigationMenuItemActive(item: NavigationMenuItem, currentPath
 export function navigationMenuHotkey(item: NavigationMenuItem): HotkeyOptions | undefined {
   return item.hotkey && item.shortcut && !item.disabled ? { keys: item.shortcut } : undefined
 }
+
+interface CollapsedNavigationMenuEntry {
+  item: NavigationMenuItem
+  boundary: false | 'separator' | 'spacing'
+}
+
+/** Defer a boundary until the next action, avoiding edge and repeated dividers. */
+export function collapsedNavigationMenuEntries(items: NavigationMenuItem[], presentation: 'separator' | 'spacing' | 'none'): CollapsedNavigationMenuEntry[] {
+  const entries: CollapsedNavigationMenuEntry[] = []
+  let hasAction = false
+  let groupBoundary = false
+  let explicitBoundary = false
+  for (const item of items) {
+    if (item.type === 'separator') {
+      explicitBoundary = hasAction
+      continue
+    }
+    if (item.type === 'label') {
+      entries.push({ item, boundary: false })
+      groupBoundary = hasAction
+      continue
+    }
+    const boundary = explicitBoundary ? 'separator' : groupBoundary && presentation !== 'none' ? presentation : false
+    if (boundary)
+      entries.push({ item: { label: item.label, type: 'separator' }, boundary })
+    entries.push({ item, boundary: false })
+    hasAction = true
+    groupBoundary = false
+    explicitBoundary = false
+  }
+  return entries
+}

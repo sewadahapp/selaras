@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const collapsed = ref(false)
 const items = [
   { label: 'Guide', type: 'label' as const },
   { label: 'Introduction', to: '/introduction' },
@@ -11,7 +12,12 @@ const items = [
 </script>
 
 <template>
-  <div class="max-w-64">
-    <SNavigationMenu :items="items" orientation="vertical" />
+  <div class="flex flex-col items-start gap-3">
+    <SButton size="sm" variant="outline" @click="collapsed = !collapsed">
+      {{ collapsed ? 'Expand groups' : 'Collapse groups' }}
+    </SButton>
+    <div :class="collapsed ? 'w-16' : 'w-64'">
+      <SNavigationMenu :items="items" orientation="vertical" :collapsed="collapsed" tooltip />
+    </div>
   </div>
 </template>
