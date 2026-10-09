@@ -10,6 +10,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 import { chromium } from '@playwright/test'
+import cssSizeBudgets from './css-size-budgets.json' with { type: 'json' }
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url))
 const rootRequire = createRequire(join(rootDir, 'package.json'))
@@ -248,11 +249,12 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.ok(css.includes(':root.dark [data-selaras-theme]'), 'generated CSS must contain dark resolved role reads')
     const cssBytes = Buffer.byteLength(css)
     const gzipBytes = gzipSync(css).byteLength
+    const budget = cssSizeBudgets[prefixed ? 'prefixed' : 'unprefixed']
     // Installed consumers currently emit about 149 KB / 20 KB gzip with a
     // prefix and 154 KB / 21 KB gzip without one. Allow modest headroom for
     // build-environment differences while keeping both size guards active.
-    assert.ok(cssBytes <= (prefixed ? 155_000 : 160_000), `compiled CSS is ${cssBytes} bytes / ${gzipBytes} gzip`)
-    assert.ok(gzipBytes <= (prefixed ? 21_000 : 22_000), `compiled CSS is ${gzipBytes} gzip bytes`)
+    assert.ok(cssBytes <= budget.cssBytes, `compiled CSS is ${cssBytes} bytes / ${gzipBytes} gzip`)
+    assert.ok(gzipBytes <= budget.gzipBytes, `compiled CSS is ${gzipBytes} gzip bytes`)
     console.log(`[packed] SSR, generated defaults/tokens, Table and CSS passed (${Buffer.byteLength(css)} bytes / ${gzipSync(css).byteLength} gzip)`)
     if (process.env.SELARAS_PACKED_BROWSER) {
       const browser = await chromium.launch()

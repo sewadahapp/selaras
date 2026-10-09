@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 import { $fetch, setup } from '@nuxt/test-utils/e2e'
 import { describe, expect, it } from 'vitest'
+import cssSizeBudgets from '../scripts/css-size-budgets.json' with { type: 'json' }
 
 describe('classPrefix', async () => {
   await setup({
@@ -99,15 +100,11 @@ describe('classPrefix', async () => {
     expect(css).toContain('.tw\\:animate-out{animation:exit')
   })
 
-  it('keeps the packed consumer stylesheet within the initial size budget', async () => {
+  it('keeps the prefixed consumer stylesheet within the shared size budget', async () => {
     const css = await fetchCss()
-    // Resolved public token names are intentionally repeated in Tailwind's
-    // arbitrary-value selectors. Timeline, the adaptive Dropdown, and the
-    // Table and Toast additions grew the generated utility set to ~144 KB
-    // (~19 KB gzipped), so keep modest headroom while retaining a stricter
-    // compressed-size guard for delivered CSS.
-    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(150_000)
-    expect(gzipSync(css).byteLength).toBeLessThanOrEqual(19_500)
+    // Source and installed consumers enforce the same raw and gzip limits.
+    expect(Buffer.byteLength(css)).toBeLessThanOrEqual(cssSizeBudgets.prefixed.cssBytes)
+    expect(gzipSync(css).byteLength).toBeLessThanOrEqual(cssSizeBudgets.prefixed.gzipBytes)
   })
 
   it('lets a :ui override actually win over a conflicting base class - the real bug: tailwind-merge has no concept of tw:-style prefixes, so without normalizing the override before merging, both the base and the override class would survive and Selaras\'s own default (loaded first) would win the cascade', async () => {
