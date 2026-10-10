@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.7.1
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v0.7.0...v0.7.1)
+
+### 🩹 Fixes
+
+- **prose:** Keep table rows full width ([ffe4f8e](https://github.com/sewadahapp/selaras/commit/ffe4f8e))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.7.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.1...v0.7.0)

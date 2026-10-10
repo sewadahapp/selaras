@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.2.2
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.1...selaras-docs-v1.2.2)
+
+### 🚀 Enhancements
+
+- **feat(prose):** modernize code block headers and copy feedback ([134460a](https://github.com/sewadahapp/selaras/commit/134460aa11dbcb0ed2a3698079e59ed1732cffca))
+- **feat(navigation-menu):** add compact dropdown layout and alignment ([7f52659](https://github.com/sewadahapp/selaras/commit/7f52659a91cdab2670a5f3137b01f78914c8a959))
+
+### 🩹 Fixes
+
+- **fix(prose):** keep table rows full width ([ffe4f8e](https://github.com/sewadahapp/selaras/commit/ffe4f8e75d36c7ef1bd8acd25bc82a3804723de7))
+- **fix(test):** share CSS size budgets across consumer checks ([e39da81](https://github.com/sewadahapp/selaras/commit/e39da81419c1962e136ca1956cf82d89d0d3c72f))
+- **fix(splitter):** preserve pixel defaults before hydration ([a59596b](https://github.com/sewadahapp/selaras/commit/a59596ba388003ebea76852ecc54eaa5986f3758))
+- **fix(navigation):** align connectors and reduce corner rounding ([86cb8d1](https://github.com/sewadahapp/selaras/commit/86cb8d1bc26e4773fc02faa5a1901caaa9f8e571))
+- **fix(dev):** sync local module before preparing docs ([cd92afa](https://github.com/sewadahapp/selaras/commit/cd92afa1079e90b99ee3ca19402320bc4ee21321))
+- **fix(stepper):** localize progress announcements ([3e076a3](https://github.com/sewadahapp/selaras/commit/3e076a3252a0e0d71d1ba291f921514e0cf2d665))
+- **fix(table):** draw one outer frame with gridlines ([a934012](https://github.com/sewadahapp/selaras/commit/a934012f6fe9f84c8d917443bd401b6acabf3574))
+- **fix(navigation-menu):** preserve collapsed section boundaries ([73d3027](https://github.com/sewadahapp/selaras/commit/73d302701eb5d5f9d6e6597ebe379627fa3c212f))
+
+### 📖 Documentation
+
+- **docs(dropdown):** explain groups and separators ([ab6fde3](https://github.com/sewadahapp/selaras/commit/ab6fde3126ad39954d41b12e583063eb0993ef74))
+
+Published against `@sewadah/selaras` ^0.7.1.
+
 ## v1.2.1
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.0...selaras-docs-v1.2.1)
