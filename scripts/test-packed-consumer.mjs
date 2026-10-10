@@ -176,6 +176,11 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.match(html, pattern(/<div(?=[^>]*id="packed-page-header")(?=[^>]*tw:outline-offset-2)/), 'PageHeader must reach its recipe')
     assert.match(html, pattern(/<div(?=[^>]*id="packed-skeleton")(?=[^>]*tw:outline-offset-4)/), 'Skeleton conditions must reach its recipe')
     assert.match(html, pattern(/<div(?=[^>]*id="packed-avatar-group")(?=[^>]*tw:outline-dashed)/), 'AvatarGroup conditions must reach its recipe')
+    const avatarGroup = html.match(/<div[^>]*id="packed-avatar-group"[^>]*>([\s\S]*?)<\/div>/)?.[1]
+    assert.ok(avatarGroup, 'AvatarGroup must render in the installed consumer')
+    assert.equal((avatarGroup.match(/data-packed-avatar-item/g) ?? []).length, 2, 'compiled lists must wrap each visible avatar separately')
+    assert.match(avatarGroup, /\+1/, 'compiled lists must show their overflow count')
+    assert.doesNotMatch(avatarGroup, /id="packed-avatar-C"/, 'compiled lists must respect max during SSR')
     assert.match(html, pattern(/<div(?=[^>]*id="packed-button-group")(?=[^>]*tw:outline-dotted)/), 'ButtonGroup conditions must reach its recipe')
     assert.match(html, pattern(/<div(?=[^>]*id="packed-input-group")(?=[^>]*tw:outline-double)/), 'InputGroup conditions must reach its recipe')
     assert.match(html, pattern(/<aside(?=[^>]*id="packed-page-aside")(?=[^>]*tw:outline-solid)/), 'PageAside must reach its recipe')

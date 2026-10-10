@@ -1,29 +1,16 @@
 <script setup lang="ts">
 import type { VNode } from 'vue'
-import { cloneVNode, Comment, computed, Fragment, ref, Text, useSlots } from 'vue'
+import { cloneVNode, computed, ref, useSlots } from 'vue'
 import { useMessages } from '../composables/use-messages'
 import { resolveFileIcon } from '../utils/file-icons'
+import { flattenSlotChildren } from '../utils/slot-children'
 import ProsePre from './ProsePre.vue'
 import Tabs from './Tabs.vue'
 
 const slots = useSlots()
 const messages = useMessages()
 
-function flatten(vnodes: VNode[]): VNode[] {
-  const result: VNode[] = []
-  for (const vnode of vnodes) {
-    if (vnode.type === Comment || vnode.type === Text)
-      continue
-    if (vnode.type === Fragment && Array.isArray(vnode.children)) {
-      result.push(...flatten(vnode.children as VNode[]))
-      continue
-    }
-    result.push(vnode)
-  }
-  return result
-}
-
-const children = computed(() => flatten(slots.default?.() ?? []))
+const children = computed(() => flattenSlotChildren(slots.default?.() ?? []))
 
 function labelFor(child: VNode, index: number) {
   const props = (child.props ?? {}) as { filename?: string, language?: string }

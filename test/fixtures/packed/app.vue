@@ -18,6 +18,7 @@ const breadcrumbItems = [{ label: 'Home', to: '/' }, { label: 'Published current
 const accordionItems = [{ value: 'published', label: 'Published accordion' }]
 const tabItems = [{ value: 'published', label: 'Published tab' }]
 const stepperItems = [{ title: 'Published step' }]
+const avatarItems = ['A', 'B', 'C']
 const contentNavigationItems = [{ title: 'Published group', path: '/group', children: [{ title: 'Published child', path: '/child' }] }]
 const tocItems = [{ id: 'published-heading', text: 'Published heading', depth: 2 }]
 const theme: ThemeProps = { defaults: { button: { size: 'sm' } } }
@@ -105,8 +106,8 @@ void hyphenatedRole
     </SHeader>
     <SPageHeader id="packed-page-header" title="Published page header" />
     <SSkeleton id="packed-skeleton" animation="shimmer" />
-    <SAvatarGroup id="packed-avatar-group" size="lg">
-      <SAvatar text="A" />
+    <SAvatarGroup id="packed-avatar-group" size="lg" :max="2" :ui="{ item: { 'data-packed-avatar-item': '' } }">
+      <SAvatar v-for="person in avatarItems" :id="`packed-avatar-${person}`" :key="person" :text="person" />
     </SAvatarGroup>
     <SButtonGroup id="packed-button-group" orientation="vertical">
       <SButton>Grouped button</SButton>

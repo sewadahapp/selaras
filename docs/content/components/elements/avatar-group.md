@@ -22,17 +22,22 @@ Wrap multiple `SAvatar` components inside `SAvatarGroup` to stack them with over
 ### Max
 
 `max` limits how many avatars are visible. Extra avatars collapse into a `+N` count indicator.
+Static children, `v-for`, and `<template v-for>` lists use the same limit and
+overlap styling. Whitespace and conditional placeholders aren't counted.
 
 ::component-example{name="avatar-group-max"}
 ::
 
-```vue-html
-<SAvatarGroup :max="2">
-  <SAvatar text="AB" color="primary" />
-  <SAvatar text="CD" color="success" />
-  <SAvatar text="EF" color="info" />
-  <SAvatar text="GH" color="warning" />
-</SAvatarGroup>
+```vue
+<script setup lang="ts">
+const people = ['AB', 'CD', 'EF', 'GH']
+</script>
+
+<template>
+  <SAvatarGroup :max="2">
+    <SAvatar v-for="person in people" :key="person" :text="person" />
+  </SAvatarGroup>
+</template>
 ```
 
 ### Sizes

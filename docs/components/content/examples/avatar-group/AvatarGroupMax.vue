@@ -1,8 +1,14 @@
+<script setup lang="ts">
+const people = [
+  { id: 'ab', text: 'AB', color: 'primary' },
+  { id: 'cd', text: 'CD', color: 'success' },
+  { id: 'ef', text: 'EF', color: 'info' },
+  { id: 'gh', text: 'GH', color: 'warning' },
+] as const
+</script>
+
 <template>
   <SAvatarGroup :max="2">
-    <SAvatar text="AB" color="primary" />
-    <SAvatar text="CD" color="success" />
-    <SAvatar text="EF" color="info" />
-    <SAvatar text="GH" color="warning" />
+    <SAvatar v-for="person in people" :key="person.id" :text="person.text" :color="person.color" />
   </SAvatarGroup>
 </template>

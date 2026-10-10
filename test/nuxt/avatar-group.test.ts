@@ -1,6 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
-import { h } from 'vue'
+import { Comment, Fragment, h, nextTick, ref, Text } from 'vue'
 import Avatar from '../../src/runtime/components/Avatar.vue'
 import AvatarGroup from '../../src/runtime/components/AvatarGroup.vue'
 
@@ -64,6 +64,51 @@ describe('avatarGroup', () => {
       },
     })
     expect(wrapper.text()).not.toContain('+')
+  })
+
+  it('counts nested list fragments as individual avatars and ignores placeholders', async () => {
+    const wrapper = await mountSuspended(AvatarGroup, {
+      props: { max: 2 },
+      slots: {
+        default: () => [
+          h(Comment),
+          h(Text, ' '),
+          h(Fragment, [
+            h(Fragment, [h(Avatar, { key: 'A', text: 'A' })]),
+            h(Fragment, [h(Avatar, { key: 'B', text: 'B' })]),
+            h(Fragment, [h(Avatar, { key: 'C', text: 'C' })]),
+          ]),
+        ],
+      },
+    })
+    expect(wrapper.text()).toContain('+1')
+    expect(wrapper.findAllComponents(Avatar).map(avatar => avatar.props('text'))).toEqual(['A', 'B'])
+    const items = wrapper.findAll(':scope > span').filter(item => item.classes().includes('-me-1.5') && !item.classes().includes('size-8'))
+    expect(items).toHaveLength(2)
+    for (const item of items)
+      expect(item.findAllComponents(Avatar)).toHaveLength(1)
+  })
+
+  it('updates the visible list and overflow count when list fragments change', async () => {
+    const people = ref(['A', 'B', 'C'])
+    const wrapper = await mountSuspended(AvatarGroup, {
+      props: { max: 2 },
+      slots: { default: () => [h(Fragment, people.value.map(text => h(Avatar, { key: text, text })))] },
+    })
+    expect(wrapper.text()).toContain('+1')
+    const firstAvatar = wrapper.findAllComponents(Avatar)[0]!.element
+    people.value = ['C', 'A', 'D', 'E']
+    await nextTick()
+    expect(wrapper.findAllComponents(Avatar).map(avatar => avatar.props('text'))).toEqual(['C', 'A'])
+    expect(wrapper.findAllComponents(Avatar)[1]!.element).toBe(firstAvatar)
+    expect(wrapper.text()).toContain('+2')
+    await wrapper.setProps({ max: 3 })
+    expect(wrapper.findAllComponents(Avatar).map(avatar => avatar.props('text'))).toEqual(['C', 'A', 'D'])
+    expect(wrapper.text()).toContain('+1')
+    people.value = []
+    await nextTick()
+    expect(wrapper.findAllComponents(Avatar)).toHaveLength(0)
+    expect(wrapper.text()).toBe('')
   })
 
   it('applies the overlap ring classes to each avatar wrapper', async () => {

@@ -6,6 +6,7 @@ import { computed, provide, useSlots } from 'vue'
 import { useMessages } from '../composables/use-messages'
 import { avatarGroupTheme } from '../theme/avatar-group'
 import { AVATAR_SIZE_INJECTION_KEY } from '../utils/injection-keys'
+import { flattenSlotChildren } from '../utils/slot-children'
 import { resolveSlot, useComponentTheme, useRootProps } from '../utils/ui'
 
 type AvatarGroupVariants = VariantProps<typeof avatarGroupTheme>
@@ -37,7 +38,7 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 // inject is only a fallback).
 provide(AVATAR_SIZE_INJECTION_KEY, computed(() => props.size))
 
-const slotChildren = computed(() => slots.default?.() ?? [])
+const slotChildren = computed(() => flattenSlotChildren(slots.default?.() ?? []))
 
 const visibleChildren = computed(() => {
   if (!props.max || slotChildren.value.length <= props.max)
@@ -55,7 +56,7 @@ const overflowCount = computed(() => {
 <template>
   <div v-bind="rootProps">
     <span v-if="overflowCount" v-bind="resolveSlot(ui.count, props.ui?.count)">{{ messages.avatarGroupOverflow(overflowCount) }}</span>
-    <span v-for="(child, i) in visibleChildren" :key="i" v-bind="resolveSlot(ui.item, props.ui?.item)">
+    <span v-for="(child, i) in visibleChildren" :key="child.key ?? i" v-bind="resolveSlot(ui.item, props.ui?.item)">
       <component :is="child" />
     </span>
   </div>
