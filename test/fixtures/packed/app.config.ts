@@ -32,6 +32,8 @@ export default defineAppConfig({
       inputGroup: { compoundVariants: [{ orientation: 'vertical', class: { root: 'outline-double' } }] },
       kbd: { compoundVariants: [{ size: 'sm', class: { base: 'outline-dotted' } }] },
       modal: { slots: { content: 'max-w-xl' } },
+      listbox: { compoundVariants: [{ color: 'published', class: { root: 'outline-dashed', item: 'tracking-wide' } }] },
+      transferList: { compoundVariants: [{ layout: 'auto', class: { root: 'outline-dotted' } }] },
       navigationMenu: { compoundVariants: [{ color: 'published', active: true, class: { link: 'underline-offset-8' } }] },
       pagination: { compoundVariants: [{ size: 'sm', class: { root: 'outline-offset-4' } }] },
       pageHeader: { slots: { root: 'outline-offset-2' } },

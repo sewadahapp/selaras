@@ -84,6 +84,13 @@ a single object literal covering every key below.
 | `increment` | `Increment` | InputNumber's stepper |
 | `decrement` | `Decrement` | InputNumber's stepper |
 | `noOptions` | `No options` | Select, Autocomplete |
+| `selectAll` | `Select all` | Listbox, TransferList |
+| `transferSource` | `Available` | TransferList's source heading |
+| `transferTarget` | `Assigned` | TransferList's destination heading |
+| `moveToTarget` | `Add selected` | TransferList's add button |
+| `moveToSource` | `Remove selected` | TransferList's remove button |
+| `listSelectionCount(selected, total)` | `${selected} of ${total} selected` | TransferList's panel counts |
+| `transferItems(count, target)` | `${count} item(s) moved to ${target}` | TransferList's live announcement |
 | `noResultsFound` | `No results found` | Autocomplete, CommandPalette |
 | `createOption(value)` | `Create "${value}"` | Autocomplete's free-text suggestion |
 | `noData` | `No data` | Table |

@@ -44,6 +44,13 @@ export interface MessageRegistry {
   increment: string
   decrement: string
   noOptions: string
+  selectAll: string
+  transferSource: string
+  transferTarget: string
+  moveToTarget: string
+  moveToSource: string
+  listSelectionCount: (selected: number, total: number) => string
+  transferItems: (count: number, target: string) => string
   noResultsFound: string
   createOption: (value: string) => string
   noData: string
@@ -132,6 +139,13 @@ export const defaultMessages: MessageRegistry = {
   increment: 'Increment',
   decrement: 'Decrement',
   noOptions: 'No options',
+  selectAll: 'Select all',
+  transferSource: 'Available',
+  transferTarget: 'Assigned',
+  moveToTarget: 'Add selected',
+  moveToSource: 'Remove selected',
+  listSelectionCount: (selected, total) => `${selected} of ${total} selected`,
+  transferItems: (count, target) => `${count} item${count === 1 ? '' : 's'} moved to ${target}`,
   noResultsFound: 'No results found',
   createOption: value => `Create "${value}"`,
   noData: 'No data',

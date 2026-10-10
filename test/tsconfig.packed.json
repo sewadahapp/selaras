@@ -12,6 +12,7 @@
     "packed-types.ts",
     "packed-table.vue",
     "packed-select.vue",
-    "packed-autocomplete.vue"
+    "packed-autocomplete.vue",
+    "packed-list-controls.vue"
   ]
 }

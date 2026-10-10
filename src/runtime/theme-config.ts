@@ -41,6 +41,7 @@ import type { inputTheme, InputThemeSlots } from './theme/input'
 import type { inputGroupTheme, InputGroupThemeSlots } from './theme/input-group'
 import type { inputNumberTheme, InputNumberThemeSlots } from './theme/input-number'
 import type { kbdTheme, KbdThemeSlots } from './theme/kbd'
+import type { listboxTheme, ListboxThemeSlots } from './theme/listbox'
 import type { modalTheme, ModalThemeSlots } from './theme/modal'
 import type { navigationMenuTheme, NavigationMenuThemeSlots } from './theme/navigation-menu'
 import type { pageAsideTheme, PageAsideThemeSlots } from './theme/page-aside'
@@ -72,6 +73,7 @@ import type { toastTheme, ToastThemeSlots } from './theme/toast'
 import type { toggleTheme, ToggleThemeSlots } from './theme/toggle'
 import type { toggleGroupTheme, ToggleGroupThemeSlots } from './theme/toggle-group'
 import type { tooltipTheme, TooltipThemeSlots } from './theme/tooltip'
+import type { transferListTheme, TransferListThemeSlots } from './theme/transfer-list'
 import type { treeTheme, TreeThemeSlots } from './theme/tree'
 import type { ColorRole, RuntimeTokenOverrides } from './utils/color-registry'
 
@@ -364,6 +366,14 @@ export interface ThemeComponentRegistry {
   radioGroup: {
     slots: RadioGroupThemeSlots
     conditions: WithRegisteredColor<Pick<RadioGroupVariants, 'color' | 'size' | 'orientation' | 'variant' | 'invalid'>>
+  }
+  listbox: {
+    slots: ListboxThemeSlots
+    conditions: WithRegisteredColor<Pick<VariantProps<typeof listboxTheme>, 'color' | 'size' | 'invalid'>>
+  }
+  transferList: {
+    slots: TransferListThemeSlots
+    conditions: Pick<VariantProps<typeof transferListTheme>, 'layout'>
   }
   rating: {
     slots: RatingThemeSlots

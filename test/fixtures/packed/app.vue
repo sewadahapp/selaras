@@ -167,6 +167,8 @@ void hyphenatedRole
       </template>
     </STabs>
     <SSelect id="packed-select" :items="choices" value-key="id" label-key="title" :default-value="1" :color="role" aria-label="Published selection" />
+    <SListbox id="packed-listbox" name="packed-listbox-value" :items="primitiveNumbers" :default-value="0" :color="role" label="Published listbox" />
+    <STransferList id="packed-transfer" name="packed-assignment" :items="primitiveNumbers" :default-value="[0]" :color="role" layout="auto" />
     <SSelect id="packed-select-primitive-string" name="packed-role" :items="primitiveStrings" default-value="admin" aria-label="Primitive role" />
     <SSelect id="packed-select-primitive-number" name="packed-count" :items="primitiveNumbers" :default-value="0" aria-label="Primitive count" />
     <SSelect id="packed-select-multiple" name="packed-choices" :items="choices" value-key="id" label-key="title" multiple :default-value="[1]" aria-label="Published choices" />
