@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useColorMode } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
+import { useColorModeControl } from '../internal/color-mode-control'
 import Button from './Button.vue'
 
-const colorMode = useColorMode()
+const { colorMode, isDark, isDisabled } = useColorModeControl()
 const icons = useIcons()
 const messages = useMessages()
 
-const isDark = computed(() => colorMode.value === 'dark')
-
 function toggle() {
+  if (isDisabled.value)
+    return
   colorMode.preference = isDark.value ? 'light' : 'dark'
 }
 </script>
@@ -22,6 +21,7 @@ function toggle() {
     variant="ghost"
     color="neutral"
     :aria-label="messages.colorModeToggle"
+    :disabled="isDisabled"
     @click="toggle"
   />
 </template>

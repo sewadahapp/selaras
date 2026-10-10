@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { SwitchProps } from './Switch.vue'
 import { computed, useAttrs, useSlots } from 'vue'
-import { useColorMode } from '#imports'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
+import { useColorModeControl } from '../internal/color-mode-control'
 import Switch from './Switch.vue'
 
 export interface ColorModeSwitchProps extends Pick<SwitchProps, 'id' | 'label' | 'description' | 'size' | 'color' | 'disabled' | 'checkedIcon' | 'uncheckedIcon' | 'ui'> {}
@@ -12,10 +12,9 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<ColorModeSwitchProps>()
 const attrs = useAttrs()
 const slots = useSlots()
-const colorMode = useColorMode()
+const { colorMode, isDark, isDisabled } = useColorModeControl()
 const icons = useIcons()
 const messages = useMessages()
-const isDark = computed(() => colorMode.value === 'dark')
 const switchUi = computed(() => {
   const track = typeof props.ui?.track === 'string' ? { class: props.ui.track } : props.ui?.track
   return {
@@ -30,6 +29,8 @@ const switchUi = computed(() => {
 })
 
 function updateMode(dark: boolean) {
+  if (isDisabled.value || props.disabled)
+    return
   colorMode.preference = dark ? 'dark' : 'light'
 }
 </script>
@@ -38,7 +39,7 @@ function updateMode(dark: boolean) {
   <Switch
     v-bind="{ ...attrs, ...props }"
     :model-value="isDark"
-    :disabled="disabled || colorMode.forced"
+    :disabled="disabled || isDisabled"
     :checked-icon="checkedIcon ?? icons.darkMode"
     :unchecked-icon="uncheckedIcon ?? icons.lightMode"
     :ui="switchUi"

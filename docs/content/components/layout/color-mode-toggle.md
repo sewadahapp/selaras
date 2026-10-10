@@ -25,6 +25,12 @@ picker), call `useColorMode()` yourself - it's the same composable this
 component uses internally (`colorMode.preference` is writable, `colorMode.value`
 is the resolved mode).
 
+The button renders a disabled light-mode icon during server rendering and
+its first client render. After mounting, it reflects the saved or system
+appearance and becomes interactive. This also works on pages with async
+data loading; no `ClientOnly` wrapper is needed. Pages with a forced color
+mode keep the button disabled.
+
 ## Props
 
 `SColorModeToggle` takes no props.

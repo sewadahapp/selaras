@@ -3,12 +3,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { reactive } from 'vue'
 import ColorModeSwitch from '../../src/runtime/components/ColorModeSwitch.vue'
 
-const state = vi.hoisted(() => ({ mode: { value: 'light', preference: 'system', forced: false } }))
+const state = vi.hoisted(() => ({ mode: { value: 'light', preference: 'system', forced: false, unknown: false } }))
 mockNuxtImport('useColorMode', () => () => state.mode)
 
 describe('color mode switch', () => {
   beforeEach(() => {
-    state.mode = reactive({ value: 'light', preference: 'system', forced: false })
+    state.mode = reactive({ value: 'light', preference: 'system', forced: false, unknown: false })
   })
 
   it('reflects resolved system appearance and sets an explicit dark preference', async () => {
@@ -36,6 +36,16 @@ describe('color mode switch', () => {
     state.mode.forced = true
     const wrapper = await mountSuspended(ColorModeSwitch, { props: { label: 'Dark mode' } })
     expect(wrapper.text()).toContain('Dark mode')
+    const control = wrapper.find('[role="switch"]')
+    expect(control.attributes('disabled')).toBeDefined()
+    await control.trigger('click')
+    expect(state.mode.preference).toBe('system')
+    wrapper.unmount()
+  })
+
+  it('disables changes while the appearance is unresolved', async () => {
+    state.mode.unknown = true
+    const wrapper = await mountSuspended(ColorModeSwitch)
     const control = wrapper.find('[role="switch"]')
     expect(control.attributes('disabled')).toBeDefined()
     await control.trigger('click')

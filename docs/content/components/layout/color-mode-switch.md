@@ -20,6 +20,11 @@ an explicit `light` or `dark` preference through `useColorMode()`. Preferences
 are persisted by the color-mode module that Selaras installs automatically.
 The switch is disabled on pages with a forced color mode.
 
+During server rendering and its first client render, the switch is unchecked
+and disabled. After mounting, it reflects the saved or system appearance.
+This keeps hydration consistent on synchronous and async pages without
+requiring a `ClientOnly` wrapper.
+
 It uses the same theme and `ui` slots as [Switch](/components/forms/switch),
 with sun and moon icons in the thumb. Use [ColorModeToggle](/components/layout/color-mode-toggle)
 for a button instead.
