@@ -41,7 +41,7 @@ export const selectTheme = tv({
     mobilePanel: '',
     viewport: 'max-h-72 overflow-y-auto p-1',
     group: 'px-2 pt-2 pb-1 text-xs font-medium text-[var(--selaras-resolved-text-muted)]',
-    item: 'relative flex items-center gap-2 rounded-[var(--selaras-resolved-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--selaras-resolved-text-default)] outline-none cursor-pointer select-none data-[highlighted]:bg-[var(--selaras-resolved-surface-elevated)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
+    item: 'relative my-0.5 flex w-full min-w-0 items-center gap-2 rounded-[var(--selaras-resolved-radius-sm)] py-1.5 ps-2 pe-8 text-sm text-[var(--selaras-resolved-text-default)] outline-none cursor-pointer select-none transition-colors data-[highlighted]:bg-[var(--selaras-resolved-surface-elevated)] data-[state=checked]:bg-[var(--_selaras-color-subtle)] data-[state=checked]:text-[var(--_selaras-color-on-subtle)] data-[disabled]:opacity-50 data-[disabled]:pointer-events-none',
     itemIndicator: 'absolute end-2 flex items-center text-[var(--_selaras-color-indicator)]',
     empty: 'px-2 py-6 text-center text-sm text-[var(--selaras-resolved-text-muted)]',
     arrow: 'fill-[var(--selaras-resolved-surface-default)] stroke-[var(--selaras-resolved-border-default)] stroke-1',
