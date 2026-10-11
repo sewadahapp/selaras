@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.2.3
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.2...selaras-docs-v1.2.3)
+
+### 🚀 Enhancements
+
+- **feat(forms):** add listbox and transfer list ([e4ca547](https://github.com/sewadahapp/selaras/commit/e4ca54737d3ba492c20a61fb9e712afeaff99674))
+
+### 🩹 Fixes
+
+- **fix(select):** align selected option styles with listbox ([342eaf3](https://github.com/sewadahapp/selaras/commit/342eaf3c47851b3720fb686cac4adf50fc224c8a))
+- **fix(avatar-group):** flatten dynamic slot children ([9c68a66](https://github.com/sewadahapp/selaras/commit/9c68a66cccc4e88f0ae2a83e2fcc5a59cfa3c3a2))
+- **fix(color-mode):** keep controls stable during hydration ([4ef0d71](https://github.com/sewadahapp/selaras/commit/4ef0d7105308f5a1fe4fdf95f213933e3e2f4a34))
+
+Published against `@sewadah/selaras` ^0.8.0.
+
 ## v1.2.2
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.1...selaras-docs-v1.2.2)
