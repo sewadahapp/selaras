@@ -100,6 +100,7 @@ export default defineNuxtConfig({
     },
     prerender: {
       routes: [
+        '/design-kit',
         '/examples/adaptive-interfaces',
         ...documentationFiles.map(path => `/raw/${path}`),
         ...documentationFiles.filter(path => /^overview\/[^/]+\.md$/.test(path)).map(path => `/${path.replace(/\.md$/, '')}`),
