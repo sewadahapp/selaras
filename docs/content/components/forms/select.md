@@ -390,6 +390,25 @@ the same key because both components use this recipe.
 ::theme-source{name="select"}
 ::
 
+### Custom leading and trailing content
+
+Use `#leading` and `#trailing` for text, icons, or buttons inside the field frame.
+The slots receive `{ disabled, size, buttonSize }`; `buttonSize` fits a Button
+inside the current field size. Give interactive controls an accessible label,
+use `type="button"`, and pass `disabled` through to match the field state.
+
+Custom content stays visible alongside the built-in clear button, loading indicator, and dropdown control.
+The field reserves space for the rendered content, including suffixes whose
+width changes. Use `ui.leading` and `ui.trailing` to customize its wrappers.
+
+::component-example{name="select-addons"}
+::
+
+Custom controls render outside the trigger button, so they can receive keyboard
+focus without creating nested buttons or opening the options list on click.
+With `adaptive`, these slots customize the original field; the modal retains
+its dedicated search and selection controls.
+
 ## Props
 
 | Prop | Type | Default |
@@ -424,6 +443,7 @@ the same key because both components use this recipe.
 
 | Slot | Props | Description |
 | --- | --- | --- |
+| `leading` / `trailing` | `{ disabled, size, buttonSize }` | Custom field content alongside built-in controls |
 | `item` | `{ item }` | Custom option rendering (also used for chips) |
 | `value` | `{ selected }` | Custom trigger display (single-select only) |
 | `group` | `{ group }` | Custom group header (replaces the plain label text) |

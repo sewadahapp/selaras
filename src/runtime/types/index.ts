@@ -128,6 +128,7 @@ export type { ThemeComponentRegistry, ThemeConfiguration, ThemeDefaults, ThemeUi
 export type { ArrowConfig, RoundedArrowConfig } from '../utils/arrow'
 export type { AutocompleteValue } from '../utils/autocomplete-contracts'
 export type { BuiltinColorName, ColorRecipe, ColorRecipeInput, ColorRole, RuntimeColorOverrides, RuntimeThemeMode, RuntimeTokenOverrides } from '../utils/color-registry'
+export type { FieldAdornmentSlotProps } from '../utils/field-adornments'
 export type { FunctionalTokenOverrides, GeometryTokenOverrides, ThemeTokenOverrides } from '../utils/functional-tokens'
 export type { IconRegistry } from '../utils/icons'
 export { defaultIcons } from '../utils/icons'
@@ -138,4 +139,5 @@ export type { ContextMenuPositioning, OverlayPortal, OverlayPositioning } from '
 export type { SelectGroup, SelectIdentity, SelectModel, SelectModelValue, SelectResolvedOption, SelectValue } from '../utils/select-contracts'
 export type { TableEmits, TableProps, TableSlots } from '../utils/table-contracts'
 export type { TimelineItem, TimelineProps, TimelineSlotProps, TimelineSlots } from '../utils/timeline-contracts'
+
 export type { SelarasRuntimeConfig } from './app-config'

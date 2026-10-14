@@ -10,6 +10,7 @@
     "test/packed-table.vue",
     "test/packed-select.vue",
     "test/packed-autocomplete.vue",
+    "test/packed-field-adornments.vue",
     "test/packed-list-controls.vue",
     "test/fixtures/docs-layer",
     "test/fixtures/packed"

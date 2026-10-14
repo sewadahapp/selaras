@@ -9,6 +9,8 @@ export const selectTheme = tv({
     // let the plain gray hover ring beat the primary one in the cascade,
     // since they're all equal-specificity pseudo-class/attribute selectors.
     trigger: 'inline-flex w-full min-h-10 flex-wrap items-center gap-1.5 rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] px-3 py-1.5 text-sm ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] outline-none transition-[color,background-color,box-shadow] not-focus:not-focus-within:not-data-[state=open]:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] focus-within:ring-2 focus-within:ring-[var(--_selaras-color-focus)] data-[state=open]:ring-2 data-[state=open]:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
+    leading: 'absolute start-0 top-1/2 -translate-y-1/2 m-0 flex min-w-0 items-center gap-1 border-0 p-0 ps-2.5 text-sm text-[var(--selaras-resolved-text-muted)] disabled:opacity-50',
+    trailing: 'absolute end-0 top-1/2 -translate-y-1/2 m-0 flex min-w-0 items-center gap-1 border-0 p-0 pe-1 text-sm text-[var(--selaras-resolved-text-muted)] disabled:opacity-50',
     value: 'flex-1 truncate text-start text-[var(--selaras-resolved-text-default)] data-[placeholder]:text-[var(--selaras-resolved-text-muted)]',
     // Both chip display branches render a real Chip (see
     // ComboboxSelectBase.vue) instead of hand-rolled markup, styled/

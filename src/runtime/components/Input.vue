@@ -2,12 +2,14 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { InputThemeSlots } from '../theme/input'
 import type { ColorRole } from '../utils/color-registry'
+import type { FieldAdornmentSlotProps } from '../utils/field-adornments'
 import type { UiProp } from '../utils/ui'
 import { computed, mergeProps } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { inputTheme } from '../theme/input'
+import { useFieldAdornments } from '../utils/field-adornments'
 import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeProps } from '../utils/ui'
@@ -23,6 +25,8 @@ const props = withDefaults(defineProps<InputProps>(), {
 })
 
 const emit = defineEmits<InputEmits>()
+
+const slots = defineSlots<InputSlots>()
 
 export interface InputProps {
   id?: string
@@ -45,6 +49,14 @@ export interface InputEmits {
   'update:modelValue': [value: string]
 }
 
+export interface InputSlots {
+  'leading'?: (props: FieldAdornmentSlotProps) => any
+  'trailing'?: (props: FieldAdornmentSlotProps) => any
+  'clear-icon'?: () => any
+}
+
+const { leading, trailing, padding, clearOffset } = useFieldAdornments()
+
 const field = useFormField()
 const effectivePlaceholder = computed(() => props.placeholder || (field?.floatingLabel.value ? ' ' : undefined))
 const inputId = computed(() => props.id ?? field?.id)
@@ -66,6 +78,8 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? themeProps.val
 // smaller step, so it stays sm.
 const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
+const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: clearSize.value }))
+const clearWidth = computed(() => ({ sm: '1.75rem', md: '2.25rem', lg: '2.5rem' })[effectiveSize.value])
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('input', inputTheme)
@@ -87,11 +101,20 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { excl
 const nativeInputAttrs = useFallthroughAttrs(isInputAttr)
 const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
 const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.value))
+function adornedInputProps() {
+  return mergeProps({ style: padding(!!slots.leading, !!slots.trailing, showClear.value ? clearWidth.value : '0rem') }, inputProps.value)
+}
+function clearProps() {
+  return mergeProps({ style: slots.trailing ? clearOffset() : undefined }, resolveSlot(ui.value.clear, props.ui?.clear))
+}
 </script>
 
 <template>
-  <div :data-selaras-color="inputInvalid ? 'danger' : effectiveColor" :data-selaras-field-leading="icon ? '' : undefined" v-bind="rootProps">
-    <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+  <div :data-selaras-color="inputInvalid ? 'danger' : effectiveColor" :data-selaras-field-leading="icon || slots.leading ? '' : undefined" v-bind="rootProps">
+    <fieldset v-if="slots.leading" ref="leading" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.leading, props.ui?.leading)">
+      <slot name="leading" v-bind="adornmentScope" />
+    </fieldset>
+    <Icon v-else-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <input
       :id="inputId"
       data-ui-group-item
@@ -102,7 +125,7 @@ const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.v
       :disabled="disabled"
       :aria-invalid="inputInvalid || undefined"
       :aria-describedby="describedBy"
-      v-bind="inputProps"
+      v-bind="adornedInputProps()"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
     <Button
@@ -111,7 +134,7 @@ const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.v
       variant="text"
       color="neutral"
       :aria-label="messages.clear"
-      v-bind="resolveSlot(ui.clear, props.ui?.clear)"
+      v-bind="clearProps()"
       @click="clear"
     >
       <template #icon="{ class: iconClass }">
@@ -120,6 +143,9 @@ const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.v
         </slot>
       </template>
     </Button>
-    <Icon v-else-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    <Icon v-else-if="trailingIcon && !slots.trailing" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    <fieldset v-if="slots.trailing" ref="trailing" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.trailing, props.ui?.trailing)">
+      <slot name="trailing" v-bind="adornmentScope" />
+    </fieldset>
   </div>
 </template>

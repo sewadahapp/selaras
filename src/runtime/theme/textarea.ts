@@ -10,6 +10,8 @@ export const textareaTheme = tv({
     // way Input's own icons are - once content wraps past one line,
     // centering against the whole (variable) box height would drift the
     // icon away from the first line of text it's meant to sit beside.
+    leading: 'absolute top-1 start-0 m-0 flex min-w-0 items-center gap-1 border-0 p-0 ps-2.5 text-sm text-[var(--selaras-resolved-text-muted)] disabled:opacity-50',
+    trailing: 'absolute top-1 end-0 m-0 flex min-w-0 items-center gap-1 border-0 p-0 pe-1 text-sm text-[var(--selaras-resolved-text-muted)] disabled:opacity-50',
     leadingIcon: 'absolute start-3 top-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     trailingIcon: 'absolute end-3 top-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     clear: 'absolute end-1 top-1 shrink-0 rounded-full',

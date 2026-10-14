@@ -270,6 +270,25 @@ Global and scoped overrides use the `ui.select` key for both components.
 ::theme-source{name="select"}
 ::
 
+### Custom leading and trailing content
+
+Use `#leading` and `#trailing` for text, icons, or buttons inside the field frame.
+The slots receive `{ disabled, size, buttonSize }`; `buttonSize` fits a Button
+inside the current field size. Give interactive controls an accessible label,
+use `type="button"`, and pass `disabled` through to match the field state.
+
+Custom content stays visible alongside the built-in clear button, loading indicator, and dropdown control.
+The field reserves space for the rendered content, including suffixes whose
+width changes. Use `ui.leading` and `ui.trailing` to customize its wrappers.
+
+::component-example{name="autocomplete-addons"}
+::
+
+Custom controls render outside the trigger button, so they can receive keyboard
+focus without creating nested buttons or opening the options list on click.
+With `adaptive`, these slots customize the original field; the modal retains
+its dedicated search and selection controls.
+
 ## Props
 
 Same as [Select](/components/forms/select#props), minus `searchable` (always
@@ -284,7 +303,9 @@ on), plus these Autocomplete-only additions:
 
 ## Slots
 
-Autocomplete supports `item`, `group`, `header`, `footer`, `empty`,
+Autocomplete supports `leading`, `trailing`, `item`, `group`, `header`, `footer`, `empty`,
 `empty-filter`, `clear-icon`, `loading-icon` and `dropdown-icon`. Its input
 displays the selected label directly. Select's `value` and `filter-icon` slots
 are specific to Select's trigger display and separate filter field.
+
+`leading` and `trailing` receive `{ disabled, size, buttonSize }`, as described above.

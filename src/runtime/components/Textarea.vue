@@ -2,12 +2,14 @@
 import type { VariantProps } from 'tailwind-variants'
 import type { TextareaThemeSlots } from '../theme/textarea'
 import type { ColorRole } from '../utils/color-registry'
+import type { FieldAdornmentSlotProps } from '../utils/field-adornments'
 import type { UiProp } from '../utils/ui'
 import { computed, mergeProps, nextTick, onMounted, ref, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { textareaTheme } from '../theme/textarea'
+import { useFieldAdornments } from '../utils/field-adornments'
 import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
@@ -24,6 +26,8 @@ const props = withDefaults(defineProps<TextareaProps>(), {
 })
 
 const emit = defineEmits<TextareaEmits>()
+
+const slots = defineSlots<TextareaSlots>()
 
 export interface TextareaProps {
   id?: string
@@ -50,6 +54,14 @@ export interface TextareaEmits {
   'update:modelValue': [value: string]
 }
 
+export interface TextareaSlots {
+  'leading'?: (props: FieldAdornmentSlotProps) => any
+  'trailing'?: (props: FieldAdornmentSlotProps) => any
+  'clear-icon'?: () => any
+}
+
+const { leading, trailing, padding, clearOffset } = useFieldAdornments()
+
 const field = useFormField()
 const effectivePlaceholder = computed(() => props.placeholder || (field?.floatingLabel.value ? ' ' : undefined))
 
@@ -69,6 +81,8 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 // clear-button sizing (see Input.vue's clearSize).
 const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
+const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: clearSize.value }))
+const clearWidth = computed(() => ({ sm: '1.75rem', md: '2.25rem', lg: '2.5rem' })[effectiveSize.value])
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('textarea', textareaTheme)
@@ -115,11 +129,20 @@ onMounted(resize)
 // Covers a programmatic value change (not just typing, which already
 // triggers the @input handler below).
 watch(() => props.modelValue, resize)
+function adornedInputProps() {
+  return mergeProps({ style: padding(!!slots.leading, !!slots.trailing, showClear.value ? clearWidth.value : '0rem') }, baseProps.value)
+}
+function clearProps() {
+  return mergeProps({ style: slots.trailing ? clearOffset() : undefined }, resolveSlot(ui.value.clear, props.ui?.clear))
+}
 </script>
 
 <template>
-  <div :data-selaras-color="textareaInvalid ? 'danger' : effectiveColor" :data-selaras-field-leading="icon ? '' : undefined" v-bind="rootProps">
-    <Icon v-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
+  <div :data-selaras-color="textareaInvalid ? 'danger' : effectiveColor" :data-selaras-field-leading="icon || slots.leading ? '' : undefined" v-bind="rootProps">
+    <fieldset v-if="slots.leading" ref="leading" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.leading, props.ui?.leading)">
+      <slot name="leading" v-bind="adornmentScope" />
+    </fieldset>
+    <Icon v-else-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <textarea
       :id="textareaId"
       ref="textareaRef"
@@ -131,7 +154,7 @@ watch(() => props.modelValue, resize)
       :disabled="disabled"
       :aria-invalid="textareaInvalid || undefined"
       :aria-describedby="describedBy"
-      v-bind="baseProps"
+      v-bind="adornedInputProps()"
       @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value); resize()"
     />
     <Button
@@ -140,7 +163,7 @@ watch(() => props.modelValue, resize)
       variant="text"
       color="neutral"
       :aria-label="messages.clear"
-      v-bind="resolveSlot(ui.clear, props.ui?.clear)"
+      v-bind="clearProps()"
       @click="clear"
     >
       <template #icon="{ class: iconClass }">
@@ -149,6 +172,9 @@ watch(() => props.modelValue, resize)
         </slot>
       </template>
     </Button>
-    <Icon v-else-if="trailingIcon" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    <Icon v-else-if="trailingIcon && !slots.trailing" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
+    <fieldset v-if="slots.trailing" ref="trailing" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.trailing, props.ui?.trailing)">
+      <slot name="trailing" v-bind="adornmentScope" />
+    </fieldset>
   </div>
 </template>

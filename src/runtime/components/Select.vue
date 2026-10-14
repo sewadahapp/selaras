@@ -51,6 +51,12 @@ const unscopedSlots = ['header', 'footer', 'empty', 'empty-filter', 'filter-icon
     @update:model-value="updateValue"
     @update:search-term="emit('update:searchTerm', $event)"
   >
+    <template v-if="slots.leading" #leading="scope">
+      <slot name="leading" v-bind="scope" />
+    </template>
+    <template v-if="slots.trailing" #trailing="scope">
+      <slot name="trailing" v-bind="scope" />
+    </template>
     <template v-if="slots.item" #item="{ item }">
       <slot name="item" :item="itemData(item)" />
     </template>

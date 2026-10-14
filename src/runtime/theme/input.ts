@@ -11,6 +11,8 @@ export const inputTheme = tv({
     // hardcoded here - hover's own color stays neutral regardless of
     // `color`, matching every other component's own hover state.
     base: 'w-full rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] text-[var(--selaras-resolved-text-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] placeholder:text-[var(--selaras-resolved-text-muted)] outline-none transition-[color,background-color,box-shadow] not-focus:hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)] focus:ring-2 focus:ring-[var(--_selaras-color-focus)] disabled:opacity-50 disabled:pointer-events-none',
+    leading: 'absolute top-1/2 -translate-y-1/2 start-0 m-0 flex min-w-0 items-center gap-1 border-0 p-0 ps-2.5 text-sm text-[var(--selaras-resolved-text-muted)] disabled:opacity-50',
+    trailing: 'absolute top-1/2 -translate-y-1/2 end-0 m-0 flex min-w-0 items-center gap-1 border-0 p-0 pe-1 text-sm text-[var(--selaras-resolved-text-muted)] disabled:opacity-50',
     leadingIcon: 'absolute start-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     // A separate slot from trailingIcon (not reused) - that one is a

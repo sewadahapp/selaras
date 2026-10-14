@@ -394,6 +394,11 @@ try {
   assert.notEqual(generatedAutocompleteContract, autocompleteContract, 'generated component checks must remove the direct Autocomplete import')
   writeFileSync(join(consumerDir, 'autocomplete-direct.vue'), autocompleteContract)
   writeFileSync(join(consumerDir, 'autocomplete-generated.vue'), generatedAutocompleteContract)
+  const adornmentContract = readFileSync(join(rootDir, 'test/packed-field-adornments.vue'), 'utf8')
+  const generatedAdornmentContract = adornmentContract.replace(/^import S\w+ from '@sewadah\/selaras\/components\/\w+\.vue'\n/gm, '')
+  assert.notEqual(generatedAdornmentContract, adornmentContract)
+  writeFileSync(join(consumerDir, 'field-adornments-direct.vue'), adornmentContract)
+  writeFileSync(join(consumerDir, 'field-adornments-generated.vue'), generatedAdornmentContract)
   const sourceManifest = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'))
   const dependencies = Object.fromEntries(
     ['nuxt', 'vee-validate', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']

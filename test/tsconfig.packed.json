@@ -13,6 +13,7 @@
     "packed-table.vue",
     "packed-select.vue",
     "packed-autocomplete.vue",
+    "packed-field-adornments.vue",
     "packed-list-controls.vue"
   ]
 }

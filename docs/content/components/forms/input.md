@@ -36,6 +36,45 @@ props [Button](/components/elements/button#icons) uses for its own.
 <SInput v-model="amount" trailing-icon="hugeicons:dollar-01" placeholder="0.00" />
 ```
 
+### Custom leading and trailing content
+
+Use `#leading` and `#trailing` for text, icons, or buttons inside the field frame.
+The slots receive `{ disabled, size, buttonSize }`; `buttonSize` fits a Button
+inside the current field size. Give interactive controls an accessible label,
+use `type="button"`, and pass `disabled` through to match the field state.
+
+Custom content stays visible alongside the built-in clear button. It replaces the corresponding decorative `icon` or `trailingIcon`.
+The field reserves space for the rendered content, including suffixes whose
+width changes. Use `ui.leading` and `ui.trailing` to customize its wrappers.
+
+::component-example{name="input-password"}
+::
+
+```vue
+<script setup lang="ts">
+const password = ref('')
+const visible = ref(false)
+</script>
+
+<template>
+  <SInput v-model="password" :type="visible ? 'text' : 'password'" clearable aria-label="Password">
+    <template #trailing="{ disabled, buttonSize }">
+      <SButton
+        type="button" :disabled="disabled" :size="buttonSize" variant="text" color="neutral" square
+        :icon="visible ? 'hugeicons:view-off-slash' : 'hugeicons:view'"
+        :aria-label="visible ? 'Hide password' : 'Show password'" :aria-pressed="visible"
+        @click="visible = !visible"
+      />
+    </template>
+  </SInput>
+</template>
+```
+
+Text prefixes and suffixes use the same slots:
+
+::component-example{name="input-addons"}
+::
+
 ### Clear
 
 `clearable` adds a button that empties the value, once there's something to
@@ -130,10 +169,12 @@ every slot and variant - here's `Input`'s own theme file:
 | `clearable` | `boolean` | `false` |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
-| `ui` | `Partial<Record<'root' \| 'base' \| 'leadingIcon' \| 'trailingIcon' \| 'clear', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'base' \| 'leadingIcon' \| 'trailingIcon' \| 'leading' \| 'trailing' \| 'clear', string \| object>>` | - |
 
 ## Slots
 
 | Slot | Props | Description |
 | --- | --- | --- |
+| `leading` | `{ disabled, size, buttonSize }` | Custom content before the text; replaces `icon` |
+| `trailing` | `{ disabled, size, buttonSize }` | Custom content after the text, alongside the clear button; replaces `trailingIcon` |
 | `clear-icon` | - | Replaces the clear button's icon (default: `hugeicons:cancel-01`) |

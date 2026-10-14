@@ -2,6 +2,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { selectTheme, SelectThemeSlots } from '../theme/select'
 import type { RoundedArrowConfig } from './arrow'
 import type { ColorRole } from './color-registry'
+import type { FieldAdornmentSlotProps } from './field-adornments'
 import type { OverlayPortal, OverlayPositioning } from './overlay'
 import type { UiProp } from './ui'
 
@@ -99,6 +100,8 @@ export interface SelectEmits<Entry extends SelectEntry = { value: SelectValue },
 }
 
 export interface SelectSlots<Entry extends SelectEntry, Key extends string = 'value'> {
+  'leading'?: (props: FieldAdornmentSlotProps) => any
+  'trailing'?: (props: FieldAdornmentSlotProps) => any
   'item'?: (props: { item: SelectEntryItem<Entry> }) => any
   'group'?: (props: { group: SelectEntryGroup<Entry> }) => any
   'value'?: (props: { selected: SelectResolvedOption<Entry, Key> | undefined }) => any

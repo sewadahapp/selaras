@@ -3,6 +3,7 @@ import type { VariantProps } from 'tailwind-variants'
 import type { SelectThemeSlots } from '../theme/select'
 import type { RoundedArrowConfig } from '../utils/arrow'
 import type { ColorRole } from '../utils/color-registry'
+import type { FieldAdornmentSlotProps } from '../utils/field-adornments'
 import type { OverlayPortal, OverlayPositioning } from '../utils/overlay'
 import type { SelectModelValue } from '../utils/select-contracts'
 import type { UiProp } from '../utils/ui'
@@ -36,10 +37,11 @@ import { useIsMobile } from '../composables/use-media-query'
 import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
+import { useFieldAdornments } from '../utils/field-adornments'
 import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
-import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeBindings } from '../utils/ui'
+import { applyClassPrefix, resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeBindings } from '../utils/ui'
 import { useComboboxSelect } from './combobox-select'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
 
@@ -59,6 +61,12 @@ const props = withDefaults(defineProps<ComboboxSelectBaseProps>(), {
 
 const emit = defineEmits<ComboboxSelectBaseEmits>()
 
+const slots = defineSlots<{
+  leading?: (props: FieldAdornmentSlotProps) => any
+  trailing?: (props: FieldAdornmentSlotProps) => any
+  [name: string]: ((props: any) => any) | undefined
+}>()
+const { leading, trailing, padding } = useFieldAdornments()
 const instance = getCurrentInstance()!
 type ComboboxSelection = SelectModelValue | SelectModelValue[] | undefined
 const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue] : props.defaultValue
@@ -606,6 +614,7 @@ const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 // especially at lg; sm has no smaller step so it stays sm).
 const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
+const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: clearSize.value }))
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
@@ -621,6 +630,9 @@ const triggerProps = computed(() => mergeProps(
   resolveSlot(ui.value.trigger, props.ui?.trigger),
   !props.creatable ? nativeTriggerAttrs.value : {},
 ))
+function adornedTriggerProps() {
+  return mergeProps({ style: padding(!!slots.leading, !!slots.trailing) }, triggerProps.value)
+}
 const valueProps = computed(() => resolveSlot(ui.value.value, props.ui?.value))
 // The value slot's own flex-1 is right for the single-select case (it's
 // the only thing in the row besides the chevron), but wrong once it needs
@@ -825,7 +837,10 @@ const bodyProps = computed(() => ({
     @update:open="updateOpen($event)"
     @update:model-value="(value) => onComboboxValueUpdate(value as ComboboxSelection | null)"
   >
-    <ComboboxAnchor>
+    <ComboboxAnchor :class="applyClassPrefix('relative')">
+      <fieldset v-if="slots.leading" ref="leading" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.leading, props.ui?.leading)">
+        <slot name="leading" v-bind="adornmentScope" />
+      </fieldset>
       <!--
         Select (creatable=false): a button trigger, opened by clicking anywhere
         on it - the search input (if any) lives inside the popover instead.
@@ -837,7 +852,7 @@ const bodyProps = computed(() => ({
         data-ui-group-item
         :data-selaras-field-filled="selectedValues.length ? '' : undefined"
         :data-selaras-field-active="open ? '' : undefined"
-        v-bind="triggerProps"
+        v-bind="adornedTriggerProps()"
         @keydown.capture="onSearchKeydown"
       >
         <!--
@@ -974,7 +989,7 @@ const bodyProps = computed(() => ({
         data-ui-group-item
         :data-selaras-field-filled="selectedValues.length ? '' : undefined"
         :data-selaras-field-active="open ? '' : undefined"
-        v-bind="triggerProps"
+        v-bind="adornedTriggerProps()"
         @click="openMobileAutocomplete()"
       >
         <span v-if="multiple && selectedOptions.length" v-bind="commaValueProps">{{ commaText }}</span>
@@ -1022,7 +1037,7 @@ const bodyProps = computed(() => ({
         :aria-invalid="selectInvalid || undefined"
         :aria-describedby="describedBy"
         :aria-busy="loading || undefined"
-        v-bind="mergeProps(triggerProps, modalTriggerAttrs)"
+        v-bind="mergeProps(adornedTriggerProps(), modalTriggerAttrs)"
         tabindex="0"
         @keydown="onTriggerKeydown"
         @blur="selectedChipValue = undefined"
@@ -1122,6 +1137,9 @@ const bodyProps = computed(() => ({
         </template>
         <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
       </ComboboxTrigger>
+      <fieldset v-if="slots.trailing" ref="trailing" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.trailing, props.ui?.trailing)">
+        <slot name="trailing" v-bind="adornmentScope" />
+      </fieldset>
     </ComboboxAnchor>
 
     <ComboboxPortal v-if="!showMobileModal" v-bind="portalProps">
