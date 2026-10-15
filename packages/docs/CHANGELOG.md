@@ -1,5 +1,22 @@
 # Changelog
 
+## v1.3.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.4...selaras-docs-v1.3.0)
+
+### 🚀 Enhancements
+
+- **feat(docs):** add logo to footer attribution ([1af91a6](https://github.com/sewadahapp/selaras/commit/1af91a6b66ac279255a0a6ca421dda89ee6c966e))
+- **feat(docs):** add contextual page contribution actions ([4e21d84](https://github.com/sewadahapp/selaras/commit/4e21d843dc514d6f6f50f0922371fe0cbf94a9c7))
+
+### 🩹 Fixes
+
+- **fix(docs):** render an empty state for blank Markdown pages ([bf4cb17](https://github.com/sewadahapp/selaras/commit/bf4cb1746311c10ff389e997aaec867b60fd9a83))
+- **fix(docs):** provide an optional theme picker fallback ([3ba8c5d](https://github.com/sewadahapp/selaras/commit/3ba8c5d2d24d45bab98fdae8163de0338ed11d7c))
+- **fix(docs):** align and refine footer layout ([029956a](https://github.com/sewadahapp/selaras/commit/029956a79b11b6d13610348a3f1bec516036dacb))
+
+Published against `@sewadah/selaras` ^0.9.0.
+
 ## v1.2.4
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.3...selaras-docs-v1.2.4)
