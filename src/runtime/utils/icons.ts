@@ -1,4 +1,5 @@
 export interface IconRegistry {
+  edit: string
   close: string
   check: string
   indeterminate: string
@@ -51,6 +52,7 @@ export function isFeedbackIntent(value: string): value is FeedbackIntent {
 // once retheme every dismiss/clear/remove "x" glyph in the library
 // together, instead of needing a separate override per component.
 export const defaultIcons: IconRegistry = {
+  edit: 'hugeicons:pencil-edit-01',
   close: 'hugeicons:cancel-01',
   check: 'hugeicons:tick-02',
   indeterminate: 'hugeicons:minus-sign',

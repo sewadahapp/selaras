@@ -37,8 +37,9 @@ together, rather than needing a separate override for each.
 
 | Key | Default | Used by |
 | --- | --- | --- |
-| `close` | `hugeicons:cancel-01` | Modal, Toast, Chip, Input's clear button, CommandPalette |
-| `check` | `hugeicons:tick-02` | Checkbox, Select's selected-item marker |
+| `edit` | `hugeicons:pencil-edit-01` | Editable's edit control |
+| `close` | `hugeicons:cancel-01` | Modal, Toast, Chip, Input's clear button, CommandPalette, Editable's cancel control |
+| `check` | `hugeicons:tick-02` | Checkbox, Select's selected-item marker, Editable's save control |
 | `indeterminate` | `hugeicons:minus-sign` | Checkbox's indeterminate state |
 | `chevronUp` | `hugeicons:arrow-up-01` | Accordion, InputNumber's stepper |
 | `chevronDown` | `hugeicons:arrow-down-01` | Select, Autocomplete, DatePicker, InputNumber's stepper |

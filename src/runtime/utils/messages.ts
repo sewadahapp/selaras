@@ -1,4 +1,8 @@
 export interface MessageRegistry {
+  edit: string
+  save: string
+  editableInput: string
+  editablePlaceholder: string
   loading: string
   clear: string
   close: string
@@ -94,6 +98,10 @@ export interface MessageRegistry {
 // string can't carry that, unlike every icons.ts entry which is just a
 // static name.
 export const defaultMessages: MessageRegistry = {
+  edit: 'Edit',
+  save: 'Save',
+  editableInput: 'Editable text',
+  editablePlaceholder: 'Click to edit',
   loading: 'Loading',
   clear: 'Clear',
   close: 'Close',

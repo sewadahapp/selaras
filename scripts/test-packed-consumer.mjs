@@ -235,6 +235,7 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.match(html, /<input(?=[^>]*id="packed-external-email")(?=[^>]*name="email")/, 'generated Input must retain the form library field name')
     assert.match(html, /<input(?=[^>]*name="plan")(?=[^>]*value="0")/, 'generated Select must retain numeric zero for a form library')
     assert.match(html, /<input(?=[^>]*id="packed-external-quantity")(?=[^>]*name="quantity")(?=[^>]*value="1")/, 'generated InputNumber must render the library initial value')
+    assert.match(html, /<button(?=[^>]*id="packed-editable")[^>]+>.*Published title/s, 'published Editable must render its saved text during SSR')
     const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
       .filter(([tag]) => tag.includes('rel="stylesheet"'))
       .map(([tag]) => tag.match(/href="([^"]+)"/)?.[1])
@@ -277,6 +278,15 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
         })
         await page.goto(url)
         await page.locator('#packed-responsive').waitFor({ state: 'hidden' })
+        await page.locator('#packed-editable').click()
+        const editor = page.locator('input#packed-editable')
+        await editor.fill('Published edited title')
+        await editor.press('Escape')
+        assert.equal(await page.locator('#packed-editable').textContent(), 'Published title')
+        await page.locator('#packed-editable').click()
+        await editor.fill('Published edited title')
+        await editor.press('Enter')
+        assert.equal(await page.locator('#packed-editable').textContent(), 'Published edited title')
         const themedClass = value => `${prefixed ? 'tw:' : ''}${value}`
         async function hasRecipe(selector, value) {
           const element = page.locator(selector)
@@ -399,6 +409,11 @@ try {
   assert.notEqual(generatedAdornmentContract, adornmentContract)
   writeFileSync(join(consumerDir, 'field-adornments-direct.vue'), adornmentContract)
   writeFileSync(join(consumerDir, 'field-adornments-generated.vue'), generatedAdornmentContract)
+  const editableContract = readFileSync(join(rootDir, 'test/packed-editable.vue'), 'utf8')
+  const generatedEditableContract = editableContract.replace('import SEditable from \'@sewadah/selaras/components/Editable.vue\'\n', '')
+  assert.notEqual(generatedEditableContract, editableContract)
+  writeFileSync(join(consumerDir, 'editable-direct.vue'), editableContract)
+  writeFileSync(join(consumerDir, 'editable-generated.vue'), generatedEditableContract)
   const sourceManifest = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'))
   const dependencies = Object.fromEntries(
     ['nuxt', 'vee-validate', 'vue', 'tailwindcss', 'typescript', 'vue-tsc']

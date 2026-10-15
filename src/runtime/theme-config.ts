@@ -32,6 +32,7 @@ import type { dashboardSidebarTheme, DashboardSidebarThemeSlots } from './theme/
 import type { datePickerTheme, DatePickerThemeSlots } from './theme/date-picker'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
+import type { editableTheme, EditableThemeSlots } from './theme/editable'
 import type { fileTreeTheme, FileTreeThemeSlots } from './theme/file-tree'
 import type { fileUploadTheme, FileUploadThemeSlots } from './theme/file-upload'
 import type { formFieldTheme, FormFieldThemeSlots } from './theme/form-field'
@@ -102,6 +103,7 @@ type ContentNavigationVariants = VariantProps<typeof contentNavigationTheme>
 type ContentSurroundVariants = VariantProps<typeof contentSurroundTheme>
 type ContentTocVariants = VariantProps<typeof contentTocTheme>
 type InputVariants = VariantProps<typeof inputTheme>
+type EditableVariants = VariantProps<typeof editableTheme>
 type InputGroupVariants = VariantProps<typeof inputGroupTheme>
 type InputNumberVariants = VariantProps<typeof inputNumberTheme>
 type KbdVariants = VariantProps<typeof kbdTheme>
@@ -281,6 +283,11 @@ export interface ThemeComponentRegistry {
     slots: InputThemeSlots
     conditions: WithRegisteredColor<Pick<InputVariants, 'color' | 'size' | 'hasLeadingIcon' | 'hasTrailingIcon' | 'invalid'>>
     defaults: WithRegisteredColor<Pick<InputVariants, 'color' | 'size'>>
+  }
+  editable: {
+    slots: EditableThemeSlots
+    conditions: WithRegisteredColor<Pick<EditableVariants, 'color' | 'size' | 'invalid' | 'empty' | 'multiline'>>
+    defaults: WithRegisteredColor<Pick<EditableVariants, 'color' | 'size'>>
   }
   inputGroup: {
     slots: InputGroupThemeSlots

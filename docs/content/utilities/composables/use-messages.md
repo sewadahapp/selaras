@@ -40,10 +40,14 @@ a single object literal covering every key below.
 
 | Key | Default | Used by |
 | --- | --- | --- |
+| `edit` | `Edit` | Editable's edit control |
+| `save` | `Save` | Editable's save control |
+| `editableInput` | `Editable text` | Editable editor's fallback accessible name |
+| `editablePlaceholder` | `Click to edit` | Editable's empty preview |
 | `loading` | `Loading` | Button/Switch's loading state |
 | `clear` | `Clear` | Input, Select, DatePicker's clear button |
 | `close` | `Close` | Modal, Toast, CommandPalette's footer hint |
-| `cancel` | `Cancel` | AlertDialog's default footer |
+| `cancel` | `Cancel` | AlertDialog's default footer, Editable |
 | `continue` | `Continue` | AlertDialog's default footer |
 | `colorModeToggle` | `Toggle color mode` | ColorModeToggle |
 | `colorPicker` | `Color picker` | ColorPicker |

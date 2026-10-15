@@ -57,6 +57,7 @@ export const degungThemeUi = {
   },
   drawer: { slots: { content: 'selaras-degung-panel' } },
   dropdown: { slots: { content: 'selaras-degung-panel' } },
+  editable: { slots: { input: 'selaras-degung-field' } },
   input: { slots: { base: 'selaras-degung-field' } },
   inputNumber: { slots: { root: 'selaras-degung-field' } },
   modal: { slots: { content: 'selaras-degung-panel' } },

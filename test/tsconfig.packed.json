@@ -14,6 +14,7 @@
     "packed-select.vue",
     "packed-autocomplete.vue",
     "packed-field-adornments.vue",
+    "packed-editable.vue",
     "packed-list-controls.vue"
   ]
 }
