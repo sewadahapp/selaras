@@ -2,11 +2,13 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { docsSite, legacyDocsPaths } from './utils/seo'
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
 
 const documentationFiles = (readdirSync(join(rootDir, 'content'), { recursive: true }) as string[])
   .filter(path => path.endsWith('.md'))
+const documentationRoutes = documentationFiles.map(path => path === 'index.md' ? '/' : `/${path.replace(/\.md$/, '')}`)
 const exampleSources = Object.fromEntries(
   (readdirSync(join(rootDir, 'components/content/examples'), { recursive: true }) as string[])
     .filter(path => path.endsWith('.vue'))
@@ -20,10 +22,9 @@ function fakeDemoLinkedPaths() {
   const dir = join(rootDir, 'components/content/examples')
   const realRouteExceptions = new Set([
     '/',
-    '/components/forms/input',
-    '/components/forms/select',
-    '/components/overlays/modal',
-    '/components/overlays/slideover',
+    '/design-kit',
+    '/examples/adaptive-interfaces',
+    ...documentationRoutes,
   ])
   const paths = new Set<string>()
   for (const rel of readdirSync(dir, { recursive: true }) as string[]) {
@@ -53,7 +54,27 @@ export default defineNuxtConfig({
   // layer files directly during development; packed consumer coverage tests
   // the public package-name extension path separately.
   extends: ['../packages/docs'],
-  modules: ['nuxt-llms'],
+  modules: ['nuxt-llms', '@nuxtjs/sitemap', 'nuxt-og-image'],
+  site: {
+    url: process.env.NUXT_SITE_URL ?? docsSite.url,
+    name: docsSite.name,
+    description: docsSite.description,
+    trailingSlash: true,
+  },
+  sitemap: {
+    zeroRuntime: true,
+    include: ['/', '/design-kit', '/overview/**', '/components/**', '/composites/**', '/utilities/**'],
+    exclude: ['/examples/**', '/raw/**', ...Object.keys(legacyDocsPaths)],
+    discoverImages: false,
+  },
+  ogImage: {
+    zeroRuntime: true,
+    defaults: { width: 1200, height: 630, emojis: false },
+  },
+  routeRules: {
+    '/examples/**': { sitemap: false, ogImage: false },
+    '/raw/**': { sitemap: false, ogImage: false },
+  },
   llms: {
     domain: process.env.NUXT_LLMS_DOMAIN ?? `https://sewadahapp.github.io${process.env.NUXT_APP_BASE_URL ?? '/selaras/'}`.replace(/\/$/, ''),
     title: 'Selaras',
@@ -103,7 +124,7 @@ export default defineNuxtConfig({
         '/design-kit',
         '/examples/adaptive-interfaces',
         ...documentationFiles.map(path => `/raw/${path}`),
-        ...documentationFiles.filter(path => /^overview\/[^/]+\.md$/.test(path)).map(path => `/${path.replace(/\.md$/, '')}`),
+        ...documentationRoutes,
       ],
       ignore: [isFakeDemoLinkedPath],
     },

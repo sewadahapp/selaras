@@ -2,8 +2,8 @@
 import BrandAsset from '~/components/design-kit/BrandAsset.vue'
 
 definePageMeta({ layout: 'home' })
-useSeoMeta({
-  title: 'Design kit — Selaras',
+useDocsSeo({
+  title: 'Design kit',
   description: 'Download the Selaras logo, symbols and brand assets. Explore the Seirama identity, colour palette, typography and usage guidelines.',
 })
 

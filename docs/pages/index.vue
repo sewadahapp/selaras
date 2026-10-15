@@ -5,7 +5,7 @@ import { NuxtLink } from '#components'
 import pkg from '../../package.json'
 
 definePageMeta({ layout: 'home' })
-useSeoMeta({
+useDocsSeo({
   title: 'Selaras',
   description: 'Accessible Vue components for Nuxt, themed entirely with CSS variables.',
 })

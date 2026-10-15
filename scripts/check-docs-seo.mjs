@@ -1,0 +1,106 @@
+import assert from 'node:assert/strict'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
+import process from 'node:process'
+import { fileURLToPath } from 'node:url'
+import { docsCanonicalUrl, docsSite, legacyDocsPaths } from '../docs/utils/seo.ts'
+
+const output = new URL('../docs/.output/public/', import.meta.url)
+const siteUrl = process.env.NUXT_SITE_URL ?? docsSite.url
+const baseURL = process.env.NUXT_APP_BASE_URL ?? '/'
+const home = new URL(docsCanonicalUrl('/', siteUrl, baseURL))
+
+function decode(value) {
+  return value.replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, '\'').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+}
+
+function readPage(path) {
+  const relative = path.replace(/^\//, '').replace(/\/$/, '')
+  const candidates = relative ? [`${relative}/index.html`, `${relative}.html`] : ['index.html']
+  const file = candidates.map(path => new URL(path, output)).find(existsSync)
+  assert.ok(file, `Missing generated HTML for ${path}`)
+  return readFileSync(file, 'utf8')
+}
+
+function headTags(html) {
+  const head = html.split('</head>')[0]
+  return [...head.matchAll(/<(meta|link)\s[^>]*>/g)].map(([tag]) => Object.fromEntries(
+    [...tag.matchAll(/([\w:-]+)="([^"]*)"/g)].map(([, name, value]) => [name, decode(value)]),
+  ))
+}
+
+const sitemap = readFileSync(new URL('sitemap.xml', output), 'utf8')
+const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => decode(url))
+assert.ok(locations.length > 100, 'The sitemap must discover the documentation collection')
+assert.equal(new Set(locations).size, locations.length, 'Sitemap URLs must be unique')
+
+const content = new URL('../docs/content/', import.meta.url)
+const documentation = readdirSync(content, { recursive: true })
+  .filter(path => path.endsWith('.md'))
+  .map(path => path === 'index.md' ? '/' : `/${path.replace(/\.md$/, '')}`)
+
+for (const path of ['/', '/design-kit', ...documentation]) {
+  if (legacyDocsPaths[path])
+    continue
+  const tags = headTags(readPage(path))
+  const indexable = !/noindex|none/i.test(tags.find(tag => tag.name === 'robots')?.content ?? '')
+  if (!indexable) {
+    assert.ok(!locations.includes(docsCanonicalUrl(path, siteUrl, baseURL)), `Non-indexable page in sitemap: ${path}`)
+    continue
+  }
+  assert.ok(locations.includes(docsCanonicalUrl(path, siteUrl, baseURL)), `Sitemap must include ${path}`)
+}
+
+const images = new Set()
+for (const location of locations) {
+  const url = new URL(location)
+  assert.equal(url.origin, home.origin, 'Sitemap URLs must use the production origin')
+  assert.ok(url.pathname.startsWith(home.pathname), 'Sitemap URLs must include the deployment base path')
+  assert.equal(url.search + url.hash, '', 'Sitemap URLs must omit queries and fragments')
+  const path = `/${url.pathname.slice(home.pathname.length)}`.replace(/\/$/, '') || '/'
+  assert.ok(!/^\/(?:examples|raw|_og)\//.test(path), `Non-documentation route in sitemap: ${path}`)
+  assert.ok(!path.endsWith('.html'), `Exploration page in sitemap: ${path}`)
+  assert.ok(!legacyDocsPaths[path], `Legacy alias in sitemap: ${path}`)
+
+  const html = readPage(path)
+  const tags = headTags(html)
+  const meta = name => tags.find(tag => tag.name === name || tag.property === name)?.content
+  assert.ok(!/noindex|none/i.test(meta('robots') ?? ''), `Non-indexable page in sitemap: ${path}`)
+  assert.equal(tags.filter(tag => tag.rel === 'canonical').length, 1, `One canonical URL required: ${path}`)
+  assert.equal(tags.find(tag => tag.rel === 'canonical').href, location, `Canonical URL mismatch: ${path}`)
+  const title = decode(html.match(/<title>(.*?)<\/title>/s)?.[1] ?? '')
+  assert.ok(title === 'Selaras' || title.endsWith(' — Selaras'), `Missing branded title: ${path}`)
+  assert.equal(meta('og:title'), title, `Open Graph title mismatch: ${path}`)
+  assert.equal(meta('twitter:title'), title, `Twitter title mismatch: ${path}`)
+  assert.ok(meta('description'), `Missing description: ${path}`)
+  assert.equal(meta('og:description'), meta('description'), `Open Graph description mismatch: ${path}`)
+  assert.equal(meta('twitter:description'), meta('description'), `Twitter description mismatch: ${path}`)
+  assert.equal(meta('og:url'), location, `Open Graph URL mismatch: ${path}`)
+  assert.equal(meta('twitter:card'), 'summary_large_image', `Missing sharing card: ${path}`)
+  const image = new URL(meta('og:image'))
+  assert.equal(image.origin, home.origin, `Sharing image origin mismatch: ${path}`)
+  assert.ok(image.pathname.startsWith(home.pathname), `Sharing image missing base path: ${path}`)
+  assert.equal(meta('twitter:image'), image.href, `Twitter image mismatch: ${path}`)
+  assert.ok(meta('og:image:alt'), `Missing sharing image description: ${path}`)
+  images.add(image.pathname)
+}
+
+assert.ok(images.size > 100, 'Sharing images must be specific to each documentation page')
+for (const path of images) {
+  const file = new URL(decodeURIComponent(path.slice(home.pathname.length)), output)
+  assert.ok(existsSync(file), `Sharing image was not prerendered: ${path}`)
+  const png = readFileSync(file)
+  assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a', `Invalid PNG: ${path}`)
+  assert.equal(png.readUInt32BE(16), 1200, `Sharing image width: ${path}`)
+  assert.equal(png.readUInt32BE(20), 630, `Sharing image height: ${path}`)
+}
+
+for (const [path, canonical] of Object.entries(legacyDocsPaths)) {
+  const tags = headTags(readPage(path))
+  assert.equal(tags.find(tag => tag.rel === 'canonical')?.href, docsCanonicalUrl(canonical, siteUrl, baseURL), `Legacy canonical URL: ${path}`)
+}
+
+const preview = headTags(readPage('/examples/adaptive-interfaces'))
+assert.match(preview.find(tag => tag.name === 'robots')?.content ?? '', /noindex/, 'The embedded preview must remain non-indexable')
+assert.ok(existsSync(new URL('llms.txt', output)), 'Keep the agent documentation index')
+assert.ok(existsSync(new URL('llms-full.txt', output)), 'Keep the complete agent documentation')
+console.log(`[docs-seo] Verified ${locations.length} pages and ${images.size} static sharing images in ${fileURLToPath(output)}`)

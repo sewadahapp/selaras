@@ -254,7 +254,9 @@ jobs:
       # accounts for it. Left unset for local `bun run docs:generate`, which
       # still defaults to `/`.
       - name: Generate static docs site
-        run: bun run docs:generate
+        run: |
+          bun run docs:generate
+          bun run test:docs-seo
         env:
           NUXT_APP_BASE_URL: /selaras/
 

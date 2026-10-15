@@ -17,7 +17,7 @@ if (!page.value) {
 }
 
 definePageMeta({ layout: 'selaras-docs' })
-useSeoMeta({ title: page.value.title, description: page.value.description ?? appConfig.selarasDocs?.site?.description })
+useDocsSeo(() => ({ title: page.value!.title, description: page.value!.description ?? appConfig.selarasDocs?.site?.description }))
 
 const proseComponents = {
   h1: ProseH1,
