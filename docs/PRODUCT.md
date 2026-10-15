@@ -16,7 +16,7 @@ The repository's documentation explains component APIs, shows working examples a
 
 ## Capabilities and Constraints
 
-The docs use the local Selaras package and the reusable documentation layer. The existing primary navigation remains Overview, Components, Composites and Utilities. Public assets and links must work when deployed under a base URL. Documentation supports light and dark modes and three theme presets.
+The docs use the local Selaras package and the reusable documentation layer. The primary navigation is Overview, Components, Composites, Blocks and Utilities. Blocks provides complete interface examples with responsive previews and source, built from the library's components and composites. Public assets and links must work when deployed under a base URL. Documentation supports light and dark modes and three theme presets.
 
 ## Brand Commitments
 

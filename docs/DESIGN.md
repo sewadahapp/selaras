@@ -7,7 +7,7 @@ description: The implemented documentation shell and Seirama design-kit surface.
 
 ## Overview
 
-The documentation uses the local Selaras components and shared documentation layer. Its existing header retains Overview, Components, Composites and Utilities, with search, colour-mode and theme controls. The footer exposes the Design kit. The home layout supplies the header, footer and skip link around the page content.
+The documentation uses the local Selaras components and shared documentation layer. Its header contains Overview, Components, Composites, Blocks and Utilities, with search, colour-mode and theme controls. The footer exposes the Design kit. The home layout supplies the header, footer and skip link around the page content.
 
 The `/design-kit` page extends this system with approved Seirama artwork: three bands following a shared curve. Its sequence is the asset-kit download, symbols and logos, colour palette, typography, then usage guidance. This document records the built surface; its direction contract is `.impeccable/surfaces/docs-pages-design-kit-vue.md`.
 
@@ -29,6 +29,8 @@ The shared documentation shell is centred at a maximum width of 90rem. The desig
 
 Desktop symbols occupy three columns; logos and typography use two; palette swatches use four. Below 64rem, symbols become one column, the palette becomes two columns and the hero mark becomes 12rem. Below 40rem, logos, typography and usage become single-column; the decorative hero mark is hidden, page padding becomes 1.25rem and section spacing reduces. Header action spacing also tightens on small screens; below 24rem the header brand text is hidden. Footer links remain discoverable beside the brand, with copyright below on smaller screens.
 
+Individual block pages preserve the documentation sidebar and expand the main article into the space normally used by the right-hand table of contents. The Blocks overview retains its table of contents. A short description leads directly into the interactive preview or source. Preview controls offer desktop (1024px), tablet (768px) and mobile (390px) widths; narrow pages wrap the controls and stack the source file tree above the code.
+
 ## Elevation & Depth
 
 The design-kit galleries and specimens use token-coloured borders and surface changes for separation. Gallery previews keep their fixed artwork backgrounds while captions inherit the documentation surface. Degung contributes the existing preset's glossy gradients and inset or offset shadows to shared controls; the page does not add a separate shadow system.
@@ -40,6 +42,8 @@ Asset galleries and typography specimens use the resolved large radius; the layo
 ## Components
 
 The page reuses `SButton`, `SButtonGroup`, `SIcon`, shared icons and toast feedback. `BrandAsset` pairs each labelled preview with SVG and PNG downloads and a copy-SVG action. PNGs provide the gallery previews; SVGs remain the vector download and clipboard source. The Horizontal/Stacked selector changes the preview, SVG and PNG paths together, and exposes its selection through `aria-pressed`.
+
+`BlockPreview` extends the existing example system with `DocsViewportPreview`, `SCodeTree`, Preview/Code selection, Copy Vue and Open preview actions. Sign-in, dashboard overview, profile settings and data management use native Selaras components and resolved tokens, inheriting Pelog, Slendro and Degung in light and dark modes. Each preview and its copyable page source come from the same Vue file; the code tree also exposes the Nuxt, stylesheet and `SApp` setup. The extension's direction and verification record is `.impeccable/surfaces/docs-blocks.md`.
 
 Section landmarks have labelled headings; anchor links have visible keyboard focus and a scroll offset. Preview images have descriptive alternative text. Copy actions expose success through a check icon, updated accessible labels and status announcements. SVG copying disables its control while loading. The clipboard helper tries the secure Clipboard API, then a temporary text-field fallback that restores focus; failures show a toast with a manual-copy or download recovery. Successful copy feedback clears after 1.8 seconds. Public asset paths pass through `useDocsAssetUrl` for deployments under a base URL.
 

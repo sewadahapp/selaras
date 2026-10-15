@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { documentationBlocks } from './utils/blocks'
 import { docsCanonicalUrl, docsSite, legacyDocsPaths } from './utils/seo'
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
@@ -63,7 +64,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     zeroRuntime: true,
-    include: ['/', '/design-kit', '/overview/**', '/components/**', '/composites/**', '/utilities/**'],
+    include: ['/', '/design-kit', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
     exclude: ['/examples/**', '/raw/**', ...Object.keys(legacyDocsPaths)],
     discoverImages: false,
   },
@@ -93,6 +94,7 @@ export default defineNuxtConfig({
       { title: 'Theming', contentCollection: 'docs', contentFilters: [{ field: 'path', operator: 'LIKE', value: '/overview/theming/%' }] },
       { title: 'Components', contentCollection: 'docs', contentFilters: [{ field: 'path', operator: 'LIKE', value: '/components/%' }] },
       { title: 'Composites', contentCollection: 'docs', contentFilters: [{ field: 'path', operator: 'LIKE', value: '/composites/%' }] },
+      { title: 'Blocks', contentCollection: 'docs', contentFilters: [{ field: 'path', operator: 'LIKE', value: '/blocks/%' }] },
       { title: 'Utilities', contentCollection: 'docs', contentFilters: [{ field: 'path', operator: 'LIKE', value: '/utilities/%' }] },
       { title: 'Agent Support', contentCollection: 'docs', contentFilters: [{ field: 'path', operator: 'LIKE', value: '/overview/agent-support/%' }] },
     ],
@@ -128,6 +130,7 @@ export default defineNuxtConfig({
       routes: [
         '/design-kit',
         '/examples/adaptive-interfaces',
+        ...documentationBlocks.map(block => `/examples/blocks/${block.slug}`),
         ...documentationFiles.map(path => `/raw/${path}`),
         ...documentationRoutes,
       ],

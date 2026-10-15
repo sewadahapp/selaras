@@ -49,14 +49,20 @@ const surround = useDocsSurround()
 <template>
   <DocsErrorState v-if="error || !page" kind="page" :pending="status === 'pending'" @retry="retryPage" />
   <SContainer v-else size="full" class="selaras-docs-page">
-    <div class="selaras-docs-page-grid">
+    <div class="selaras-docs-page-grid" :class="{ 'selaras-docs-page-grid--wide': page!.toc === false }">
       <article class="selaras-docs-article">
         <SPageHeader :title="page!.title" :description="page!.description" class="selaras-docs-page-header" />
         <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose" />
-        <DocsEditLink :path="route.path" />
-        <SContentSurround :prev="surround.prev" :next="surround.next" class="selaras-docs-surround" />
+        <DocsEditLink v-if="page!.editLink !== false" :path="route.path" />
+        <SContentSurround v-if="page!.prevNext !== false" :prev="surround.prev" :next="surround.next" class="selaras-docs-surround" />
       </article>
-      <DocsTableOfContents :links="tocLinks" />
+      <DocsTableOfContents v-if="page!.toc !== false" :links="tocLinks" />
     </div>
   </SContainer>
 </template>
+
+<style scoped>
+.selaras-docs-page-grid--wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+</style>

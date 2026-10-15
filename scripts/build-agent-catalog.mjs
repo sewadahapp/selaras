@@ -40,7 +40,7 @@ export async function buildAgentCatalog(root = repositoryRoot) {
       continue
     const path = `/${file.replace(/\.md$/, '')}`
     const content = source.slice(frontmatter[0].length).trim()
-    const exampleNames = [...content.matchAll(/component-example\{name=["']([^"']+)["']/g)].map(match => match[1])
+    const exampleNames = [...content.matchAll(/(?:component-example|block-preview)\{name=["']([^"']+)["']/g)].map(match => match[1])
     const component = `S${file.split('/').at(-1).replace(/\.md$/, '').split('-').map(part => part[0].toUpperCase() + part.slice(1)).join('')}`
     documents.push({
       path,

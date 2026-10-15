@@ -9,12 +9,17 @@ describe('agent documentation examples', () => {
     ':component-example{name="button-basic"}',
     '<component-example name="button-basic"></component-example>',
     '<component-example name="button-basic" />',
+    '::block-preview{name="button-basic"}\n::',
+    ':block-preview{name="button-basic"}',
+    '<block-preview name="button-basic"></block-preview>',
+    '<block-preview name="button-basic" />',
   ])('expands %s into a complete Vue code block', (embed) => {
     const markdown = expandLlmsExamples(`Before\n${embed}\nAfter`, examples)
     expect(markdown).toContain(`\n\`\`\`vue\n${examples['button-basic']}\n\`\`\`\n`)
     expect(markdown).toContain('Before')
     expect(markdown).toContain('After')
     expect(markdown).not.toContain('component-example')
+    expect(markdown).not.toContain('block-preview')
   })
 
   it('uses a longer fence when example source contains Markdown fences', () => {

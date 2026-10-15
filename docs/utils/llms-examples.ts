@@ -10,7 +10,7 @@ export function expandLlmsExamples(markdown: string, examples: Record<string, st
   }
 
   return markdown
-    .replace(/::component-example\{name=["']([^"']+)["']\}\s*\n::/g, replaceExample)
-    .replace(/^:component-example\{name=["']([^"']+)["']\}[ \t]*$/gm, replaceExample)
-    .replace(/<component-example\s[^>]*\bname=["']([^"']+)["'][^>]*>(?:\s*<\/component-example>)?/g, replaceExample)
+    .replace(/::(?:component-example|block-preview)\{name=["']([^"']+)["']\}\s*\n::/g, replaceExample)
+    .replace(/^:(?:component-example|block-preview)\{name=["']([^"']+)["']\}[ \t]*$/gm, replaceExample)
+    .replace(/<(?:component-example|block-preview)\s[^>]*\bname=["']([^"']+)["'][^>]*>(?:\s*<\/(?:component-example|block-preview)>)?/g, replaceExample)
 }

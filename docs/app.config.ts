@@ -42,6 +42,10 @@ export default defineAppConfig({
           to: '/composites/documentation/page-header',
         },
         {
+          label: 'Blocks',
+          to: '/blocks/overview',
+        },
+        {
           label: 'Utilities',
           to: '/utilities/composables/use-modal',
         },
