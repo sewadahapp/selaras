@@ -45,7 +45,9 @@ jobs:
           bun run docs:generate
           bun run test:docs-seo
         env:
-          NUXT_APP_BASE_URL: /selaras/
+          NUXT_APP_BASE_URL: /
+          NUXT_SITE_URL: https://selarasui.my.id
+          NUXT_LLMS_DOMAIN: https://selarasui.my.id
 
       - name: Build packages
         run: bun run prepack

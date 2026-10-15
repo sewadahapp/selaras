@@ -247,18 +247,16 @@ jobs:
       - name: Docs prepare
         run: bun run docs:prepare
 
-      # A GitHub Pages *project* site (not a custom domain or a
-      # <org>.github.io root repo) serves from a /selaras/ subpath, not the
-      # domain root - NUXT_APP_BASE_URL is Nuxt's own env-var mapping for
-      # runtimeConfig.app.baseURL, so every generated link/asset path
-      # accounts for it. Left unset for local `bun run docs:generate`, which
-      # still defaults to `/`.
+      # The custom domain serves the docs from its root. Keep generated
+      # asset paths, canonical URLs and agent links on the same origin.
       - name: Generate static docs site
         run: |
           bun run docs:generate
           bun run test:docs-seo
         env:
-          NUXT_APP_BASE_URL: /selaras/
+          NUXT_APP_BASE_URL: /
+          NUXT_SITE_URL: https://selarasui.my.id
+          NUXT_LLMS_DOMAIN: https://selarasui.my.id
 
       - uses: actions/configure-pages@v5
 

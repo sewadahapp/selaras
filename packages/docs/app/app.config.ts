@@ -31,7 +31,7 @@ export default defineAppConfig({
       links: [
         {
           label: 'Powered by Selaras',
-          to: 'https://sewadahapp.github.io/selaras',
+          to: 'https://selarasui.my.id',
           target: '_blank',
           rel: 'noreferrer',
         },

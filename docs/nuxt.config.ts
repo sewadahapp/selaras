@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import { docsSite, legacyDocsPaths } from './utils/seo'
+import { docsCanonicalUrl, docsSite, legacyDocsPaths } from './utils/seo'
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
 
@@ -81,7 +81,7 @@ export default defineNuxtConfig({
     '/raw/**': { sitemap: false, ogImage: false },
   },
   llms: {
-    domain: process.env.NUXT_LLMS_DOMAIN ?? `https://sewadahapp.github.io${process.env.NUXT_APP_BASE_URL ?? '/selaras/'}`.replace(/\/$/, ''),
+    domain: process.env.NUXT_LLMS_DOMAIN ?? docsCanonicalUrl('/', process.env.NUXT_SITE_URL ?? docsSite.url, process.env.NUXT_APP_BASE_URL ?? '/').replace(/\/$/, ''),
     title: 'Selaras',
     description: 'Nuxt-first Vue components for adaptable design systems. Component APIs, composables, theming, and complete usage examples.',
     full: {

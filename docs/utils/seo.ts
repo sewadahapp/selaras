@@ -1,6 +1,6 @@
 export const docsSite = {
   name: 'Selaras',
-  url: 'https://sewadahapp.github.io',
+  url: 'https://selarasui.my.id',
   description: 'Nuxt-first components for adaptable design systems.',
 }
 
