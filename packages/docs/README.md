@@ -138,10 +138,16 @@ pieces can be replaced on their own:
 | --- | --- | --- |
 | `DocsHeaderBrand` | The header's home link content | `site.logo` and the site name |
 | `DocsFooterBrand` | The start of the footer | `footer.text` |
+| `DocsThemePicker` | Optional header theme control | Empty; provide your own component and set `header.themePicker: true` |
 | `DocsLogo` | The logo image, used by `DocsHeaderBrand` | `site.logo`, switching light/dark; size it with `--selaras-docs-logo-height` |
 
 For example, a `components/DocsFooterBrand.vue` containing `<DocsLogo />` adds
 the logo to the footer while leaving the header as configured.
+
+The layer does not include the Selaras site's theme presets. To offer your own
+themes, create `components/DocsThemePicker.vue` and enable
+`selarasDocs.header.themePicker` in `app.config.ts`. The layer's empty default
+keeps the header valid when the consuming site does not supply a picker.
 
 ## Error recovery
 

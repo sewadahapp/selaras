@@ -16,6 +16,7 @@ const docsConfig: SelarasDocsAppConfig = {
     url: 'https://github.com/sewadahapp/selaras',
   },
   header: {
+    themePicker: true,
     links: [{ label: 'Guide', to: '/guide/getting-started' }],
   },
 }

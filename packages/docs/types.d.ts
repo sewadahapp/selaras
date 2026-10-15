@@ -80,7 +80,7 @@ export interface SelarasDocsAppConfig {
     showTitle?: boolean
     search?: boolean
     colorMode?: boolean
-    /** Show the consuming site's visual preset picker. @default false */
+    /** Show the consuming site's DocsThemePicker component; the layer default is empty. @default false */
     themePicker?: boolean
     /** Let the header span the viewport instead of the docs shell width. */
     fluid?: boolean
