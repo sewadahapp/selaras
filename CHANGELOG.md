@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v0.9.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.3...v0.9.0)
+
+### 🚀 Enhancements
+
+- **forms:** Add leading and trailing content slots ([ebd0948](https://github.com/sewadahapp/selaras/commit/ebd0948))
+- **docs:** Add Seirama branding and design kit ([9fd9f19](https://github.com/sewadahapp/selaras/commit/9fd9f19))
+- **docs:** Add SEO metadata and static sharing images ([f6ec141](https://github.com/sewadahapp/selaras/commit/f6ec141))
+- **docs:** Add error pages and local recovery boundaries ([371ed7a](https://github.com/sewadahapp/selaras/commit/371ed7a))
+- **docs:** Add interactive application blocks ([102ee68](https://github.com/sewadahapp/selaras/commit/102ee68))
+
+### 🩹 Fixes
+
+- **docs:** Configure custom domain deployment ([b65908a](https://github.com/sewadahapp/selaras/commit/b65908a))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.8.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.2...v0.8.0)
