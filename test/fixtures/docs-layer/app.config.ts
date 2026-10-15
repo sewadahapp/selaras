@@ -1,6 +1,9 @@
 import type { SelarasDocsAppConfig } from '@sewadah/selaras-docs'
 
 const docsConfig: SelarasDocsAppConfig = {
+  errors: {
+    homeTo: '/guide/getting-started',
+  },
   site: {
     name: 'Packed documentation',
     description: 'Advanced installed docs consumer.',

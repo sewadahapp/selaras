@@ -13,6 +13,7 @@
     "test/packed-field-adornments.vue",
     "test/packed-list-controls.vue",
     "test/fixtures/docs-layer",
+    "test/fixtures/docs-error-recovery",
     "test/fixtures/packed"
   ]
 }

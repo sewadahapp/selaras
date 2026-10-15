@@ -10,14 +10,27 @@ import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
 
 const route = useRoute()
 const appConfig = useAppConfig()
-const { data: page } = await useAsyncData(`selaras-docs:${route.path}`, () => queryCollection('docs').path(route.path).first())
+const { data: page, error, status, refresh } = await useAsyncData(`selaras-docs:${route.path}`, () => queryCollection('docs').path(route.path).first())
 
-if (!page.value) {
+if (!page.value && !error.value) {
   throw createError({ statusCode: 404, statusMessage: 'Documentation page not found', fatal: true })
+}
+if (import.meta.server && error.value)
+  setResponseStatus(500)
+
+async function retryPage() {
+  await refresh()
+  if (import.meta.client && error.value) {
+    window.location.reload()
+    return
+  }
+  if (!page.value && !error.value)
+    showError({ statusCode: 404, statusMessage: 'Documentation page not found' })
 }
 
 definePageMeta({ layout: 'selaras-docs' })
-useDocsSeo(() => ({ title: page.value!.title, description: page.value!.description ?? appConfig.selarasDocs?.site?.description }))
+useDocsSeo(() => ({ title: page.value?.title ?? 'Documentation unavailable', description: page.value?.description ?? appConfig.selarasDocs?.site?.description }))
+useSeoMeta({ robots: () => error.value ? 'noindex' : undefined })
 
 const proseComponents = {
   h1: ProseH1,
@@ -34,7 +47,8 @@ const surround = useDocsSurround()
 </script>
 
 <template>
-  <SContainer size="full" class="selaras-docs-page">
+  <DocsErrorState v-if="error || !page" kind="page" :pending="status === 'pending'" @retry="retryPage" />
+  <SContainer v-else size="full" class="selaras-docs-page">
     <div class="selaras-docs-page-grid">
       <article class="selaras-docs-article">
         <SPageHeader :title="page!.title" :description="page!.description" class="selaras-docs-page-header" />

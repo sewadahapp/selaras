@@ -36,7 +36,8 @@ const resolvedComponent = computed(() => {
 </script>
 
 <template>
-  <!--
+  <DocsErrorBoundary kind="example" :reset-key="name">
+    <!--
     overflow-x-auto is the same "contain the scroll to the box, not the
     whole page" pattern Table's own wrapper already uses - flex-wrap lets
     a row of short items (buttons, badges) reflow to multiple lines on a
@@ -46,15 +47,16 @@ const resolvedComponent = computed(() => {
     it drags the entire page into horizontal scroll instead of just this
     box.
   -->
-  <AdaptiveViewportPreview v-if="name === 'adaptive-interfaces-basic'" class="w-full" />
-  <div
-    v-else
-    class="not-prose flex flex-wrap items-center gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-6"
-    :class="hasNavigationFlyout ? 'overflow-visible' : 'overflow-x-auto'"
-  >
-    <component :is="resolvedComponent" v-if="resolvedComponent" />
-    <div v-else class="text-sm text-[var(--selaras-resolved-color-danger-text)]">
-      Example "{{ name }}" not found
+    <AdaptiveViewportPreview v-if="name === 'adaptive-interfaces-basic'" class="w-full" />
+    <div
+      v-else
+      class="not-prose flex flex-wrap items-center gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-6"
+      :class="hasNavigationFlyout ? 'overflow-visible' : 'overflow-x-auto'"
+    >
+      <component :is="resolvedComponent" v-if="resolvedComponent" />
+      <div v-else class="text-sm text-[var(--selaras-resolved-color-danger-text)]">
+        Example "{{ name }}" not found
+      </div>
     </div>
-  </div>
+  </DocsErrorBoundary>
 </template>

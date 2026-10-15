@@ -119,6 +119,65 @@ pieces can be replaced on their own:
 For example, a `components/DocsFooterBrand.vue` containing `<DocsLogo />` adds
 the logo to the footer while leaving the header as configured.
 
+## Error recovery
+
+The layer provides a default `error.vue` for missing pages and fatal errors.
+It preserves the HTTP status code, keeps error pages out of search indexes and
+offers a home link or reload action. The standalone screen avoids loading
+navigation and Content data so it can render when those services fail.
+
+Client-side page failures show a local recovery state inside the layout, keeping
+the header and sidebar available. `DocsExample` isolates each live example;
+retrying remounts its content. Navigating to another route clears the page
+boundary. Server rendering errors still use the standalone error screen.
+
+Content query failures show a retry state with HTTP 500 during server rendering.
+Only a successful query with no matching document is treated as a 404.
+If a request cannot recover in place, retry reloads the current page to start a
+fresh session. Reloads happen only after the user chooses to retry.
+
+Customize the messages and home destination in `app.config.ts`:
+
+```ts
+export default defineAppConfig({
+  selarasDocs: {
+    errors: {
+      homeTo: '/guide/introduction',
+      homeLabel: 'Back to the guide',
+      retryLabel: 'Try again',
+      reloadLabel: 'Reload page',
+      retryingLabel: 'Trying again…',
+      notFound: { title: 'Page not found', description: 'Start again from the guide.' },
+      fatal: { title: 'Something went wrong' },
+      page: { title: 'This page couldn’t load' },
+      example: { title: 'This example couldn’t load' },
+    },
+  },
+})
+```
+
+Home destinations are internal routes resolved under the app's `baseURL`.
+The default destination is `/`. Provide an existing page if your site has no
+homepage. Public recovery copy never includes raw exceptions or stack traces.
+
+Override `components/DocsErrorIllustration.vue` to replace the default geometric
+document illustration. The optional `missing` boolean distinguishes a 404 from
+other errors. Use inherited theme tokens in inline SVGs for light/dark support.
+`DocsErrorState` also exposes an `illustration` slot. Override `DocsErrorPage`
+for the standalone screen's composition, or supply your own `error.vue` for
+application-specific providers. Applications with their own `app.vue` should
+retain the page boundary inside their layout:
+
+```vue
+<template>
+  <NuxtLayout>
+    <DocsErrorBoundary>
+      <NuxtPage />
+    </DocsErrorBoundary>
+  </NuxtLayout>
+</template>
+```
+
 For a host that owns Tailwind compilation or uses a class prefix, set
 `selarasDocs: { css: false }` in `nuxt.config.ts` and import Selaras and the
 docs stylesheet from the host CSS entry.

@@ -70,6 +70,11 @@ export default defineNuxtConfig({
   ogImage: {
     zeroRuntime: true,
     defaults: { width: 1200, height: 630, emojis: false },
+    compatibility: {
+      dev: { sharp: false },
+      prerender: { sharp: false },
+      runtime: { sharp: false },
+    },
   },
   routeRules: {
     '/examples/**': { sitemap: false, ogImage: false },

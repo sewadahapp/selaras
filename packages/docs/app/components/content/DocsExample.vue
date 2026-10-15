@@ -18,7 +18,9 @@ const resolvedComponent = computed(() => {
 
 <template>
   <section v-if="resolvedComponent" :data-example="name">
-    <component :is="resolvedComponent" />
+    <DocsErrorBoundary kind="example" :reset-key="name">
+      <component :is="resolvedComponent" />
+    </DocsErrorBoundary>
   </section>
   <p v-else role="alert">
     Example "{{ name }}" not found

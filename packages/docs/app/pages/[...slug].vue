@@ -10,14 +10,30 @@ import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
 
 const route = useRoute()
 const appConfig = useAppConfig()
-const { data: page } = await useAsyncData(`selaras-docs:${route.path}`, () => queryCollection('docs').path(route.path).first())
+const { data: page, error, status, refresh } = await useAsyncData(`selaras-docs:${route.path}`, () => queryCollection('docs').path(route.path).first())
 
-if (!page.value) {
+if (!page.value && !error.value) {
   throw createError({ statusCode: 404, statusMessage: 'Documentation page not found', fatal: true })
+}
+if (import.meta.server && error.value)
+  setResponseStatus(500)
+
+async function retryPage() {
+  await refresh()
+  if (import.meta.client && error.value) {
+    window.location.reload()
+    return
+  }
+  if (!page.value && !error.value)
+    showError({ statusCode: 404, statusMessage: 'Documentation page not found' })
 }
 
 definePageMeta({ layout: 'selaras-docs' })
-useSeoMeta({ title: page.value.title, description: page.value.description ?? appConfig.selarasDocs?.site?.description })
+useSeoMeta({
+  title: () => page.value?.title ?? appConfig.selarasDocs?.errors?.page?.title ?? 'Documentation unavailable',
+  description: () => page.value?.description ?? appConfig.selarasDocs?.site?.description,
+  robots: () => error.value ? 'noindex' : undefined,
+})
 useHead(() => ({
   ...(appConfig.selarasDocs?.site?.titleTemplate && { titleTemplate: appConfig.selarasDocs.site.titleTemplate }),
   ...(appConfig.selarasDocs?.site?.url && {
@@ -40,7 +56,8 @@ const surround = useDocsSurround()
 </script>
 
 <template>
-  <SContainer size="full" class="selaras-docs-page" :class="{ 'selaras-docs-page--fluid': appConfig.selarasDocs?.main?.fluid }">
+  <DocsErrorState v-if="error || !page" kind="page" :pending="status === 'pending'" @retry="retryPage" />
+  <SContainer v-else size="full" class="selaras-docs-page" :class="{ 'selaras-docs-page--fluid': appConfig.selarasDocs?.main?.fluid }">
     <div class="selaras-docs-page-grid">
       <article class="selaras-docs-article">
         <p v-if="page!.description" class="selaras-docs-description">

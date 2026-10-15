@@ -19,7 +19,9 @@ useHead(() => {
   <SApp>
     <STheme :ui="activeUi">
       <NuxtLayout>
-        <NuxtPage />
+        <DocsErrorBoundary>
+          <NuxtPage />
+        </DocsErrorBoundary>
       </NuxtLayout>
       <ClientOnly>
         <DocsSearch />

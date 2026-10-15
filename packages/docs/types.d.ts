@@ -37,7 +37,23 @@ export interface SelarasDocsLogo {
   tint?: boolean
 }
 
+export type SelarasDocsErrorKind = 'notFound' | 'fatal' | 'page' | 'example'
+
+export interface SelarasDocsErrorCopy {
+  title?: string
+  description?: string
+}
+
 export interface SelarasDocsAppConfig {
+  /** Recovery messages and the destination of error-screen home links. */
+  errors?: Partial<Record<SelarasDocsErrorKind, SelarasDocsErrorCopy>> & {
+    /** An internal route, resolved under the application's base URL. @default '/' */
+    homeTo?: string
+    homeLabel?: string
+    retryLabel?: string
+    reloadLabel?: string
+    retryingLabel?: string
+  }
   site?: {
     name?: string
     description?: string

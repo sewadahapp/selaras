@@ -13,7 +13,9 @@ useHead(() => {
 <template>
   <SApp>
     <NuxtLayout>
-      <NuxtPage />
+      <DocsErrorBoundary>
+        <NuxtPage />
+      </DocsErrorBoundary>
     </NuxtLayout>
     <ClientOnly>
       <DocsSearch />

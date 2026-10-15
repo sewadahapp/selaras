@@ -101,6 +101,20 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     const response = await fetch(pageUrl)
     assert.equal(response.status, 200)
     const html = await response.text()
+    for (const [path, status, heading] of [
+      ['/guide/missing', 404, 'Page not found'],
+      ['/server-failure', 500, 'Something went wrong'],
+    ]) {
+      const response = await fetch(new URL(path, url), { headers: { accept: 'text/html' } })
+      assert.equal(response.status, status, `${path} must preserve its HTTP error status`)
+      const errorHtml = await response.text()
+      assert.match(errorHtml, new RegExp(`<h1[^>]*>[\\s\\S]*?${heading}`), 'the layer must supply a recovery screen')
+      assert.match(errorHtml, /Go to homepage/, 'the error screen must expose a recovery link')
+      assert.match(errorHtml, /name="robots" content="noindex"/, 'error pages must not be indexed')
+      assert.doesNotMatch(errorHtml.match(/<main[\s\S]*?<\/main>/)?.[0] ?? '', /Private server failure detail/, 'public error copy must not expose exception details')
+      if (prefixed)
+        assert.match(errorHtml, /href="\/guide\/getting-started"/, 'the home destination must be configurable')
+    }
     assert.match(html, /<h1[^>]*>[\s\S]*Getting started/, 'the consumer-owned docs collection must render through the layer route')
     if (prefixed && !overridden) {
       assert.match(html, /Packed documentation/, 'typed app config must set the site identity')
@@ -191,6 +205,39 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         else {
           await page.locator('#consumer-docs-header').waitFor()
         }
+        await page.setViewportSize({ width: 1280, height: 800 })
+        await page.goto(new URL('/guide/recovery', url).href, { waitUntil: 'domcontentloaded' })
+        await page.getByRole('button', { name: 'Break example', exact: true }).click()
+        await page.getByRole('heading', { name: 'This example couldn’t load', exact: true }).waitFor()
+        await page.getByRole('button', { name: 'Break page', exact: true }).waitFor()
+        await page.getByRole('button', { name: 'Try again', exact: true }).click()
+        await page.getByRole('button', { name: 'Break example', exact: true }).waitFor()
+        await page.getByRole('button', { name: 'Break page', exact: true }).click()
+        await page.getByRole('heading', { name: 'This page couldn’t load', exact: true }).waitFor()
+        await page.getByRole('complementary', { name: 'Documentation navigation', exact: true }).getByRole('link', { name: 'Getting started', exact: true }).click()
+        await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
+        assert.equal(await page.locator('[data-error-kind="page"]').count(), 0, 'navigation must clear a captured page error')
+        const queryPage = await browser.newPage({ viewport: { width: 1280, height: 800 } })
+        try {
+          queryPage.on('pageerror', error => issues.push(error.message))
+          await queryPage.goto(pageUrl.href, { waitUntil: 'domcontentloaded' })
+          await queryPage.route('**/__nuxt_content/**', route => route.abort('failed'))
+          await queryPage.getByRole('complementary', { name: 'Documentation navigation', exact: true }).getByRole('link', { name: 'Retry guide', exact: true }).click()
+          await queryPage.getByRole('heading', { name: 'This page couldn’t load', exact: true }).waitFor()
+          assert.equal(await queryPage.locator('[data-error-kind="notFound"]').count(), 0, 'a failed request must not become a missing document')
+          await queryPage.unroute('**/__nuxt_content/**')
+          await queryPage.getByRole('button', { name: 'Try again', exact: true }).click()
+          await queryPage.getByRole('heading', { level: 1, name: 'Retry guide', exact: true }).waitFor()
+        }
+        finally {
+          await queryPage.close()
+        }
+        if (prefixed) {
+          await page.goto(new URL('/guide/missing', url).href, { waitUntil: 'domcontentloaded' })
+          await page.getByRole('heading', { name: 'Page not found', exact: true }).waitFor()
+          await page.getByRole('link', { name: 'Go to homepage', exact: true }).click()
+          await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
+        }
         assert.deepEqual(issues, [])
       }
       finally {
@@ -232,6 +279,8 @@ try {
   assert.ok(docsArchive.files.some(file => file.path === 'content.config.ts'))
   assert.ok(docsArchive.files.some(file => file.path === 'modules/docs.mjs'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/app.vue'))
+  assert.ok(docsArchive.files.some(file => file.path === 'app/error.vue'), 'the layer must publish its default fatal-error page')
+  assert.ok(docsArchive.files.some(file => file.path === 'app/components/DocsErrorBoundary.vue'), 'the layer must publish local error isolation')
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsExample.vue'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsViewportPreview.vue'), 'the docs layer must publish its reusable viewport preview')
   assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')
@@ -242,6 +291,7 @@ try {
       return !path.split(/[\\/]/).some(segment => ['.nuxt', '.output', 'node_modules'].includes(segment))
     },
   })
+  cpSync(join(rootDir, 'test/fixtures/docs-error-recovery'), consumerDir, { recursive: true })
   const dependencies = Object.fromEntries(
     ['nuxt', 'vue', 'typescript', 'vue-tsc']
       .map(name => [name, installedManifest(name).version]),
