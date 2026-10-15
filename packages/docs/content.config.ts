@@ -42,6 +42,7 @@ export default defineContentConfig({
         toc: z.boolean().default(true),
         aside: z.boolean().default(true),
         editLink: z.boolean().default(true),
+        issueLink: z.boolean().default(true),
         prevNext: z.boolean().default(true),
       }),
     }),

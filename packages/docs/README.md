@@ -57,6 +57,7 @@ export default defineAppConfig({
     repository: {
       url: 'https://github.com/example/project',
       editLinks: true,
+      issueLinks: true,
     },
     header: {
       search: true,
@@ -100,11 +101,34 @@ navBadges:
 Use `navigation: false` in a page's frontmatter to omit it from navigation, or
 set `navigation` to an object to override its navigation `title`, `icon`,
 `order`, and `navBadges`. Page frontmatter can also set `toc: false`,
-`aside: false`, `editLink: false`, or `prevNext: false` to hide those parts of
+`aside: false`, `editLink: false`, `issueLink: false`, or `prevNext: false` to hide those parts of
 the page shell. The sidebar also accepts an app-wide `collapsed` default; a
 folder's `collapse` value takes precedence. `main.fluid` expands the
 content width, `main.padded: false` removes its outer inset, and `header.fluid`
 and `footer.fluid` allow those regions to span the viewport.
+
+### Page actions
+
+With `repository.url` configured, **Edit this page** and **Report an issue**
+appear below the table of contents on desktop. On smaller screens, or when
+the page has no table of contents, they appear after the article and before
+Previous/Next navigation. Pages without an aside use the available content width.
+
+Set `repository.branch` and `repository.contentDirectory` to the branch and
+Markdown directory in your repository; their defaults are `main` and `content`.
+Generated issue links include the page title and route in a new issue draft.
+The links open the repository in a new tab; they do not submit changes or issues.
+
+Use `repository.editLinks: false` or `repository.issueLinks: false` to hide an
+action site-wide. Set `editLink: false` or `issueLink: false` in frontmatter to
+hide it on one page. GitHub and GitLab URLs are recognized automatically;
+set `repository.issueUrl` to use a different issue tracker or an issue-template
+chooser. Custom issue URLs are used unchanged. With no supported repository or
+custom issue URL, unavailable actions are omitted.
+
+Override `components/DocsPageActions.vue` to replace the group, or
+`components/DocsEditLink.vue` to customize the edit link. The
+`DocsTableOfContents` default slot renders content below its heading links.
 
 Create an application component with the same name as a layer component, such
 as `components/DocsHeader.vue`, to replace that part of the shell. Smaller

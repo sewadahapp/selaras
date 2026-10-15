@@ -117,6 +117,10 @@
   gap: 3rem;
 }
 
+.selaras-docs-page-grid.selaras-docs-page-grid--wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .selaras-docs-article {
   min-width: 0;
 }
@@ -133,19 +137,51 @@
   width: 14rem;
 }
 
-.selaras-docs-edit-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  margin-top: 2.5rem;
-  color: var(--selaras-resolved-text-muted);
-  font-size: 0.875rem;
-  text-decoration: none;
+.selaras-docs-page-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--selaras-resolved-border-default);
 }
 
-.selaras-docs-edit-link:hover {
+.selaras-docs-article > .selaras-docs-page-actions {
+  margin-top: 2.5rem;
+}
+
+.selaras-docs-edit-link,
+.selaras-docs-issue-link {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--selaras-resolved-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-decoration: none;
+  text-underline-offset: 0.25em;
+}
+
+.selaras-docs-edit-link .iconify,
+.selaras-docs-issue-link .iconify {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.selaras-docs-edit-link:hover,
+.selaras-docs-issue-link:hover {
   color: var(--selaras-resolved-text-default);
   text-decoration: underline;
+}
+
+.selaras-docs-edit-link:focus-visible,
+.selaras-docs-issue-link:focus-visible {
+  outline: 2px solid var(--selaras-resolved-color-primary-focus);
+  outline-offset: 3px;
+  border-radius: var(--selaras-resolved-radius-sm);
 }
 
 .selaras-docs-surround {
@@ -231,6 +267,10 @@
 }
 
 @media (min-width: 64rem) {
+  .selaras-docs-page-actions--mobile {
+    display: none;
+  }
+
   .selaras-docs-nav-toggle {
     display: none;
   }

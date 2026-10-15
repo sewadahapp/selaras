@@ -143,6 +143,13 @@ async function inspectConsumer({ prefixed, overridden, example }) {
       if (prefixed)
         assert.match(html, /href="https:\/\/github\.com\/sewadahapp\/selaras\/edit\/main\/content\/guide\/getting-started\.md"/, 'a configured GitHub repository must expose an edit link')
     }
+    if (prefixed) {
+      assert.match(html, /Report an issue/, 'a configured repository must expose issue reporting')
+      assert.match(html, /https:\/\/github\.com\/sewadahapp\/selaras\/issues\/new\?/, 'issue reporting must link to a new issue draft')
+    }
+    else {
+      assert.doesNotMatch(html, /aria-label="Page actions"/, 'unconfigured repositories must not leave empty action groups')
+    }
     const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
       .filter(([tag]) => tag.includes('rel="stylesheet"'))
       .map(([tag]) => tag.match(/href="([^"]+)"/)?.[1])
@@ -173,6 +180,18 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         // interactive checks wait for the hydrated UI they actually need.
         await page.goto(pageUrl.href, { waitUntil: 'domcontentloaded' })
         await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
+        if (prefixed) {
+          const articleActions = page.locator('article > .selaras-docs-page-actions')
+          const asideActions = page.locator('.selaras-docs-toc .selaras-docs-page-actions')
+          await articleActions.getByRole('link', { name: 'Report an issue', exact: true }).waitFor()
+          assert.equal(await asideActions.isVisible(), false, 'mobile must expose only the article actions')
+          const issue = new URL(await articleActions.getByRole('link', { name: 'Report an issue', exact: true }).getAttribute('href'))
+          assert.equal(issue.searchParams.get('body'), 'Documentation page: /guide/getting-started\n\n')
+          await page.setViewportSize({ width: 1280, height: 800 })
+          await asideActions.getByRole('link', { name: 'Edit this page', exact: true }).waitFor()
+          assert.equal(await articleActions.isVisible(), false, 'desktop must expose only the aside actions when a TOC exists')
+          await page.setViewportSize({ width: 600, height: 800 })
+        }
         if (example) {
           await page.locator('#consumer-example').waitFor()
           const preview = page.locator('#consumer-viewport')
@@ -206,6 +225,16 @@ async function inspectConsumer({ prefixed, overridden, example }) {
           await page.locator('#consumer-docs-header').waitFor()
         }
         await page.setViewportSize({ width: 1280, height: 800 })
+        if (prefixed) {
+          await page.goto(new URL('/guide/page-actions', url).href, { waitUntil: 'domcontentloaded' })
+          await page.getByRole('heading', { level: 1, name: 'Page actions', exact: true }).waitFor()
+          assert.equal(await page.locator('.selaras-docs-toc').count(), 0, 'toc:false must remove the aside')
+          await page.locator('article').getByRole('link', { name: 'Edit this page', exact: true }).waitFor()
+          await page.locator('article').getByRole('link', { name: 'Report an issue', exact: true }).waitFor()
+          await page.goto(new URL('/guide/hidden-page-actions', url).href, { waitUntil: 'domcontentloaded' })
+          await page.getByRole('heading', { level: 1, name: 'Hidden page actions', exact: true }).waitFor()
+          assert.equal(await page.getByRole('navigation', { name: 'Page actions', exact: true }).count(), 0, 'frontmatter must suppress both actions')
+        }
         await page.goto(new URL('/guide/recovery', url).href, { waitUntil: 'domcontentloaded' })
         await page.getByRole('button', { name: 'Break example', exact: true }).click()
         await page.getByRole('heading', { name: 'This example couldn’t load', exact: true }).waitFor()

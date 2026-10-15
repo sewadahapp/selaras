@@ -17,5 +17,6 @@ const docsConfig = computed(() => appConfig.selarasDocs ?? {})
     :ui="{ root: 'top-16 h-[calc(100vh-4rem)]' }"
   >
     <SContentToc :links="links" :title="docsConfig.toc?.title" />
+    <slot />
   </SPageAside>
 </template>

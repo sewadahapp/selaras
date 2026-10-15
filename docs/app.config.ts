@@ -19,7 +19,7 @@ export default defineAppConfig({
     },
     repository: {
       url: 'https://github.com/sewadahapp/selaras',
-      branch: 'main',
+      branch: 'master',
       contentDirectory: 'docs/content',
       editLinks: true,
     },

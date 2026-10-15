@@ -52,19 +52,26 @@ const proseComponents = {
 }
 
 const tocLinks = computed(() => (page.value?.body?.toc?.links ?? []) as unknown as TocLink[])
+const hasToc = computed(() => page.value?.toc !== false && page.value?.aside !== false && appConfig.selarasDocs?.toc?.enabled !== false && tocLinks.value.length > 0)
 const surround = useDocsSurround()
 </script>
 
 <template>
   <DocsErrorState v-if="error || !page" kind="page" :pending="status === 'pending'" @retry="retryPage" />
   <SContainer v-else size="full" class="selaras-docs-page" :class="{ 'selaras-docs-page--fluid': appConfig.selarasDocs?.main?.fluid }">
-    <div class="selaras-docs-page-grid">
+    <div class="selaras-docs-page-grid" :class="{ 'selaras-docs-page-grid--wide': !hasToc }">
       <article class="selaras-docs-article">
         <p v-if="page!.description" class="selaras-docs-description">
           {{ page!.description }}
         </p>
         <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose" />
-        <DocsEditLink v-if="page!.editLink !== false" :path="route.path" />
+        <DocsPageActions
+          :path="route.path"
+          :title="page!.title"
+          :edit-link="page!.editLink !== false"
+          :issue-link="page!.issueLink !== false"
+          :class="{ 'selaras-docs-page-actions--mobile': hasToc }"
+        />
         <SContentSurround
           v-if="page!.prevNext !== false"
           :prev="surround.prev"
@@ -72,7 +79,9 @@ const surround = useDocsSurround()
           class="selaras-docs-surround"
         />
       </article>
-      <DocsTableOfContents v-if="page!.toc !== false && page!.aside !== false" :links="tocLinks" />
+      <DocsTableOfContents v-if="hasToc" :links="tocLinks">
+        <DocsPageActions :path="route.path" :title="page!.title" :edit-link="page!.editLink !== false" :issue-link="page!.issueLink !== false" />
+      </DocsTableOfContents>
     </div>
   </SContainer>
 </template>

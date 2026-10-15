@@ -7,6 +7,7 @@ export default defineAppConfig({
       branch: 'main',
       contentDirectory: 'content',
       editLinks: true,
+      issueLinks: true,
     },
     header: {
       showTitle: true,

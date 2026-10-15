@@ -13,6 +13,10 @@ export default defineContentConfig({
           z.string(),
           z.object({ text: z.string() }),
         ])).optional(),
+        toc: z.boolean().default(true),
+        aside: z.boolean().default(true),
+        editLink: z.boolean().default(true),
+        issueLink: z.boolean().default(true),
         navigation: z.union([
           z.boolean(),
           z.object({

@@ -70,6 +70,10 @@ export interface SelarasDocsAppConfig {
     branch?: string
     contentDirectory?: string
     editLinks?: boolean
+    /** Show a page-context issue link. @default true */
+    issueLinks?: boolean
+    /** Override the new-issue destination, e.g. for a separate issue tracker. */
+    issueUrl?: string
   }
   header?: {
     title?: string
