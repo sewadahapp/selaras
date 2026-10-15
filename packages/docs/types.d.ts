@@ -45,6 +45,11 @@ export interface SelarasDocsErrorCopy {
 }
 
 export interface SelarasDocsAppConfig {
+  /** Copy shown for an existing Markdown page with no body content. */
+  empty?: {
+    title?: string
+    description?: string
+  }
   /** Recovery messages and the destination of error-screen home links. */
   errors?: Partial<Record<SelarasDocsErrorKind, SelarasDocsErrorCopy>> & {
     /** An internal route, resolved under the application's base URL. @default '/' */

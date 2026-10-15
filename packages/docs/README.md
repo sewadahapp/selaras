@@ -151,6 +151,21 @@ keeps the header valid when the consuming site does not supply a picker.
 
 ## Error recovery
 
+An existing Markdown file with no body content renders a **No content yet**
+view inside the documentation shell, with a themed vector illustration and a
+link back to the documentation. Zero-byte, whitespace-only and frontmatter-only
+pages remain valid pages rather than 404s. Header, navigation, configured page
+actions and Previous/Next remain available. Adding body content replaces the
+empty view automatically.
+
+Set `selarasDocs.empty.title` and `selarasDocs.empty.description` in
+`app.config.ts` to change its copy. Its home action uses `errors.homeTo` and
+`errors.homeLabel`, matching the recovery screens. Override
+`components/DocsEmptyState.vue` for a different empty-page design; its
+`illustration` slot defaults to the existing `DocsErrorIllustration` component.
+
+### Errors
+
 The layer provides a default `error.vue` for missing pages and fatal errors.
 It preserves the HTTP status code, keeps error pages out of search indexes and
 offers a home link or reload action. The standalone screen avoids loading

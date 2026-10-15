@@ -101,6 +101,20 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     const response = await fetch(pageUrl)
     assert.equal(response.status, 200)
     const html = await response.text()
+    for (const slug of ['empty', 'whitespace', 'frontmatter-only']) {
+      const response = await fetch(new URL(`/guide/${slug}`, url))
+      assert.equal(response.status, 200, 'an existing empty document must not become an error response')
+      const emptyHtml = await response.text()
+      if (overridden && slug === 'empty') {
+        assert.doesNotMatch(emptyHtml, /data-docs-empty-state/, 'adding body content must replace the empty view')
+        assert.match(emptyHtml, /Content is available now/, 'new body content must render normally')
+      }
+      else {
+        assert.match(emptyHtml, /data-docs-empty-state/, `${slug} must render an empty view`)
+        assert.match(emptyHtml, /No content yet/, 'empty pages must explain their state')
+        assert.match(emptyHtml, /id="selaras-docs-main"/, 'empty pages must retain the documentation shell')
+      }
+    }
     for (const [path, status, heading] of [
       ['/guide/missing', 404, 'Page not found'],
       ['/server-failure', 500, 'Something went wrong'],
@@ -225,6 +239,26 @@ async function inspectConsumer({ prefixed, overridden, example }) {
           await page.locator('#consumer-docs-header').waitFor()
         }
         await page.setViewportSize({ width: 1280, height: 800 })
+        for (const slug of ['empty', 'whitespace', 'frontmatter-only']) {
+          await page.goto(new URL(`/guide/${slug}`, url).href, { waitUntil: 'domcontentloaded' })
+          if (overridden && slug === 'empty') {
+            await page.getByRole('heading', { name: 'Content is available now', exact: true }).waitFor()
+            assert.equal(await page.locator('[data-docs-empty-state]').count(), 0)
+          }
+          else {
+            await page.getByRole('heading', { name: 'No content yet', exact: true }).waitFor()
+            assert.equal(await page.locator('[data-error-kind]').count(), 0, 'an empty page must not present a failed-page recovery state')
+            await page.getByRole('link', { name: 'Back to documentation', exact: true }).waitFor()
+          }
+          await page.getByRole('complementary', { name: 'Documentation navigation', exact: true }).getByRole('link', { name: 'Getting started', exact: true }).click()
+          await page.getByRole('heading', { name: 'Getting started', exact: true, level: 1 }).waitFor()
+          assert.equal(await page.locator('[data-docs-empty-state]').count(), 0, 'navigation away from an empty page must render ordinary content')
+          await page.locator(`.selaras-docs-sidebar a[href="/guide/${slug}"]`).first().click()
+          if (overridden && slug === 'empty')
+            await page.getByRole('heading', { name: 'Content is available now', exact: true }).waitFor()
+          else
+            await page.getByRole('heading', { name: 'No content yet', exact: true }).waitFor()
+        }
         if (prefixed) {
           await page.goto(new URL('/guide/page-actions', url).href, { waitUntil: 'domcontentloaded' })
           await page.getByRole('heading', { level: 1, name: 'Page actions', exact: true }).waitFor()
@@ -323,6 +357,7 @@ try {
     },
   })
   cpSync(join(rootDir, 'test/fixtures/docs-error-recovery'), consumerDir, { recursive: true })
+  writeFileSync(join(consumerDir, 'content/guide/whitespace.md'), ' \n\t\n  \n')
   const dependencies = Object.fromEntries(
     ['nuxt', 'vue', 'typescript', 'vue-tsc']
       .map(name => [name, installedManifest(name).version]),
@@ -357,6 +392,7 @@ try {
     run('build the default prefixed consumer', process.execPath, [nuxtCli, 'build'])
     run('type-check generated layer and Content contracts', process.execPath, [vueTsc, '--noEmit', '--project', 'tsconfig.json'])
     await inspectConsumer({ prefixed: true, overridden: false, example: true })
+    writeFileSync(join(consumerDir, 'content/guide/empty.md'), '# Content is available now\n\nThis page is no longer empty.\n')
     cpSync(join(consumerDir, 'components/DocsHeader.override.vue'), join(consumerDir, 'components/DocsHeader.vue'))
     run('rebuild the prefixed consumer override', process.execPath, [nuxtCli, 'build'])
     await inspectConsumer({ prefixed: true, overridden: true, example: true })

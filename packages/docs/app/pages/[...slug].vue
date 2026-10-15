@@ -64,7 +64,11 @@ const surround = useDocsSurround()
         <p v-if="page!.description" class="selaras-docs-description">
           {{ page!.description }}
         </p>
-        <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose" />
+        <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose">
+          <template #empty>
+            <DocsEmptyState />
+          </template>
+        </ContentRenderer>
         <DocsPageActions
           :path="route.path"
           :title="page!.title"

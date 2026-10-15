@@ -53,7 +53,11 @@ const surround = useDocsSurround()
     <div class="selaras-docs-page-grid" :class="{ 'selaras-docs-page-grid--wide': !hasToc }">
       <article class="selaras-docs-article">
         <SPageHeader :title="page!.title" :description="page!.description" class="selaras-docs-page-header" />
-        <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose" />
+        <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose">
+          <template #empty>
+            <DocsEmptyState heading="h2" />
+          </template>
+        </ContentRenderer>
         <DocsPageActions
           :path="route.path"
           :title="page!.title"
