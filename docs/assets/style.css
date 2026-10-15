@@ -10,19 +10,54 @@
 }
 
 .selaras-docs-footer-inner.selaras-site-footer-inner {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1.5rem 3rem;
+  padding-block: 1.5rem;
+}
+
+.selaras-site-footer-meta {
+  display: flex;
+  min-width: 0;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.selaras-site-footer-meta .selaras-docs-footer-links {
+  justify-content: flex-end;
   gap: 1rem;
 }
 
-.selaras-site-footer-copyright {
-  justify-self: end;
-  text-align: end;
+.selaras-site-footer-meta .selaras-docs-footer-links a {
+  min-height: 1.25rem;
+  padding: 0;
+  gap: 0.5rem;
+  color: var(--selaras-resolved-text-default);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  text-underline-offset: 0.25em;
 }
 
-.selaras-site-footer-inner > .selaras-docs-footer-links {
-  grid-column: 2;
-  justify-self: end;
+.selaras-site-footer-meta .selaras-docs-footer-links a:hover {
+  color: var(--selaras-resolved-color-primary-text);
+  background: transparent;
+  text-decoration: underline;
+}
+
+.selaras-site-footer-meta .selaras-docs-footer-links .iconify {
+  width: 1rem;
+  height: 1rem;
+}
+
+.selaras-site-footer-copyright {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  text-align: end;
+  text-wrap: balance;
 }
 
 .selaras-theme-source-code span {
@@ -33,20 +68,11 @@
   color: var(--shiki-dark);
 }
 
-@media (max-width: 63.999rem) {
+@media (max-width: 47.999rem) {
   .selaras-docs-footer-inner.selaras-site-footer-inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-  }
-
-  .selaras-site-footer-copyright {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    justify-self: end;
-  }
-
-  .selaras-site-footer-inner > .selaras-docs-footer-links {
-    grid-row: 1;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
   }
 }
 

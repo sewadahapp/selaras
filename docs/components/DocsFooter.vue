@@ -9,22 +9,25 @@ const links = computed(() => footer.value?.links?.filter(link => link.label !== 
   <footer v-if="footer?.text || links.length" class="selaras-docs-footer" :class="{ 'selaras-docs-footer--fluid': footer?.fluid }">
     <SContainer size="full" class="selaras-docs-footer-inner selaras-site-footer-inner">
       <DocsFooterBrand />
-      <p v-if="footer?.text" class="selaras-docs-footer-text selaras-site-footer-copyright">
-        {{ footer.text }}
-      </p>
-      <nav v-if="links.length" class="selaras-docs-footer-links" aria-label="Footer navigation">
-        <NuxtLink
-          v-for="link in links"
-          :key="`${link.to}:${link.label ?? link.icon ?? ''}`"
-          :to="link.to"
-          :target="link.target"
-          :rel="link.rel"
-          :aria-label="link.ariaLabel ?? link.label"
-        >
-          <SIcon v-if="link.icon" :name="link.icon" />
-          <span v-if="link.label">{{ link.label }}</span>
-        </NuxtLink>
-      </nav>
+      <div class="selaras-site-footer-meta">
+        <nav v-if="links.length" class="selaras-docs-footer-links" aria-label="Footer navigation">
+          <NuxtLink
+            v-for="link in links"
+            :key="`${link.to}:${link.label ?? link.icon ?? ''}`"
+            :to="link.to"
+            :target="link.target"
+            :rel="link.rel"
+            :aria-label="link.ariaLabel ?? link.label"
+          >
+            <SIcon v-if="link.icon" :name="link.icon" />
+            <span v-if="link.label">{{ link.label }}</span>
+            <SIcon v-if="link.label && !link.icon" name="hugeicons:arrow-right-01" aria-hidden="true" />
+          </NuxtLink>
+        </nav>
+        <p v-if="footer?.text" class="selaras-docs-footer-text selaras-site-footer-copyright">
+          {{ footer.text }}
+        </p>
+      </div>
     </SContainer>
   </footer>
 </template>
