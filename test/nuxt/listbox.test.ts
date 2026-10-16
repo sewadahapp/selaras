@@ -3,8 +3,10 @@ import type { Component } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
+import Checkbox from '../../src/runtime/components/Checkbox.vue'
 import FormField from '../../src/runtime/components/FormField.vue'
 import ListboxComponent from '../../src/runtime/components/Listbox.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 
 const Listbox = ListboxComponent as Component
 const wrappers: { unmount: () => void }[] = []
@@ -61,6 +63,30 @@ describe('listbox', () => {
     await wrapper.findAll('[role=option]')[0]!.trigger('click')
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([['b']])
     expect(wrapper.find('[role=option] button').exists()).toBe(false)
+    expect(wrapper.find('[role=option] [role=checkbox], [role=option] input, [role=option] [tabindex]').exists()).toBe(false)
+    expect(wrapper.findAllComponents(Checkbox).every(checkbox => checkbox.props('decorative'))).toBe(true)
+  })
+
+  it('uses the shared Checkbox theme, size, and color for row indicators and select all', async () => {
+    const wrapper = await mount(defineComponent({
+      render: () => h(Theme, { ui: { checkbox: { slots: { box: 'rounded-none' } } } }, () =>
+        h(Listbox, { items: ['a', 'b'], defaultValue: ['a'], multiple: true, checkbox: true, selectAll: true, size: 'lg', color: 'success' })),
+    }))
+    const checkboxes = wrapper.findAllComponents(Checkbox)
+    expect(checkboxes).toHaveLength(3)
+    for (const checkbox of checkboxes) {
+      expect(checkbox.props('size')).toBe('lg')
+      expect(checkbox.attributes('data-selaras-color')).toBe('success')
+      expect(checkbox.find('.rounded-none').classes()).toContain('size-5.5')
+    }
+    const options = wrapper.findAll('[role=option]')
+    expect(options[0]!.findComponent(Checkbox).attributes('data-state')).toBe('checked')
+    expect(options[1]!.findComponent(Checkbox).attributes('data-state')).toBe('unchecked')
+    expect(options[0]!.find('path').attributes('data-state')).toBe('checked')
+    expect(options[1]!.find('path').attributes('data-state')).toBe('unchecked')
+    await options[1]!.trigger('click')
+    expect(options[1]!.find('path').attributes('data-state')).toBe('checked')
+    expect(wrapper.findComponent(Listbox).emitted('update:modelValue')?.at(-1)).toEqual([['a', 'b']])
   })
 
   it('filters groups and selects only visible enabled items while preserving hidden values', async () => {

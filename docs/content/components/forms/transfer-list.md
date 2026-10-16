@@ -14,6 +14,27 @@ destination model. The component never mutates the supplied collection.
 ::component-example{name="transfer-list-basic"}
 ::
 
+```vue
+<script setup lang="ts">
+const assigned = ref([2])
+const items = [
+  { id: 1, name: 'Alex Morgan', description: 'Product designer' },
+  { id: 2, name: 'Sam Lee', description: 'Software engineer' },
+  { id: 3, name: 'Dina Sari', description: 'Project manager' },
+  { id: 4, name: 'Taylor Kim', description: 'Workspace owner', disabled: true },
+]
+</script>
+
+<template>
+  <div class="w-full space-y-4">
+    <STransferList v-model="assigned" :items="items" value-key="id" label-key="name" source-label="Available members" target-label="Project team" searchable />
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
+      Assigned member IDs: {{ assigned.join(', ') || 'None' }}
+    </p>
+  </div>
+</template>
+```
+
 ## Values and selection
 
 Value rules match [Listbox](/components/forms/listbox) and Select: strings and
@@ -55,6 +76,33 @@ The `item` slot provides original item metadata, selection state, and `side`:
 ::component-example{name="transfer-list-custom-item"}
 ::
 
+```vue
+<script setup lang="ts">
+const assigned = ref(['editor'])
+const items = [
+  { label: 'Administrator', value: 'admin', description: 'Full workspace access' },
+  { label: 'Editor', value: 'editor', description: 'Create and edit content' },
+  { label: 'Viewer', value: 'viewer', description: 'Read-only access' },
+]
+</script>
+
+<template>
+  <STransferList v-model="assigned" :items="items" source-label="Available roles" target-label="Assigned roles" class="w-full">
+    <template #item="{ item, side }">
+      <div class="min-w-0 flex-1">
+        <p class="font-medium">
+          {{ item.label }}
+        </p>
+        <p class="text-xs text-[var(--selaras-resolved-text-muted)]">
+          {{ item.description }}
+        </p>
+      </div>
+      <SBadge v-if="side === 'target'" size="sm" variant="soft" label="Assigned" />
+    </template>
+  </STransferList>
+</template>
+```
+
 `source-header` and `target-header` receive `count` and `checkedCount`. Panel
 footers and empty states are also customizable. Options should contain display
 content rather than independently interactive links or buttons.
@@ -83,6 +131,17 @@ Override `ui.transferList` for the layout and panel chrome; `ui.listbox` styles
 the selection panels. Both support global app config, scoped Theme overrides,
 and local `:ui` values. `ui.listbox` on a transfer instance can include attributes
 such as `{ ui: { content: 'max-h-96' } }` to configure its panels.
+
+Both the item indicators and select-all controls use
+[Checkbox](/components/forms/checkbox), so global or scoped `ui.checkbox` overrides
+apply to both panels. Item indicators are decorative: the option owns selection,
+keyboard focus, and accessibility semantics. They do not submit extra form values.
+
+```vue-html
+<STheme :ui="{ checkbox: { slots: { box: 'rounded-none' } } }">
+  <STransferList v-model="assigned" :items="items" />
+</STheme>
+```
 
 Labels use the message registry: `transferSource`, `transferTarget`,
 `moveToTarget`, `moveToSource`, `selectAll`, `listSelectionCount`, and

@@ -4,7 +4,7 @@ import type { CheckboxThemeSlots } from '../theme/checkbox'
 import type { ColorRole } from '../utils/color-registry'
 import type { UiProp } from '../utils/ui'
 import { CheckboxIndicator, CheckboxRoot } from 'reka-ui'
-import { computed } from 'vue'
+import { computed, mergeProps } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { checkboxTheme } from '../theme/checkbox'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
@@ -28,6 +28,8 @@ export interface CheckboxProps {
   disabled?: boolean
   invalid?: boolean
   required?: boolean
+  /** Renders only the visual indicator, without a focus target, form input, or inherited FormField state. Selection is owned by the surrounding control. */
+  decorative?: boolean
   size?: CheckboxVariants['size']
   color?: ColorRole
   /** `card` wraps the checkbox and label in a bordered box, highlighted when checked - the same treatment RadioGroup's own `card` variant already applies per item. */
@@ -39,12 +41,13 @@ export interface CheckboxEmits {
   'update:modelValue': [value: boolean | 'indeterminate']
 }
 
-const field = useFormField()
+const inheritedField = useFormField()
+const field = computed(() => props.decorative ? undefined : inheritedField)
 
-const checkboxId = computed(() => props.id ?? field?.id)
-const checkboxInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
-const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
-const describedBy = computed(() => field?.describedBy.value)
+const checkboxId = computed(() => props.id ?? field.value?.id)
+const checkboxInvalid = computed(() => props.invalid || (field.value?.invalid.value ?? false))
+const effectiveSize = computed(() => props.size ?? field.value?.size ?? 'md')
+const describedBy = computed(() => field.value?.describedBy.value)
 
 const theme = useComponentTheme('checkbox', checkboxTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
@@ -73,28 +76,38 @@ const indeterminateIconProps = computed(() => resolveSlot(ui.value.indeterminate
 // transitions can actually animate in and out, instead of the glyph just
 // popping in/out with Presence's default (non-animated) show/hide.
 const glyphState = computed(() => props.modelValue === 'indeterminate' ? 'indeterminate' : props.modelValue ? 'checked' : 'unchecked')
+const controlProps = computed(() => props.decorative
+  ? {
+      ...boxProps.value,
+      'data-state': glyphState.value,
+      'data-disabled': props.disabled ? '' : undefined,
+    }
+  : mergeProps({
+      'id': checkboxId.value,
+      'modelValue': props.modelValue,
+      'name': props.name ?? field.value?.name,
+      'disabled': props.disabled,
+      'required': props.required,
+      'aria-invalid': checkboxInvalid.value || undefined,
+      'aria-describedby': describedBy.value,
+    }, boxProps.value, {
+      'onUpdate:modelValue': (value: boolean | 'indeterminate') => emit('update:modelValue', value),
+    }))
+const visualIndicatorProps = computed(() => props.decorative
+  ? { 'data-state': glyphState.value, 'data-disabled': props.disabled ? '' : undefined, ...indicatorProps.value }
+  : { forceMount: true, ...indicatorProps.value })
 </script>
 
 <template>
-  <label :data-selaras-color="checkboxInvalid ? 'danger' : effectiveColor" v-bind="rootProps">
-    <CheckboxRoot
-      :id="checkboxId"
-      :model-value="modelValue"
-      :name="name ?? field?.name"
-      :disabled="disabled"
-      :required="required"
-      :aria-invalid="checkboxInvalid || undefined"
-      :aria-describedby="describedBy"
-      v-bind="boxProps"
-      @update:model-value="(value) => emit('update:modelValue', value)"
-    >
-      <CheckboxIndicator force-mount v-bind="indicatorProps">
+  <component :is="decorative ? 'span' : 'label'" :data-selaras-color="checkboxInvalid ? 'danger' : effectiveColor" v-bind="rootProps" :aria-hidden="decorative ? true : rootProps['aria-hidden']">
+    <component :is="decorative ? 'span' : CheckboxRoot" v-bind="controlProps">
+      <component :is="decorative ? 'span' : CheckboxIndicator" v-bind="visualIndicatorProps">
         <svg viewBox="0 0 24 24" :class="applyClassPrefix('size-full')" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 13l4 4L19 7" :data-state="glyphState" v-bind="checkIconProps" />
           <path d="M5 12h14" :data-state="glyphState" v-bind="indeterminateIconProps" />
         </svg>
-      </CheckboxIndicator>
-    </CheckboxRoot>
+      </component>
+    </component>
     <span v-if="description" v-bind="labelGroupProps">
       <span v-if="label || $slots.default" v-bind="labelProps"><slot>{{ label }}</slot></span>
       <span v-bind="descriptionProps">
@@ -104,5 +117,5 @@ const glyphState = computed(() => props.modelValue === 'indeterminate' ? 'indete
     <span v-else-if="label || $slots.default" v-bind="labelProps">
       <slot>{{ label }}</slot>
     </span>
-  </label>
+  </component>
 </template>

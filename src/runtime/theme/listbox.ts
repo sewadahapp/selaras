@@ -16,7 +16,7 @@ export const listboxTheme = tv({
     itemContent: 'flex min-w-0 flex-1 flex-col gap-0.5',
     icon: 'size-4 shrink-0',
     indicator: 'ms-auto flex size-4 shrink-0 items-center justify-center text-[var(--_selaras-color-indicator)]',
-    checkbox: 'pointer-events-none flex size-4 shrink-0 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] border border-[var(--selaras-resolved-border-default)] data-[state=checked]:border-[var(--_selaras-color-fill)] data-[state=checked]:bg-[var(--_selaras-color-fill)] data-[state=checked]:text-[var(--_selaras-color-on-fill)]',
+    checkbox: 'pointer-events-none shrink-0',
     empty: 'px-3 py-6 text-center text-sm text-[var(--selaras-resolved-text-muted)]',
   },
   variants: {

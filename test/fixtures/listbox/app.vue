@@ -28,7 +28,7 @@ const virtual = Array.from({ length: 1000 }, (_, value) => ({ label: `Row ${valu
       <output id="assigned-value">{{ JSON.stringify(assigned) }}</output>
       <output id="checked-value">{{ JSON.stringify(checked) }}</output>
       <section id="virtual-panel">
-        <SListbox id="virtual" :items="virtual" label="Virtual rows" multiple searchable virtualize />
+        <SListbox id="virtual" :items="virtual" label="Virtual rows" multiple checkbox searchable virtualize />
       </section>
       <form id="required-form">
         <SListbox id="required" :items="[0, 1]" name="required-choice" label="Required choice" required />

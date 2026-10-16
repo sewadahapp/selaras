@@ -113,6 +113,12 @@ toggles it - standard behavior for the
 [ARIA checkbox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/checkbox/),
 not something to configure here.
 
+`decorative` renders only the themed indicator, hidden from assistive technology,
+without a focus target or form input. It does not inherit FormField state or emit
+selection changes. [Listbox](/components/forms/listbox) and
+[TransferList](/components/forms/transfer-list) use this mode inside their options;
+the surrounding option owns keyboard interaction and selection announcements.
+
 ### Custom `:ui`
 
 To see exactly what you'd be overriding - the current default classes for
@@ -133,6 +139,7 @@ every slot and variant - here's `Checkbox`'s own theme file:
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `required` | `boolean` | `false` |
+| `decorative` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `color` | `ColorRole` (built-in or registered semantic role) | `'primary'` |
 | `variant` | `'default' \| 'card'` | `'default'` |

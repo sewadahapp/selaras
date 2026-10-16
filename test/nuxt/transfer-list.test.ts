@@ -3,7 +3,9 @@ import type { Component } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
+import Checkbox from '../../src/runtime/components/Checkbox.vue'
 import FormField from '../../src/runtime/components/FormField.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 import TransferListComponent from '../../src/runtime/components/TransferList.vue'
 
 const TransferList = TransferListComponent as Component
@@ -17,6 +19,21 @@ afterEach(() => wrappers.splice(0).forEach(wrapper => wrapper.unmount()))
 const items = [{ label: 'One', value: 1 }, { label: 'Two', value: 2 }, { label: 'Locked', value: 3, disabled: true }]
 
 describe('transfer list', () => {
+  it('shares Checkbox styling across both panels without adding interactive row controls', async () => {
+    const wrapper = await mount(defineComponent({
+      render: () => h(Theme, { ui: { checkbox: { slots: { box: 'rounded-none' } } } }, () =>
+        h(TransferList, { items, defaultValue: [2], checked: [1], size: 'sm', color: 'success' })),
+    }))
+    expect(wrapper.findAllComponents(Checkbox)).toHaveLength(5)
+    for (const panel of wrapper.findAll('[role=listbox]')) {
+      expect(panel.find('[role=option] .rounded-none').classes()).toContain('size-3.5')
+      expect(panel.find('[role=option] [aria-hidden=true]').attributes('data-selaras-color')).toBe('success')
+      expect(panel.find('button, input, [role=checkbox], label').exists()).toBe(false)
+    }
+    expect(wrapper.findAll('[role=listbox]')[0]!.find('[role=option] path').attributes('data-state')).toBe('checked')
+    expect(wrapper.findAll('[role=listbox]')[1]!.find('[role=option] path').attributes('data-state')).toBe('unchecked')
+  })
+
   it('partitions the collection by destination values and names both panels', async () => {
     const wrapper = await mount(TransferList, { props: { items, defaultValue: [2], sourceLabel: 'Available users', targetLabel: 'Team' } })
     const lists = wrapper.findAll('[role=listbox]')

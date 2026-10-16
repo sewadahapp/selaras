@@ -13,6 +13,22 @@ a popup. Selection is single by default.
 ::component-example{name="listbox-basic"}
 ::
 
+```vue
+<script setup lang="ts">
+const selected = ref('Design')
+const items = ['Design', 'Engineering', 'Operations', 'Support']
+</script>
+
+<template>
+  <div class="w-full max-w-sm space-y-3">
+    <SListbox v-model="selected" :items="items" label="Department" />
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
+      Selected: {{ selected ?? 'None' }}
+    </p>
+  </div>
+</template>
+```
+
 `items` accepts strings, finite numbers, and objects. A primitive is both its
 label and value. Objects display `label` and use their `value` property when
 present; otherwise the complete object is the value. Explicit `labelKey` and
@@ -25,10 +41,30 @@ use a stable `valueKey` when replacing records fetched from an API.
 `multiple` uses an array model. Clicking or pressing Space toggles a row without
 requiring a modifier key. `selectionBehavior="replace"` enables replacement
 selection with modifier keys for additive selection. `checkbox` shows decorative
-checkbox indicators; the option remains the only interactive element in each row.
+indicators rendered by [Checkbox](/components/forms/checkbox) in its decorative
+mode; the option remains the only interactive element in each row.
 
 ::component-example{name="listbox-multiple"}
 ::
+
+```vue
+<script setup lang="ts">
+const selected = ref(['read'])
+const items = [
+  { label: 'Workspace', items: [{ label: 'Read projects', value: 'read' }, { label: 'Create projects', value: 'create' }, { label: 'Delete projects', value: 'delete', disabled: true }] },
+  { label: 'Team', items: [{ label: 'Invite members', value: 'invite' }, { label: 'Manage roles', value: 'roles' }] },
+]
+</script>
+
+<template>
+  <div class="w-full max-w-sm space-y-3">
+    <SListbox v-model="selected" :items="items" label="Permissions" multiple checkbox searchable select-all />
+    <p class="text-sm text-[var(--selaras-resolved-text-muted)]">
+      {{ selected.length }} permissions selected
+    </p>
+  </div>
+</template>
+```
 
 `selectAll` adds a header checkbox in multiple mode. It checks or unchecks only
 visible, enabled options and preserves selections outside the current filter.
@@ -52,6 +88,21 @@ complete flattened collection. Use `group` to replace a group label.
 ::component-example{name="listbox-custom-objects"}
 ::
 
+```vue
+<script setup lang="ts">
+const selected = ref(1)
+const items = [
+  { id: 1, name: 'Product design', description: 'Interfaces and user experience', icon: 'hugeicons:paint-brush-01' },
+  { id: 2, name: 'Engineering', description: 'Application development', icon: 'hugeicons:code' },
+  { id: 3, name: 'Support', description: 'Customer care', icon: 'hugeicons:customer-support' },
+]
+</script>
+
+<template>
+  <SListbox v-model="selected" :items="items" value-key="id" label-key="name" label="Teams" class="w-full max-w-sm" />
+</template>
+```
+
 Keep custom options to display content. Put independent links or action buttons
 in a regular list or table rather than inside a listbox option.
 
@@ -63,6 +114,17 @@ This does not fetch additional pages.
 
 ::component-example{name="listbox-virtualize"}
 ::
+
+```vue
+<script setup lang="ts">
+const selected = ref<number[]>([])
+const items = Array.from({ length: 5000 }, (_, index) => ({ label: `Item ${index + 1}`, value: index + 1 }))
+</script>
+
+<template>
+  <SListbox v-model="selected" :items="items" label="Large collection" multiple searchable virtualize class="w-full max-w-sm" />
+</template>
+```
 
 ### Controlled values and forms
 
@@ -92,6 +154,17 @@ the inline options. Listbox stays inline at every viewport size.
 `size` accepts `sm`, `md`, or `lg`; `color` controls selection and focus tokens.
 `invalid` uses the danger role. Override `ui.listbox` globally or within Theme,
 or pass `:ui` to a single instance.
+
+Item indicators and the select-all control share the `ui.checkbox` theme, including
+its box shape and checkmark animation. Their size and color follow the listbox.
+The listbox's `checkbox` slot styles the indicator wrapper; to customize the
+Checkbox itself for one list, scope `ui.checkbox` with [Theme](/overview/theming/scoped-themes):
+
+```vue-html
+<STheme :ui="{ checkbox: { slots: { box: 'rounded-none' } } }">
+  <SListbox v-model="selected" :items="items" multiple checkbox select-all />
+</STheme>
+```
 
 ::theme-source{name="listbox"}
 ::

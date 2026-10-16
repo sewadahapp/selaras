@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import type { ListboxThemeSlots } from '../theme/listbox'
+import type { ColorRole } from '../utils/color-registry'
 import type { ResolvedItemOption } from './combobox-select'
 import { ListboxItem, ListboxItemIndicator } from 'reka-ui'
 import { computed } from 'vue'
+import Checkbox from '../components/Checkbox.vue'
 import Icon from '../components/Icon.vue'
 import { useIcons } from '../composables/use-icons'
 
@@ -13,7 +15,7 @@ const props = defineProps<{
   disabled?: boolean
   checkbox?: boolean
   descriptionKey: string
-  color: string
+  color: ColorRole
   size?: 'sm' | 'md' | 'lg'
   parts: Record<ListboxThemeSlots, Record<string, unknown>>
 }>()
@@ -25,7 +27,7 @@ const icon = computed(() => typeof record.value?.icon === 'string' ? record.valu
 
 <template>
   <ListboxItem :value="option.value" :text-value="option.label" :disabled="disabled || option.disabled" v-bind="parts.item">
-    <span v-if="checkbox" aria-hidden="true" :data-state="selected ? 'checked' : 'unchecked'" v-bind="parts.checkbox"><Icon v-if="selected" :name="icons.check" class="size-3" /></span>
+    <Checkbox v-if="checkbox" :model-value="selected" :color="color" :size="size" :data-state="selected ? 'checked' : 'unchecked'" decorative variant="default" v-bind="parts.checkbox" />
     <slot :item="option.raw" :index="index" :selected="selected" :disabled="!!(disabled || option.disabled)">
       <Icon v-if="icon" :name="icon" v-bind="parts.icon" />
       <span v-bind="parts.itemContent">

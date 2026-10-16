@@ -1,8 +1,38 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it } from 'vitest'
+import { defineComponent, h } from 'vue'
 import Checkbox from '../../src/runtime/components/Checkbox.vue'
+import FormField from '../../src/runtime/components/FormField.vue'
 
 describe('checkbox', () => {
+  it('renders a controlled decorative indicator without inheriting field semantics or submitting values', async () => {
+    const wrapper = await mountSuspended(defineComponent({
+      render: () => h('form', {}, h(FormField, { id: 'choice', name: 'choice', label: 'Choice', error: 'Required', size: 'lg' }, () =>
+        h(Checkbox, { decorative: true, modelValue: true, color: 'success', size: 'sm' }))),
+    }))
+    const checkbox = wrapper.findComponent(Checkbox)
+    expect(checkbox.element.tagName).toBe('SPAN')
+    expect(checkbox.attributes('aria-hidden')).toBe('true')
+    expect(checkbox.attributes('data-selaras-color')).toBe('success')
+    expect(checkbox.find('[data-state=checked]').classes()).toContain('size-3.5')
+    expect(checkbox.find('path').attributes('data-state')).toBe('checked')
+    expect(checkbox.find('button, input, label, [role=checkbox], [tabindex], #choice, [aria-invalid], [aria-describedby]').exists()).toBe(false)
+    await checkbox.find('[data-state=checked]').trigger('click')
+    expect(checkbox.emitted('update:modelValue')).toBeUndefined()
+    wrapper.unmount()
+  })
+
+  it('updates decorative checked and indeterminate visuals from its model', async () => {
+    const wrapper = await mountSuspended(Checkbox, { props: { decorative: true, modelValue: false } })
+    expect(wrapper.find('[data-state=unchecked]').exists()).toBe(true)
+    await wrapper.setProps({ modelValue: true })
+    expect(wrapper.findAll('path').every(path => path.attributes('data-state') === 'checked')).toBe(true)
+    await wrapper.setProps({ modelValue: 'indeterminate' })
+    expect(wrapper.find('[data-state=indeterminate]').exists()).toBe(true)
+    expect(wrapper.findAll('path').every(path => path.attributes('data-state') === 'indeterminate')).toBe(true)
+    wrapper.unmount()
+  })
+
   it('binds a custom semantic role to the label bridge', async () => {
     const wrapper = await mountSuspended(Checkbox, { props: { color: 'premium' } })
     expect(wrapper.attributes('data-selaras-color')).toBe('premium')
