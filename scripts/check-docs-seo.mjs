@@ -35,6 +35,30 @@ assert.doesNotMatch(robots, /^Disallow:\s*\/\s*$/im, 'Do not block public docume
 const robotSitemaps = [...robots.matchAll(/^Sitemap:\s*(\S+)\s*$/gim)].map(([, url]) => url)
 assert.ok(robotSitemaps.includes(new URL('sitemap.xml', home).href), 'Robots must advertise the production sitemap')
 
+const aiUserAgents = [
+  'Amazonbot',
+  'Applebot-Extended',
+  'Bytespider',
+  'CCBot',
+  'ChatGPT-User',
+  'Claude-Web',
+  'Claude-SearchBot',
+  'Claude-User',
+  'ClaudeBot',
+  'Google-Extended',
+  'GPTBot',
+  'OAI-SearchBot',
+  'PerplexityBot',
+  'Perplexity-User',
+]
+const robotGroups = robots.split(/\r?\n[\t ]*\r?\n/)
+for (const userAgent of aiUserAgents) {
+  const group = robotGroups.find(group => new RegExp(`^User-agent:[\\t ]*${userAgent}[\\t ]*$`, 'im').test(group))
+  assert.ok(group, `Missing explicit AI crawler policy: ${userAgent}`)
+  assert.match(group, /^Allow:[\t ]*\/[\t ]*$/im, `AI crawlers must be allowed to read public documentation: ${userAgent}`)
+  assert.doesNotMatch(group, /^Disallow:[\t ]*\/.*$/im, `Do not block AI crawler access: ${userAgent}`)
+}
+
 const sitemap = readFileSync(new URL('sitemap.xml', output), 'utf8')
 const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => decode(url))
 assert.ok(locations.length > 100, 'The sitemap must discover the documentation collection')

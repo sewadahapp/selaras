@@ -65,6 +65,22 @@ export default defineNuxtConfig({
   robots: {
     allow: ['/'],
     sitemap: ['/sitemap.xml'],
+    groups: [
+      'Amazonbot',
+      'Applebot-Extended',
+      'Bytespider',
+      'CCBot',
+      'ChatGPT-User',
+      'Claude-Web',
+      'Claude-SearchBot',
+      'Claude-User',
+      'ClaudeBot',
+      'Google-Extended',
+      'GPTBot',
+      'OAI-SearchBot',
+      'PerplexityBot',
+      'Perplexity-User',
+    ].map(userAgent => ({ userAgent, allow: ['/'] })),
   },
   sitemap: {
     zeroRuntime: true,
