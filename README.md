@@ -143,6 +143,9 @@ See the full [Theming guide](./docs/content/overview/theming.md).
   # Generate the static docs site
   npm run docs:generate
 
+  # Run the complete pre-commit checks (requires Bun)
+  npm run check
+
   # Type-check
   npm run test:types
 
@@ -169,6 +172,13 @@ See the full [Theming guide](./docs/content/overview/theming.md).
   RELEASE_BUMP=major npm run release:selaras
   RELEASE_BUMP=patch npm run release:docs
   ```
+
+  Dependency installation enables Git hooks in a local development checkout.
+  Before each commit, the hooks run ESLint, docs preparation, root and docs
+  type checks, and the full Vitest suite against the working tree. They also
+  require Conventional Commit messages, such as `fix(select): preserve selection`
+  or `feat(toolbar): add controls`. CI validates the committed code and commit
+  messages too. CI and production installs skip local hook installation.
 
 </details>
 

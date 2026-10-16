@@ -132,7 +132,10 @@
     "tokens:check": "node scripts/generate-default-colors.mjs --check",
     "tokens:generate": "node scripts/generate-default-colors.mjs",
     "agent:build": "node scripts/build-agent-catalog.mjs",
-    "test:agent": "node scripts/test-agent-support.mjs"
+    "test:agent": "node scripts/test-agent-support.mjs",
+    "prepare": "node scripts/install-git-hooks.mjs",
+    "commitlint": "commitlint",
+    "check": "bun run lint && bun run docs:prepare && bun run test:types && bun run test"
   },
   "peerDependencies": {
     "nuxt": "^4.5.2",
@@ -157,6 +160,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.3.0",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "@nuxt/devtools": "^3.4.1",
     "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^4.5.2",
@@ -167,6 +172,7 @@
     "changelogen": "^0.6.2",
     "eslint": "^10.8.1",
     "happy-dom": "^20.11.6",
+    "husky": "^9.1.7",
     "nuxt": "^4.5.2",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
