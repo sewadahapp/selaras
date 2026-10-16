@@ -59,6 +59,17 @@ for (const userAgent of aiUserAgents) {
   assert.doesNotMatch(group, /^Disallow:[\t ]*\/.*$/im, `Do not block AI crawler access: ${userAgent}`)
 }
 
+for (const group of robotGroups.filter(group => /^User-agent:/im.test(group))) {
+  const userAgent = group.match(/^User-agent:[\t ]*(\S.*)$/im)?.[1]
+  const signals = [...group.matchAll(/^Content-Signal:[\t ]*(\S.*)$/gim)]
+    .flatMap(([, value]) => value.split(','))
+    .map(signal => signal.trim().toLowerCase())
+  for (const category of ['ai-train', 'search', 'ai-input']) {
+    assert.ok(signals.includes(`${category}=yes`), `Missing content preference ${category}=yes for ${userAgent}`)
+    assert.ok(!signals.includes(`${category}=no`), `Conflicting content preference ${category}=no for ${userAgent}`)
+  }
+}
+
 const sitemap = readFileSync(new URL('sitemap.xml', output), 'utf8')
 const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => decode(url))
 assert.ok(locations.length > 100, 'The sitemap must discover the documentation collection')

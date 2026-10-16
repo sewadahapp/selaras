@@ -66,6 +66,7 @@ export default defineNuxtConfig({
     allow: ['/'],
     sitemap: ['/sitemap.xml'],
     groups: [
+      '*',
       'Amazonbot',
       'Applebot-Extended',
       'Bytespider',
@@ -80,7 +81,11 @@ export default defineNuxtConfig({
       'OAI-SearchBot',
       'PerplexityBot',
       'Perplexity-User',
-    ].map(userAgent => ({ userAgent, allow: ['/'] })),
+    ].map(userAgent => ({
+      userAgent,
+      allow: ['/'],
+      contentSignal: 'ai-train=yes, search=yes, ai-input=yes',
+    })),
   },
   sitemap: {
     zeroRuntime: true,
