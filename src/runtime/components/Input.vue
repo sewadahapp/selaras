@@ -4,16 +4,15 @@ import type { InputThemeSlots } from '../theme/input'
 import type { ColorRole } from '../utils/color-registry'
 import type { FieldAdornmentSlotProps } from '../utils/field-adornments'
 import type { UiProp } from '../utils/ui'
-import { computed, mergeProps } from 'vue'
+import { computed, mergeProps, nextTick, ref, useAttrs } from 'vue'
 import { useFormField } from '../composables/use-form-field'
-import { useIcons } from '../composables/use-icons'
-import { useMessages } from '../composables/use-messages'
+import FieldClearButton from '../internal/FieldClearButton.vue'
 import { inputTheme } from '../theme/input'
 import { useFieldAdornments } from '../utils/field-adornments'
+import { canClearField, fieldClearWidths, isFieldReadonly } from '../utils/field-clear'
 import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeProps } from '../utils/ui'
-import Button from './Button.vue'
 import Icon from './Icon.vue'
 
 type InputVariants = VariantProps<typeof inputTheme>
@@ -58,30 +57,33 @@ export interface InputSlots {
 const { leading, trailing, padding, clearOffset } = useFieldAdornments()
 
 const field = useFormField()
+const attrs = useAttrs()
+const inputRef = ref<HTMLInputElement>()
 const effectivePlaceholder = computed(() => props.placeholder || (field?.floatingLabel.value ? ' ' : undefined))
 const inputId = computed(() => props.id ?? field?.id)
 const inputInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 
-const hasValue = computed(() => props.modelValue !== undefined && props.modelValue !== '')
-const showClear = computed(() => !!props.clearable && !props.disabled && hasValue.value)
+const hasValue = computed(() => props.modelValue != null && props.modelValue !== '')
+const showClear = computed(() => canClearField(props.clearable, hasValue.value, props.disabled, isFieldReadonly(attrs.readonly)))
 
-function clear() {
+async function clear() {
+  if (!showClear.value)
+    return
   emit('update:modelValue', '')
+  await nextTick()
+  inputRef.value?.focus()
 }
 
 const themeProps = useThemeProps('input')
 const effectiveSize = computed(() => props.size ?? field?.size ?? themeProps.value.size as InputVariants['size'] ?? 'md')
 
-// One size step down from the input itself - a full-size dismiss icon reads
-// as too heavy next to the input's own text, especially at lg. sm has no
-// smaller step, so it stays sm.
-const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
+// Suggested size for actions supplied through the adornment slots.
+// The built-in clear control sizes its target and icon independently.
+const adornmentButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
-const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: clearSize.value }))
-const clearWidth = computed(() => ({ sm: '1.75rem', md: '2.25rem', lg: '2.5rem' })[effectiveSize.value])
-const icons = useIcons()
-const messages = useMessages()
+const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: adornmentButtonSize.value }))
+const clearWidth = computed(() => fieldClearWidths[effectiveSize.value])
 const theme = useComponentTheme('input', inputTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? themeProps.value.color ?? 'primary', 'primary'))
 
@@ -117,6 +119,7 @@ function clearProps() {
     <Icon v-else-if="icon" :name="icon" v-bind="resolveSlot(ui.leadingIcon, props.ui?.leadingIcon)" />
     <input
       :id="inputId"
+      ref="inputRef"
       data-ui-group-item
       :value="modelValue"
       :type="type"
@@ -128,21 +131,16 @@ function clearProps() {
       v-bind="adornedInputProps()"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
     >
-    <Button
+    <FieldClearButton
       v-if="showClear"
-      :size="clearSize"
-      variant="text"
-      color="neutral"
-      :aria-label="messages.clear"
+      :size="effectiveSize"
       v-bind="clearProps()"
       @click="clear"
     >
-      <template #icon="{ class: iconClass }">
-        <slot name="clear-icon">
-          <Icon :name="icons.close" :class="iconClass" />
-        </slot>
+      <template v-if="slots['clear-icon']" #default>
+        <slot name="clear-icon" />
       </template>
-    </Button>
+    </FieldClearButton>
     <Icon v-else-if="trailingIcon && !slots.trailing" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
     <fieldset v-if="slots.trailing" ref="trailing" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.trailing, props.ui?.trailing)">
       <slot name="trailing" v-bind="adornmentScope" />

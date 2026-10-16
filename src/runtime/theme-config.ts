@@ -33,6 +33,7 @@ import type { datePickerTheme, DatePickerThemeSlots } from './theme/date-picker'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
 import type { editableTheme, EditableThemeSlots } from './theme/editable'
+import type { fieldClearButtonTheme, FieldClearButtonThemeSlots } from './theme/field-clear-button'
 import type { fileTreeTheme, FileTreeThemeSlots } from './theme/file-tree'
 import type { fileUploadTheme, FileUploadThemeSlots } from './theme/file-upload'
 import type { formFieldTheme, FormFieldThemeSlots } from './theme/form-field'
@@ -283,6 +284,10 @@ export interface ThemeComponentRegistry {
     slots: InputThemeSlots
     conditions: WithRegisteredColor<Pick<InputVariants, 'color' | 'size' | 'hasLeadingIcon' | 'hasTrailingIcon' | 'invalid'>>
     defaults: WithRegisteredColor<Pick<InputVariants, 'color' | 'size'>>
+  }
+  fieldClearButton: {
+    slots: FieldClearButtonThemeSlots
+    conditions: Pick<VariantProps<typeof fieldClearButtonTheme>, 'size'>
   }
   editable: {
     slots: EditableThemeSlots

@@ -73,10 +73,10 @@ pagination bar, a calendar grid) won't line up:
 
 ### Text
 
-`text` never paints a background, at any state - only the label/icon color
-shifts on hover. Meant for an action button that sits tight against another
-control's own border, like a field's clear button - `ghost`'s hover-fill
-would otherwise visually compete with that border right at the seam:
+`text` never paints a background, at any state; only the label/icon color
+shifts on hover. Use it for actions that need minimal visual weight.
+Built-in field clear controls use an inset neutral `ghost` button for a more
+visible hover response. See [field clear controls](/overview/theming/component-styling#field-clear-controls).
 
 The border in this comparison belongs to the illustrative field, not either
 button.

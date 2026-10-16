@@ -14,13 +14,13 @@ export const textareaTheme = tv({
     trailing: 'absolute top-1 end-0 m-0 flex min-w-0 items-center gap-1 border-0 p-0 pe-1 text-sm text-[var(--selaras-resolved-text-muted)] disabled:opacity-50',
     leadingIcon: 'absolute start-3 top-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     trailingIcon: 'absolute end-3 top-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
-    clear: 'absolute end-1 top-1 shrink-0 rounded-full',
+    clear: 'absolute end-1 top-1',
   },
   variants: {
     size: {
-      sm: { base: 'text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4', clear: 'size-7' },
-      md: { base: 'text-sm', leadingIcon: 'size-4.5', trailingIcon: 'size-4.5', clear: 'size-9' },
-      lg: { base: 'text-base', leadingIcon: 'size-5', trailingIcon: 'size-5', clear: 'size-10' },
+      sm: { base: 'text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4' },
+      md: { base: 'text-sm', leadingIcon: 'size-4.5', trailingIcon: 'size-4.5' },
+      lg: { base: 'text-base', leadingIcon: 'size-5', trailingIcon: 'size-5' },
     },
     // Focus-ring color only - the resting ring stays --selaras-resolved-border-default regardless
     // of `color`, matching Input's own scope (see input.ts).

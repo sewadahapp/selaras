@@ -95,7 +95,7 @@ describe('input', () => {
     expect(classes).toContain('items-center')
     expect(classes).toContain('justify-center')
     // The theme's own fixed override for size="md" - equal on both axes.
-    expect(classes).toContain('size-9')
+    expect(classes).toContain('size-7')
   })
 
   it('replaces the clear icon via the clear-icon slot instead of the default', async () => {

@@ -81,6 +81,12 @@ Text prefixes and suffixes use the same slots:
 clear - it takes over the trailing position from `trailingIcon` while active,
 the same way [Select's](/components/forms/select#clear) does.
 
+It stays visible while the value is nonempty (including `0`), and hides when
+the input is `disabled` or `readonly`. Clearing restores focus to the input.
+The neutral `ghost` hover target is inset from the field border, with an icon
+that matches the input's size. Customize it with `ui.clear` or `#clear-icon`;
+see [shared clear styling](/overview/theming/component-styling#field-clear-controls).
+
 ::component-example{name="input-clear"}
 ::
 

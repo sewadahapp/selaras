@@ -71,6 +71,36 @@ test('keeps actions focusable beside clear controls without opening Select or su
   await expect(action).not.toBeFocused()
 })
 
+test('clears text and draft queries without submitting or committing draft values, and restores focus', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  for (const component of ['input', 'textarea', 'autocomplete']) {
+    const field = page.locator(`[data-case=${component}-md]`)
+    const editor = field.locator('input:not([type=hidden]),textarea')
+    if (component === 'autocomplete')
+      await editor.fill('Uncommitted draft')
+    await field.getByRole('button', { name: 'Clear', exact: true }).click()
+    await expect(editor).toHaveValue('')
+    await expect(editor).toBeFocused()
+    await expect(field.getByRole('button', { name: 'Clear', exact: true })).toHaveCount(0)
+    await expect(page.locator(`#value-${component}-md`)).toBeEmpty()
+    await editor.press('Tab')
+    await expect(page.locator(`#value-${component}-md`)).toBeEmpty()
+  }
+  await expect(page.locator('#submits')).toHaveText('0')
+})
+
+test('updates clear visibility when readonly is toggled', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  for (const component of ['input', 'textarea', 'select', 'autocomplete'])
+    await expect(page.locator(`[data-case=${component}-md]`).getByRole('button', { name: 'Clear', exact: true })).toBeVisible()
+  await page.locator('#readonly').click()
+  for (const component of ['input', 'textarea', 'select', 'autocomplete'])
+    await expect(page.locator(`[data-case=${component}-md]`).getByRole('button', { name: 'Clear', exact: true })).toHaveCount(0)
+  await page.locator('#readonly').click()
+  for (const component of ['input', 'textarea', 'select', 'autocomplete'])
+    await expect(page.locator(`[data-case=${component}-md]`).getByRole('button', { name: 'Clear', exact: true })).toBeVisible()
+})
+
 test('keeps custom field actions separate from adaptive modal triggers', async ({ page, goto }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 })
   await goto('/', { waitUntil: 'hydration' })

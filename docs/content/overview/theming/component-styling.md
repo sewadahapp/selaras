@@ -35,6 +35,51 @@ grow to fit their content. Buttons embedded inside a field use smaller dimension
 to leave room within the field. Theme and local `:ui` overrides can customize
 these defaults.
 
+## Field clear controls
+
+Input, Textarea, Select, Autocomplete, and DatePicker share a neutral `ghost`
+Button for their built-in clear action. Its hover background sits inside the
+field border. The target and glyph have independent sizes, so the clear icon
+matches adjacent field icons without needing a full-height button:
+
+| Field size | Clear target | Icon |
+| --- | --- | --- |
+| `sm` | 24px | 16px |
+| `md` | 28px | 18px |
+| `lg` | 32px | 20px |
+
+These dimensions scale with the root font size. With `clearable`, the action
+stays visible whenever there is content, including the number `0` and an
+Autocomplete draft query. Empty, disabled, and read-only fields hide it.
+Loading indicators and custom `trailing` content can appear alongside it.
+Clearing returns focus to the editor or trigger.
+
+Customize one field with `ui.clear`, or replace its glyph with `#clear-icon`:
+
+```vue-html
+<SInput v-model="query" clearable :ui="{ clear: 'rounded-sm' }" />
+```
+
+Use the shared `fieldClearButton` recipe in `app.config.ts` to style every
+built-in field clear control. The same recipe works inside `STheme`:
+
+```ts [app.config.ts]
+export default defineAppConfig({
+  selaras: {
+    ui: {
+      fieldClearButton: {
+        slots: { base: 'rounded-sm' },
+      },
+    },
+  },
+})
+```
+
+Size-specific target or icon overrides use `compoundVariants` with a `size`
+condition and the `base` and `icon` slots. DatePicker also exposes `ui.buttonClear` for clear placement
+in button trigger mode, and `ui.triggerIcon` for its field-mode calendar/clock
+glyph. Keep enough space inside the field when changing the target size.
+
 ## The `:ui` prop and `STheme`
 
 Color tokens and component class overrides are separate systems.

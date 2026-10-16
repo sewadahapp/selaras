@@ -17,21 +17,14 @@ export const inputTheme = tv({
     trailingIcon: 'absolute end-2.5 shrink-0 text-[var(--selaras-resolved-text-muted)]',
     // A separate slot from trailingIcon (not reused) - that one is a
     // decorative, non-interactive icon; this is a real dismiss button.
-    // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
-    // and rounded-full (this dismiss-glyph family reads better circular
-    // than the library's usual rounded-md) come from Button's own theme;
-    // this slot only positions it and shrinks it below the input's full
-    // height (Button's own size steps match that height exactly, which
-    // once centered still touches both edges with zero margin) - explicit
-    // top-1/2 -translate-y-1/2 centering, not the root's items-center,
-    // since position:absolute drops it out of that flex flow.
-    clear: 'absolute end-1 top-1/2 -translate-y-1/2 shrink-0 rounded-full',
+    // The shared clear control owns its target size, icon, and feedback.
+    clear: 'absolute end-1 top-1/2 -translate-y-1/2',
   },
   variants: {
     size: {
-      sm: { base: 'h-8 px-2.5 text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4', clear: 'size-7' },
-      md: { base: 'h-10 px-3 text-sm', leadingIcon: 'size-4.5', trailingIcon: 'size-4.5', clear: 'size-9' },
-      lg: { base: 'h-11 px-3.5 text-base', leadingIcon: 'size-5', trailingIcon: 'size-5', clear: 'size-10' },
+      sm: { base: 'h-8 px-2.5 text-sm', leadingIcon: 'size-4', trailingIcon: 'size-4' },
+      md: { base: 'h-10 px-3 text-sm', leadingIcon: 'size-4.5', trailingIcon: 'size-4.5' },
+      lg: { base: 'h-11 px-3.5 text-base', leadingIcon: 'size-5', trailingIcon: 'size-5' },
     },
     // Focus-ring color only - the resting ring stays --selaras-resolved-border-default regardless
     // of `color`, matching a Nuxt-ecosystem component kit's own Input

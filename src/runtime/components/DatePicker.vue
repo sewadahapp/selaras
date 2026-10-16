@@ -32,7 +32,7 @@ import {
   TimeFieldInput,
   TimeFieldRoot,
 } from 'reka-ui'
-import { computed, getCurrentInstance, onMounted, onUnmounted, ref, shallowRef, useId, watch } from 'vue'
+import { computed, getCurrentInstance, mergeProps, nextTick, onMounted, onUnmounted, ref, shallowRef, useId, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
 import { useIcons } from '../composables/use-icons'
 import { useLocale } from '../composables/use-locale'
@@ -41,8 +41,10 @@ import { useMessages } from '../composables/use-messages'
 import DatePickerCalendarBody from '../internal/DatePickerCalendarBody.vue'
 import DatePickerRangeCalendarBody from '../internal/DatePickerRangeCalendarBody.vue'
 import DatePickerTimeBody from '../internal/DatePickerTimeBody.vue'
+import FieldClearButton from '../internal/FieldClearButton.vue'
 import { datePickerTheme } from '../theme/date-picker'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
+import { canClearField, fieldClearWidths } from '../utils/field-clear'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useRootProps, useThemeBindings } from '../utils/ui'
@@ -128,7 +130,7 @@ export interface DatePickerProps {
   isYearDisabled?: (year: number) => boolean
   invalid?: boolean
   clearable?: boolean
-  /** Chrome color - the clear/trigger buttons and prev/next month nav. Only the color changes; each button keeps its own deliberately-different variant (icon-only buttons use `text`, nav arrows use `ghost`). */
+  /** Chrome color for trigger buttons and calendar navigation. Clear controls remain neutral. */
   color?: ColorRole
   /** The color of whatever's currently "active" - the selected day/month/year cell and the Done button. */
   activeColor?: ColorRole
@@ -198,9 +200,8 @@ const minuteInputId = useId()
 const datePickerInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
-// One step down from the field itself - matches Input's own clear-button
-// sizing (see Input.vue's clearSize) so an icon button doesn't read as
-// oversized crammed next to the date segments.
+// Keep the calendar trigger compact inside the segmented field.
+// Its icon is sized separately to match the other field glyphs.
 const iconButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 // Reka itself always defaults to 1 - a range picker reads far better with
 // two months side by side (matches common range-picker convention) so this
@@ -221,9 +222,21 @@ const singleModelValue = computed(() => (props.range ? undefined : (modelValue.v
 // would never visibly progress since nothing ever feeds the change back in.
 const rangeModelValue = computed(() => (props.range ? (modelValue.value as DateRange | undefined) : undefined))
 const hasValue = computed(() => props.range ? !!(modelValue.value as DateRange | undefined)?.start : !!modelValue.value)
+const showClear = computed(() => canClearField(props.clearable, props.range
+  ? !!((modelValue.value as DateRange | undefined)?.start || (modelValue.value as DateRange | undefined)?.end)
+  : !!modelValue.value, props.disabled, props.readonly))
+const fieldElement = ref<HTMLElement>()
+const buttonTrigger = ref<InstanceType<typeof Button>>()
 
-function clear() {
+async function clear() {
+  if (!showClear.value)
+    return
   updateModelValue(props.range ? { start: undefined, end: undefined } : undefined)
+  await nextTick()
+  if (props.triggerMode === 'button')
+    buttonTrigger.value?.$el?.focus()
+  else
+    fieldElement.value?.querySelector<HTMLElement>('[role=spinbutton]')?.focus()
 }
 
 // Month/year view drill-down - single-date mode only (see the plan's scope
@@ -582,6 +595,10 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 const fieldProps = computed(() => resolveSlot(ui.value.field, props.ui?.field))
 const segmentProps = computed(() => resolveSlot(ui.value.segment, props.ui?.segment))
 const separatorProps = computed(() => resolveSlot(ui.value.separator, props.ui?.separator))
+const clearProps = computed(() => resolveSlot(ui.value.clear, props.ui?.clear))
+const buttonClearProps = computed(() => resolveSlot(ui.value.buttonClear, props.ui?.buttonClear))
+const triggerIconProps = computed(() => resolveSlot(ui.value.triggerIcon, props.ui?.triggerIcon))
+const buttonLabelStyle = computed(() => showClear.value ? { paddingInlineEnd: `calc(${fieldClearWidths[effectiveSize.value]} + 0.25rem)` } : undefined)
 const contentProps = computed(() => ({ ...resolveSlot(ui.value.content, props.ui?.content), ...arrowContentProps(props.arrow), ...props.positioning }))
 const portalProps = computed(() => overlayPortalProps(props.portal))
 const arrowProps = computed(() => ({ ...resolveSlot(ui.value.arrow, props.ui?.arrow), ...arrowElementProps(props.arrow) }))
@@ -680,9 +697,6 @@ const buttonTriggerUi = computed(() => ({
   base: [
     'w-full justify-start rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] text-[var(--selaras-resolved-text-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)]',
     datePickerInvalid.value ? 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)]' : undefined,
-    // Room for the clear button, which sits absolutely positioned on top of
-    // this same end edge - without it, a long formatted date can run under it.
-    props.clearable && hasValue.value ? 'pe-8' : undefined,
   ].filter(Boolean).join(' '),
   // base is justify-start (text left-aligned, not centered) so the button
   // reads naturally for a short date string - without its own auto margin,
@@ -730,7 +744,7 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(value)"
   >
     <DateRangePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" ref="fieldElement" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <DateRangePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="segment in segments.start" :key="`start-${segment.part}`">
             <DateRangePickerInput as="span" type="start" :part="segment.part" v-bind="segmentProps">
@@ -745,22 +759,13 @@ const buttonTriggerUi = computed(() => ({
           </template>
         </DateRangePickerField>
         <div :class="applyClassPrefix('ms-auto flex shrink-0 items-center gap-1')">
-          <Button
-            v-if="clearable && hasValue"
-            variant="text"
-            :color="color"
-            :size="iconButtonSize"
-            :aria-label="messages.clear"
-            @click="clear"
-          >
-            <template #icon="{ class: iconClass }">
-              <slot name="clear-icon">
-                <Icon :name="icons.close" :class="iconClass" />
-              </slot>
+          <FieldClearButton v-if="showClear" :size="effectiveSize" v-bind="clearProps" @click.stop="clear">
+            <template v-if="$slots['clear-icon']" #default>
+              <slot name="clear-icon" />
             </template>
-          </Button>
+          </FieldClearButton>
           <DateRangePickerTrigger as-child>
-            <Button variant="text" :color="color" :size="iconButtonSize" :aria-label="messages.dateRangePicker">
+            <Button variant="text" :color="color" :size="iconButtonSize" :ui="{ leadingIcon: triggerIconProps }" :aria-label="messages.dateRangePicker">
               <template #icon="{ class: iconClass }">
                 <slot name="trigger-icon">
                   <Icon :name="icons.calendar" :class="iconClass" />
@@ -775,6 +780,7 @@ const buttonTriggerUi = computed(() => ({
         <DateRangePickerTrigger as-child>
           <Button
             :id="datePickerId"
+            ref="buttonTrigger"
             variant="text"
             :color="color"
             :size="effectiveSize"
@@ -783,29 +789,19 @@ const buttonTriggerUi = computed(() => ({
             :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
-            {{ hasValue ? formattedValue : field?.floatingLabel.value ? '' : messages.pickDate }}
-            <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
+            <span :class="applyClassPrefix('min-w-0 flex-1 truncate text-start')" :style="buttonLabelStyle">{{ hasValue ? formattedValue : field?.floatingLabel.value ? '' : messages.pickDate }}</span>
+            <template #trailing-icon="{ class: iconClass }">
               <slot name="trigger-icon">
                 <Icon :name="icons.calendar" :class="iconClass" />
               </slot>
             </template>
           </Button>
         </DateRangePickerTrigger>
-        <Button
-          v-if="clearable && hasValue"
-          variant="text"
-          :color="color"
-          :size="iconButtonSize"
-          :aria-label="messages.clear"
-          :class="applyClassPrefix('absolute end-1 top-1/2 -translate-y-1/2')"
-          @click.stop="clear"
-        >
-          <template #icon="{ class: iconClass }">
-            <slot name="clear-icon">
-              <Icon :name="icons.close" :class="iconClass" />
-            </slot>
+        <FieldClearButton v-if="showClear" :size="effectiveSize" v-bind="mergeProps(clearProps, buttonClearProps)" @click.stop="clear">
+          <template v-if="$slots['clear-icon']" #default>
+            <slot name="clear-icon" />
           </template>
-        </Button>
+        </FieldClearButton>
       </div>
     </DateRangePickerAnchor>
 
@@ -849,7 +845,7 @@ const buttonTriggerUi = computed(() => ({
 
   <PopoverRoot v-else-if="timeOnly" :open="open" :data-selaras-color="fieldColor" @update:open="onUpdateOpen">
     <PopoverAnchor as-child>
-      <div v-if="triggerMode === 'field'" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" ref="fieldElement" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <TimeFieldRoot
           :id="datePickerId"
           v-slot="{ segments }"
@@ -873,22 +869,13 @@ const buttonTriggerUi = computed(() => ({
           </template>
         </TimeFieldRoot>
         <div :class="applyClassPrefix('ms-auto flex shrink-0 items-center gap-1')">
-          <Button
-            v-if="clearable && hasValue"
-            variant="text"
-            :color="color"
-            :size="iconButtonSize"
-            :aria-label="messages.clear"
-            @click="clear"
-          >
-            <template #icon="{ class: iconClass }">
-              <slot name="clear-icon">
-                <Icon :name="icons.close" :class="iconClass" />
-              </slot>
+          <FieldClearButton v-if="showClear" :size="effectiveSize" v-bind="clearProps" @click.stop="clear">
+            <template v-if="$slots['clear-icon']" #default>
+              <slot name="clear-icon" />
             </template>
-          </Button>
+          </FieldClearButton>
           <PopoverTrigger as-child>
-            <Button variant="text" :color="color" :size="iconButtonSize" :aria-label="messages.timePicker">
+            <Button variant="text" :color="color" :size="iconButtonSize" :ui="{ leadingIcon: triggerIconProps }" :aria-label="messages.timePicker">
               <template #icon="{ class: iconClass }">
                 <slot name="trigger-icon">
                   <Icon :name="icons.clock" :class="iconClass" />
@@ -903,6 +890,7 @@ const buttonTriggerUi = computed(() => ({
         <PopoverTrigger as-child>
           <Button
             :id="datePickerId"
+            ref="buttonTrigger"
             variant="text"
             :color="color"
             :size="effectiveSize"
@@ -911,29 +899,19 @@ const buttonTriggerUi = computed(() => ({
             :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
-            {{ hasValue ? formattedTimeValue : field?.floatingLabel.value ? '' : messages.pickTime }}
-            <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
+            <span :class="applyClassPrefix('min-w-0 flex-1 truncate text-start')" :style="buttonLabelStyle">{{ hasValue ? formattedTimeValue : field?.floatingLabel.value ? '' : messages.pickTime }}</span>
+            <template #trailing-icon="{ class: iconClass }">
               <slot name="trigger-icon">
                 <Icon :name="icons.clock" :class="iconClass" />
               </slot>
             </template>
           </Button>
         </PopoverTrigger>
-        <Button
-          v-if="clearable && hasValue"
-          variant="text"
-          :color="color"
-          :size="iconButtonSize"
-          :aria-label="messages.clear"
-          :class="applyClassPrefix('absolute end-1 top-1/2 -translate-y-1/2')"
-          @click.stop="clear"
-        >
-          <template #icon="{ class: iconClass }">
-            <slot name="clear-icon">
-              <Icon :name="icons.close" :class="iconClass" />
-            </slot>
+        <FieldClearButton v-if="showClear" :size="effectiveSize" v-bind="mergeProps(clearProps, buttonClearProps)" @click.stop="clear">
+          <template v-if="$slots['clear-icon']" #default>
+            <slot name="clear-icon" />
           </template>
-        </Button>
+        </FieldClearButton>
       </div>
     </PopoverAnchor>
 
@@ -993,7 +971,7 @@ const buttonTriggerUi = computed(() => ({
     @update:model-value="(value) => updateModelValue(normalizeForGranularity(value as DateValue | undefined))"
   >
     <DatePickerAnchor as-child>
-      <div v-if="triggerMode === 'field'" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
+      <div v-if="triggerMode === 'field'" ref="fieldElement" data-selaras-field-segmented :data-selaras-color="fieldColor" :data-selaras-field-filled="hasValue ? '' : undefined" :data-selaras-field-active="open ? '' : undefined" :aria-invalid="datePickerInvalid || undefined" :aria-describedby="describedBy" v-bind="fieldProps" :aria-labelledby="field?.labelId">
         <DatePickerField v-slot="{ segments }" :aria-labelledby="field?.labelId" :aria-describedby="describedBy" :aria-invalid="datePickerInvalid || undefined">
           <template v-for="(segment, index) in visibleSegments(segments)" :key="`${segment.part}-${index}`">
             <DatePickerInput as="span" :part="segment.part" v-bind="segmentProps">
@@ -1002,22 +980,13 @@ const buttonTriggerUi = computed(() => ({
           </template>
         </DatePickerField>
         <div :class="applyClassPrefix('ms-auto flex shrink-0 items-center gap-1')">
-          <Button
-            v-if="clearable && hasValue"
-            variant="text"
-            :color="color"
-            :size="iconButtonSize"
-            :aria-label="messages.clear"
-            @click="clear"
-          >
-            <template #icon="{ class: iconClass }">
-              <slot name="clear-icon">
-                <Icon :name="icons.close" :class="iconClass" />
-              </slot>
+          <FieldClearButton v-if="showClear" :size="effectiveSize" v-bind="clearProps" @click.stop="clear">
+            <template v-if="$slots['clear-icon']" #default>
+              <slot name="clear-icon" />
             </template>
-          </Button>
+          </FieldClearButton>
           <DatePickerTrigger as-child>
-            <Button variant="text" :color="color" :size="iconButtonSize" :aria-label="messages.datePicker">
+            <Button variant="text" :color="color" :size="iconButtonSize" :ui="{ leadingIcon: triggerIconProps }" :aria-label="messages.datePicker">
               <template #icon="{ class: iconClass }">
                 <slot name="trigger-icon">
                   <Icon :name="icons.calendar" :class="iconClass" />
@@ -1032,6 +1001,7 @@ const buttonTriggerUi = computed(() => ({
         <DatePickerTrigger as-child>
           <Button
             :id="datePickerId"
+            ref="buttonTrigger"
             variant="text"
             :color="color"
             :size="effectiveSize"
@@ -1040,29 +1010,19 @@ const buttonTriggerUi = computed(() => ({
             :aria-labelledby="field?.labelId"
             :ui="buttonTriggerUi"
           >
-            {{ hasValue ? formattedValue : field?.floatingLabel.value ? '' : messages.pickDate }}
-            <template v-if="!(clearable && hasValue)" #trailing-icon="{ class: iconClass }">
+            <span :class="applyClassPrefix('min-w-0 flex-1 truncate text-start')" :style="buttonLabelStyle">{{ hasValue ? formattedValue : field?.floatingLabel.value ? '' : messages.pickDate }}</span>
+            <template #trailing-icon="{ class: iconClass }">
               <slot name="trigger-icon">
                 <Icon :name="icons.calendar" :class="iconClass" />
               </slot>
             </template>
           </Button>
         </DatePickerTrigger>
-        <Button
-          v-if="clearable && hasValue"
-          variant="text"
-          :color="color"
-          :size="iconButtonSize"
-          :aria-label="messages.clear"
-          :class="applyClassPrefix('absolute end-1 top-1/2 -translate-y-1/2')"
-          @click.stop="clear"
-        >
-          <template #icon="{ class: iconClass }">
-            <slot name="clear-icon">
-              <Icon :name="icons.close" :class="iconClass" />
-            </slot>
+        <FieldClearButton v-if="showClear" :size="effectiveSize" v-bind="mergeProps(clearProps, buttonClearProps)" @click.stop="clear">
+          <template v-if="$slots['clear-icon']" #default>
+            <slot name="clear-icon" />
           </template>
-        </Button>
+        </FieldClearButton>
       </div>
     </DatePickerAnchor>
 

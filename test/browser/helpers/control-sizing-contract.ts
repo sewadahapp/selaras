@@ -46,8 +46,17 @@ export function controlSizingContract() {
         const before = (await trigger.boundingBox())!
         const clear = trigger.getByRole('button', { name: 'Clear', exact: true })
         const action = (await clear.boundingBox())!
+        const targetSize = { sm: 24, md: 28, lg: 32 }[size]!
+        const iconSize = { sm: 16, md: 18, lg: 20 }[size]!
+        expect(action.width).toBe(targetSize)
+        expect(action.height).toBe(targetSize)
+        await expect(clear.locator('.iconify')).toHaveCSS('width', `${iconSize}px`)
+        await expect(clear.locator('.iconify')).toHaveCSS('height', `${iconSize}px`)
         expect(action.y).toBeGreaterThan(before.y)
         expect(action.y + action.height).toBeLessThan(before.y + before.height)
+        const background = await clear.evaluate(element => getComputedStyle(element).backgroundColor)
+        await clear.hover()
+        await expect.poll(() => clear.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(background)
         await clear.click()
         await expect(clear).toHaveCount(0)
         expect((await trigger.boundingBox())!.height).toBe(before.height)
@@ -56,8 +65,21 @@ export function controlSizingContract() {
         for (const kind of ['date', 'range', 'time']) {
           const picker = page.locator(`[data-size=${size}] [data-picker=${kind}-${mode}]`)
           const clear = picker.getByRole('button', { name: 'Clear', exact: true })
+          await expect(clear).toHaveCSS('width', `${{ sm: 24, md: 28, lg: 32 }[size]}px`)
+          await expect(clear.locator('.iconify')).toHaveCSS('width', `${{ sm: 16, md: 18, lg: 20 }[size]}px`)
+          if (mode === 'button') {
+            const calendar = picker.locator('button[aria-expanded] .iconify')
+            await expect(calendar).toBeVisible()
+            const glyph = (await calendar.boundingBox())!
+            const action = (await clear.boundingBox())!
+            expect(glyph.x - action.x - action.width).toBeGreaterThanOrEqual(4)
+          }
           await clear.click()
           await expect(clear).toHaveCount(0)
+          if (mode === 'button')
+            await expect(picker.locator('button[aria-expanded]')).toBeFocused()
+          else
+            await expect(picker.getByRole('spinbutton').first()).toBeFocused()
         }
       }
     }

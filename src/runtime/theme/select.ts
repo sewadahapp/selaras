@@ -24,10 +24,8 @@ export const selectTheme = tv({
     // soft (the same pairing Chip's own soft variant uses) clears 6.5:1.
     chipOverflow: 'inline-flex items-center rounded-[var(--selaras-resolved-radius-sm)] bg-[var(--_selaras-color-subtle)] px-2 py-0.5 text-xs text-[var(--_selaras-color-text)]',
     icon: 'shrink-0 text-[var(--selaras-resolved-text-muted)]',
-    // Rendered as an <SButton> (ghost/neutral) - real chrome, focus ring
-    // and touch target come from Button's own theme; only rounded-full
-    // (this dismiss-glyph family reads better circular) stays here.
-    clear: 'shrink-0 rounded-full',
+    // Layout only; FieldClearButton owns the shared interaction treatment.
+    clear: '',
     dropdown: 'inline-flex shrink-0 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] p-0.5 text-[var(--selaras-resolved-text-muted)] transition-colors hover:bg-[var(--selaras-resolved-border-default)] hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
     searchWrapper: 'box-content flex h-9 items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-2',
     // The popup owns its search row height. Inside a trigger, stretch the
@@ -53,9 +51,9 @@ export const selectTheme = tv({
   },
   variants: {
     size: {
-      sm: { trigger: 'min-h-8 py-1 text-sm', clear: 'size-6' },
-      md: { trigger: 'min-h-10', clear: 'size-7' },
-      lg: { trigger: 'min-h-11 text-base', clear: 'size-8' },
+      sm: { trigger: 'min-h-8 py-1 text-sm', icon: 'size-4' },
+      md: { trigger: 'min-h-10', icon: 'size-4.5' },
+      lg: { trigger: 'min-h-11 text-base', icon: 'size-5' },
     },
     // Registered custom roles have no finite Tailwind Variants branch. Keep
     // the semantic focus styling in the base slot so every registered role

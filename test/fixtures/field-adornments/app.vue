@@ -7,6 +7,7 @@ import Textarea from '../../../src/runtime/components/Textarea.vue'
 
 const route = useRoute()
 const disabled = ref(false)
+const readonly = ref(false)
 const expanded = ref(false)
 const actions = ref(0)
 const submits = ref(0)
@@ -25,12 +26,15 @@ const parts = { leading: { 'data-test': 'leading' }, trailing: { 'data-test': 't
       <button id="expand" @click="expanded = !expanded">
         Change suffix width
       </button>
+      <button id="readonly" @click="readonly = !readonly">
+        Toggle readonly
+      </button>
       <form id="fields-form" class="tw:grid tw:grid-cols-1 tw:gap-4 tw:sm:grid-cols-2" @submit.prevent="submits++">
         <div v-for="field in cases" :key="`${field.name}-${field.size}`" :data-case="`${field.name}-${field.size}`" class="tw:min-w-0 tw:space-y-2">
           <label :for="`${field.name}-${field.size}`">{{ field.name }} {{ field.size }}</label>
           <component
             :is="field.component" :id="`${field.name}-${field.size}`" v-model="field.value"
-            :name="`${field.name}-${field.size}`" :size="field.size" :disabled="disabled" :ui="parts" clearable
+            :name="`${field.name}-${field.size}`" :size="field.size" :disabled="disabled" :readonly="readonly" :ui="parts" clearable
             :items="field.name === 'select' || field.name === 'autocomplete' ? ['One', 'Two'] : undefined"
             :type="field.name === 'input' ? (visible ? 'text' : 'password') : undefined"
             :dropdown="field.name === 'autocomplete' || undefined" :adaptive="field.name === 'select' || field.name === 'autocomplete' || undefined"
@@ -45,6 +49,7 @@ const parts = { leading: { 'data-test': 'leading' }, trailing: { 'data-test': 't
               </SButton>
             </template>
           </component>
+          <output :id="`value-${field.name}-${field.size}`">{{ field.value }}</output>
         </div>
         <button id="submit" type="submit">
           Submit

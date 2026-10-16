@@ -285,7 +285,7 @@ single-date, range, and time-only modes, including with `clearable` enabled.
 
 ### Colors
 
-`color` sets the chrome color - the clear/trigger buttons and prev/next
+`color` sets the chrome color - the trigger buttons and prev/next
 month nav; `active-color` sets the color of whatever's currently "active" -
 the selected day/month/year cell and the Done button:
 
@@ -324,8 +324,11 @@ and time-only modes. The adaptive modal has its own presentation.
 
 ### Clearable & disabled
 
-`clearable` adds a dismiss button once a value is set; `disabled` disables
-the whole control:
+`clearable` adds an inset neutral `ghost` button once a value is set, including
+a partially filled range. Empty, `disabled`, and `readonly` pickers hide it.
+The calendar/clock trigger remains available beside clear in both trigger
+modes. Clearing returns focus to the first editable segment or button trigger.
+`disabled` disables the whole control:
 
 ::component-example{name="date-picker-clearable"}
 ::
@@ -334,6 +337,11 @@ the whole control:
 <SDatePicker v-model="date" clearable />
 <SDatePicker v-model="date" disabled />
 ```
+
+Customize the clear action with `ui.clear` or `#clear-icon`. `ui.buttonClear`
+controls its position in button trigger mode; `ui.triggerIcon` styles the
+field-mode calendar/clock glyph. See
+[shared clear styling](/overview/theming/component-styling#field-clear-controls).
 
 ### Read-only
 
@@ -476,7 +484,7 @@ spacing for an absent calendar. Both slots also support global theme overrides.
 | `positioning` | `OverlayPositioning` | anchored calendar defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `adaptive` | `boolean` | `false` |
-| `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'separator' \| 'content' \| 'mobileContent' \| 'header' \| 'heading' \| 'grids' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'viewGrid' \| 'timeSection' \| 'arrow', string \| object>>` | - |
+| `ui` | `Partial<Record<'root' \| 'field' \| 'segment' \| 'separator' \| 'clear' \| 'buttonClear' \| 'triggerIcon' \| 'content' \| 'mobileContent' \| 'header' \| 'heading' \| 'grids' \| 'grid' \| 'gridHead' \| 'headCell' \| 'cell' \| 'viewGrid' \| 'timeSectionStandalone' \| 'timeSection' \| 'arrow', string \| object>>` | - |
 
 ## Slots
 

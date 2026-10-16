@@ -148,6 +148,12 @@ the row is still what drives selection, same as any other option.
 select, an empty array for `multiple`. It only renders once there's something
 to clear, and clicking it never opens the popover.
 
+The action remains visible during loading and alongside custom `trailing`
+content. Empty and disabled controls hide it. Clearing returns focus to the
+trigger. Its inset neutral `ghost` target uses an icon sized to match the
+chevron. Customize it with `ui.clear` or `#clear-icon`; see
+[shared clear styling](/overview/theming/component-styling#field-clear-controls).
+
 ::component-example{name="select-clear"}
 ::
 

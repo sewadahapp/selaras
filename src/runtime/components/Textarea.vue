@@ -4,16 +4,15 @@ import type { TextareaThemeSlots } from '../theme/textarea'
 import type { ColorRole } from '../utils/color-registry'
 import type { FieldAdornmentSlotProps } from '../utils/field-adornments'
 import type { UiProp } from '../utils/ui'
-import { computed, mergeProps, nextTick, onMounted, ref, watch } from 'vue'
+import { computed, mergeProps, nextTick, onMounted, ref, useAttrs, watch } from 'vue'
 import { useFormField } from '../composables/use-form-field'
-import { useIcons } from '../composables/use-icons'
-import { useMessages } from '../composables/use-messages'
+import FieldClearButton from '../internal/FieldClearButton.vue'
 import { textareaTheme } from '../theme/textarea'
 import { useFieldAdornments } from '../utils/field-adornments'
+import { canClearField, fieldClearWidths, isFieldReadonly } from '../utils/field-clear'
 import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
-import Button from './Button.vue'
 import Icon from './Icon.vue'
 
 type TextareaVariants = VariantProps<typeof textareaTheme>
@@ -63,28 +62,31 @@ export interface TextareaSlots {
 const { leading, trailing, padding, clearOffset } = useFieldAdornments()
 
 const field = useFormField()
+const attrs = useAttrs()
+const textareaRef = ref<HTMLTextAreaElement>()
 const effectivePlaceholder = computed(() => props.placeholder || (field?.floatingLabel.value ? ' ' : undefined))
 
 const textareaId = computed(() => props.id ?? field?.id)
 const textareaInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 
-const hasValue = computed(() => props.modelValue !== undefined && props.modelValue !== '')
-const showClear = computed(() => !!props.clearable && !props.disabled && hasValue.value)
+const hasValue = computed(() => props.modelValue != null && props.modelValue !== '')
+const showClear = computed(() => canClearField(props.clearable, hasValue.value, props.disabled, isFieldReadonly(attrs.readonly)))
 
-function clear() {
+async function clear() {
+  if (!showClear.value)
+    return
   emit('update:modelValue', '')
+  await nextTick()
+  textareaRef.value?.focus()
 }
 
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
-// One size step down from the textarea itself - matches Input's own
-// clear-button sizing (see Input.vue's clearSize).
-const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
+// Suggested size for actions supplied through the adornment slots.
+const adornmentButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
-const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: clearSize.value }))
-const clearWidth = computed(() => ({ sm: '1.75rem', md: '2.25rem', lg: '2.5rem' })[effectiveSize.value])
-const icons = useIcons()
-const messages = useMessages()
+const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: adornmentButtonSize.value }))
+const clearWidth = computed(() => fieldClearWidths[effectiveSize.value])
 const theme = useComponentTheme('textarea', textareaTheme)
 const effectiveColor = computed(() => resolveRegisteredColorRole(props.color ?? 'primary', 'primary'))
 
@@ -104,8 +106,6 @@ const isTextareaAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isTextareaAttr })
 const nativeTextareaAttrs = useFallthroughAttrs(isTextareaAttr)
 const baseProps = computed(() => mergeProps(resolveSlot(ui.value.base, props.ui?.base), nativeTextareaAttrs.value))
-
-const textareaRef = ref<HTMLTextAreaElement>()
 
 async function resize() {
   if (!props.autoresize || !textareaRef.value)
@@ -157,21 +157,16 @@ function clearProps() {
       v-bind="adornedInputProps()"
       @input="$emit('update:modelValue', ($event.target as HTMLTextAreaElement).value); resize()"
     />
-    <Button
+    <FieldClearButton
       v-if="showClear"
-      :size="clearSize"
-      variant="text"
-      color="neutral"
-      :aria-label="messages.clear"
+      :size="effectiveSize"
       v-bind="clearProps()"
       @click="clear"
     >
-      <template #icon="{ class: iconClass }">
-        <slot name="clear-icon">
-          <Icon :name="icons.close" :class="iconClass" />
-        </slot>
+      <template v-if="slots['clear-icon']" #default>
+        <slot name="clear-icon" />
       </template>
-    </Button>
+    </FieldClearButton>
     <Icon v-else-if="trailingIcon && !slots.trailing" :name="trailingIcon" v-bind="resolveSlot(ui.trailingIcon, props.ui?.trailingIcon)" />
     <fieldset v-if="slots.trailing" ref="trailing" :disabled="disabled" :inert="disabled || undefined" v-bind="resolveSlot(ui.trailing, props.ui?.trailing)">
       <slot name="trailing" v-bind="adornmentScope" />

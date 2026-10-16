@@ -66,7 +66,7 @@ describe('autocomplete', () => {
       await input.trigger('blur')
       expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Created text'])
       expect(wrapper.find('input[type="hidden"][name="query"]').exists()).toBe(false)
-      expect(wrapper.find('[aria-label="Clear"]').exists()).toBe(false)
+      expect(wrapper.find('[aria-label="Clear"]').exists()).toBe(true)
     }
     finally {
       wrapper.unmount()

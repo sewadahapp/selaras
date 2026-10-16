@@ -25,7 +25,7 @@ import {
   TagsInputRoot,
   useDirection,
 } from 'reka-ui'
-import { computed, getCurrentInstance, mergeProps, nextTick, onMounted, onUnmounted, ref, useId, watch } from 'vue'
+import { computed, getCurrentInstance, mergeProps, nextTick, onMounted, onUnmounted, ref, useAttrs, useId, watch } from 'vue'
 import Button from '../components/Button.vue'
 import Chip from '../components/Chip.vue'
 import Icon from '../components/Icon.vue'
@@ -38,12 +38,14 @@ import { useMessages } from '../composables/use-messages'
 import { selectTheme } from '../theme/select'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
 import { useFieldAdornments } from '../utils/field-adornments'
+import { canClearField, isFieldReadonly } from '../utils/field-clear'
 import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '../utils/native-input'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeBindings } from '../utils/ui'
 import { useComboboxSelect } from './combobox-select'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
+import FieldClearButton from './FieldClearButton.vue'
 
 type SelectVariants = VariantProps<typeof selectTheme>
 
@@ -68,6 +70,7 @@ const slots = defineSlots<{
 }>()
 const { leading, trailing, padding } = useFieldAdornments()
 const instance = getCurrentInstance()!
+const attrs = useAttrs()
 type ComboboxSelection = SelectModelValue | SelectModelValue[] | undefined
 const initialValue = Array.isArray(props.defaultValue) ? [...props.defaultValue] : props.defaultValue
 const isControlled = () => Object.hasOwn(instance.vnode.props ?? {}, 'modelValue') || Object.hasOwn(instance.vnode.props ?? {}, 'model-value')
@@ -233,10 +236,6 @@ const {
   get: (target, key) => key === 'modelValue' ? selection.value : Reflect.get(target, key),
 }), updateSelection, { creatable: props.creatable })
 
-function clear() {
-  setValue(props.multiple ? [] : undefined)
-}
-
 // Chip removal, for the plain (non-creatable) trigger only - the creatable
 // branch has a real <ComboboxInput>, so it can nest TagsInputRoot/
 // TagsInputInput directly and get this behavior from Reka for free (see the
@@ -338,6 +337,13 @@ const searchText = computed({
     emit('update:searchTerm', value)
   },
 })
+
+const showClear = computed(() => canClearField(
+  props.clearable,
+  selectedValues.value.length > 0 || (!!props.creatable && searchText.value.length > 0),
+  props.disabled,
+  isFieldReadonly(attrs.readonly),
+))
 
 // Reka protects its own highlighted-item selection while composing, but this
 // component also handles Enter to create or reject free text. Keep the state
@@ -609,12 +615,10 @@ const searchDescribedBy = computed(() => [
 
 const effectiveSize = computed(() => props.size ?? field?.size ?? 'md')
 
-// One size step down from the trigger itself - see Input.vue's identical
-// clearSize for the reasoning (a full-size dismiss icon reads too heavy,
-// especially at lg; sm has no smaller step so it stays sm).
-const clearSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
+// Suggested size for actions supplied through the adornment slots.
+const adornmentButtonSize = computed(() => ({ sm: 'sm', md: 'sm', lg: 'md' } as const)[effectiveSize.value])
 
-const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: clearSize.value }))
+const adornmentScope = computed(() => ({ disabled: !!props.disabled, size: effectiveSize.value, buttonSize: adornmentButtonSize.value }))
 const icons = useIcons()
 const messages = useMessages()
 const theme = useComponentTheme('select', selectTheme)
@@ -820,6 +824,18 @@ const bodyProps = computed(() => ({
   itemProps: itemProps.value,
   itemIndicatorProps: itemIndicatorProps.value,
 }))
+
+async function clear() {
+  if (!showClear.value)
+    return
+  searchText.value = ''
+  setValue(props.multiple ? [] : undefined)
+  await nextTick()
+  if (props.creatable)
+    activeEditableInput.value?.focus()
+  else
+    selectTrigger.value?.$el?.focus()
+}
 </script>
 
 <template>
@@ -957,29 +973,18 @@ const bodyProps = computed(() => ({
           display-value re-syncs the visible text once modelValue changes.
           tabindex="-1" replicates the one bit of its behavior this used.
         -->
-        <Button
-          v-if="clearable && !disabled && selectedOptions.length"
-          :size="clearSize"
-          variant="text"
-          color="neutral"
-          tabindex="-1"
-          :aria-label="messages.clear"
-          v-bind="clearProps"
-          @click.stop="clear"
-        >
-          <template #icon="{ class: iconClass }">
-            <slot name="clear-icon">
-              <Icon :name="icons.close" :class="iconClass" />
-            </slot>
+        <FieldClearButton v-if="showClear" :size="effectiveSize" tabindex="-1" v-bind="clearProps" @click.stop="clear">
+          <template v-if="slots['clear-icon']" #default>
+            <slot name="clear-icon" />
           </template>
-        </Button>
+        </FieldClearButton>
         <slot v-if="loading" name="loading-icon">
-          <Icon :name="icons.loading" class="size-4 animate-spin" v-bind="iconProps" />
+          <Icon :name="icons.loading" class="animate-spin" v-bind="iconProps" />
         </slot>
         <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
         <ComboboxTrigger v-if="dropdown" v-bind="dropdownProps" @click="onDropdownClick">
           <slot name="dropdown-icon">
-            <Icon :name="icons.chevronDown" class="size-4" />
+            <Icon :name="icons.chevronDown" v-bind="iconProps" />
           </slot>
         </ComboboxTrigger>
       </div>
@@ -1009,20 +1014,18 @@ const bodyProps = computed(() => ({
           :aria-controls="modalId"
           @keydown="openMobileAutocomplete"
         >
-        <Button v-if="clearable && !disabled && selectedOptions.length" :size="clearSize" variant="text" color="neutral" tabindex="-1" :aria-label="messages.clear" v-bind="clearProps" @click.stop="clear">
-          <template #icon>
-            <slot name="clear-icon">
-              <Icon :name="icons.close" class="size-4" />
-            </slot>
+        <FieldClearButton v-if="showClear" :size="effectiveSize" tabindex="-1" v-bind="clearProps" @click.stop="clear">
+          <template v-if="slots['clear-icon']" #default>
+            <slot name="clear-icon" />
           </template>
-        </Button>
+        </FieldClearButton>
         <slot v-if="loading" name="loading-icon">
-          <Icon :name="icons.loading" class="size-4 animate-spin" v-bind="iconProps" />
+          <Icon :name="icons.loading" class="animate-spin" v-bind="iconProps" />
         </slot>
         <span v-if="loading" class="sr-only">{{ messages.loading }}</span>
         <button v-if="dropdown" type="button" tabindex="-1" :disabled="disabled" :aria-label="messages.search" v-bind="dropdownProps" @click.stop="onDropdownClick(); openMobileAutocomplete()">
           <slot name="dropdown-icon">
-            <Icon :name="icons.chevronDown" class="size-4" />
+            <Icon :name="icons.chevronDown" v-bind="iconProps" />
           </slot>
         </button>
       </div>
@@ -1107,32 +1110,19 @@ const bodyProps = computed(() => ({
           already set here regardless, so nothing about keyboard
           reachability changes.
         -->
-        <Button
-          v-if="clearable && !disabled && selectedOptions.length"
-          as="span"
-          role="button"
-          :size="clearSize"
-          variant="text"
-          color="neutral"
-          tabindex="-1"
-          :aria-label="messages.clear"
-          v-bind="clearProps"
-          @click.stop="clear"
-        >
-          <template #icon="{ class: iconClass }">
-            <slot name="clear-icon">
-              <Icon :name="icons.close" :class="iconClass" />
-            </slot>
+        <FieldClearButton v-if="showClear" as="span" role="button" :size="effectiveSize" tabindex="-1" v-bind="clearProps" @click.stop="clear">
+          <template v-if="slots['clear-icon']" #default>
+            <slot name="clear-icon" />
           </template>
-        </Button>
+        </FieldClearButton>
         <template v-if="loading">
           <slot name="loading-icon">
-            <Icon :name="icons.loading" class="size-4 animate-spin" v-bind="iconProps" />
+            <Icon :name="icons.loading" class="animate-spin" v-bind="iconProps" />
           </slot>
         </template>
         <template v-else>
           <slot name="dropdown-icon">
-            <Icon :name="icons.chevronDown" class="size-4" v-bind="iconProps" />
+            <Icon :name="icons.chevronDown" v-bind="iconProps" />
           </slot>
         </template>
         <span v-if="loading" class="sr-only">{{ messages.loading }}</span>

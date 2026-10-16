@@ -19,6 +19,9 @@ export const datePickerTheme = tv({
     // Between the two segment groups in range mode - a plain en dash, not an
     // arrow glyph, so there's nothing directional to mirror under RTL.
     separator: 'px-0.5 text-[var(--selaras-resolved-text-muted)]',
+    clear: 'shrink-0',
+    buttonClear: 'absolute top-1/2 -translate-y-1/2',
+    triggerIcon: 'shrink-0',
     // Copied from theme/dropdown.ts's `content` - the more complete of this
     // library's two floating-panel precedents (directional slide-in, not
     // just fade/zoom).
@@ -56,9 +59,9 @@ export const datePickerTheme = tv({
   },
   variants: {
     size: {
-      sm: { field: 'h-8 px-2.5 text-sm' },
-      md: { field: 'h-10 px-3 text-sm' },
-      lg: { field: 'h-11 px-3.5 text-base' },
+      sm: { field: 'h-8 px-2.5 text-sm', buttonClear: 'end-8', triggerIcon: 'size-4' },
+      md: { field: 'h-10 px-3 text-sm', buttonClear: 'end-10', triggerIcon: 'size-4.5' },
+      lg: { field: 'h-11 px-3.5 text-base', buttonClear: 'end-11', triggerIcon: 'size-5' },
     },
     invalid: {
       true: { field: 'ring-[var(--_selaras-color-border)] hover:ring-[var(--_selaras-color-border)] focus-within:ring-[var(--_selaras-color-focus)]' },

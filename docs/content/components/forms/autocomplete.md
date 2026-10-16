@@ -145,10 +145,16 @@ the query.
 
 ### Clear
 
-`clearable` works the same as [Select's](/components/forms/select#clear) - a
-button that resets the selection once there's something to clear. Clearing
-also blanks the displayed text back to the placeholder, the same way picking
-a suggestion fills it in.
+`clearable` resets both the selection and draft query. It appears when either
+contains content, including typed text before any suggestion is selected.
+It hides when empty, `disabled`, or `readonly`; loading and custom `trailing`
+content do not hide it. Clicking clear does not commit the draft as a new
+value, and returns focus to the editor.
+
+Like [Select](/components/forms/select#clear), it uses an inset neutral `ghost`
+target with a glyph that matches the field's other icons. Customize it with
+`ui.clear` or `#clear-icon`; see
+[shared clear styling](/overview/theming/component-styling#field-clear-controls).
 
 ::component-example{name="autocomplete-clear"}
 ::

@@ -57,7 +57,10 @@ width changes. Use `ui.leading` and `ui.trailing` to customize its wrappers.
 ### Clear
 
 `clearable` adds a button that empties the value, once there's something to
-clear - the same behavior as [Input's](/components/forms/input#clear):
+clear. It hides when empty, `disabled`, or `readonly`, and restores focus to
+the textarea after clearing. Like [Input](/components/forms/input#clear), it
+uses an inset neutral `ghost` target. Customize it with `ui.clear` or
+`#clear-icon`; see [shared clear styling](/overview/theming/component-styling#field-clear-controls).
 
 ::component-example{name="textarea-clear"}
 ::
