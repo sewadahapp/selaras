@@ -28,6 +28,13 @@ function headTags(html) {
   ))
 }
 
+const robots = readFileSync(new URL('robots.txt', output), 'utf8')
+assert.match(robots, /^User-agent:\s*\*\s*$/im, 'Robots must include a group for all crawlers')
+assert.match(robots, /^Allow:\s*\/\s*$/im, 'Public documentation must allow crawling')
+assert.doesNotMatch(robots, /^Disallow:\s*\/\s*$/im, 'Do not block public documentation or agent access')
+const robotSitemaps = [...robots.matchAll(/^Sitemap:\s*(\S+)\s*$/gim)].map(([, url]) => url)
+assert.ok(robotSitemaps.includes(new URL('sitemap.xml', home).href), 'Robots must advertise the production sitemap')
+
 const sitemap = readFileSync(new URL('sitemap.xml', output), 'utf8')
 const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => decode(url))
 assert.ok(locations.length > 100, 'The sitemap must discover the documentation collection')
@@ -103,4 +110,4 @@ const preview = headTags(readPage('/examples/adaptive-interfaces'))
 assert.match(preview.find(tag => tag.name === 'robots')?.content ?? '', /noindex/, 'The embedded preview must remain non-indexable')
 assert.ok(existsSync(new URL('llms.txt', output)), 'Keep the agent documentation index')
 assert.ok(existsSync(new URL('llms-full.txt', output)), 'Keep the complete agent documentation')
-console.log(`[docs-seo] Verified ${locations.length} pages and ${images.size} static sharing images in ${fileURLToPath(output)}`)
+console.log(`[docs-seo] Verified ${locations.length} pages, ${images.size} static sharing images, and robots.txt in ${fileURLToPath(output)}`)

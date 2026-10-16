@@ -55,12 +55,16 @@ export default defineNuxtConfig({
   // layer files directly during development; packed consumer coverage tests
   // the public package-name extension path separately.
   extends: ['../packages/docs'],
-  modules: ['nuxt-llms', '@nuxtjs/sitemap', 'nuxt-og-image'],
+  modules: ['nuxt-llms', '@nuxtjs/robots', '@nuxtjs/sitemap', 'nuxt-og-image'],
   site: {
     url: process.env.NUXT_SITE_URL ?? docsSite.url,
     name: docsSite.name,
     description: docsSite.description,
     trailingSlash: true,
+  },
+  robots: {
+    allow: ['/'],
+    sitemap: ['/sitemap.xml'],
   },
   sitemap: {
     zeroRuntime: true,
@@ -78,8 +82,8 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    '/examples/**': { sitemap: false, ogImage: false },
-    '/raw/**': { sitemap: false, ogImage: false },
+    '/examples/**': { sitemap: false, ogImage: false, robots: false },
+    '/raw/**': { sitemap: false, ogImage: false, robots: false },
   },
   llms: {
     domain: process.env.NUXT_LLMS_DOMAIN ?? docsCanonicalUrl('/', process.env.NUXT_SITE_URL ?? docsSite.url, process.env.NUXT_APP_BASE_URL ?? '/').replace(/\/$/, ''),
