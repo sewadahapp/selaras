@@ -17,6 +17,11 @@ The full export and individual pages include the Vue source of live examples,
 alongside component props, slots, and usage guidance. These files are regenerated
 with the documentation site, so they follow the published documentation version.
 
+The exports also carry our optional
+[attribution request](/overview/agent-support/overview#attribution-request).
+Please credit Selaras when referencing the documentation and link to the
+relevant page where possible. This request does not add conditions to the MIT license.
+
 ## Using an assistant
 
 Give your assistant the documentation index URL and ask it to read the relevant

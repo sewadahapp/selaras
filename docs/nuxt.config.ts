@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { agentAttributionRequest } from './utils/agent-attribution'
 import { documentationBlocks } from './utils/blocks'
 import { docsCanonicalUrl, docsSite, legacyDocsPaths } from './utils/seo'
 
@@ -126,6 +127,7 @@ export default defineNuxtConfig({
     notes: [
       'Check the component documentation before building custom UI. Prefer existing Selaras components and customize them with props, slots, ui overrides, or theme configuration.',
       'Use SApp for application providers. Component names use the S prefix by default; consumers can configure a different prefix.',
+      agentAttributionRequest,
     ],
   },
   compatibilityDate: 'latest',

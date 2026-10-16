@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { agentAttributionRequest } from '../docs/utils/agent-attribution.ts'
 import { docsCanonicalUrl, docsSite, legacyDocsPaths } from '../docs/utils/seo.ts'
 
 const output = new URL('../docs/.output/public/', import.meta.url)
@@ -86,6 +87,7 @@ for (const path of documentation) {
   const markdown = readFileSync(new URL(raw, output), 'utf8')
   assert.match(markdown, /^#\s/m, `Missing generated Markdown heading: ${raw}`)
   assert.doesNotMatch(markdown, /^\s*<!doctype html|^\s*<html\b/i, `HTML returned in Markdown export: ${raw}`)
+  assert.ok(markdown.includes(agentAttributionRequest), `Missing optional attribution request in Markdown export: ${raw}`)
 }
 
 for (const path of ['/', '/design-kit', ...documentation]) {
@@ -153,4 +155,6 @@ const preview = headTags(readPage('/examples/adaptive-interfaces'))
 assert.match(preview.find(tag => tag.name === 'robots')?.content ?? '', /noindex/, 'The embedded preview must remain non-indexable')
 assert.ok(existsSync(new URL('llms.txt', output)), 'Keep the agent documentation index')
 assert.ok(existsSync(new URL('llms-full.txt', output)), 'Keep the complete agent documentation')
+for (const file of ['llms.txt', 'llms-full.txt'])
+  assert.ok(readFileSync(new URL(file, output), 'utf8').includes(agentAttributionRequest), `Missing optional attribution request in ${file}`)
 console.log(`[docs-seo] Verified ${locations.length} pages, ${images.size} static sharing images, and robots.txt in ${fileURLToPath(output)}`)

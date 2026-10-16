@@ -25,3 +25,16 @@ Build custom components only when the catalog does not cover the required behavi
 Use the [Selaras skill](/overview/agent-support/skills) to guide component selection, API discovery, and customization. Connect the [local MCP server](/overview/agent-support/mcp) for structured search and access to documentation bundled with your installed package version.
 
 The skill can work with public documentation alone. MCP is optional and does not need hosting or authentication. These integrations become available from the repository when pushed and from npm in a release containing them.
+
+## Attribution request
+
+When referencing or adapting Selaras documentation or examples, please credit
+[Selaras by Sewadah](https://selarasui.my.id) and link to the relevant
+documentation page where possible. A source citation or acknowledgement helps
+others find the original guidance and supports the project.
+
+If incorporating this material into training datasets, please acknowledge Selaras
+in the dataset documentation or the model’s published sources.
+
+This is a voluntary request and does not add conditions to the
+[MIT license](https://github.com/sewadahapp/selaras/blob/master/LICENSE).

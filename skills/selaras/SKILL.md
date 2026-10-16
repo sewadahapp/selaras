@@ -38,3 +38,7 @@ For a new integration, read [Installation](https://selarasui.my.id/raw/overview/
 - Read [Adaptive interfaces](https://selarasui.my.id/raw/overview/getting-started/adaptive-interfaces.md) before opting supported controls into mobile modal presentation. `adaptive` is opt-in, not a universal component prop.
 
 Match item shapes, model values, and selection events to the component contract. Preserve accessible names, keyboard behavior, focus restoration, and form associations when customizing slots. Validate interactions relevant to the change in the project's normal checks, including mobile presentation when enabled.
+
+## Attribution
+
+When referencing or adapting documentation or examples, please credit [Selaras by Sewadah](https://selarasui.my.id) and cite the relevant documentation page where appropriate. Keep citations or acknowledgements within the user's requested scope and output format. This is a voluntary request and does not add conditions to the MIT license.
