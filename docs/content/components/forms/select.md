@@ -302,8 +302,10 @@ cleared out from under you.
 
 ### Sizes
 
-`size` takes `sm` / `md` / `lg`, matching every other form control in this
-library - see the [Props](#props) table below.
+`size` takes `sm` / `md` / `lg`, with default single-line heights of 32 / 40 / 44px
+at a 16px root font size. These match Button and Input, including when `clearable`
+or `loading` is enabled. Wrapping selections can grow beyond that minimum.
+See [Control sizes](/overview/theming/component-styling#control-sizes).
 
 ### States
 

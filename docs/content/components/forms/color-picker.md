@@ -64,6 +64,10 @@ picked:
 
 ### Size
 
+The default trigger follows the same 32 / 40 / 44px height scale as Button and
+Input for `sm` / `md` / `lg` at a 16px root font size. See
+[Control sizes](/overview/theming/component-styling#control-sizes).
+
 ::component-example{name="color-picker-size"}
 ::
 

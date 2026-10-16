@@ -79,6 +79,18 @@ stays neutral regardless, matching `Input`:
 <SPinInput color="success" />
 ```
 
+### Sizes
+
+`size="sm"`, `md`, and `lg` give each box a default height and width of
+32 / 40 / 44px at a 16px root font size. Each box matches a Button or Input of the
+same size. See [Control sizes](/overview/theming/component-styling#control-sizes).
+
+```vue-html
+<SPinInput v-model="value" size="sm" />
+<SPinInput v-model="value" size="md" />
+<SPinInput v-model="value" size="lg" />
+```
+
 ### Forms integration
 
 Wrap it in [FormField](/components/forms/form-field) to get `id`/`name`/`invalid` and

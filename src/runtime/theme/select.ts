@@ -28,9 +28,12 @@ export const selectTheme = tv({
     // and touch target come from Button's own theme; only rounded-full
     // (this dismiss-glyph family reads better circular) stays here.
     clear: 'shrink-0 rounded-full',
-    dropdown: 'shrink-0 rounded-[var(--selaras-resolved-radius-sm)] p-0.5 text-[var(--selaras-resolved-text-muted)] transition-colors hover:bg-[var(--selaras-resolved-border-default)] hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
-    searchWrapper: 'flex items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-2',
-    searchInput: 'h-9 min-w-16 flex-1 bg-transparent text-sm text-[var(--selaras-resolved-text-default)] outline-none placeholder:text-[var(--selaras-resolved-text-muted)]',
+    dropdown: 'inline-flex shrink-0 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] p-0.5 text-[var(--selaras-resolved-text-muted)] transition-colors hover:bg-[var(--selaras-resolved-border-default)] hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
+    searchWrapper: 'box-content flex h-9 items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-2',
+    // The popup owns its search row height. Inside a trigger, stretch the
+    // editor into the available space instead of adding a fixed input
+    // height to the trigger's vertical padding.
+    searchInput: 'min-w-16 flex-1 self-stretch bg-transparent text-sm text-[var(--selaras-resolved-text-default)] outline-none placeholder:text-[var(--selaras-resolved-text-muted)]',
     content: 'z-[var(--selaras-resolved-z-dropdown)] max-h-72 min-w-[var(--reka-combobox-trigger-width)] overflow-hidden rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] shadow-[var(--selaras-resolved-shadow-md)] ring-1 ring-[var(--selaras-resolved-border-default)] data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
     // The `adaptive` path's own content wrapper - none of `content`'s
     // own popover chrome (ring/shadow/rounded/animate-in, sized off the
@@ -50,9 +53,9 @@ export const selectTheme = tv({
   },
   variants: {
     size: {
-      sm: { trigger: 'min-h-8 text-sm' },
-      md: { trigger: 'min-h-10' },
-      lg: { trigger: 'min-h-11 text-base' },
+      sm: { trigger: 'min-h-8 py-1 text-sm', clear: 'size-6' },
+      md: { trigger: 'min-h-10', clear: 'size-7' },
+      lg: { trigger: 'min-h-11 text-base', clear: 'size-8' },
     },
     // Registered custom roles have no finite Tailwind Variants branch. Keep
     // the semantic focus styling in the base slot so every registered role

@@ -267,7 +267,12 @@ Single-date mode only - `range` and `time-only` aren't combinable.
 ### Sizes
 
 `size` takes `sm` / `md` / `lg`, scaling the field, segments, and calendar-
-day buttons together:
+day buttons together.
+
+The outer trigger follows the default 32 / 40 / 44px
+[control height scale](/overview/theming/component-styling#control-sizes) in both
+`trigger-mode="field"` and `trigger-mode="button"`. The same heights apply to
+single-date, range, and time-only modes, including with `clearable` enabled.
 
 ::component-example{name="date-picker-sizes"}
 ::

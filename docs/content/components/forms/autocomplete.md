@@ -233,6 +233,11 @@ show the selection instead). Same `v-model:search-term` and
 [Select's](/components/forms/select#sizes) - see the [Props](#props) table
 below.
 
+Its outer input uses the same default 32 / 40 / 44px height scale as Input,
+Select, and Button, including with a dropdown, clear button, or loading indicator.
+Multiple selections can grow when their content wraps. See
+[Control sizes](/overview/theming/component-styling#control-sizes).
+
 ### Adaptive presentation
 
 `adaptive` uses the same breakpoint and open-time latch as

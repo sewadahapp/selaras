@@ -4,6 +4,37 @@ description: Customize individual component slots and understand style precedenc
 order: 50
 ---
 
+## Control sizes
+
+Buttons and single-line fields share the same default outer height for each size:
+
+| Size | Height | At a 16px root font size |
+| --- | --- | --- |
+| `sm` | `2rem` | 32px |
+| `md` | `2.5rem` | 40px |
+| `lg` | `2.75rem` | 44px |
+
+This applies to Button, Input, InputNumber, Select, Autocomplete, DatePicker,
+ColorPicker's trigger, and each PinInput box. DatePicker keeps the same height
+with `trigger-mode="field"` and `trigger-mode="button"`, including range and
+time-only modes. Clear buttons and loading indicators do not increase the
+outer height.
+
+Use the same `size` when placing a field beside an action:
+
+```vue-html
+<div class="flex items-center gap-2">
+  <SInput size="md" placeholder="Search projects" />
+  <SButton size="md">Search</SButton>
+</div>
+```
+
+The height refers to the control itself; FormField labels, descriptions, and
+validation messages add space around it. Textareas and wrapping selections can
+grow to fit their content. Buttons embedded inside a field use smaller dimensions
+to leave room within the field. Theme and local `:ui` overrides can customize
+these defaults.
+
 ## The `:ui` prop and `STheme`
 
 Color tokens and component class overrides are separate systems.
