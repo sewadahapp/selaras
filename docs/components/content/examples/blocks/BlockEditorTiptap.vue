@@ -134,8 +134,7 @@ watch(readOnly, value => editor.value?.setEditable(!value))
         </SButton>
       </div>
       <div class="mb-4 flex items-center justify-end gap-2">
-        <SSwitch :model-value="readOnly" :disabled="props.readonly || props.disabled" aria-label="Read only" @update:model-value="previewReadonly = $event" />
-        <span class="text-sm text-[var(--selaras-resolved-text-muted)]">Read only</span>
+        <SSwitch :model-value="readOnly" :disabled="props.readonly || props.disabled" label="Read only" :ui="{ label: 'text-[var(--selaras-resolved-text-muted)]' }" @update:model-value="previewReadonly = $event" />
       </div>
       <div class="editor-frame overflow-hidden rounded-[var(--selaras-resolved-radius-lg)] border border-[var(--selaras-resolved-border-default)] focus-within:outline-2 focus-within:outline-[var(--selaras-resolved-color-primary-focus)]" :aria-busy="!ready" :data-disabled="props.disabled || undefined">
         <SToolbar aria-label="Text formatting" :disabled="readOnly || !ready" :ui="{ root: 'rounded-none border-0 border-b p-2' }">
