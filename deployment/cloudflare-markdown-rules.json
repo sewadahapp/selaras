@@ -1,0 +1,80 @@
+{
+  "http_request_transform": [
+    {
+      "ref": "selaras_markdown_home",
+      "description": "Selaras Markdown homepage",
+      "expression": "http.host eq \"selarasui.my.id\" and http.request.method in {\"GET\" \"HEAD\"} and lower(trim(http.request.headers[\"accept\"][0])) eq \"text/markdown\" and http.request.uri.path eq \"/\"",
+      "action": "rewrite",
+      "action_parameters": {
+        "uri": {
+          "path": {
+            "value": "/raw/index.md"
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "ref": "selaras_markdown_pages",
+      "description": "Selaras Markdown documentation",
+      "expression": "http.host eq \"selarasui.my.id\" and http.request.method in {\"GET\" \"HEAD\"} and lower(trim(http.request.headers[\"accept\"][0])) eq \"text/markdown\" and (not (http.request.uri.path contains \".\") and (starts_with(http.request.uri.path, \"/overview/\") or starts_with(http.request.uri.path, \"/components/\") or starts_with(http.request.uri.path, \"/composites/\") or starts_with(http.request.uri.path, \"/blocks/\") or starts_with(http.request.uri.path, \"/utilities/\")))",
+      "action": "rewrite",
+      "action_parameters": {
+        "uri": {
+          "path": {
+            "expression": "concat(\"/raw\", trim_end(http.request.uri.path, \"/\"), \".md\")"
+          }
+        }
+      },
+      "enabled": true
+    }
+  ],
+  "http_request_cache_settings": [
+    {
+      "ref": "selaras_markdown_cache",
+      "description": "Bypass cache for Selaras Markdown requests",
+      "expression": "http.host eq \"selarasui.my.id\" and http.request.method in {\"GET\" \"HEAD\"} and lower(trim(http.request.headers[\"accept\"][0])) eq \"text/markdown\" and (raw.http.request.uri.path eq \"/\" or (not (raw.http.request.uri.path contains \".\") and (starts_with(raw.http.request.uri.path, \"/overview/\") or starts_with(raw.http.request.uri.path, \"/components/\") or starts_with(raw.http.request.uri.path, \"/composites/\") or starts_with(raw.http.request.uri.path, \"/blocks/\") or starts_with(raw.http.request.uri.path, \"/utilities/\"))) or (starts_with(raw.http.request.uri.path, \"/raw/\") and ends_with(raw.http.request.uri.path, \".md\")))",
+      "action": "set_cache_settings",
+      "action_parameters": {
+        "cache": false
+      },
+      "enabled": true
+    }
+  ],
+  "http_response_headers_transform": [
+    {
+      "ref": "selaras_markdown_vary",
+      "description": "Vary Selaras pages by Accept",
+      "expression": "http.host eq \"selarasui.my.id\" and http.request.method in {\"GET\" \"HEAD\"} and (raw.http.request.uri.path eq \"/\" or (not (raw.http.request.uri.path contains \".\") and (starts_with(raw.http.request.uri.path, \"/overview/\") or starts_with(raw.http.request.uri.path, \"/components/\") or starts_with(raw.http.request.uri.path, \"/composites/\") or starts_with(raw.http.request.uri.path, \"/blocks/\") or starts_with(raw.http.request.uri.path, \"/utilities/\"))) or (starts_with(raw.http.request.uri.path, \"/raw/\") and ends_with(raw.http.request.uri.path, \".md\")))",
+      "action": "rewrite",
+      "action_parameters": {
+        "headers": {
+          "vary": {
+            "operation": "add",
+            "value": "Accept"
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "ref": "selaras_markdown_headers",
+      "description": "Selaras Markdown response headers",
+      "expression": "http.host eq \"selarasui.my.id\" and http.request.method in {\"GET\" \"HEAD\"} and lower(trim(http.request.headers[\"accept\"][0])) eq \"text/markdown\" and (starts_with(http.request.uri.path, \"/raw/\") and ends_with(http.request.uri.path, \".md\")) and http.response.code eq 200 and http.response.content_type.media_type in {\"text/markdown\" \"text/plain\"}",
+      "action": "rewrite",
+      "action_parameters": {
+        "headers": {
+          "content-type": {
+            "operation": "set",
+            "value": "text/markdown; charset=utf-8"
+          },
+          "cache-control": {
+            "operation": "set",
+            "value": "no-store"
+          }
+        }
+      },
+      "enabled": true
+    }
+  ]
+}

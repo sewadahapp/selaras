@@ -182,6 +182,7 @@ See the full [Theming guide](./docs/content/overview/theming.md).
 
 </details>
 
+For the documentation deployment, see [Markdown negotiation on Cloudflare](./deployment/cloudflare-markdown.md).
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/@sewadah/selaras/latest.svg?style=flat&colorA=020420&colorB=00DC82

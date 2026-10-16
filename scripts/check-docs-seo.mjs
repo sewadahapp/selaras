@@ -80,6 +80,14 @@ const documentation = readdirSync(content, { recursive: true })
   .filter(path => path.endsWith('.md'))
   .map(path => path === 'index.md' ? '/' : `/${path.replace(/\.md$/, '')}`)
 
+for (const path of documentation) {
+  assert.ok(path === '/' || /^\/(?:overview|components|composites|blocks|utilities)\/[^.]+$/.test(path), `Page is outside the Cloudflare Markdown rewrite scope: ${path}`)
+  const raw = path === '/' ? 'raw/index.md' : `raw${path}.md`
+  const markdown = readFileSync(new URL(raw, output), 'utf8')
+  assert.match(markdown, /^#\s/m, `Missing generated Markdown heading: ${raw}`)
+  assert.doesNotMatch(markdown, /^\s*<!doctype html|^\s*<html\b/i, `HTML returned in Markdown export: ${raw}`)
+}
+
 for (const path of ['/', '/design-kit', ...documentation]) {
   if (legacyDocsPaths[path])
     continue

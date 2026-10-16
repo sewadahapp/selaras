@@ -135,7 +135,8 @@
     "test:agent": "node scripts/test-agent-support.mjs",
     "prepare": "node scripts/install-git-hooks.mjs",
     "commitlint": "commitlint",
-    "check": "bun run lint && bun run docs:prepare && bun run test:types && bun run test"
+    "check": "bun run lint && bun run docs:prepare && bun run test:types && bun run test",
+    "test:docs-markdown": "node scripts/check-docs-markdown.mjs"
   },
   "peerDependencies": {
     "nuxt": "^4.5.2",
