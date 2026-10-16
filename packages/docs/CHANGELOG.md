@@ -1,5 +1,36 @@
 # Changelog
 
+## v1.3.1
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.0...selaras-docs-v1.3.1)
+
+### 🚀 Enhancements
+
+- **feat(docs):** prepare Cloudflare Markdown negotiation rules ([7beb431](https://github.com/sewadahapp/selaras/commit/7beb431ac798eb24fc4021d01b93cd477cca34ee))
+- **feat(docs):** declare AI content usage preferences ([2434ffe](https://github.com/sewadahapp/selaras/commit/2434ffe475b63c862ca1575afb90a497b4742699))
+- **feat(docs):** declare explicit AI crawler access rules ([a2a624c](https://github.com/sewadahapp/selaras/commit/a2a624cbfdaa56cc9fa77d63bdcf08578e22e421))
+- **feat(docs):** generate robots.txt with sitemap discovery ([a8e4ed6](https://github.com/sewadahapp/selaras/commit/a8e4ed6fc7c97beccb3dfab7796ce085d9befa8f))
+- **feat(toolbar):** add shared controls and editor blocks ([dc56fd8](https://github.com/sewadahapp/selaras/commit/dc56fd8d92e19cefe37bd7b261c08937bafaa02c))
+- **feat(docs):** redesign homepage with interactive previews ([878a542](https://github.com/sewadahapp/selaras/commit/878a542f10b0c8310eed4be8759bd80f5017e800))
+- **feat(editable):** add inline text editing with draft controls ([078649e](https://github.com/sewadahapp/selaras/commit/078649e219dfcf4553a02e3f3a6ae0a8914d7bf0))
+
+### 🩹 Fixes
+
+- **fix(docs):** make editor read-only labels clickable ([8c521f2](https://github.com/sewadahapp/selaras/commit/8c521f2c84610f1df9b4e5953bed990d0b0ec9aa))
+- **fix(forms):** unify clear button styling and behavior ([c669eb3](https://github.com/sewadahapp/selaras/commit/c669eb39f7c6f7246a892804447e95a533c327c8))
+- **fix(forms):** align field and button heights across sizes ([818c325](https://github.com/sewadahapp/selaras/commit/818c325b24525927be85a21a7c46a875484fc6f0))
+- **fix(listbox):** reuse checkbox component for selection indicators ([1abf48b](https://github.com/sewadahapp/selaras/commit/1abf48b75004754de1ea38a796015ae978047c76))
+
+### 📖 Documentation
+
+- **docs(agent):** request optional source attribution ([e279f40](https://github.com/sewadahapp/selaras/commit/e279f4050edae50be0b1e85f085eaa8ea82a9781))
+
+### 🤖 Other changes
+
+- **ci:** enforce conventional commits and pre-commit checks ([1b5922f](https://github.com/sewadahapp/selaras/commit/1b5922f5b8534920f9c054d1611ebc2eb7dc377d))
+
+Published against `@sewadah/selaras` ^0.10.0.
+
 ## v1.3.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.4...selaras-docs-v1.3.0)

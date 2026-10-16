@@ -1,6 +1,39 @@
 # Changelog
 
 
+## v0.10.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.0...v0.10.0)
+
+### 🚀 Enhancements
+
+- **editable:** Add inline text editing with draft controls ([078649e](https://github.com/sewadahapp/selaras/commit/078649e))
+- **docs:** Redesign homepage with interactive previews ([878a542](https://github.com/sewadahapp/selaras/commit/878a542))
+- **toolbar:** Add shared controls and editor blocks ([dc56fd8](https://github.com/sewadahapp/selaras/commit/dc56fd8))
+- **docs:** Generate robots.txt with sitemap discovery ([a8e4ed6](https://github.com/sewadahapp/selaras/commit/a8e4ed6))
+- **docs:** Declare explicit AI crawler access rules ([a2a624c](https://github.com/sewadahapp/selaras/commit/a2a624c))
+- **docs:** Declare AI content usage preferences ([2434ffe](https://github.com/sewadahapp/selaras/commit/2434ffe))
+- **docs:** Prepare Cloudflare Markdown negotiation rules ([7beb431](https://github.com/sewadahapp/selaras/commit/7beb431))
+
+### 🩹 Fixes
+
+- **listbox:** Reuse checkbox component for selection indicators ([1abf48b](https://github.com/sewadahapp/selaras/commit/1abf48b))
+- **forms:** Align field and button heights across sizes ([818c325](https://github.com/sewadahapp/selaras/commit/818c325))
+- **forms:** Unify clear button styling and behavior ([c669eb3](https://github.com/sewadahapp/selaras/commit/c669eb3))
+- **docs:** Make editor read-only labels clickable ([8c521f2](https://github.com/sewadahapp/selaras/commit/8c521f2))
+
+### 📖 Documentation
+
+- **agent:** Request optional source attribution ([e279f40](https://github.com/sewadahapp/selaras/commit/e279f40))
+
+### 🤖 CI
+
+- Enforce conventional commits and pre-commit checks ([1b5922f](https://github.com/sewadahapp/selaras/commit/1b5922f))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.9.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.2.3...v0.9.0)
