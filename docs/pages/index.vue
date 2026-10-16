@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import type { RuntimeTokenOverrides } from '@sewadah/selaras/types'
-import { defineColorFromSeed } from '@sewadah/selaras/theme'
 import { NuxtLink } from '#components'
 import pkg from '../../package.json'
+import HomeComponentEnsemble from '../components/home/HomeComponentEnsemble.vue'
+import HomeLibraryPreview from '../components/home/HomeLibraryPreview.vue'
+import HomeThemeLab from '../components/home/HomeThemeLab.vue'
 
 definePageMeta({ layout: 'home' })
 useDocsSeo({
@@ -10,549 +11,311 @@ useDocsSeo({
   description: 'Accessible Vue components for Nuxt, themed entirely with CSS variables.',
 })
 
-const BRAND_HUE = 280
-
-// The slider picks a hue; the rest of the role (hover, text, borders, dark
-// mode) is derived by the same helper an app would use in its own config.
-const hue = ref(BRAND_HUE)
-const seed = computed(() => hueToHex(hue.value))
-const heroTokens = computed<RuntimeTokenOverrides | undefined>(() => {
-  if (hue.value === BRAND_HUE)
-    return undefined
-  try {
-    const role = defineColorFromSeed(seed.value)
-    return { light: { colors: { primary: role.light } }, dark: { colors: { primary: role.dark } } }
-  }
-  catch {
-    return undefined
-  }
-})
-
-function hueToHex(h: number) {
-  const toLinear = (lightness: number, chroma: number) => {
-    const a = chroma * Math.cos((h * Math.PI) / 180)
-    const b = chroma * Math.sin((h * Math.PI) / 180)
-    const l = (lightness + 0.3963377774 * a + 0.2158037573 * b) ** 3
-    const m = (lightness - 0.1055613458 * a - 0.0638541728 * b) ** 3
-    const s = (lightness - 0.0894841775 * a - 1.291485548 * b) ** 3
-    return [
-      4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
-      -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
-      -0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s,
-    ]
-  }
-  // Keep the brand's lightness and give up chroma until the color fits sRGB.
-  let chroma = 0.2
-  let rgb = toLinear(0.5, chroma)
-  while (rgb.some(channel => channel < 0 || channel > 1) && chroma > 0) {
-    chroma -= 0.005
-    rgb = toLinear(0.5, chroma)
-  }
-  return `#${rgb.map((channel) => {
-    const clamped = Math.min(1, Math.max(0, channel))
-    const encoded = clamped <= 0.0031308 ? 12.92 * clamped : 1.055 * clamped ** (1 / 2.4) - 0.055
-    return Math.round(encoded * 255).toString(16).padStart(2, '0')
-  }).join('')}`
-}
-
-const workspace = ref('Northwind')
-const plan = ref('team')
-const planItems = [
-  { label: 'Free', value: 'free' },
-  { label: 'Team', value: 'team' },
-  { label: 'Enterprise', value: 'enterprise' },
-]
-const weeklySummary = ref(true)
-const saved = ref(false)
-let savedTimer: ReturnType<typeof setTimeout> | undefined
-function save() {
-  saved.value = true
-  clearTimeout(savedTimer)
-  savedTimer = setTimeout(() => {
-    saved.value = false
-  }, 1800)
-}
-
-const principles = [
-  { title: 'Themed with CSS variables', text: 'Every color, radius and shadow is a custom property. Recolor a role by changing one value.', to: '/overview/theming/overview', link: 'How theming works' },
-  { title: 'One prop to customize', text: 'Pass classes to any part of a component through its ui prop. They merge with the defaults instead of fighting them.', to: '/overview/theming/overview', link: 'Customize a component' },
-  { title: 'Accessible primitives', text: 'Built on Reka UI, so keyboard support, focus management and ARIA come with every component.', to: '/overview/getting-started/introduction#accessible-primitives', link: 'Accessibility approach' },
-  { title: 'Ready for small screens', text: 'Select, date and color pickers can switch to a full modal on phones, where a popover is too cramped.', to: '/components/forms/select', link: 'See Select' },
-  { title: 'Motion in CSS', text: 'Open, close and hover transitions run on data attributes, and respect reduced-motion settings.', to: '/overview/getting-started/introduction#css-based-motion', link: 'How motion works' },
-  { title: 'Typed throughout', text: 'Props, emits and slots are exported for every component, for wrappers that stay in sync.', to: '/overview/getting-started/typescript', link: 'TypeScript guide' },
-]
-
-// Guides that live beside the components but aren't components themselves.
-const guidePages = new Set(['/components/forms/validation'])
-const summaries: Record<string, string> = {
-  '/components/elements': 'Buttons, badges, avatars, chips and other building blocks',
-  '/components/forms': 'Inputs, selects, date and color pickers, uploads and field wiring',
-  '/components/overlays': 'Modals, drawers, menus, popovers, toasts and a command palette',
-  '/components/layout': 'The app shell, header, cards, splitters and theme scopes',
-  '/components/navigation': 'Tabs, menus, breadcrumbs, steppers and trees',
-  '/components/typography': 'Prose styles, callouts, code blocks and file trees',
-  '/components/data': 'Tables with sorting, pagination and virtual scroll, and a calendar',
-  '/composites/dashboard': 'Resizable panels, sidebar and navbar for app dashboards',
-  '/composites/documentation': 'Navigation, table of contents and page headers for docs sites',
-  '/utilities/composables': 'Open overlays from code, and set icons, locale and messages',
-  '/utilities/directives': 'Input masking and click ripples for any element',
-}
-
+const home = useTemplateRef('home')
+const preset = useDocsThemePreset()
+const colorMode = useColorMode()
+const gridColorKey = computed(() => `${preset.value}:${colorMode.value}`)
+const installCommand = 'npm install @sewadah/selaras'
+const icons = useIcons()
+const { copy, copied } = useDocsClipboard()
 const { data: navigation } = useDocsNavigation()
-const groups = computed(() => (['/components', '/composites', '/utilities'] as const).map((section) => {
-  const sectionItem = navigation.value?.find(item => item.path === section)
-  return {
-    title: sectionItem?.title ?? section,
-    categories: (sectionItem?.children ?? []).map((category) => {
-      const pages = (category.children ?? []).filter(page => !guidePages.has(page.path))
-      return { title: category.title, to: pages[0]?.path ?? category.path, count: pages.length, summary: summaries[category.path] }
-    }),
-  }
-}))
-
-const steps = [
-  { title: 'Install the package', text: 'Tailwind CSS is a peer dependency, so your project owns its version.', filename: 'Terminal', language: 'bash', code: 'npm install @sewadah/selaras tailwindcss' },
-  { title: 'Register the module', text: 'Components are auto-imported with an S prefix, like SButton.', filename: 'nuxt.config.ts', language: 'ts', code: `export default defineNuxtConfig({\n  modules: ['@sewadah/selaras'],\n  css: ['~/assets/css/main.css'],\n})` },
-  { title: 'Import the styles and wrap your app', text: 'SApp provides the shared context that tooltips, toasts and overlays need.', filename: 'assets/css/main.css', language: 'css', code: '@import "tailwindcss";\n@import "@sewadah/selaras";' },
+const guidePages = new Set(['/components/forms/validation'])
+const sections = [
+  { path: '/components', title: 'Components', icon: 'hugeicons:dashboard-square-01', description: 'Inputs, navigation, overlays, and the details in between. Keyboard support and typed APIs included.', fallback: '/components/elements/button' },
+  { path: '/composites', title: 'Composites', icon: 'hugeicons:layers-01', description: 'Resizable dashboards and documentation layouts, composed from the same parts.', fallback: '/composites/dashboard/dashboard-group' },
+  { path: '/blocks', title: 'Blocks', icon: 'hugeicons:layout-01', description: 'Complete interfaces you can try, inspect, and copy into your own project.', fallback: '/blocks/overview' },
+  { path: '/utilities', title: 'Utilities', icon: 'hugeicons:source-code', description: 'Open an overlay from code. Share icons and messages. Add masking or a ripple.', fallback: '/utilities/composables/use-modal' },
 ]
+const groups = computed(() => sections.map((section) => {
+  const item = navigation.value?.find(entry => entry.path === section.path)
+  const categories = (item?.children ?? []).map(category => ({
+    title: category.title,
+    to: category.children?.find(page => !guidePages.has(page.path))?.path ?? category.path,
+  }))
+  return { ...section, categories }
+}))
+const setup = [
+  { title: 'Add the package', icon: 'hugeicons:package', text: 'Install Selaras and keep Tailwind CSS under your project’s control.' },
+  { title: 'Register the module', icon: 'hugeicons:plug-01', text: 'Components are auto-imported with an S prefix. Nuxt handles the integration.' },
+  { title: 'Connect the styles', icon: 'hugeicons:paint-brush-01', text: 'Import the theme and the generated Tailwind entry in your stylesheet.' },
+  { title: 'Wrap your app', icon: 'hugeicons:browser', text: 'SApp provides the shared context for tooltips, toasts, and programmatic overlays.' },
+]
+const setupFiles = [
+  { name: 'install.sh', language: 'bash', code: 'bun add @sewadah/selaras tailwindcss\n\n# Or use your preferred package manager:\n# npm install @sewadah/selaras tailwindcss\n# pnpm add @sewadah/selaras tailwindcss\n' },
+  { name: 'nuxt.config.ts', code: 'export default defineNuxtConfig({\n  modules: [\'@sewadah/selaras\'],\n  css: [\'~/assets/css/main.css\'],\n})\n' },
+  { name: 'assets', children: [{ name: 'css', children: [{ name: 'main.css', code: '@import "tailwindcss";\n@import "@sewadah/selaras";\n@import "#selaras/tailwind.css";\n' }] }] },
+  { name: 'app.vue', code: '<template>\n  <SApp>\n    <NuxtLayout>\n      <NuxtPage />\n    </NuxtLayout>\n  </SApp>\n</template>\n' },
+]
+
+let observer: IntersectionObserver | undefined
+onMounted(() => {
+  if (!home.value || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window))
+    return
+  observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting)
+        continue
+      const element = entry.target as HTMLElement
+      element.classList.add('home-in-view')
+      observer?.unobserve(element)
+    }
+  }, { threshold: 0.08 })
+  home.value.querySelectorAll('[data-home-reveal]').forEach(element => observer?.observe(element))
+})
+onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <template>
-  <div class="home">
-    <STheme as="section" :tokens="heroTokens" class="home-hero" aria-labelledby="home-title">
-      <HomeDotGrid :color-key="heroTokens" />
-      <div class="home-container home-hero-grid">
-        <div class="home-hero-copy">
-          <h1 id="home-title" class="home-title">
-            Nuxt components that follow your design system
-          </h1>
+  <div ref="home" class="home">
+    <section class="home-hero" aria-labelledby="home-title">
+      <HomeDotGrid :color-key="gridColorKey" />
+      <div class="home-container home-hero-content">
+        <h1 id="home-title" class="home-title">
+          <span class="home-title-line"><span>Interfaces,</span></span>
+          <span class="home-title-line"><span>in harmony.</span></span>
+        </h1>
+        <div class="home-hero-bottom">
           <p class="home-lead">
-            Selaras is a set of accessible Vue components for Nuxt, built on Reka UI and
-            Tailwind CSS v4. Colors, radii and shadows are CSS variables, so the components
-            take on your brand instead of imposing one.
+            Accessible Vue components for Nuxt. The parts fit together. The design stays yours.
           </p>
-          <div class="home-actions">
-            <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg">
-              Get started
-            </SButton>
-            <SButton :as="NuxtLink" to="/components/elements/button" size="lg" variant="outline" color="neutral">
-              Browse components
-            </SButton>
-          </div>
-          <div class="home-install">
-            <SCodeButton code="npm install @sewadah/selaras" />
-          </div>
-          <p class="home-status">
-            <SBadge label="Pre-1.0" color="neutral" variant="soft" size="sm" />
-            Version {{ pkg.version }}. APIs can still change before 1.0.
-          </p>
-        </div>
-
-        <SCard class="home-demo">
-          <template #header>
-            <div class="home-demo-header">
-              <label for="home-hue" class="home-demo-label">Primary color</label>
-              <span class="home-demo-value">
-                <span class="home-demo-swatch" />
-                <code v-if="heroTokens">{{ seed }}</code>
-                <span v-else>Brand default</span>
-              </span>
-            </div>
-            <SSlider id="home-hue" v-model="hue" :min="0" :max="359" aria-label="Primary hue" />
-            <p class="home-demo-hint">
-              Drag to recolor this section.
-              <button v-if="hue !== BRAND_HUE" type="button" class="home-demo-reset" @click="hue = BRAND_HUE">
-                Reset
-              </button>
-            </p>
-          </template>
-
-          <div class="home-demo-body">
-            <SFormField label="Workspace name">
-              <SInput v-model="workspace" />
-            </SFormField>
-            <SFormField label="Plan">
-              <SSelect v-model="plan" :items="planItems" />
-            </SFormField>
-            <SSwitch v-model="weeklySummary" label="Send me a weekly summary" />
-          </div>
-
-          <template #footer>
-            <div class="home-demo-footer">
-              <SButton variant="outline" color="neutral">
-                Cancel
+          <div class="home-hero-actions home-hero-start">
+            <div class="home-hero-buttons">
+              <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg" class="home-primary-action">
+                Get started
               </SButton>
-              <SButton :icon="saved ? 'hugeicons:tick-02' : undefined" @click="save">
-                {{ saved ? 'Saved' : 'Save changes' }}
+              <SButton :as="NuxtLink" to="/components/elements/button" variant="outline" color="neutral" size="lg" class="home-primary-action">
+                Browse components
               </SButton>
             </div>
-          </template>
-        </SCard>
-      </div>
-    </STheme>
-
-    <section class="home-section" aria-labelledby="home-principles">
-      <div class="home-container">
-        <h2 id="home-principles" class="home-heading">
-          Built on a few firm decisions
-        </h2>
-        <div class="home-principles">
-          <div v-for="item in principles" :key="item.title" class="home-principle">
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.text }}</p>
-            <NuxtLink :to="item.to" class="home-link">
-              {{ item.link }}
-            </NuxtLink>
+            <SButton
+              color="neutral" variant="soft" class="home-install-command"
+              :trailing-icon="copied === 'install-command' ? icons.check : icons.copy"
+              :aria-label="copied === 'install-command' ? 'Install command copied' : 'Copy npm install command'"
+              @click="copy(installCommand, 'install-command')"
+            >
+              <code>{{ installCommand }}</code>
+            </SButton>
+            <span class="sr-only" role="status">{{ copied === 'install-command' ? 'Install command copied to clipboard.' : '' }}</span>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="home-section" aria-labelledby="home-included">
-      <div class="home-container">
-        <h2 id="home-included" class="home-heading">
-          What's included
+    <section id="home-preview" class="home-section home-container home-preview" aria-labelledby="home-preview-title">
+      <div class="home-section-intro">
+        <h2 id="home-preview-title" data-home-reveal>
+          Set your own tone
         </h2>
-        <div class="home-groups">
-          <div v-for="(column, index) in [groups.slice(0, 1), groups.slice(1)]" :key="index" class="home-group-column" :class="{ 'home-group-column--wide': index === 0 }">
-            <div v-for="group in column" :key="group.title" class="home-group">
-              <h3 class="home-group-title">
-                {{ group.title }}
+        <p data-home-reveal>
+          Three themes. The same components. Change the colors, adjust the corners, and see how much of the interface can become yours.
+        </p>
+      </div>
+      <HomeThemeLab>
+        <div class="home-ensemble">
+          <HomeComponentEnsemble />
+        </div>
+      </HomeThemeLab>
+      <p class="home-preview-note">
+        These are working Selaras components. Try selecting a team, collapsing the navigation, or opening an invitation.
+      </p>
+    </section>
+
+    <section class="home-section home-library" aria-labelledby="home-library-title">
+      <div class="home-container">
+        <h2 id="home-library-title" class="home-section-title" data-home-reveal>
+          A whole composition
+        </h2>
+        <p class="home-library-note">
+          Interactive previews with sample content. Explore the parts behind each one.
+        </p>
+        <div class="home-capabilities">
+          <article v-for="group in groups" :key="group.path" class="home-capability" data-home-reveal="across">
+            <HomeLibraryPreview :kind="group.path" />
+            <div class="home-capability-content">
+              <h3>
+                <NuxtLink :to="group.fallback">
+                  <span class="home-category-title">
+                    <SIcon :name="group.icon" class="home-category-icon" aria-hidden="true" />
+                    {{ group.title }}
+                  </span>
+                  <SIcon name="hugeicons:arrow-up-right-01" class="home-capability-arrow" aria-hidden="true" />
+                </NuxtLink>
               </h3>
-              <ul class="home-categories">
+              <p>{{ group.description }}</p>
+              <ul v-if="group.categories.length" class="home-category-links">
                 <li v-for="category in group.categories" :key="category.to">
-                  <NuxtLink :to="category.to" class="home-category">
-                    <span class="home-category-text">
-                      <span class="home-category-title">{{ category.title }}</span>
-                      <span v-if="category.summary" class="home-category-summary">{{ category.summary }}</span>
-                    </span>
-                    <span class="home-category-count">{{ category.count }}</span>
+                  <NuxtLink :to="category.to">
+                    {{ category.title }}
                   </NuxtLink>
                 </li>
               </ul>
             </div>
-          </div>
+          </article>
+        </div>
+        <div class="home-agent-link" data-home-reveal>
+          <p>Building with an agent?</p>
+          <NuxtLink to="/overview/agent-support/overview">
+            Give it the component APIs, examples, and Selaras skill.
+          </NuxtLink>
         </div>
       </div>
     </section>
 
-    <section class="home-section" aria-labelledby="home-start">
-      <div class="home-container">
-        <h2 id="home-start" class="home-heading">
-          Start in three steps
+    <section class="home-section home-container home-setup" aria-labelledby="home-setup-title">
+      <div class="home-section-intro">
+        <h2 id="home-setup-title" data-home-reveal>
+          Start with the real thing
         </h2>
-        <ol class="home-steps">
-          <li v-for="step in steps" :key="step.title" class="home-step">
-            <h3>{{ step.title }}</h3>
+        <p data-home-reveal>
+          One package, a Nuxt module, and your first component. No separate component registration.
+        </p>
+      </div>
+      <div class="home-setup-grid">
+        <ol class="home-setup-steps">
+          <li v-for="step in setup" :key="step.title" data-home-reveal>
+            <h3>
+              <SIcon :name="step.icon" class="home-step-icon" aria-hidden="true" />
+              {{ step.title }}
+            </h3>
             <p>{{ step.text }}</p>
-            <SProsePre :filename="step.filename" :language="step.language" :code="step.code">
-              {{ step.code }}
-            </SProsePre>
           </li>
         </ol>
-        <NuxtLink to="/overview/getting-started/installation" class="home-link">
-          Read the full installation guide
+        <div class="home-setup-source" data-ui data-home-reveal aria-label="Selaras installation files">
+          <STheme :ui="{ fileTree: { slots: { root: 'font-sans', list: 'font-sans' } } }">
+            <SCodeTree :items="setupFiles" class="home-code-tree" :ui="{ root: 'flex-col md:flex-row', tree: 'w-full max-h-44 border-e-0 md:w-44 md:max-h-none' }" />
+          </STheme>
+        </div>
+      </div>
+      <div class="home-install-footer">
+        <NuxtLink to="/overview/getting-started/installation" class="home-text-link">
+          Read the installation guide
         </NuxtLink>
+        <p>Selaras {{ pkg.version }}. APIs may change before 1.0. Built with Reka UI and Tailwind CSS v4.</p>
+      </div>
+    </section>
+
+    <section class="home-close" aria-labelledby="home-close-title">
+      <div class="home-container home-close-content">
+        <h2 id="home-close-title" data-home-reveal>
+          Make it Selaras.
+        </h2>
+        <div class="home-close-bottom">
+          <p data-home-reveal>
+            Start with a button. Keep going with a system that feels like yours.
+          </p>
+          <div class="home-hero-actions" data-home-reveal>
+            <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg" class="home-primary-action">
+              Install Selaras
+            </SButton>
+            <NuxtLink to="/blocks/overview" class="home-text-link">
+              Explore the blocks
+            </NuxtLink>
+          </div>
+        </div>
       </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-.home-container {
-  box-sizing: border-box;
-  width: min(100%, 90rem);
-  margin-inline: auto;
-  padding-inline: 1.5rem;
+.home {
+  --home-space: clamp(5rem, 11vw, 10rem);
+  --home-display: clamp(5rem, 13vw, 12rem);
+  color: var(--selaras-resolved-text-default);
 }
-
-.home-hero {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-bottom: 1px solid var(--selaras-resolved-border-muted);
-}
-
-.home-hero-grid {
-  position: relative;
-  display: grid;
-  gap: 3rem;
-  padding-block: 5rem 4.5rem;
-  align-items: center;
-}
-
-.home-title {
-  max-width: 16ch;
-  margin: 0;
-  font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4.25rem);
-  font-weight: 650;
-  line-height: 1.04;
-  letter-spacing: -0.035em;
-  text-wrap: balance;
-}
-
-.home-lead {
-  max-width: 34rem;
-  margin: 1.5rem 0 0;
-  color: var(--selaras-resolved-text-muted);
-  font-size: 1.125rem;
-  line-height: 1.6;
-}
-
-.home-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-top: 2rem;
-}
-
-.home-install {
-  margin-top: 1.25rem;
-}
-
-.home-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 1.5rem 0 0;
-  color: var(--selaras-resolved-text-muted);
-  font-size: 0.875rem;
-}
-
-.home-demo {
-  width: 100%;
-  max-width: 26rem;
-  justify-self: end;
-  box-shadow: var(--selaras-resolved-shadow-lg);
-}
-
-.home-demo-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 0.875rem;
-}
-
-.home-demo-label {
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.home-demo-value {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--selaras-resolved-text-muted);
-  font-size: 0.8125rem;
-}
-
-.home-demo-swatch {
-  background: var(--selaras-resolved-color-primary-fill);
-  width: 0.875rem;
-  height: 0.875rem;
-  border-radius: var(--selaras-resolved-radius-full);
-}
-
-.home-demo-hint {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0.75rem 0 0;
-  color: var(--selaras-resolved-text-muted);
-  font-size: 0.8125rem;
-}
-
-.home-demo-reset {
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--selaras-resolved-color-primary-text);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.home-demo-reset:focus-visible {
-  border-radius: var(--selaras-resolved-radius-sm);
-  outline: 2px solid var(--selaras-resolved-color-primary-focus);
-  outline-offset: 2px;
-}
-
-.home-demo-body {
-  display: grid;
-  gap: 1rem;
-}
-
-.home-demo-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
-.home-section {
-  padding-block: 5rem;
-}
-
-.home-section + .home-section {
-  padding-top: 0;
-}
-
-.home-heading {
-  margin: 0 0 2.5rem;
-  font-size: 1.75rem;
-  font-weight: 650;
-  letter-spacing: -0.02em;
-}
-
-.home-principles {
-  display: grid;
-  gap: 2.5rem 3rem;
-}
-
-.home-principle h3,
-.home-step h3 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.home-principle p,
-.home-step p {
-  max-width: 34rem;
-  margin: 0.5rem 0 0.75rem;
-  color: var(--selaras-resolved-text-muted);
-  line-height: 1.6;
-}
-
-.home-link {
-  color: var(--selaras-resolved-color-primary-text);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.home-link:hover {
-  text-decoration: underline;
-}
-
-.home-groups {
-  display: grid;
-  gap: 2.5rem;
-}
-
-.home-group-column {
-  display: grid;
-  align-content: start;
-  gap: 2.5rem;
-}
-
-.home-group-title {
-  margin: 0 0 0.5rem;
-  color: var(--selaras-resolved-text-muted);
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.home-categories {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.home-category {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 1.5rem;
-  padding: 0.875rem 0;
-  border-top: 1px solid var(--selaras-resolved-border-muted);
-  color: inherit;
-  text-decoration: none;
-}
-
-.home-category-text {
-  display: grid;
-  gap: 0.125rem;
-}
-
-.home-category-title {
-  font-weight: 600;
-}
-
-.home-category:hover .home-category-title {
-  color: var(--selaras-resolved-color-primary-text);
-}
-
-.home-category-summary {
-  color: var(--selaras-resolved-text-muted);
-  font-size: 0.875rem;
-}
-
-.home-category-count {
-  color: var(--selaras-resolved-text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.home-steps {
-  display: grid;
-  gap: 2.5rem;
-  margin: 0 0 2rem;
-  padding: 0;
-  list-style: none;
-  counter-reset: step;
-}
-
-.home-step {
-  counter-increment: step;
-  min-width: 0;
-}
-
-.home-step h3::before {
-  margin-inline-end: 0.5rem;
-  color: var(--selaras-resolved-color-primary-text);
-  content: counter(step) '.';
-}
-
-@media (min-width: 48rem) {
-  .home-principles {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 64rem) {
-  .home-hero-grid {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-    padding-block: 6.5rem 6rem;
-  }
-
-  .home-principles {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .home-groups {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 3rem;
-  }
-
-  .home-group-column--wide {
-    grid-column: span 2;
-  }
-
-  .home-group-column--wide .home-categories {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 3rem;
-  }
-
-  .home-steps {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
+.home-container { box-sizing: border-box; width: min(100%, 90rem); padding-inline: clamp(1.25rem, 3.4vw, 3rem); margin-inline: auto; }
+.home-hero { position: relative; isolation: isolate; overflow: hidden; }
+.home-hero-content { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 3rem; min-height: min(53rem, calc(100svh - 4rem)); padding-block: clamp(3rem, 7vw, 6rem) 3.5rem; }
+.home-title, .home-hero-bottom { position: relative; z-index: 1; }
+.home-title { margin: 0; font-size: var(--home-display); line-height: 0.98; font-weight: 600; letter-spacing: -0.04em; }
+.home-title-line { display: block; padding-block: 0.06em 0.12em; margin-block: -0.06em -0.12em; overflow: hidden; }
+.home-title-line > span { display: block; }
+.home-title-line + .home-title-line { margin-top: 0.05em; text-align: end; }
+.home-hero-bottom, .home-close-bottom { display: flex; align-items: end; justify-content: space-between; gap: 3rem; }
+.home-lead { max-width: 34ch; margin: 0; font-size: clamp(1.125rem, 1.6vw, 1.375rem); line-height: 1.55; text-wrap: pretty; }
+.home-hero-actions { display: flex; flex-direction: column; align-items: stretch; gap: 1.25rem; text-align: center; flex-shrink: 0; }
+.home-hero-buttons { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.home-install-command { justify-content: space-between; gap: 1rem; min-height: 2.75rem; padding: 0.75rem 1rem; font-size: 0.875rem; }
+.home-install-command code { font-family: var(--font-mono); font-size: inherit; white-space: nowrap; }
+.home-primary-action { min-height: 3.25rem; padding-inline: 2rem; }
+.home-text-link { color: inherit; font-size: 0.9375rem; font-weight: 500; text-underline-offset: 0.3em; text-decoration-thickness: 1px; }
+.home a:focus-visible { outline: 2px solid var(--selaras-resolved-color-primary-focus); outline-offset: 5px; }
+.home-section { padding-block: var(--home-space); scroll-margin-top: 5rem; }
+.home-section-intro { display: grid; grid-template-columns: 1.15fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3.5rem; }
+.home-section-intro h2, .home-section-title { margin: 0; max-width: 13ch; font-size: clamp(2.25rem, 4.3vw, 4rem); line-height: 1.08; letter-spacing: -0.035em; font-weight: 550; text-wrap: balance; }
+.home-section-intro p { max-width: 43ch; margin: 0; font-size: 1.0625rem; line-height: 1.65; }
+.home-ensemble { margin-top: 1rem; }
+.home-preview-note { max-width: 65ch; margin: 1.5rem 0 0; font-size: 0.875rem; line-height: 1.65; color: var(--selaras-resolved-text-muted); }
+.home-library { background: var(--selaras-resolved-surface-elevated); }
+.home-section-title { max-width: none; margin-bottom: 4.5rem; }
+.home-library .home-section-title { margin-bottom: 1.25rem; }
+.home-library-note { margin: 0 0 3.5rem; max-width: 60ch; font-size: 1rem; line-height: 1.65; color: var(--selaras-resolved-text-muted); }
+.home-capabilities { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4rem 2rem; }
+.home-capability { display: grid; grid-column: span 5; align-content: start; min-width: 0; gap: 1.5rem; }
+.home-capability:first-child, .home-capability:last-child { grid-column: span 7; }
+.home-capability h3 { margin: 0 0 0.75rem; font-size: 2rem; line-height: 1.1; letter-spacing: -0.03em; font-weight: 600; }
+.home-capability h3 a { display: flex; justify-content: space-between; align-items: center; gap: 1rem; text-decoration: none; color: inherit; transition: color 160ms ease; }
+.home-category-title { display: inline-flex; align-items: center; gap: 0.75rem; }
+.home-category-icon { flex-shrink: 0; width: 1.625rem; height: 1.625rem; color: var(--selaras-resolved-color-primary-text); }
+.home-capability-arrow { flex-shrink: 0; width: 1.25rem; height: 1.25rem; }
+.home-capability h3 a:hover { color: var(--selaras-resolved-color-primary-text); }
+.home-capability-content > p { margin: 0; max-width: 43ch; font-size: 1rem; line-height: 1.65; }
+.home-category-links { display: flex; flex-wrap: wrap; gap: 0.65rem 1.4rem; list-style: none; margin: 1.1rem 0 0; padding: 0; }
+.home-category-links a { color: inherit; font-size: 0.875rem; text-decoration-color: var(--selaras-resolved-border-hover); text-underline-offset: 4px; transition: color 160ms ease; }
+.home-category-links a:hover { color: var(--selaras-resolved-color-primary-text); }
+.home-agent-link { display: grid; grid-template-columns: 1.15fr 1fr; align-items: baseline; gap: 3rem; margin-top: 4.5rem; }
+.home-agent-link p { margin: 0; font-weight: 600; }
+.home-agent-link a { color: inherit; line-height: 1.7; text-underline-offset: 4px; }
+.home-setup-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: clamp(3rem, 7vw, 7rem); }
+.home-setup-steps { display: grid; align-content: start; gap: 2.2rem; padding: 0; margin: 0; list-style: none; }
+.home-setup-steps h3 { display: flex; align-items: center; gap: 0.75rem; margin: 0; font-size: 1.125rem; font-weight: 600; }
+.home-step-icon { flex-shrink: 0; width: 1.25rem; height: 1.25rem; color: var(--selaras-resolved-color-primary-text); }
+.home-setup-steps p { margin: 0.5rem 0 0; max-width: 35ch; font-size: 1rem; line-height: 1.65; }
+.home-setup-source { min-width: 0; }
+.home-code-tree { height: 32rem; }
+.home-install-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; margin-top: 3rem; }
+.home-install-footer p { max-width: 57ch; margin: 0; font-size: 0.8125rem; line-height: 1.6; color: var(--selaras-resolved-text-muted); }
+.home-close { background: var(--selaras-resolved-color-primary-subtle); color: var(--selaras-resolved-color-primary-on-subtle); padding-block: 6rem; }
+.home-close h2 { font-size: clamp(3rem, 7.2vw, 6rem); margin: 0 0 3.5rem; line-height: 1.05; letter-spacing: -0.04em; font-weight: 550; }
+.home-close-bottom > p { max-width: 28ch; margin: 0; font-size: clamp(1.25rem, 2vw, 1.75rem); line-height: 1.5; }
 @media (max-width: 63.999rem) {
-  .home-demo {
-    justify-self: start;
-  }
+  .home-capabilities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-capability, .home-capability:first-child, .home-capability:last-child { grid-column: auto; }
+  .home-hero-content { min-height: min(46rem, calc(100svh - 4rem)); }
+  .home-section-intro { gap: 2rem; }
+  .home-setup-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-setup-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-code-tree { height: 27rem; }
+}
+@media (max-width: 47.999rem) {
+  .home { --home-space: 5rem; --home-display: clamp(3.2rem, 15.4vw, 7rem); }
+  .home-hero-content { min-height: min(44rem, calc(100svh - 4rem)); padding-block: 3.5rem 2.5rem; gap: 3rem; }
+  .home-title-line + .home-title-line { text-align: start; }
+  .home-hero-bottom, .home-close-bottom { flex-direction: column; align-items: stretch; gap: 2rem; }
+  .home-hero-actions { gap: 1.1rem; }
+  .home-hero-buttons { flex-direction: column; }
+  .home-install-command { gap: 0.5rem; padding-inline: 0.5rem; font-size: 0.8125rem; }
+  .home-lead { max-width: 31ch; font-size: 1.125rem; }
+  .home-section-intro, .home-agent-link { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .home-section-intro { margin-bottom: 2.25rem; }
+  .home-section-intro h2, .home-section-title { font-size: 2.5rem; max-width: 14ch; }
+  .home-section-title { margin-bottom: 3rem; }
+  .home-capabilities { grid-template-columns: minmax(0, 1fr); gap: 3rem; }
+  .home-capability, .home-capability:first-child, .home-capability:last-child { grid-column: auto; }
+  .home-capability h3 { font-size: 1.75rem; }
+  .home-agent-link { margin-top: 3.5rem; gap: 0.75rem; }
+  .home-setup-steps { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+  .home-code-tree { height: 30rem; }
+  .home-close { padding-block: 4rem; }
+  .home-close h2 { margin-bottom: 2rem; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-title-line > span { animation: home-align 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .home-title-line + .home-title-line > span { animation-delay: 110ms; }
+  .home :deep([data-home-reveal].home-in-view) { animation: home-arrive 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .home :deep([data-home-reveal=across].home-in-view) { animation-name: home-across; }
+  @keyframes home-align { from { transform: translateY(110%); } to { transform: translateY(0); } }
+  @keyframes home-arrive { from { opacity: 0.35; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes home-across { from { opacity: 0.35; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 }
 </style>
