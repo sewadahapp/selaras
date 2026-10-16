@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@import "../../../src/runtime/theme.css";
+@import "#selaras/tailwind.css";
+@source "../../../docs/components/content/examples/blocks";

@@ -74,6 +74,10 @@ import type { timelineTheme, TimelineThemeSlots } from './theme/timeline'
 import type { toastTheme, ToastThemeSlots } from './theme/toast'
 import type { toggleTheme, ToggleThemeSlots } from './theme/toggle'
 import type { toggleGroupTheme, ToggleGroupThemeSlots } from './theme/toggle-group'
+import type { toolbarTheme, ToolbarThemeSlots } from './theme/toolbar'
+import type { toolbarButtonTheme, ToolbarButtonThemeSlots } from './theme/toolbar-button'
+import type { toolbarSeparatorTheme, ToolbarSeparatorThemeSlots } from './theme/toolbar-separator'
+import type { toolbarToggleGroupTheme, ToolbarToggleGroupThemeSlots } from './theme/toolbar-toggle-group'
 import type { tooltipTheme, TooltipThemeSlots } from './theme/tooltip'
 import type { transferListTheme, TransferListThemeSlots } from './theme/transfer-list'
 import type { treeTheme, TreeThemeSlots } from './theme/tree'
@@ -472,6 +476,23 @@ export interface ThemeComponentRegistry {
   slideover: {
     slots: SlideoverThemeSlots
     conditions: Pick<SlideoverVariants, 'side' | 'inset' | 'transition'>
+  }
+  toolbar: {
+    slots: ToolbarThemeSlots
+    conditions: Pick<VariantProps<typeof toolbarTheme>, 'orientation'>
+    defaults: { size?: 'sm' | 'md' | 'lg', color?: ColorRole }
+  }
+  toolbarButton: {
+    slots: ToolbarButtonThemeSlots
+    conditions: Pick<VariantProps<typeof toolbarButtonTheme>, 'size' | 'variant'>
+  }
+  toolbarToggleGroup: {
+    slots: ToolbarToggleGroupThemeSlots
+    conditions: Pick<VariantProps<typeof toolbarToggleGroupTheme>, 'size' | 'orientation'>
+  }
+  toolbarSeparator: {
+    slots: ToolbarSeparatorThemeSlots
+    conditions: Pick<VariantProps<typeof toolbarSeparatorTheme>, 'orientation'>
   }
   tooltip: {
     slots: TooltipThemeSlots

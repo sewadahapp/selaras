@@ -28,6 +28,10 @@ const devices = [
 <template>
   <DocsErrorBoundary kind="example" :reset-key="name">
     <section v-if="block" class="not-prose min-w-0" :aria-label="`${block.title} block`">
+      <div v-if="block.install" class="mb-5 flex min-w-0 items-center gap-3 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] bg-[var(--selaras-resolved-surface-elevated)] px-4 py-3">
+        <code class="min-w-0 flex-1 overflow-x-auto text-xs leading-6">{{ block.install }}</code>
+        <SButton variant="ghost" color="neutral" size="sm" :icon="copied === `${name}-install` ? 'hugeicons:tick-02' : 'hugeicons:copy-01'" aria-label="Copy installation command" @click="copy(block.install!, `${name}-install`)" />
+      </div>
       <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div class="inline-flex gap-1 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-1" role="group" aria-label="Block view">
           <SButton :variant="view === 'preview' ? 'soft' : 'ghost'" :color="view === 'preview' ? 'primary' : 'neutral'" :aria-pressed="view === 'preview'" size="sm" @click="view = 'preview'">

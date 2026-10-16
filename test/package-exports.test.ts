@@ -12,6 +12,11 @@ const ignoredComponents = moduleSource.split('ignore: [')[1]?.split(']')[0]
 const ignoredNames = new Set([...(ignoredComponents ?? [])].map(match => match[1]!))
 
 describe('public component export boundary', () => {
+  it('keeps rich-text engines out of the library dependency graph', () => {
+    const dependencies = Object.keys({ ...manifest.dependencies, ...manifest.peerDependencies, ...manifest.optionalDependencies })
+    expect(dependencies.filter(name => /^(?:@tiptap\/|@lexical\/|lexical$|lexical-vue$|quill$)/.test(name))).toEqual([])
+  })
+
   it('blocks every component excluded from Nuxt auto-registration', () => {
     const ignored = [...ignoredNames].sort()
 

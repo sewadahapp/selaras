@@ -31,4 +31,10 @@ describe('agent documentation examples', () => {
     expect(() => expandLlmsExamples('::component-example{name="missing"}\n::', examples))
       .toThrow('Missing documentation example: missing')
   })
+
+  it('includes the installation command with a copyable editor block', () => {
+    const markdown = expandLlmsExamples('::block-preview{name="block-editor-quill"}\n::', { 'block-editor-quill': '<template>Editor</template>' })
+    expect(markdown).toContain('```sh\nbun add quill@2\n```')
+    expect(markdown).toContain('```vue\n<template>Editor</template>\n```')
+  })
 })

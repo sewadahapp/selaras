@@ -31,6 +31,9 @@ import type {
   ThemeConfiguration,
   ThemeProps,
   ToastOptions,
+  ToolbarButtonProps,
+  ToolbarProps,
+  ToolbarToggleGroupProps,
   TreeProps,
   UseCommandPaletteReturn,
   UseConfirmOptions,
@@ -361,3 +364,12 @@ void packedSelection
 void packedColorLiteral
 void packedTableEventShape
 void packedRowEventShape
+
+const packedToolbar: ToolbarProps = { size: 'sm', color: 'primary', loop: false, dir: 'rtl' }
+const packedToolbarButton: ToolbarButtonProps = { icon: 'hugeicons:text-bold', pressed: true, variant: 'ghost' }
+const packedToolbarGroup: ToolbarToggleGroupProps = { type: 'multiple', items: ['Bold'], modelValue: ['Bold'], iconOnly: true }
+const packedToolbarTheme: ThemeConfiguration = { ui: { toolbarButton: { compoundVariants: [{ size: 'sm', class: { base: 'rounded-none' } }] } }, defaults: { toolbar: { size: 'md', color: 'neutral' } } }
+void packedToolbar
+void packedToolbarButton
+void packedToolbarGroup
+void packedToolbarTheme
