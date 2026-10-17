@@ -39,7 +39,7 @@ matter of overriding variables, not rebuilding the library.
 
 ## Agent support
 
-Use the [Selaras skill](skills/selaras/SKILL.md) to guide component selection and customization. The package also includes `selaras-mcp`, a local stdio MCP server with versioned documentation search, component discovery, and Vue examples. It needs no hosted service or API key.
+Use the [Selaras skill](skills/selaras/SKILL.md) to guide component selection and customization. For retrieval tools, the separate [`@sewadah/selaras-mcp`](packages/mcp) package provides a local stdio MCP server with versioned documentation search, component discovery, and Vue examples. It reads the catalog shipped with your installed Selaras version and needs no hosted service or API key.
 
 See the [agent support guides](https://selarasui.my.id/overview/agent-support/overview) for skill installation, MCP client configuration, and the public `llms.txt` exports.
 

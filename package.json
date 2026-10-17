@@ -55,7 +55,8 @@
     "./theme.css": "./dist/runtime/theme.css",
     "./structural.css": "./dist/runtime/structural.css",
     "./prose.css": "./dist/runtime/prose.css",
-    "./tokens/default-colors.tokens.json": "./dist/tokens/default-colors.tokens.json"
+    "./tokens/default-colors.tokens.json": "./dist/tokens/default-colors.tokens.json",
+    "./agent/catalog.json": "./dist/agent/catalog.json"
   },
   "main": "./dist/module.mjs",
   "style": "./dist/runtime/theme.css",
@@ -88,11 +89,7 @@
       ]
     }
   },
-  "bin": {
-    "selaras-mcp": "agent/mcp.mjs"
-  },
   "files": [
-    "agent",
     "dist",
     "skills"
   ],
@@ -101,7 +98,8 @@
   },
   "workspaces": [
     "docs",
-    "packages/docs"
+    "packages/docs",
+    "packages/mcp"
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
@@ -119,7 +117,8 @@
     "release": "bun run release:both",
     "release:both": "bun run release:selaras && bun run release:docs",
     "release:selaras": "bun run lint && bun run test && (if [ -n \"$RELEASE_VERSION\" ]; then npx changelogen --bump -r \"$RELEASE_VERSION\"; elif [ \"${RELEASE_BUMP:-auto}\" = \"auto\" ]; then npx changelogen --bump; else npx changelogen --bump \"--$RELEASE_BUMP\"; fi) && bun run test:release && npm publish --access public && bash scripts/tag-and-push-release.sh selaras && changelogen gh release",
-    "release:docs": "node scripts/bump-docs-layer.mjs && node scripts/prepare-docs-layer-release.mjs --verify && bun run test:release && node scripts/prepare-docs-layer-release.mjs && (cd packages/docs && npm publish --access public) && node scripts/prepare-docs-layer-release.mjs --restore && bash scripts/tag-and-push-release.sh selaras-docs",
+    "release:docs": "node scripts/bump-workspace-package.mjs --package docs && node scripts/prepare-docs-layer-release.mjs --verify && bun run test:release && node scripts/prepare-docs-layer-release.mjs && (cd packages/docs && npm publish --access public) && node scripts/prepare-docs-layer-release.mjs --restore && bash scripts/tag-and-push-release.sh selaras-docs",
+    "release:mcp": "node scripts/bump-workspace-package.mjs --package mcp && bun run prepack && bun run test:agent && (cd packages/mcp && npm publish --access public) && bash scripts/tag-and-push-release.sh selaras-mcp",
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
     "test": "vitest run",
@@ -144,7 +143,6 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.12.4",
-    "@modelcontextprotocol/sdk": "^1.32.1",
     "@nuxt/icon": "^2.5.1",
     "@nuxt/kit": "^4.5.2",
     "@nuxtjs/color-mode": "^4.0.1",
@@ -156,13 +154,13 @@
     "shiki": "^4.5.0",
     "tailwind-merge": "^3.7.0",
     "tailwind-variants": "^3.3.1",
-    "tw-animate-css": "^1.4.0",
-    "zod": "^4.6.7"
+    "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.3.0",
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@nuxt/devtools": "^3.4.3",
     "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^4.5.2",

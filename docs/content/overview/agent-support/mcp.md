@@ -4,32 +4,34 @@ description: Retrieve versioned component documentation and examples through a l
 order: 40
 ---
 
-Selaras includes a local, read-only MCP server named `selaras-mcp`. Your agent client launches it as a subprocess and communicates over standard input and output (`stdio`). No hosted server, account, API key, or authentication service is needed.
+Selaras provides a local, read-only MCP server in the separate `@sewadah/selaras-mcp` package. Your agent client launches it as a subprocess and communicates over standard input and output (`stdio`). No hosted server, account, API key, or authentication service is needed.
 
-The catalog is bundled with the package and generated from the same documentation and Vue examples as the website. After installation, the server works without fetching documentation from the network. Its catalog version matches the installed package.
+The documentation catalog ships inside `@sewadah/selaras` itself, generated from the same documentation and Vue examples as the website. The server reads the catalog from your project's own Selaras installation, so its answers always match the version you use, and it works without fetching documentation from the network. It requires `@sewadah/selaras` 0.11.0 or later.
+
+Keeping the server in its own package means applications that only use the components never install it or its dependencies.
 
 ## Configure your client
 
-Install a Selaras release containing the MCP server in your application. Add this entry to your client's MCP configuration:
+Add this entry to your client's MCP configuration:
 
 ```json
 {
   "mcpServers": {
     "selaras": {
-      "command": "node",
-      "args": [
-        "/absolute/path/to/your-project/node_modules/@sewadah/selaras/agent/mcp.mjs"
-      ]
+      "command": "npx",
+      "args": ["-y", "@sewadah/selaras-mcp"]
     }
   }
 }
 ```
 
-Replace the absolute path with your application's location. The example uses a common JSON configuration shape; your client may use a different file or format. Use the Node.js version supported by Selaras and restart or reconnect the client after changing its configuration.
+The server looks for Selaras in the directory it starts in, which is your project for clients that launch local servers there. If your client starts servers elsewhere, add `"--project", "/absolute/path/to/your-project"` to `args`.
 
-The package also exposes the `selaras-mcp` executable. Clients that launch commands from your project directory can use `npx --no-install selaras-mcp`, so the server uses your existing installation rather than downloading a potentially different version.
+The example uses a common JSON configuration shape; your client may use a different file or format. Use the Node.js version supported by Selaras and restart or reconnect the client after changing its configuration.
 
-For development in this repository, run `bun run agent:build` first, then point your client at the repository's `agent/mcp.mjs`. The npm command becomes available after a package release containing this implementation.
+To pin the server version with your project instead of fetching the latest, install it as a development dependency (`bun add -d @sewadah/selaras-mcp`) and use `npx --no-install selaras-mcp` as the command.
+
+For development in this repository, run `bun run agent:build` first, then point your client at the repository's `packages/mcp/mcp.mjs`, passing `--project` with the repository path.
 
 ## Tools
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { mkdtemp, readFile, rm, symlink } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import process from 'node:process'
@@ -9,12 +9,14 @@ import { fileURLToPath } from 'node:url'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
-import { loadCatalog, readSection } from '../agent/catalog.mjs'
-import { createServer } from '../agent/server.mjs'
+import { loadCatalog, readSection, resolveCatalogPath } from '../packages/mcp/catalog.mjs'
+import { createServer } from '../packages/mcp/server.mjs'
 import { buildAgentCatalog } from './build-agent-catalog.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
-const catalog = await loadCatalog()
+const mcpRoot = join(root, 'packages/mcp')
+// From the repository root, @sewadah/selaras resolves to this package itself.
+const catalog = await loadCatalog(resolveCatalogPath(root))
 const digest = value => createHash('sha256').update(JSON.stringify(value)).digest('hex')
 assert.equal(digest(await buildAgentCatalog()), digest(catalog), 'Published catalog must match current documentation and examples')
 assert.equal(readSection('## Usage\nExample:\n```md\n## Props\n```\nMore usage.\n## Props\nReal props.', 'Usage'), '## Usage\nExample:\n```md\n## Props\n```\nMore usage.')
@@ -60,7 +62,7 @@ async function exerciseClient(client) {
   await assert.rejects(client.readResource({ uri: 'selaras://docs/../../package.json' }))
 }
 
-const server = createServer(await loadCatalog())
+const server = createServer(catalog)
 const client = new Client({ name: 'selaras-agent-test', version: '1.0.0' })
 const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair()
 await server.connect(serverTransport)
@@ -74,36 +76,76 @@ finally {
 }
 console.log('[agent] Catalog and MCP tool/resource contracts passed')
 
-// Exercise the shipped files, including the executable entry and versioned catalog.
-const temporary = await mkdtemp(join(tmpdir(), 'selaras-agent-'))
-try {
-  const result = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', temporary], { cwd: root, encoding: 'utf8' }))
+// Exercise the shipped packages as a consumer would get them: the UI package
+// carries only the catalog, and the standalone server finds it through the
+// project's own @sewadah/selaras install.
+function pack(cwd, destination) {
+  const result = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', destination], { cwd, encoding: 'utf8' }))
   const archives = Array.isArray(result) ? result : Object.values(result)
   assert.equal(archives.length, 1)
-  const [pack] = archives
-  for (const path of ['agent/mcp.mjs', 'dist/agent/catalog.json', 'skills/selaras/SKILL.md'])
-    assert.ok(pack.files.some(file => file.path === path), `Missing packed file: ${path}`)
-  execFileSync('tar', ['-xzf', join(temporary, pack.filename), '-C', temporary])
-  const extracted = join(temporary, 'package')
-  await symlink(join(root, 'node_modules'), join(extracted, 'node_modules'), 'dir')
-  const manifest = JSON.parse(await readFile(join(extracted, 'package.json'), 'utf8'))
-  assert.equal(manifest.bin['selaras-mcp'], 'agent/mcp.mjs')
-  assert.ok(manifest.dependencies['@modelcontextprotocol/sdk'])
-  assert.ok(manifest.dependencies.zod)
-  const transport = new StdioClientTransport({ command: process.execPath, args: [join(extracted, manifest.bin['selaras-mcp'])], stderr: 'pipe' })
-  const diagnostics = []
-  transport.stderr?.on('data', data => diagnostics.push(data.toString()))
-  const packedClient = new Client({ name: 'selaras-packed-agent-test', version: '1.0.0' })
-  try {
+  return archives[0]
+}
+
+async function extract(archive, destination) {
+  await mkdir(destination, { recursive: true })
+  execFileSync('tar', ['-xzf', archive, '-C', destination, '--strip-components=1'])
+  return destination
+}
+
+const temporary = await mkdtemp(join(tmpdir(), 'selaras-agent-'))
+try {
+  const ui = pack(root, temporary)
+  for (const path of ['dist/agent/catalog.json', 'skills/selaras/SKILL.md'])
+    assert.ok(ui.files.some(file => file.path === path), `Missing packed file: ${path}`)
+  assert.ok(!ui.files.some(file => file.path.startsWith('agent/')), 'The UI package must not ship the MCP server')
+  const uiManifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
+  assert.equal(uiManifest.bin, undefined, 'The UI package must not expose an MCP executable')
+  assert.equal(uiManifest.dependencies['@modelcontextprotocol/sdk'], undefined, 'The UI package must not depend on the MCP SDK')
+  assert.equal(uiManifest.dependencies.zod, undefined, 'The UI package must not depend on zod')
+  assert.equal(uiManifest.exports['./agent/catalog.json'], './dist/agent/catalog.json')
+
+  const mcp = pack(mcpRoot, temporary)
+  for (const path of ['mcp.mjs', 'server.mjs', 'catalog.mjs'])
+    assert.ok(mcp.files.some(file => file.path === path), `Missing packed MCP file: ${path}`)
+  const server = await extract(join(temporary, mcp.filename), join(temporary, 'mcp'))
+  await symlink(join(root, 'node_modules'), join(server, 'node_modules'), 'dir')
+  const mcpManifest = JSON.parse(await readFile(join(server, 'package.json'), 'utf8'))
+  assert.equal(mcpManifest.bin['selaras-mcp'], './mcp.mjs')
+  assert.ok(mcpManifest.dependencies['@modelcontextprotocol/sdk'])
+  assert.ok(mcpManifest.dependencies.zod)
+
+  // A consumer project with only the packed UI package installed.
+  const project = join(temporary, 'project')
+  await extract(join(temporary, ui.filename), join(project, 'node_modules/@sewadah/selaras'))
+  await writeFile(join(project, 'package.json'), '{ "name": "agent-test-project", "private": true }\n')
+
+  async function connect(args, cwd) {
+    const transport = new StdioClientTransport({ command: process.execPath, args: [join(server, mcpManifest.bin['selaras-mcp']), ...args], cwd, stderr: 'pipe' })
+    const diagnostics = []
+    transport.stderr?.on('data', data => diagnostics.push(data.toString()))
+    const packedClient = new Client({ name: 'selaras-packed-agent-test', version: '1.0.0' })
     await packedClient.connect(transport)
-    await exerciseClient(packedClient)
-    assert.equal(diagnostics.join(''), '')
+    return { packedClient, diagnostics }
   }
-  finally {
-    await packedClient.close()
+
+  // Launched from the project directory, and from elsewhere with --project.
+  for (const [args, cwd] of [[[], project], [['--project', project], temporary]]) {
+    const { packedClient, diagnostics } = await connect(args, cwd)
+    try {
+      await exerciseClient(packedClient)
+      assert.equal(diagnostics.join(''), '')
+    }
+    finally {
+      await packedClient.close()
+    }
   }
-  console.log('[agent] Packed stdio server and distributable skill passed')
+
+  // Outside any project, it fails with directions rather than serving nothing.
+  const orphan = spawnSync(process.execPath, [join(server, 'mcp.mjs')], { cwd: temporary, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] })
+  assert.equal(orphan.status, 1)
+  assert.match(orphan.stderr, /Could not find @sewadah\/selaras from .*--project/)
 }
 finally {
   await rm(temporary, { recursive: true, force: true })
 }
+console.log('[agent] Packed UI catalog, standalone stdio server, and distributable skill passed')

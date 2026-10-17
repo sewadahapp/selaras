@@ -11,6 +11,7 @@ on:
           - both
           - selaras
           - selaras-docs
+          - selaras-mcp
       selaras-version:
         description: Exact Selaras candidate version to validate
         type: string
@@ -18,6 +19,11 @@ on:
         default: 1.0.0
       docs-version:
         description: Exact docs layer candidate version to validate
+        type: string
+        required: true
+        default: 0.1.0
+      mcp-version:
+        description: Exact MCP server candidate version to validate
         type: string
         required: true
         default: 0.1.0
@@ -60,15 +66,24 @@ jobs:
 
       - name: Create ephemeral release candidate
         run: |
-          if [ "${{ inputs.package }}" != "selaras-docs" ]; then
-            npx changelogen --bump -r "${{ inputs.selaras-version }}"
-          fi
-          if [ "${{ inputs.package }}" != "selaras" ]; then
-            node scripts/bump-docs-layer.mjs --version "${{ inputs.docs-version }}"
-          fi
+          case "${{ inputs.package }}" in
+            both)
+              npx changelogen --bump -r "${{ inputs.selaras-version }}"
+              node scripts/bump-workspace-package.mjs --package docs --version "${{ inputs.docs-version }}"
+              ;;
+            selaras)
+              npx changelogen --bump -r "${{ inputs.selaras-version }}"
+              ;;
+            selaras-docs)
+              node scripts/bump-workspace-package.mjs --package docs --version "${{ inputs.docs-version }}"
+              ;;
+            selaras-mcp)
+              node scripts/bump-workspace-package.mjs --package mcp --version "${{ inputs.mcp-version }}"
+              ;;
+          esac
 
       - name: Add 1.0 migration summary
-        if: inputs.package != 'selaras-docs' && inputs.selaras-version == '1.0.0'
+        if: (inputs.package == 'both' || inputs.package == 'selaras') && inputs.selaras-version == '1.0.0'
         run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
 
       - name: Install Chromium for candidate validation
@@ -78,10 +93,14 @@ jobs:
         run: bun run test:release
 
       - name: Validate docs layer publish manifest
-        if: inputs.package != 'selaras'
+        if: (inputs.package == 'both' || inputs.package == 'selaras-docs')
         run: |
           node scripts/prepare-docs-layer-release.mjs --selaras "${{ inputs.selaras-version }}"
           node scripts/prepare-docs-layer-release.mjs --assert-publishable
+
+      - name: Validate MCP server package
+        if: inputs.package == 'selaras-mcp'
+        run: bun run prepack && bun run test:agent
 
       - name: Generate static docs site
         run: |

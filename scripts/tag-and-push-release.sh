@@ -6,22 +6,23 @@ set -euo pipefail
 # the version bump(s), tags them, and pushes. Publishing first means a failed
 # publish never leaves a pushed commit/tag behind with nothing to undo them.
 #
-# Usage: bash scripts/tag-and-push-release.sh <selaras|selaras-docs> [...]
+# Usage: bash scripts/tag-and-push-release.sh <selaras|selaras-docs|selaras-mcp> [...]
 #
-# The two packages are independent release streams, so each gets its own tag:
-# `selaras-v0.3.0` for @sewadah/selaras and `selaras-docs-v0.1.1` for
-# @sewadah/selaras-docs. Core releases additionally keep the legacy `v0.3.0`
+# The packages are independent release streams, so each gets its own tag:
+# `selaras-v0.3.0` for @sewadah/selaras, `selaras-docs-v0.1.1` for
+# @sewadah/selaras-docs, and `selaras-mcp-v0.1.0` for @sewadah/selaras-mcp.
+# Core releases additionally keep the legacy `v0.3.0`
 # tag pointing at the same commit - changelogen resolves its bump base from
 # `v*` tags, so dropping it would silently change what `--bump` infers.
 #
 # Only the requested packages' manifests (plus CHANGELOG.md when it changed,
 # which only core bumps via changelogen ever touch, and
-# packages/docs/CHANGELOG.md when it changed, which only docs bumps via
-# bump-docs-layer.mjs ever touch) are staged - a docs-only release never
-# rewrites the core version, and vice versa.
+# each workspace package's own CHANGELOG.md when it changed, which only that
+# package's bump via bump-workspace-package.mjs ever touches) are staged - a
+# docs-only release never rewrites the core version, and vice versa.
 
 if [ "$#" -eq 0 ]; then
-  echo "Usage: $0 <selaras|selaras-docs> [...]" >&2
+  echo "Usage: $0 <selaras|selaras-docs|selaras-mcp> [...]" >&2
   exit 1
 fi
 
@@ -44,8 +45,14 @@ for package in "$@"; do
       tags+=("selaras-docs-v$version")
       message="$message selaras-docs v$version"
       ;;
+    selaras-mcp)
+      version=$(node -p "require('./packages/mcp/package.json').version")
+      stage+=(packages/mcp/package.json)
+      tags+=("selaras-mcp-v$version")
+      message="$message selaras-mcp v$version"
+      ;;
     *)
-      echo "Unknown package $package, expected selaras or selaras-docs" >&2
+      echo "Unknown package $package, expected selaras, selaras-docs or selaras-mcp" >&2
       exit 1
       ;;
   esac
@@ -57,11 +64,12 @@ else
   stage+=(CHANGELOG.md)
 fi
 
-if git diff --quiet -- packages/docs/CHANGELOG.md 2>/dev/null; then
-  : # unchanged - only staged when a docs bump rewrote it
-else
-  stage+=(packages/docs/CHANGELOG.md)
-fi
+for changelog in packages/docs/CHANGELOG.md packages/mcp/CHANGELOG.md; do
+  # A package's first bump creates its changelog, which git diff won't see.
+  if [ -f "$changelog" ] && { ! git ls-files --error-unmatch "$changelog" >/dev/null 2>&1 || ! git diff --quiet -- "$changelog"; }; then
+    stage+=("$changelog")
+  fi
+done
 
 git add "${stage[@]}"
 

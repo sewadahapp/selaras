@@ -1,0 +1,45 @@
+{
+  "name": "@sewadah/selaras-mcp",
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Local, read-only MCP server with versioned Selaras documentation and examples",
+  "author": "Wicaksana Pratama <wicaksanapratama@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/sewadahapp/selaras/tree/master/packages/mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sewadahapp/selaras.git",
+    "directory": "packages/mcp"
+  },
+  "bugs": "https://github.com/sewadahapp/selaras/issues",
+  "keywords": [
+    "selaras",
+    "mcp",
+    "model-context-protocol",
+    "nuxt"
+  ],
+  "bin": {
+    "selaras-mcp": "./mcp.mjs"
+  },
+  "files": [
+    "CHANGELOG.md",
+    "catalog.mjs",
+    "mcp.mjs",
+    "server.mjs"
+  ],
+  "engines": {
+    "node": "^22.19.0 || ^24.11.0 || >=26.0.0"
+  },
+  "peerDependencies": {
+    "@sewadah/selaras": ">=0.11.0"
+  },
+  "peerDependenciesMeta": {
+    "@sewadah/selaras": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "zod": "^4.6.7"
+  }
+}
