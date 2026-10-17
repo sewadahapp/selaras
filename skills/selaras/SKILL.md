@@ -1,6 +1,6 @@
 ---
 name: selaras
-description: Build and customize Vue and Nuxt interfaces with @sewadah/selaras. Use when a project uses Selaras or the user asks to adopt it, including component selection, forms, overlays, theming, icons, localization, and adaptive interfaces.
+description: Build and customize Nuxt interfaces with @sewadah/selaras. Use when a project uses Selaras or the user asks to adopt it, including component selection, forms, overlays, theming, icons, localization, and adaptive interfaces.
 ---
 
 # Selaras

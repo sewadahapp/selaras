@@ -5,7 +5,7 @@
     </NuxtLink>
     <div class="flex flex-col gap-1">
       <span class="text-sm font-semibold leading-5 text-[var(--selaras-resolved-text-default)]">Selaras</span>
-      <span class="text-xs leading-normal text-[var(--selaras-resolved-text-muted)]">Design system components for Vue and Nuxt</span>
+      <span class="text-xs leading-normal text-[var(--selaras-resolved-text-muted)]">Design system components for Nuxt</span>
     </div>
   </div>
 </template>
