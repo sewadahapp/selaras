@@ -145,7 +145,7 @@
   "dependencies": {
     "@internationalized/date": "^3.5.0",
     "@modelcontextprotocol/sdk": "^1.32.0",
-    "@nuxt/icon": "^1.10.3",
+    "@nuxt/icon": "^2.5.1",
     "@nuxt/kit": "^4.5.2",
     "@nuxtjs/color-mode": "^4.0.1",
     "@tailwindcss/oxide": "^4.3.0",
