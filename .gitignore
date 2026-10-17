@@ -70,3 +70,12 @@ Temporary Items
 
 # Local design exploration
 .taste-skill/
+
+# Local design-tool context (Impeccable); kept on disk, never committed.
+docs/PRODUCT.md
+docs/DESIGN.md
+# ...and the tool's generated working files.
+.impeccable/questions/
+.impeccable/mocks/
+.impeccable/build/
+.impeccable/review/
