@@ -68,14 +68,8 @@ Temporary Items
 #notes
 .notes
 
-# Local design exploration
+# Local design-tool context and working files; kept on disk, never committed.
 .taste-skill/
-
-# Local design-tool context (Impeccable); kept on disk, never committed.
+.impeccable/
 docs/PRODUCT.md
 docs/DESIGN.md
-# ...and the tool's generated working files.
-.impeccable/questions/
-.impeccable/mocks/
-.impeccable/build/
-.impeccable/review/

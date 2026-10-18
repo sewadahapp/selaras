@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { NuxtLink } from '#components'
 import pkg from '../../package.json'
-import HomeComponentEnsemble from '../components/home/HomeComponentEnsemble.vue'
-import HomeLibraryPreview from '../components/home/HomeLibraryPreview.vue'
-import HomeThemeLab from '../components/home/HomeThemeLab.vue'
+import HomeEditSpecimen from '../components/home/HomeEditSpecimen.vue'
 
 definePageMeta({ layout: 'home' })
 useDocsSeo({
@@ -11,84 +9,172 @@ useDocsSeo({
   description: 'Accessible Vue components for Nuxt, themed entirely with CSS variables.',
 })
 
-const home = useTemplateRef('home')
 const preset = useDocsThemePreset()
 const colorMode = useColorMode()
 const gridColorKey = computed(() => `${preset.value}:${colorMode.value}`)
 const installCommand = 'npm install @sewadah/selaras'
 const icons = useIcons()
 const { copy, copied } = useDocsClipboard()
+
+// The four edits the specimen applies, from the whole app down to one
+// component. Each snippet is the real global form of the setting.
+const specimen = {
+  brand: '#0F766E',
+  radius: '0px',
+  buttonClass: 'uppercase tracking-wider',
+  oneButtonClass: 'rounded-full',
+}
+const edits = [
+  {
+    title: 'Your brand colour',
+    short: 'Colour',
+    file: 'nuxt.config.ts',
+    lang: 'ts',
+    mark: 6,
+    text: 'Give the primary role one colour. Hover, pressed, text and focus values are derived from it, in light and dark.',
+    code: `import { defineColorFromSeed } from '@sewadah/selaras/theme'\n\nexport default defineNuxtConfig({\n  selaras: {\n    theme: {\n      colors: { primary: defineColorFromSeed('${specimen.brand}') },\n    },\n  },\n})`,
+  },
+  {
+    title: 'Your corners',
+    short: 'Corners',
+    file: 'main.css',
+    lang: 'css',
+    mark: 2,
+    text: 'One radius token. The small, medium and large radii are derived from it.',
+    code: `:root {\n  --selaras-radius-base: ${specimen.radius};\n}`,
+  },
+  {
+    title: 'Every button',
+    short: 'Buttons',
+    file: 'app.config.ts',
+    lang: 'ts',
+    mark: 4,
+    text: 'Add classes to a component everywhere it appears, without wrapping it.',
+    code: `export default defineAppConfig({\n  selaras: {\n    ui: {\n      button: { slots: { base: '${specimen.buttonClass}' } },\n    },\n  },\n})`,
+  },
+  {
+    title: 'Just this one',
+    short: 'Instance',
+    file: 'BookingForm.vue',
+    lang: 'vue',
+    mark: 1,
+    text: 'The :ui prop changes a single instance, and wins over everything above.',
+    code: `<SButton :ui="{ base: '${specimen.oneButtonClass}' }">\n  Request booking\n</SButton>`,
+  },
+]
+const { data: highlighted } = await useAsyncData('home-edit-snippets', async () => {
+  const { codeToHtml } = await import('shiki')
+  return Promise.all(edits.map(async (edit) => {
+    const html = await codeToHtml(edit.code, {
+      lang: edit.lang,
+      theme: 'github-dark-default',
+      // Mark the one line the edit is about, so it reads without parsing the rest.
+      transformers: [{
+        line(node, line) {
+          if (line === edit.mark)
+            this.addClassToHast(node, 'is-edit')
+        },
+      }],
+    })
+    return html.match(/<code(?:\s[^>]*)?>([\s\S]*?)<\/code>/)?.[1] ?? ''
+  }))
+})
+
+// How many edits are applied: scrolling past a step applies it on wide
+// screens, and the step buttons (or the phone selector) apply it directly.
+const step = ref(0)
+const stepValue = computed({
+  get: () => String(step.value),
+  set: (value) => {
+    if (value !== '')
+      step.value = Number(value)
+  },
+})
+const stepItems = [{ label: 'None', value: '0' }, ...edits.map((edit, index) => ({ label: edit.short, value: String(index + 1) }))]
+// Phones show the applied edit's code, or the first edit before any is applied.
+const shownIndex = computed(() => Math.max(step.value, 1) - 1)
+const shownEdit = computed(() => edits[shownIndex.value]!)
+const stepElements = useTemplateRef<HTMLElement[]>('stepElements')
+
+function updateFromScroll() {
+  const line = window.innerHeight * 0.5
+  step.value = (stepElements.value ?? []).filter(element => element.getBoundingClientRect().top < line).length
+}
+function selectStep(index: number) {
+  step.value = index
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  stepElements.value?.[index - 1]?.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' })
+}
+
+// The specimen answers each change with one brief echo.
+const echo = ref(false)
+watch(step, () => {
+  echo.value = false
+  requestAnimationFrame(() => {
+    echo.value = true
+  })
+})
+
+let wide: MediaQueryList | undefined
+let frame = 0
+function onScroll() {
+  if (!wide?.matches || frame)
+    return
+  frame = requestAnimationFrame(() => {
+    frame = 0
+    updateFromScroll()
+  })
+}
+onMounted(() => {
+  wide = window.matchMedia('(min-width: 64rem)')
+  window.addEventListener('scroll', onScroll, { passive: true })
+  if (wide.matches)
+    updateFromScroll()
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', onScroll)
+  cancelAnimationFrame(frame)
+})
+
 const { data: navigation } = useDocsNavigation()
 const guidePages = new Set(['/components/forms/validation'])
-const sections = [
-  { path: '/components', title: 'Components', icon: 'hugeicons:dashboard-square-01', description: 'Inputs, navigation, overlays, and the details in between. Keyboard support and typed APIs included.', fallback: '/components/elements/button' },
-  { path: '/composites', title: 'Composites', icon: 'hugeicons:layers-01', description: 'Resizable dashboards and documentation layouts, composed from the same parts.', fallback: '/composites/dashboard/dashboard-group' },
-  { path: '/blocks', title: 'Blocks', icon: 'hugeicons:layout-01', description: 'Complete interfaces you can try, inspect, and copy into your own project.', fallback: '/blocks/overview' },
-  { path: '/utilities', title: 'Utilities', icon: 'hugeicons:source-code', description: 'Open an overlay from code. Share icons and messages. Add masking or a ripple.', fallback: '/utilities/composables/use-modal' },
+const areas = [
+  { path: '/components', title: 'Components', description: 'Inputs, navigation, overlays, and the details in between, with keyboard support and typed APIs.', fallback: '/components/elements/button' },
+  { path: '/composites', title: 'Composites', description: 'Resizable dashboards and documentation layouts, composed from the same parts.', fallback: '/composites/dashboard/dashboard-group' },
+  { path: '/blocks', title: 'Blocks', description: 'Complete interfaces to try, inspect, and copy into your project.', fallback: '/blocks/overview' },
+  { path: '/utilities', title: 'Utilities', description: 'Open overlays from code, share icons and messages, and add input masks.', fallback: '/utilities/composables/use-modal' },
 ]
-const groups = computed(() => sections.map((section) => {
-  const item = navigation.value?.find(entry => entry.path === section.path)
+const groups = computed(() => areas.map((area) => {
+  const item = navigation.value?.find(entry => entry.path === area.path)
   const categories = (item?.children ?? []).map(category => ({
     title: category.title,
     to: category.children?.find(page => !guidePages.has(page.path))?.path ?? category.path,
   }))
-  return { ...section, categories }
+  return { ...area, categories }
 }))
-const setup = [
-  { title: 'Add the package', icon: 'hugeicons:package', text: 'Install Selaras and keep Tailwind CSS under your project’s control.' },
-  { title: 'Register the module', icon: 'hugeicons:plug-01', text: 'Components are auto-imported with an S prefix. Nuxt handles the integration.' },
-  { title: 'Connect the styles', icon: 'hugeicons:paint-brush-01', text: 'Import the theme and the generated Tailwind entry in your stylesheet.' },
-  { title: 'Wrap your app', icon: 'hugeicons:browser', text: 'SApp provides the shared context for tooltips, toasts, and programmatic overlays.' },
-]
-const setupFiles = [
-  { name: 'install.sh', language: 'bash', code: 'bun add @sewadah/selaras tailwindcss\n\n# Or use your preferred package manager:\n# npm install @sewadah/selaras tailwindcss\n# pnpm add @sewadah/selaras tailwindcss\n' },
-  { name: 'nuxt.config.ts', code: 'export default defineNuxtConfig({\n  modules: [\'@sewadah/selaras\'],\n  css: [\'~/assets/css/main.css\'],\n})\n' },
-  { name: 'assets', children: [{ name: 'css', children: [{ name: 'main.css', code: '@import "tailwindcss";\n@import "@sewadah/selaras";\n@import "#selaras/tailwind.css";\n' }] }] },
-  { name: 'app.vue', code: '<template>\n  <SApp>\n    <NuxtLayout>\n      <NuxtPage />\n    </NuxtLayout>\n  </SApp>\n</template>\n' },
-]
-
-let observer: IntersectionObserver | undefined
-onMounted(() => {
-  if (!home.value || window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window))
-    return
-  observer = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (!entry.isIntersecting)
-        continue
-      const element = entry.target as HTMLElement
-      element.classList.add('home-in-view')
-      observer?.unobserve(element)
-    }
-  }, { threshold: 0.08 })
-  home.value.querySelectorAll('[data-home-reveal]').forEach(element => observer?.observe(element))
-})
-onBeforeUnmount(() => observer?.disconnect())
 </script>
 
 <template>
-  <div ref="home" class="home">
-    <section class="home-hero" aria-labelledby="home-title">
-      <HomeDotGrid :color-key="gridColorKey" />
-      <div class="home-container home-hero-content">
-        <h1 id="home-title" class="home-title">
-          <span class="home-title-line"><span>Interfaces,</span></span>
-          <span class="home-title-line"><span>in harmony.</span></span>
-        </h1>
-        <div class="home-hero-bottom">
+  <div class="home">
+    <section class="home-intro" aria-labelledby="home-title">
+      <div class="home-grid-layer">
+        <HomeDotGrid :color-key="gridColorKey" />
+      </div>
+      <div class="home-container home-intro-grid">
+        <div class="home-intro-main">
+          <h1 id="home-title" class="home-title">
+            <span class="home-title-line"><span>Interfaces,</span></span>{{ " " }}
+            <span class="home-title-line"><span>in harmony.</span></span>
+          </h1>
           <p class="home-lead">
-            Accessible Vue components for Nuxt. The parts fit together. The design stays yours.
+            Vue components for Nuxt and Tailwind CSS v4. Four small edits, one interface: apply them in turn and watch it become yours.
           </p>
-          <div class="home-hero-actions home-hero-start">
-            <div class="home-hero-buttons">
-              <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg" class="home-primary-action">
-                Get started
-              </SButton>
-              <SButton :as="NuxtLink" to="/components/elements/button" variant="outline" color="neutral" size="lg" class="home-primary-action">
-                Browse components
-              </SButton>
-            </div>
+          <div class="home-actions">
+            <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg">
+              Get started
+            </SButton>
             <SButton
-              color="neutral" variant="soft" class="home-install-command"
+              color="neutral" variant="soft" size="lg" class="home-install"
               :trailing-icon="copied === 'install-command' ? icons.check : icons.copy"
               :aria-label="copied === 'install-command' ? 'Install command copied' : 'Copy npm install command'"
               @click="copy(installCommand, 'install-command')"
@@ -97,225 +183,184 @@ onBeforeUnmount(() => observer?.disconnect())
             </SButton>
             <span class="sr-only" role="status">{{ copied === 'install-command' ? 'Install command copied to clipboard.' : '' }}</span>
           </div>
-        </div>
-      </div>
-    </section>
 
-    <section id="home-preview" class="home-section home-container home-preview" aria-labelledby="home-preview-title">
-      <div class="home-section-intro">
-        <h2 id="home-preview-title" data-home-reveal>
-          Set your own tone
-        </h2>
-        <p data-home-reveal>
-          Three themes. The same components. Change the colors, adjust the corners, and see how much of the interface can become yours.
-        </p>
-      </div>
-      <HomeThemeLab>
-        <div class="home-ensemble">
-          <HomeComponentEnsemble />
+          <ol class="home-edits">
+            <li
+              v-for="(edit, index) in edits"
+              ref="stepElements"
+              :key="edit.title"
+              class="home-edit"
+              :class="{ 'is-applied': step > index }"
+              :aria-current="step === index + 1 ? 'step' : undefined"
+            >
+              <h2>
+                <button type="button" class="home-edit-toggle" @click="selectStep(index + 1)">
+                  <span class="home-edit-number" aria-hidden="true">{{ index + 1 }}</span>
+                  {{ edit.title }}
+                </button>
+              </h2>
+              <p>{{ edit.text }}</p>
+              <figure class="home-code">
+                <figcaption>{{ edit.file }}</figcaption>
+                <pre><code v-if="highlighted?.[index]" v-html="highlighted[index]" /><code v-else>{{ edit.code }}</code></pre>
+              </figure>
+            </li>
+          </ol>
         </div>
-      </HomeThemeLab>
-      <p class="home-preview-note">
-        These are working Selaras components. Try selecting a team, collapsing the navigation, or opening an invitation.
-      </p>
-    </section>
 
-    <section class="home-section home-library" aria-labelledby="home-library-title">
-      <div class="home-container">
-        <h2 id="home-library-title" class="home-section-title" data-home-reveal>
-          A whole composition
-        </h2>
-        <p class="home-library-note">
-          Interactive previews with sample content. Explore the parts behind each one.
-        </p>
-        <div class="home-capabilities">
-          <article v-for="group in groups" :key="group.path" class="home-capability" data-home-reveal="across">
-            <HomeLibraryPreview :kind="group.path" />
-            <div class="home-capability-content">
-              <h3>
-                <NuxtLink :to="group.fallback">
-                  <span class="home-category-title">
-                    <SIcon :name="group.icon" class="home-category-icon" aria-hidden="true" />
-                    {{ group.title }}
-                  </span>
-                  <SIcon name="hugeicons:arrow-up-right-01" class="home-capability-arrow" aria-hidden="true" />
-                </NuxtLink>
-              </h3>
-              <p>{{ group.description }}</p>
-              <ul v-if="group.categories.length" class="home-category-links">
-                <li v-for="category in group.categories" :key="category.to">
-                  <NuxtLink :to="category.to">
-                    {{ category.title }}
-                  </NuxtLink>
-                </li>
-              </ul>
+        <aside class="home-specimen-column" aria-label="Live specimen">
+          <div class="home-specimen-sticky">
+            <SToggleGroup v-model="stepValue" :items="stepItems" size="sm" class="home-step-picker" aria-label="Edits applied to the specimen" />
+            <div class="home-specimen-frame" :class="{ 'is-echoing': echo }">
+              <HomeEditSpecimen :step="step" v-bind="specimen" />
             </div>
-          </article>
-        </div>
-        <div class="home-agent-link" data-home-reveal>
-          <p>Building with an agent?</p>
-          <NuxtLink to="/overview/agent-support/overview">
-            Give it the component APIs, examples, and Selaras skill.
-          </NuxtLink>
-        </div>
-      </div>
-    </section>
-
-    <section class="home-section home-container home-setup" aria-labelledby="home-setup-title">
-      <div class="home-section-intro">
-        <h2 id="home-setup-title" data-home-reveal>
-          Start with the real thing
-        </h2>
-        <p data-home-reveal>
-          One package, a Nuxt module, and your first component. No separate component registration.
-        </p>
-      </div>
-      <div class="home-setup-grid">
-        <ol class="home-setup-steps">
-          <li v-for="step in setup" :key="step.title" data-home-reveal>
-            <h3>
-              <SIcon :name="step.icon" class="home-step-icon" aria-hidden="true" />
-              {{ step.title }}
-            </h3>
-            <p>{{ step.text }}</p>
-          </li>
-        </ol>
-        <div class="home-setup-source" data-ui data-home-reveal aria-label="Selaras installation files">
-          <STheme :ui="{ fileTree: { slots: { root: 'font-sans', list: 'font-sans' } } }">
-            <SCodeTree :items="setupFiles" class="home-code-tree" :ui="{ root: 'flex-col md:flex-row', tree: 'w-full max-h-44 border-e-0 md:w-44 md:max-h-none' }" />
-          </STheme>
-        </div>
-      </div>
-      <div class="home-install-footer">
-        <NuxtLink to="/overview/getting-started/installation" class="home-text-link">
-          Read the installation guide
-        </NuxtLink>
-        <p>Selaras {{ pkg.version }}. APIs may change before 1.0. Built with Reka UI and Tailwind CSS v4.</p>
-      </div>
-    </section>
-
-    <section class="home-close" aria-labelledby="home-close-title">
-      <div class="home-container home-close-content">
-        <h2 id="home-close-title" data-home-reveal>
-          Make it Selaras.
-        </h2>
-        <div class="home-close-bottom">
-          <p data-home-reveal>
-            Start with a button. Keep going with a system that feels like yours.
-          </p>
-          <div class="home-hero-actions" data-home-reveal>
-            <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg" class="home-primary-action">
-              Install Selaras
-            </SButton>
-            <NuxtLink to="/blocks/overview" class="home-text-link">
-              Explore the blocks
-            </NuxtLink>
+            <p class="home-specimen-note">
+              Live Selaras components. Each edit is applied here with STheme, the scoped form of the same setting, so only this preview changes.
+            </p>
+            <div class="home-step-detail">
+              <h2>{{ shownEdit.title }}</h2>
+              <p>{{ shownEdit.text }}</p>
+              <p v-if="step === 0" class="home-step-hint">
+                Not applied yet. Choose {{ shownEdit.short }} above to apply it.
+              </p>
+              <figure class="home-code">
+                <figcaption>{{ shownEdit.file }}</figcaption>
+                <pre><code v-if="highlighted?.[shownIndex]" v-html="highlighted[shownIndex]" /><code v-else>{{ shownEdit.code }}</code></pre>
+              </figure>
+            </div>
           </div>
-        </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="home-container home-library" aria-labelledby="home-library-title">
+      <h2 id="home-library-title">
+        Explore the library
+      </h2>
+      <ul class="home-areas">
+        <li v-for="group in groups" :key="group.path">
+          <h3>
+            <NuxtLink :to="group.fallback">
+              {{ group.title }}
+              <SIcon name="hugeicons:arrow-right-02" class="home-area-arrow" aria-hidden="true" />
+            </NuxtLink>
+          </h3>
+          <p>{{ group.description }}</p>
+          <ul v-if="group.categories.length" class="home-area-links">
+            <li v-for="category in group.categories" :key="category.to">
+              <NuxtLink :to="category.to">
+                {{ category.title }}
+              </NuxtLink>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <div class="home-meta">
+        <p>
+          Building with a coding agent? <NuxtLink to="/overview/agent-support/overview">
+            Give it the component APIs, examples, and the Selaras skill.
+          </NuxtLink>
+        </p>
+        <p class="home-version">
+          Selaras {{ pkg.version }}, MIT licensed.
+        </p>
       </div>
     </section>
   </div>
 </template>
 
 <style scoped>
-.home {
-  --home-space: clamp(5rem, 11vw, 10rem);
-  --home-display: clamp(5rem, 13vw, 12rem);
-  color: var(--selaras-resolved-text-default);
-}
+.home { color: var(--selaras-resolved-text-default); }
 .home-container { box-sizing: border-box; width: min(100%, 90rem); padding-inline: clamp(1.25rem, 3.4vw, 3rem); margin-inline: auto; }
-.home-hero { position: relative; isolation: isolate; overflow: hidden; }
-.home-hero-content { position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 3rem; min-height: min(53rem, calc(100svh - 4rem)); padding-block: clamp(3rem, 7vw, 6rem) 3.5rem; }
-.home-title, .home-hero-bottom { position: relative; z-index: 1; }
-.home-title { margin: 0; font-size: var(--home-display); line-height: 0.98; font-weight: 600; letter-spacing: -0.04em; }
+.home a:focus-visible, .home-edit-toggle:focus-visible { outline: 2px solid var(--selaras-resolved-color-primary-focus); outline-offset: 4px; border-radius: 4px; }
+
+/* Intro: the hero and the four edits share one grid, so the specimen can stay
+   beside the steps while they scroll. The dot grid sits behind the first
+   screen only. */
+.home-intro { position: relative; isolation: isolate; }
+.home-grid-layer { position: absolute; inset: 0 0 auto; z-index: -1; height: min(100svh, 58rem); overflow: hidden; }
+.home-intro-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(2.5rem, 5vw, 5rem); padding-block: clamp(3rem, 7vw, 6rem) clamp(2rem, 4vw, 3.5rem); }
+.home-title { margin: 0; font-size: clamp(3.25rem, 7.4vw, 6rem); line-height: 1; font-weight: 650; letter-spacing: -0.04em; }
 .home-title-line { display: block; padding-block: 0.06em 0.12em; margin-block: -0.06em -0.12em; overflow: hidden; }
 .home-title-line > span { display: block; }
-.home-title-line + .home-title-line { margin-top: 0.05em; text-align: end; }
-.home-hero-bottom, .home-close-bottom { display: flex; align-items: end; justify-content: space-between; gap: 3rem; }
-.home-lead { max-width: 34ch; margin: 0; font-size: clamp(1.125rem, 1.6vw, 1.375rem); line-height: 1.55; text-wrap: pretty; }
-.home-hero-actions { display: flex; flex-direction: column; align-items: stretch; gap: 1.25rem; text-align: center; flex-shrink: 0; }
-.home-hero-buttons { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.home-install-command { justify-content: space-between; gap: 1rem; min-height: 2.75rem; padding: 0.75rem 1rem; font-size: 0.875rem; }
-.home-install-command code { font-family: var(--font-mono); font-size: inherit; white-space: nowrap; }
-.home-primary-action { min-height: 3.25rem; padding-inline: 2rem; }
-.home-text-link { color: inherit; font-size: 0.9375rem; font-weight: 500; text-underline-offset: 0.3em; text-decoration-thickness: 1px; }
-.home a:focus-visible { outline: 2px solid var(--selaras-resolved-color-primary-focus); outline-offset: 5px; }
-.home-section { padding-block: var(--home-space); scroll-margin-top: 5rem; }
-.home-section-intro { display: grid; grid-template-columns: 1.15fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3.5rem; }
-.home-section-intro h2, .home-section-title { margin: 0; max-width: 13ch; font-size: clamp(2.25rem, 4.3vw, 4rem); line-height: 1.08; letter-spacing: -0.035em; font-weight: 550; text-wrap: balance; }
-.home-section-intro p { max-width: 43ch; margin: 0; font-size: 1.0625rem; line-height: 1.65; }
-.home-ensemble { margin-top: 1rem; }
-.home-preview-note { max-width: 65ch; margin: 1.5rem 0 0; font-size: 0.875rem; line-height: 1.65; color: var(--selaras-resolved-text-muted); }
-.home-library { background: var(--selaras-resolved-surface-elevated); }
-.home-section-title { max-width: none; margin-bottom: 4.5rem; }
-.home-library .home-section-title { margin-bottom: 1.25rem; }
-.home-library-note { margin: 0 0 3.5rem; max-width: 60ch; font-size: 1rem; line-height: 1.65; color: var(--selaras-resolved-text-muted); }
-.home-capabilities { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4rem 2rem; }
-.home-capability { display: grid; grid-column: span 5; align-content: start; min-width: 0; gap: 1.5rem; }
-.home-capability:first-child, .home-capability:last-child { grid-column: span 7; }
-.home-capability h3 { margin: 0 0 0.75rem; font-size: 2rem; line-height: 1.1; letter-spacing: -0.03em; font-weight: 600; }
-.home-capability h3 a { display: flex; justify-content: space-between; align-items: center; gap: 1rem; text-decoration: none; color: inherit; transition: color 160ms ease; }
-.home-category-title { display: inline-flex; align-items: center; gap: 0.75rem; }
-.home-category-icon { flex-shrink: 0; width: 1.625rem; height: 1.625rem; color: var(--selaras-resolved-color-primary-text); }
-.home-capability-arrow { flex-shrink: 0; width: 1.25rem; height: 1.25rem; }
-.home-capability h3 a:hover { color: var(--selaras-resolved-color-primary-text); }
-.home-capability-content > p { margin: 0; max-width: 43ch; font-size: 1rem; line-height: 1.65; }
-.home-category-links { display: flex; flex-wrap: wrap; gap: 0.65rem 1.4rem; list-style: none; margin: 1.1rem 0 0; padding: 0; }
-.home-category-links a { color: inherit; font-size: 0.875rem; text-decoration-color: var(--selaras-resolved-border-hover); text-underline-offset: 4px; transition: color 160ms ease; }
-.home-category-links a:hover { color: var(--selaras-resolved-color-primary-text); }
-.home-agent-link { display: grid; grid-template-columns: 1.15fr 1fr; align-items: baseline; gap: 3rem; margin-top: 4.5rem; }
-.home-agent-link p { margin: 0; font-weight: 600; }
-.home-agent-link a { color: inherit; line-height: 1.7; text-underline-offset: 4px; }
-.home-setup-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr); gap: clamp(3rem, 7vw, 7rem); }
-.home-setup-steps { display: grid; align-content: start; gap: 2.2rem; padding: 0; margin: 0; list-style: none; }
-.home-setup-steps h3 { display: flex; align-items: center; gap: 0.75rem; margin: 0; font-size: 1.125rem; font-weight: 600; }
-.home-step-icon { flex-shrink: 0; width: 1.25rem; height: 1.25rem; color: var(--selaras-resolved-color-primary-text); }
-.home-setup-steps p { margin: 0.5rem 0 0; max-width: 35ch; font-size: 1rem; line-height: 1.65; }
-.home-setup-source { min-width: 0; }
-.home-code-tree { height: 32rem; }
-.home-install-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; margin-top: 3rem; }
-.home-install-footer p { max-width: 57ch; margin: 0; font-size: 0.8125rem; line-height: 1.6; color: var(--selaras-resolved-text-muted); }
-.home-close { background: var(--selaras-resolved-color-primary-subtle); color: var(--selaras-resolved-color-primary-on-subtle); padding-block: 6rem; }
-.home-close h2 { font-size: clamp(3rem, 7.2vw, 6rem); margin: 0 0 3.5rem; line-height: 1.05; letter-spacing: -0.04em; font-weight: 550; }
-.home-close-bottom > p { max-width: 28ch; margin: 0; font-size: clamp(1.25rem, 2vw, 1.75rem); line-height: 1.5; }
+.home-lead { max-width: 44ch; margin: 1.75rem 0 0; font-size: clamp(1.0625rem, 1.4vw, 1.25rem); line-height: 1.6; text-wrap: pretty; }
+.home-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 2.25rem; }
+.home-install { gap: 1rem; }
+.home-install code { font-family: var(--font-mono); font-size: 0.875rem; white-space: nowrap; }
+
+.home-edits { display: grid; grid-template-columns: minmax(0, 1fr); list-style: none; margin: clamp(4rem, 12vh, 7rem) 0 0; padding: 0; }
+.home-edit { min-height: 44vh; padding-block: 2.5rem; border-top: 1px solid var(--selaras-resolved-border-default); color: var(--selaras-resolved-text-muted); transition: color 300ms cubic-bezier(0.22, 1, 0.36, 1); }
+.home-edit:last-child { min-height: 0; }
+.home-edit.is-applied, .home-edit[aria-current] { color: var(--selaras-resolved-text-default); }
+.home-edit h2 { margin: 0; font-size: clamp(1.5rem, 2.2vw, 1.875rem); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; }
+.home-edit-toggle { display: inline-flex; align-items: center; gap: 0.875rem; padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-align: start; cursor: pointer; }
+.home-edit-number { display: grid; place-items: center; flex-shrink: 0; width: 2rem; height: 2rem; border: 1px solid var(--selaras-resolved-border-hover); border-radius: 999px; font-size: 0.875rem; font-weight: 600; letter-spacing: 0; transition: background-color 300ms, border-color 300ms, color 300ms; }
+.home-edit.is-applied .home-edit-number { border-color: var(--selaras-resolved-color-primary-fill); background: var(--selaras-resolved-color-primary-fill); color: var(--selaras-resolved-color-primary-on-fill); }
+.home-edit > p { max-width: 46ch; margin: 1rem 0 1.5rem; font-size: 1.0625rem; line-height: 1.65; }
+
+.home-code { margin: 0; overflow: hidden; border: 1px solid rgb(255 255 255 / 0.08); border-radius: var(--selaras-resolved-radius-md); background: #141418; color: #e6edf3; }
+.home-code figcaption { padding: 0.625rem 1rem; border-bottom: 1px solid rgb(255 255 255 / 0.08); font-family: var(--font-mono); font-size: 0.75rem; color: #a8b1bd; }
+.home-code pre { margin: 0; padding-block: 1rem; overflow-x: auto; font-family: var(--font-mono); font-size: 0.8125rem; line-height: 1.7; }
+.home-code pre > code { display: grid; width: max-content; min-width: 100%; }
+.home-code pre > code:not(:has(.line)) { padding-inline: 1rem; }
+.home-code pre > code > :deep(.line) { min-height: 1.7em; padding-inline: 1rem; }
+.home-code pre > code > :deep(.line.is-edit) { background: rgb(169 154 255 / 0.14); box-shadow: inset 2px 0 0 #a99aff; }
+.home-code pre::selection, .home-code pre :deep(*::selection) { background: rgb(169 154 255 / 0.35); }
+
+.home-specimen-column { min-width: 0; }
+.home-specimen-sticky { position: sticky; top: 6rem; display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+.home-step-picker, .home-step-detail { display: none; }
+.home-specimen-frame { position: relative; }
+.home-specimen-frame::after { content: ''; position: absolute; inset: 0; border: 1px solid var(--selaras-resolved-color-primary-fill); border-radius: calc(var(--selaras-resolved-radius-lg) + 2px); opacity: 0; pointer-events: none; }
+.home-specimen-note { max-width: 52ch; margin: 0; font-size: 0.8125rem; line-height: 1.6; color: var(--selaras-resolved-text-muted); }
+
+/* Library index: a typographic list rather than a grid of cards. */
+.home-library { padding-block: clamp(4rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem); }
+.home-library > h2 { margin: 0 0 2.5rem; font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; }
+.home-areas { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2.5rem clamp(1.5rem, 3vw, 3rem); list-style: none; margin: 0; padding: 0; }
+.home-areas > li { padding-top: 1.5rem; border-top: 1px solid var(--selaras-resolved-border-default); }
+.home-areas h3 { margin: 0; font-size: 1.375rem; line-height: 1.25; font-weight: 600; letter-spacing: -0.015em; }
+.home-areas h3 a { display: inline-flex; align-items: center; gap: 0.5rem; color: inherit; text-decoration: none; }
+.home-areas h3 a:hover { color: var(--selaras-resolved-color-primary-text); }
+.home-area-arrow { width: 1.125rem; height: 1.125rem; transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1); }
+.home-areas h3 a:hover .home-area-arrow { transform: translateX(3px); }
+.home-areas p { margin: 0.75rem 0 0; font-size: 0.9375rem; line-height: 1.6; color: var(--selaras-resolved-text-muted); }
+.home-area-links { display: flex; flex-wrap: wrap; gap: 0.375rem 1rem; list-style: none; margin: 1rem 0 0; padding: 0; }
+.home-area-links a { color: inherit; font-size: 0.875rem; text-decoration-color: var(--selaras-resolved-border-hover); text-underline-offset: 4px; }
+.home-area-links a:hover { color: var(--selaras-resolved-color-primary-text); }
+.home-meta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 1rem 2rem; margin-top: clamp(3rem, 6vw, 4.5rem); padding-top: 1.5rem; border-top: 1px solid var(--selaras-resolved-border-default); font-size: 0.9375rem; line-height: 1.6; }
+.home-meta p { margin: 0; }
+.home-meta a { color: inherit; text-underline-offset: 4px; }
+.home-version { color: var(--selaras-resolved-text-muted); font-size: 0.875rem; }
+
+/* Below 64rem the steps collapse into a selector above the specimen, with the
+   chosen edit's code beneath it. */
 @media (max-width: 63.999rem) {
-  .home-capabilities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .home-capability, .home-capability:first-child, .home-capability:last-child { grid-column: auto; }
-  .home-hero-content { min-height: min(46rem, calc(100svh - 4rem)); }
-  .home-section-intro { gap: 2rem; }
-  .home-setup-grid { grid-template-columns: minmax(0, 1fr); }
-  .home-setup-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .home-code-tree { height: 27rem; }
+  .home-intro-grid { grid-template-columns: minmax(0, 1fr); gap: 3rem; }
+  .home-edits { display: none; }
+  .home-specimen-sticky { position: static; }
+  .home-step-picker { display: flex; width: 100%; }
+  .home-step-picker :deep(button) { flex: 1; min-width: 0; padding-inline: 0.5rem; }
+  .home-step-detail { display: block; }
+  .home-step-detail h2 { margin: 0.5rem 0 0; font-size: 1.375rem; line-height: 1.25; font-weight: 600; letter-spacing: -0.015em; }
+  .home-step-detail > p, .home-step-detail h2 + p { margin: 0.5rem 0 1rem; font-size: 1rem; line-height: 1.6; }
+  .home-step-detail > .home-step-hint { margin-top: -0.5rem; color: var(--selaras-resolved-text-muted); font-size: 0.875rem; }
+  .home-grid-layer { height: min(100svh, 44rem); }
+  .home-intro-grid { padding-bottom: 1rem; }
+  .home-areas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-@media (max-width: 47.999rem) {
-  .home { --home-space: 5rem; --home-display: clamp(3.2rem, 15.4vw, 7rem); }
-  .home-hero-content { min-height: min(44rem, calc(100svh - 4rem)); padding-block: 3.5rem 2.5rem; gap: 3rem; }
-  .home-title-line + .home-title-line { text-align: start; }
-  .home-hero-bottom, .home-close-bottom { flex-direction: column; align-items: stretch; gap: 2rem; }
-  .home-hero-actions { gap: 1.1rem; }
-  .home-hero-buttons { flex-direction: column; }
-  .home-install-command { gap: 0.5rem; padding-inline: 0.5rem; font-size: 0.8125rem; }
-  .home-lead { max-width: 31ch; font-size: 1.125rem; }
-  .home-section-intro, .home-agent-link { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
-  .home-section-intro { margin-bottom: 2.25rem; }
-  .home-section-intro h2, .home-section-title { font-size: 2.5rem; max-width: 14ch; }
-  .home-section-title { margin-bottom: 3rem; }
-  .home-capabilities { grid-template-columns: minmax(0, 1fr); gap: 3rem; }
-  .home-capability, .home-capability:first-child, .home-capability:last-child { grid-column: auto; }
-  .home-capability h3 { font-size: 1.75rem; }
-  .home-agent-link { margin-top: 3.5rem; gap: 0.75rem; }
-  .home-setup-steps { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
-  .home-code-tree { height: 30rem; }
-  .home-close { padding-block: 4rem; }
-  .home-close h2 { margin-bottom: 2rem; }
+@media (max-width: 39.999rem) {
+  .home-actions { flex-direction: column; align-items: stretch; }
+  .home-install { justify-content: space-between; }
+  .home-install code { font-size: 0.8125rem; }
+  .home-areas { grid-template-columns: minmax(0, 1fr); }
 }
+
 @media (prefers-reduced-motion: no-preference) {
   .home-title-line > span { animation: home-align 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
   .home-title-line + .home-title-line > span { animation-delay: 110ms; }
-  .home :deep([data-home-reveal].home-in-view) { animation: home-arrive 900ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-  .home :deep([data-home-reveal=across].home-in-view) { animation-name: home-across; }
+  .home-specimen-frame.is-echoing::after { animation: home-echo 700ms cubic-bezier(0.22, 1, 0.36, 1); }
   @keyframes home-align { from { transform: translateY(110%); } to { transform: translateY(0); } }
-  @keyframes home-arrive { from { opacity: 0.35; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes home-across { from { opacity: 0.35; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes home-echo { from { opacity: 0.9; transform: scale(1); } to { opacity: 0; transform: scale(1.035); } }
 }
 </style>
