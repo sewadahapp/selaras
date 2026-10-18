@@ -108,7 +108,8 @@ try {
   for (const path of ['mcp.mjs', 'server.mjs', 'catalog.mjs'])
     assert.ok(mcp.files.some(file => file.path === path), `Missing packed MCP file: ${path}`)
   const server = await extract(join(temporary, mcp.filename), join(temporary, 'mcp'))
-  await symlink(join(root, 'node_modules'), join(server, 'node_modules'), 'dir')
+  // Its own workspace install: only the dependencies it declares, as a consumer gets.
+  await symlink(join(mcpRoot, 'node_modules'), join(server, 'node_modules'), 'dir')
   const mcpManifest = JSON.parse(await readFile(join(server, 'package.json'), 'utf8'))
   assert.equal(mcpManifest.bin['selaras-mcp'], './mcp.mjs')
   assert.ok(mcpManifest.dependencies['@modelcontextprotocol/sdk'])
