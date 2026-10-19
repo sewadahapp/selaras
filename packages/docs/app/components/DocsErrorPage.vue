@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
+import { isDocsNotFound } from '../utils/error-status'
 
 const props = defineProps<{ error: NuxtError }>()
 const config = useRuntimeConfig()
 const appConfig = useAppConfig()
 const siteName = computed(() => appConfig.selarasDocs?.site?.name ?? 'Documentation')
-const missing = computed(() => props.error.statusCode === 404)
+const missing = computed(() => isDocsNotFound(props.error))
 const pending = ref(false)
 
 useSeoMeta({

@@ -127,6 +127,7 @@
     "test:browser": "playwright test",
     "test:browser:install": "playwright install chromium",
     "test:compat": "node scripts/test-compatibility.mjs",
+    "test:nuxt-compat": "node scripts/test-nuxt-compatibility.mjs",
     "test:release": "bun run test:types && SELARAS_PACKED_BROWSER=1 bun run test:compat",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && bun run docs:types",

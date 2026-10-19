@@ -13,7 +13,7 @@ const ErrorState = defineComponent({
   },
 })
 
-function harness(kind: 'page' | 'example' = 'page', missing = false) {
+function harness(kind: 'page' | 'example' = 'page', statusKey?: 'statusCode' | 'status') {
   const resetKey = ref('first')
   let router: ReturnType<typeof useRouter>
   const Fragile = defineComponent({
@@ -21,7 +21,7 @@ function harness(kind: 'page' | 'example' = 'page', missing = false) {
       const broken = ref(false)
       return () => {
         if (broken.value)
-          throw Object.assign(new Error('Private failure details'), missing ? { statusCode: 404 } : {})
+          throw Object.assign(new Error('Private failure details'), statusKey ? { [statusKey]: 404 } : {})
         return h('button', { 'data-break': '', 'onClick': () => broken.value = true }, 'Break content')
       }
     },
@@ -79,8 +79,8 @@ describe('documentation error isolation', () => {
     await getRouter().push('/')
   })
 
-  it('shows a missing-page state for a client-side 404', async () => {
-    const { App } = harness('page', true)
+  it.each(['statusCode', 'status'] as const)('shows a missing-page state for a client-side 404 with %s', async (statusKey) => {
+    const { App } = harness('page', statusKey)
     const wrapper = await mountSuspended(App, options)
     await wrapper.get('[data-break]').trigger('click')
     await nextTick()

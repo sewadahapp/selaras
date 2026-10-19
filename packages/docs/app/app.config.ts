@@ -1,4 +1,7 @@
-export default defineAppConfig({
+import type { SelarasDocsAppConfig } from '../types'
+
+// Server-side content tooling also evaluates this config without app auto-imports.
+export default {
   selarasDocs: {
     site: {
       name: 'Documentation',
@@ -39,4 +42,4 @@ export default defineAppConfig({
       ],
     },
   },
-})
+} satisfies { selarasDocs: SelarasDocsAppConfig }

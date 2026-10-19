@@ -1,0 +1,69 @@
+name: Nuxt compatibility
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    name: Nuxt compatibility (${{ matrix.channel }}, ${{ matrix.scope }})
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - channel: future
+            scope: core
+            experimental: false
+          # Content currently relies on server auto-imports disabled by the
+          # v5 defaults. Keep the finding visible without blocking Nuxt 4.
+          - channel: future
+            scope: docs
+            experimental: true
+          - channel: nightly
+            scope: core
+            experimental: true
+          - channel: nightly
+            scope: docs
+            experimental: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.19.0
+
+      - name: Install the stable workspace dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Test installed packages on the selected Nuxt channel
+        run: |
+          set -o pipefail
+          bun run test:nuxt-compat "${{ matrix.channel }}" "${{ matrix.scope }}" 2>&1 | tee nuxt-compatibility.log
+        env:
+          SELARAS_PACKED_BROWSER: '1'
+          SELARAS_DOCS_LAYER_BROWSER: '1'
+
+      - name: Upload compatibility diagnostics
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: nuxt-compatibility-${{ matrix.channel }}-${{ matrix.scope }}
+          path: nuxt-compatibility.log
+          if-no-files-found: ignore

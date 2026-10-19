@@ -9,6 +9,7 @@ import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 
+import { installedPackedNuxt, packedNuxtConfig, packedNuxtDependencies } from './packed-nuxt.mjs'
 import { prepareDocsLayerForPublish } from './prepare-docs-layer-release.mjs'
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url))
@@ -180,10 +181,11 @@ async function inspectConsumer({ prefixed, overridden, example }) {
       assert.ok(css.includes('--tw-breakpoint-tablet:60rem'), 'the advanced consumer owns the emitted breakpoint')
     assert.ok(css.includes('.selaras-docs-content button p'), 'the layer stylesheet must be imported through the consumer entry')
     if (process.env.SELARAS_DOCS_LAYER_BROWSER) {
-      const browser = await chromium.launch()
+      const browser = await chromium.launch({ executablePath: process.env.SELARAS_PACKED_BROWSER_EXECUTABLE_PATH })
+      const issues = []
+      let page
       try {
-        const page = await browser.newPage({ viewport: { width: 600, height: 800 } })
-        const issues = []
+        page = await browser.newPage({ viewport: { width: 600, height: 800 } })
         page.on('pageerror', error => issues.push(error.message))
         page.on('console', (message) => {
           if (/hydration|mismatch|Failed to resolve component|\[Selaras\]/i.test(message.text()))
@@ -303,6 +305,22 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         }
         assert.deepEqual(issues, [])
       }
+      catch (error) {
+        if (page) {
+          const diagnostics = await page.evaluate(() => {
+            const app = document.querySelector('#__nuxt')?.__vue_app__?.config.globalProperties.$nuxt
+            return {
+              url: location.href,
+              title: document.title,
+              errors: Object.entries(app?.payload._errors ?? {}).filter(([, value]) => value).map(([key, value]) => ({ key, message: value.message })),
+            }
+          }).catch(() => undefined)
+          console.error('[docs-layer] Browser document:', diagnostics)
+        }
+        console.error('[docs-layer] Browser issues:', issues)
+        console.error(`[docs-layer] Server output:\n${output.slice(-6000)}`)
+        throw error
+      }
       finally {
         await browser.close()
       }
@@ -357,11 +375,13 @@ try {
     },
   })
   cpSync(join(rootDir, 'test/fixtures/docs-error-recovery'), consumerDir, { recursive: true })
+  const fixtureConfigPath = join(consumerDir, 'nuxt.config.ts')
+  writeFileSync(fixtureConfigPath, packedNuxtConfig(readFileSync(fixtureConfigPath, 'utf8')))
   writeFileSync(join(consumerDir, 'content/guide/whitespace.md'), ' \n\t\n  \n')
-  const dependencies = Object.fromEntries(
+  const dependencies = packedNuxtDependencies(Object.fromEntries(
     ['nuxt', 'vue', 'typescript', 'vue-tsc']
       .map(name => [name, installedManifest(name).version]),
-  )
+  ))
   dependencies['@sewadah/selaras'] = `file:./${selarasArchive.filename}`
   dependencies['@sewadah/selaras-docs'] = `file:./${docsArchive.filename}`
   // The packed layer declares a semver range on the core package (rewritten
@@ -374,6 +394,7 @@ try {
   writeFileSync(join(consumerDir, 'package.json'), `${JSON.stringify({ name: 'selaras-packed-docs-layer-consumer', private: true, type: 'module', dependencies, overrides }, null, 2)}\n`)
   run('install both tarballs in an isolated dependency graph', 'bun', ['install', '--ignore-scripts'])
   const consumerRequire = createRequire(join(consumerDir, 'package.json'))
+  console.log(`[docs-layer] Nuxt ${installedPackedNuxt(consumerRequire)}`)
   for (const packageName of ['@sewadah/selaras', '@sewadah/selaras-docs']) {
     const entry = realpathSync(fileURLToPath(run(`resolve ${packageName}`, process.execPath, ['--input-type=module', '--eval', `console.log(import.meta.resolve(${JSON.stringify(packageName)}))`])))
     assert.ok(!relative(consumerDir, entry).startsWith('..'), `${packageName} must resolve from the installed consumer`)
