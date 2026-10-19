@@ -1,6 +1,70 @@
 # Changelog
 
 
+## v1.0.0
+
+<!-- selaras-release-summary -->
+
+Selaras 1.0 freezes the Nuxt-first component, theme, and package contracts
+developed before the stable release.
+
+### Upgrade highlights
+
+- Semantic color roles are registered at Nuxt build time and work across
+  applicable components.
+- Theme customization uses public `--selaras-*` inputs and
+  `--selaras-resolved-*` effective reads; legacy `--ui-*` aliases are retired.
+- Select, Autocomplete, DatePicker, and ColorPicker use the opt-in `adaptive`
+  prop for their small-screen presentation.
+- Controls follow `v-model`/`defaultValue` and
+  `v-model:open`/`defaultOpen` ownership conventions.
+
+Read the full [Migrating to 1.0 guide](https://selarasui.my.id/overview/migrating-to-1/)
+before upgrading. The generated change list below remains the detailed
+historical record.
+
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.1...v1.0.0)
+
+### 🚀 Enhancements
+
+- **agent:** ⚠️  Move the MCP server into @sewadah/selaras-mcp ([d4f8848](https://github.com/sewadahapp/selaras/commit/d4f8848))
+- **docs:** Redesign the homepage around four theming edits ([a9e508d](https://github.com/sewadahapp/selaras/commit/a9e508d))
+- **docs:** Add templates catalogue and navigation ([3973c61](https://github.com/sewadahapp/selaras/commit/3973c61))
+
+### 🩹 Fixes
+
+- **release:** Stage changelogs only for selected packages ([ec0f11c](https://github.com/sewadahapp/selaras/commit/ec0f11c))
+- **select:** Preserve search height with overflowing options ([4a71179](https://github.com/sewadahapp/selaras/commit/4a71179))
+- **docs:** Recover stale tabs after deployment ([c7f7bdc](https://github.com/sewadahapp/selaras/commit/c7f7bdc))
+
+### 📖 Documentation
+
+- Describe Selaras as a Nuxt component library ([4869b74](https://github.com/sewadahapp/selaras/commit/4869b74))
+
+### 📦 Build
+
+- **deps:** Bump @nuxt/icon to v2 ([5076bed](https://github.com/sewadahapp/selaras/commit/5076bed))
+- **deps:** Bump runtime dependencies and raise their minimums ([1a3b889](https://github.com/sewadahapp/selaras/commit/1a3b889))
+- **deps:** Bump dev tooling within current majors ([17bdd8b](https://github.com/sewadahapp/selaras/commit/17bdd8b))
+- **deps:** Bump vitest to v5 and happy-dom to v21 ([ebae6e2](https://github.com/sewadahapp/selaras/commit/ebae6e2))
+
+### 🏡 Chore
+
+- Stop tracking local design-tool context ([560713f](https://github.com/sewadahapp/selaras/commit/560713f))
+
+### ✅ Tests
+
+- **agent:** Resolve the packed server's dependencies from its own workspace ([4678a1d](https://github.com/sewadahapp/selaras/commit/4678a1d))
+
+#### ⚠️ Breaking Changes
+
+- **agent:** ⚠️  Move the MCP server into @sewadah/selaras-mcp ([d4f8848](https://github.com/sewadahapp/selaras/commit/d4f8848))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v0.10.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.0...v0.10.0)

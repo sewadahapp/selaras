@@ -1,5 +1,36 @@
 # Changelog
 
+## v1.3.2
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.1...selaras-docs-v1.3.2)
+
+### 🚀 Enhancements
+
+- **feat(docs):** add templates catalogue and navigation ([3973c61](https://github.com/sewadahapp/selaras/commit/3973c610c3f6bbdc998ba189d15001c37382ddf4))
+- **feat(docs):** redesign the homepage around four theming edits ([a9e508d](https://github.com/sewadahapp/selaras/commit/a9e508d9b0ab99271a2caaa3ec6cf805515ec35c))
+- **feat(agent)!:** move the MCP server into @sewadah/selaras-mcp ([d4f8848](https://github.com/sewadahapp/selaras/commit/d4f88485a0841210b5d3f16a514b18193de4bfe5))
+
+### 🩹 Fixes
+
+- **fix(docs):** recover stale tabs after deployment ([c7f7bdc](https://github.com/sewadahapp/selaras/commit/c7f7bdc62df3c161cf300c815289bbce6e42dee4))
+- **fix(select):** preserve search height with overflowing options ([4a71179](https://github.com/sewadahapp/selaras/commit/4a7117995fc1fd46f30ac883720274cee33f4fa0))
+- **fix(release):** stage changelogs only for selected packages ([ec0f11c](https://github.com/sewadahapp/selaras/commit/ec0f11cae742122a5645414a5be58d2ac902f3dd))
+
+### 📖 Documentation
+
+- **docs:** describe Selaras as a Nuxt component library ([4869b74](https://github.com/sewadahapp/selaras/commit/4869b74572284fa5e40625bb0e195a8f5b474818))
+
+### 🤖 Other changes
+
+- **test(agent):** resolve the packed server's dependencies from its own workspace ([4678a1d](https://github.com/sewadahapp/selaras/commit/4678a1d7106ab808c96051c8e29d7f87a13141b7))
+- **chore:** stop tracking local design-tool context ([560713f](https://github.com/sewadahapp/selaras/commit/560713f4562903f2ebc952c228f3ba2d4659f0f0))
+- **build(deps):** bump vitest to v5 and happy-dom to v21 ([ebae6e2](https://github.com/sewadahapp/selaras/commit/ebae6e2d7db6785f53e092d63d17273d3b52f49c))
+- **build(deps):** bump dev tooling within current majors ([17bdd8b](https://github.com/sewadahapp/selaras/commit/17bdd8bb6322a19edbc11f9188b73c3b00eef4ef))
+- **build(deps):** bump runtime dependencies and raise their minimums ([1a3b889](https://github.com/sewadahapp/selaras/commit/1a3b8891d2be0140dd16c81a0e9ef19361f6c35d))
+- **build(deps):** bump @nuxt/icon to v2 ([5076bed](https://github.com/sewadahapp/selaras/commit/5076bed7048f69e8cdd372173d0aaee3ebd14b86))
+
+Published against `@sewadah/selaras` ^1.0.0.
+
 ## v1.3.1
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.0...selaras-docs-v1.3.1)
