@@ -37,6 +37,20 @@ need an app root, Content config, or stylesheet for the default setup.
 `nuxt` remains a peer because the documentation site is a Nuxt application;
 the layer is normally a development dependency, just like Nuxt itself.
 
+## Updates after deployment
+
+In production, the layer checks Nuxt's latest build manifest before navigation
+and when a tab becomes visible again. A confirmed build change reloads the page
+at the requested URL. Missing content also triggers a fresh build check before
+becoming a 404. Offline or failed checks keep the existing page available;
+checks for an unchanged build do not reload it. This uses Nuxt's app manifest
+and is disabled when `experimental.appManifest` is false.
+
+Serve HTML with `Cache-Control: no-cache` so reloads revalidate it, and avoid
+caching `/_nuxt/builds/latest.json` as immutable. On static hosts, configure
+these headers through the hosting provider or CDN. Hashed JavaScript and CSS
+can keep their normal asset caching.
+
 ## Customization
 
 Use `app.config.ts` for site identity and the default shell:

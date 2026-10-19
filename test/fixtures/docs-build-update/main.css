@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@import "../../../src/runtime/theme.css";
+@import "#selaras/tailwind.css";
+@import "../../../src/runtime/prose.css";
+@import "../../../packages/docs/app/assets/style.css";
+
+@source "../../../packages/docs/app";

@@ -1,0 +1,15 @@
+{
+  "ref": "selaras_mutable_documents_revalidate",
+  "description": "Revalidate Selaras HTML and mutable deployment data",
+  "expression": "http.host eq \"selarasui.my.id\" and http.request.method in {\"GET\" \"HEAD\"} and (http.response.content_type.media_type eq \"text/html\" or http.request.uri.path eq \"/_nuxt/builds/latest.json\" or ends_with(http.request.uri.path, \"/_payload.json\") or starts_with(http.request.uri.path, \"/__nuxt_content/\"))",
+  "action": "rewrite",
+  "action_parameters": {
+    "headers": {
+      "cache-control": {
+        "operation": "set",
+        "value": "no-cache, max-age=0, must-revalidate"
+      }
+    }
+  },
+  "enabled": true
+}

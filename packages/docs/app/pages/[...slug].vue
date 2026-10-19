@@ -10,9 +10,12 @@ import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
 
 const route = useRoute()
 const appConfig = useAppConfig()
+const nuxtApp = useNuxtApp()
 const { data: page, error, status, refresh } = await useAsyncData(`selaras-docs:${route.path}`, () => queryCollection('docs').path(route.path).first())
 
-if (!page.value && !error.value) {
+const recoveringBuild = import.meta.client && (!page.value || error.value)
+  && await nuxtApp.$docsCheckBuild(route.fullPath, true)
+if (!page.value && !error.value && !recoveringBuild) {
   throw createError({ statusCode: 404, statusMessage: 'Documentation page not found', fatal: true })
 }
 if (import.meta.server && error.value)
