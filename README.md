@@ -5,60 +5,78 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-A UI component library for Nuxt, built on Reka UI and Tailwind v4. Every
-component ships a `tailwind-variants` theme and a single `:ui` prop for
-overrides - no separate pass-through prop to juggle, no specificity fights
-between the library's own classes and yours. Design tokens are plain CSS
-variables (`@theme` foundations plus semantic `--selaras-*` inputs), so re-theming an app is a
-matter of overriding variables, not rebuilding the library.
+A customizable Vue component library for Nuxt, built on Reka UI and Tailwind CSS v4.
+Build forms, navigation, data tables, overlays, and application layouts with typed APIs,
+keyboard interactions, and light and dark modes.
 
-- [✨ &nbsp;Release Notes](/CHANGELOG.md)
+Selaras v1 is available on npm.
 
-> **Status:** pre-1.0 and still moving - component APIs, the color token
-> system, and internal structure can change between minor versions until
-> things settle.
+[Documentation](https://selarasui.my.id) · [Components](https://selarasui.my.id/components/elements/button) · [Blocks](https://selarasui.my.id/blocks/overview) · [Templates](https://selarasui.my.id/templates) · [Release notes](https://github.com/sewadahapp/selaras/releases)
 
 ## Features
 
-- **One override prop, not two.** `:ui` accepts a string (tailwind-merge'd
-  against the theme) or an object (merged via `mergeProps` for the rare
-  non-class case) per slot - the same mental model everywhere in the library.
-- **CSS variable design tokens.** Colors, radii, shadows, and z-index use
-  semantic `--selaras-*` inputs and `--selaras-resolved-*` reads, so swapping
-  a brand color is a CSS override, not a rebuild.
-- **CSS-only animation.** Open/close and hover/focus transitions run on
-  `data-state` attributes and Tailwind variants - no motion library
-  dependency.
-- **~35 components** across elements (Button, Badge, Chip, Icon, ...), forms
-  (Input, Select, Autocomplete, Checkbox, RadioGroup, Switch, FormField,
-  ...), data (Table, with sorting/pagination/virtualization/pinning/export),
-  navigation (Tabs, Accordion, ContentNavigation, ContentToc), overlays
-  (Modal, Dropdown, Tooltip, Toast), layout, and a full set of Prose
-  wrappers for `@nuxt/content`.
-- Components auto-import with an `S` prefix (`SButton`, `SSelect`, ...).
+- **Ready-to-use components.** Form controls, Select, Autocomplete, Listbox, TransferList,
+  Table, NavigationMenu, Modal, Drawer, Toast, and more, auto-imported with an `S` prefix.
+- **CSS-first theming.** Customize semantic colors, surfaces, radius, and shadows through
+  CSS variables, with support for light, dark, and system appearance.
+- **Consistent customization.** Use props, slots, and `:ui` overrides locally,
+  `app.config.ts` for shared defaults, or `STheme` for a subtree.
+- **Adaptive interfaces.** Present supported controls as popovers, modals, or drawers
+  according to the available screen space.
+- **Application building blocks.** Dashboard and documentation layouts, copyable blocks,
+  and starter templates.
+- **Agent support.** Public Markdown documentation, an installable skill, and an optional
+  local MCP server with component contracts and examples.
 
-## Agent support
+## Requirements
 
-Use the [Selaras skill](skills/selaras/SKILL.md) to guide component selection and customization. For retrieval tools, the separate [`@sewadah/selaras-mcp`](packages/mcp) package provides a local stdio MCP server with versioned documentation search, component discovery, and Vue examples. It reads the catalog shipped with your installed Selaras version and needs no hosted service or API key.
+Use an existing Nuxt application with:
 
-See the [agent support guides](https://selarasui.my.id/overview/agent-support/overview) for skill installation, MCP client configuration, and the public `llms.txt` exports.
+- Nuxt `^4.5.2`.
+- Tailwind CSS `^4.3.0`.
+- Node.js `^22.19.0 || ^24.11.0 || >=26.0.0`.
 
-## Quick Setup
+Nuxt supplies Vue. Selaras configures the Tailwind Vite plugin and installs
+Nuxt Icon and Nuxt Color Mode automatically.
 
-Install the module to your Nuxt application with one command:
+## Quick setup
 
-```bash
-npx nuxt module add @sewadah/selaras
-```
-
-Tailwind CSS is a peer dependency - install it alongside Selaras too, so
-your own project owns its version directly:
+### 1. Install
 
 ```bash
-npm install tailwindcss
+npm install @sewadah/selaras tailwindcss
 ```
 
-Import the CSS in your own stylesheet, after Tailwind itself:
+Or use your preferred package manager:
+
+```bash
+pnpm add @sewadah/selaras tailwindcss
+bun add @sewadah/selaras tailwindcss
+```
+
+Install the default icon collection locally so icons do not depend on runtime
+requests to Iconify:
+
+```bash
+npm install -D @iconify-json/hugeicons
+```
+
+See [Icons](https://selarasui.my.id/overview/getting-started/icons) to use other collections.
+
+### 2. Configure Nuxt
+
+Register the module and your stylesheet in `nuxt.config.ts`:
+
+```ts
+export default defineNuxtConfig({
+  modules: ['@sewadah/selaras'],
+  css: ['~/assets/css/main.css'],
+})
+```
+
+### 3. Add the styles
+
+Create `app/assets/css/main.css` with these imports in order:
 
 ```css
 @import "tailwindcss";
@@ -66,25 +84,14 @@ Import the CSS in your own stylesheet, after Tailwind itself:
 @import "#selaras/tailwind.css";
 ```
 
-For a mature design system that supplies complete semantic role recipes and
-`--selaras-*` functional inputs, import `@sewadah/selaras/structural.css`
-instead. It keeps Selaras's source discovery, variants, motion and semantic
-bindings while omitting Selaras-owned foundation colors. The default aggregate
-import remains the recommended path for most applications. Structural CSS is
-not an unthemed fallback: an incomplete theme has no default palette or runtime
-diagnostic, so provide every role and functional value your components use.
+The generated `#selaras/tailwind.css` entry connects component classes and adaptive
+breakpoints to your application's Tailwind theme.
 
-The Nuxt-generated import supplies library class candidates and the adaptive
-breakpoint binding to the same Tailwind compilation as your app. Breakpoint
-values come from your CSS (`@theme { --breakpoint-md: 60rem; }`); select another
-name with `selaras.adaptive.breakpoint` in `nuxt.config.ts`.
+### 4. Add the app provider
 
-Wrap your root `app.vue` in `<SApp>`, once - required for Tooltip's shared
-hover-delay behavior and the `useModal`/`useDrawer`/`useSlideover` composables
-to work:
+Wrap your application once in `SApp` in `app/app.vue`:
 
-```vue-html
-<!-- app.vue -->
+```vue
 <template>
   <SApp>
     <NuxtLayout>
@@ -94,146 +101,119 @@ to work:
 </template>
 ```
 
-Every component is now auto-imported and ready to use:
+`SApp` provides shared tooltip behavior and the renderers used by the programmatic
+overlay composables. Toasts need an `SToast` component where you want them rendered;
+see the [App guide](https://selarasui.my.id/components/layout/app) for details.
 
-```vue-html
-<SButton color="primary" icon="ph:sparkle">
-  Get started
+### 5. Use components
+
+Create `app/pages/index.vue`, or add components to an existing page:
+
+```vue
+<script setup lang="ts">
+const name = ref('')
+</script>
+
+<template>
+  <main class="mx-auto max-w-md space-y-6 px-6 py-12">
+    <div class="flex items-center justify-between gap-4">
+      <h1 class="text-2xl font-semibold">
+        Welcome to Selaras
+      </h1>
+      <SColorModeToggle />
+    </div>
+
+    <SFormField label="Your name">
+      <SInput v-model="name" placeholder="Enter your name" />
+    </SFormField>
+    <p v-if="name">
+      Hello, {{ name }}!
+    </p>
+
+    <SButton as="a" href="https://selarasui.my.id/components/elements/button">
+      Explore components
+    </SButton>
+  </main>
+</template>
+```
+
+Start your application:
+
+```bash
+npm run dev
+```
+
+No component imports are needed. See [Installation](https://selarasui.my.id/overview/getting-started/installation)
+for additional setup options and [Nuxt configuration](https://selarasui.my.id/overview/getting-started/nuxt-configuration)
+for module settings.
+
+## Customization
+
+Change design tokens in your stylesheet, after the imports:
+
+```css
+:root {
+  --selaras-radius-base: 0.5rem;
+}
+```
+
+Override a component's slots with `:ui`:
+
+```vue
+<SButton :ui="{ base: 'font-semibold' }">
+  Save changes
 </SButton>
 ```
 
-## Theming
+Use [global configuration](https://selarasui.my.id/overview/theming/global-configuration)
+to share styles and defaults, or [scoped themes](https://selarasui.my.id/overview/theming/scoped-themes)
+to style part of an application. The [theming guides](https://selarasui.my.id/overview/theming/overview)
+cover color roles, complete themes, and all customization layers.
 
-Selaras is CSS-first for design values.
+## Documentation
 
-For normal theme changes, override the public `--selaras-*` CSS variables or
-the Selaras foundation palettes in Tailwind `@theme`. You do not need
-`nuxt.config.ts` to change built-in roles such as `primary`, `warning`,
-`danger`, or `neutral`.
+- [Component usage](https://selarasui.my.id/overview/getting-started/component-usage)
+- [Icons](https://selarasui.my.id/overview/getting-started/icons)
+- [Messages and text](https://selarasui.my.id/overview/getting-started/messages)
+- [Color modes](https://selarasui.my.id/overview/theming/color-modes)
+- [Adaptive interfaces](https://selarasui.my.id/overview/getting-started/adaptive-interfaces)
+- [Copyable blocks](https://selarasui.my.id/blocks/overview)
+- [Starter templates](https://selarasui.my.id/templates)
 
-Use `selaras.theme.colors` in `nuxt.config.ts` when you must register a new
-role name, such as `tertiary`, or when you intentionally want to author a
-complete build-time recipe.
+## Agent support
 
-`defineColorFromSeed()` is an optional accessibility-oriented generator. The
-supplied color remains the exact resting solid fill; Selaras derives readable
-content, interaction states, text, borders, focus, and essential indicators
-around it. Use `defineColor()` when you need to author every leaf yourself.
+Install the Selaras skill from your application directory:
 
-See the full [Theming guide](./docs/content/overview/theming.md).
+```bash
+npx skills add sewadahapp/selaras --skill selaras
+```
 
-## Contribution
+The optional `@sewadah/selaras-mcp` package provides a local stdio MCP server for
+documentation search, component discovery, and Vue examples matching your installed
+Selaras version. It needs no hosted service or API key.
 
-<details>
-  <summary>Local development</summary>
+See the [agent support guides](https://selarasui.my.id/overview/agent-support/overview)
+for skill installation options, MCP configuration, and `llms.txt` exports.
 
-  ```bash
-  # Install dependencies
-  npm install
+## Contributing
 
-  # Generate type stubs and prepare the docs site
-  npm run docs:prepare
+See the [contribution guide](https://github.com/sewadahapp/selaras/blob/master/CONTRIBUTING.md)
+for local development, validation, compatibility checks, and release commands.
+Report bugs and suggest improvements through [GitHub issues](https://github.com/sewadahapp/selaras/issues).
 
-  # Develop with the Selaras documentation site in /docs
-  npm run dev
+## License
 
-  # Develop the standalone documentation template preview
-  npm run docs:dev
-
-  # Generate the static docs site
-  npm run docs:generate
-
-  # Run the complete pre-commit checks (requires Bun)
-  npm run check
-
-  # Type-check
-  npm run test:types
-
-  # Run ESLint
-  npm run lint
-
-  # Run Vitest
-  npm run test
-  npm run test:watch
-
-  # Build and test source consumers plus an isolated installed tarball
-  # Requires Bun for the temporary consumer's dependency installation
-  npm run test:compat
-
-  # Test isolated consumers on Nuxt 4 with v5 defaults, or Nuxt 5 nightly
-  npm run test:nuxt-compat -- future
-  npm run test:nuxt-compat -- nightly
-
-  # Optionally test only the core package or docs layer
-  npm run test:nuxt-compat -- future core
-  npm run test:nuxt-compat -- nightly docs
-
-  # Release core and the docs layer (the default), or all three packages
-  npm run release
-  npm run release:selaras-and-docs
-  npm run release:all
-
-  # Release one package independently
-  npm run release:selaras
-  npm run release:docs
-  npm run release:mcp
-
-  # Each package has its own version stream, so one run can bump them at
-  # different levels - Selaras major alongside a docs patch, for example.
-  # The release workflow exposes per-package bump/version inputs for this.
-  # Locally, drive each package through its own env:
-  RELEASE_BUMP=major npm run release:selaras
-  RELEASE_BUMP=patch npm run release:docs
-  RELEASE_BUMP=patch npm run release:mcp
-  ```
-
-  In the release and release rehearsal workflows, select `selaras-and-docs`
-  for core and docs, `all` to include MCP, or a single package. Bump and exact
-  version inputs apply only to the selected packages. Each package keeps its
-  own version stream. The local `release:both` command remains an alias for
-  `release:selaras-and-docs`.
-
-  Nuxt compatibility runs build the publishable packages with the stable
-  workspace toolchain, then install them in isolated consumers using the
-  selected framework. The `future` lane uses current Nuxt 4 with
-  `future.compatibilityVersion: 5`; `nightly` uses `nuxt-nightly@5x`.
-  Each run records the resolved framework version and uses its Vue requirement.
-  Core and default/prefixed docs consumers exercise builds, generated types,
-  SSR, themes, CSS budgets, and browser interactions. Install Chromium once
-  with `npm run test:browser:install` before running these commands locally.
-  `SELARAS_PACKED_BROWSER_EXECUTABLE_PATH` optionally selects a local Chromium.
-
-  The Nuxt compatibility workflow runs on pushes, pull requests, manual
-  dispatch, and weekly. Core's future-mode job fails the workflow on
-  regressions; the nightly jobs are informational while Nuxt 5 is unreleased.
-  The docs future-mode job is also informational: Nuxt Content imports helpers through
-  auto-imports disabled by v5 defaults. Its current client queries also rely
-  on a global `$fetch` absent from Nuxt 5, preventing client-side navigation.
-  The checks retain the framework defaults and report these failures. They
-  do not expand the published Nuxt peer range or upgrade the documentation
-  website.
-
-  Dependency installation enables Git hooks in a local development checkout.
-  Before each commit, the hooks run ESLint, docs preparation, root and docs
-  type checks, and the full Vitest suite against the working tree. They also
-  require Conventional Commit messages, such as `fix(select): preserve selection`
-  or `feat(toolbar): add controls`. CI validates the committed code and commit
-  messages too. CI and production installs skip local hook installation.
-
-</details>
-
-For the documentation deployment, see [Markdown negotiation on Cloudflare](./deployment/cloudflare-markdown.md).
-See [deployment cache revalidation](./deployment/cloudflare-revalidation.md) for browser cache headers and recovery when an open tab outlives a build.
+[MIT](https://github.com/sewadahapp/selaras/blob/master/LICENSE), copyright Sewadah.
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/@sewadah/selaras/latest.svg?style=flat&colorA=020420&colorB=00DC82
-[npm-version-href]: https://npmjs.com/package/@sewadah/selaras
+[npm-version-href]: https://www.npmjs.com/package/@sewadah/selaras
 
 [npm-downloads-src]: https://img.shields.io/npm/dm/@sewadah/selaras.svg?style=flat&colorA=020420&colorB=00DC82
 [npm-downloads-href]: https://npm.chart.dev/@sewadah/selaras
 
 [license-src]: https://img.shields.io/npm/l/@sewadah/selaras.svg?style=flat&colorA=020420&colorB=00DC82
-[license-href]: https://npmjs.com/package/@sewadah/selaras
+[license-href]: https://github.com/sewadahapp/selaras/blob/master/LICENSE
 
 [nuxt-src]: https://img.shields.io/badge/Nuxt-020420?logo=nuxt
 [nuxt-href]: https://nuxt.com
