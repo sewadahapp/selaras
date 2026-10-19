@@ -15,11 +15,7 @@ set -euo pipefail
 # tag pointing at the same commit - changelogen resolves its bump base from
 # `v*` tags, so dropping it would silently change what `--bump` infers.
 #
-# Only the requested packages' manifests (plus CHANGELOG.md when it changed,
-# which only core bumps via changelogen ever touch, and
-# each workspace package's own CHANGELOG.md when it changed, which only that
-# package's bump via bump-workspace-package.mjs ever touches) are staged - a
-# docs-only release never rewrites the core version, and vice versa.
+# Stage only the requested packages' manifests and changed changelogs.
 
 if [ "$#" -eq 0 ]; then
   echo "Usage: $0 <selaras|selaras-docs|selaras-mcp> [...]" >&2
@@ -27,6 +23,7 @@ if [ "$#" -eq 0 ]; then
 fi
 
 stage=()
+changelogs=()
 tags=()
 message="chore(release):"
 
@@ -35,6 +32,7 @@ for package in "$@"; do
     selaras)
       version=$(node -p "require('./package.json').version")
       stage+=(package.json)
+      changelogs+=(CHANGELOG.md)
       # Legacy tag first so `git push --follow-tags` pushes both together.
       tags+=("v$version" "selaras-v$version")
       message="$message selaras v$version"
@@ -42,12 +40,14 @@ for package in "$@"; do
     selaras-docs)
       version=$(node -p "require('./packages/docs/package.json').version")
       stage+=(packages/docs/package.json)
+      changelogs+=(packages/docs/CHANGELOG.md)
       tags+=("selaras-docs-v$version")
       message="$message selaras-docs v$version"
       ;;
     selaras-mcp)
       version=$(node -p "require('./packages/mcp/package.json').version")
       stage+=(packages/mcp/package.json)
+      changelogs+=(packages/mcp/CHANGELOG.md)
       tags+=("selaras-mcp-v$version")
       message="$message selaras-mcp v$version"
       ;;
@@ -58,13 +58,7 @@ for package in "$@"; do
   esac
 done
 
-if git diff --quiet -- CHANGELOG.md 2>/dev/null; then
-  : # unchanged - only staged when a core bump rewrote it
-else
-  stage+=(CHANGELOG.md)
-fi
-
-for changelog in packages/docs/CHANGELOG.md packages/mcp/CHANGELOG.md; do
+for changelog in "${changelogs[@]}"; do
   # A package's first bump creates its changelog, which git diff won't see.
   if [ -f "$changelog" ] && { ! git ls-files --error-unmatch "$changelog" >/dev/null 2>&1 || ! git diff --quiet -- "$changelog"; }; then
     stage+=("$changelog")
