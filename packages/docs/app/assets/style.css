@@ -278,10 +278,6 @@
     display: none;
   }
 
-  .selaras-docs-nav-toggle {
-    display: none;
-  }
-
   /* Reserve the sidebar's width for the brand, so the header menu's first
      label lines up with the page content: sidebar (16rem) + the content's
      inset from it (4rem), less the header's own padding (1.5rem), the
@@ -292,6 +288,12 @@
 
   .selaras-docs-page-grid {
     grid-template-columns: minmax(0, 1fr) 14rem;
+  }
+}
+
+@media (min-width: 80rem) {
+  .selaras-docs-nav-toggle {
+    display: none;
   }
 }
 

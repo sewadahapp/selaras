@@ -46,6 +46,10 @@ export default defineAppConfig({
           to: '/blocks/overview',
         },
         {
+          label: 'Templates',
+          to: '/templates',
+        },
+        {
           label: 'Utilities',
           to: '/utilities/composables/use-modal',
         },

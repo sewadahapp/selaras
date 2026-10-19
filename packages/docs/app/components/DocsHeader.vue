@@ -9,6 +9,7 @@ const siteName = computed(() => docsConfig.value.header?.title ?? docsConfig.val
 const headerLinks = computed(() => docsConfig.value.header?.links ?? [])
 const repositoryUrl = computed(() => docsConfig.value.repository?.url)
 const sidebarEnabled = computed(() => docsConfig.value.sidebar?.enabled !== false)
+const mobileNavigationEnabled = computed(() => sidebarEnabled.value || headerLinks.value.length > 0)
 
 watch(() => route.path, () => {
   navigationOpen.value = false
@@ -32,7 +33,7 @@ watch(() => route.path, () => {
       v-if="headerLinks.length"
       :items="headerLinks"
       variant="link"
-      :ui="{ root: 'hidden w-auto lg:flex' }"
+      :ui="{ root: 'hidden w-auto xl:flex' }"
     />
     <div class="selaras-docs-header-actions">
       <DocsSearchButton v-if="docsConfig.header?.search !== false" />
@@ -51,7 +52,7 @@ watch(() => route.path, () => {
         color="neutral"
       />
       <SButton
-        v-if="sidebarEnabled"
+        v-if="mobileNavigationEnabled"
         variant="ghost"
         color="neutral"
         class="selaras-docs-nav-toggle"
@@ -62,9 +63,16 @@ watch(() => route.path, () => {
       </SButton>
     </div>
   </SHeader>
-  <SDrawer v-if="sidebarEnabled" v-model:open="navigationOpen" side="left" title="Documentation navigation" :handle="false">
+  <SDrawer v-if="mobileNavigationEnabled" v-model:open="navigationOpen" side="left" title="Documentation navigation" :handle="false">
     <template #body>
-      <SContentNavigation :navigation="navigation ?? []" :collapsed="docsConfig.sidebar?.collapsed" />
+      <SNavigationMenu
+        v-if="headerLinks.length"
+        :items="headerLinks"
+        orientation="vertical"
+        aria-label="Main navigation"
+        :ui="{ root: 'mb-6 w-full' }"
+      />
+      <SContentNavigation v-if="sidebarEnabled" :navigation="navigation ?? []" :collapsed="docsConfig.sidebar?.collapsed" />
     </template>
   </SDrawer>
 </template>

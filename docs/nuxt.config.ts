@@ -25,6 +25,7 @@ function fakeDemoLinkedPaths() {
   const realRouteExceptions = new Set([
     '/',
     '/design-kit',
+    '/templates',
     '/examples/adaptive-interfaces',
     ...documentationRoutes,
   ])
@@ -90,7 +91,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     zeroRuntime: true,
-    include: ['/', '/design-kit', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
+    include: ['/', '/design-kit', '/templates', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
     exclude: ['/examples/**', '/raw/**', ...Object.keys(legacyDocsPaths)],
     discoverImages: false,
   },
@@ -156,6 +157,7 @@ export default defineNuxtConfig({
     prerender: {
       routes: [
         '/design-kit',
+        '/templates',
         '/examples/adaptive-interfaces',
         ...documentationBlocks.map(block => `/examples/blocks/${block.slug}`),
         ...documentationFiles.map(path => `/raw/${path}`),
