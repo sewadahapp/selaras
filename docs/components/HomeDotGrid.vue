@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
 const props = defineProps<{
   /** Changes whenever the surrounding theme is swapped, so colors are re-read. */
   colorKey?: unknown
@@ -108,12 +110,12 @@ function listen<K extends keyof WindowEventMap>(target: EventTarget, type: K | s
 
 onMounted(() => {
   const element = canvas.value!
-  const host = element.parentElement!
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
   reducedMotion = motion.matches
   listen(motion, 'change', (event: MediaQueryListEvent) => {
     reducedMotion = event.matches
     pointer = null
+    wave = null
     schedule()
   })
 
@@ -126,17 +128,32 @@ onMounted(() => {
   observer.observe(element)
   cleanups.push(() => observer.disconnect())
 
-  listen(host, 'pointermove', (event: PointerEvent) => {
-    if (reducedMotion || event.pointerType === 'touch')
-      return
+  // The foreground content covers the canvas, so observe its pointer events too.
+  listen(window, 'pointermove', (event: PointerEvent) => {
     const rect = element.getBoundingClientRect()
-    pointer = { x: event.clientX - rect.left, y: event.clientY - rect.top }
+    const x = event.clientX - rect.left
+    const y = event.clientY - rect.top
+    const inside = x >= 0 && y >= 0 && x < rect.width && y < rect.height
+    if (!reducedMotion && event.pointerType !== 'touch' && inside) {
+      pointer = { x, y }
+    }
+    else {
+      if (!pointer)
+        return
+      pointer = null
+    }
     schedule()
   }, { passive: true })
-  listen(host, 'pointerleave', () => {
+
+  function clearPointer() {
+    if (!pointer)
+      return
     pointer = null
     schedule()
-  })
+  }
+  listen(document.documentElement, 'pointerleave', clearPointer)
+  listen(window, 'blur', clearPointer)
+  listen(window, 'scroll', clearPointer, { passive: true, capture: true })
 
   if (!reducedMotion)
     wave = { start: performance.now(), x: width * 0.3, y: height * 0.45 }
