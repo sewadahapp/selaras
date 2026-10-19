@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test'
+import type { Locator, Page } from '@playwright/test'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from '@nuxt/test-utils/playwright'
 
@@ -12,6 +12,50 @@ function collectIssues(page: Page) {
       issues.push(message.text())
   })
   return issues
+}
+
+async function searchRowHeight(input: Locator) {
+  return input.evaluate(element => element.parentElement!.offsetHeight)
+}
+
+for (const width of [1440, 600]) {
+  for (const virtualize of [false, true]) {
+    test(`keeps the search row height with overflowing options at ${width}px (virtual: ${virtualize})`, async ({ page, goto }) => {
+      const issues = collectIssues(page)
+      await page.setViewportSize({ width, height: 1000 })
+      const input = page.getByRole('combobox', { name: 'Search...', exact: true })
+      const trigger = page.locator('#select-trigger')
+      const query = `virtual=${virtualize}`
+      await goto(`/?count=2&${query}`, { waitUntil: 'hydration' })
+      await trigger.click()
+      await expect(input).toBeFocused()
+      const shortHeight = await searchRowHeight(input)
+      expect(shortHeight).toBeGreaterThanOrEqual(36)
+
+      await goto(`/?count=38&${query}`, { waitUntil: 'hydration' })
+      await trigger.click()
+      await expect(input).toBeFocused()
+      await expect.poll(() => searchRowHeight(input)).toBeCloseTo(shortHeight, 0)
+      const viewport = width === 600 ? page.getByRole('listbox') : page.locator('[data-reka-combobox-viewport]')
+      await expect.poll(() => viewport.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true)
+
+      await input.fill('Option 38')
+      await expect(page.getByRole('option', { name: 'Option 38', exact: true })).toBeVisible()
+      await expect(page.getByRole('option', { name: 'Option 1', exact: true })).toHaveCount(0)
+      await expect.poll(() => searchRowHeight(input)).toBeCloseTo(shortHeight, 0)
+      await input.fill('')
+      await expect.poll(() => viewport.evaluate(element => element.scrollHeight > element.clientHeight)).toBe(true)
+      await expect.poll(() => searchRowHeight(input)).toBeCloseTo(shortHeight, 0)
+
+      await input.press('End')
+      const last = page.getByRole('option', { name: 'Option 38', exact: true })
+      await expect(last).toBeInViewport()
+      await input.press('Enter')
+      await expect(page.locator('#value-proposals')).toHaveText('[38]')
+      await expect(trigger).toBeFocused()
+      expect(issues).toEqual([])
+    })
+  }
 }
 
 test('owns mobile Select focus through filtering, Tab, selection and native submission', async ({ page, goto }) => {

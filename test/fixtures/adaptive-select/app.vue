@@ -12,10 +12,12 @@ const parentValue = ref()
 const acceptClose = ref(route.query.veto !== 'true')
 const requests = ref([])
 const proposals = ref([])
-const items = Object.freeze([
-  { label: 'Numbers', items: [{ label: 'One', value: 1 }, { label: 'Two', value: 2 }] },
-  { label: 'Other', items: [{ label: 'Three', value: 3, disabled: true }] },
-])
+const items = Object.freeze(route.query.count
+  ? Array.from({ length: Number(route.query.count) }, (_, index) => ({ label: `Option ${index + 1}`, value: index + 1 }))
+  : [
+      { label: 'Numbers', items: [{ label: 'One', value: 1 }, { label: 'Two', value: 2 }] },
+      { label: 'Other', items: [{ label: 'Three', value: 3, disabled: true }] },
+    ])
 const bindings = computed(() => ({
   ...(controlledOpen ? { open: parentOpen.value } : { defaultOpen: initialOpen }),
   ...(controlledModel ? { modelValue: parentValue.value } : { defaultValue: multiple ? [] : undefined }),

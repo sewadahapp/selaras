@@ -27,7 +27,7 @@ export const selectTheme = tv({
     // Layout only; FieldClearButton owns the shared interaction treatment.
     clear: '',
     dropdown: 'inline-flex shrink-0 items-center justify-center rounded-[var(--selaras-resolved-radius-sm)] p-0.5 text-[var(--selaras-resolved-text-muted)] transition-colors hover:bg-[var(--selaras-resolved-border-default)] hover:text-[var(--selaras-resolved-text-default)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--_selaras-color-focus)]',
-    searchWrapper: 'box-content flex h-9 items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-2',
+    searchWrapper: 'box-content flex h-9 shrink-0 items-center gap-2 border-b border-[var(--selaras-resolved-border-default)] px-2',
     // The popup owns its search row height. Inside a trigger, stretch the
     // editor into the available space instead of adding a fixed input
     // height to the trigger's vertical padding.
