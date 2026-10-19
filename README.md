@@ -160,18 +160,30 @@ See the full [Theming guide](./docs/content/overview/theming.md).
   # Requires Bun for the temporary consumer's dependency installation
   npm run test:compat
 
-  # Release new versions (selaras, docs layer, or both)
+  # Release core and the docs layer (the default), or all three packages
   npm run release
+  npm run release:selaras-and-docs
+  npm run release:all
+
+  # Release one package independently
   npm run release:selaras
   npm run release:docs
+  npm run release:mcp
 
   # Each package has its own version stream, so one run can bump them at
   # different levels - Selaras major alongside a docs patch, for example.
   # The release workflow exposes per-package bump/version inputs for this.
-  # Locally, drive each half through its own env:
+  # Locally, drive each package through its own env:
   RELEASE_BUMP=major npm run release:selaras
   RELEASE_BUMP=patch npm run release:docs
+  RELEASE_BUMP=patch npm run release:mcp
   ```
+
+  In the release and release rehearsal workflows, select `selaras-and-docs`
+  for core and docs, `all` to include MCP, or a single package. Bump and exact
+  version inputs apply only to the selected packages. Each package keeps its
+  own version stream. The local `release:both` command remains an alias for
+  `release:selaras-and-docs`.
 
   Dependency installation enables Git hooks in a local development checkout.
   Before each commit, the hooks run ESLint, docs preparation, root and docs

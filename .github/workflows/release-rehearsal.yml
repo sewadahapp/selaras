@@ -4,11 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: Which package to rehearse
+        description: Packages to rehearse (version settings apply only to selected packages)
         type: choice
-        default: both
+        default: selaras-and-docs
         options:
-          - both
+          - selaras-and-docs
+          - all
           - selaras
           - selaras-docs
           - selaras-mcp
@@ -67,9 +68,12 @@ jobs:
       - name: Create ephemeral release candidate
         run: |
           case "${{ inputs.package }}" in
-            both)
+            all|selaras-and-docs)
               npx changelogen --bump -r "${{ inputs.selaras-version }}"
               node scripts/bump-workspace-package.mjs --package docs --version "${{ inputs.docs-version }}"
+              if [ "${{ inputs.package }}" = "all" ]; then
+                node scripts/bump-workspace-package.mjs --package mcp --version "${{ inputs.mcp-version }}"
+              fi
               ;;
             selaras)
               npx changelogen --bump -r "${{ inputs.selaras-version }}"
@@ -83,7 +87,7 @@ jobs:
           esac
 
       - name: Add 1.0 migration summary
-        if: (inputs.package == 'both' || inputs.package == 'selaras') && inputs.selaras-version == '1.0.0'
+        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras') && inputs.selaras-version == '1.0.0'
         run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
 
       - name: Install Chromium for candidate validation
@@ -93,13 +97,13 @@ jobs:
         run: bun run test:release
 
       - name: Validate docs layer publish manifest
-        if: (inputs.package == 'both' || inputs.package == 'selaras-docs')
+        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs')
         run: |
           node scripts/prepare-docs-layer-release.mjs --selaras "${{ inputs.selaras-version }}"
           node scripts/prepare-docs-layer-release.mjs --assert-publishable
 
       - name: Validate MCP server package
-        if: inputs.package == 'selaras-mcp'
+        if: inputs.package == 'all' || inputs.package == 'selaras-mcp'
         run: bun run prepack && bun run test:agent
 
       - name: Generate static docs site

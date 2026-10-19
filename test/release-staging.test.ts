@@ -21,6 +21,7 @@ describe('release staging', () => {
     { releases: ['selaras-docs'], newMcpChangelog: false, unchangedChangelogs: false },
     { releases: ['selaras-mcp'], newMcpChangelog: false, unchangedChangelogs: false },
     { releases: ['selaras', 'selaras-docs'], newMcpChangelog: false, unchangedChangelogs: false },
+    { releases: ['selaras', 'selaras-docs', 'selaras-mcp'], newMcpChangelog: true, unchangedChangelogs: false },
     { releases: ['selaras'], newMcpChangelog: true, unchangedChangelogs: false },
     { releases: ['selaras-mcp'], newMcpChangelog: true, unchangedChangelogs: false },
     { releases: ['selaras-docs'], newMcpChangelog: false, unchangedChangelogs: true },
