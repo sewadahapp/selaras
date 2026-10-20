@@ -32,6 +32,10 @@ npm run test:types
 # Run ESLint
 npm run lint
 
+# Run accessibility and keyboard checks (install Chromium once)
+npm run test:browser:install
+npm run test:a11y
+
 # Run Vitest
 npm run test
 npm run test:watch
@@ -99,6 +103,15 @@ type checks, and the full Vitest suite against the working tree. They also
 require Conventional Commit messages, such as `fix(select): preserve selection`
 or `feat(toolbar): add controls`. CI validates the committed code and commit
 messages too. CI and production installs skip local hook installation.
+
+## Accessibility checks
+
+`npm run test:a11y` builds a dedicated consumer and runs axe checks plus keyboard
+scenarios for forms, validation, navigation, empty states, nested dialogs, and
+adaptive selection. The CI accessibility job runs this suite in Chromium. New
+interactive components should also have focused keyboard tests for their behavior.
+
+See the [v1.1 quality review](./docs/reviews/v1.1-quality.md) for the current audit scope and loading measurements.
 
 ## Documentation deployment
 

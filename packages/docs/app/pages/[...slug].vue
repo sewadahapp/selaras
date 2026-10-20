@@ -7,11 +7,13 @@ import ProseH4 from '@sewadah/selaras/components/ProseH4.vue'
 import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
+import { docsContentPath } from '../utils/content-path'
 
 const route = useRoute()
 const appConfig = useAppConfig()
 const nuxtApp = useNuxtApp()
-const { data: page, error, status, refresh } = await useAsyncData(`selaras-docs:${route.path}`, () => queryCollection('docs').path(route.path).first())
+const contentPath = docsContentPath(route.path)
+const { data: page, error, status, refresh } = await useAsyncData(`selaras-docs:${contentPath}`, () => queryCollection('docs').path(contentPath).first())
 
 const recoveringBuild = import.meta.client && (!page.value || error.value)
   && await nuxtApp.$docsCheckBuild(route.fullPath, true)
@@ -73,7 +75,7 @@ const surround = useDocsSurround()
           </template>
         </ContentRenderer>
         <DocsPageActions
-          :path="route.path"
+          :path="contentPath"
           :title="page!.title"
           :edit-link="page!.editLink !== false"
           :issue-link="page!.issueLink !== false"
@@ -87,7 +89,7 @@ const surround = useDocsSurround()
         />
       </article>
       <DocsTableOfContents v-if="hasToc" :links="tocLinks">
-        <DocsPageActions :path="route.path" :title="page!.title" :edit-link="page!.editLink !== false" :issue-link="page!.issueLink !== false" />
+        <DocsPageActions :path="contentPath" :title="page!.title" :edit-link="page!.editLink !== false" :issue-link="page!.issueLink !== false" />
       </DocsTableOfContents>
     </div>
   </SContainer>

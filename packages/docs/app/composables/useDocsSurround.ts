@@ -1,4 +1,5 @@
 import type { ContentNavigationLink } from '@sewadah/selaras/components/ContentNavigation.vue'
+import { docsContentPath } from '../utils/content-path'
 
 function flattenNavigation(links: ContentNavigationLink[]): ContentNavigationLink[] {
   return links.flatMap(link => link.children?.length ? flattenNavigation(link.children) : [link])
@@ -11,7 +12,7 @@ export function useDocsSurround() {
 
   return computed(() => {
     const links = flattenNavigation(navigation.value ?? [])
-    const index = links.findIndex(link => link.path === route.path)
+    const index = links.findIndex(link => docsContentPath(link.path) === docsContentPath(route.path))
 
     return index === -1
       ? { prev: undefined, next: undefined }

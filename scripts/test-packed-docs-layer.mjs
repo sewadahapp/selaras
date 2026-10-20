@@ -102,6 +102,9 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     const response = await fetch(pageUrl)
     assert.equal(response.status, 200)
     const html = await response.text()
+    const slashResponse = await fetch(new URL('/guide/getting-started/', url))
+    assert.equal(slashResponse.status, 200, 'trailing-slash documentation URLs must resolve the same content')
+    assert.match(await slashResponse.text(), /<h1[^>]*>[\s\S]*Getting started/, 'trailing-slash URLs must render the requested document')
     for (const slug of ['empty', 'whitespace', 'frontmatter-only']) {
       const response = await fetch(new URL(`/guide/${slug}`, url))
       assert.equal(response.status, 200, 'an existing empty document must not become an error response')
@@ -194,6 +197,13 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         // Icon providers and other optional browser requests must not turn a
         // hydration assertion into a network-idle test. The following
         // interactive checks wait for the hydrated UI they actually need.
+        await page.goto(new URL('/guide/getting-started/', url).href, { waitUntil: 'domcontentloaded' })
+        await page.waitForFunction(() => {
+          const app = document.getElementById('__nuxt')?.__vue_app__?.$nuxt
+          return app && !app.isHydrating
+        })
+        await page.getByRole('heading', { name: 'Getting started', exact: true }).waitFor()
+        assert.equal(await page.locator('[data-error-kind]').count(), 0, 'trailing-slash URLs must remain valid after hydration')
         await page.goto(pageUrl.href, { waitUntil: 'domcontentloaded' })
         await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
         if (prefixed) {
