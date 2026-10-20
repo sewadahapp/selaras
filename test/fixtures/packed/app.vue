@@ -71,6 +71,7 @@ void hyphenatedRole
   <SApp>
     <output id="packed-config" :data-icon="packedIcons.close" :data-message="packedMessages.close" :data-ripple="packedRipple">{{ packedLocale }}</output>
     <RemainingThemes />
+    <SEmptyState id="packed-empty-state" title="No published projects" description="Add your first project." :ui="{ root: 'py-6' }" />
     <SEditable id="packed-editable" default-value="Published title" aria-label="Published editable title" />
     <span id="packed-responsive" class="tw:hidden tw:tablet:block">Wide viewport</span>
     <button id="packed-toast" @click="addPublishedToast({ title: 'Published global toast', color: 'published' })">

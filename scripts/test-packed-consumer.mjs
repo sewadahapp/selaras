@@ -236,6 +236,7 @@ async function inspectSsr(prefixed = true, explicitTheme = false) {
     assert.match(html, /<input(?=[^>]*id="packed-external-email")(?=[^>]*name="email")/, 'generated Input must retain the form library field name')
     assert.match(html, /<input(?=[^>]*name="plan")(?=[^>]*value="0")/, 'generated Select must retain numeric zero for a form library')
     assert.match(html, /<input(?=[^>]*id="packed-external-quantity")(?=[^>]*name="quantity")(?=[^>]*value="1")/, 'generated InputNumber must render the library initial value')
+    assert.match(html, /<div(?=[^>]*id="packed-empty-state")[^>]+>[\s\S]*?No published projects/, 'published EmptyState must render its content during SSR')
     assert.match(html, /<button(?=[^>]*id="packed-editable")[^>]+>.*Published title/s, 'published Editable must render its saved text during SSR')
     const stylesheets = [...html.matchAll(/<link [^>]+>/g)]
       .filter(([tag]) => tag.includes('rel="stylesheet"'))

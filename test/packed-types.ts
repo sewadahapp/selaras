@@ -11,6 +11,8 @@ import type {
   ColorPickerProps,
   ColorRole,
   DrawerProps,
+  EmptyStateProps,
+  EmptyStateSlots,
   InputGroupProps,
   NavigationMenuItem,
   NavigationMenuPositioning,
@@ -373,3 +375,8 @@ void packedToolbar
 void packedToolbarButton
 void packedToolbarGroup
 void packedToolbarTheme
+
+const packedEmptyState: EmptyStateProps = { title: 'No projects', ui: { root: 'py-6' } }
+const packedEmptyStateSlots: EmptyStateSlots = { actions: () => undefined }
+void packedEmptyState
+void packedEmptyStateSlots

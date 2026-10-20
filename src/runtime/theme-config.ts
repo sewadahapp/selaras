@@ -33,6 +33,7 @@ import type { datePickerTheme, DatePickerThemeSlots } from './theme/date-picker'
 import type { drawerTheme, DrawerThemeSlots } from './theme/drawer'
 import type { dropdownTheme, DropdownThemeSlots } from './theme/dropdown'
 import type { editableTheme, EditableThemeSlots } from './theme/editable'
+import type { emptyStateTheme, EmptyStateThemeSlots } from './theme/empty-state'
 import type { fieldClearButtonTheme, FieldClearButtonThemeSlots } from './theme/field-clear-button'
 import type { fileTreeTheme, FileTreeThemeSlots } from './theme/file-tree'
 import type { fileUploadTheme, FileUploadThemeSlots } from './theme/file-upload'
@@ -266,6 +267,10 @@ export interface ThemeComponentRegistry {
   callout: {
     slots: CalloutThemeSlots
     conditions: Pick<CalloutVariants, 'type'>
+  }
+  emptyState: {
+    slots: EmptyStateThemeSlots
+    conditions: Pick<VariantProps<typeof emptyStateTheme>, never>
   }
   card: {
     slots: CardThemeSlots
