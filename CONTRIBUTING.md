@@ -88,14 +88,13 @@ with `npm run test:browser:install` before running these commands locally.
 `SELARAS_PACKED_BROWSER_EXECUTABLE_PATH` optionally selects a local Chromium.
 
 The Nuxt compatibility workflow runs on pushes, pull requests, manual
-dispatch, and weekly. Core's future-mode job fails the workflow on
-regressions; the nightly jobs are informational while Nuxt 5 is unreleased.
-The docs future-mode job is also informational: Nuxt Content imports helpers through
-auto-imports disabled by v5 defaults. Its current client queries also rely
-on a global `$fetch` absent from Nuxt 5, preventing client-side navigation.
-The checks retain the framework defaults and report these failures. They
-do not expand the published Nuxt peer range or upgrade the documentation
-website.
+dispatch, and weekly. Both core and docs future-mode jobs fail the workflow
+on regressions; the nightly jobs are informational while Nuxt 5 is unreleased.
+The docs layer enables server auto-imports for Nuxt Content 3 and supplies
+its global client `$fetch` when the framework does not provide one. These
+compatibility settings ship with the layer and are tested in installed
+consumers, rather than being added only to the test fixtures. The checks do
+not expand the published Nuxt peer range or upgrade the documentation website.
 
 Dependency installation enables Git hooks in a local development checkout.
 Before each commit, the hooks run ESLint, docs preparation, root and docs

@@ -37,6 +37,17 @@ need an app root, Content config, or stylesheet for the default setup.
 `nuxt` remains a peer because the documentation site is a Nuxt application;
 the layer is normally a development dependency, just like Nuxt itself.
 
+## Framework compatibility
+
+The supported Nuxt range is declared in the package's peer dependencies.
+CI also tests Nuxt 4 with `future.compatibilityVersion: 5` and Nuxt 5 nightly.
+The nightly checks are informational until Nuxt 5 is released.
+
+The layer enables server auto-imports required by Nuxt Content 3. On the
+client, it supplies Content's global `$fetch` from Nuxt's configured fetch
+client when that global is missing, preserving an existing implementation.
+Consumers do not need to configure either compatibility setting themselves.
+
 ## Updates after deployment
 
 In production, the layer checks Nuxt's latest build manifest before navigation

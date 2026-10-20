@@ -24,11 +24,9 @@ jobs:
           - channel: future
             scope: core
             experimental: false
-          # Content currently relies on server auto-imports disabled by the
-          # v5 defaults. Keep the finding visible without blocking Nuxt 4.
           - channel: future
             scope: docs
-            experimental: true
+            experimental: false
           - channel: nightly
             scope: core
             experimental: true

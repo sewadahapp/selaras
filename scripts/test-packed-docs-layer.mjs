@@ -374,6 +374,7 @@ try {
   assert.ok(docsArchive.files.some(file => file.path === 'app/error.vue'), 'the layer must publish its default fatal-error page')
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/DocsErrorBoundary.vue'), 'the layer must publish local error isolation')
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/DocsThemePicker.vue'), 'the layer must publish its empty theme picker override point')
+  assert.ok(docsArchive.files.some(file => file.path === 'app/plugins/content-fetch.client.ts'), 'the layer must publish its Content fetch compatibility plugin')
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsExample.vue'))
   assert.ok(docsArchive.files.some(file => file.path === 'app/components/content/DocsViewportPreview.vue'), 'the docs layer must publish its reusable viewport preview')
   assert.ok(!docsArchive.files.some(file => /ThemeSource|playground|raw/i.test(file.path)), 'the docs layer must not publish internal theme source tooling')

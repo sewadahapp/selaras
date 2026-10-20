@@ -7,6 +7,8 @@ export default defineNuxtConfig({
   modules: ['@sewadah/selaras', '@nuxt/content', resolve('./modules/docs.mjs')],
   experimental: {
     emitRouteChunkError: 'automatic-immediate',
+    // Content 3 still imports server utilities from Nitro's generated imports.
+    nitroAutoImports: true,
   },
   // Selaras supports Node versions with node:sqlite. Keeping Content on its
   // native connector lets an installed docs layer avoid a native addon.
