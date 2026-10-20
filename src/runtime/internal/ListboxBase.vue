@@ -14,6 +14,7 @@ import { useMessages } from '../composables/use-messages'
 import { listboxTheme } from '../theme/listbox'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
+import { useActiveDescendant } from './active-descendant'
 import { isOptionGroup, useComboboxSelect } from './combobox-select'
 import { useListSelection } from './list-selection'
 import ListboxOption from './ListboxOption.vue'
@@ -101,6 +102,8 @@ function updateSelection(value: SelectModelValue | SelectModelValue[] | undefine
 const generatedId = useId()
 const id = computed(() => props.id ?? field?.id ?? `selaras-listbox-${generatedId}`)
 const content = ref<{ $el: HTMLElement }>()
+const searchInput = ref<{ $el: HTMLElement }>()
+useActiveDescendant(() => searchInput.value?.$el, () => [search.value, visibleValues.value])
 defineExpose({ focus: () => content.value?.$el.focus() })
 const size = computed(() => props.size ?? field?.size ?? 'md')
 const invalid = computed(() => props.invalid || field?.invalid.value || false)
@@ -130,18 +133,10 @@ function resetForm() {
     </div>
     <div v-if="searchable" v-bind="parts.searchWrapper">
       <Icon :name="icons.search" v-bind="parts.icon" />
-      <ListboxFilter v-model="search" :disabled="disabled" :placeholder="messages.search" :aria-label="messages.search" role="combobox" aria-autocomplete="list" :aria-expanded="true" :aria-controls="id" v-bind="parts.searchInput" />
+      <ListboxFilter ref="searchInput" v-model="search" :disabled="disabled" :placeholder="messages.search" :aria-label="messages.search" role="combobox" aria-autocomplete="list" :aria-expanded="true" :aria-controls="id" v-bind="parts.searchInput" />
     </div>
     <ListboxContent :id="id" ref="content" :aria-label="label ?? (field?.labelId ? undefined : messages.select)" :aria-labelledby="field?.labelId" :aria-describedby="field?.describedBy.value" :aria-invalid="invalid || undefined" :aria-busy="loading || undefined" v-bind="{ ...parts.content, ...a11yAttrs }" @keydown.capture="onListKeydown">
-      <div v-if="!visible.length" v-bind="parts.empty">
-        <slot v-if="!flatOptions.length" name="empty">
-          {{ messages.noOptions }}
-        </slot>
-        <slot v-else name="empty-filter">
-          {{ messages.noResultsFound }}
-        </slot>
-      </div>
-      <ListboxVirtualizer v-else-if="virtualize" v-slot="{ option: value, virtualItem }" :options="visibleValues" :text-content="value => optionsByValue.get(value)!.label" v-bind="virtual">
+      <ListboxVirtualizer v-if="virtualize" v-slot="{ option: value, virtualItem }" :options="visibleValues" :text-content="value => optionsByValue.get(value)!.label" v-bind="virtual">
         <ListboxOption :option="optionsByValue.get(value)!" :index="indices.get(optionsByValue.get(value)!) ?? virtualItem.index" :selected="values.includes(value)" v-bind="rowProps">
           <template v-if="slots.item" #default="data">
             <slot name="item" v-bind="data" />
@@ -163,6 +158,14 @@ function resetForm() {
         </ListboxGroup>
       </template>
     </ListboxContent>
+    <div v-if="!visible.length" v-bind="parts.empty">
+      <slot v-if="!flatOptions.length" name="empty">
+        {{ messages.noOptions }}
+      </slot>
+      <slot v-else name="empty-filter">
+        {{ messages.noResultsFound }}
+      </slot>
+    </div>
     <div v-if="slots.footer" v-bind="parts.footer">
       <slot name="footer" />
     </div>

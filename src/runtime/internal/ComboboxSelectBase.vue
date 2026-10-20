@@ -43,6 +43,7 @@ import { isNativeInputA11yAttr, isNativeInputAttr, isNativeInputEvent } from '..
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { applyClassPrefix, resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeBindings } from '../utils/ui'
+import { useActiveDescendant } from './active-descendant'
 import { useComboboxSelect } from './combobox-select'
 import ComboboxSelectBody from './ComboboxSelectBody.vue'
 import FieldClearButton from './FieldClearButton.vue'
@@ -602,9 +603,12 @@ function groupOptions(group: { items: readonly (SelectOption | SelectModelValue)
   return group.items.map(toOption)
 }
 
+useActiveDescendant(() => activeEditableInput.value, () => [searchText.value, flatOptions.value])
+
 const field = useFormField()
 
 const selectId = computed(() => props.id ?? field?.id)
+const popupListboxId = `selaras-combobox-options-${useId()}`
 const selectInvalid = computed(() => props.invalid || (field?.invalid.value ?? false))
 const describedBy = computed(() => field?.describedBy.value)
 const selectedSummaryId = `selaras-autocomplete-selection-${useId()}`
@@ -631,6 +635,7 @@ const nativeTriggerAttrs = useFallthroughAttrs(key => !props.creatable && (isNat
 const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: key => isNativeInputA11yAttr(key) || isNativeInputEvent(key) || ((props.creatable || props.searchable) && isNativeInputAttr(key)) })
 const nativeSearchInputAttrs = useFallthroughAttrs(key => isNativeInputAttr(key) || (props.creatable && isNativeInputA11yAttr(key)))
 const triggerProps = computed(() => mergeProps(
+  { 'aria-label': undefined, 'aria-labelledby': nativeTriggerAttrs.value['aria-label'] ? undefined : field?.labelId },
   resolveSlot(ui.value.trigger, props.ui?.trigger),
   !props.creatable ? nativeTriggerAttrs.value : {},
 ))
@@ -801,6 +806,7 @@ const modalSearchInputProps = computed(() => mergeProps(searchInputProps.value, 
 // Single source of truth for ComboboxSelectBody's own (large) prop surface,
 // shared by desktop popups and the mobile modal Listbox adapter.
 const bodyProps = computed(() => ({
+  listboxId: popupListboxId,
   searchable: props.searchable,
   creatable: props.creatable,
   multiple: props.multiple,
@@ -927,7 +933,7 @@ async function clear() {
           <Tooltip v-if="overflowOptions.length" :text="overflowOptions.map((o) => o.label).join(', ')">
             <span v-bind="chipOverflowProps">{{ messages.moreItems(overflowOptions.length) }}</span>
           </Tooltip>
-          <ComboboxInput v-model="searchText" as-child>
+          <ComboboxInput v-model="searchText" :aria-controls="popupListboxId" as-child>
             <TagsInputInput
               :id="selectId"
               :ref="setEditableInput"
@@ -955,6 +961,7 @@ async function clear() {
           :id="selectId"
           :ref="setEditableInput"
           v-model="searchText"
+          :aria-controls="popupListboxId"
           :display-value="displayValue"
           :placeholder="multiple && displayMode === 'comma' && selectedOptions.length ? undefined : placeholder"
           :aria-invalid="selectInvalid || undefined"
@@ -1034,6 +1041,8 @@ async function clear() {
         v-else
         :id="selectId"
         ref="selectTrigger"
+        role="combobox"
+        :aria-controls="popupListboxId"
         data-ui-group-item
         :data-selaras-field-filled="selectedValues.length ? '' : undefined"
         :data-selaras-field-active="open ? '' : undefined"
@@ -1134,6 +1143,9 @@ async function clear() {
 
     <ComboboxPortal v-if="!showMobileModal" v-bind="portalProps">
       <ComboboxContent
+        role="presentation"
+        :aria-multiselectable="undefined"
+        :aria-orientation="undefined"
         position="popper" :side-offset="4"
         :hide-when-empty="creatable && !multiple && !forceSelection"
         :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="colorRoleMarker"

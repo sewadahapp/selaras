@@ -23,6 +23,7 @@ import { computed, mergeProps, ref, useId } from 'vue'
 import Icon from '../components/Icon.vue'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
+import { useActiveDescendant } from './active-descendant'
 import { isOptionGroup } from './combobox-select'
 
 defineOptions({ inheritAttrs: false })
@@ -35,6 +36,7 @@ const emit = defineEmits<ComboboxSelectBodyEmits>()
 // ComboboxContent owns a popup; Dialog owns a modal Listbox surface.
 export interface ComboboxSelectBodyProps {
   listbox?: boolean
+  listboxId?: string
   searchable?: boolean
   creatable?: boolean
   multiple?: boolean
@@ -65,8 +67,10 @@ export interface ComboboxSelectBodyEmits {
 
 const icons = useIcons()
 const messages = useMessages()
-const listboxId = `selaras-select-options-${useId()}`
+const generatedListboxId = `selaras-select-options-${useId()}`
+const listboxId = computed(() => props.listboxId ?? generatedListboxId)
 const searchInput = ref<{ $el: HTMLElement }>()
+useActiveDescendant(() => searchInput.value?.$el, () => [props.searchText, props.flatOptions])
 const { contains } = useFilter({ sensitivity: 'base' })
 const primitives = computed(() => props.listbox
   ? { input: ListboxFilter, viewport: ListboxContent, group: ListboxGroup, label: ListboxGroupLabel, item: ListboxItem, indicator: ListboxItemIndicator, virtualizer: ListboxVirtualizer }
@@ -102,8 +106,8 @@ function onItemSelect(event: Event, value: SelectModelValue) {
 }
 const filterInputProps = computed(() => mergeProps(
   props.listbox
-    ? { 'role': 'combobox', 'aria-autocomplete': 'list', 'aria-expanded': true, 'aria-controls': listboxId, 'aria-label': messages.value.search }
-    : { displayValue: props.displayValue },
+    ? { 'role': 'combobox', 'aria-autocomplete': 'list', 'aria-expanded': true, 'aria-controls': listboxId.value, 'aria-label': messages.value.search }
+    : { 'displayValue': props.displayValue, 'aria-controls': listboxId.value },
   props.searchInputProps ?? {},
 ))
 function focusSearch() {
@@ -140,102 +144,104 @@ defineExpose({ focusSearch, searchElement: computed(() => searchInput.value?.$el
       {{ messages.noOptions }}
     </slot>
   </div>
-  <component :is="primitives.viewport" v-else :id="listbox ? listboxId : undefined" v-bind="viewportProps">
-    <div v-if="listbox && visibleOptions.length === 0 && !createText" v-bind="emptyProps">
-      <slot name="empty-filter">
-        {{ messages.noResultsFound }}
-      </slot>
-    </div>
-    <div v-else-if="creatable && multiple && visibleOptions.length === 0 && !createText" v-bind="emptyProps">
-      <slot name="empty-filter">
-        {{ messages.noResultsFound }}
-      </slot>
-    </div>
-    <ComboboxEmpty v-else-if="!listbox && !(creatable && multiple)" v-bind="emptyProps">
-      <slot name="empty-filter">
-        {{ messages.noResultsFound }}
-      </slot>
-    </ComboboxEmpty>
+  <div v-else-if="listbox && visibleOptions.length === 0 && !createText" v-bind="emptyProps">
+    <slot name="empty-filter">
+      {{ messages.noResultsFound }}
+    </slot>
+  </div>
+  <div v-else-if="creatable && multiple && visibleOptions.length === 0 && !createText" v-bind="emptyProps">
+    <slot name="empty-filter">
+      {{ messages.noResultsFound }}
+    </slot>
+  </div>
+  <ComboboxEmpty v-else-if="!listbox && !(creatable && multiple)" v-bind="emptyProps">
+    <slot name="empty-filter">
+      {{ messages.noResultsFound }}
+    </slot>
+  </ComboboxEmpty>
 
-    <!-- Virtual row measurement needs client DOM, including default-open surfaces. -->
-    <ClientOnly v-if="virtualizeConfig">
-      <component
-        :is="primitives.virtualizer"
-        v-slot="{ option, virtualItem }"
-        :options="virtualOptions"
-        :estimate-size="virtualizeConfig.estimateSize"
-        :overscan="virtualizeConfig.overscan"
-      >
+  <component :is="primitives.viewport" as-child v-bind="viewportProps">
+    <div :id="listboxId" role="listbox" :aria-label="messages.select" :aria-multiselectable="multiple || undefined">
+      <!-- Virtual row measurement needs client DOM, including default-open surfaces. -->
+      <ClientOnly v-if="virtualizeConfig">
         <component
-          :is="primitives.item"
-          :key="String(virtualItem.key)"
-          :value="option.value"
-          :disabled="option.disabled"
-          :data-selaras-create-option="option.raw === undefined || undefined"
-          :style="{ position: 'absolute', top: 0, left: 0, right: 0, transform: `translateY(${virtualItem.start}px)`, height: `${virtualItem.size}px` }"
-          v-bind="itemProps"
-          @select="onItemSelect($event, option.value)"
+          :is="primitives.virtualizer"
+          v-slot="{ option, virtualItem }"
+          :options="virtualOptions"
+          :estimate-size="virtualizeConfig.estimateSize"
+          :overscan="virtualizeConfig.overscan"
         >
-          <template v-if="option.raw === undefined">
-            {{ option.label }}
-          </template>
-          <template v-else>
-            <slot name="item" :item="option.raw">
-              {{ option.label }}
-            </slot>
-            <component :is="primitives.indicator" v-bind="itemIndicatorProps">
-              <Icon :name="icons.check" class="size-4" />
-            </component>
-          </template>
-        </component>
-      </component>
-    </ClientOnly>
-
-    <template v-else>
-      <component :is="primitives.item" v-if="createText" :value="createText" data-selaras-create-option v-bind="itemProps">
-        {{ messages.createOption(createText) }}
-      </component>
-      <template v-for="(entry, index) in items" :key="index">
-        <component :is="primitives.group" v-if="isOptionGroup(entry) && groupOptions(entry).some(matches)">
-          <component :is="primitives.label" v-bind="groupProps">
-            <slot name="group" :group="entry">
-              {{ entry.label }}
-            </slot>
-          </component>
           <component
             :is="primitives.item"
-            v-for="option in groupOptions(entry).filter(matches)"
-            :key="option.key"
+            :key="String(virtualItem.key)"
             :value="option.value"
             :disabled="option.disabled"
+            :data-selaras-create-option="option.raw === undefined || undefined"
+            :style="{ position: 'absolute', top: 0, left: 0, right: 0, transform: `translateY(${virtualItem.start}px)`, height: `${virtualItem.size}px` }"
             v-bind="itemProps"
             @select="onItemSelect($event, option.value)"
           >
-            <slot name="item" :item="option.raw">
+            <template v-if="option.raw === undefined">
               {{ option.label }}
+            </template>
+            <template v-else>
+              <slot name="item" :item="option.raw">
+                {{ option.label }}
+              </slot>
+              <component :is="primitives.indicator" v-bind="itemIndicatorProps">
+                <Icon :name="icons.check" class="size-4" />
+              </component>
+            </template>
+          </component>
+        </component>
+      </ClientOnly>
+
+      <template v-else>
+        <component :is="primitives.item" v-if="createText" :value="createText" data-selaras-create-option v-bind="itemProps">
+          {{ messages.createOption(createText) }}
+        </component>
+        <template v-for="(entry, index) in items" :key="index">
+          <component :is="primitives.group" v-if="isOptionGroup(entry) && groupOptions(entry).some(matches)">
+            <component :is="primitives.label" v-bind="groupProps">
+              <slot name="group" :group="entry">
+                {{ entry.label }}
+              </slot>
+            </component>
+            <component
+              :is="primitives.item"
+              v-for="option in groupOptions(entry).filter(matches)"
+              :key="option.key"
+              :value="option.value"
+              :disabled="option.disabled"
+              v-bind="itemProps"
+              @select="onItemSelect($event, option.value)"
+            >
+              <slot name="item" :item="option.raw">
+                {{ option.label }}
+              </slot>
+              <component :is="primitives.indicator" v-bind="itemIndicatorProps">
+                <Icon :name="icons.check" class="size-4" />
+              </component>
+            </component>
+          </component>
+          <component
+            :is="primitives.item"
+            v-else-if="!isOptionGroup(entry) && matches(toOption(entry))"
+            :value="toOption(entry).value"
+            :disabled="toOption(entry).disabled"
+            v-bind="itemProps"
+            @select="onItemSelect($event, toOption(entry).value)"
+          >
+            <slot name="item" :item="entry">
+              {{ toOption(entry).label }}
             </slot>
             <component :is="primitives.indicator" v-bind="itemIndicatorProps">
               <Icon :name="icons.check" class="size-4" />
             </component>
           </component>
-        </component>
-        <component
-          :is="primitives.item"
-          v-else-if="!isOptionGroup(entry) && matches(toOption(entry))"
-          :value="toOption(entry).value"
-          :disabled="toOption(entry).disabled"
-          v-bind="itemProps"
-          @select="onItemSelect($event, toOption(entry).value)"
-        >
-          <slot name="item" :item="entry">
-            {{ toOption(entry).label }}
-          </slot>
-          <component :is="primitives.indicator" v-bind="itemIndicatorProps">
-            <Icon :name="icons.check" class="size-4" />
-          </component>
-        </component>
+        </template>
       </template>
-    </template>
+    </div>
   </component>
 
   <slot name="footer" />

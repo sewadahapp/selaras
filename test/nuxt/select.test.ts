@@ -34,7 +34,7 @@ describe('select', () => {
     const inlineWrapper = await mountSuspended(Select, { props: { items: fruitItems, open: true, portal: false, positioning: { side: 'top', align: 'end' } } })
     try {
       expect(inlineWrapper.find('[role=listbox]').exists()).toBe(true)
-      expect(inlineWrapper.find('[role=listbox]').attributes('data-side')).toBe('top')
+      expect(inlineWrapper.find('[data-side]').attributes('data-side')).toBe('top')
     }
     finally {
       inlineWrapper.unmount()

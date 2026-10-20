@@ -9,7 +9,7 @@ test('preserves primitive identity through hydration, chip removal, and form res
   })
   await goto('/', { waitUntil: 'hydration' })
   const form = page.locator('#identity-form')
-  const trigger = form.getByRole('button', { name: 'Choose identities', exact: true })
+  const trigger = form.getByRole('combobox', { name: 'Choose identities', exact: true })
   await expect(trigger).toHaveAccessibleDescription('Choose numeric or string identities.')
   const values = () => form.evaluate(el => new FormData(el as HTMLFormElement).getAll('identity'))
   await expect.poll(values).toEqual(['1', '1'])

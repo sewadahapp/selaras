@@ -125,6 +125,7 @@
     "lint:fix": "eslint --fix",
     "test": "vitest run",
     "test:browser": "playwright test",
+    "test:a11y": "playwright test test/browser/accessibility.spec.ts",
     "test:browser:install": "playwright install chromium",
     "test:compat": "node scripts/test-compatibility.mjs",
     "test:nuxt-compat": "node scripts/test-nuxt-compatibility.mjs",
@@ -161,6 +162,7 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^9.3.0",
+    "@axe-core/playwright": "^4.14.0",
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
     "@modelcontextprotocol/sdk": "^1.32.1",

@@ -377,15 +377,17 @@ back to FormField's own state when not set directly on the select.
 
 ### Accessibility
 
-Select renders Reka UI's Combobox primitive, so the accessibility semantics
-come from there rather than being reimplemented here: the trigger/search
-input exposes `role="combobox"` with `aria-expanded`/`aria-controls`, each
-option is `role="option"`, and each group is `aria-labelledby` its header.
+The trigger exposes a labelled `combobox` with its expanded state and a relationship
+to the popup's option list. `SFormField` supplies the visible label; standalone
+instances can use `aria-label` or `aria-labelledby`. Search inputs and footer actions
+sit outside the listbox's option hierarchy. The adaptive modal supplies dialog
+semantics and restores focus to the trigger when closed.
+
+
 Arrow keys move the highlighted option, <kbd>Enter</kbd> selects it,
 <kbd>Escape</kbd> closes the popover, and typing while closed (or while
-`searchable`) filters the list - all standard behavior for the
-[ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/),
-not something to configure here.
+`searchable`) filters the list, following the
+[ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/).
 
 ### Custom `:ui`
 

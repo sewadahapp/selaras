@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "../../../src/runtime/theme.css";
+@import "#selaras/tailwind.css";
+
+body {
+  background: var(--selaras-resolved-surface-canvas);
+  color: var(--selaras-resolved-text-default);
+}

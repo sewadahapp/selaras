@@ -77,6 +77,9 @@ Groups use the same `{ label, items }` shape as Select.
 Search matches labels without case or accent sensitivity. Filtering preserves
 selection, and choosing an item leaves the search text intact.
 Use `empty` for an empty collection and `empty-filter` for no matching results.
+[EmptyState](/components/data/empty-state) provides richer messages for either slot.
+Empty content is rendered alongside the option list. Put interactive actions in
+`footer`, keeping the listbox dedicated to selectable options.
 
 ### Rich items and custom keys
 
