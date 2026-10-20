@@ -1,6 +1,34 @@
 # Changelog
 
 
+## v1.1.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.2...v1.1.0)
+
+### 🚀 Enhancements
+
+- **empty-state:** Add reusable empty states and examples ([b915695](https://github.com/sewadahapp/selaras/commit/b915695))
+
+### 🩹 Fixes
+
+- **release:** Add explicit all-package release selection ([8ac0d9b](https://github.com/sewadahapp/selaras/commit/8ac0d9b))
+- **docs:** Restore dot grid pointer interaction ([3f8df1e](https://github.com/sewadahapp/selaras/commit/3f8df1e))
+- **a11y:** Correct selection semantics and add browser checks ([3416404](https://github.com/sewadahapp/selaras/commit/3416404))
+- **docs:** Preserve content at trailing-slash URLs ([24f55a6](https://github.com/sewadahapp/selaras/commit/24f55a6))
+- **docs:** Restore future and nightly Nuxt compatibility ([272260e](https://github.com/sewadahapp/selaras/commit/272260e))
+
+### 📖 Documentation
+
+- Refresh v1 setup guide and package homepage ([f4ad42c](https://github.com/sewadahapp/selaras/commit/f4ad42c))
+
+### ✅ Tests
+
+- **compat:** Add Nuxt 5 checks and docs compatibility fixes ([9f6ca01](https://github.com/sewadahapp/selaras/commit/9f6ca01))
+
+### ❤️ Contributors
+
+- Wicaksana Pratama <wicaksanapratama@gmail.com>
+
 ## v1.0.0
 
 <!-- selaras-release-summary -->
