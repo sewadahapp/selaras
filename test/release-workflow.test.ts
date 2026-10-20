@@ -107,4 +107,10 @@ describe('release workflow package selection', () => {
       expect(steps.indexOf(step(release, name))).toBeLessThan(tagIndex)
     expect(step(release, 'Commit and tag the release').if).toBeUndefined()
   })
+
+  it('uses the verified retry path for every package publish', () => {
+    expect(step(release, 'Publish to npm').run).toBe('node scripts/publish-package.mjs')
+    expect(step(release, 'Publish docs layer to npm').run).toBe('node scripts/publish-package.mjs packages/docs')
+    expect(step(release, 'Publish MCP server to npm').run).toBe('node scripts/publish-package.mjs packages/mcp')
+  })
 })

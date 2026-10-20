@@ -77,6 +77,20 @@ version inputs apply only to the selected packages. Each package keeps its
 own version stream. The local `release:both` command remains an alias for
 `release:selaras-and-docs`.
 
+The release workflow publishes selected packages before committing versions
+and creating tags. If a later publish fails, earlier packages may already be
+on npm even though their GitHub releases are missing. The publish steps pack
+the built candidate and compare it with any existing version. If compressed
+integrities differ, the downloaded archive's integrity is verified before
+comparing the exact uncompressed tar bytes. This permits compression changes
+between Node builds while retaining every file and its metadata in the comparison.
+An identical artifact is reused on retry; different contents under the same
+version stop the workflow. Registry and authorization errors remain fatal.
+This lets a retry finish the remaining packages and then create the release
+records without republishing packages that already succeeded. Rerunning an
+older workflow still uses that workflow's original definition, so failures
+from before this check need their published version records recovered first.
+
 Nuxt compatibility runs build the publishable packages with the stable
 workspace toolchain, then install them in isolated consumers using the
 selected framework. The `future` lane uses current Nuxt 4 with

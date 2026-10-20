@@ -180,9 +180,11 @@ jobs:
       # Each package must have its own npm Trusted Publisher configured for
       # this GitHub repository and workflow. Publishing authenticates through
       # GitHub OIDC; no long-lived npm token is needed.
+      # A partial-release retry may reuse an existing version only when the
+      # packed artifact has exactly the same contents as the verified published one.
       - name: Publish to npm
         if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras')
-        run: npm publish --access public
+        run: node scripts/publish-package.mjs
 
       # The docs layer depends on the core package through `file:../..` for
       # local development - npm cannot publish that, so rewrite the
@@ -203,7 +205,7 @@ jobs:
 
       - name: Publish docs layer to npm
         if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs')
-        run: cd packages/docs && npm publish --access public
+        run: node scripts/publish-package.mjs packages/docs
 
       - name: Restore docs layer workspace dependency
         if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs') && always()
@@ -211,7 +213,7 @@ jobs:
 
       - name: Publish MCP server to npm
         if: inputs.package == 'all' || inputs.package == 'selaras-mcp'
-        run: cd packages/mcp && npm publish --access public
+        run: node scripts/publish-package.mjs packages/mcp
 
       # Only reached once the publish above has actually succeeded - now
       # it's safe to commit the version bump(s), tag, and push. Same
