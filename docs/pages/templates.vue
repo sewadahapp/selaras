@@ -85,7 +85,9 @@ const assetUrl = useDocsAssetUrl()
 }
 
 .template {
+  display: flex;
   min-width: 0;
+  flex-direction: column;
 }
 
 .template-preview {
@@ -134,6 +136,7 @@ const assetUrl = useDocsAssetUrl()
 }
 
 .template-description {
+  flex: 1;
   max-width: 36rem;
   margin: 0.75rem 0 0;
   line-height: 1.7;
