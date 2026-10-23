@@ -115,6 +115,7 @@
     "docs:types": "cd docs && vue-tsc --noEmit",
     "test:docs-seo": "node scripts/check-docs-seo.mjs",
     "release": "bun run release:selaras-and-docs",
+    "release:plan": "node scripts/plan-release.mjs",
     "release:selaras-and-docs": "bun run release:selaras && bun run release:docs",
     "release:both": "bun run release:selaras-and-docs",
     "release:all": "bun run release:selaras-and-docs && bun run release:mcp",
