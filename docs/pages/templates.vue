@@ -37,7 +37,7 @@ const assetUrl = useDocsAssetUrl()
         </p>
         <div class="template-actions">
           <SButton as="a" :href="template.createUrl" target="_blank" rel="noreferrer" trailing-icon="hugeicons:arrow-up-right-01">
-            {{ template.createLabel ?? 'Use template' }}
+            Use template
           </SButton>
           <SButton v-if="template.demo" as="a" :href="template.demo" target="_blank" rel="noreferrer" color="neutral" variant="link">
             Live preview

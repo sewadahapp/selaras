@@ -6,7 +6,6 @@ export interface StarterTemplate {
   imageAlt: string
   repository: string
   createUrl: string
-  createLabel?: string
   demo?: string
 }
 
@@ -18,8 +17,7 @@ export const starterTemplates: readonly StarterTemplate[] = [
     image: '/templates/selaras-dashboard.png',
     imageAlt: 'Selaras Dashboard workspace overview with sidebar navigation, customer metrics, a revenue chart, and customer plans.',
     repository: 'https://github.com/sewadahapp/selaras-dashboard',
-    createUrl: 'https://github.com/sewadahapp/selaras-dashboard#quick-start',
-    createLabel: 'Get started',
+    createUrl: 'https://github.com/new?template_name=selaras-dashboard&template_owner=sewadahapp',
     demo: 'https://selaras-dashboard.selarasui.my.id/',
   },
   {
@@ -29,8 +27,7 @@ export const starterTemplates: readonly StarterTemplate[] = [
     image: '/templates/selaras-saas.png',
     imageAlt: 'Selaras SaaS project overview with an application rail, workspace navigation, tasks, and a project inspector.',
     repository: 'https://github.com/sewadahapp/selaras-saas',
-    createUrl: 'https://github.com/sewadahapp/selaras-saas#quick-start',
-    createLabel: 'Get started',
+    createUrl: 'https://github.com/new?template_name=selaras-saas&template_owner=sewadahapp',
     demo: 'https://selaras-saas.selarasui.my.id/',
   },
   {
@@ -40,8 +37,7 @@ export const starterTemplates: readonly StarterTemplate[] = [
     image: '/templates/selaras-documentation.png',
     imageAlt: 'Selaras Documentation homepage with a getting-started introduction, a quick tour, and guide and API reference links.',
     repository: 'https://github.com/sewadahapp/selaras-documentation',
-    createUrl: 'https://github.com/sewadahapp/selaras-documentation#quick-start',
-    createLabel: 'Get started',
+    createUrl: 'https://github.com/new?template_name=selaras-documentation&template_owner=sewadahapp',
     demo: 'https://selaras-documentation.selarasui.my.id/',
   },
   {
