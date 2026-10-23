@@ -131,7 +131,7 @@ every slot and variant - here's `ColorPicker`'s own theme file:
 | `positioning` | `OverlayPositioning` | anchored picker defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `ui` | `Partial<Record<ColorPickerSlot, string \| object>>` | - |
 
 ## Events

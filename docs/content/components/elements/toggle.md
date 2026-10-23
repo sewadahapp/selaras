@@ -71,7 +71,7 @@ every slot and variant - here's `Toggle`'s own theme file:
 | `defaultValue` | `boolean` | `false` |
 | `disabled` | `boolean` | - |
 | `icon` | `string` | - |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `square` | `boolean` | - |
 | `ui` | `Partial<Record<ToggleSlot, string \| object>>` | - |

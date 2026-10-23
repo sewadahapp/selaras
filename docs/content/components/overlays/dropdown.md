@@ -211,6 +211,8 @@ are display-only unless `hotkey: true` is set.
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `open` | `boolean` | uncontrolled (initially closed) |
+| `defaultOpen` | `boolean` | `false` |
 | [`items`](#groups-and-separators) | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; to?: string; target?: string; rel?: string; shortcut?: string; hotkey?: boolean }[][]` | - |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `positioning` | `OverlayPositioning` | menu defaults |
@@ -227,3 +229,15 @@ A `class` passed to `<SDropdown>` is merged into its default-slot trigger elemen
 | --- | --- | --- |
 | `default` | - | The trigger element |
 | `item` | `{ item }` | Replaces an item's label content |
+
+### Initial and controlled visibility
+
+`defaultOpen` sets initial visibility when `open` is omitted. Use `v-model:open`
+when a parent owns visibility; `update:open` proposes changes without overriding
+the parent's value. Changing `defaultOpen` after mount does not control the overlay.
+
+## Events
+
+| Event | Payload | Purpose |
+| --- | --- | --- |
+| `update:open` | `boolean` | Requests opening or closing the menu or adaptive modal |

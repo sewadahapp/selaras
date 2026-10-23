@@ -144,6 +144,7 @@ every slot and variant - here's `FormField`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `id` | `string` | generated unique ID |
 | `label` | `string` | - |
 | `name` | `string` | - |
 | `description` | `string` | - |

@@ -84,10 +84,9 @@ export interface SelectProps<Entry extends SelectEntry = { value: SelectValue, l
   /** Teleport target for the anchored list, or `false` to render it inline. */
   portal?: OverlayPortal
   /**
-   * Opts into the control's accessible small-screen presentation. Select uses
-   * a centered modal; Autocomplete keeps its editable combobox in a wider
-   * nonmodal panel. The active presentation is chosen on open and held until
-   * close.
+   * Opts into a small-screen modal. Select shows its searchable option list;
+   * Autocomplete supplies a dedicated editable combobox inside the modal.
+   * The active presentation is chosen on open and held until close.
    */
   adaptive?: boolean
   ui?: UiProp<SelectThemeSlots>

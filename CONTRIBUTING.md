@@ -117,6 +117,24 @@ require Conventional Commit messages, such as `fix(select): preserve selection`
 or `feat(toolbar): add controls`. CI validates the committed code and commit
 messages too. CI and production installs skip local hook installation.
 
+## Public documentation coverage
+
+Each public component must have a guide. Companion components can share their
+parent's guide: declare their canonical names in that Markdown file's frontmatter,
+for example `components: [SColumn, SColumnGroup]` in the Table guide. The agent
+catalog builder combines these with the component inferred from the guide name.
+It checks the package's public export boundary, including TypeScript components,
+and rejects missing guides, unknown/private names, or ambiguous ownership.
+
+`bun run agent:build` checks this inventory; `bun run test:agent` also exercises
+discovery and shared-guide lookup through the packed MCP server. Keep names in
+this metadata even when their API tables share a page. Internal recursive helpers
+and renderer lifecycle components remain excluded. Website content, Markdown
+exports, and the offline catalog use the same examples and guide text.
+
+See the [public API documentation audit](./docs/reviews/public-api-audit.md) for
+the reviewed coverage and corrected examples.
+
 ## Accessibility checks
 
 `npm run test:a11y` builds a dedicated consumer and runs axe checks plus keyboard

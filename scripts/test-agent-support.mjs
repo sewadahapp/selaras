@@ -11,7 +11,7 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js'
 import { loadCatalog, readSection, resolveCatalogPath } from '../packages/mcp/catalog.mjs'
 import { createServer } from '../packages/mcp/server.mjs'
-import { buildAgentCatalog } from './build-agent-catalog.mjs'
+import { buildAgentCatalog, readPublicComponents } from './build-agent-catalog.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const mcpRoot = join(root, 'packages/mcp')
@@ -22,6 +22,7 @@ assert.equal(digest(await buildAgentCatalog()), digest(catalog), 'Published cata
 assert.equal(readSection('## Usage\nExample:\n```md\n## Props\n```\nMore usage.\n## Props\nReal props.', 'Usage'), '## Usage\nExample:\n```md\n## Props\n```\nMore usage.')
 assert.ok(catalog.documents.length > 90)
 assert.ok(catalog.examples.length > 300)
+const publicComponents = await readPublicComponents(root)
 assert.equal(catalog.documents.find(document => document.path === '/components/forms/validation').component, undefined)
 assert.equal(catalog.documents.find(document => document.path === '/components/typography/prose').component, undefined)
 assert.ok(!catalog.documents.some(document => /^\/overview\/[^/]+$/.test(document.path)))
@@ -35,6 +36,20 @@ async function exerciseClient(client) {
   const { tools } = await client.listTools()
   assert.deepEqual(tools.map(tool => tool.name).sort(), ['get_documentation', 'get_example', 'list_components', 'search_documentation'])
   assert.ok(tools.every(tool => tool.annotations.readOnlyHint && !tool.annotations.openWorldHint))
+  const all = await client.callTool({ name: 'list_components', arguments: {} })
+  assert.deepEqual(JSON.parse(all.content[0].text).map(component => component.component).sort(), publicComponents, 'Every public component must be discoverable, including shared-guide companions')
+  for (const [component, path] of [
+    ['SColumn', '/components/data/table'],
+    ['SColumnGroup', '/components/data/table'],
+    ['SToolbarButton', '/components/elements/toolbar'],
+    ['SSplitterPanel', '/components/layout/splitter'],
+    ['SProseH2', '/components/typography/prose'],
+    ['SProsePre', '/components/typography/prose'],
+  ]) {
+    const guide = await client.callTool({ name: 'get_documentation', arguments: { path: component } })
+    assert.notEqual(guide.isError, true, `${component} must resolve its shared guide`)
+    assert.ok(guide.content[0].text.includes(`Documentation: ${path}`))
+  }
   const list = await client.callTool({ name: 'list_components', arguments: { category: 'forms' } })
   const components = JSON.parse(list.content[0].text)
   const select = components.find(component => component.component === 'SSelect')
@@ -54,6 +69,7 @@ async function exerciseClient(client) {
   const missing = await client.callTool({ name: 'get_documentation', arguments: { path: '../../package.json' } })
   assert.equal(missing.isError, true)
   const resources = await client.listResources()
+  assert.equal(resources.resources.length, new Set(resources.resources.map(resource => resource.uri)).size, 'Shared guides must not duplicate resource URIs')
   assert.ok(resources.resources.some(resource => resource.uri === select.uri))
   const resource = await client.readResource({ uri: select.uri })
   assert.match(resource.contents[0].text, /valueKey/)

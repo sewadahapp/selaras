@@ -121,7 +121,7 @@ every slot and variant - here's `PinInput`'s own theme file:
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `name` | `string` | - |
 | `required` | `boolean` | `false` |
 | `ui` | `Partial<Record<'root' \| 'input', string \| object>>` | - |

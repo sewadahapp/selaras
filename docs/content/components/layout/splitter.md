@@ -1,5 +1,6 @@
 ---
 title: Splitter
+components: [SSplitterPanel, SSplitterResizeHandle]
 description: A resizable split-pane layout - drag the handle to resize, built on Reka UI's own resizable-panel primitive.
 order: 68
 ---

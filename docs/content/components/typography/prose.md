@@ -1,5 +1,6 @@
 ---
 title: Prose
+components: [SProseH1, SProseH2, SProseH3, SProseH4, SProseH5, SProseH6, SProsePre]
 description: A pipeline-agnostic typography class for long-form content, plus two enhanced components for renderers that support them.
 order: 70
 ---
@@ -69,7 +70,7 @@ Both are usable directly, the same as any other component:
 
 ```vue-html
 <SProseH3 id="a-heading">A heading</SProseH3>
-<SProsePre code="const x = 1" language="ts" />
+<SProsePre code="const x = 1" language="ts"><code>const x = 1</code></SProsePre>
 ```
 
 ## Props
@@ -86,8 +87,9 @@ Both are usable directly, the same as any other component:
 | `highlights` | `number[]` | - |
 | `meta` | `string` | - |
 
-`code` drives the copy button (nothing renders if it's unset) and is also
-copied verbatim, regardless of what's in the default slot. The header bar
+`code` supplies the clipboard text; the default slot supplies the visible code.
+The copy button is hidden when `code` is empty. A Markdown renderer supplies
+both the highlighted slot content and the original source automatically. The header bar
 shows `filename` if set, else a plain label for `language` if that's set, else
 nothing; set `showHeader` to `false` to hide the whole metadata/copy row.
 CodeGroup does this automatically and moves the filename and file-type icon
@@ -130,61 +132,52 @@ anchor.
 
 ## Wiring into `@nuxt/content`
 
-This module registers `ProsePre`/`ProseH1`-`ProseH6` a *second* time
-under their own bare, unprefixed names (`ProseH1`, not `SProseH1`).
-That's necessary but **not sufficient on its own** - `@nuxtjs/mdc`
-ships its own built-in default `ProseH1`/`ProsePre` (styling-only,
-no copy button, no anchor link) under those exact same names, and its
-own registration wins that naming collision regardless of this
-module's own `priority` setting (confirmed by reading
-`@nuxtjs/mdc`'s own source - `MDCRenderer` never does a global-name
-component *lookup* for these tags at all, so registration order/
-priority never even enters into it).
+Pass imported component objects to `ContentRenderer`. This keeps heading anchors
+and code-copy controls available during server rendering and hydration. Bare
+component names can collide with the renderer's built-in prose components.
 
-The reliable path is `<ContentRenderer>`'s own `components` prop -
-`@nuxtjs/mdc` merges it *over* its built-in defaults (see
-`MDCRenderer.vue`'s own `tags` computed), so this always wins:
+For example, create a wrapper that accepts a document returned by your
+`queryCollection` call:
 
-```vue-html
-<ContentRenderer
-  :value="page"
-  :components="{ h1: 'SProseH1', h2: 'SProseH2', h3: 'SProseH3', h4: 'SProseH4', h5: 'SProseH5', h6: 'SProseH6', pre: 'SProsePre' }"
-  class="selaras-prose"
-/>
+```vue
+<script setup lang="ts">
+import ProseH1 from '@sewadah/selaras/components/ProseH1.vue'
+import ProseH2 from '@sewadah/selaras/components/ProseH2.vue'
+import ProseH3 from '@sewadah/selaras/components/ProseH3.vue'
+import ProseH4 from '@sewadah/selaras/components/ProseH4.vue'
+import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
+import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
+import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
+
+defineProps<{ document: Record<string, unknown> }>()
+const proseComponents = {
+  h1: ProseH1,
+  h2: ProseH2,
+  h3: ProseH3,
+  h4: ProseH4,
+  h5: ProseH5,
+  h6: ProseH6,
+  pre: ProsePre,
+}
+</script>
+
+<template>
+  <ContentRenderer :value="document" :components="proseComponents" class="selaras-prose" />
+</template>
 ```
 
-This docs site's own pages are wired exactly this way in
-`docs/pages/[...slug].vue`, and every heading/code block on this very page
-renders through it.
-
-Everything else, `selaras-prose` styles directly - no `components`
-entry needed for it, since it's plain HTML either way.
-
-### A known SSR caveat
-
-Confirmed via a real production build (`nuxt build` + serving the
-built output, not just dev mode): on the *very first* server-rendered
-HTML for a page, any component `@nuxtjs/mdc` resolves dynamically -
-headings and code blocks included, regardless of whether it's
-resolving to this library's components, its own built-in defaults, or
-anything else passed through `:components` - can render as a literal,
-unresolved tag (`<SProsePre ...>` as text, not real markup) instead of
-the actual element. This traces to `MDCRenderer`'s own `async setup()`
-combined with Vue's `resolveComponent`, a known Vue SSR interaction
-(dynamic component resolution needs Vue's current-instance context,
-which an `await` inside an async `setup()` doesn't reliably preserve
-server-side) - not something introduced by this wiring, and not
-something this module can fix from the outside. It self-corrects
-immediately on client hydration (confirmed: every example on this
-page works correctly once loaded in a real browser) - the practical
-impact is limited to a no-JS/crawler-only view of the very first
-response, not anything a real visitor sees.
+Import the prose stylesheet in your CSS entry as shown above. The docs layer
+already supplies this mapping and stylesheet; a project extending
+`@sewadah/selaras-docs` only needs custom wiring when replacing its renderer.
+The documentation website and packed docs-layer consumers use imported
+components in the same way. Plain elements continue to use the
+`selaras-prose` styles without a component mapping.
 
 ## Custom `:ui`
 
-`SProsePre` and `SProseH1`-`SProseH6` all resolve their slots from the
-same theme file - overriding `ui` on any one of them reads from, and
-merges over, this one shared source. To see exactly what you'd be
+`SProsePre` and `SProseH1`-`SProseH6` share the `prose` theme. Configure
+`app.config.selaras.ui.prose`, or scope `STheme` with `:ui="{ prose: { slots: { pre: 'font-mono' } } }"`.
+These components do not expose an instance `ui` prop. To see exactly what you'd be
 overriding - the current default classes for every slot and variant -
 here's `Prose`'s own theme file:
 

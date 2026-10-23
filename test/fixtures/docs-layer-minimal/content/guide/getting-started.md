@@ -12,3 +12,7 @@ collection and default stylesheet.
 ## Installation
 
 The default page shell should expose this heading in its table of contents.
+
+```ts [greeting.ts]
+const greeting = 'Hello from Markdown'
+```

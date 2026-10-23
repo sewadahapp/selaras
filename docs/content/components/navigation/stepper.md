@@ -180,7 +180,7 @@ every slot and variant - here's `Stepper`'s own theme file:
 | `linear` | `boolean` | `true` |
 | `orientation` | `'horizontal' \| 'vertical'` | `horizontal` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `ui` | `Partial<Record<StepperSlot, string \| object>>` | - |
 
 `Step` is `{ title?: string, description?: string, icon?: string, disabled?: boolean }`.

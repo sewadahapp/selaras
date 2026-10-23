@@ -483,7 +483,7 @@ spacing for an absent calendar. Both slots also support global theme overrides.
 | `preventDeselect` | `boolean` (not `timeOnly`) | `false` |
 | `invalid` | `boolean` | `false` |
 | `clearable` | `boolean` | `false` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'neutral'` |
 | `activeColor` | same as `color` | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
@@ -506,5 +506,5 @@ spacing for an absent calendar. Both slots also support global theme overrides.
 | Emit | Payload | Description |
 | --- | --- | --- |
 | `update:open` | `boolean` | Fires when the picker requests opening or closing |
-| `update:modelValue` | `DateValue \| DateRange \| undefined` | Fires when a day is picked, typed into the field's segments, or cleared |
+| `update:modelValue` | `DateValue \| DateRange \| Time \| undefined` | Proposes a selected, typed, or cleared value; `Time` in time-only mode |
 | `update:view` | `'date' \| 'month' \| 'year'` | Fires when the heading or a month/year cell drills the popover to a different view |

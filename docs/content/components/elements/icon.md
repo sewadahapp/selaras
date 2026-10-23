@@ -91,5 +91,5 @@ every slot and variant - here's `Icon`'s own theme file:
 | Prop | Type | Default |
 | --- | --- | --- |
 | `name` | `string` | - |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | - |
+| `color` | [ColorRole](/overview/theming/color-roles) | - |
 | `ui` | `Partial<Record<'base', string \| object>>` | - |
