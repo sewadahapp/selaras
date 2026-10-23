@@ -162,7 +162,7 @@ void hyphenatedRole
     <SSeparator id="packed-separator" :color="role" />
     <SStepper id="packed-stepper" :items="stepperItems" :color="role" />
     <SPagination id="packed-pagination" :total="20" :items-per-page="10" size="sm" :color="role" :active-color="role" />
-    <STable :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" />
+    <STable id="packed-selection" :data="[{ id: 'published-row' }]" :columns="[column]" :get-row-id="row => row.id" :get-row-selection-label="row => `Select ${row.id}`" selectable />
     <STabs id="packed-tabs" :items="tabItems" default-value="published" :color="role">
       <template #published>
         Published tab content

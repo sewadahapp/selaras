@@ -26,6 +26,26 @@ async function checkAccessibility(page: Page) {
   expect(violations.map(({ id, nodes }) => ({ id, nodes: nodes.map(({ target, failureSummary }) => ({ target, failureSummary })) }))).toEqual([])
 }
 
+test('names table selection controls and supports keyboard selection', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  const members = page.getByRole('region', { name: 'Members', exact: true })
+  const all = members.getByRole('checkbox', { name: 'Select all rows', exact: true })
+  const alya = members.getByRole('checkbox', { name: 'Select Alya', exact: true })
+  const dimas = members.getByRole('checkbox', { name: 'Select Dimas', exact: true })
+  await expect(all).toHaveAccessibleName('Select all rows')
+  await expect(alya).toHaveAccessibleName('Select Alya')
+  await expect(dimas).toHaveAccessibleName('Select Dimas')
+  await alya.focus()
+  await page.keyboard.press('Space')
+  await expect(alya).toBeChecked()
+  await expect(all).toBeChecked({ indeterminate: true })
+  await all.focus()
+  await page.keyboard.press('Space')
+  await expect(all).toBeChecked()
+  await expect(dimas).toBeChecked()
+  await checkAccessibility(page)
+})
+
 for (const colorScheme of ['light', 'dark'] as const) {
   test(`checks forms, validation, navigation, and empty states in ${colorScheme} mode`, async ({ page, goto }) => {
     await page.emulateMedia({ colorScheme })

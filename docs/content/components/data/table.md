@@ -52,6 +52,27 @@ first. `filterable` adds a funnel button beside that column's header; it opens
 a popover with a live text filter and a Clear action. `selectable` adds a leading checkbox column wired to
 `v-model:row-selection`.
 
+Selection checkboxes have accessible names by default: "Select all rows"
+and "Select row 1", "Select row 2", and so on. Row numbers refer to the
+original data order and stay attached to their records when sorting or
+filtering. Customize these defaults with the `selectAllRows` and
+`selectRow(index)` [messages](/utilities/composables/use-messages).
+For a more descriptive name, pass `get-row-selection-label`:
+
+```vue-html
+<STable
+  :data="users"
+  selectable
+  :get-row-selection-label="user => `Select ${user.name}`"
+>
+  <SColumn field="name" header="Name" />
+</STable>
+```
+
+The callback receives the original row object and returns the full accessible
+name. Translate this text in your application when needed. Empty callback
+results fall back to the localized row number.
+
 Use `select-on-row-click` alongside `selectable` to toggle selection by
 clicking anywhere on a row. Clicks on controls inside cells (such as links,
 buttons, and checkboxes) keep their normal behavior. `row-hover` adds a subtle
@@ -528,6 +549,7 @@ slot - here's `Table`'s own theme file:
 | `data` | `TData[]` | - |
 | `columns` | `TableColumnDef<TData>[]` | - |
 | `selectable` | `boolean` | `false` |
+| `getRowSelectionLabel` | `(row: TData) => string` | Localized row number |
 | `selectOnRowClick` | `boolean` | `false` |
 | `rowHover` | `boolean` | `false` |
 | `pageSize` | `number` | - (no pagination until set) |

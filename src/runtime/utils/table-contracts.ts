@@ -16,6 +16,8 @@ export interface TableProps<TData extends RowData = RowData> {
   data: TData[]
   columns?: TableColumnDef<TData>[]
   selectable?: boolean
+  /** Accessible name for a row's selection checkbox. Defaults to the localized row number. */
+  getRowSelectionLabel?: (row: TData) => string
   /** Highlights body rows on hover. @default false */
   rowHover?: boolean
   /** Toggles selection when a selectable body row is clicked. Interactive controls inside cells are ignored. @default false */

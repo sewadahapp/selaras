@@ -12,6 +12,7 @@ const users: User[] = [{ id: 'user-a', name: 'Alice', age: 30 }]
 const columns: TableColumnDef<User>[] = [{ accessorKey: 'name', header: 'Name' }]
 const getRowId = (row: User) => row.id
 const getRowClass = (row: User) => row.age >= 18 ? 'adult' : undefined
+const getRowSelectionLabel = (row: User) => `Select ${row.name}`
 const handleRowClick = (row: User) => row.name.toUpperCase()
 </script>
 
@@ -21,6 +22,8 @@ const handleRowClick = (row: User) => row.name.toUpperCase()
     :columns="columns"
     :get-row-id="getRowId"
     :row-class="getRowClass"
+    :get-row-selection-label="getRowSelectionLabel"
+    selectable
     @row-click="handleRowClick"
   >
     <template #expanded="{ row }">

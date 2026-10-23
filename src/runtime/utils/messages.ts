@@ -58,6 +58,9 @@ export interface MessageRegistry {
   noResultsFound: string
   createOption: (value: string) => string
   noData: string
+  selectAllRows: string
+  /** Receives the one-based index in the supplied data, before sorting or filtering. */
+  selectRow: (index: number) => string
   expandRow: string
   collapseRow: string
   maximize: string
@@ -157,6 +160,8 @@ export const defaultMessages: MessageRegistry = {
   noResultsFound: 'No results found',
   createOption: value => `Create "${value}"`,
   noData: 'No data',
+  selectAllRows: 'Select all rows',
+  selectRow: index => `Select row ${index}`,
   expandRow: 'Expand row',
   collapseRow: 'Collapse row',
   maximize: 'Maximize',

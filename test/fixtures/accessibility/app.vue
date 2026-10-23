@@ -9,6 +9,7 @@ const invalid = ref(false)
 const search = ref('missing')
 const selected = ref<string>()
 const projectName = ref('Website refresh')
+const rows = [{ id: 'a', name: 'Alya' }, { id: 'd', name: 'Dimas' }]
 const items = ['Design', 'Engineering', 'Operations']
 const navigation = [
   { label: 'Projects', to: '#projects' },
@@ -84,6 +85,14 @@ const navigation = [
             </SButton>
           </template>
         </SListbox>
+      </section>
+      <section aria-labelledby="members-heading">
+        <h2 id="members-heading" class="text-lg font-medium">
+          Members
+        </h2>
+        <STable :data="rows" :get-row-id="row => row.id" :get-row-selection-label="row => `Select ${row.name}`" selectable>
+          <SColumn field="name" header="Name" />
+        </STable>
       </section>
     </main>
   </SApp>

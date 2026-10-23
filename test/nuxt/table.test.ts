@@ -2,6 +2,7 @@ import type { DOMWrapper } from '@vue/test-utils'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
+import { updateAppConfig } from '#app'
 import Column from '../../src/runtime/components/Column'
 import Table from '../../src/runtime/components/Table.vue'
 
@@ -10,6 +11,57 @@ function findButton(wrapper: Awaited<ReturnType<typeof mountSuspended>>, text: s
 }
 
 describe('table', () => {
+  it('names every selection checkbox and preserves names through selection and sorting', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ id: 'a', name: 'Alya' }, { id: 'd', name: 'Dimas' }],
+        columns: [{ accessorKey: 'name', header: 'Name', enableSorting: true }],
+        getRowId: (row: any) => row.id,
+        selectable: true,
+      },
+    })
+    try {
+      const names = () => wrapper.findAll('[role="checkbox"]').map(checkbox => checkbox.attributes('aria-label'))
+      expect(names()).toEqual(['Select all rows', 'Select row 1', 'Select row 2'])
+      await wrapper.find('tbody [role="checkbox"]').trigger('click')
+      expect(wrapper.find('thead [role="checkbox"]').attributes('aria-checked')).toBe('mixed')
+      expect(names()).toEqual(['Select all rows', 'Select row 1', 'Select row 2'])
+      const sortableHeader = wrapper.find('th[aria-sort]')
+      await sortableHeader.trigger('click')
+      await sortableHeader.trigger('click')
+      expect(names()).toEqual(['Select all rows', 'Select row 2', 'Select row 1'])
+      await wrapper.find('thead [role="checkbox"]').trigger('click')
+      expect(wrapper.findAll('tbody [role="checkbox"]').every(checkbox => checkbox.attributes('aria-checked') === 'true')).toBe(true)
+    }
+    finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('localizes selection names reactively and accepts row-specific accessible labels', async () => {
+    const wrapper = await mountSuspended(Table, {
+      props: {
+        data: [{ id: 'a', name: 'Alya' }, { id: 'd', name: 'Dimas' }],
+        columns: [{ accessorKey: 'name', header: 'Name' }],
+        selectable: true,
+      },
+    })
+    try {
+      updateAppConfig({ selaras: { messages: { selectAllRows: 'Pilih semua baris', selectRow: (index: number) => `Pilih baris ${index}` } } })
+      await nextTick()
+      expect(wrapper.find('thead [role="checkbox"]').attributes('aria-label')).toBe('Pilih semua baris')
+      expect(wrapper.find('tbody [role="checkbox"]').attributes('aria-label')).toBe('Pilih baris 1')
+      await wrapper.setProps({ getRowSelectionLabel: (row: any) => `Pilih ${row.name}` })
+      expect(wrapper.findAll('tbody [role="checkbox"]').map(checkbox => checkbox.attributes('aria-label'))).toEqual(['Pilih Alya', 'Pilih Dimas'])
+      await wrapper.setProps({ getRowSelectionLabel: () => '' })
+      expect(wrapper.find('tbody [role="checkbox"]').attributes('aria-label')).toBe('Pilih baris 1')
+    }
+    finally {
+      wrapper.unmount()
+      updateAppConfig({ selaras: { messages: { selectAllRows: 'Select all rows', selectRow: (index: number) => `Select row ${index}` } } })
+    }
+  })
+
   it('binds a custom semantic role to its sorting and loading affordances', async () => {
     const wrapper = await mountSuspended(Table, {
       props: {

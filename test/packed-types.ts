@@ -294,6 +294,7 @@ const packedTable: TableProps<PackedUser> = {
   columns: packedColumns,
   getRowId: row => row.id,
   rowClass: row => row.age >= 18 ? 'adult' : undefined,
+  getRowSelectionLabel: row => `Select ${row.name}`,
 }
 const packedToast: ToastOptions = { title: 'Saved', color: 'success' }
 const packedColumnHelper = createTableColumnHelper<PackedUser>()

@@ -48,10 +48,12 @@ const ui = computed(() => theme.value({
 const selectColumn = {
   id: '__select__',
   header: ({ table }: any) => h(Checkbox, {
+    'ui': { box: { 'aria-label': messages.value.selectAllRows } },
     'modelValue': table.getIsAllRowsSelected() ? true : table.getIsSomeRowsSelected() ? 'indeterminate' : false,
     'onUpdate:modelValue': () => table.toggleAllRowsSelected(),
   }),
   cell: ({ row }: any) => h(Checkbox, {
+    'ui': { box: { 'aria-label': props.getRowSelectionLabel?.(row.original) || messages.value.selectRow(row.index + 1) } },
     'modelValue': row.getIsSelected(),
     'disabled': !row.getCanSelect(),
     'onUpdate:modelValue': () => row.toggleSelected(),
@@ -302,8 +304,8 @@ defineExpose({
                 :tabindex="header.column.getCanSort() ? 0 : undefined"
                 :aria-sort="header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : header.column.getCanSort() ? 'none' : undefined"
                 @click="header.column.getToggleSortingHandler()?.($event)"
-                @keydown.enter="header.column.getToggleSortingHandler()?.($event)"
-                @keydown.space.prevent="header.column.getToggleSortingHandler()?.($event)"
+                @keydown.enter.self="header.column.getToggleSortingHandler()?.($event)"
+                @keydown.space.self.prevent="header.column.getToggleSortingHandler()?.($event)"
               >
                 <template v-if="!header.isPlaceholder || header.rowSpan > 1">
                   <div :class="applyClassPrefix('inline-flex items-center gap-1')">
