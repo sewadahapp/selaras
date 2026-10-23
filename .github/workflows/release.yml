@@ -4,17 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: Packages to release (bump settings apply only to selected packages)
+        description: Auto-detect changed packages, or override the selection
         type: choice
-        default: selaras-and-docs
+        default: auto
         options:
+          - auto
           - selaras-and-docs
           - all
           - selaras
           - selaras-docs
           - selaras-mcp
       selaras-bump:
-        description: Selaras version bump (auto lets changelogen infer it from commit types)
+        description: Selaras bump (auto uses relevant conventional commits)
         type: choice
         default: auto
         options:
@@ -23,11 +24,11 @@ on:
           - minor
           - major
       selaras-version:
-        description: Exact Selaras version (for example 1.0.0; overrides selaras-bump)
+        description: Exact Selaras version (must advance; overrides selaras-bump)
         required: false
         type: string
       docs-bump:
-        description: Docs layer version bump (auto resolves to patch)
+        description: Docs layer bump (auto uses relevant conventional commits)
         type: choice
         default: auto
         options:
@@ -36,11 +37,11 @@ on:
           - minor
           - major
       docs-version:
-        description: Exact docs layer version (for example 0.2.0; overrides docs-bump)
+        description: Exact docs layer version (must advance; overrides docs-bump)
         required: false
         type: string
       mcp-bump:
-        description: MCP server version bump (auto resolves to patch)
+        description: MCP server bump (auto uses relevant conventional commits)
         type: choice
         default: auto
         options:
@@ -49,12 +50,19 @@ on:
           - minor
           - major
       mcp-version:
-        description: Exact MCP server version (for example 0.2.0; overrides mcp-bump)
+        description: Exact MCP server version (must advance; overrides mcp-bump)
         required: false
         type: string
 
+# A running publication must finish; a second run waits and then plans against
+# the updated default branch instead of reusing an earlier version candidate.
+concurrency:
+  group: package-release
+  cancel-in-progress: false
+
 jobs:
   release:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
 
     permissions:
@@ -64,6 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
@@ -76,14 +85,26 @@ jobs:
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
 
-      # Trusted publishing (OIDC, see the Publish step below) needs npm CLI
-      # >= 11.5.1 - not guaranteed to be what Node 24.19.0 happens to bundle.
-      - run: npm install -g npm@latest
-
-      - run: npm i -g --force corepack@latest && corepack enable
+      - name: Enable Corepack
+        run: npm i -g --force corepack@latest && corepack enable
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Set release plan path
+        run: echo "PLAN_FILE=$RUNNER_TEMP/selaras-release-plan.json" >> "$GITHUB_ENV"
+
+      - name: Plan release
+        id: plan
+        env:
+          RELEASE_INPUTS: ${{ toJSON(inputs) }}
+        run: node scripts/plan-release.mjs --output "$PLAN_FILE"
+
+      - name: Save release plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-plan
+          path: ${{ env.PLAN_FILE }}
 
       - name: Docs prepare
         run: bun run docs:prepare
@@ -94,175 +115,106 @@ jobs:
       - name: Test
         run: bun run test
 
+      - name: Create release candidate
+        if: steps.plan.outputs.has_packages == 'true'
+        run: node scripts/apply-release-plan.mjs "$PLAN_FILE"
+
+      - name: Install Chromium for release validation
+        if: steps.plan.outputs.has_packages == 'true'
+        run: bunx playwright install --with-deps chromium
+
+      - name: Verify release candidate
+        if: steps.plan.outputs.has_packages == 'true'
+        run: bun run test:release
+
+      - name: Build
+        if: steps.plan.outputs.has_packages == 'true'
+        run: bun run prepack
+
+      - name: Verify MCP server package
+        if: steps.plan.outputs.mcp == 'true'
+        run: bun run test:agent
+
+      # Publishing remains before git finalization. Retried versions are accepted
+      # only when publish-package verifies the already published artifact matches.
+      - name: Configure npm trusted publishing
+        if: steps.plan.outputs.has_packages == 'true'
+        run: npm install -g npm@latest
+
+      - name: Verify release branch has not advanced
+        if: steps.plan.outputs.has_packages == 'true'
+        env:
+          RELEASE_REF: ${{ github.ref }}
+        run: |
+          git fetch origin "$RELEASE_REF"
+          test "$(git rev-parse HEAD)" = "$(git rev-parse FETCH_HEAD)"
+
+      - name: Publish to npm
+        if: steps.plan.outputs.selaras == 'true'
+        run: node scripts/publish-package.mjs
+
+      - name: Prepare docs layer publish manifest
+        if: steps.plan.outputs.docs == 'true'
+        run: node scripts/prepare-docs-layer-release.mjs && node scripts/prepare-docs-layer-release.mjs --assert-publishable
+
+      - name: Verify published Selaras dependency
+        if: steps.plan.outputs.docs == 'true' && steps.plan.outputs.selaras != 'true'
+        run: node scripts/prepare-docs-layer-release.mjs --verify
+
+      - name: Publish docs layer to npm
+        if: steps.plan.outputs.docs == 'true'
+        run: node scripts/publish-package.mjs packages/docs
+
+      - name: Restore docs layer workspace dependency
+        if: always() && steps.plan.outputs.docs == 'true'
+        run: node scripts/prepare-docs-layer-release.mjs --restore
+
+      - name: Publish MCP server to npm
+        if: steps.plan.outputs.mcp == 'true'
+        run: node scripts/publish-package.mjs packages/mcp
+
       - name: Configure git identity
+        if: steps.plan.outputs.has_packages == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # Only bumps package.json and writes CHANGELOG.md - no commit, tag,
-      # push, or GitHub release yet. Everything that mutates git/GitHub
-      # happens *after* the npm publish step below now, not before - a
-      # failed publish used to still leave a pushed bump commit, tag, and
-      # GitHub release behind with nothing to undo them (found the hard
-      # way: a 403 from npm still left v0.1.1 tagged and released on
-      # GitHub). Publishing first means a failure here simply stops the
-      # job - there's nothing to revert because nothing was pushed.
-      # `selaras-bump` defaults to "auto" (changelogen infers patch/minor/
-      # major from commit types since the last tag). `selaras-version` is an
-      # exact override: SemVer's pre-1.0 major bump turns 0.1.1 into 0.2.0,
-      # while the first stable release must explicitly request 1.0.0.
-      - name: Bump Selaras version
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras')
-        env:
-          RELEASE_BUMP: ${{ inputs.selaras-bump }}
-          RELEASE_VERSION: ${{ inputs.selaras-version }}
-        run: |
-          if [ -n "$RELEASE_VERSION" ]; then
-            npx changelogen --bump -r "$RELEASE_VERSION"
-          elif [ "$RELEASE_BUMP" = "auto" ]; then
-            npx changelogen --bump
-          else
-            npx changelogen --bump "--$RELEASE_BUMP"
-          fi
-
-      # Changelogen preserves the complete commit history. The first stable
-      # release adds a short user-facing upgrade summary ahead of it; the
-      # release body below is read from this same generated entry.
-      - name: Add 1.0 migration summary
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras') && inputs.selaras-version == '1.0.0'
-        run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
-
-      # The docs layer is an independent release stream with its own version
-      # - this never copies the core version over. `docs-bump` defaults to
-      # `auto`, which resolves to a patch bump; anything beyond that (or an
-      # exact `docs-version`) needs an explicit bump, since changelogen's
-      # commit-type inference tracks the core stream. Each package in a joint
-      # run uses its own inputs, so mixed levels (Selaras major alongside a
-      # docs patch, for example) release together in one run.
-      - name: Bump docs layer version
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs')
-        env:
-          RELEASE_BUMP: ${{ inputs.docs-bump }}
-          RELEASE_VERSION: ${{ inputs.docs-version }}
-        run: node scripts/bump-workspace-package.mjs --package docs
-
-      # The MCP server is its own release stream too. It reads the catalog
-      # from whichever @sewadah/selaras a project installed, so it only needs
-      # a release when the server itself changes. Select "all" to release it
-      # with core and docs; "selaras-and-docs" keeps it unchanged.
-      - name: Bump MCP server version
-        if: inputs.package == 'all' || inputs.package == 'selaras-mcp'
-        env:
-          RELEASE_BUMP: ${{ inputs.mcp-bump }}
-          RELEASE_VERSION: ${{ inputs.mcp-version }}
-        run: node scripts/bump-workspace-package.mjs --package mcp
-
-      # Validate the versioned release candidate itself, including generated
-      # declarations, a fresh packed install, and Chromium hydration/portal
-      # behavior. CI's matrix remains broader; this is the publish-critical
-      # slice that must finish before npm can receive the artifact.
-      - name: Install Chromium for release validation
-        run: bunx playwright install --with-deps chromium
-
-      - name: Verify release candidate
-        run: bun run test:release
-
-      - name: Build
-        if: inputs.package != 'selaras-docs'
-        run: bun run prepack
-
-      # Packs the core and MCP packages and drives the packed server over
-      # stdio against the packed catalog, exactly as a consumer installs it.
-      - name: Verify MCP server package
-        if: inputs.package == 'all' || inputs.package == 'selaras-mcp'
-        run: bun run test:agent
-
-      # Each package must have its own npm Trusted Publisher configured for
-      # this GitHub repository and workflow. Publishing authenticates through
-      # GitHub OIDC; no long-lived npm token is needed.
-      # A partial-release retry may reuse an existing version only when the
-      # packed artifact has exactly the same contents as the verified published one.
-      - name: Publish to npm
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras')
-        run: node scripts/publish-package.mjs
-
-      # The docs layer depends on the core package through `file:../..` for
-      # local development - npm cannot publish that, so rewrite the
-      # dependency to the just-published core range right before publishing.
-      # The layer keeps its own version throughout; restore the workspace
-      # dependency afterwards so the working tree stays developable.
-      - name: Prepare docs layer publish manifest
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs')
-        run: node scripts/prepare-docs-layer-release.mjs && node scripts/prepare-docs-layer-release.mjs --assert-publishable
-
-      # A docs-only release publishes against a core version from an earlier
-      # run - confirm that range actually exists on the registry before
-      # shipping an uninstallable package. Skipped for joint releases, where
-      # the core version was published a few steps earlier in this same job.
-      - name: Verify published Selaras dependency
-        if: inputs.package == 'selaras-docs'
-        run: node scripts/prepare-docs-layer-release.mjs --verify
-
-      - name: Publish docs layer to npm
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs')
-        run: node scripts/publish-package.mjs packages/docs
-
-      - name: Restore docs layer workspace dependency
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs') && always()
-        run: node scripts/prepare-docs-layer-release.mjs --restore
-
-      - name: Publish MCP server to npm
-        if: inputs.package == 'all' || inputs.package == 'selaras-mcp'
-        run: node scripts/publish-package.mjs packages/mcp
-
-      # Only reached once the publish above has actually succeeded - now
-      # it's safe to commit the version bump(s), tag, and push. Same
-      # script the local `release:*` scripts use, so there's one place
-      # that defines this instead of two copies to keep in sync. Each
-      # package gets its own tag (selaras-v0.3.0, selaras-docs-v0.1.1);
-      # core releases additionally keep the legacy v0.3.0 tag so
-      # changelogen's bump inference keeps working.
       - name: Commit and tag the release
+        if: steps.plan.outputs.has_packages == 'true'
+        env:
+          RELEASE_PACKAGES: ${{ steps.plan.outputs.packages }}
         run: |
-          if [ "${{ inputs.package }}" = "all" ]; then
-            bash scripts/tag-and-push-release.sh selaras selaras-docs selaras-mcp
-          elif [ "${{ inputs.package }}" = "selaras-and-docs" ]; then
-            bash scripts/tag-and-push-release.sh selaras selaras-docs
-          elif [ "${{ inputs.package }}" = "selaras-docs" ]; then
-            bash scripts/tag-and-push-release.sh selaras-docs
-          elif [ "${{ inputs.package }}" = "selaras-mcp" ]; then
-            bash scripts/tag-and-push-release.sh selaras-mcp
-          else
-            bash scripts/tag-and-push-release.sh selaras
-          fi
+          read -r -a packages <<< "$RELEASE_PACKAGES"
+          bash scripts/tag-and-push-release.sh "${packages[@]}"
 
-      # Reads the entry `Bump Selaras version` just wrote into CHANGELOG.md
-      # and creates the matching GitHub release from it - no recomputation of
-      # commits/version, so this can't drift from what was actually
-      # published above.
       - name: Create GitHub release
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras')
+        if: steps.plan.outputs.selaras == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx changelogen gh release
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.plan.outputs.selaras_tag }}
+        run: gh release create "$RELEASE_TAG" --verify-tag --title "$RELEASE_TAG" --notes-file "$PLAN_FILE.selaras.md"
 
-      # The docs layer has no CHANGELOG entry of its own - generate the
-      # release notes from the commits since the previous docs tag instead.
       - name: Create docs layer GitHub release
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs')
+        if: steps.plan.outputs.docs == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "selaras-docs-v$(node -p "require('./packages/docs/package.json').version")" --title "selaras-docs v$(node -p "require('./packages/docs/package.json').version")" --generate-notes
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.plan.outputs.docs_tag }}
+        run: gh release create "$RELEASE_TAG" --verify-tag --title "$RELEASE_TAG" --notes-file "$PLAN_FILE.docs.md"
 
       - name: Create MCP server GitHub release
-        if: inputs.package == 'all' || inputs.package == 'selaras-mcp'
+        if: steps.plan.outputs.mcp == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release create "selaras-mcp-v$(node -p "require('./packages/mcp/package.json').version")" --title "selaras-mcp v$(node -p "require('./packages/mcp/package.json').version")" --generate-notes
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.plan.outputs.mcp_tag }}
+        run: gh release create "$RELEASE_TAG" --verify-tag --title "$RELEASE_TAG" --notes-file "$PLAN_FILE.mcp.md"
 
   docs:
     needs: release
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
 
     permissions:
       contents: read
