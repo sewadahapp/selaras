@@ -2,13 +2,14 @@
 const appConfig = useAppConfig()
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
 const footer = computed(() => docsConfig.value.footer)
+const messages = useDocsMessages()
 </script>
 
 <template>
   <footer v-if="footer?.text || footer?.links?.length" class="selaras-docs-footer" :class="{ 'selaras-docs-footer--fluid': footer?.fluid }">
     <SContainer size="full" class="selaras-docs-footer-inner">
       <DocsFooterBrand />
-      <nav v-if="footer?.links?.length" class="selaras-docs-footer-links" aria-label="Footer navigation">
+      <nav v-if="footer?.links?.length" class="selaras-docs-footer-links" :aria-label="messages.footerNavigation">
         <NuxtLink
           v-for="link in footer.links"
           :key="`${link.to}:${link.label ?? link.icon ?? ''}`"

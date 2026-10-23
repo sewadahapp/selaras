@@ -21,6 +21,9 @@ export async function readPublicComponents(root = repositoryRoot) {
     .sort()
 }
 
+/** Locale folders whose Markdown translates the default locale and must not become catalog entries. */
+const translationFolders = new Set(['id'])
+
 /** Build an offline catalog from the same documentation and examples as the site. */
 export async function buildAgentCatalog(root = repositoryRoot) {
   const manifest = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'))
@@ -42,7 +45,7 @@ export async function buildAgentCatalog(root = repositoryRoot) {
   const documentedComponents = new Map()
   const documents = []
   for (const file of (await readdir(contentRoot, { recursive: true })).sort()) {
-    if (!file.endsWith('.md') || file === 'index.md')
+    if (!file.endsWith('.md') || file === 'index.md' || translationFolders.has(file.split(/[\\/]/)[0]))
       continue
     const source = await readFile(resolve(contentRoot, file), 'utf8')
     const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)

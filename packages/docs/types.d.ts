@@ -44,7 +44,65 @@ export interface SelarasDocsErrorCopy {
   description?: string
 }
 
+/** A locale offered by the docs language switcher. */
+export interface SelarasDocsLocaleOption {
+  code: string
+  /** Label shown in the switcher, written in the locale's own language. */
+  name: string
+  /** BCP-47 tag used for `html lang` and locale-aware components, e.g. `en-GB`. */
+  language?: string
+}
+
+export interface SelarasDocsI18n {
+  /** Locale served without URL changes and used for content at the content root. @default 'en' */
+  defaultLocale?: string
+  /** Locales available in the language switcher. @default [{ code: 'en', name: 'English', language: 'en-GB' }] */
+  locales?: SelarasDocsLocaleOption[]
+}
+
+/**
+ * UI copy shipped by the docs layer. Override a locale's copy through
+ * `app.config.selarasDocs.messages[locale]` when a site needs different wording.
+ */
+export interface SelarasDocsMessages {
+  skipToContent?: string
+  documentationNavigation?: string
+  pageActions?: string
+  reportIssue?: string
+  editPage?: string
+  footerNavigation?: string
+  sourceRepository?: string
+  openNavigation?: string
+  mainNavigation?: string
+  previewViewport?: string
+  tableOfContents?: string
+  searchDocumentation?: string
+  /** Accessible name for the language switcher; `{language}` is replaced. */
+  languageSwitcher?: string
+  documentationUnavailable?: string
+  untranslatedNotice?: string
+  emptyTitle?: string
+  emptyDescription?: string
+  notFoundTitle?: string
+  notFoundDescription?: string
+  fatalTitle?: string
+  fatalDescription?: string
+  pageTitle?: string
+  pageDescription?: string
+  exampleTitle?: string
+  exampleDescription?: string
+  retry?: string
+  retrying?: string
+  reload?: string
+  backToDocumentation?: string
+  home?: string
+}
+
 export interface SelarasDocsAppConfig {
+  /** Locales, the default locale, and language-switcher options. */
+  i18n?: SelarasDocsI18n
+  /** Per-locale overrides for the UI copy shipped by the docs layer. */
+  messages?: Partial<Record<string, SelarasDocsMessages>>
   /** Copy shown for an existing Markdown page with no body content. */
   empty?: {
     title?: string

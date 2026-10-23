@@ -7,13 +7,12 @@ import ProseH4 from '@sewadah/selaras/components/ProseH4.vue'
 import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
-import { docsContentPath } from '../utils/content-path'
 
 const route = useRoute()
 const appConfig = useAppConfig()
 const nuxtApp = useNuxtApp()
-const contentPath = docsContentPath(route.path)
-const { data: page, error, status, refresh } = await useAsyncData(`selaras-docs:${contentPath}`, () => queryCollection('docs').path(contentPath).first())
+const messages = useDocsMessages()
+const { page, fallback, contentPath, error, status, refresh } = await useDocsPageContent()
 
 const recoveringBuild = import.meta.client && (!page.value || error.value)
   && await nuxtApp.$docsCheckBuild(route.fullPath, true)
@@ -35,7 +34,7 @@ async function retryPage() {
 
 definePageMeta({ layout: 'selaras-docs' })
 useSeoMeta({
-  title: () => page.value?.title ?? appConfig.selarasDocs?.errors?.page?.title ?? 'Documentation unavailable',
+  title: () => page.value?.title ?? appConfig.selarasDocs?.errors?.page?.title ?? messages.value.documentationUnavailable,
   description: () => page.value?.description ?? appConfig.selarasDocs?.site?.description,
   robots: () => error.value ? 'noindex' : undefined,
 })
@@ -68,6 +67,9 @@ const surround = useDocsSurround()
       <article class="selaras-docs-article">
         <p v-if="page!.description" class="selaras-docs-description">
           {{ page!.description }}
+        </p>
+        <p v-if="fallback" class="selaras-docs-translation-notice" role="note">
+          {{ messages.untranslatedNotice }}
         </p>
         <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose">
           <template #empty>

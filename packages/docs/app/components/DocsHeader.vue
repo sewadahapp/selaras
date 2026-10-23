@@ -2,6 +2,7 @@
 const route = useRoute()
 const appConfig = useAppConfig()
 const { data: navigation } = useDocsNavigation()
+const messages = useDocsMessages()
 const navigationOpen = ref(false)
 
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
@@ -36,6 +37,7 @@ watch(() => route.path, () => {
       :ui="{ root: 'hidden w-auto xl:flex' }"
     />
     <div class="selaras-docs-header-actions">
+      <DocsLanguageSwitcher />
       <DocsSearchButton v-if="docsConfig.header?.search !== false" />
       <SColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
       <DocsThemePicker v-if="docsConfig.header?.themePicker" />
@@ -45,8 +47,8 @@ watch(() => route.path, () => {
         :href="repositoryUrl"
         target="_blank"
         rel="noreferrer"
-        aria-label="Source repository"
-        title="Source repository"
+        :aria-label="messages.sourceRepository"
+        :title="messages.sourceRepository"
         icon="hugeicons:github"
         variant="ghost"
         color="neutral"
@@ -56,20 +58,20 @@ watch(() => route.path, () => {
         variant="ghost"
         color="neutral"
         class="selaras-docs-nav-toggle"
-        aria-label="Open documentation navigation"
+        :aria-label="messages.openNavigation"
         @click="navigationOpen = true"
       >
         Menu
       </SButton>
     </div>
   </SHeader>
-  <SDrawer v-if="mobileNavigationEnabled" v-model:open="navigationOpen" side="left" title="Documentation navigation" :handle="false">
+  <SDrawer v-if="mobileNavigationEnabled" v-model:open="navigationOpen" side="left" :title="messages.documentationNavigation" :handle="false">
     <template #body>
       <SNavigationMenu
         v-if="headerLinks.length"
         :items="headerLinks"
         orientation="vertical"
-        aria-label="Main navigation"
+        :aria-label="messages.mainNavigation"
         :ui="{ root: 'mb-6 w-full' }"
       />
       <SContentNavigation v-if="sidebarEnabled" :navigation="navigation ?? []" :collapsed="docsConfig.sidebar?.collapsed" />

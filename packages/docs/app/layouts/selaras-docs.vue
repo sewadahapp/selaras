@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const appConfig = useAppConfig()
+const messages = useDocsMessages()
 </script>
 
 <template>
@@ -9,7 +10,7 @@ const appConfig = useAppConfig()
       'selaras-docs-root--fluid': appConfig.selarasDocs?.main?.fluid,
     }"
   >
-    <a class="selaras-docs-skip-link" href="#selaras-docs-main">Skip to content</a>
+    <a class="selaras-docs-skip-link" href="#selaras-docs-main">{{ messages.skipToContent }}</a>
     <DocsHeader />
     <div class="selaras-docs-shell">
       <DocsSidebar />

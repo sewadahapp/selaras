@@ -6,6 +6,16 @@ export default defineAppConfig({
     },
   },
   selarasDocs: {
+    // Mirrors the @nuxtjs/i18n locales so the layer's switcher can label them
+    // without importing the module. The default locale owns the URL and the
+    // content root.
+    i18n: {
+      defaultLocale: 'en',
+      locales: [
+        { code: 'en', name: 'English', language: 'en-GB' },
+        { code: 'id', name: 'Bahasa Indonesia', language: 'id-ID' },
+      ],
+    },
     site: {
       name: 'Selaras',
       description: 'Nuxt-first components for adaptable design systems.',

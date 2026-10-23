@@ -7,13 +7,12 @@ import ProseH4 from '@sewadah/selaras/components/ProseH4.vue'
 import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
-import { docsContentPath } from '../../packages/docs/app/utils/content-path'
 
 const route = useRoute()
 const appConfig = useAppConfig()
 const nuxtApp = useNuxtApp()
-const contentPath = docsContentPath(route.path)
-const { data: page, error, status, refresh } = await useAsyncData(`selaras-docs:${contentPath}`, () => queryCollection('docs').path(contentPath).first())
+const messages = useDocsMessages()
+const { page, fallback, contentPath, error, status, refresh } = await useDocsPageContent()
 
 const recoveringBuild = import.meta.client && (!page.value || error.value)
   && await nuxtApp.$docsCheckBuild(route.fullPath, true)
@@ -34,7 +33,7 @@ async function retryPage() {
 }
 
 definePageMeta({ layout: 'selaras-docs' })
-useDocsSeo(() => ({ title: page.value?.title ?? 'Documentation unavailable', description: page.value?.description ?? appConfig.selarasDocs?.site?.description }))
+useDocsSeo(() => ({ title: page.value?.title ?? messages.value.documentationUnavailable, description: page.value?.description ?? appConfig.selarasDocs?.site?.description }))
 useSeoMeta({ robots: () => error.value ? 'noindex' : undefined })
 
 const proseComponents = {
@@ -58,6 +57,9 @@ const surround = useDocsSurround()
     <div class="selaras-docs-page-grid" :class="{ 'selaras-docs-page-grid--wide': !hasToc }">
       <article class="selaras-docs-article">
         <SPageHeader :title="page!.title" :description="page!.description" class="selaras-docs-page-header" />
+        <p v-if="fallback" class="selaras-docs-translation-notice" role="note">
+          {{ messages.untranslatedNotice }}
+        </p>
         <ContentRenderer :value="page!" :components="proseComponents" class="selaras-docs-content selaras-prose">
           <template #empty>
             <DocsEmptyState heading="h2" />
