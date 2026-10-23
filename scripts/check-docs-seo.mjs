@@ -78,7 +78,7 @@ assert.equal(new Set(locations).size, locations.length, 'Sitemap URLs must be un
 
 const content = new URL('../docs/content/', import.meta.url)
 const documentation = readdirSync(content, { recursive: true })
-  .filter(path => path.endsWith('.md'))
+  .filter(path => path.endsWith('.md') && !path.startsWith('id/'))
   .map(path => path === 'index.md' ? '/' : `/${path.replace(/\.md$/, '')}`)
 
 for (const path of documentation) {

@@ -1,4 +1,6 @@
 import type { DocsNavigationNode } from '../packages/docs/app/utils/docs-navigation'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { docsContentPath, docsDefaultContentPath, docsIsLocalizedContentPath, docsLocalizedContentPath } from '../packages/docs/app/utils/content-path'
 import { docsMessages, formatDocsMessage, resolveDocsMessages } from '../packages/docs/app/utils/docs-messages'
@@ -97,5 +99,38 @@ describe('documentation locale navigation', () => {
       { title: 'Tombol', path: '/components/button' },
       { title: 'Calendar', path: '/components/calendar' },
     ])
+  })
+})
+
+describe('documentation Indonesian translations', () => {
+  const root = new URL('..', import.meta.url).pathname
+  const paths = [
+    'index.md',
+    'overview/getting-started/introduction.md',
+    'overview/getting-started/installation.md',
+    'overview/getting-started/component-usage.md',
+    'overview/getting-started/nuxt-configuration.md',
+    'overview/getting-started/icons.md',
+    'overview/getting-started/messages.md',
+    'overview/getting-started/adaptive-interfaces.md',
+    'overview/getting-started/typescript.md',
+    'overview/getting-started/accessibility.md',
+    'overview/getting-started/migrating-to-1.md',
+    'overview/theming/overview.md',
+    'overview/theming/css-tokens.md',
+    'overview/theming/color-roles.md',
+    'overview/theming/color-modes.md',
+    'overview/theming/component-styling.md',
+    'overview/theming/global-configuration.md',
+    'overview/theming/scoped-themes.md',
+    'overview/theming/complete-themes.md',
+  ]
+
+  it.each(paths)('has an Indonesian translation for %s', (path) => {
+    const content = readFileSync(join(root, 'docs/content/id', path), 'utf8')
+    expect(content).toMatch(/^---\n/)
+    expect(content).toMatch(/title:/)
+    expect(content).toMatch(/description:/)
+    expect(content.length).toBeGreaterThan(100)
   })
 })
