@@ -192,7 +192,8 @@ every slot and variant - here's the panel's own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `open` | `boolean` | `false` |
+| `open` | `boolean` | uncontrolled (initially closed) |
+| `defaultOpen` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` |
@@ -231,3 +232,9 @@ A `class` passed to `<SDrawer>` is merged into the drawer panel. Use `ui.content
 | `body` | Main content |
 | `footer` | Usually action buttons |
 | `close-icon` | Replaces the close button's icon (default: `hugeicons:cancel-01`) |
+
+### Initial and controlled visibility
+
+`defaultOpen` sets initial visibility when `open` is omitted. Use `v-model:open`
+when a parent owns visibility; `update:open` proposes changes without overriding
+the parent's value. Changing `defaultOpen` after mount does not control the overlay.

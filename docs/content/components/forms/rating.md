@@ -117,7 +117,7 @@ every slot and variant - here's `Rating`'s own theme file:
 | `invalid` | `boolean` | `false` |
 | `orientation` | `'horizontal' \| 'vertical'` | `horizontal` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `name` | `string` | - |
 | `required` | `boolean` | `false` |
 | `ui` | `Partial<Record<RatingSlot, string \| object>>` | - |

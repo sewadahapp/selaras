@@ -42,6 +42,12 @@ For development in this repository, run `bun run agent:build` first, then point 
 | `get_documentation` | `path` or component name; optional `section` heading | Markdown API guidance with complete Vue example source. |
 | `get_example` | Example `name` from the catalog | The exact Vue source of that example. |
 
+Companion components such as `SColumn`, `SToolbarButton`, and `SProsePre` are
+listed individually and resolve to their shared Table, Toolbar, or Prose guide.
+Guide summaries include `components`, the names covered by that guide. This
+requires a catalog generated with companion metadata; older installed catalogs
+still expose their original primary component names.
+
 The server also exposes `selaras://catalog` and documentation resources under `selaras://docs/...` for clients that support MCP resources.
 
 ## Example workflow

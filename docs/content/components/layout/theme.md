@@ -15,7 +15,7 @@ explicit DOM boundary.
 
 ```vue-html
 <SButton>Default</SButton>
-<STheme :ui="{ button: { base: 'rounded-full' } }">
+<STheme :ui="{ button: { slots: { base: 'rounded-full' } } }">
   <SButton>Rounded, scoped</SButton>
 </STheme>
 ```
@@ -40,11 +40,11 @@ rather than a class override:
 ```
 
 An explicit prop on the component itself always wins - `STheme` only
-fills in when a prop is left unset. **Only `size`/`color` are wired up to
-read this today**, and only on `Button`, `Badge`, `Avatar`, `Chip`, and
-`Input` - not every prop on every component. Unwired components ignore
-`defaults` entirely (their own `:ui`/`app.config.selaras.ui` overrides are
-unaffected either way).
+fills in when a prop is left unset. Supported defaults are `size` and `color`
+for `Button`, `Badge`, `Avatar`, `Chip`, `Input`, `Editable`, and `Toolbar`.
+Other components keep their own prop defaults; their `ui` overrides still apply.
+Behavioral props such as open state, selection, and disabled state belong on the
+component itself.
 
 ### Nesting
 
@@ -52,7 +52,7 @@ An inner `STheme` wins for the specific settings it sets, while still
 inheriting whatever an outer one set and it didn't touch:
 
 ```vue-html
-<STheme :ui="{ button: { base: 'rounded-full' } }" :defaults="{ button: { color: 'neutral' } }">
+<STheme :ui="{ button: { slots: { base: 'rounded-full' } } }" :defaults="{ button: { color: 'neutral' } }">
   <STheme :defaults="{ button: { color: 'danger' } }">
     <SButton>Rounded (from the outer Theme) + danger (from the inner one)</SButton>
   </STheme>
@@ -83,7 +83,19 @@ ancestor; the theme marker does not copy arbitrary CSS variables.
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `ui` | `Partial<Record<string, object>>` | - |
-| `defaults` | `Partial<Record<string, Record<string, unknown>>>` | - |
+| `ui` | `ThemeUiOverrides` | - |
+| `defaults` | `ThemeDefaults` | - |
 | `tokens` | `RuntimeTokenOverrides` | - |
 | `as` | `string \| Component` | - |
+| `mode` | `'inherit' \| 'light' \| 'dark'` | inherited mode |
+
+`ThemeUiOverrides` and `ThemeDefaults` are exported from `@sewadah/selaras/types`.
+Use `as` when setting `tokens` or an explicit light/dark `mode`; otherwise Theme
+throws because there is no DOM boundary for the scope. The explicit mode applies
+to the subtree and supported overlay portals without changing the app-wide mode.
+
+```vue-html
+<STheme as="section" mode="dark">
+  <SButton>A locally dark section</SButton>
+</STheme>
+```

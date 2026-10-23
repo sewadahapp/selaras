@@ -103,6 +103,7 @@ every slot and variant - here's `Breadcrumb`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `items` | `BreadcrumbItem[]` | - |
 | `maxItems` | `number` | - |
 | `truncate` | `boolean \| string` | `false` |

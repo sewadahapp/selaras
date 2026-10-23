@@ -133,9 +133,9 @@ every slot and variant - here's `InputNumber`'s own theme file:
 | `placeholder` | `string` | - |
 | `formatOptions` | `Intl.NumberFormatOptions` | - |
 | `locale` | `string` | - |
-| `disabled` | `boolean` | `false` |
+| `disabled` / `readonly` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `orientation` | `'horizontal' \| 'vertical'` | `horizontal` |
 | `ui` | `Partial<Record<'root' \| 'input' \| 'stepper' \| 'stepperButton', string \| object>>` | - |

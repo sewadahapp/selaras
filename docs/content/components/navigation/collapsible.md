@@ -88,6 +88,7 @@ every slot and variant - here's `Collapsible`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `open` | `boolean` | - |
 | `defaultOpen` | `boolean` | `false` |
 | `disabled` | `boolean` | - |

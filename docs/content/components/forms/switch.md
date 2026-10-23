@@ -143,7 +143,7 @@ every slot and variant - here's `Switch`'s own theme file:
 | `invalid` | `boolean` | `false` |
 | `required` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'primary'` |
 | `loading` | `boolean` | `false` |
 | `checkedIcon` | `string` | - |
 | `uncheckedIcon` | `string` | - |

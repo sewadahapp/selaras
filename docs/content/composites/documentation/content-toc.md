@@ -87,6 +87,7 @@ separate source of information.
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `links` | `{ id: string, text: string, depth: number, children?: [...] }[]` | - (required) |
 | `title` | `string` | `'On this page'` |
 | `ui` | `Partial<Record<ContentTocSlot, string \| object>>` | - |

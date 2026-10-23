@@ -168,12 +168,14 @@ every slot and variant - here's `Tabs`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `items` | `{ label: string; value?: string; disabled?: boolean; icon?: string }[]` | - |
 | `variant` | `'underline' \| 'pill'` | `'underline'` |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `scrollable` | `boolean` | `false` |
 | `unmountOnHide` | `boolean` | `true` |
 | `modelValue` | `string` | - |
+| `defaultValue` | `string` | no initial selection |
 | `ui` | `Partial<Record<'root' \| 'scrollRoot' \| 'scrollViewport' \| 'scrollButton' \| 'scrollIcon' \| 'list' \| 'trigger' \| 'icon' \| 'indicator' \| 'content', string \| object>>` | - |
 
 ## Events
@@ -190,3 +192,7 @@ every slot and variant - here's `Tabs`'s own theme file:
 | `label` | `{ item, index }` | Replaces a tab's label content |
 | `scroll-left-icon`, `scroll-right-icon` | `{ class }` | Replaces a default control's chevron |
 | `scroll-left`, `scroll-right` | `{ buttonProps, scroll, disabled, ariaLabel }` | Replaces an entire overflow control |
+
+For uncontrolled tabs, pass `defaultValue` to select an initial panel. Item values
+use `item.value`, or the item's zero-based index converted to a string when
+omitted. Use `v-model` when a parent owns selection.

@@ -112,6 +112,7 @@ every slot and variant - here's `Tree`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `items` | `TreeItemType[]` | - (required) |
 | `modelValue` | `TreeItemType \| TreeItemType[]` | - |
 | `defaultValue` | `TreeItemType \| TreeItemType[]` | - |

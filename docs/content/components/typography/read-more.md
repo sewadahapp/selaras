@@ -42,6 +42,7 @@ Global and scoped theme recipes use `ui.readMore`.
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `previewHeight` | `number` | `200` |
 | `ui` | `Partial<Record<ReadMoreSlot, string \| object>>` | - |
 

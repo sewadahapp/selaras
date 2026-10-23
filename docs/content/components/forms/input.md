@@ -171,7 +171,7 @@ every slot and variant - here's `Input`'s own theme file:
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `disabled` | `boolean` | `false` |
 | `invalid` | `boolean` | `false` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `clearable` | `boolean` | `false` |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |

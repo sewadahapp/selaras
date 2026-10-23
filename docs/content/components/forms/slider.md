@@ -224,7 +224,7 @@ every slot and variant - here's `Slider`'s own theme file:
 | `inverted` | `boolean` | `false` |
 | `showTicks` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `thumbVariant` | `'circle' \| 'bar'` | `circle` |
 | `tooltip` | `boolean` | `false` |
 | `controls` | `boolean` | `false` |

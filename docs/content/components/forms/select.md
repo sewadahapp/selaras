@@ -424,10 +424,13 @@ its dedicated search and selection controls.
 | Prop | Type | Default |
 | --- | --- | --- |
 | `id` | `string` | - |
-| `name` | `string` | - |
-| `items` | `readonly Entry[]` | - |
+| `name` / `form` | `string` | - |
+| `open` | `boolean` | uncontrolled |
+| `defaultOpen` | `boolean` | `false` |
+| `items` | `readonly Entry[]` | required |
 | `valueKey` / `labelKey` | `string` | `'value'` when present, otherwise the option object / `'label'` |
 | `modelValue` | identity, identity array, or `undefined` | - |
+| `defaultValue` | same as `modelValue` | mount-captured initial/reset value |
 | `multiple` | `boolean` | `false` |
 | `searchable` | `boolean` | `false` |
 | `searchTerm` | `string` | - |
@@ -439,10 +442,10 @@ its dedicated search and selection controls.
 | `clearable` | `boolean` | `false` |
 | `loading` | `boolean` | `false` |
 | `placeholder` | `string` | - |
-| `disabled` | `boolean` | `false` |
+| `disabled` / `required` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
 | `invalid` | `boolean` | `false` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `primary` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `positioning` | `OverlayPositioning` | anchored list defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
@@ -464,3 +467,15 @@ its dedicated search and selection controls.
 | `dropdown-icon` | - | Replaces the trigger's chevron (default: `hugeicons:arrow-down-01`) |
 | `loading-icon` | - | Replaces the spinner shown while `loading` (default: `hugeicons:loading-02`) |
 | `filter-icon` | - | Replaces the popover search field's icon (default: `hugeicons:search-01`) |
+
+## Events
+
+| Event | Payload | Purpose |
+| --- | --- | --- |
+| `update:modelValue` | identity, identity array, or `undefined` | Proposes a selection or clear/reset value |
+| `update:open` | `boolean` | Requests opening or closing the anchored panel or adaptive modal |
+| `update:searchTerm` | `string` | Updates filter text, including configured resets |
+
+Use `v-model:open` to control presentation. Without it, `defaultOpen` supplies
+initial visibility. An explicit `open` value remains authoritative, so a parent
+can reject an opening or closing request.

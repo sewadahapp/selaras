@@ -213,6 +213,7 @@ shown above.
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` |
 | `as` | `string \| Component` | `'button'` |
 | `color` | `ColorRole` (built-in and registered roles) | `primary` |
 | `to` | `string` | - |

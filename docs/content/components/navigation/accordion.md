@@ -207,6 +207,7 @@ every slot and variant - here's `Accordion`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `items` | `{ value: string, label: string, disabled?: boolean, icon?: string }[]` | - |
 | `type` | `'single' \| 'multiple'` | `'multiple'` |
 | `defaultValue` | `string \| string[]` | - |

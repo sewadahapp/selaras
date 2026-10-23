@@ -49,6 +49,7 @@ every slot and variant - here's `FileTree`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `items` | `FileTreeNode[]` | - (required) |
 | `selected` | `FileTreeNode` | - |
 | `defaultExpanded` | `boolean` | `true` |
