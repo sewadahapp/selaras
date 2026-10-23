@@ -118,6 +118,8 @@ Then read [Theming](/overview/theming/overview) to learn how to customize Selara
 
 Use the component documentation when you need the props, slots, events, variants, and `:ui` options for a specific component.
 
+Read the [changelog](/changelog) for new features, fixes, and upgrade guidance.
+
 ## Acknowledgments
 
 Selaras uses [Reka UI](https://reka-ui.com) as its primitive foundation.

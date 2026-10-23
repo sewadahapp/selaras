@@ -179,6 +179,7 @@ cover color roles, complete themes, and all customization layers.
 - [Adaptive interfaces](https://selarasui.my.id/overview/getting-started/adaptive-interfaces)
 - [Copyable blocks](https://selarasui.my.id/blocks/overview)
 - [Starter templates](https://selarasui.my.id/templates)
+- [Changelog](https://selarasui.my.id/changelog)
 
 ## Agent support
 
