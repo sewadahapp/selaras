@@ -61,7 +61,7 @@ export default defineAppConfig({
     },
     footer: {
       text: '© 2026 Sewadah · Open source under the MIT License',
-      links: [{ label: 'Design kit', to: '/design-kit' }],
+      links: [{ label: 'Changelog', to: '/changelog' }, { label: 'Design kit', to: '/design-kit' }],
     },
   },
 })

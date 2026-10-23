@@ -128,5 +128,18 @@ See the [v1.1 quality review](./docs/reviews/v1.1-quality.md) for the current au
 
 ## Documentation deployment
 
+The public changelog reads `CHANGELOG.md`, `packages/docs/CHANGELOG.md`, and
+`packages/mcp/CHANGELOG.md` at build time. Edit or generate release notes in
+those files; do not maintain a second copy in the documentation. The core,
+docs layer, and MCP server retain their independent version streams at
+`/changelog`, `/changelog/docs`, and `/changelog/mcp`.
+
+`npm run docs:generate` refreshes optional publication dates from public GitHub
+release metadata into the ignored `docs/.cache/release-dates.json` file before
+building. If GitHub is unavailable, cached dates are retained and undated notes
+still render. No publication date is inferred from a commit timestamp. The
+release workflow already generates and deploys docs after updating changelogs;
+a docs-only deployment also rebuilds this page from the current source.
+
 For the documentation deployment, see [Markdown negotiation on Cloudflare](./deployment/cloudflare-markdown.md).
 See [deployment cache revalidation](./deployment/cloudflare-revalidation.md) for browser cache headers and recovery when an open tab outlives a build.

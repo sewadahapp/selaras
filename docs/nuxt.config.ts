@@ -26,6 +26,7 @@ function fakeDemoLinkedPaths() {
     '/',
     '/design-kit',
     '/templates',
+    '/changelog',
     '/examples/adaptive-interfaces',
     ...documentationRoutes,
   ])
@@ -57,7 +58,7 @@ export default defineNuxtConfig({
   // layer files directly during development; packed consumer coverage tests
   // the public package-name extension path separately.
   extends: ['../packages/docs'],
-  modules: ['nuxt-llms', '@nuxtjs/robots', '@nuxtjs/sitemap', 'nuxt-og-image'],
+  modules: ['./modules/changelog', 'nuxt-llms', '@nuxtjs/robots', '@nuxtjs/sitemap', 'nuxt-og-image'],
   site: {
     url: process.env.NUXT_SITE_URL ?? docsSite.url,
     name: docsSite.name,
@@ -91,7 +92,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     zeroRuntime: true,
-    include: ['/', '/design-kit', '/templates', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
+    include: ['/', '/design-kit', '/templates', '/changelog', '/changelog/**', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
     exclude: ['/examples/**', '/raw/**', ...Object.keys(legacyDocsPaths)],
     discoverImages: false,
   },
@@ -158,6 +159,9 @@ export default defineNuxtConfig({
       routes: [
         '/design-kit',
         '/templates',
+        '/changelog',
+        '/changelog/docs',
+        '/changelog/mcp',
         '/examples/adaptive-interfaces',
         ...documentationBlocks.map(block => `/examples/blocks/${block.slug}`),
         ...documentationFiles.map(path => `/raw/${path}`),
