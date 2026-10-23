@@ -15,6 +15,24 @@ export interface ChangelogPackage {
   releases: ChangelogRelease[]
 }
 
+export function changelogHashTarget(releases: ChangelogRelease[], hash: string) {
+  let id: string
+  try {
+    id = decodeURIComponent(hash.replace(/^#/, ''))
+  }
+  catch {
+    return undefined
+  }
+  let index = releases.findIndex(release => release.tag === id)
+  if (index < 0) {
+    for (const [candidate, release] of releases.entries()) {
+      if (id.startsWith(`${release.tag}-`) && (index < 0 || release.tag.length > releases[index]!.tag.length))
+        index = candidate
+    }
+  }
+  return index < 0 ? undefined : { id, index }
+}
+
 /** Split version sections without treating headings inside code examples as releases. */
 export function parseChangelog(markdown: string, tagPrefix: string, dates: Record<string, string> = {}): ChangelogRelease[] {
   const releases: ChangelogRelease[] = []

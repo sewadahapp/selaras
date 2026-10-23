@@ -2,9 +2,18 @@ import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import process from 'node:process'
 import { describe, expect, it } from 'vitest'
-import { parseChangelog, releaseDatesFromMetadata, scopeReleaseHeadings } from '../docs/utils/changelog'
+import { changelogHashTarget, parseChangelog, releaseDatesFromMetadata, scopeReleaseHeadings } from '../docs/utils/changelog'
 
 describe('documentation changelog', () => {
+  it('resolves older release and section permalinks without confusing prerelease tags', () => {
+    const releases = parseChangelog('## v2.0.0\n\nLatest.\n\n## v1.0.0\n\nStable.\n\n## v1.0.0-rc.1\n\nPreview.', 'v')
+    expect(changelogHashTarget(releases, '#v1.0.0')).toEqual({ id: 'v1.0.0', index: 1 })
+    expect(changelogHashTarget(releases, '#v1.0.0-rc.1-fixes')).toEqual({ id: 'v1.0.0-rc.1-fixes', index: 2 })
+    expect(changelogHashTarget(releases, '#v1.0.0%2Dfixes')).toEqual({ id: 'v1.0.0-fixes', index: 1 })
+    expect(changelogHashTarget(releases, '#missing')).toBeUndefined()
+    expect(changelogHashTarget(releases, '#%FF')).toBeUndefined()
+  })
+
   it('preserves release notes and skips version headings inside fenced examples', () => {
     const source = '# Changelog\r\n\r\n## v2.0.0\r\n\r\n### Fixes\r\n\r\n- A [fix](https://example.com).\r\n\r\n````md\r\n## v99.0.0\r\n```\r\n````\r\n\r\n## v1.0.0\r\n\r\n### Breaking Changes\r\n\r\nRead the migration guide.\r\n'
     const releases = parseChangelog(source, 'v')

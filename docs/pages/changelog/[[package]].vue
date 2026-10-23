@@ -6,7 +6,7 @@ import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
 import history from '#build/selaras-changelog.json'
-import { scopeReleaseHeadings } from '../../utils/changelog'
+import { changelogHashTarget, scopeReleaseHeadings } from '../../utils/changelog'
 
 definePageMeta({
   layout: 'home',
@@ -24,6 +24,45 @@ watch(() => activePackage.value.id, () => {
 const proseComponents = { h3: ProseH3, h4: ProseH4, h5: ProseH5, h6: ProseH6, pre: ProsePre }
 const releaseUrl = (tag: string) => `https://github.com/sewadahapp/selaras/releases/tag/${encodeURIComponent(tag)}`
 const formatDate = (date: string) => new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date))
+
+let stopHashScroll = () => {}
+onMounted(() => {
+  watch(() => [activePackage.value.id, route.hash], async () => {
+    stopHashScroll()
+    const hash = route.hash
+    const packageId = activePackage.value.id
+    const target = changelogHashTarget(activePackage.value.releases, hash)
+    if (!target)
+      return
+    visibleCount.value = Math.max(visibleCount.value, target.index + 1)
+    await nextTick()
+    if (route.hash !== hash || activePackage.value.id !== packageId)
+      return
+    const scroll = () => {
+      const element = document.getElementById(target.id)
+      if (!element)
+        return false
+      element.scrollIntoView()
+      return true
+    }
+    if (scroll())
+      return
+    const root = document.querySelector('.changelog-releases')
+    if (!root)
+      return
+    const observer = new MutationObserver(() => {
+      if (scroll())
+        stopHashScroll()
+    })
+    observer.observe(root, { childList: true, subtree: true })
+    const timeout = window.setTimeout(observer.disconnect.bind(observer), 5000)
+    stopHashScroll = () => {
+      observer.disconnect()
+      window.clearTimeout(timeout)
+    }
+  }, { immediate: true, flush: 'post' })
+})
+onUnmounted(() => stopHashScroll())
 
 useDocsSeo(() => ({
   title: activePackage.value.id === 'core' ? 'Changelog' : `${activePackage.value.label} changelog`,
