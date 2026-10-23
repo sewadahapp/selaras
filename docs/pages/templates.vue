@@ -37,7 +37,7 @@ const assetUrl = useDocsAssetUrl()
         </p>
         <div class="template-actions">
           <SButton as="a" :href="template.createUrl" target="_blank" rel="noreferrer" trailing-icon="hugeicons:arrow-up-right-01">
-            Use template
+            {{ template.createLabel ?? 'Use template' }}
           </SButton>
           <SButton v-if="template.demo" as="a" :href="template.demo" target="_blank" rel="noreferrer" color="neutral" variant="link">
             Live preview
@@ -85,7 +85,9 @@ const assetUrl = useDocsAssetUrl()
 }
 
 .template {
+  display: flex;
   min-width: 0;
+  flex-direction: column;
 }
 
 .template-preview {
@@ -134,6 +136,7 @@ const assetUrl = useDocsAssetUrl()
 }
 
 .template-description {
+  flex: 1;
   max-width: 36rem;
   margin: 0.75rem 0 0;
   line-height: 1.7;
