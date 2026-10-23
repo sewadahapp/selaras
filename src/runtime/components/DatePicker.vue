@@ -687,17 +687,16 @@ const timeBodyProps = computed(() => ({
   timeSectionProps: resolveSlot(ui.value.timeSectionStandalone, props.ui?.timeSectionStandalone),
 }))
 
-// The button-mode trigger's own look - Input-style ring/bg/hover, but using
-// Button's native :focus-visible (already in buttonTheme's own base) rather
-// than the field slot's :focus-within, since this is a single focusable
-// element, not a box of several. variant="text" (any color) contributes no
-// bg of its own, so this override's bg/ring/hover classes are the only ones
-// in play rather than fighting a second, competing background.
+// Both trigger modes resolve the same field surface, including theme and
+// instance overrides. A focused button also matches :focus-within.
 const buttonTriggerUi = computed(() => ({
-  base: [
-    'w-full justify-start rounded-[var(--selaras-resolved-radius-md)] bg-[var(--selaras-resolved-surface-default)] text-[var(--selaras-resolved-text-default)] ring-1 ring-inset ring-[var(--selaras-resolved-border-default)] hover:ring-[var(--selaras-resolved-border-hover)] hover:bg-[var(--selaras-resolved-surface-elevated)]',
-    datePickerInvalid.value ? 'ring-[var(--_selaras-color-fill)] hover:ring-[var(--_selaras-color-fill)]' : undefined,
-  ].filter(Boolean).join(' '),
+  base: {
+    ...fieldProps.value,
+    class: [
+      'justify-start font-normal text-[var(--selaras-resolved-text-default)] hover:text-[var(--selaras-resolved-text-default)] active:text-[var(--selaras-resolved-text-default)] focus-visible:outline-none',
+      fieldProps.value.class,
+    ].join(' '),
+  },
   // base is justify-start (text left-aligned, not centered) so the button
   // reads naturally for a short date string - without its own auto margin,
   // the trailing icon would just sit right after that short text instead of
@@ -782,7 +781,8 @@ const buttonTriggerUi = computed(() => ({
             :id="datePickerId"
             ref="buttonTrigger"
             variant="text"
-            :color="color"
+            :disabled="disabled"
+            :color="fieldColor"
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
@@ -875,7 +875,7 @@ const buttonTriggerUi = computed(() => ({
             </template>
           </FieldClearButton>
           <PopoverTrigger as-child>
-            <Button variant="text" :color="color" :size="iconButtonSize" :ui="{ leadingIcon: triggerIconProps }" :aria-label="messages.timePicker">
+            <Button variant="text" :color="color" :size="iconButtonSize" :disabled="disabled" :ui="{ leadingIcon: triggerIconProps }" :aria-label="messages.timePicker">
               <template #icon="{ class: iconClass }">
                 <slot name="trigger-icon">
                   <Icon :name="icons.clock" :class="iconClass" />
@@ -892,7 +892,8 @@ const buttonTriggerUi = computed(() => ({
             :id="datePickerId"
             ref="buttonTrigger"
             variant="text"
-            :color="color"
+            :disabled="disabled"
+            :color="fieldColor"
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"
@@ -1003,7 +1004,8 @@ const buttonTriggerUi = computed(() => ({
             :id="datePickerId"
             ref="buttonTrigger"
             variant="text"
-            :color="color"
+            :disabled="disabled"
+            :color="fieldColor"
             :size="effectiveSize"
             :aria-invalid="datePickerInvalid || undefined"
             :aria-describedby="describedBy"

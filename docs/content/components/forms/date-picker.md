@@ -125,6 +125,12 @@ the same shape every other JS date-formatting API already uses, default
 <SDatePicker v-model="date" trigger-mode="button" :format="{ year: 'numeric', month: '2-digit', day: '2-digit' }" />
 ```
 
+Both trigger modes share the `field` UI slot. Set
+`app.config.selaras.ui.datePicker.slots.field` globally, or `:ui="{ field: '...' }"`
+on an instance, to customize their surface, border, and interaction states
+together. This also applies to range and time-only pickers. Field focus uses
+`active-color`; invalid fields use the danger color.
+
 ### Month/year view
 
 Click the calendar heading to drill down from the day grid to a month grid,

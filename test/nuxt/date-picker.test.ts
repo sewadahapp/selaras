@@ -3,8 +3,10 @@ import type { DOMWrapper } from '@vue/test-utils'
 import { CalendarDate, CalendarDateTime, Time } from '@internationalized/date'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
+import { updateAppConfig } from '#app'
 import DatePicker from '../../src/runtime/components/DatePicker.vue'
+import Theme from '../../src/runtime/components/Theme.vue'
 import './helpers/adaptive-breakpoint'
 
 // DatePickerContent teleports into document.body once opened, same as
@@ -48,6 +50,64 @@ async function clickAndWait(el: HTMLElement) {
 }
 
 describe('datePicker', () => {
+  it.each([
+    { mode: 'single', range: false, timeOnly: false },
+    { mode: 'range', range: true, timeOnly: false },
+    { mode: 'time', range: false, timeOnly: true },
+  ])('shares global and local field overrides between both $mode trigger modes', async (mode) => {
+    updateAppConfig({ selaras: { ui: { datePicker: { slots: { field: 'ring-[#7f8a82] bg-[#f0f4f1]' } } } } })
+    try {
+      wrapper = await mountSuspended(defineComponent({
+        render: () => h('div', ['field', 'button'].map(triggerMode => h(DatePicker, {
+          ...mode,
+          triggerMode: triggerMode as 'field' | 'button',
+          ui: { field: { 'data-surface': triggerMode } },
+        }))),
+      }))
+      for (const triggerMode of ['field', 'button']) {
+        const surface = wrapper.find(`[data-surface="${triggerMode}"]`)
+        expect(surface.classes()).toContain('ring-[#7f8a82]')
+        expect(surface.classes()).toContain('bg-[#f0f4f1]')
+      }
+      wrapper.unmount()
+      wrapper = await mountSuspended(DatePicker, {
+        props: { ...mode, triggerMode: 'button', ui: { field: { 'class': 'ring-[#123456]', 'data-surface': 'local' } } },
+      })
+      const local = wrapper.find('[data-surface="local"]')
+      expect(local.element.tagName).toBe('BUTTON')
+      expect(local.classes()).toContain('ring-[#123456]')
+      expect(local.classes()).not.toContain('ring-[#7f8a82]')
+    }
+    finally {
+      updateAppConfig({ selaras: { ui: { datePicker: undefined } } })
+    }
+  })
+
+  it.each(['sm', 'md', 'lg'] as const)('applies scoped field variants and focus colors to a %s button trigger', async (size) => {
+    const invalid = ref(true)
+    wrapper = await mountSuspended(defineComponent({
+      render: () => h(Theme, { ui: { datePicker: { compoundVariants: [{ size, invalid: true, class: { field: 'rounded-none' } }] } } }, () =>
+        h(DatePicker, { triggerMode: 'button', size, invalid: invalid.value, activeColor: 'success', ui: { field: { 'data-surface': 'button' } } })),
+    }))
+    const surface = wrapper.find('[data-surface="button"]')
+    expect(surface.classes()).toContain('rounded-none')
+    expect(surface.classes()).toContain({ sm: 'h-8', md: 'h-10', lg: 'h-11' }[size])
+    expect(surface.classes()).toContain('ring-[var(--_selaras-color-border)]')
+    expect(surface.classes()).toContain('focus-within:ring-[var(--_selaras-color-focus)]')
+    expect(surface.attributes('data-selaras-color')).toBe('danger')
+    expect(surface.attributes('aria-invalid')).toBe('true')
+    invalid.value = false
+    await nextTick()
+    expect(surface.attributes('data-selaras-color')).toBe('success')
+  })
+
+  it.each(['field', 'button'] as const)('disables the time-only %s trigger', async (triggerMode) => {
+    wrapper = await mountSuspended(DatePicker, { props: { timeOnly: true, triggerMode, disabled: true } })
+    expect(wrapper.find('button').attributes('disabled')).toBeDefined()
+    await wrapper.find('button').trigger('click')
+    expect(document.body.querySelector('[role="dialog"]')).toBeNull()
+  })
+
   it.each([{ range: false, timeOnly: false }, { range: true, timeOnly: false }, { range: false, timeOnly: true }])('renders its $range/$timeOnly panel inline when portal is false', async (mode) => {
     wrapper = await mountSuspended(DatePicker, { props: { ...mode, open: true, portal: false, positioning: { side: 'top', align: 'end' } } })
     expect(wrapper.find('[role=dialog]').exists()).toBe(true)
