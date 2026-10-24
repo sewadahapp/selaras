@@ -37,7 +37,7 @@ async function copySvg() {
 <template>
   <article class="brand-asset">
     <div class="brand-asset-preview" :class="[`brand-asset-preview--${background ?? 'light'}`, `brand-asset-preview--${layout ?? 'symbol'}`]">
-      <img :src="assetUrl(png)" :alt="`${label} ${layout === 'symbol' || !layout ? 'symbol' : `${layout} logo`}`" width="256" height="256">
+      <img :src="assetUrl(png)" :alt="copyText.imageAlt" width="256" height="256">
     </div>
     <div class="brand-asset-caption">
       <h3>{{ label }}</h3>

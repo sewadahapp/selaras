@@ -116,6 +116,7 @@ for (const [path, phrase] of [
   ['/id/design-kit', 'Kit desain'],
   ['/id/design-kit', 'Unduh simbol Ungu sebagai SVG'],
   ['/id/design-kit', 'Salin simbol Ungu sebagai SVG'],
+  ['/id/design-kit', 'alt="Simbol Ungu"'],
   ['/id/changelog', 'Catatan perubahan'],
   ['/id/changelog', 'Catatan rilis ditampilkan sesuai teks publikasi aslinya.'],
   ['/id', 'Komponen'],
