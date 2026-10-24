@@ -8,6 +8,7 @@ import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
 import history from '#build/selaras-changelog.json'
 import { useDocsRoutePath } from '../../../packages/docs/app/composables/useDocsRoutePath'
 import { changelogHashTarget, scopeReleaseHeadings } from '../../utils/changelog'
+import { localizeChangelogBody } from '../../utils/changelog-locale'
 
 definePageMeta({
   layout: 'home',
@@ -25,7 +26,7 @@ const copy = computed(() => isId.value
       description: 'Pembaruan Selaras, layer dokumentasi, dan alat agen. Setiap paket memiliki riwayat rilis sendiri.',
       migrating: 'Migrasi ke 1.0',
       packageLabel: 'Paket changelog',
-      releaseSource: 'Catatan rilis ditampilkan sesuai teks publikasi aslinya.',
+      releaseSource: 'Ringkasan editorial diterjemahkan; daftar perubahan otomatis tetap memakai bahasa publikasi aslinya.',
       viewGithub: 'Lihat di GitHub',
       older: 'Tampilkan rilis lama',
       full: 'Changelog lengkap',
@@ -56,6 +57,7 @@ const activePackage = computed(() => packages.find(pkg => pkg.id === (route.para
 const activePackageCopy = computed(() => copy.value.packages[activePackage.value.id as keyof typeof copy.value.packages]!)
 const visibleCount = ref(3)
 const releases = computed(() => activePackage.value.releases.slice(0, visibleCount.value))
+const releaseBody = (release: ChangelogPackage['releases'][number]) => localizeChangelogBody(release.body, release.tag, locale.value)
 watch(() => activePackage.value.id, () => {
   visibleCount.value = 3
 })
@@ -151,7 +153,7 @@ useDocsSeo(() => ({
           <time v-if="release.date" :datetime="release.date">{{ formatDate(release.date) }}</time>
           <a :href="releaseUrl(release.tag)" target="_blank" rel="noreferrer" :aria-label="`${copy.viewGithub}: ${activePackageCopy.label} v${release.version}`">{{ copy.viewGithub }} <span aria-hidden="true">↗</span></a>
         </header>
-        <MDC :key="release.tag" v-slot="{ body, data }" :value="release.body" :cache-key="`changelog-${release.tag}`">
+        <MDC :key="release.tag" v-slot="{ body, data }" :value="releaseBody(release)" :cache-key="`changelog-${locale}-${release.tag}`">
           <MDCRenderer v-if="body" :body="scopeReleaseHeadings(body, release.tag)" :data="data" :components="proseComponents" tag="div" class="selaras-prose release-notes" />
         </MDC>
       </article>

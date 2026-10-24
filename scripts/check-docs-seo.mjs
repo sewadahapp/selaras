@@ -115,7 +115,7 @@ for (const [path, phrase] of [
   ['/id/templates', 'Templat'],
   ['/id/design-kit', 'Kit desain'],
   ['/id/changelog', 'Catatan perubahan'],
-  ['/id/changelog', 'Catatan rilis ditampilkan sesuai teks publikasi aslinya.'],
+  ['/id/changelog', 'Ringkasan editorial diterjemahkan; daftar perubahan otomatis tetap memakai bahasa publikasi aslinya.'],
   ['/id', 'Komponen'],
   ['/id', 'Catatan perubahan'],
 ]) {

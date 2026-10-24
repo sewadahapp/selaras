@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import process from 'node:process'
 import { describe, expect, it } from 'vitest'
 import { changelogHashTarget, parseChangelog, releaseDatesFromMetadata, scopeReleaseHeadings } from '../docs/utils/changelog'
+import { localizeChangelogBody } from '../docs/utils/changelog-locale'
 
 describe('documentation changelog', () => {
   it('resolves older release and section permalinks without confusing prerelease tags', () => {
@@ -44,6 +45,23 @@ describe('documentation changelog', () => {
     expect(mcp.find(release => release.version === '0.1.1')!.tag).toBe('selaras-mcp-v0.1.1')
     expect(docs.every(release => release.tag.startsWith('selaras-docs-v'))).toBe(true)
     expect(new Set(core.map(release => release.tag)).size).toBe(core.length)
+  })
+
+  it('localizes editorial release summaries while preserving generated notes and API identifiers', () => {
+    const core = parseChangelog(readFileSync(new URL('../CHANGELOG.md', import.meta.url), 'utf8'), 'v')
+    const docs = parseChangelog(readFileSync(new URL('../packages/docs/CHANGELOG.md', import.meta.url), 'utf8'), 'selaras-docs-v')
+    const coreSummary = core.find(release => release.tag === 'v1.0.0')!.body
+    const docsSummary = docs.find(release => release.tag === 'selaras-docs-v1.0.0')!.body
+    const localizedCore = localizeChangelogBody(coreSummary, 'v1.0.0', 'id')
+    const localizedDocs = localizeChangelogBody(docsSummary, 'selaras-docs-v1.0.0', 'id')
+
+    expect(localizedCore).toContain('Sorotan upgrade')
+    expect(localizedCore).toContain('`--selaras-resolved-*`')
+    expect(localizedCore).toContain('`v-model:open`/`defaultOpen`')
+    expect(localizedCore).toContain('Redesign the homepage around four theming edits')
+    expect(localizedDocs).toContain('kompatibel dengan `@sewadah/selaras` versi ^0.3.0.')
+    expect(localizedDocs).toContain('Riwayat terperinci sebelum rilis ini tersedia')
+    expect(localizeChangelogBody(coreSummary, 'v1.0.0', 'en')).toBe(coreSummary)
   })
 
   it('ignores drafts, unrelated tags, and unverifiable publication dates', () => {
