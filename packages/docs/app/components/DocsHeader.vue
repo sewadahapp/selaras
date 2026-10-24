@@ -50,10 +50,10 @@ watch(() => route.path, () => {
       :ui="{ root: 'hidden w-auto xl:flex' }"
     />
     <div class="selaras-docs-header-actions">
-      <DocsLanguageSwitcher />
       <DocsSearchButton v-if="docsConfig.header?.search !== false" />
       <SColorModeToggle v-if="docsConfig.header?.colorMode !== false" />
       <DocsThemePicker v-if="docsConfig.header?.themePicker" />
+      <DocsLanguageSwitcher />
       <SButton
         v-if="repositoryUrl"
         as="a"
