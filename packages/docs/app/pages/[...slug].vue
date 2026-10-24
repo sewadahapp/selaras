@@ -7,8 +7,8 @@ import ProseH4 from '@sewadah/selaras/components/ProseH4.vue'
 import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
-import { docsCanonicalUrl, docsSite } from '~/utils/seo'
 import { docsDefaultContentPath, docsLocalizedRoutePath } from '../utils/content-path'
+import { docsCanonicalUrl, docsSite } from '../utils/seo'
 
 const route = useRoute()
 const appConfig = useAppConfig()
@@ -36,7 +36,7 @@ async function retryPage() {
 
 definePageMeta({ layout: 'selaras-docs' })
 const { locale, defaultLocale, locales, localeOption } = useDocsLocale()
-const siteUrl = useSiteConfig().url || docsSite.url
+const siteUrl = appConfig.selarasDocs?.site?.url || docsSite.url
 const config = useRuntimeConfig()
 const defaultRoutePath = computed(() => docsDefaultContentPath(contentPath.value, locale.value, defaultLocale.value))
 const translatedPage = computed(() => locale.value !== defaultLocale.value && contentPath.value.startsWith(`/${locale.value}/`))

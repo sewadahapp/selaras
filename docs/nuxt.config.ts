@@ -94,6 +94,11 @@ export default defineNuxtConfig({
     description: docsSite.description,
     trailingSlash: true,
   },
+  appConfig: {
+    selarasDocs: {
+      site: { url: process.env.NUXT_SITE_URL ?? docsSite.url },
+    },
+  },
   robots: {
     allow: ['/'],
     sitemap: ['/sitemap_index.xml'],
