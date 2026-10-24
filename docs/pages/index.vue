@@ -1,13 +1,70 @@
 <script setup lang="ts">
 import { NuxtLink } from '#components'
 import pkg from '../../package.json'
+import { useDocsRoutePath } from '../../packages/docs/app/composables/useDocsRoutePath'
 import HomeEditSpecimen from '../components/home/HomeEditSpecimen.vue'
 
 definePageMeta({ layout: 'home' })
-useDocsSeo({
-  title: 'Selaras',
-  description: 'Accessible Vue components for Nuxt, themed entirely with CSS variables.',
-})
+const { locale } = useDocsLocale()
+const isId = computed(() => locale.value === 'id')
+const pageCopy = computed(() => isId.value
+  ? {
+      description: 'Komponen Vue yang aksesibel untuk Nuxt, ditata sepenuhnya dengan variabel CSS.',
+      lead: 'Komponen Vue untuk Nuxt dan Tailwind CSS v4. Empat penyesuaian kecil untuk satu antarmuka: terapkan satu per satu dan lihat semuanya terasa milik Anda.',
+      getStarted: 'Mulai',
+      copied: 'Perintah instalasi disalin',
+      copiedStatus: 'Perintah instalasi disalin ke papan klip.',
+      copyCommand: 'Salin perintah instalasi npm',
+      edits: [
+        { title: 'Warna merek Anda', short: 'Warna', text: 'Tentukan satu warna untuk peran utama. Nilai hover, ditekan, teks, dan fokus diturunkan darinya untuk mode terang maupun gelap.' },
+        { title: 'Sudut komponen', short: 'Sudut', text: 'Satu token radius. Radius kecil, sedang, dan besar diturunkan dari nilai ini.' },
+        { title: 'Semua tombol', short: 'Tombol', text: 'Tambahkan kelas ke setiap kemunculan komponen tanpa perlu membungkusnya.' },
+        { title: 'Satu komponen ini', short: 'Instans', text: 'Prop :ui mengubah satu instans dan menjadi prioritas di atas semua pengaturan sebelumnya.' },
+      ],
+      none: 'Tidak ada',
+      liveSpecimen: 'Contoh langsung',
+      appliedEdits: 'Penyesuaian yang diterapkan pada contoh',
+      liveNote: 'Komponen Selaras langsung. Setiap penyesuaian diterapkan di sini dengan STheme, bentuk terbatas dari pengaturan yang sama, sehingga hanya pratinjau ini yang berubah.',
+      notApplied: 'Belum diterapkan. Pilih {short} di atas untuk menerapkannya.',
+      explore: 'Jelajahi pustaka',
+      agentLead: 'Membangun dengan coding agent?',
+      agentLink: 'Berikan API komponen, contoh, dan skill Selaras.',
+      areas: [
+        { title: 'Komponen', description: 'Input, navigasi, overlay, dan detail di antaranya, dengan dukungan keyboard dan API bertipe.' },
+        { title: 'Komposit', description: 'Dasbor yang dapat diubah ukurannya dan tata letak dokumentasi, disusun dari bagian yang sama.' },
+        { title: 'Blok', description: 'Antarmuka lengkap untuk dicoba, diperiksa, dan disalin ke proyek Anda.' },
+        { title: 'Utilitas', description: 'Buka overlay dari kode, gunakan ikon dan pesan bersama, serta tambahkan mask input.' },
+      ],
+    }
+  : {
+      description: 'Accessible Vue components for Nuxt, themed entirely with CSS variables.',
+      lead: 'Vue components for Nuxt and Tailwind CSS v4. Four small edits, one interface: apply them in turn and watch it become yours.',
+      getStarted: 'Get started',
+      copied: 'Install command copied',
+      copiedStatus: 'Install command copied to clipboard.',
+      copyCommand: 'Copy npm install command',
+      edits: [
+        { title: 'Your brand colour', short: 'Colour', text: 'Give the primary role one colour. Hover, pressed, text and focus values are derived from it, in light and dark.' },
+        { title: 'Your corners', short: 'Corners', text: 'One radius token. The small, medium and large radii are derived from it.' },
+        { title: 'Every button', short: 'Buttons', text: 'Add classes to a component everywhere it appears, without wrapping it.' },
+        { title: 'Just this one', short: 'Instance', text: 'The :ui prop changes a single instance, and wins over everything above.' },
+      ],
+      none: 'None',
+      liveSpecimen: 'Live specimen',
+      appliedEdits: 'Edits applied to the specimen',
+      liveNote: 'Live Selaras components. Each edit is applied here with STheme, the scoped form of the same setting, so only this preview changes.',
+      notApplied: 'Not applied yet. Choose {short} above to apply it.',
+      explore: 'Explore the library',
+      agentLead: 'Building with a coding agent?',
+      agentLink: 'Give it the component APIs, examples, and the Selaras skill.',
+      areas: [
+        { title: 'Components', description: 'Inputs, navigation, overlays, and the details in between, with keyboard support and typed APIs.' },
+        { title: 'Composites', description: 'Resizable dashboards and documentation layouts, composed from the same parts.' },
+        { title: 'Blocks', description: 'Complete interfaces to try, inspect, and copy into your project.' },
+        { title: 'Utilities', description: 'Open overlays from code, share icons and messages, and add input masks.' },
+      ],
+    })
+useDocsSeo(() => ({ title: 'Selaras', description: pageCopy.value.description }), { translationAvailable: true })
 
 const preset = useDocsThemePreset()
 const colorMode = useColorMode()
@@ -90,10 +147,10 @@ const stepValue = computed({
       step.value = Number(value)
   },
 })
-const stepItems = [{ label: 'None', value: '0' }, ...edits.map((edit, index) => ({ label: edit.short, value: String(index + 1) }))]
+const stepItems = computed(() => [{ label: pageCopy.value.none, value: '0' }, ...pageCopy.value.edits.map((edit, index) => ({ label: edit.short, value: String(index + 1) }))])
 // Phones show the applied edit's code, or the first edit before any is applied.
 const shownIndex = computed(() => Math.max(step.value, 1) - 1)
-const shownEdit = computed(() => edits[shownIndex.value]!)
+const shownEdit = computed(() => ({ ...edits[shownIndex.value]!, ...pageCopy.value.edits[shownIndex.value]! }))
 const stepElements = useTemplateRef<HTMLElement[]>('stepElements')
 
 function updateFromScroll() {
@@ -137,20 +194,22 @@ onBeforeUnmount(() => {
 })
 
 const { data: navigation } = useDocsNavigation()
+const docsRoutePath = useDocsRoutePath()
 const guidePages = new Set(['/components/forms/validation'])
 const areas = [
-  { path: '/components', title: 'Components', description: 'Inputs, navigation, overlays, and the details in between, with keyboard support and typed APIs.', fallback: '/components/elements/button' },
-  { path: '/composites', title: 'Composites', description: 'Resizable dashboards and documentation layouts, composed from the same parts.', fallback: '/composites/dashboard/dashboard-group' },
-  { path: '/blocks', title: 'Blocks', description: 'Complete interfaces to try, inspect, and copy into your project.', fallback: '/blocks/overview' },
-  { path: '/utilities', title: 'Utilities', description: 'Open overlays from code, share icons and messages, and add input masks.', fallback: '/utilities/composables/use-modal' },
+  { path: '/components', fallback: '/components/elements/button' },
+  { path: '/composites', fallback: '/composites/dashboard/dashboard-group' },
+  { path: '/blocks', fallback: '/blocks/overview' },
+  { path: '/utilities', fallback: '/utilities/composables/use-modal' },
 ]
 const groups = computed(() => areas.map((area) => {
-  const item = navigation.value?.find(entry => entry.path === area.path)
+  const item = navigation.value?.find(entry => entry.path === docsRoutePath(area.path))
+  const text = pageCopy.value.areas[areas.indexOf(area)]!
   const categories = (item?.children ?? []).map(category => ({
     title: category.title,
     to: category.children?.find(page => !guidePages.has(page.path))?.path ?? category.path,
   }))
-  return { ...area, categories }
+  return { ...area, ...text, categories }
 }))
 </script>
 
@@ -163,32 +222,32 @@ const groups = computed(() => areas.map((area) => {
       <div class="home-container home-intro-grid">
         <div class="home-intro-main">
           <h1 id="home-title" class="home-title">
-            <span class="home-title-line"><span>Interfaces,</span></span>{{ " " }}
-            <span class="home-title-line"><span>in harmony.</span></span>
+            <span class="home-title-line"><span>{{ isId ? 'Antarmuka,' : 'Interfaces,' }}</span></span>{{ " " }}
+            <span class="home-title-line"><span>{{ isId ? 'selaras.' : 'in harmony.' }}</span></span>
           </h1>
           <p class="home-lead">
-            Vue components for Nuxt and Tailwind CSS v4. Four small edits, one interface: apply them in turn and watch it become yours.
+            {{ pageCopy.lead }}
           </p>
           <div class="home-actions">
-            <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg">
-              Get started
+            <SButton :as="NuxtLink" :to="docsRoutePath('/overview/getting-started/installation')" size="lg">
+              {{ pageCopy.getStarted }}
             </SButton>
             <SButton
               color="neutral" variant="soft" size="lg" class="home-install"
               :trailing-icon="copied === 'install-command' ? icons.check : icons.copy"
-              :aria-label="copied === 'install-command' ? 'Install command copied' : 'Copy npm install command'"
+              :aria-label="copied === 'install-command' ? pageCopy.copied : pageCopy.copyCommand"
               @click="copy(installCommand, 'install-command')"
             >
               <code>{{ installCommand }}</code>
             </SButton>
-            <span class="sr-only" role="status">{{ copied === 'install-command' ? 'Install command copied to clipboard.' : '' }}</span>
+            <span class="sr-only" role="status">{{ copied === 'install-command' ? pageCopy.copiedStatus : '' }}</span>
           </div>
 
           <ol class="home-edits">
             <li
-              v-for="(edit, index) in edits"
+              v-for="(baseEdit, index) in edits"
               ref="stepElements"
-              :key="edit.title"
+              :key="baseEdit.title"
               class="home-edit"
               :class="{ 'is-applied': step > index }"
               :aria-current="step === index + 1 ? 'step' : undefined"
@@ -196,32 +255,32 @@ const groups = computed(() => areas.map((area) => {
               <h2>
                 <button type="button" class="home-edit-toggle" @click="selectStep(index + 1)">
                   <span class="home-edit-number" aria-hidden="true">{{ index + 1 }}</span>
-                  {{ edit.title }}
+                  {{ pageCopy.edits[index]!.title }}
                 </button>
               </h2>
-              <p>{{ edit.text }}</p>
+              <p>{{ pageCopy.edits[index]!.text }}</p>
               <figure class="home-code">
-                <figcaption>{{ edit.file }}</figcaption>
-                <pre><code v-if="highlighted?.[index]" v-html="highlighted[index]" /><code v-else>{{ edit.code }}</code></pre>
+                <figcaption>{{ baseEdit.file }}</figcaption>
+                <pre><code v-if="highlighted?.[index]" v-html="highlighted[index]" /><code v-else>{{ baseEdit.code }}</code></pre>
               </figure>
             </li>
           </ol>
         </div>
 
-        <aside class="home-specimen-column" aria-label="Live specimen">
+        <aside class="home-specimen-column" :aria-label="pageCopy.liveSpecimen">
           <div class="home-specimen-sticky">
-            <SToggleGroup v-model="stepValue" :items="stepItems" size="sm" class="home-step-picker" aria-label="Edits applied to the specimen" />
+            <SToggleGroup v-model="stepValue" :items="stepItems" size="sm" class="home-step-picker" :aria-label="pageCopy.appliedEdits" />
             <div class="home-specimen-frame" :class="{ 'is-echoing': echo }">
-              <HomeEditSpecimen :step="step" v-bind="specimen" />
+              <HomeEditSpecimen :key="locale" :step="step" v-bind="specimen" />
             </div>
             <p class="home-specimen-note">
-              Live Selaras components. Each edit is applied here with STheme, the scoped form of the same setting, so only this preview changes.
+              {{ pageCopy.liveNote }}
             </p>
             <div class="home-step-detail">
               <h2>{{ shownEdit.title }}</h2>
               <p>{{ shownEdit.text }}</p>
               <p v-if="step === 0" class="home-step-hint">
-                Not applied yet. Choose {{ shownEdit.short }} above to apply it.
+                {{ pageCopy.notApplied.replace('{short}', shownEdit.short) }}
               </p>
               <figure class="home-code">
                 <figcaption>{{ shownEdit.file }}</figcaption>
@@ -235,12 +294,12 @@ const groups = computed(() => areas.map((area) => {
 
     <section class="home-container home-library" aria-labelledby="home-library-title">
       <h2 id="home-library-title">
-        Explore the library
+        {{ pageCopy.explore }}
       </h2>
       <ul class="home-areas">
         <li v-for="group in groups" :key="group.path">
           <h3>
-            <NuxtLink :to="group.fallback">
+            <NuxtLink :to="docsRoutePath(group.fallback)">
               {{ group.title }}
               <SIcon name="hugeicons:arrow-right-02" class="home-area-arrow" aria-hidden="true" />
             </NuxtLink>
@@ -248,7 +307,7 @@ const groups = computed(() => areas.map((area) => {
           <p>{{ group.description }}</p>
           <ul v-if="group.categories.length" class="home-area-links">
             <li v-for="category in group.categories" :key="category.to">
-              <NuxtLink :to="category.to">
+              <NuxtLink :to="docsRoutePath(category.to)">
                 {{ category.title }}
               </NuxtLink>
             </li>
@@ -257,8 +316,8 @@ const groups = computed(() => areas.map((area) => {
       </ul>
       <div class="home-meta">
         <p>
-          Building with a coding agent? <NuxtLink to="/overview/agent-support/overview">
-            Give it the component APIs, examples, and the Selaras skill.
+          {{ pageCopy.agentLead }} <NuxtLink :to="docsRoutePath('/overview/agent-support/overview')">
+            {{ pageCopy.agentLink }}
           </NuxtLink>
         </p>
         <p class="home-version">

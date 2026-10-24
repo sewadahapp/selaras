@@ -2,10 +2,37 @@
 import { starterTemplates } from '../utils/templates'
 
 definePageMeta({ layout: 'home' })
-useDocsSeo({
-  title: 'Templates',
-  description: 'Start your next site with Selaras. Browse starter templates, preview their designs, and make them your own.',
-})
+const { locale } = useDocsLocale()
+const isId = computed(() => locale.value === 'id')
+const copy = computed(() => isId.value
+  ? {
+      title: 'Templat',
+      description: 'Mulai situs berikutnya dengan Selaras. Jelajahi templat awal, lihat desainnya, lalu sesuaikan dengan kebutuhan Anda.',
+      intro: 'Titik awal untuk situs berikutnya. Dibangun dengan Selaras dan siap Anda sesuaikan.',
+      listLabel: 'Templat awal',
+      preview: 'Pratinjau',
+      view: 'Lihat',
+      use: 'Gunakan templat',
+      livePreview: 'Pratinjau langsung',
+      items: [
+        { category: 'Dasbor', description: 'Templat dasbor dengan analitik, pengelolaan pelanggan, editor teks kaya, dan pengaturan ruang kerja. Termasuk data demo lokal dan contoh antarmuka autentikasi.', imageAlt: 'Ringkasan ruang kerja Selaras Dashboard dengan navigasi bilah sisi, metrik pelanggan, grafik pendapatan, dan paket pelanggan.' },
+        { category: 'Ruang kerja SaaS', description: 'Ruang kerja dengan beberapa panel untuk proyek, tugas, berkas, kotak masuk, dan obrolan. Menggunakan data demo lokal dan siap dihubungkan ke layanan Anda.', imageAlt: 'Ringkasan proyek Selaras SaaS dengan bilah aplikasi, navigasi ruang kerja, tugas, dan panel detail proyek.' },
+        { category: 'Dokumentasi', description: 'Templat dokumentasi dengan panduan Markdown, referensi API, pencarian lokal, dan beranda yang dapat disesuaikan. Dibangun dengan layer Selaras Docs.', imageAlt: 'Beranda Selaras Documentation dengan pengantar awal, tur singkat, serta tautan panduan dan referensi API.' },
+        { category: 'Blog dan portofolio', description: 'Blog pribadi dan portofolio dengan publikasi Markdown, jurnal, dan arsip proyek. Dibangun dengan Nuxt Content dan Selaras.', imageAlt: 'Beranda Selaras Blog dengan tata letak editorial gelap dan tulisan besar Naya Arunika.' },
+      ],
+    }
+  : {
+      title: 'Templates',
+      description: 'Start your next site with Selaras. Browse starter templates, preview their designs, and make them your own.',
+      intro: 'A starting point for your next site. Built with Selaras, ready to make your own.',
+      listLabel: 'Starter templates',
+      preview: 'Preview',
+      view: 'View',
+      use: 'Use template',
+      livePreview: 'Live preview',
+      items: starterTemplates,
+    })
+useDocsSeo(() => ({ title: copy.value.title, description: copy.value.description }), { translationAvailable: true })
 
 const assetUrl = useDocsAssetUrl()
 </script>
@@ -13,34 +40,34 @@ const assetUrl = useDocsAssetUrl()
 <template>
   <div class="templates-page">
     <header class="templates-intro">
-      <h1>Templates</h1>
-      <p>A starting point for your next site. Built with Selaras, ready to make your own.</p>
+      <h1>{{ copy.title }}</h1>
+      <p>{{ copy.intro }}</p>
     </header>
 
-    <section class="templates-grid" aria-label="Starter templates">
-      <article v-for="template in starterTemplates" :key="template.repository" class="template">
+    <section class="templates-grid" :aria-label="copy.listLabel">
+      <article v-for="(template, index) in starterTemplates" :key="template.repository" class="template">
         <a
           :href="template.demo ?? template.repository"
           target="_blank"
           rel="noreferrer"
           class="template-preview"
-          :aria-label="`${template.demo ? 'Preview' : 'View'} ${template.name}`"
+          :aria-label="`${template.demo ? copy.preview : copy.view} ${template.name}`"
         >
-          <img :src="assetUrl(template.image)" :alt="template.imageAlt" width="1440" height="960">
+          <img :src="assetUrl(template.image)" :alt="isId ? copy.items[index]!.imageAlt : template.imageAlt" width="1440" height="960">
         </a>
         <div class="template-heading">
           <h2>{{ template.name }}</h2>
-          <span>{{ template.category }}</span>
+          <span>{{ isId ? copy.items[index]!.category : template.category }}</span>
         </div>
         <p class="template-description">
-          {{ template.description }}
+          {{ isId ? copy.items[index]!.description : template.description }}
         </p>
         <div class="template-actions">
           <SButton as="a" :href="template.createUrl" target="_blank" rel="noreferrer" trailing-icon="hugeicons:arrow-up-right-01">
-            Use template
+            {{ copy.use }}
           </SButton>
           <SButton v-if="template.demo" as="a" :href="template.demo" target="_blank" rel="noreferrer" color="neutral" variant="link">
-            Live preview
+            {{ copy.livePreview }}
           </SButton>
           <SButton as="a" :href="template.repository" target="_blank" rel="noreferrer" color="neutral" variant="link" icon="hugeicons:github">
             GitHub

@@ -4,6 +4,7 @@ withDefaults(defineProps<{ heading?: 'h1' | 'h2' }>(), { heading: 'h1' })
 const appConfig = useAppConfig()
 const config = useRuntimeConfig()
 const headingId = useId()
+const messages = useDocsMessages()
 const copy = computed(() => appConfig.selarasDocs?.empty ?? {})
 const homeHref = computed(() => {
   const path = appConfig.selarasDocs?.errors?.homeTo ?? '/'
@@ -19,13 +20,13 @@ const homeHref = computed(() => {
       </slot>
     </div>
     <component :is="heading" :id="headingId" class="selaras-docs-empty-title">
-      {{ copy.title ?? 'No content yet' }}
+      {{ copy.title ?? messages.emptyTitle }}
     </component>
     <p class="selaras-docs-empty-description">
-      {{ copy.description ?? 'There’s no content on this page yet. You can explore the rest of the documentation using the navigation.' }}
+      {{ copy.description ?? messages.emptyDescription }}
     </p>
     <SButton as="a" :href="homeHref" variant="outline" color="neutral" class="selaras-docs-empty-action">
-      {{ appConfig.selarasDocs?.errors?.homeLabel ?? 'Back to documentation' }}
+      {{ appConfig.selarasDocs?.errors?.homeLabel ?? messages.backToDocumentation }}
     </SButton>
   </section>
 </template>
