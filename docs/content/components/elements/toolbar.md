@@ -1,5 +1,6 @@
 ---
 title: Toolbar
+components: [SToolbarButton, SToolbarSeparator, SToolbarToggleGroup]
 description: A keyboard-navigable group of actions, toggles and custom controls.
 order: 12.95
 ---

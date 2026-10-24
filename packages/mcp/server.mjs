@@ -1,6 +1,6 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { documentSummary, findDocument, readSection, searchDocuments } from './catalog.mjs'
+import { documentComponents, documentSummary, findDocument, readSection, searchDocuments } from './catalog.mjs'
 
 const annotations = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }
 const text = value => ({ content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value, null, 2) }] })
@@ -14,8 +14,8 @@ export function createServer(catalog) {
     description: 'Discover Selaras components and composites, their documentation paths, and available examples. Filter by category such as forms, overlays, data, or dashboard.',
     inputSchema: { category: z.string().max(100).optional() },
     annotations,
-  }, async ({ category }) => text(catalog.documents.filter(document => document.component
-    && (!category || document.category.toLowerCase().includes(category.toLowerCase()))).map(documentSummary)))
+  }, async ({ category }) => text(catalog.documents.filter(document => !category || document.category.toLowerCase().includes(category.toLowerCase()))
+    .flatMap(document => documentComponents(document).map(component => ({ ...documentSummary(document), component })))))
   server.registerTool('search_documentation', {
     description: 'Search component APIs, setup, theming, icons, messages, adaptive controls, and composables. Returns matching guide paths to read next.',
     inputSchema: { query: z.string().trim().min(1).max(200), limit: z.number().int().min(1).max(20).default(10) },

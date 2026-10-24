@@ -1,5 +1,6 @@
 ---
 title: Table
+components: [SColumn, SColumnGroup]
 description: A table built on TanStack Table, with a declarative column API - sorting, row selection, pagination, filtering, expansion, column visibility, virtual scroll, and pinned columns out of the box.
 order: 30
 ---
@@ -546,6 +547,7 @@ slot - here's `Table`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `data` | `TData[]` | - |
 | `columns` | `TableColumnDef<TData>[]` | - |
 | `selectable` | `boolean` | `false` |

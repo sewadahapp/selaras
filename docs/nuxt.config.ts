@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { dirname, join, sep } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import { agentAttributionRequest } from './utils/agent-attribution'
@@ -8,8 +8,11 @@ import { docsCanonicalUrl, docsSite, legacyDocsPaths } from './utils/seo'
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
 
+// Locale folders hold translations served from the same public URL, so they
+// never produce their own routes, raw files, or prerendered pages.
+const localeFolders = new Set(['id'])
 const documentationFiles = (readdirSync(join(rootDir, 'content'), { recursive: true }) as string[])
-  .filter(path => path.endsWith('.md'))
+  .filter(path => path.endsWith('.md') && !localeFolders.has(path.split(sep)[0]!))
 const documentationRoutes = documentationFiles.map(path => path === 'index.md' ? '/' : `/${path.replace(/\.md$/, '')}`)
 const exampleSources = Object.fromEntries(
   (readdirSync(join(rootDir, 'components/content/examples'), { recursive: true }) as string[])
@@ -26,6 +29,7 @@ function fakeDemoLinkedPaths() {
     '/',
     '/design-kit',
     '/templates',
+    '/changelog',
     '/examples/adaptive-interfaces',
     ...documentationRoutes,
   ])
@@ -57,7 +61,25 @@ export default defineNuxtConfig({
   // layer files directly during development; packed consumer coverage tests
   // the public package-name extension path separately.
   extends: ['../packages/docs'],
-  modules: ['nuxt-llms', '@nuxtjs/robots', '@nuxtjs/sitemap', 'nuxt-og-image'],
+  modules: ['@nuxtjs/i18n', './modules/changelog', 'nuxt-llms', '@nuxtjs/robots', '@nuxtjs/sitemap', 'nuxt-og-image'],
+  // Localization applies to this docs site only; the published docs layer reads
+  // the active locale through useDocsLocale() and stays dependency-free.
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', language: 'en-GB', name: 'English' },
+      { code: 'id', language: 'id-ID', name: 'Bahasa Indonesia' },
+    ],
+    // The URL never changes, so the choice is kept in a cookie and applied on
+    // the next navigation (and client-side after a static build hydrates).
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'selaras-docs-locale',
+      redirectOn: 'no prefix',
+      fallbackLocale: 'en',
+    },
+  },
   site: {
     url: process.env.NUXT_SITE_URL ?? docsSite.url,
     name: docsSite.name,
@@ -91,7 +113,7 @@ export default defineNuxtConfig({
   },
   sitemap: {
     zeroRuntime: true,
-    include: ['/', '/design-kit', '/templates', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
+    include: ['/', '/design-kit', '/templates', '/changelog', '/changelog/**', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
     exclude: ['/examples/**', '/raw/**', ...Object.keys(legacyDocsPaths)],
     discoverImages: false,
   },
@@ -158,10 +180,14 @@ export default defineNuxtConfig({
       routes: [
         '/design-kit',
         '/templates',
+        '/changelog',
+        '/changelog/docs',
+        '/changelog/mcp',
         '/examples/adaptive-interfaces',
         ...documentationBlocks.map(block => `/examples/blocks/${block.slug}`),
         ...documentationFiles.map(path => `/raw/${path}`),
         ...documentationRoutes,
+
       ],
       ignore: [isFakeDemoLinkedPath],
     },

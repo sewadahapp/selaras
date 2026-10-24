@@ -161,7 +161,7 @@ every slot and variant - here's `Pagination`'s own theme file:
 | `to` | `(page: number) => string` | - |
 | `disabled` | `boolean` | `false` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `md` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'neutral'` |
 | `variant` | `'solid' \| 'soft' \| 'outline' \| 'ghost' \| 'text'` | `'ghost'` |
 | `activeColor` | same as `color` | `'primary'` |
 | `activeVariant` | same as `variant` | `'solid'` |

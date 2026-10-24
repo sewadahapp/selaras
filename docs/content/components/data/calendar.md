@@ -112,3 +112,56 @@ unselected day/navigation buttons; `active-color` styles the selected day.
 The `#footer` slot adds content below the grids. Each month is compact by
 default; use `class="w-full"` with `:ui="{ grid: 'w-full' }"` for a calendar
 that fills its container.
+
+## Props
+
+| Prop | Type | Default |
+| --- | --- | --- |
+| `modelValue` / `defaultValue` | `DateValue` | no selection |
+| `placeholder` / `defaultPlaceholder` | `DateValue` | selected date or today |
+| `minValue` / `maxValue` | `DateValue` | - |
+| `isDateDisabled` / `isDateUnavailable` | `(date: DateValue) => boolean` | - |
+| `locale` | BCP-47 locale string | inherited configuration |
+| `numberOfMonths` | `number` | `1` |
+| `pagedNavigation` | `boolean` | `false` |
+| `weekStartsOn` | `0`–`6` (Sunday–Saturday) | locale default |
+| `weekdayFormat` | `'narrow' \| 'short' \| 'long'` | `'narrow'` |
+| `fixedWeeks` | `boolean` | `false` |
+| `disableDaysOutsideCurrentView` | `boolean` | `false` |
+| `preventDeselect` | `boolean` | `false` |
+| `disabled` / `readonly` | `boolean` | `false` |
+| `initialFocus` | `boolean` | `false` |
+| `calendarLabel` | `string` | generated calendar label |
+| `color` / `activeColor` | `ColorRole`, including registered roles | `'neutral'` / `'primary'` |
+| `ui` | `CalendarProps['ui']` | - |
+
+`placeholder` is a date identifying the visible month, separate from selection.
+Use `v-model:placeholder` to control it, or `defaultPlaceholder` to initialize it.
+`preventDeselect` keeps a selected date selected when activated again.
+`disableDaysOutsideCurrentView` prevents selecting adjacent-month dates shown in
+the current grid. `readonly` keeps navigation available while preventing selection;
+`disabled` disables interaction. `initialFocus` requests focus when mounted.
+
+Calendar selects one date. Use [DatePicker](/components/forms/date-picker#range-selection)
+for a date range. Calendar has no native `name`/`form` submission contract; bind
+its value to your form state or use DatePicker for a field with native submission.
+
+## Events
+
+| Event | Payload | Purpose |
+| --- | --- | --- |
+| `update:modelValue` | `DateValue \| undefined` | Selection or deselection proposal |
+| `update:placeholder` | `DateValue` | Visible month changes through navigation |
+
+## Slots
+
+| Slot | Props | Purpose |
+| --- | --- | --- |
+| `day` | `CalendarDaySlotProps` | Date-button content; keep independent actions outside this slot |
+| `day-details` | `{ date: DateValue, month: DateValue }` | Content beside the date button, suitable for event links/buttons |
+| `footer` | - | Content below the grids |
+
+`CalendarDaySlotProps` contains `date`, `month`, the localized `dayValue`, and
+`selected`, `today`, `disabled`, `unavailable`, `outsideView`, and
+`outsideVisibleView` booleans. `CalendarProps`, `CalendarEmits`, and
+`CalendarDaySlotProps` are exported from `@sewadah/selaras/types`.

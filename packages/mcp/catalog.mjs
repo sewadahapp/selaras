@@ -30,6 +30,10 @@ export async function loadCatalog(path) {
   return catalog
 }
 
+export function documentComponents(document) {
+  return document.components ?? (document.component ? [document.component] : [])
+}
+
 export function documentSummary(document) {
   return {
     path: document.path,
@@ -37,6 +41,7 @@ export function documentSummary(document) {
     description: document.description,
     category: document.category,
     component: document.component,
+    components: documentComponents(document),
     examples: document.examples,
     uri: `selaras://docs${document.path}`,
   }
@@ -45,7 +50,7 @@ export function documentSummary(document) {
 export function findDocument(catalog, path) {
   const normalized = `/${path.replace(/^\/+/, '').replace(/\.md$/, '')}`
   return catalog.documents.find(document => document.path === normalized
-    || document.component?.toLowerCase() === path.toLowerCase())
+    || documentComponents(document).some(component => component.toLowerCase() === path.toLowerCase()))
 }
 
 export function searchDocuments(catalog, query, limit = 10) {
@@ -53,7 +58,7 @@ export function searchDocuments(catalog, query, limit = 10) {
   if (!words.length)
     return []
   return catalog.documents.map((document) => {
-    const title = `${document.title} ${document.component ?? ''}`.toLowerCase()
+    const title = `${document.title} ${documentComponents(document).join(' ')}`.toLowerCase()
     const description = document.description.toLowerCase()
     const content = document.content.toLowerCase()
     const score = words.reduce((total, word) => total

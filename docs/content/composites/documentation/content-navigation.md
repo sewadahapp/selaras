@@ -96,6 +96,8 @@ primitive used internally - see its own Accessibility section for details.
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
+| `collapsed` | `boolean` | `false` |
 | `navigation` | `{ title: string, path: string, icon?: string, children?: [...] }[]` | - (required) |
 | `ui` | `Partial<Record<ContentNavigationSlot, string \| object>>` | - |
 
@@ -104,3 +106,6 @@ primitive used internally - see its own Accessibility section for details.
 | Slot | Props | Description |
 | --- | --- | --- |
 | `link` | `{ link, active }` | Replaces a link's (or group header's) title content |
+
+`collapsed` initially closes groups unless an item's `collapse` metadata overrides
+it. It configures group expansion, rather than a compact sidebar layout.

@@ -134,6 +134,11 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         assert.match(errorHtml, /href="\/guide\/getting-started"/, 'the home destination must be configurable')
     }
     assert.match(html, /<h1[^>]*>[\s\S]*Getting started/, 'the consumer-owned docs collection must render through the layer route')
+    const codeBlock = html.match(/<pre\b[^>]*>[\s\S]*?<\/pre>/)?.[0]
+    assert.ok(codeBlock, 'imported prose components must render code during SSR')
+    assert.match(codeBlock.replace(/<[^>]*>/g, ''), /const greeting = [\s\S]*Hello from Markdown/, 'SSR must include visible code, not an unresolved component tag')
+    assert.match(html, /greeting\.ts/, 'the prose component must render the code filename')
+    assert.match(html, /aria-label="Copy code"/, 'the server-rendered code block must expose its copy control')
     if (prefixed && !overridden) {
       assert.match(html, /Packed documentation/, 'typed app config must set the site identity')
       assert.match(html, /src="\/brand\.svg"[^>]*alt="Packed mark"/, 'site config must render the configured logo and alternative text')

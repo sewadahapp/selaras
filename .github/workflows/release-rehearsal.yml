@@ -4,44 +4,69 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: Packages to rehearse (version settings apply only to selected packages)
+        description: Auto-detect packages to rehearse, or override the selection
         type: choice
-        default: selaras-and-docs
+        default: auto
         options:
+          - auto
           - selaras-and-docs
           - all
           - selaras
           - selaras-docs
           - selaras-mcp
+      selaras-bump:
+        description: Selaras bump (auto uses relevant conventional commits)
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
       selaras-version:
-        description: Exact Selaras candidate version to validate
+        description: Exact Selaras version (must advance; overrides selaras-bump)
+        required: false
         type: string
-        required: true
-        default: 1.0.0
+      docs-bump:
+        description: Docs layer bump (auto uses relevant conventional commits)
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
       docs-version:
-        description: Exact docs layer candidate version to validate
+        description: Exact docs layer version (must advance; overrides docs-bump)
+        required: false
         type: string
-        required: true
-        default: 0.1.0
+      mcp-bump:
+        description: MCP server bump (auto uses relevant conventional commits)
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
       mcp-version:
-        description: Exact MCP server candidate version to validate
+        description: Exact MCP server version (must advance; overrides mcp-bump)
+        required: false
         type: string
-        required: true
-        default: 0.1.0
 
 jobs:
   rehearsal:
     runs-on: ubuntu-latest
 
-    # This workflow deliberately has no write, package, Pages, or identity
-    # permissions. It validates the release job's pre-publish path in an
-    # ephemeral checkout and cannot publish, tag, push, deploy, or release.
+    # Candidate files exist only in this checkout. No publishing, git writes,
+    # Pages deployment, or OIDC authentication is permitted here.
     permissions:
       contents: read
 
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
@@ -52,9 +77,25 @@ jobs:
         with:
           node-version: 24.19.0
           registry-url: https://registry.npmjs.org
+          package-manager-cache: false
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Set release plan path
+        run: echo "PLAN_FILE=$RUNNER_TEMP/selaras-release-plan.json" >> "$GITHUB_ENV"
+
+      - name: Plan release
+        id: plan
+        env:
+          RELEASE_INPUTS: ${{ toJSON(inputs) }}
+        run: node scripts/plan-release.mjs --output "$PLAN_FILE"
+
+      - name: Save release plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-plan
+          path: ${{ env.PLAN_FILE }}
 
       - name: Docs prepare
         run: bun run docs:prepare
@@ -65,46 +106,32 @@ jobs:
       - name: Test
         run: bun run test
 
-      - name: Create ephemeral release candidate
-        run: |
-          case "${{ inputs.package }}" in
-            all|selaras-and-docs)
-              npx changelogen --bump -r "${{ inputs.selaras-version }}"
-              node scripts/bump-workspace-package.mjs --package docs --version "${{ inputs.docs-version }}"
-              if [ "${{ inputs.package }}" = "all" ]; then
-                node scripts/bump-workspace-package.mjs --package mcp --version "${{ inputs.mcp-version }}"
-              fi
-              ;;
-            selaras)
-              npx changelogen --bump -r "${{ inputs.selaras-version }}"
-              ;;
-            selaras-docs)
-              node scripts/bump-workspace-package.mjs --package docs --version "${{ inputs.docs-version }}"
-              ;;
-            selaras-mcp)
-              node scripts/bump-workspace-package.mjs --package mcp --version "${{ inputs.mcp-version }}"
-              ;;
-          esac
+      - name: Create release candidate
+        if: steps.plan.outputs.has_packages == 'true'
+        run: node scripts/apply-release-plan.mjs "$PLAN_FILE"
 
-      - name: Add 1.0 migration summary
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras') && inputs.selaras-version == '1.0.0'
-        run: node scripts/annotate-release-notes.mjs 1.0.0 .github/release-notes/1.0.0.md
-
-      - name: Install Chromium for candidate validation
+      - name: Install Chromium for release validation
+        if: steps.plan.outputs.has_packages == 'true'
         run: bunx playwright install --with-deps chromium
 
       - name: Verify release candidate
+        if: steps.plan.outputs.has_packages == 'true'
         run: bun run test:release
 
-      - name: Validate docs layer publish manifest
-        if: (inputs.package == 'all' || inputs.package == 'selaras-and-docs' || inputs.package == 'selaras-docs')
-        run: |
-          node scripts/prepare-docs-layer-release.mjs --selaras "${{ inputs.selaras-version }}"
-          node scripts/prepare-docs-layer-release.mjs --assert-publishable
+      - name: Build
+        if: steps.plan.outputs.has_packages == 'true'
+        run: bun run prepack
 
-      - name: Validate MCP server package
-        if: inputs.package == 'all' || inputs.package == 'selaras-mcp'
-        run: bun run prepack && bun run test:agent
+      - name: Verify MCP server package
+        if: steps.plan.outputs.mcp == 'true'
+        run: bun run test:agent
+
+      - name: Validate docs layer publish manifest
+        if: steps.plan.outputs.docs == 'true'
+        run: |
+          node scripts/prepare-docs-layer-release.mjs
+          node scripts/prepare-docs-layer-release.mjs --assert-publishable
+          node scripts/prepare-docs-layer-release.mjs --restore
 
       - name: Generate static docs site
         run: |

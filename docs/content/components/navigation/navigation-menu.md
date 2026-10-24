@@ -372,7 +372,7 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `contentOrientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
 | `positioning` | `NavigationMenuPositioning` (`{ align?: 'start' \| 'center' \| 'end' }`) | `{ align: 'center' }` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'primary'` |
 | `variant` | `'pill' \| 'link'` | `'pill'` |
 | `highlight` | `boolean` | `false` |
 | `collapsed` | `boolean` | `false` |

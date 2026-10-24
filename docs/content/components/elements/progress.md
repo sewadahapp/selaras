@@ -68,7 +68,7 @@ Global and scoped theme recipes use `ui.progress`.
 | `max` | `number` | `100` |
 | `type` | `'linear' \| 'circular'` | `'linear'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'primary'` |
 | `ui` | `Partial<Record<ProgressSlot, string \| object>>` | - |
 
 ## Slots

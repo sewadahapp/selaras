@@ -309,6 +309,7 @@ on), plus these Autocomplete-only additions:
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `modelValue` / `defaultValue` | suggestion identity or created string; array in multiple mode | - |
 | `dropdown` | `boolean` | `false` |
 | `forceSelection` | `boolean` | `false` |
 
@@ -320,3 +321,15 @@ displays the selected label directly. Select's `value` and `filter-icon` slots
 are specific to Select's trigger display and separate filter field.
 
 `leading` and `trailing` receive `{ disabled, size, buttonSize }`, as described above.
+
+## Events
+
+| Event | Payload | Purpose |
+| --- | --- | --- |
+| `update:modelValue` | suggestion identity or created string, array in multiple mode, or `undefined` | Proposes a selected, created, cleared, or reset value |
+| `update:open` | `boolean` | Requests opening or closing the suggestion panel or adaptive modal |
+| `update:searchTerm` | `string` | Updates the editable search text |
+
+When `forceSelection` is enabled, selection updates contain suggestion identities
+rather than newly created strings. Open-state control and `defaultOpen` follow
+[Select](/components/forms/select#events).

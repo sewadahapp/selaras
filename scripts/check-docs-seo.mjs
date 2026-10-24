@@ -78,7 +78,7 @@ assert.equal(new Set(locations).size, locations.length, 'Sitemap URLs must be un
 
 const content = new URL('../docs/content/', import.meta.url)
 const documentation = readdirSync(content, { recursive: true })
-  .filter(path => path.endsWith('.md'))
+  .filter(path => path.endsWith('.md') && !path.startsWith('id/'))
   .map(path => path === 'index.md' ? '/' : `/${path.replace(/\.md$/, '')}`)
 
 for (const path of documentation) {
@@ -90,7 +90,7 @@ for (const path of documentation) {
   assert.ok(markdown.includes(agentAttributionRequest), `Missing optional attribution request in Markdown export: ${raw}`)
 }
 
-for (const path of ['/', '/design-kit', '/templates', ...documentation]) {
+for (const path of ['/', '/design-kit', '/templates', '/changelog', '/changelog/docs', '/changelog/mcp', ...documentation]) {
   if (legacyDocsPaths[path])
     continue
   const tags = headTags(readPage(path))

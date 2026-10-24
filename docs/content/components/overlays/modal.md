@@ -238,7 +238,8 @@ await modal.open(ModalConfirmDialog, { dismissible: false })
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `open` | `boolean` | `false` |
+| `open` | `boolean` | uncontrolled (initially closed) |
+| `defaultOpen` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `fullscreen` | `boolean` | `false` |
@@ -248,6 +249,7 @@ await modal.open(ModalConfirmDialog, { dismissible: false })
 | `modal` | `boolean` | `true` |
 | `overlay` | `boolean` | `true` |
 | `transition` | `boolean` | `true` |
+| `autoFocus` | `boolean` | `true` |
 | `ui` | `Partial<Record<'overlay' \| 'content' \| 'header' \| 'headerActions' \| 'title' \| 'description' \| 'close' \| 'maximize' \| 'body' \| 'footer', string \| object>>` | - |
 
 
@@ -276,3 +278,9 @@ A `class` passed to `<SModal>` is merged into the dialog panel. Use `ui.content`
 | `close-icon` | Replaces the close button's icon (default: `hugeicons:cancel-01`) |
 | `maximize-icon` | Replaces the maximize button's icon while not fullscreen |
 | `minimize-icon` | Replaces the maximize button's icon while fullscreen |
+
+### Initial and controlled visibility
+
+`defaultOpen` sets initial visibility when `open` is omitted. Use `v-model:open`
+when a parent owns visibility; `update:open` proposes changes without overriding
+the parent's value. Changing `defaultOpen` after mount does not control the overlay.

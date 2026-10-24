@@ -106,7 +106,8 @@ export function buildChangelogEntry({ version, previousTag, commits, selarasVers
   ]
   const grouped = new Map(sections.map(([type]) => [type, []]))
   const other = []
-  for (const { sha, subject } of commits) {
+  const breaking = []
+  for (const { sha, subject, body } of commits) {
     const conventional = splitConventional(subject)
     const bullet = conventional
       ? `- **${conventional.prefix}** ${conventional.rest} ([${sha.slice(0, 7)}](https://github.com/${repo}/commit/${sha}))`
@@ -116,7 +117,14 @@ export function buildChangelogEntry({ version, previousTag, commits, selarasVers
       bucket.push(bullet)
     else
       other.push(bullet)
+    if (/^[a-z]+(?:\([^)]*\))?!:/.test(subject) || /^BREAKING[ -]CHANGE:/m.test(body ?? '')) {
+      breaking.push(bullet)
+      if (body?.trim())
+        breaking.push('', ...body.trim().split('\n').map(line => `  ${line}`))
+    }
   }
+  if (breaking.length)
+    lines.push('### Breaking changes', '', ...breaking, '')
   for (const [type, heading] of sections) {
     const bullets = grouped.get(type)
     if (bullets.length > 0)

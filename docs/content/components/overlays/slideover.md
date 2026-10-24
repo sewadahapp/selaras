@@ -205,7 +205,8 @@ await slideover.open(SlideoverFilterPanel, { side: 'left' })
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `open` | `boolean` | `false` |
+| `open` | `boolean` | uncontrolled (initially closed) |
+| `defaultOpen` | `boolean` | `false` |
 | `title` | `string` | - |
 | `description` | `string` | - |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'right'` |
@@ -240,3 +241,9 @@ A `class` passed to `<SSlideover>` is merged into the slideover panel. Use `ui.c
 | `body` | Main content |
 | `footer` | Usually action buttons |
 | `close-icon` | Replaces the close button's icon (default: `hugeicons:cancel-01`) |
+
+### Initial and controlled visibility
+
+`defaultOpen` sets initial visibility when `open` is omitted. Use `v-model:open`
+when a parent owns visibility; `update:open` proposes changes without overriding
+the parent's value. Changing `defaultOpen` after mount does not control the overlay.

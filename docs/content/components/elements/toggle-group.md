@@ -90,7 +90,7 @@ every slot and variant - here's `ToggleGroup`'s own theme file:
 | `defaultValue` | `string \| string[]` | - |
 | `disabled` | `boolean` | - |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'primary'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'primary'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `ui` | `Partial<Record<ToggleGroupSlot, string \| object>>` | - |
 

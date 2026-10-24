@@ -7,6 +7,23 @@ import { expandLlmsExamples } from '../docs/utils/llms-examples.ts'
 
 const repositoryRoot = fileURLToPath(new URL('..', import.meta.url))
 
+/** The published export boundary excludes renderers and recursive implementation helpers. */
+export async function readPublicComponents(root = repositoryRoot) {
+  const manifest = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'))
+  return (await readdir(resolve(root, 'src/runtime/components')))
+    .filter(file => /\.(?:vue|ts|js)$/.test(file))
+    .map(file => file.replace(/\.(?:vue|ts|js)$/, ''))
+    .filter((name) => {
+      const entry = manifest.exports?.[`./components/${name}*`]
+      return !(entry && typeof entry === 'object' && Object.keys(entry).length === 0)
+    })
+    .map(name => `S${name}`)
+    .sort()
+}
+
+/** Locale folders whose Markdown translates the default locale and must not become catalog entries. */
+const translationFolders = new Set(['id'])
+
 /** Build an offline catalog from the same documentation and examples as the site. */
 export async function buildAgentCatalog(root = repositoryRoot) {
   const manifest = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'))
@@ -24,12 +41,11 @@ export async function buildAgentCatalog(root = repositoryRoot) {
     sources[name] = source
     examples.push({ name, source, file: `docs/components/content/examples/${file}` })
   }
-  const componentNames = new Set((await readdir(resolve(root, 'src/runtime/components')))
-    .filter(file => file.endsWith('.vue'))
-    .map(file => `S${file.slice(0, -4)}`))
+  const componentNames = new Set(await readPublicComponents(root))
+  const documentedComponents = new Map()
   const documents = []
   for (const file of (await readdir(contentRoot, { recursive: true })).sort()) {
-    if (!file.endsWith('.md') || file === 'index.md')
+    if (!file.endsWith('.md') || file === 'index.md' || translationFolders.has(file.split(/[\\/]/)[0]))
       continue
     const source = await readFile(resolve(contentRoot, file), 'utf8')
     const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/)
@@ -42,18 +58,31 @@ export async function buildAgentCatalog(root = repositoryRoot) {
     const content = source.slice(frontmatter[0].length).trim()
     const exampleNames = [...content.matchAll(/(?:component-example|block-preview)\{name=["']([^"']+)["']/g)].map(match => match[1])
     const component = `S${file.split('/').at(-1).replace(/\.md$/, '').split('-').map(part => part[0].toUpperCase() + part.slice(1)).join('')}`
+    const primaryComponent = (file.startsWith('components/') || file.startsWith('composites/')) && componentNames.has(component) ? component : undefined
+    if (metadata.components !== undefined && (!Array.isArray(metadata.components) || metadata.components.some(name => typeof name !== 'string')))
+      throw new Error(`${file}: components metadata must be an array of public component names`)
+    const components = [...new Set([...(primaryComponent ? [primaryComponent] : []), ...metadata.components ?? []])]
+    for (const name of components) {
+      if (!componentNames.has(name))
+        throw new Error(`${file}: unknown or private component ${name}`)
+      if (documentedComponents.has(name))
+        throw new Error(`${name} has multiple guides: ${documentedComponents.get(name)} and ${file}`)
+      documentedComponents.set(name, file)
+    }
     documents.push({
       path,
       title: metadata.title,
       description: metadata.description ?? '',
       category: file.split('/').slice(0, -1).join('/'),
-      component: (file.startsWith('components/') || file.startsWith('composites/')) && componentNames.has(component)
-        ? component
-        : undefined,
+      component: primaryComponent,
+      components: components.length ? components : undefined,
       examples: [...new Set(exampleNames)],
       content: expandLlmsExamples(content, sources),
     })
   }
+  const missing = [...componentNames].filter(name => !documentedComponents.has(name))
+  if (missing.length)
+    throw new Error(`Public components missing documentation: ${missing.join(', ')}. Add a guide or declare companion components in its components frontmatter.`)
   const catalog = { version: manifest.version, documents, examples }
   const directory = resolve(root, 'dist/agent')
   await mkdir(directory, { recursive: true })

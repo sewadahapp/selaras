@@ -109,8 +109,8 @@ every slot and variant - here's `Avatar`'s own theme file:
 | `alt` | `string` | - |
 | `text` | `string` | - |
 | `icon` | `string` | - |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
-| `statusColor` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'neutral'` |
+| `statusColor` | [ColorRole](/overview/theming/color-roles) | `'neutral'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `shape` | `'circle' \| 'rounded'` | `'circle'` |
 | `status` | `boolean` | `false` |

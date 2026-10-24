@@ -7,13 +7,14 @@ defineProps<{
 
 const appConfig = useAppConfig()
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
+const messages = useDocsMessages()
 </script>
 
 <template>
   <SPageAside
     v-if="links.length && docsConfig.toc?.enabled !== false"
     class="selaras-docs-toc"
-    aria-label="Table of contents"
+    :aria-label="messages.tableOfContents"
     :ui="{ root: 'top-16 h-[calc(100vh-4rem)]' }"
   >
     <SContentToc :links="links" :title="docsConfig.toc?.title" />

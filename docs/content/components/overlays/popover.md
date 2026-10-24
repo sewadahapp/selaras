@@ -142,7 +142,8 @@ Use `ui.content` for panel styling and `#content` for its contents.
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `open` | `boolean` | - |
+| `open` | `boolean` | uncontrolled (initially closed) |
+| `defaultOpen` | `boolean` | `false` |
 | `side` | `'top' \| 'right' \| 'bottom' \| 'left'` | `'bottom'` |
 | `align` | `'start' \| 'center' \| 'end'` | `'center'` |
 | `positioning` | `OverlayPositioning` | panel defaults |
@@ -172,3 +173,9 @@ A `class` passed to `<SPopover>` is merged into its default-slot trigger element
 | --- | --- |
 | default | The trigger element |
 | `content` | The popover's own content |
+
+### Initial and controlled visibility
+
+`defaultOpen` sets initial visibility when `open` is omitted. Use `v-model:open`
+when a parent owns visibility; `update:open` proposes changes without overriding
+the parent's value. Changing `defaultOpen` after mount does not control the overlay.

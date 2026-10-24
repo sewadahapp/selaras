@@ -52,7 +52,10 @@ npm run test:nuxt-compat -- nightly
 npm run test:nuxt-compat -- future core
 npm run test:nuxt-compat -- nightly docs
 
-# Release core and the docs layer (the default), or all three packages
+# Preview CI's automatic release plan without changing files or publishing
+npm run release:plan
+
+# Local manual release commands (use the GitHub workflow for automatic selection)
 npm run release
 npm run release:selaras-and-docs
 npm run release:all
@@ -71,11 +74,59 @@ RELEASE_BUMP=patch npm run release:docs
 RELEASE_BUMP=patch npm run release:mcp
 ```
 
-In the release and release rehearsal workflows, select `selaras-and-docs`
-for core and docs, `all` to include MCP, or a single package. Bump and exact
-version inputs apply only to the selected packages. Each package keeps its
-own version stream. The local `release:both` command remains an alias for
-`release:selaras-and-docs`.
+### Automatic releases in GitHub Actions
+
+Run the **release** workflow on the default branch and leave package selection
+and bump inputs at `auto`. It computes a plan from each package's current
+release tag, lists proposed versions and relevant commits in the run summary,
+and saves the JSON plan as an artifact. Validation, candidate files, npm
+publication, tags, and GitHub release notes all use that same plan. A run with
+no affected packages skips npm and rebuilds/deploys the documentation website.
+The workflow does not publish automatically when a PR merges.
+
+Ownership rules live in `scripts/plan-release.mjs`:
+
+| Changed input | Release impact |
+| --- | --- |
+| `src/`, bundled `skills/`, core build configuration/generators | Selaras |
+| Guides in `docs/content/` (except `index.md`), Vue examples in `docs/components/content/examples/`, or their Markdown expander | Selaras, because these feed its published offline agent catalog |
+| `packages/docs/`, excluding its preview and changelog | Docs layer |
+| `packages/mcp/`, excluding its changelog | MCP server |
+| Published manifest fields, runtime dependencies, or their resolved lockfile graph | The affected package(s) |
+| Core build tool versions (`@nuxt/module-builder`, `@nuxt/schema`, TypeScript, vue-tsc, YAML) | Selaras |
+| Website layout/pages, template previews, tests, CI, and unrelated dev tooling | No npm release |
+
+Published README/license changes are patch changes. Catalog-only updates also
+produce a patch, even when their commit describes a new documentation feature.
+For runtime changes, relevant `feat` commits propose minor releases, breaking
+headers (`!`) or `BREAKING CHANGE`/`BREAKING-CHANGE` footers propose major releases,
+and other changes propose patches. Before 1.0, features propose patches and
+breaking changes propose minors, retaining the existing core versioning policy.
+Package versions stay independent; a core release alone does not bump docs or MCP.
+Lockfile comparison conservatively includes nested resolutions of dependencies
+used by the package, while unrelated development-only updates do not trigger it.
+
+Use the **release rehearsal** workflow first to compute and validate the same
+candidate in a disposable checkout. It has read-only repository permission and
+cannot publish, tag, push, or deploy. Bump/exact-version fields are optional in
+both workflows. In `auto` mode an explicit override also selects that package;
+with an explicit package selection, overrides for excluded packages are rejected.
+Manual package choices remain available for intentional maintenance releases.
+Exact versions must advance the current version. Review breaking-change impact;
+commit messages cannot establish API compatibility by themselves.
+
+The planner requires full history and reachable tags for each current version;
+it stops rather than guessing when release records are missing. Unknown paths
+outside the documented repository areas also stop automatic planning: add an
+ownership rule and regression coverage, or explicitly select packages after
+review. Update the rules when a build gains another input or shared tool.
+Changes to release versions/changelogs do not themselves create another release,
+and fully reverted file changes are excluded. Existing local release commands
+remain manual; `release:both` aliases `release:selaras-and-docs`.
+
+Release runs are serialized without canceling an active publication. They use
+the latest default-branch checkout and abort before publishing if the branch
+advanced during validation. If this happens, run again to compute a fresh plan.
 
 The release workflow publishes selected packages before committing versions
 and creating tags. If a later publish fails, earlier packages may already be
@@ -117,6 +168,24 @@ require Conventional Commit messages, such as `fix(select): preserve selection`
 or `feat(toolbar): add controls`. CI validates the committed code and commit
 messages too. CI and production installs skip local hook installation.
 
+## Public documentation coverage
+
+Each public component must have a guide. Companion components can share their
+parent's guide: declare their canonical names in that Markdown file's frontmatter,
+for example `components: [SColumn, SColumnGroup]` in the Table guide. The agent
+catalog builder combines these with the component inferred from the guide name.
+It checks the package's public export boundary, including TypeScript components,
+and rejects missing guides, unknown/private names, or ambiguous ownership.
+
+`bun run agent:build` checks this inventory; `bun run test:agent` also exercises
+discovery and shared-guide lookup through the packed MCP server. Keep names in
+this metadata even when their API tables share a page. Internal recursive helpers
+and renderer lifecycle components remain excluded. Website content, Markdown
+exports, and the offline catalog use the same examples and guide text.
+
+See the [public API documentation audit](./docs/reviews/public-api-audit.md) for
+the reviewed coverage and corrected examples.
+
 ## Accessibility checks
 
 `npm run test:a11y` builds a dedicated consumer and runs axe checks plus keyboard
@@ -127,6 +196,19 @@ interactive components should also have focused keyboard tests for their behavio
 See the [v1.1 quality review](./docs/reviews/v1.1-quality.md) for the current audit scope and loading measurements.
 
 ## Documentation deployment
+
+The public changelog reads `CHANGELOG.md`, `packages/docs/CHANGELOG.md`, and
+`packages/mcp/CHANGELOG.md` at build time. Edit or generate release notes in
+those files; do not maintain a second copy in the documentation. The core,
+docs layer, and MCP server retain their independent version streams at
+`/changelog`, `/changelog/docs`, and `/changelog/mcp`.
+
+`npm run docs:generate` refreshes optional publication dates from public GitHub
+release metadata into the ignored `docs/.cache/release-dates.json` file before
+building. If GitHub is unavailable, cached dates are retained and undated notes
+still render. No publication date is inferred from a commit timestamp. The
+release workflow already generates and deploys docs after updating changelogs;
+a docs-only deployment also rebuilds this page from the current source.
 
 For the documentation deployment, see [Markdown negotiation on Cloudflare](./deployment/cloudflare-markdown.md).
 See [deployment cache revalidation](./deployment/cloudflare-revalidation.md) for browser cache headers and recovery when an open tab outlives a build.

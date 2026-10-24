@@ -93,7 +93,7 @@ every slot and variant - here's `Chip`'s own theme file:
 | `removeLabel` | `string` | - |
 | `disabled` | `boolean` | `false` |
 | `rounded` | `boolean` | `false` |
-| `color` | `'primary' \| 'neutral' \| 'secondary' \| 'success' \| 'danger' \| 'info' \| 'warning'` | `'neutral'` |
+| `color` | [ColorRole](/overview/theming/color-roles) | `'neutral'` |
 | `variant` | `'solid' \| 'soft' \| 'outline'` | `'soft'` |
 | `size` | `'sm' \| 'md' \| 'lg'` | `'md'` |
 | `ui` | `Partial<Record<ChipSlot, string \| object>>` | - |

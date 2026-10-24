@@ -38,6 +38,7 @@ Global and scoped theme recipes use `ui.contentSurround`.
 
 | Prop | Type | Default |
 | --- | --- | --- |
+| `color` | [ColorRole](/overview/theming/color-roles) | `primary` |
 | `prev` | `{ title: string, path: string }` | - |
 | `next` | `{ title: string, path: string }` | - |
 | `ui` | `Partial<Record<'root' \| 'link' \| 'label' \| 'icon' \| 'title', string \| object>>` | - |

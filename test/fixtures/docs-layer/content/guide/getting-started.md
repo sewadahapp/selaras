@@ -12,5 +12,9 @@ This page belongs to the consumer-owned collection.
 
 The layer should provide navigation around ordinary Markdown headings.
 
+```ts [greeting.ts]
+const greeting = 'Hello from Markdown'
+```
+
 ::docs-example{name="welcome"}
 ::
