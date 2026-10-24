@@ -114,6 +114,8 @@ for (const [path, phrase] of [
   ['/id', 'Antarmuka,'],
   ['/id/templates', 'Templat'],
   ['/id/design-kit', 'Kit desain'],
+  ['/id/design-kit', 'Unduh simbol Ungu sebagai SVG'],
+  ['/id/design-kit', 'Salin simbol Ungu sebagai SVG'],
   ['/id/changelog', 'Catatan perubahan'],
   ['/id/changelog', 'Catatan rilis ditampilkan sesuai teks publikasi aslinya.'],
   ['/id', 'Komponen'],
@@ -121,6 +123,8 @@ for (const [path, phrase] of [
 ]) {
   assert.ok(readPage(path).includes(phrase), `Missing Indonesian standalone-page copy "${phrase}": ${path}`)
 }
+assert.doesNotMatch(readPage('/id/design-kit'), /aria-label="Download [^"]+ as SVG"/, 'Indonesian design-kit asset labels must not remain English')
+assert.doesNotMatch(readPage('/id/design-kit'), /title="Copy SVG"/, 'Indonesian design-kit copy tooltip must not remain English')
 
 const untranslatedIdPath = '/id/overview/introduction'
 const untranslatedTags = headTags(readPage(untranslatedIdPath))
