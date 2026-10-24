@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SelarasDocsNavigationItem } from '../../types'
 import { useDocsRoutePath } from '../composables/useDocsRoutePath'
 
 const route = useRoute()
@@ -7,13 +8,19 @@ const { data: navigation } = useDocsNavigation()
 const messages = useDocsMessages()
 const docsRoutePath = useDocsRoutePath()
 const navigationOpen = ref(false)
+const { locale } = useDocsLocale()
 
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
 const siteName = computed(() => docsConfig.value.header?.title ?? docsConfig.value.site?.name ?? 'Documentation')
-const headerLinks = computed(() => (docsConfig.value.header?.links ?? []).map(link => ({
-  ...link,
-  to: docsRoutePath(link.to ?? '/'),
-})))
+function localizedLink(link: SelarasDocsNavigationItem): SelarasDocsNavigationItem {
+  return {
+    ...link,
+    label: link.labels?.[locale.value] ?? link.label,
+    ...(link.to ? { to: docsRoutePath(link.to) } : {}),
+    ...(link.children ? { children: link.children.map(localizedLink) } : {}),
+  }
+}
+const headerLinks = computed(() => (docsConfig.value.header?.links ?? []).map(localizedLink))
 const repositoryUrl = computed(() => docsConfig.value.repository?.url)
 const sidebarEnabled = computed(() => docsConfig.value.sidebar?.enabled !== false)
 const mobileNavigationEnabled = computed(() => sidebarEnabled.value || headerLinks.value.length > 0)

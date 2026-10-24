@@ -9,6 +9,8 @@ export interface SelarasDocsModuleOptions {
 
 export interface SelarasDocsLink {
   label?: string
+  /** Per-locale labels for links in the consuming site's navigation. */
+  labels?: Record<string, string>
   to: string
   icon?: string
   target?: string
@@ -20,6 +22,8 @@ export interface SelarasDocsLink {
 export interface SelarasDocsNavigationItem {
   /** Required so every header control has an accessible name. */
   label: string
+  /** Per-locale labels for links in the consuming site's navigation. */
+  labels?: Record<string, string>
   to?: string
   icon?: string
   target?: string
@@ -169,6 +173,7 @@ export interface SelarasDocsAppConfig {
   }
   footer?: {
     text?: string
+    textByLocale?: Record<string, string>
     links?: SelarasDocsLink[]
     /** Let the footer span the viewport instead of the docs shell width. */
     fluid?: boolean
