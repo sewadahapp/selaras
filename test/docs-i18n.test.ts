@@ -124,6 +124,21 @@ describe('documentation Indonesian translations', () => {
     'overview/theming/global-configuration.md',
     'overview/theming/scoped-themes.md',
     'overview/theming/complete-themes.md',
+    'components/elements/alert.md',
+    'components/elements/avatar-group.md',
+    'components/elements/avatar.md',
+    'components/elements/badge.md',
+    'components/elements/button-group.md',
+    'components/elements/button.md',
+    'components/elements/chip.md',
+    'components/elements/icon.md',
+    'components/elements/kbd.md',
+    'components/elements/progress.md',
+    'components/elements/separator.md',
+    'components/elements/skeleton.md',
+    'components/elements/toggle-group.md',
+    'components/elements/toggle.md',
+    'components/elements/toolbar.md',
   ]
 
   it.each(paths)('has an Indonesian translation for %s', (path) => {
