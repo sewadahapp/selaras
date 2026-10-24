@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import { useDocsRoutePath } from '../../packages/docs/app/composables/useDocsRoutePath'
+
 const appConfig = useAppConfig()
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
 const footer = computed(() => docsConfig.value.footer)
 const links = computed(() => footer.value?.links?.filter(link => link.label !== 'Powered by Selaras') ?? [])
+const docsRoutePath = useDocsRoutePath()
 </script>
 
 <template>
@@ -14,7 +17,7 @@ const links = computed(() => footer.value?.links?.filter(link => link.label !== 
           <NuxtLink
             v-for="link in links"
             :key="`${link.to}:${link.label ?? link.icon ?? ''}`"
-            :to="link.to"
+            :to="docsRoutePath(link.to)"
             :target="link.target"
             :rel="link.rel"
             :aria-label="link.ariaLabel ?? link.label"

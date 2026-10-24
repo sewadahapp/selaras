@@ -1,5 +1,5 @@
 import type { DocsNavigationNode } from '../utils/docs-navigation'
-import { docsDefaultContentPath } from '../utils/content-path'
+import { docsDefaultContentPath, docsLocalizedRoutePath } from '../utils/content-path'
 import { applyDocsTranslatedTitles, withoutDocsLocaleFolders } from '../utils/docs-navigation'
 
 export function useDocsNavigation() {
@@ -55,6 +55,12 @@ export function useDocsNavigation() {
         return a.order - b.order
       })
 
-    return visit(defaultTree, excluded.size > 0)
+    const localize = (items: DocsNavigationNode[]): DocsNavigationNode[] => items.map(item => ({
+      ...item,
+      path: docsLocalizedRoutePath(item.path, locale.value, defaultLocale.value),
+      ...(item.children ? { children: localize(item.children) } : {}),
+    }))
+
+    return localize(visit(defaultTree, excluded.size > 0))
   }, { watch: [locale, defaultLocale] })
 }

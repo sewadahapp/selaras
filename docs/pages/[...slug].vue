@@ -7,12 +7,13 @@ import ProseH4 from '@sewadah/selaras/components/ProseH4.vue'
 import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
+import { docsDefaultContentPath } from '../../packages/docs/app/utils/content-path'
 
 const route = useRoute()
 const appConfig = useAppConfig()
 const nuxtApp = useNuxtApp()
 const messages = useDocsMessages()
-const { page, fallback, contentPath, error, status, refresh } = await useDocsPageContent()
+const { page, fallback, hasTranslation, contentPath, error, status, refresh } = await useDocsPageContent()
 
 const recoveringBuild = import.meta.client && (!page.value || error.value)
   && await nuxtApp.$docsCheckBuild(route.fullPath, true)
@@ -33,7 +34,14 @@ async function retryPage() {
 }
 
 definePageMeta({ layout: 'selaras-docs' })
-useDocsSeo(() => ({ title: page.value?.title ?? messages.value.documentationUnavailable, description: page.value?.description ?? appConfig.selarasDocs?.site?.description }))
+useDocsSeo(
+  () => ({ title: page.value?.title ?? messages.value.documentationUnavailable, description: page.value?.description ?? appConfig.selarasDocs?.site?.description }),
+  computed(() => ({
+    canonicalPath: fallback.value ? docsDefaultContentPath(route.path, 'id') : route.path,
+    translationAvailable: hasTranslation.value,
+    noindex: fallback.value,
+  })),
+)
 useSeoMeta({ robots: () => error.value ? 'noindex' : undefined })
 
 const proseComponents = {

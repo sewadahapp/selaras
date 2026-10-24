@@ -2,7 +2,7 @@ import type { DocsNavigationNode } from '../packages/docs/app/utils/docs-navigat
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { docsContentPath, docsDefaultContentPath, docsIsLocalizedContentPath, docsLocalizedContentPath } from '../packages/docs/app/utils/content-path'
+import { docsContentPath, docsDefaultContentPath, docsIsLocalizedContentPath, docsLocalizedContentPath, docsLocalizedRoutePath, docsUnlocalizedRoutePath } from '../packages/docs/app/utils/content-path'
 import { docsMessages, formatDocsMessage, resolveDocsMessages } from '../packages/docs/app/utils/docs-messages'
 import { applyDocsTranslatedTitles, withoutDocsLocaleFolders } from '../packages/docs/app/utils/docs-navigation'
 
@@ -33,6 +33,25 @@ describe('documentation locale content paths', () => {
     expect(docsIsLocalizedContentPath('/id/overview', 'id')).toBe(true)
     expect(docsIsLocalizedContentPath('/identity', 'id')).toBe(false)
     expect(docsIsLocalizedContentPath('/overview', 'id')).toBe(false)
+  })
+})
+
+describe('documentation locale route paths', () => {
+  it('keeps English routes at the root and prefixes Indonesian routes', () => {
+    expect(docsLocalizedRoutePath('/components/button', 'en')).toBe('/components/button')
+    expect(docsLocalizedRoutePath('/components/button', 'id')).toBe('/id/components/button')
+    expect(docsLocalizedRoutePath('/', 'id')).toBe('/id')
+  })
+
+  it('does not double-prefix routes and preserves query strings and hashes', () => {
+    expect(docsLocalizedRoutePath('/id/components/button', 'id')).toBe('/id/components/button')
+    expect(docsLocalizedRoutePath('/components/button?tab=api#props', 'id')).toBe('/id/components/button?tab=api#props')
+  })
+
+  it('maps prefixed public routes back to the default content path', () => {
+    expect(docsUnlocalizedRoutePath('/id/components/button', 'id')).toBe('/components/button')
+    expect(docsUnlocalizedRoutePath('/id', 'id')).toBe('/')
+    expect(docsUnlocalizedRoutePath('/identity', 'id')).toBe('/identity')
   })
 })
 

@@ -6,6 +6,7 @@ import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
 import history from '#build/selaras-changelog.json'
+import { useDocsRoutePath } from '../../../packages/docs/app/composables/useDocsRoutePath'
 import { changelogHashTarget, scopeReleaseHeadings } from '../../utils/changelog'
 
 definePageMeta({
@@ -15,6 +16,7 @@ definePageMeta({
 
 const packages = history as ChangelogPackage[]
 const route = useRoute()
+const docsRoutePath = useDocsRoutePath()
 const activePackage = computed(() => packages.find(pkg => pkg.id === (route.params.package || 'core')) ?? packages[0]!)
 const visibleCount = ref(3)
 const releases = computed(() => activePackage.value.releases.slice(0, visibleCount.value))
@@ -75,7 +77,7 @@ useDocsSeo(() => ({
     <header class="changelog-intro">
       <h1>Changelog</h1>
       <p>Updates to Selaras, the docs layer, and agent tools. Each package has its own release history.</p>
-      <SButton to="/overview/getting-started/migrating-to-1" variant="link" color="neutral" :ui="{ base: 'px-0' }">
+      <SButton :to="docsRoutePath('/overview/getting-started/migrating-to-1')" variant="link" color="neutral" :ui="{ base: 'px-0' }">
         Migrating to 1.0
       </SButton>
     </header>
@@ -84,7 +86,7 @@ useDocsSeo(() => ({
       <SButton
         v-for="pkg in packages"
         :key="pkg.id"
-        :to="pkg.path"
+        :to="docsRoutePath(pkg.path)"
         :variant="activePackage.id === pkg.id ? 'soft' : 'text'"
         :color="activePackage.id === pkg.id ? 'primary' : 'neutral'"
         :aria-current="activePackage.id === pkg.id ? 'page' : undefined"
@@ -102,7 +104,7 @@ useDocsSeo(() => ({
       <article v-for="release in releases" :id="release.tag" :key="release.tag" class="changelog-release" :aria-labelledby="`${release.tag}-title`">
         <header class="release-meta">
           <h2 :id="`${release.tag}-title`">
-            <NuxtLink :to="`${activePackage.path}#${release.tag}`">
+            <NuxtLink :to="`${docsRoutePath(activePackage.path)}#${release.tag}`">
               v{{ release.version }}
             </NuxtLink>
           </h2>

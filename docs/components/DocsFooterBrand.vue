@@ -1,6 +1,12 @@
+<script setup lang="ts">
+import { useDocsRoutePath } from '../../packages/docs/app/composables/useDocsRoutePath'
+
+const docsRoutePath = useDocsRoutePath()
+</script>
+
 <template>
   <div class="selaras-site-footer-brand flex items-center gap-3">
-    <NuxtLink to="/" aria-label="Selaras home" class="inline-flex shrink-0 rounded-[var(--selaras-resolved-radius-sm)] [--selaras-docs-logo-height:1.75rem]">
+    <NuxtLink :to="docsRoutePath('/')" aria-label="Selaras home" class="inline-flex shrink-0 rounded-[var(--selaras-resolved-radius-sm)] [--selaras-docs-logo-height:1.75rem]">
       <DocsLogo />
     </NuxtLink>
     <div class="flex flex-col gap-1">

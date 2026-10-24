@@ -34,7 +34,7 @@ assert.match(robots, /^User-agent:\s*\*\s*$/im, 'Robots must include a group for
 assert.match(robots, /^Allow:\s*\/\s*$/im, 'Public documentation must allow crawling')
 assert.doesNotMatch(robots, /^Disallow:\s*\/\s*$/im, 'Do not block public documentation or agent access')
 const robotSitemaps = [...robots.matchAll(/^Sitemap:\s*(\S+)\s*$/gim)].map(([, url]) => url)
-assert.ok(robotSitemaps.includes(new URL('sitemap.xml', home).href), 'Robots must advertise the production sitemap')
+assert.ok(robotSitemaps.includes(new URL('sitemap_index.xml', home).href), 'Robots must advertise the production sitemap index')
 
 const aiUserAgents = [
   'Amazonbot',
@@ -71,8 +71,16 @@ for (const group of robotGroups.filter(group => /^User-agent:/im.test(group))) {
   }
 }
 
-const sitemap = readFileSync(new URL('sitemap.xml', output), 'utf8')
-const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => decode(url))
+const sitemapFile = existsSync(new URL('sitemap_index.xml', output)) ? 'sitemap_index.xml' : 'sitemap.xml'
+const sitemap = readFileSync(new URL(sitemapFile, output), 'utf8')
+const sitemapUrls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => decode(url))
+const sitemaps = /<sitemapindex\b/.test(sitemap)
+  ? sitemapUrls.map((url) => {
+      const pathname = new URL(url).pathname.slice(home.pathname.length).replace(/^\//, '')
+      return readFileSync(new URL(pathname, output), 'utf8')
+    })
+  : [sitemap]
+const locations = sitemaps.flatMap(xml => [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => decode(url)))
 assert.ok(locations.length > 100, 'The sitemap must discover the documentation collection')
 assert.equal(new Set(locations).size, locations.length, 'Sitemap URLs must be unique')
 
@@ -101,6 +109,16 @@ for (const path of ['/', '/design-kit', '/templates', '/changelog', '/changelog/
   }
   assert.ok(locations.includes(docsCanonicalUrl(path, siteUrl, baseURL)), `Sitemap must include ${path}`)
 }
+
+const untranslatedIdPath = '/id/overview/introduction'
+const untranslatedTags = headTags(readPage(untranslatedIdPath))
+assert.match(untranslatedTags.find(tag => tag.name === 'robots')?.content ?? '', /noindex/, 'Untranslated Indonesian fallback must be noindex')
+assert.equal(
+  untranslatedTags.find(tag => tag.rel === 'canonical')?.href,
+  docsCanonicalUrl('/overview/introduction', siteUrl, baseURL),
+  'Untranslated Indonesian fallback must canonicalize to its English page',
+)
+assert.ok(!locations.includes(docsCanonicalUrl(untranslatedIdPath, siteUrl, baseURL)), 'Untranslated Indonesian fallback must stay out of the sitemap')
 
 const images = new Set()
 for (const location of locations) {

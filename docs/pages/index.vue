@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { NuxtLink } from '#components'
 import pkg from '../../package.json'
+import { useDocsRoutePath } from '../../packages/docs/app/composables/useDocsRoutePath'
 import HomeEditSpecimen from '../components/home/HomeEditSpecimen.vue'
 
 definePageMeta({ layout: 'home' })
@@ -137,6 +138,7 @@ onBeforeUnmount(() => {
 })
 
 const { data: navigation } = useDocsNavigation()
+const docsRoutePath = useDocsRoutePath()
 const guidePages = new Set(['/components/forms/validation'])
 const areas = [
   { path: '/components', title: 'Components', description: 'Inputs, navigation, overlays, and the details in between, with keyboard support and typed APIs.', fallback: '/components/elements/button' },
@@ -145,7 +147,7 @@ const areas = [
   { path: '/utilities', title: 'Utilities', description: 'Open overlays from code, share icons and messages, and add input masks.', fallback: '/utilities/composables/use-modal' },
 ]
 const groups = computed(() => areas.map((area) => {
-  const item = navigation.value?.find(entry => entry.path === area.path)
+  const item = navigation.value?.find(entry => entry.path === docsRoutePath(area.path))
   const categories = (item?.children ?? []).map(category => ({
     title: category.title,
     to: category.children?.find(page => !guidePages.has(page.path))?.path ?? category.path,
@@ -170,7 +172,7 @@ const groups = computed(() => areas.map((area) => {
             Vue components for Nuxt and Tailwind CSS v4. Four small edits, one interface: apply them in turn and watch it become yours.
           </p>
           <div class="home-actions">
-            <SButton :as="NuxtLink" to="/overview/getting-started/installation" size="lg">
+            <SButton :as="NuxtLink" :to="docsRoutePath('/overview/getting-started/installation')" size="lg">
               Get started
             </SButton>
             <SButton
@@ -240,7 +242,7 @@ const groups = computed(() => areas.map((area) => {
       <ul class="home-areas">
         <li v-for="group in groups" :key="group.path">
           <h3>
-            <NuxtLink :to="group.fallback">
+            <NuxtLink :to="docsRoutePath(group.fallback)">
               {{ group.title }}
               <SIcon name="hugeicons:arrow-right-02" class="home-area-arrow" aria-hidden="true" />
             </NuxtLink>
@@ -248,7 +250,7 @@ const groups = computed(() => areas.map((area) => {
           <p>{{ group.description }}</p>
           <ul v-if="group.categories.length" class="home-area-links">
             <li v-for="category in group.categories" :key="category.to">
-              <NuxtLink :to="category.to">
+              <NuxtLink :to="docsRoutePath(category.to)">
                 {{ category.title }}
               </NuxtLink>
             </li>
@@ -257,7 +259,7 @@ const groups = computed(() => areas.map((area) => {
       </ul>
       <div class="home-meta">
         <p>
-          Building with a coding agent? <NuxtLink to="/overview/agent-support/overview">
+          Building with a coding agent? <NuxtLink :to="docsRoutePath('/overview/agent-support/overview')">
             Give it the component APIs, examples, and the Selaras skill.
           </NuxtLink>
         </p>

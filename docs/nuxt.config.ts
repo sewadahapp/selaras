@@ -8,12 +8,20 @@ import { docsCanonicalUrl, docsSite, legacyDocsPaths } from './utils/seo'
 
 const rootDir = dirname(fileURLToPath(import.meta.url))
 
-// Locale folders hold translations served from the same public URL, so they
-// never produce their own routes, raw files, or prerendered pages.
 const localeFolders = new Set(['id'])
 const documentationFiles = (readdirSync(join(rootDir, 'content'), { recursive: true }) as string[])
   .filter(path => path.endsWith('.md') && !localeFolders.has(path.split(sep)[0]!))
 const documentationRoutes = documentationFiles.map(path => path === 'index.md' ? '/' : `/${path.replace(/\.md$/, '')}`)
+const indonesianDocumentationFiles = (readdirSync(join(rootDir, 'content', 'id'), { recursive: true }) as string[])
+  .filter(path => path.endsWith('.md'))
+const translatedDocumentationRoutes = indonesianDocumentationFiles.map(path => path === 'index.md' ? '/id' : `/id/${path.replace(/\.md$/, '')}`)
+const indonesianFallbackRoutes = documentationRoutes.map(path => path === '/' ? '/id' : `/id${path}`)
+const translatedDocumentationRouteSet = new Set(translatedDocumentationRoutes)
+const indonesianFallbackRouteRules = Object.fromEntries(
+  indonesianFallbackRoutes
+    .filter(path => !translatedDocumentationRouteSet.has(path))
+    .map(path => [path, { robots: false, sitemap: false }]),
+)
 const exampleSources = Object.fromEntries(
   (readdirSync(join(rootDir, 'components/content/examples'), { recursive: true }) as string[])
     .filter(path => path.endsWith('.vue'))
@@ -65,18 +73,18 @@ export default defineNuxtConfig({
   // Localization applies to this docs site only; the published docs layer reads
   // the active locale through useDocsLocale() and stays dependency-free.
   i18n: {
-    strategy: 'no_prefix',
+    strategy: 'prefix_except_default',
     defaultLocale: 'en',
     locales: [
       { code: 'en', language: 'en-GB', name: 'English' },
       { code: 'id', language: 'id-ID', name: 'Bahasa Indonesia' },
     ],
-    // The URL never changes, so the choice is kept in a cookie and applied on
-    // the next navigation (and client-side after a static build hydrates).
+    // Locale detection redirects only the root URL; explicit locale paths stay
+    // stable and independently crawlable.
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'selaras-docs-locale',
-      redirectOn: 'no prefix',
+      redirectOn: 'root',
       fallbackLocale: 'en',
     },
   },
@@ -88,7 +96,7 @@ export default defineNuxtConfig({
   },
   robots: {
     allow: ['/'],
-    sitemap: ['/sitemap.xml'],
+    sitemap: ['/sitemap_index.xml'],
     groups: [
       '*',
       'Amazonbot',
@@ -113,7 +121,22 @@ export default defineNuxtConfig({
   },
   sitemap: {
     zeroRuntime: true,
-    include: ['/', '/design-kit', '/templates', '/changelog', '/changelog/**', '/overview/**', '/components/**', '/composites/**', '/blocks/**', '/utilities/**'],
+    include: [
+      '/',
+      '/design-kit',
+      '/templates',
+      '/changelog',
+      '/changelog/docs',
+      '/changelog/mcp',
+      ...documentationRoutes,
+      '/id',
+      '/id/design-kit',
+      '/id/templates',
+      '/id/changelog',
+      '/id/changelog/docs',
+      '/id/changelog/mcp',
+      ...translatedDocumentationRoutes,
+    ],
     exclude: ['/examples/**', '/raw/**', ...Object.keys(legacyDocsPaths)],
     discoverImages: false,
   },
@@ -127,6 +150,7 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
+    ...indonesianFallbackRouteRules,
     '/examples/**': { sitemap: false, ogImage: false, robots: false },
     '/raw/**': { sitemap: false, ogImage: false, robots: false },
   },
@@ -187,7 +211,13 @@ export default defineNuxtConfig({
         ...documentationBlocks.map(block => `/examples/blocks/${block.slug}`),
         ...documentationFiles.map(path => `/raw/${path}`),
         ...documentationRoutes,
-
+        '/id',
+        '/id/design-kit',
+        '/id/templates',
+        '/id/changelog',
+        '/id/changelog/docs',
+        '/id/changelog/mcp',
+        ...indonesianFallbackRoutes,
       ],
       ignore: [isFakeDemoLinkedPath],
     },

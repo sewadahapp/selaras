@@ -7,12 +7,14 @@ import ProseH4 from '@sewadah/selaras/components/ProseH4.vue'
 import ProseH5 from '@sewadah/selaras/components/ProseH5.vue'
 import ProseH6 from '@sewadah/selaras/components/ProseH6.vue'
 import ProsePre from '@sewadah/selaras/components/ProsePre.vue'
+import { docsCanonicalUrl, docsSite } from '~/utils/seo'
+import { docsDefaultContentPath, docsLocalizedRoutePath } from '../utils/content-path'
 
 const route = useRoute()
 const appConfig = useAppConfig()
 const nuxtApp = useNuxtApp()
 const messages = useDocsMessages()
-const { page, fallback, contentPath, error, status, refresh } = await useDocsPageContent()
+const { page, fallback, contentPath, hasTranslation, error, status, refresh } = await useDocsPageContent()
 
 const recoveringBuild = import.meta.client && (!page.value || error.value)
   && await nuxtApp.$docsCheckBuild(route.fullPath, true)
@@ -33,16 +35,38 @@ async function retryPage() {
 }
 
 definePageMeta({ layout: 'selaras-docs' })
+const { locale, defaultLocale, locales, localeOption } = useDocsLocale()
+const siteUrl = useSiteConfig().url || docsSite.url
+const config = useRuntimeConfig()
+const defaultRoutePath = computed(() => docsDefaultContentPath(contentPath.value, locale.value, defaultLocale.value))
+const translatedPage = computed(() => locale.value !== defaultLocale.value && contentPath.value.startsWith(`/${locale.value}/`))
+const canonicalPath = computed(() => contentPath.value)
+const canonicalUrl = computed(() => siteUrl ? docsCanonicalUrl(canonicalPath.value, siteUrl, config.app.baseURL) : undefined)
+const alternateLinks = computed(() => {
+  if ((locale.value !== defaultLocale.value && !translatedPage.value) || !hasTranslation.value || !siteUrl)
+    return []
+  const translatedLocale = locales.value.find(item => item.code !== defaultLocale.value)
+  const defaultLanguage = locales.value.find(item => item.code === defaultLocale.value)?.language ?? defaultLocale.value
+  const translatedPath = docsLocalizedRoutePath(defaultRoutePath.value, translatedLocale?.code ?? 'id', defaultLocale.value)
+  const defaultUrl = docsCanonicalUrl(defaultRoutePath.value, siteUrl, config.app.baseURL)
+  return [
+    { rel: 'alternate' as const, type: 'text/html', hreflang: defaultLanguage, href: defaultUrl },
+    ...(translatedLocale?.language ? [{ rel: 'alternate' as const, type: 'text/html', hreflang: translatedLocale.language, href: docsCanonicalUrl(translatedPath, siteUrl, config.app.baseURL) }] : []),
+    { rel: 'alternate' as const, type: 'text/html', hreflang: 'x-default', href: defaultUrl },
+  ]
+})
 useSeoMeta({
   title: () => page.value?.title ?? appConfig.selarasDocs?.errors?.page?.title ?? messages.value.documentationUnavailable,
   description: () => page.value?.description ?? appConfig.selarasDocs?.site?.description,
-  robots: () => error.value ? 'noindex' : undefined,
+  robots: () => error.value || fallback.value ? 'noindex' : undefined,
+  ogUrl: () => canonicalUrl.value,
+  ogLocale: () => (localeOption.value.language ?? locale.value).replace('-', '_'),
 })
 useHead(() => ({
+  htmlAttrs: { lang: localeOption.value.language ?? locale.value },
+  ...(fallback.value && { meta: [{ name: 'robots', content: 'noindex, follow' }] }),
   ...(appConfig.selarasDocs?.site?.titleTemplate && { titleTemplate: appConfig.selarasDocs.site.titleTemplate }),
-  ...(appConfig.selarasDocs?.site?.url && {
-    link: [{ rel: 'canonical', href: new URL(route.path, appConfig.selarasDocs.site.url).href }],
-  }),
+  ...(canonicalUrl.value && { link: [{ rel: 'canonical', href: canonicalUrl.value, key: 'canonical', tagPriority: 'critical' }, ...alternateLinks.value] }),
 }))
 
 const proseComponents = {

@@ -7,8 +7,8 @@ export default defineAppConfig({
   },
   selarasDocs: {
     // Mirrors the @nuxtjs/i18n locales so the layer's switcher can label them
-    // without importing the module. The default locale owns the URL and the
-    // content root.
+    // without importing the module. English owns the unprefixed URL and root
+    // content; Indonesian uses /id and docs/content/id.
     i18n: {
       defaultLocale: 'en',
       locales: [

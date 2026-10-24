@@ -1,13 +1,19 @@
 <script setup lang="ts">
+import { useDocsRoutePath } from '../composables/useDocsRoutePath'
+
 const route = useRoute()
 const appConfig = useAppConfig()
 const { data: navigation } = useDocsNavigation()
 const messages = useDocsMessages()
+const docsRoutePath = useDocsRoutePath()
 const navigationOpen = ref(false)
 
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
 const siteName = computed(() => docsConfig.value.header?.title ?? docsConfig.value.site?.name ?? 'Documentation')
-const headerLinks = computed(() => docsConfig.value.header?.links ?? [])
+const headerLinks = computed(() => (docsConfig.value.header?.links ?? []).map(link => ({
+  ...link,
+  to: docsRoutePath(link.to ?? '/'),
+})))
 const repositoryUrl = computed(() => docsConfig.value.repository?.url)
 const sidebarEnabled = computed(() => docsConfig.value.sidebar?.enabled !== false)
 const mobileNavigationEnabled = computed(() => sidebarEnabled.value || headerLinks.value.length > 0)
@@ -26,7 +32,7 @@ watch(() => route.path, () => {
     }"
   >
     <div class="selaras-docs-brand-area">
-      <NuxtLink to="/" class="selaras-docs-brand" :aria-label="`${siteName} home`">
+      <NuxtLink :to="docsRoutePath('/')" class="selaras-docs-brand" :aria-label="`${siteName} home`">
         <DocsHeaderBrand />
       </NuxtLink>
     </div>
