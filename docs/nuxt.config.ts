@@ -181,6 +181,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   icon: {
     clientBundle: {
+      icons: ['circle-flags:gb', 'circle-flags:id'],
       scan: {
         globInclude: [
           'components/**/*.{vue,md,mdc,mdx}',

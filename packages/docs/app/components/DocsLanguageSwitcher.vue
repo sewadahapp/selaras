@@ -5,11 +5,6 @@ const { locale, locales, localeOption, hasLocaleSwitching, setLocale } = useDocs
 const messages = useDocsMessages()
 const open = ref(false)
 
-const flags: Record<string, string> = {
-  en: 'circle-flags:gb',
-  id: 'circle-flags:id',
-}
-
 const nextLocale = computed(() => locales.value.find(option => option.code !== locale.value) ?? localeOption.value)
 const label = computed(() => formatDocsMessage(messages.value.languageSwitcher, { language: nextLocale.value.name }))
 </script>
@@ -24,7 +19,9 @@ const label = computed(() => formatDocsMessage(messages.value.languageSwitcher, 
       :title="label"
       :aria-expanded="open"
     >
-      <Icon aria-hidden="true" :name="flags[localeOption.code] ?? 'hugeicons:globe-02'" class="size-5" />
+      <Icon v-if="localeOption.code === 'en'" aria-hidden="true" name="circle-flags:gb" class="size-5" />
+      <Icon v-else-if="localeOption.code === 'id'" aria-hidden="true" name="circle-flags:id" class="size-5" />
+      <Icon v-else aria-hidden="true" name="hugeicons:globe-02" class="size-5" />
     </SButton>
 
     <template #content>
@@ -51,7 +48,9 @@ const label = computed(() => formatDocsMessage(messages.value.languageSwitcher, 
             @click="setLocale(option.code); open = false"
           >
             <span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center">
-              <Icon :name="flags[option.code] ?? 'hugeicons:globe-02'" class="size-8" />
+              <Icon v-if="option.code === 'en'" name="circle-flags:gb" class="size-8" />
+              <Icon v-else-if="option.code === 'id'" name="circle-flags:id" class="size-8" />
+              <Icon v-else name="hugeicons:globe-02" class="size-8" />
             </span>
 
             <span class="min-w-0 flex-1">

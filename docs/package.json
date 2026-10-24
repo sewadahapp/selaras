@@ -37,6 +37,7 @@
     "shiki": "^4.4.3"
   },
   "devDependencies": {
+    "@iconify-json/circle-flags": "^1.2.12",
     "@iconify-json/hugeicons": "^1.2.35",
     "@iconify-json/vscode-icons": "^1.2.84",
     "vue-router": "^5.2.0"
