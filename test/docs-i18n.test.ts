@@ -139,6 +139,12 @@ describe('documentation Indonesian translations', () => {
     'components/elements/toggle-group.md',
     'components/elements/toggle.md',
     'components/elements/toolbar.md',
+    'components/forms/checkbox.md',
+    'components/forms/form-field.md',
+    'components/forms/input.md',
+    'components/forms/select.md',
+    'components/forms/switch.md',
+    'components/forms/textarea.md',
   ]
 
   it.each(paths)('has an Indonesian translation for %s', (path) => {
