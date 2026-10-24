@@ -110,6 +110,18 @@ for (const path of ['/', '/design-kit', '/templates', '/changelog', '/changelog/
   assert.ok(locations.includes(docsCanonicalUrl(path, siteUrl, baseURL)), `Sitemap must include ${path}`)
 }
 
+for (const [path, phrase] of [
+  ['/id', 'Antarmuka,'],
+  ['/id/templates', 'Templat'],
+  ['/id/design-kit', 'Kit desain'],
+  ['/id/changelog', 'Catatan perubahan'],
+  ['/id/changelog', 'Catatan rilis ditampilkan sesuai teks publikasi aslinya.'],
+  ['/id', 'Komponen'],
+  ['/id', 'Catatan perubahan'],
+]) {
+  assert.ok(readPage(path).includes(phrase), `Missing Indonesian standalone-page copy "${phrase}": ${path}`)
+}
+
 const untranslatedIdPath = '/id/overview/introduction'
 const untranslatedTags = headTags(readPage(untranslatedIdPath))
 assert.match(untranslatedTags.find(tag => tag.name === 'robots')?.content ?? '', /noindex/, 'Untranslated Indonesian fallback must be noindex')
