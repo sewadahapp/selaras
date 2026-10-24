@@ -17,7 +17,43 @@ definePageMeta({
 const packages = history as ChangelogPackage[]
 const route = useRoute()
 const docsRoutePath = useDocsRoutePath()
+const { locale } = useDocsLocale()
+const isId = computed(() => locale.value === 'id')
+const copy = computed(() => isId.value
+  ? {
+      title: 'Catatan perubahan',
+      description: 'Pembaruan Selaras, layer dokumentasi, dan alat agen. Setiap paket memiliki riwayat rilis sendiri.',
+      migrating: 'Migrasi ke 1.0',
+      packageLabel: 'Paket changelog',
+      releaseSource: 'Catatan rilis ditampilkan sesuai teks publikasi aslinya.',
+      viewGithub: 'Lihat di GitHub',
+      older: 'Tampilkan rilis lama',
+      full: 'Changelog lengkap',
+      titleFor: (label: string) => `Changelog ${label}`,
+      packages: {
+        core: { label: 'Selaras', description: 'Komponen, theming, dan modul Nuxt.' },
+        docs: { label: 'Layer Docs', description: 'Layer dokumentasi yang dapat digunakan kembali.' },
+        mcp: { label: 'Server MCP', description: 'Penemuan komponen dan dokumentasi untuk agen.' },
+      },
+    }
+  : {
+      title: 'Changelog',
+      description: 'Updates to Selaras, the docs layer, and agent tools. Each package has its own release history.',
+      migrating: 'Migrating to 1.0',
+      packageLabel: 'Changelog package',
+      releaseSource: '',
+      viewGithub: 'View on GitHub',
+      older: 'Show older releases',
+      full: 'Full changelog',
+      titleFor: (label: string) => `${label} changelog`,
+      packages: {
+        core: { label: 'Selaras', description: 'Components, theming, and the Nuxt module.' },
+        docs: { label: 'Docs layer', description: 'The reusable documentation layer.' },
+        mcp: { label: 'MCP server', description: 'Component discovery and documentation for agents.' },
+      },
+    })
 const activePackage = computed(() => packages.find(pkg => pkg.id === (route.params.package || 'core')) ?? packages[0]!)
+const activePackageCopy = computed(() => copy.value.packages[activePackage.value.id as keyof typeof copy.value.packages]!)
 const visibleCount = ref(3)
 const releases = computed(() => activePackage.value.releases.slice(0, visibleCount.value))
 watch(() => activePackage.value.id, () => {
@@ -25,7 +61,7 @@ watch(() => activePackage.value.id, () => {
 })
 const proseComponents = { h3: ProseH3, h4: ProseH4, h5: ProseH5, h6: ProseH6, pre: ProsePre }
 const releaseUrl = (tag: string) => `https://github.com/sewadahapp/selaras/releases/tag/${encodeURIComponent(tag)}`
-const formatDate = (date: string) => new Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date))
+const formatDate = (date: string) => new Intl.DateTimeFormat(isId.value ? 'id-ID' : 'en-GB', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(date))
 
 let stopHashScroll = () => {}
 onMounted(() => {
@@ -67,22 +103,22 @@ onMounted(() => {
 onUnmounted(() => stopHashScroll())
 
 useDocsSeo(() => ({
-  title: activePackage.value.id === 'core' ? 'Changelog' : `${activePackage.value.label} changelog`,
-  description: `Release notes for ${activePackage.value.name}. Features, fixes, breaking changes, and upgrade guidance.`,
-}))
+  title: activePackage.value.id === 'core' ? copy.value.title : copy.value.titleFor(activePackageCopy.value.label),
+  description: isId.value ? `Catatan rilis ${activePackageCopy.value.label}. Fitur, perbaikan, perubahan yang tidak kompatibel, dan panduan peningkatan.` : `Release notes for ${activePackage.value.name}. Features, fixes, breaking changes, and upgrade guidance.`,
+}), { translationAvailable: true })
 </script>
 
 <template>
   <div class="changelog-page">
     <header class="changelog-intro">
-      <h1>Changelog</h1>
-      <p>Updates to Selaras, the docs layer, and agent tools. Each package has its own release history.</p>
+      <h1>{{ copy.title }}</h1>
+      <p>{{ copy.description }}</p>
       <SButton :to="docsRoutePath('/overview/getting-started/migrating-to-1')" variant="link" color="neutral" :ui="{ base: 'px-0' }">
-        Migrating to 1.0
+        {{ copy.migrating }}
       </SButton>
     </header>
 
-    <nav class="changelog-packages" aria-label="Changelog package">
+    <nav class="changelog-packages" :aria-label="copy.packageLabel">
       <SButton
         v-for="pkg in packages"
         :key="pkg.id"
@@ -91,14 +127,18 @@ useDocsSeo(() => ({
         :color="activePackage.id === pkg.id ? 'primary' : 'neutral'"
         :aria-current="activePackage.id === pkg.id ? 'page' : undefined"
       >
-        {{ pkg.label }}
+        {{ copy.packages[pkg.id as keyof typeof copy.packages]!.label }}
       </SButton>
     </nav>
 
     <div class="changelog-package-details">
-      <p>{{ activePackage.name }}</p>
-      <span>{{ activePackage.description }}</span>
+      <p>{{ activePackageCopy.label }} · {{ activePackage.name }}</p>
+      <span>{{ activePackageCopy.description }}</span>
     </div>
+
+    <p v-if="isId" class="changelog-source-note" role="note">
+      {{ copy.releaseSource }}
+    </p>
 
     <div class="changelog-releases">
       <article v-for="release in releases" :id="release.tag" :key="release.tag" class="changelog-release" :aria-labelledby="`${release.tag}-title`">
@@ -109,7 +149,7 @@ useDocsSeo(() => ({
             </NuxtLink>
           </h2>
           <time v-if="release.date" :datetime="release.date">{{ formatDate(release.date) }}</time>
-          <a :href="releaseUrl(release.tag)" target="_blank" rel="noreferrer" :aria-label="`View on GitHub: ${activePackage.label} v${release.version}`">View on GitHub <span aria-hidden="true">↗</span></a>
+          <a :href="releaseUrl(release.tag)" target="_blank" rel="noreferrer" :aria-label="`${copy.viewGithub}: ${activePackageCopy.label} v${release.version}`">{{ copy.viewGithub }} <span aria-hidden="true">↗</span></a>
         </header>
         <MDC :key="release.tag" v-slot="{ body, data }" :value="release.body" :cache-key="`changelog-${release.tag}`">
           <MDCRenderer v-if="body" :body="scopeReleaseHeadings(body, release.tag)" :data="data" :components="proseComponents" tag="div" class="selaras-prose release-notes" />
@@ -119,10 +159,10 @@ useDocsSeo(() => ({
 
     <div class="changelog-more">
       <SButton v-if="visibleCount < activePackage.releases.length" variant="outline" color="neutral" @click="visibleCount += 3">
-        Show older releases
+        {{ copy.older }}
       </SButton>
       <a :href="`https://github.com/sewadahapp/selaras/blob/master/${activePackage.source}`" target="_blank" rel="noreferrer">
-        Full {{ activePackage.label }} changelog <span aria-hidden="true">↗</span>
+        {{ copy.full }} {{ activePackageCopy.label }} <span aria-hidden="true">↗</span>
       </a>
     </div>
   </div>
