@@ -2,64 +2,161 @@
 import BrandAsset from '~/components/design-kit/BrandAsset.vue'
 
 definePageMeta({ layout: 'home' })
-useDocsSeo({
-  title: 'Design kit',
-  description: 'Download the Selaras logo, symbols and brand assets. Explore the Seirama identity, colour palette, typography and usage guidelines.',
-})
+const { locale } = useDocsLocale()
+const isId = computed(() => locale.value === 'id')
+const pageCopy = computed(() => isId.value
+  ? {
+      title: 'Kit desain',
+      description: 'Unduh logo, simbol, dan aset merek Selaras. Kenali identitas Seirama, palet warna, tipografi, dan panduan penggunaannya.',
+      intro: 'Identitas Selaras siap digunakan. Pilih logo, salin warna, dan unduh aset untuk proyek berikutnya.',
+      downloadAssets: 'Unduh aset merek',
+      downloadNote: 'SVG, PNG, dan PDF · Termasuk ikon dan panduan penggunaan',
+      sections: ['Logo', 'Warna', 'Tipografi', 'Penggunaan'],
+      sectionsLabel: 'Bagian kit desain',
+      logoTitle: 'Logo Selaras',
+      logoDescription: 'Selaras berarti seirama, harmonis, atau selaras. Simbol kami, Seirama, mewujudkan gagasan itu dalam tiga pita berbeda yang mengikuti satu irama.',
+      symbol: 'Simbol',
+      logo: 'Logo',
+      layout: 'Tata letak logo',
+      horizontal: 'Horizontal',
+      stacked: 'Bertumpuk',
+      vectorNote: 'Setiap SVG adalah berkas vektor dengan huruf yang sudah diubah menjadi outline. Anda tidak perlu memasang font.',
+      palette: 'Palet warna',
+      paletteDescription: 'Ungu menjadi warna utama identitas, ditemani nada yang lebih terang untuk latar gelap dan warna netral yang tenang. Pilih sampel untuk menyalin kode hex.',
+      copyAction: 'Salin',
+      copied: 'Disalin',
+      paletteNote: 'Dokumentasi dapat memberi warna pada simbol mengikuti tema aktif. Gunakan warna merek tetap ini untuk presentasi, grafis, dan materi Selaras lainnya.',
+      typography: 'Tipografi',
+      typeDescription: 'Bentuk huruf yang jelas dan ritme yang teratur, dari logotipe hingga contoh kode.',
+      wordmarkText: 'Logotipe, judul, dan teks antarmuka. Logo menggunakan ketebalan 600.',
+      codeText: 'Contoh kode, perintah, dan nilai teknis dalam dokumentasi.',
+      getTypeface: 'Dapatkan font',
+      usage: 'Beri ruang pada simbol',
+      usageDescription: 'Pertahankan ketiga pita, jaga proporsinya, dan pilih versi yang terlihat jelas pada latarnya.',
+      clearSpace: 'Sisakan ruang kosong selebar satu pita di sekitar simbol',
+      clearSpaceShort: 'Ruang kosong selebar satu pita',
+      keepShape: 'Pertahankan bentuknya',
+      keepShapeText: 'Gunakan artwork yang disediakan. Pertahankan lengkungan, jarak, dan ketiga pita.',
+      rightSize: 'Gunakan ukuran yang tepat',
+      rightSizeText: 'Gunakan simbol minimal 24 px atau logo horizontal dengan lebar minimal 120 px. Untuk ukuran 16 px, gunakan artwork favicon khusus.',
+      contrast: 'Pilih kontras yang cukup',
+      contrastText: 'Gunakan ungu atau hitam pada latar terang, serta ungu muda atau putih pada latar gelap.',
+      downloadGuide: 'Unduh panduan penggunaan',
+      downloadFavicon: 'Unduh SVG favicon',
+      violet: 'Ungu',
+      lightViolet: 'Ungu muda',
+      ink: 'Tinta',
+      white: 'Putih',
+      brandPrimary: 'Warna utama merek',
+      darkSurface: 'Untuk latar gelap',
+      wordmarkRole: 'Logotipe dan teks',
+      reversed: 'Artwork versi terang',
+      violetInk: 'Ungu dan tinta',
+      lightVioletWhite: 'Ungu muda dan putih',
+    }
+  : {
+      title: 'Design kit',
+      description: 'Download the Selaras logo, symbols and brand assets. Explore the Seirama identity, colour palette, typography and usage guidelines.',
+      intro: 'The Selaras identity, ready to use. Find the right logo, copy a colour, and download the assets for your next project.',
+      downloadAssets: 'Download brand assets',
+      downloadNote: 'SVG, PNG and PDF · Includes icons and usage guidelines',
+      sections: ['Logo', 'Colours', 'Typography', 'Usage'],
+      sectionsLabel: 'Design kit sections',
+      logoTitle: 'The Selaras logo',
+      logoDescription: 'Selaras means aligned, in harmony, or in tune. Our mark, Seirama, brings that idea into three distinct bands following one shared rhythm.',
+      symbol: 'Symbol',
+      logo: 'Logo',
+      layout: 'Logo layout',
+      horizontal: 'Horizontal',
+      stacked: 'Stacked',
+      vectorNote: 'Every SVG is a vector file with outlined lettering. No font installation needed.',
+      palette: 'Colour palette',
+      paletteDescription: 'Violet anchors the identity, with a lighter tone for dark surfaces and quiet neutrals alongside it. Select a swatch to copy its hex value.',
+      copyAction: 'Copy',
+      copied: 'Copied',
+      paletteNote: 'The documentation can tint the mark with the active theme. Use these fixed brand colours for presentations, graphics and other Selaras material.',
+      typography: 'Typography',
+      typeDescription: 'Clear letterforms and a steady rhythm, from the wordmark to the code examples.',
+      wordmarkText: 'Wordmark, headings and interface text. The logo uses weight 600.',
+      codeText: 'Code examples, commands and technical values in the documentation.',
+      getTypeface: 'Get the typeface',
+      usage: 'Give the mark room',
+      usageDescription: 'Keep the three bands together, preserve their proportions, and choose a version that stands out against its background.',
+      clearSpace: 'Keep at least one band thickness of clear space around the symbol',
+      clearSpaceShort: 'One band thickness of clear space',
+      keepShape: 'Keep its shape',
+      keepShapeText: 'Use the supplied artwork. Keep the curves, gaps and all three bands intact.',
+      rightSize: 'Use the right size',
+      rightSizeText: 'Prefer a symbol of at least 24 px, or a horizontal logo at least 120 px wide. Use the dedicated favicon artwork at 16 px.',
+      contrast: 'Choose for contrast',
+      contrastText: 'Use violet or black on light backgrounds, and light violet or white on dark backgrounds.',
+      downloadGuide: 'Download usage guide',
+      downloadFavicon: 'Download favicon SVG',
+      violet: 'Violet',
+      lightViolet: 'Light violet',
+      ink: 'Ink',
+      white: 'White',
+      brandPrimary: 'Primary brand colour',
+      darkSurface: 'On dark backgrounds',
+      wordmarkRole: 'Wordmarks and text',
+      reversed: 'Reversed artwork',
+      violetInk: 'Violet & ink',
+      lightVioletWhite: 'Light violet & white',
+    })
+useDocsSeo(() => ({ title: pageCopy.value.title, description: pageCopy.value.description }), { translationAvailable: true })
 
 const assetUrl = useDocsAssetUrl()
 const icons = useIcons()
-const { copy, copied } = useDocsClipboard()
+const { copy: copyToClipboard, copied } = useDocsClipboard()
 const logoLayout = ref<'horizontal' | 'stacked'>('horizontal')
 
-const symbols = [
-  { label: 'Violet', svg: '/brand/selaras-symbol.svg', png: '/brand/logo-1024.png', background: 'light' },
-  { label: 'Black', svg: '/brand/selaras-symbol-black.svg', png: '/brand/selaras-symbol-black-1024.png', background: 'light' },
-  { label: 'White', svg: '/brand/selaras-symbol-white.svg', png: '/brand/selaras-symbol-white-1024.png', background: 'dark' },
-] as const
+const symbols = computed(() => [
+  { label: pageCopy.value.violet, svg: '/brand/selaras-symbol.svg', png: '/brand/logo-1024.png', background: 'light' },
+  { label: isId.value ? 'Hitam' : 'Black', svg: '/brand/selaras-symbol-black.svg', png: '/brand/selaras-symbol-black-1024.png', background: 'light' },
+  { label: pageCopy.value.white, svg: '/brand/selaras-symbol-white.svg', png: '/brand/selaras-symbol-white-1024.png', background: 'dark' },
+] as const)
 
-const logoVariants = [
-  { label: 'Violet & ink', variant: 'colour', background: 'light' },
-  { label: 'Black', variant: 'black', background: 'light' },
-  { label: 'Light violet & white', variant: 'dark', background: 'dark' },
-  { label: 'White', variant: 'white', background: 'dark' },
-] as const
+const logoVariants = computed(() => [
+  { label: pageCopy.value.violetInk, variant: 'colour', background: 'light' },
+  { label: isId.value ? 'Hitam' : 'Black', variant: 'black', background: 'light' },
+  { label: pageCopy.value.lightVioletWhite, variant: 'dark', background: 'dark' },
+  { label: pageCopy.value.white, variant: 'white', background: 'dark' },
+] as const)
 
-const logos = computed(() => logoVariants.map(variant => ({
+const logos = computed(() => logoVariants.value.map(variant => ({
   ...variant,
   svg: `/brand/selaras-${logoLayout.value}-${variant.variant}.svg`,
   png: `/brand/selaras-${logoLayout.value}-${variant.variant}.png`,
 })))
 
-const palette = [
-  { name: 'Violet', hex: '#4E40C9', role: 'Primary brand colour' },
-  { name: 'Light violet', hex: '#A99AFF', role: 'On dark backgrounds' },
-  { name: 'Ink', hex: '#191919', role: 'Wordmarks and text' },
-  { name: 'White', hex: '#FFFFFF', role: 'Reversed artwork' },
-]
+const palette = computed(() => [
+  { name: pageCopy.value.violet, hex: '#4E40C9', role: pageCopy.value.brandPrimary },
+  { name: pageCopy.value.lightViolet, hex: '#A99AFF', role: pageCopy.value.darkSurface },
+  { name: pageCopy.value.ink, hex: '#191919', role: pageCopy.value.wordmarkRole },
+  { name: pageCopy.value.white, hex: '#FFFFFF', role: pageCopy.value.reversed },
+])
 
-const sections = [
-  { id: 'logo', label: 'Logo' },
-  { id: 'colours', label: 'Colours' },
-  { id: 'typography', label: 'Typography' },
-  { id: 'usage', label: 'Usage' },
-]
+const sections = computed(() => [
+  { id: 'logo', label: pageCopy.value.sections[0] },
+  { id: 'colours', label: pageCopy.value.sections[1] },
+  { id: 'typography', label: pageCopy.value.sections[2] },
+  { id: 'usage', label: pageCopy.value.sections[3] },
+])
 </script>
 
 <template>
   <div class="design-kit">
     <header class="kit-hero">
       <div>
-        <h1>Design kit</h1>
+        <h1>{{ pageCopy.title }}</h1>
         <p class="kit-intro">
-          The Selaras identity, ready to use. Find the right logo, copy a colour,
-          and download the assets for your next project.
+          {{ pageCopy.intro }}
         </p>
         <SButton as="a" :href="assetUrl('/brand/seirama-kit.zip')" download color="neutral" size="lg" icon="hugeicons:download-04">
-          Download brand assets
+          {{ pageCopy.downloadAssets }}
         </SButton>
         <p class="kit-download-note">
-          SVG, PNG and PDF · Includes icons and usage guidelines
+          {{ pageCopy.downloadNote }}
         </p>
       </div>
       <div class="kit-hero-mark" aria-hidden="true">
@@ -68,23 +165,22 @@ const sections = [
       </div>
     </header>
 
-    <nav class="kit-section-nav" aria-label="Design kit sections">
+    <nav class="kit-section-nav" :aria-label="pageCopy.sectionsLabel">
       <a v-for="section in sections" :key="section.id" :href="`#${section.id}`">{{ section.label }}</a>
     </nav>
 
     <section id="logo" class="kit-section" aria-labelledby="kit-logo-title">
       <div class="kit-section-heading">
         <h2 id="kit-logo-title">
-          The Selaras logo
+          {{ pageCopy.logoTitle }}
         </h2>
         <p>
-          Selaras means aligned, in harmony, or in tune. Our mark, Seirama, brings that idea
-          into three distinct bands following one shared rhythm.
+          {{ pageCopy.logoDescription }}
         </p>
       </div>
 
       <h3 class="kit-subheading">
-        Symbol
+        {{ pageCopy.symbol }}
       </h3>
       <div class="kit-symbols">
         <BrandAsset v-for="symbol in symbols" :key="symbol.label" v-bind="symbol" layout="symbol" />
@@ -92,14 +188,14 @@ const sections = [
 
       <div class="kit-logo-heading">
         <h3 class="kit-subheading">
-          Logo
+          {{ pageCopy.logo }}
         </h3>
-        <SButtonGroup aria-label="Logo layout" class="kit-layout-picker">
+        <SButtonGroup :aria-label="pageCopy.layout" class="kit-layout-picker">
           <SButton :variant="logoLayout === 'horizontal' ? 'soft' : 'ghost'" color="neutral" size="sm" :aria-pressed="logoLayout === 'horizontal'" @click="logoLayout = 'horizontal'">
-            Horizontal
+            {{ pageCopy.horizontal }}
           </SButton>
           <SButton :variant="logoLayout === 'stacked' ? 'soft' : 'ghost'" color="neutral" size="sm" :aria-pressed="logoLayout === 'stacked'" @click="logoLayout = 'stacked'">
-            Stacked
+            {{ pageCopy.stacked }}
           </SButton>
         </SButtonGroup>
       </div>
@@ -107,18 +203,17 @@ const sections = [
         <BrandAsset v-for="logo in logos" :key="`${logoLayout}-${logo.variant}`" :label="logo.label" :svg="logo.svg" :png="logo.png" :background="logo.background" :layout="logoLayout" />
       </div>
       <p class="kit-caption">
-        Every SVG is a vector file with outlined lettering. No font installation needed.
+        {{ pageCopy.vectorNote }}
       </p>
     </section>
 
     <section id="colours" class="kit-section" aria-labelledby="kit-colours-title">
       <div class="kit-section-heading">
         <h2 id="kit-colours-title">
-          Colour palette
+          {{ pageCopy.palette }}
         </h2>
         <p>
-          Violet anchors the identity, with a lighter tone for dark surfaces and quiet neutrals
-          alongside it. Select a swatch to copy its hex value.
+          {{ pageCopy.paletteDescription }}
         </p>
       </div>
       <div class="kit-palette">
@@ -128,8 +223,8 @@ const sections = [
           variant="ghost"
           color="neutral"
           :ui="{ base: 'kit-colour' }"
-          :aria-label="copied === colour.hex ? `Copied ${colour.hex}` : `Copy ${colour.name} ${colour.hex}`"
-          @click="copy(colour.hex)"
+          :aria-label="copied === colour.hex ? `${pageCopy.copied} ${colour.hex}` : `${pageCopy.copyAction} ${colour.name} ${colour.hex}`"
+          @click="copyToClipboard(colour.hex)"
         >
           <span class="kit-colour-paint" :style="{ backgroundColor: colour.hex }" />
           <span class="kit-colour-description">
@@ -139,19 +234,18 @@ const sections = [
           </span>
         </SButton>
       </div>
-      <span class="sr-only" role="status">{{ copied ? `${copied} copied to clipboard` : '' }}</span>
+      <span class="sr-only" role="status">{{ copied ? `${copied} ${isId ? 'disalin ke papan klip' : 'copied to clipboard'}` : '' }}</span>
       <p class="kit-caption">
-        The documentation can tint the mark with the active theme. Use these fixed brand colours
-        for presentations, graphics and other Selaras material.
+        {{ pageCopy.paletteNote }}
       </p>
     </section>
 
     <section id="typography" class="kit-section" aria-labelledby="kit-type-title">
       <div class="kit-section-heading">
         <h2 id="kit-type-title">
-          Typography
+          {{ pageCopy.typography }}
         </h2>
-        <p>Clear letterforms and a steady rhythm, from the wordmark to the code examples.</p>
+        <p>{{ pageCopy.typeDescription }}</p>
       </div>
       <div class="kit-type-grid">
         <article class="kit-type-specimen">
@@ -162,9 +256,9 @@ const sections = [
             ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789
           </p>
           <h3>Plus Jakarta Sans</h3>
-          <p>Wordmark, headings and interface text. The logo uses weight 600.</p>
+          <p>{{ pageCopy.wordmarkText }}</p>
           <SButton as="a" href="https://github.com/tokotype/PlusJakartaSans" target="_blank" rel="noreferrer" variant="link" color="neutral" size="sm" trailing-icon="hugeicons:arrow-up-right-01">
-            Get the typeface
+            {{ pageCopy.getTypeface }}
           </SButton>
         </article>
         <article class="kit-type-specimen kit-type-specimen--mono">
@@ -175,9 +269,9 @@ const sections = [
             ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789
           </p>
           <h3>JetBrains Mono</h3>
-          <p>Code examples, commands and technical values in the documentation.</p>
+          <p>{{ pageCopy.codeText }}</p>
           <SButton as="a" href="https://www.jetbrains.com/lp/mono/" target="_blank" rel="noreferrer" variant="link" color="neutral" size="sm" trailing-icon="hugeicons:arrow-up-right-01">
-            Get the typeface
+            {{ pageCopy.getTypeface }}
           </SButton>
         </article>
       </div>
@@ -186,30 +280,30 @@ const sections = [
     <section id="usage" class="kit-section" aria-labelledby="kit-usage-title">
       <div class="kit-section-heading">
         <h2 id="kit-usage-title">
-          Give the mark room
+          {{ pageCopy.usage }}
         </h2>
-        <p>Keep the three bands together, preserve their proportions, and choose a version that stands out against its background.</p>
+        <p>{{ pageCopy.usageDescription }}</p>
       </div>
       <div class="kit-usage">
-        <div class="kit-clear-space" role="img" aria-label="Keep at least one band thickness of clear space around the symbol">
+        <div class="kit-clear-space" role="img" :aria-label="pageCopy.clearSpace">
           <div class="kit-clear-space-box">
             <img class="kit-on-light" :src="assetUrl('/brand/selaras-symbol.svg')" width="256" height="256" alt="">
             <img class="kit-on-dark" :src="assetUrl('/brand/logo-dark.svg')" width="256" height="256" alt="">
           </div>
-          <span>One band thickness of clear space</span>
+          <span>{{ pageCopy.clearSpaceShort }}</span>
         </div>
         <dl class="kit-guidelines">
-          <div><dt>Keep its shape</dt><dd>Use the supplied artwork. Keep the curves, gaps and all three bands intact.</dd></div>
-          <div><dt>Use the right size</dt><dd>Prefer a symbol of at least 24 px, or a horizontal logo at least 120 px wide. Use the dedicated favicon artwork at 16 px.</dd></div>
-          <div><dt>Choose for contrast</dt><dd>Use violet or black on light backgrounds, and light violet or white on dark backgrounds.</dd></div>
+          <div><dt>{{ pageCopy.keepShape }}</dt><dd>{{ pageCopy.keepShapeText }}</dd></div>
+          <div><dt>{{ pageCopy.rightSize }}</dt><dd>{{ pageCopy.rightSizeText }}</dd></div>
+          <div><dt>{{ pageCopy.contrast }}</dt><dd>{{ pageCopy.contrastText }}</dd></div>
         </dl>
       </div>
       <div class="kit-guideline-links">
         <SButton as="a" :href="assetUrl('/brand/README.md')" download variant="outline" color="neutral">
-          Download usage guide
+          {{ pageCopy.downloadGuide }}
         </SButton>
         <SButton as="a" :href="assetUrl('/brand/favicon.svg')" download variant="link" color="neutral">
-          Download favicon SVG
+          {{ pageCopy.downloadFavicon }}
         </SButton>
       </div>
     </section>
