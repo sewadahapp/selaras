@@ -248,7 +248,7 @@ export interface ThemeComponentRegistry {
   }
   badge: {
     slots: BadgeThemeSlots
-    conditions: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'variant' | 'size' | 'rounded' | 'dotOnly' | 'iconOnly'>>
+    conditions: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'variant' | 'size' | 'rounded' | 'countLabel' | 'dotOnly' | 'iconOnly'>>
     defaults: WithRegisteredColor<Pick<BadgeVariants, 'color' | 'size'>>
   }
   breadcrumb: {

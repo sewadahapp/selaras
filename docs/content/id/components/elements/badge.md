@@ -44,11 +44,11 @@ order: 11
 
 ### Lencana hitungan rounded
 
-Label numerik otomatis menggunakan bentuk yang membulat penuh. Lebar minimum
-mengikuti tinggi lencana, sehingga satu digit berbentuk lingkaran sementara
-hitungan beberapa digit seperti `12` atau `99+` melebar menjadi pil. Hitungan
-numerik juga menggunakan angka tabular agar lebar digit konsisten. Gunakan
-`rounded` untuk menerapkan bentuk yang sama pada label teks seperti `Baru`.
+Label numerik otomatis memiliki lebar minimum yang sama dengan tinggi lencana,
+sehingga hitungan satu digit berbentuk persegi sementara nilai yang lebih
+panjang melebar mengikuti kontennya. Radius sudut tetap menggunakan nilai
+default. Gunakan `rounded` untuk membulatkan penuh hitungan atau label teks
+seperti `Baru`.
 
 ::component-example{name="badge-rounded-count"}
 ::

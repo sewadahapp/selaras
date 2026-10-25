@@ -37,6 +37,9 @@ export const badgeTheme = tv({
     rounded: {
       true: { base: 'rounded-full tabular-nums' },
     },
+    countLabel: {
+      true: { base: '' },
+    },
     dotOnly: { true: '', false: '' },
     // No label - just an icon (or nothing but a dot, handled separately in
     // Badge.vue) - reads better as a circle than a flat pill, doubling as
@@ -58,11 +61,16 @@ export const badgeTheme = tv({
     { size: 'md', iconOnly: true, class: { base: 'w-5' } },
     { size: 'lg', iconOnly: true, class: { base: 'w-6' } },
 
-    // Rounded count badges keep a one-character label circular while longer
-    // counts naturally grow into a pill.
+    // Explicitly rounded badges preserve their existing size-matched minimum width.
     { size: 'sm', rounded: true, class: { base: 'min-w-4' } },
     { size: 'md', rounded: true, class: { base: 'min-w-5' } },
     { size: 'lg', rounded: true, class: { base: 'min-w-6' } },
+
+    // Numeric count labels keep at least a square footprint while longer
+    // values naturally grow to fit their content.
+    { size: 'sm', countLabel: true, class: { base: 'min-w-4' } },
+    { size: 'md', countLabel: true, class: { base: 'min-w-5' } },
+    { size: 'lg', countLabel: true, class: { base: 'min-w-6' } },
   ],
   defaultVariants: {
     color: 'neutral',

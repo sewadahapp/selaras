@@ -1,6 +1,6 @@
 ---
 title: Badge
-description: A small themed pill for labels and status indicators, with automatic rounded shapes for numeric counts.
+description: A small themed pill for labels and status indicators, with a square minimum width for numeric counts.
 order: 11
 ---
 
@@ -51,11 +51,10 @@ is a deliberately different shape for a deliberately different role.
 
 ### Rounded count badges
 
-Numeric labels automatically use a fully-rounded shape. The minimum width
-matches the badge height, so one digit is circular while multi-digit counts
-such as `12` or `99+` grow into a pill. Numeric counts also use tabular
-numerals to keep digit widths consistent. Set `rounded` to apply the same
-shape to text labels such as `New`.
+Numeric labels automatically get a minimum width equal to the badge height,
+so a one-digit count has a square footprint while longer values grow to fit
+their content. Their corner radius stays at the default. Set `rounded` to use
+a fully-rounded shape for counts or text labels such as `New`.
 
 ::component-example{name="badge-rounded-count"}
 ::

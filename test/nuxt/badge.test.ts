@@ -131,15 +131,16 @@ describe('badge', () => {
     ['sm', 'min-w-4'],
     ['md', 'min-w-5'],
     ['lg', 'min-w-6'],
-  ] as const)('automatically rounds numeric %s counts from circles into pills', async (size, minWidth) => {
+  ] as const)('keeps numeric %s count badges at least square without changing their corner radius', async (size, minWidth) => {
     const singleDigit = await mountSuspended(Badge, { props: { label: '1', size } })
-    expect(singleDigit.classes()).toContain('rounded-full')
+    expect(singleDigit.classes()).toContain('rounded-[var(--selaras-resolved-radius-sm)]')
     expect(singleDigit.classes()).toContain(minWidth)
-    expect(singleDigit.classes()).toContain('tabular-nums')
+    expect(singleDigit.classes()).not.toContain('rounded-full')
 
     const multiDigit = await mountSuspended(Badge, { props: { label: '100', size } })
-    expect(multiDigit.classes()).toContain('rounded-full')
+    expect(multiDigit.classes()).toContain('rounded-[var(--selaras-resolved-radius-sm)]')
     expect(multiDigit.classes()).toContain(minWidth)
+    expect(multiDigit.classes()).not.toContain('rounded-full')
     expect(multiDigit.text()).toBe('100')
   })
 
