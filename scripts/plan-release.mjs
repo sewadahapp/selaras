@@ -129,7 +129,7 @@ export function createReleasePlan({ cwd = process.cwd(), inputs = {} } = {}) {
   const read = (ref, path) => {
     if (!git('ls-tree', '--name-only', ref, '--', path))
       return undefined
-    return git('show', `${ref}:${path}`)
+    return execFileSync('git', ['show', `${ref}:${path}`], { cwd, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 })
   }
   const json = (ref, path) => {
     const content = read(ref, path)

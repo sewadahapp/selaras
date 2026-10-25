@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { mkdirSync, mkdtempSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
@@ -35,7 +36,7 @@ function fixture() {
     mkdirSync(dirname(join(cwd, path)), { recursive: true })
     writeFileSync(join(cwd, path), text)
   }
-  const json = (path: string, object: unknown) => write(path, JSON.stringify(object))
+  const json = (path: string, object: unknown) => write(path, `${JSON.stringify(object)}\n`)
   const read = (path: string) => JSON.parse(readFileSync(join(cwd, path), 'utf8'))
   const commit = (subject: string, body?: string) => {
     git('add', '.')
@@ -235,6 +236,20 @@ describe('automatic release planning', () => {
     expect(notes).toContain('### Breaking changes')
     expect(notes).toContain('BREAKING CHANGE: use the new setup API.')
     expect(notes).toContain('https://example.invalid/migration')
+  })
+
+  it('hashes manifest bytes including the trailing newline so the plan can be applied', () => {
+    const repo = fixture()
+    repo.write('src/module.ts', 'new core')
+    repo.commit('fix(core): update module')
+    const manifest = readFileSync(join(repo.cwd, 'package.json'), 'utf8')
+    const plan = repo.plan()
+    const core = plan.packages.find(pkg => pkg.id === 'selaras')!
+    expect(manifest.endsWith('\n')).toBe(true)
+    expect(core.manifestHash).toBe(createHash('sha256').update(manifest).digest('hex'))
+    const planPath = join(repo.cwd, 'plan.json')
+    writeFileSync(planPath, JSON.stringify(plan))
+    expect(() => applyReleasePlan({ planPath, cwd: repo.cwd })).not.toThrow()
   })
 
   it('rejects a changed manifest before mutating any selected package', () => {
