@@ -12,11 +12,23 @@ export default defineContentConfig({
         {
           cwd: resolve(options.rootDir, 'content'),
           include: '**/*.md',
+          // Translations live under `<locale>/` and are served from the
+          // default locale's URL; only the default locale owns the root.
+          exclude: ['id/**'],
+        },
+        {
+          cwd: resolve(options.rootDir, 'content'),
+          include: 'id/**/*.md',
         },
         {
           cwd: resolve(options.rootDir, 'content'),
           // Nuxt Content reads this metadata into the navigation tree.
           include: '**/.navigation.yml',
+          exclude: ['id/**'],
+        },
+        {
+          cwd: resolve(options.rootDir, 'content'),
+          include: 'id/**/.navigation.yml',
         },
       ],
       schema: z.object({

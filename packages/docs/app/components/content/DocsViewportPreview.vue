@@ -14,6 +14,7 @@ const props = withDefaults(defineProps<{
   height: 540,
 })
 const selected = defineModel<string>('device')
+const messages = useDocsMessages()
 const defaultDevices: readonly SelarasDocsViewportDevice[] = [
   { value: 'desktop', label: 'Desktop', icon: 'hugeicons:computer', width: 1024 },
   { value: 'tablet', label: 'Tablet', icon: 'hugeicons:tablet-01', width: 768 },
@@ -38,7 +39,7 @@ const previewUrl = computed(() => assetUrl(props.src))
           </p>
         </slot>
         <div class="flex items-center gap-2">
-          <div class="inline-flex gap-1 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-1" role="group" aria-label="Preview viewport">
+          <div class="inline-flex gap-1 rounded-[var(--selaras-resolved-radius-md)] border border-[var(--selaras-resolved-border-default)] p-1" role="group" :aria-label="messages.previewViewport">
             <SButton
               v-for="option in devices" :key="option.value"
               :icon="option.icon" :aria-label="option.label" :aria-pressed="device.value === option.value"

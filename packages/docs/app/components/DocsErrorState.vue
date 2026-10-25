@@ -9,6 +9,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ retry: [], home: [event: MouseEvent] }>()
 const appConfig = useAppConfig()
+const messages = useDocsMessages()
 const config = useRuntimeConfig()
 const homeHref = computed(() => {
   const path = appConfig.selarasDocs?.errors?.homeTo ?? '/'
@@ -23,10 +24,10 @@ onMounted(() => {
 })
 const copy = computed(() => {
   const defaults = {
-    notFound: { title: 'Page not found', description: 'The link may have changed, or this page may no longer exist. You can start again from the homepage.' },
-    fatal: { title: 'Something went wrong', description: 'We couldn’t load this page. Reload it to try again, or return to the homepage.' },
-    page: { title: 'This page couldn’t load', description: 'Please try again. You can still use the navigation to explore other pages.' },
-    example: { title: 'This example couldn’t load', description: 'Try loading the example again. The rest of the documentation is still available.' },
+    notFound: { title: messages.value.notFoundTitle, description: messages.value.notFoundDescription },
+    fatal: { title: messages.value.fatalTitle, description: messages.value.fatalDescription },
+    page: { title: messages.value.pageTitle, description: messages.value.pageDescription },
+    example: { title: messages.value.exampleTitle, description: messages.value.exampleDescription },
   }
   return { ...defaults[props.kind], ...appConfig.selarasDocs?.errors?.[props.kind] }
 })
@@ -55,10 +56,10 @@ const showHome = computed(() => props.showHome ?? props.kind !== 'example')
       </p>
       <div class="selaras-docs-error-actions">
         <SButton v-if="kind !== 'notFound'" :loading="pending" :disabled="pending" @click="emit('retry')">
-          {{ pending ? labels.retryingLabel ?? 'Trying again…' : kind === 'fatal' ? labels.reloadLabel ?? 'Reload page' : labels.retryLabel ?? 'Try again' }}
+          {{ pending ? labels.retryingLabel ?? messages.retrying : kind === 'fatal' ? labels.reloadLabel ?? messages.reload : labels.retryLabel ?? messages.retry }}
         </SButton>
         <SButton v-if="showHome" as="a" :href="homeHref" :variant="kind === 'notFound' ? 'solid' : 'outline'" :color="kind === 'notFound' ? 'primary' : 'neutral'" @click="emit('home', $event)">
-          {{ labels.homeLabel ?? 'Go to homepage' }}
+          {{ labels.homeLabel ?? messages.home }}
         </SButton>
       </div>
     </div>

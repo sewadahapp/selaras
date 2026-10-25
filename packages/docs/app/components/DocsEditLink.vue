@@ -7,6 +7,7 @@ const props = defineProps<{
 
 const appConfig = useAppConfig()
 const docsConfig = computed(() => appConfig.selarasDocs ?? {})
+const messages = useDocsMessages()
 
 const editUrl = computed(() => getDocsRepositoryLinks(docsConfig.value.repository, props.path).edit)
 </script>
@@ -14,6 +15,6 @@ const editUrl = computed(() => getDocsRepositoryLinks(docsConfig.value.repositor
 <template>
   <a v-if="editUrl" :href="editUrl" class="selaras-docs-edit-link" target="_blank" rel="noreferrer">
     <SIcon name="hugeicons:pencil-edit-01" aria-hidden="true" />
-    Edit this page
+    {{ messages.editPage }}
   </a>
 </template>

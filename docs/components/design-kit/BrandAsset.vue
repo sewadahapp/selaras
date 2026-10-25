@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { getBrandAssetCopy } from '~/utils/brand-asset-copy'
+
 const props = defineProps<{
   label: string
   svg: string
@@ -9,9 +11,11 @@ const props = defineProps<{
 
 const assetUrl = useDocsAssetUrl()
 const icons = useIcons()
+const { locale } = useDocsLocale()
 const toast = useToast()
 const { copy, copied } = useDocsClipboard()
 const copying = ref(false)
+const copyText = computed(() => getBrandAssetCopy(locale.value, props.label, props.layout ?? 'symbol'))
 
 async function copySvg() {
   copying.value = true
@@ -22,7 +26,7 @@ async function copySvg() {
     await copy(await response.text(), props.svg)
   }
   catch {
-    toast.add({ title: 'Could not load this SVG', description: 'Try the download link instead.', color: 'danger' })
+    toast.add({ title: copyText.value.errorTitle, description: copyText.value.errorDescription, color: 'danger' })
   }
   finally {
     copying.value = false
@@ -33,15 +37,15 @@ async function copySvg() {
 <template>
   <article class="brand-asset">
     <div class="brand-asset-preview" :class="[`brand-asset-preview--${background ?? 'light'}`, `brand-asset-preview--${layout ?? 'symbol'}`]">
-      <img :src="assetUrl(png)" :alt="`${label} ${layout === 'symbol' || !layout ? 'symbol' : `${layout} logo`}`" width="256" height="256">
+      <img :src="assetUrl(png)" :alt="copyText.imageAlt" width="256" height="256">
     </div>
     <div class="brand-asset-caption">
       <h3>{{ label }}</h3>
       <div class="brand-asset-actions">
-        <SButton as="a" :href="assetUrl(svg)" download variant="ghost" color="neutral" size="sm" :aria-label="`Download ${label} ${layout ?? 'symbol'} as SVG`">
+        <SButton as="a" :href="assetUrl(svg)" download variant="ghost" color="neutral" size="sm" :aria-label="copyText.downloadSvg">
           SVG
         </SButton>
-        <SButton as="a" :href="assetUrl(png)" download variant="ghost" color="neutral" size="sm" :aria-label="`Download ${label} ${layout ?? 'symbol'} as PNG`">
+        <SButton as="a" :href="assetUrl(png)" download variant="ghost" color="neutral" size="sm" :aria-label="copyText.downloadPng">
           PNG
         </SButton>
         <SButton
@@ -49,15 +53,15 @@ async function copySvg() {
           color="neutral"
           size="sm"
           :icon="copied === svg ? icons.check : icons.copy"
-          :aria-label="copied === svg ? `Copied ${label} SVG` : `Copy ${label} ${layout ?? 'symbol'} SVG`"
-          :title="copied === svg ? 'Copied SVG' : 'Copy SVG'"
+          :aria-label="copied === svg ? copyText.copied : copyText.copy"
+          :title="copied === svg ? copyText.copiedTitle : copyText.copyTitle"
           :loading="copying"
           :disabled="copying"
           @click="copySvg"
         />
       </div>
     </div>
-    <span class="sr-only" role="status">{{ copied === svg ? `${label} SVG copied` : '' }}</span>
+    <span class="sr-only" role="status">{{ copied === svg ? copyText.announcement : '' }}</span>
   </article>
 </template>
 

@@ -18,6 +18,7 @@
     "@lexical/selection": "^0.52.0",
     "@lexical/utils": "^0.52.0",
     "@nuxt/content": "^3.16.0",
+    "@nuxtjs/i18n": "^10.6.0",
     "@nuxtjs/robots": "6.2.4",
     "@nuxtjs/sitemap": "8.6.2",
     "@resvg/resvg-js": "2.6.2",
@@ -36,6 +37,7 @@
     "shiki": "^4.4.3"
   },
   "devDependencies": {
+    "@iconify-json/circle-flags": "^1.2.12",
     "@iconify-json/hugeicons": "^1.2.35",
     "@iconify-json/vscode-icons": "^1.2.84",
     "vue-router": "^5.2.0"

@@ -28,6 +28,8 @@ async function fixture() {
   await write('src/runtime/components/Renderer.vue', '<template>Private</template>')
   await write('docs/components/content/examples/ButtonBasic.vue', '<template><SButton>Save</SButton></template>')
   await write('docs/content/components/button.md', '---\ntitle: Button\ncomponents: [SColumn]\n---\n\n## Usage\n\n::component-example{name="button-basic"}\n::\n')
+  // Translations are served from the same URL and must never duplicate catalog entries.
+  await write('docs/content/id/components/button.md', '---\ntitle: Tombol\n---\n\n## Penggunaan\n')
   return { root, write, build: () => buildAgentCatalog(root) }
 }
 
@@ -37,6 +39,7 @@ describe('public documentation inventory', () => {
     const catalog = await repo.build()
     expect(await readPublicComponents(repo.root)).toEqual(['SButton', 'SColumn'])
     expect(catalog.documents).toHaveLength(1)
+    expect(catalog.documents.map(document => document.path)).toEqual(['/components/button'])
     expect(catalog.documents[0]?.components).toEqual(['SButton', 'SColumn'])
     expect(catalog.documents[0]?.content).toContain('<SButton>Save</SButton>')
     expect(catalog.examples.map(example => example.name)).toEqual(['button-basic'])
