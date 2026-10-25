@@ -44,19 +44,20 @@ order: 11
 
 ### Lencana hitungan rounded
 
-Gunakan `rounded` untuk bentuk yang membulat penuh pada lencana hitungan.
-Lebar minimum mengikuti tinggi lencana, sehingga satu digit berbentuk
-lingkaran sementara hitungan beberapa digit seperti `12` atau `99+` melebar
-menjadi pil. Bentuk rounded juga menggunakan angka tabular agar lebar setiap
-digit konsisten.
+Label numerik otomatis menggunakan bentuk yang membulat penuh. Lebar minimum
+mengikuti tinggi lencana, sehingga satu digit berbentuk lingkaran sementara
+hitungan beberapa digit seperti `12` atau `99+` melebar menjadi pil. Hitungan
+numerik juga menggunakan angka tabular agar lebar digit konsisten. Gunakan
+`rounded` untuk menerapkan bentuk yang sama pada label teks seperti `Baru`.
 
 ::component-example{name="badge-rounded-count"}
 ::
 
 ```vue-html
-<SBadge rounded label="1" size="sm" color="primary" />
-<SBadge rounded label="12" color="primary" />
-<SBadge rounded label="99+" color="danger" />
+<SBadge label="1" size="sm" color="primary" />
+<SBadge label="12" color="primary" />
+<SBadge label="100" color="primary" />
+<SBadge rounded label="Baru" color="danger" />
 ```
 
 ### Status dot

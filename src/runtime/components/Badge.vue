@@ -19,7 +19,7 @@ export interface BadgeProps {
   label?: string
   icon?: string
   trailingIcon?: string
-  /** Fully-rounded shape for count badges; a one-character label stays circular. */
+  /** Force a fully-rounded shape for non-numeric count labels; numeric labels are rounded automatically. */
   rounded?: boolean
   /** A status circle. Inline dots use the badge foreground; standalone dots use the role indicator. Supply an accessible name when no label is visible. */
   dot?: boolean
@@ -32,6 +32,7 @@ export interface BadgeProps {
 const slots = useSlots()
 
 const hasLabel = computed(() => !!(props.label || slots.default))
+const isNumericCount = computed(() => /^\d+\+?$/.test(props.label ?? ''))
 // dot with nothing else - just the bare circle, no padded pill around it.
 // A bare dot conveys nothing to screen readers on its own; pass a plain
 // aria-label (on its img role, through the fallthrough attrs below) when
@@ -49,7 +50,7 @@ const ui = computed(() => theme.value({
   color: effectiveColor.value as BadgeVariants['color'],
   variant: props.variant,
   size: props.size ?? themeProps.value.size as BadgeVariants['size'],
-  rounded: props.rounded,
+  rounded: props.rounded || isNumericCount.value,
   iconOnly: iconOnly.value,
   dotOnly: dotOnly.value,
 }))

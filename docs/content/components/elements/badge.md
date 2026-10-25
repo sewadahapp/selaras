@@ -1,6 +1,6 @@
 ---
 title: Badge
-description: A small themed pill for labels and status indicators, with an optional rounded shape for count badges.
+description: A small themed pill for labels and status indicators, with automatic rounded shapes for numeric counts.
 order: 11
 ---
 
@@ -51,18 +51,20 @@ is a deliberately different shape for a deliberately different role.
 
 ### Rounded count badges
 
-Set `rounded` to use a fully-rounded shape for a count badge. The minimum
-width matches the badge height, so one digit is circular while multi-digit
-counts such as `12` or `99+` grow into a pill. Rounded counts also use
-tabular numerals to keep digit widths consistent.
+Numeric labels automatically use a fully-rounded shape. The minimum width
+matches the badge height, so one digit is circular while multi-digit counts
+such as `12` or `99+` grow into a pill. Numeric counts also use tabular
+numerals to keep digit widths consistent. Set `rounded` to apply the same
+shape to text labels such as `New`.
 
 ::component-example{name="badge-rounded-count"}
 ::
 
 ```vue-html
-<SBadge rounded label="1" size="sm" color="primary" />
-<SBadge rounded label="12" color="primary" />
-<SBadge rounded label="99+" color="danger" />
+<SBadge label="1" size="sm" color="primary" />
+<SBadge label="12" color="primary" />
+<SBadge label="100" color="danger" />
+<SBadge rounded label="New" color="danger" />
 ```
 
 ### Status dot

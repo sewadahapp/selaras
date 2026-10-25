@@ -96,7 +96,7 @@ describe('public documentation inventory', () => {
     }
     const badge = catalog.documents.find(document => document.path === '/components/elements/badge')
     expect(badge?.content).toContain('Rounded count badges')
-    expect(badge?.content).toContain('<SBadge rounded label="99+"')
+    expect(badge?.content).toContain('<SBadge label="100"')
     expect(badge?.examples).toContain('badge-rounded-count')
   })
 
