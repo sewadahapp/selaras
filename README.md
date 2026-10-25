@@ -172,6 +172,7 @@ cover color roles, complete themes, and all customization layers.
 
 ## Documentation
 
+- [Migration to 1.0](https://selarasui.my.id/overview/migrating-to-1/)
 - [Component usage](https://selarasui.my.id/overview/getting-started/component-usage)
 - [Icons](https://selarasui.my.id/overview/getting-started/icons)
 - [Messages and text](https://selarasui.my.id/overview/getting-started/messages)
@@ -180,6 +181,10 @@ cover color roles, complete themes, and all customization layers.
 - [Copyable blocks](https://selarasui.my.id/blocks/overview)
 - [Starter templates](https://selarasui.my.id/templates)
 - [Changelog](https://selarasui.my.id/changelog)
+
+The documentation site (`@sewadah/selaras-docs`) and optional MCP server
+(`@sewadah/selaras-mcp`) are released and versioned independently from the core
+`@sewadah/selaras` package.
 
 ## Agent support
 
