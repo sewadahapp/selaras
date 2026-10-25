@@ -34,6 +34,9 @@ export const badgeTheme = tv({
       md: { base: 'h-5 px-1.5 text-xs', leadingIcon: 'size-3', trailingIcon: 'size-3', dot: 'size-2' },
       lg: { base: 'h-6 px-2 text-sm', leadingIcon: 'size-3.5', trailingIcon: 'size-3.5', dot: 'size-2.5' },
     },
+    rounded: {
+      true: { base: 'rounded-full tabular-nums' },
+    },
     dotOnly: { true: '', false: '' },
     // No label - just an icon (or nothing but a dot, handled separately in
     // Badge.vue) - reads better as a circle than a flat pill, doubling as
@@ -54,6 +57,12 @@ export const badgeTheme = tv({
     { size: 'sm', iconOnly: true, class: { base: 'w-4' } },
     { size: 'md', iconOnly: true, class: { base: 'w-5' } },
     { size: 'lg', iconOnly: true, class: { base: 'w-6' } },
+
+    // Rounded count badges keep a one-character label circular while longer
+    // counts naturally grow into a pill.
+    { size: 'sm', rounded: true, class: { base: 'min-w-4' } },
+    { size: 'md', rounded: true, class: { base: 'min-w-5' } },
+    { size: 'lg', rounded: true, class: { base: 'min-w-6' } },
   ],
   defaultVariants: {
     color: 'neutral',
