@@ -34,3 +34,15 @@ test('transports scoped Badge colors into a portal', async ({ page, goto }) => {
   await expect(badge).toHaveAttribute('data-selaras-color', 'enterprise')
   expect(await badge.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(9, 8, 7)')
 })
+
+test('rounded count badges are circular for one digit and grow into pills', async ({ page, goto }) => {
+  await goto('/', { waitUntil: 'hydration' })
+  for (const size of ['sm', 'md', 'lg']) {
+    const badge = await page.locator(`#rounded-count-${size}-primary`).boundingBox()
+    expect(badge).not.toBeNull()
+    expect(badge!.width).toBeCloseTo(badge!.height, 0)
+  }
+  const multiDigit = await page.locator('#rounded-count-many-primary').boundingBox()
+  expect(multiDigit).not.toBeNull()
+  expect(multiDigit!.width).toBeGreaterThan(multiDigit!.height)
+})

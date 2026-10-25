@@ -19,6 +19,8 @@ export interface BadgeProps {
   label?: string
   icon?: string
   trailingIcon?: string
+  /** Fully-rounded shape for count badges; a one-character label stays circular. */
+  rounded?: boolean
   /** A status circle. Inline dots use the badge foreground; standalone dots use the role indicator. Supply an accessible name when no label is visible. */
   dot?: boolean
   color?: ColorRole
@@ -47,6 +49,7 @@ const ui = computed(() => theme.value({
   color: effectiveColor.value as BadgeVariants['color'],
   variant: props.variant,
   size: props.size ?? themeProps.value.size as BadgeVariants['size'],
+  rounded: props.rounded,
   iconOnly: iconOnly.value,
   dotOnly: dotOnly.value,
 }))

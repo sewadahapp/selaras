@@ -1,6 +1,6 @@
 ---
 title: Badge
-description: Pil tema kecil untuk label, tag, dan indikator status.
+description: Pil tema kecil untuk label dan indikator status, dengan opsi bentuk rounded untuk lencana hitungan.
 order: 11
 ---
 
@@ -42,6 +42,23 @@ order: 11
 <SBadge icon="hugeicons:tick-02" color="success" variant="solid" size="lg" />
 ```
 
+### Lencana hitungan rounded
+
+Gunakan `rounded` untuk bentuk yang membulat penuh pada lencana hitungan.
+Lebar minimum mengikuti tinggi lencana, sehingga satu digit berbentuk
+lingkaran sementara hitungan beberapa digit seperti `12` atau `99+` melebar
+menjadi pil. Bentuk rounded juga menggunakan angka tabular agar lebar setiap
+digit konsisten.
+
+::component-example{name="badge-rounded-count"}
+::
+
+```vue-html
+<SBadge rounded label="1" size="sm" color="primary" />
+<SBadge rounded label="12" color="primary" />
+<SBadge rounded label="99+" color="danger" />
+```
+
 ### Status dot
 
 `dot` menambahkan lingkaran solid berwarna kecil - indikator online/offline/away klasik. Dikasangkan dengan label, ia duduk di depan teks; sendirian, seluruh badge menciut menjadi hanya dot. Dots inline menggunakan warna badge foreground sehingga tetap terlihat di pil solid; standalone dots menggunakan warna teks role terlepas dari `variant` untuk kontras terhadap permukaan default. Dots inline bersifat dekoratif. Dot standalone memiliki peran gambar dan membutuhkan nama yang dapat diakses seperti `aria-label`.
@@ -81,6 +98,7 @@ Untuk melihat dengan tepat apa yang akan Anda timpa - kelas default untuk setiap
 | `label` | `string` | - |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
+| `rounded` | `boolean` | `false` |
 | `dot` | `boolean` | `false` |
 | `color` | `ColorRole` (role bawaan atau semantik terdaftar) | `'neutral'` |
 | `variant` | `'solid' \| 'soft' \| 'outline' \| 'subtle'` | `'soft'` |

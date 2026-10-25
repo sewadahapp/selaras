@@ -127,6 +127,30 @@ describe('badge', () => {
     expect(wrapper.classes()).not.toContain('rounded-full')
   })
 
+  it.each([
+    ['sm', 'min-w-4'],
+    ['md', 'min-w-5'],
+    ['lg', 'min-w-6'],
+  ] as const)('keeps a rounded %s count badge circular for one digit and pill-shaped for longer counts', async (size, minWidth) => {
+    const singleDigit = await mountSuspended(Badge, { props: { label: '1', rounded: true, size } })
+    expect(singleDigit.classes()).toContain('rounded-full')
+    expect(singleDigit.classes()).toContain(minWidth)
+    expect(singleDigit.classes()).toContain('tabular-nums')
+
+    const multiDigit = await mountSuspended(Badge, { props: { label: '99+', rounded: true, size } })
+    expect(multiDigit.classes()).toContain('rounded-full')
+    expect(multiDigit.classes()).toContain(minWidth)
+    expect(multiDigit.text()).toBe('99+')
+  })
+
+  it('keeps the default shape and spacing unchanged without rounded', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { label: '1', size: 'sm' } })
+    expect(wrapper.classes()).toContain('rounded-[var(--selaras-resolved-radius-sm)]')
+    expect(wrapper.classes()).not.toContain('rounded-full')
+    expect(wrapper.classes()).not.toContain('min-w-4')
+    expect(wrapper.classes()).not.toContain('tabular-nums')
+  })
+
   it('renders a leading dot alongside the label when dot is set', async () => {
     const wrapper = await mountSuspended(Badge, { props: { label: 'Online', dot: true, color: 'success' } })
     const dot = wrapper.find('span > span')

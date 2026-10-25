@@ -61,7 +61,7 @@ type PrivateRendererContract = ModalRendererProps
 void (undefined as unknown as PrivateRendererContract)
 
 const packedButton: ButtonProps = { color: 'primary', to: '/settings', variant: 'link' }
-const packedBadge: BadgeProps = { label: 'New', variant: 'subtle' }
+const packedBadge: BadgeProps = { label: 'New', variant: 'subtle', rounded: true }
 const packedConfirm: UseConfirmOptions = { title: 'Confirm', confirmColor: 'danger' }
 type PackedConfirmContract = UseConfirmReturn
 void packedBadge

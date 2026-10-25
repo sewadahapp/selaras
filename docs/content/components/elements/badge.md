@@ -1,6 +1,6 @@
 ---
 title: Badge
-description: A small themed pill for labels, tags, and status indicators.
+description: A small themed pill for labels and status indicators, with an optional rounded shape for count badges.
 order: 11
 ---
 
@@ -47,6 +47,22 @@ is a deliberately different shape for a deliberately different role.
 <SBadge icon="hugeicons:tick-02" color="success" size="lg" />
 <SBadge icon="hugeicons:notification-01" color="primary" variant="solid" />
 <SBadge icon="hugeicons:tick-02" color="success" variant="solid" size="lg" />
+```
+
+### Rounded count badges
+
+Set `rounded` to use a fully-rounded shape for a count badge. The minimum
+width matches the badge height, so one digit is circular while multi-digit
+counts such as `12` or `99+` grow into a pill. Rounded counts also use
+tabular numerals to keep digit widths consistent.
+
+::component-example{name="badge-rounded-count"}
+::
+
+```vue-html
+<SBadge rounded label="1" size="sm" color="primary" />
+<SBadge rounded label="12" color="primary" />
+<SBadge rounded label="99+" color="danger" />
 ```
 
 ### Status dot
@@ -98,6 +114,7 @@ every slot and variant - here's `Badge`'s own theme file:
 | `label` | `string` | - |
 | `icon` | `string` | - |
 | `trailingIcon` | `string` | - |
+| `rounded` | `boolean` | `false` |
 | `dot` | `boolean` | `false` |
 | `color` | `ColorRole` (built-in or registered semantic role) | `'neutral'` |
 | `variant` | `'solid' \| 'soft' \| 'outline' \| 'subtle'` | `'soft'` |
