@@ -1,5 +1,50 @@
 # Changelog
 
+## v1.2.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.1.0...selaras-v1.2.0)
+
+### 🚀 Enhancements
+
+- **feat(badge):** add rounded count shape ([81a29f0](https://github.com/sewadahapp/selaras/commit/81a29f0e87212039985dfeefee754fed43469e03))
+
+### 🩹 Fixes
+
+- **fix(badge):** preserve count badge corner radius ([d8bfaa1](https://github.com/sewadahapp/selaras/commit/d8bfaa174eb7a81e6258a68decd7442c0b50ef83))
+- **fix(badge):** round numeric count labels by default ([5bf4eac](https://github.com/sewadahapp/selaras/commit/5bf4eac4ccdd1bf435118cf7cfba5bc743ee3806))
+- **fix(docs):** align public APIs and agent component discovery ([9c95ba4](https://github.com/sewadahapp/selaras/commit/9c95ba4d2f9b1649fc334db4aabf796f5359a386))
+- **fix(table):** label selection checkboxes for accessibility ([c04a2bf](https://github.com/sewadahapp/selaras/commit/c04a2bfd6963ef75e0c3c84217f8a5789b29dcc6))
+- **fix(date-picker):** share field styling across trigger modes ([8ccf18b](https://github.com/sewadahapp/selaras/commit/8ccf18bb47a2d67403e83b0e5c572b42b5ad68eb))
+
+### 📖 Documentation
+
+- **docs:** add migration and package version links ([824beac](https://github.com/sewadahapp/selaras/commit/824beaca479e6c091ea4845eaaad39cf1ee8570e))
+- **docs(badge):** clarify numeric count heading ([fd4198c](https://github.com/sewadahapp/selaras/commit/fd4198cb858b006bb63a9a53320b36e3e48c9c51))
+- **docs(id):** translate Overview/Agent-support section to Bahasa Indonesia ([178a85b](https://github.com/sewadahapp/selaras/commit/178a85ba8b8e32773dc97c073c8751426b6a66f9))
+- **docs(id):** translate Composites section to Bahasa Indonesia ([08c3bdd](https://github.com/sewadahapp/selaras/commit/08c3bdd6487148b7d69567719ffc0980271ed204))
+- **docs(id):** translate Blocks section to Bahasa Indonesia ([e11be41](https://github.com/sewadahapp/selaras/commit/e11be41b600cb16aca6e834b96a49383d1564b64))
+- **docs(id):** translate Utilities section to Bahasa Indonesia ([53ae62e](https://github.com/sewadahapp/selaras/commit/53ae62e1457c22b4e626c90916e95a7181e3c4ac))
+- **docs(id):** translate Components/Typography section to Bahasa Indonesia ([7d1caa6](https://github.com/sewadahapp/selaras/commit/7d1caa63b11c2cfffd414aacd74e68eb1459f038))
+- **docs(id):** translate Components/Overlays section to Bahasa Indonesia ([da5fb65](https://github.com/sewadahapp/selaras/commit/da5fb6551a0e5461f09db06c0cd058f8e2b69c6b))
+- **docs(id):** translate Components/Navigation section to Bahasa Indonesia ([fce94c7](https://github.com/sewadahapp/selaras/commit/fce94c7973d457100ebf870621ebb0763999e8a2))
+- **docs(id):** translate Components/Layout section to Bahasa Indonesia ([6427ba4](https://github.com/sewadahapp/selaras/commit/6427ba41c59e311c32519e532ea7d16153261fbe))
+- **docs(id):** translate Components/Data section to Bahasa Indonesia ([1dc45ec](https://github.com/sewadahapp/selaras/commit/1dc45ece47808059ddb0b72b1efc62f7d6fb9105))
+- **docs(id):** translate remaining Components/Forms pages to Bahasa Indonesia ([270a49a](https://github.com/sewadahapp/selaras/commit/270a49a52c08ae7f1326b87178037f2d04bba508))
+- **docs(id):** translate Components/Forms core controls to Bahasa Indonesia ([3d4d541](https://github.com/sewadahapp/selaras/commit/3d4d54154f1c10afdd1b12d0cb94bf436cafd1ef))
+- **docs(id):** translate Components/Elements section to Bahasa Indonesia ([c748044](https://github.com/sewadahapp/selaras/commit/c748044f4b7764fc9236a8ce52f1071b15dd8191))
+- **docs(id):** translate essential guides to Bahasa Indonesia ([e3b3f74](https://github.com/sewadahapp/selaras/commit/e3b3f74c1f34e2548724ab99e79e2f5da5d95487))
+- **docs(i18n):** add EN/ID localization infrastructure ([6b81981](https://github.com/sewadahapp/selaras/commit/6b819818be0ded51644277c803dc2b0ee1463a12))
+- **docs(changelog):** publish package release histories ([7415ca0](https://github.com/sewadahapp/selaras/commit/7415ca07ec23b6cf9d736090a4cbb22534895f40))
+
+### 🤖 Other changes
+
+- Merge pull request #32 from sewadahapp/docs/readme-v1-links ([dfdb5b7](https://github.com/sewadahapp/selaras/commit/dfdb5b7b325f745d113c0d4632cf1dadff70fe12))
+- Merge pull request #31 from sewadahapp/fix/badge-count-default-shape ([52d2b2b](https://github.com/sewadahapp/selaras/commit/52d2b2b7ec8e48b416271b0a21fa9bed86f646bb))
+- Merge pull request #30 from sewadahapp/fix/badge-rounded-count ([c76f7e7](https://github.com/sewadahapp/selaras/commit/c76f7e7470cff0b259a0bb664e53b23d5c61c235))
+- Merge pull request #27 from sewadahapp/feat/docs-i18n-expanded ([9be0a40](https://github.com/sewadahapp/selaras/commit/9be0a4095a4fb01a344daedb53de06215fb54edd))
+- Merge branch 'feat/docs-i18n-infrastructure' into feat/docs-i18n-expanded ([881a930](https://github.com/sewadahapp/selaras/commit/881a93061b8329d77048f8e288df567eb5caff9c))
+- Merge pull request #26 from sewadahapp/docs/public-api-audit ([6eed73d](https://github.com/sewadahapp/selaras/commit/6eed73d6d67725cb756d47dd2931237ac434e104))
+- Merge pull request #24 from sewadahapp/docs/changelog ([cd2300b](https://github.com/sewadahapp/selaras/commit/cd2300b470827bd0ca3d40009e0c701500709a86))
 
 ## v1.1.0
 

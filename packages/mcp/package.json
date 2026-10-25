@@ -1,7 +1,7 @@
 {
   "name": "@sewadah/selaras-mcp",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Local, read-only MCP server with versioned Selaras documentation and examples",
   "author": "Wicaksana Pratama <wicaksanapratama@gmail.com>",
   "license": "MIT",

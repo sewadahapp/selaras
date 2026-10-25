@@ -1,5 +1,31 @@
 # Changelog
 
+## v1.4.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.3...selaras-docs-v1.4.0)
+
+### 🚀 Enhancements
+
+- **feat(docs):** style locale picker with country flags ([52cdf75](https://github.com/sewadahapp/selaras/commit/52cdf75ad5066d75702900fb739a6978d6d3d36b))
+- **feat(docs):** localize shared site navigation ([74bf72d](https://github.com/sewadahapp/selaras/commit/74bf72dd3768711d9528c12148209ea532620a03))
+- **feat(docs):** add locale-prefixed Indonesian routes ([fa4027b](https://github.com/sewadahapp/selaras/commit/fa4027b3927b658582197da9e6820b00383f229f))
+
+### 🩹 Fixes
+
+- **fix(docs):** keep SEO helpers within packed docs layer ([5375302](https://github.com/sewadahapp/selaras/commit/5375302141d67dd519c1b98337f4762976d10099))
+- **fix(docs):** bundle circular locale flags ([a84da63](https://github.com/sewadahapp/selaras/commit/a84da63f7919d318c0ed822f269fac3841b83c14))
+
+### 📖 Documentation
+
+- **docs(i18n):** add EN/ID localization infrastructure ([6b81981](https://github.com/sewadahapp/selaras/commit/6b819818be0ded51644277c803dc2b0ee1463a12))
+
+### 🤖 Other changes
+
+- Merge pull request #27 from sewadahapp/feat/docs-i18n-expanded ([9be0a40](https://github.com/sewadahapp/selaras/commit/9be0a4095a4fb01a344daedb53de06215fb54edd))
+- Merge branch 'feat/docs-i18n-infrastructure' into feat/docs-i18n-expanded ([881a930](https://github.com/sewadahapp/selaras/commit/881a93061b8329d77048f8e288df567eb5caff9c))
+
+Published against `@sewadah/selaras` ^1.2.0.
+
 ## v1.3.3
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.2...selaras-docs-v1.3.3)
