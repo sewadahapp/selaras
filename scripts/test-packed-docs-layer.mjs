@@ -102,6 +102,21 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     const response = await fetch(pageUrl)
     assert.equal(response.status, 200)
     const html = await response.text()
+    const expectedCanonical = prefixed ? 'https://docs.example.test/guide/getting-started/' : undefined
+    const headTags = [...html.split('</head>')[0].matchAll(/<(?:link|meta)\s[^>]*>/g)]
+      .map(([tag]) => Object.fromEntries([...tag.matchAll(/([\w:-]+)="([^"]*)"/g)].map(([, key, value]) => [key, value])))
+    assert.deepEqual(
+      headTags.filter(tag => tag.rel === 'canonical').map(tag => tag.href),
+      expectedCanonical ? [expectedCanonical] : [],
+      'canonical URLs must use the configured consumer origin and be omitted when it is unset',
+    )
+    assert.deepEqual(
+      headTags.filter(tag => tag.property === 'og:url').map(tag => tag.content),
+      expectedCanonical ? [expectedCanonical] : [],
+      'Open Graph URLs must use the configured consumer origin and be omitted when it is unset',
+    )
+    if (!expectedCanonical)
+      assert.ok(!headTags.some(tag => tag.hreflang), 'an unconfigured origin must not generate alternate-language URLs')
     const slashResponse = await fetch(new URL('/guide/getting-started/', url))
     assert.equal(slashResponse.status, 200, 'trailing-slash documentation URLs must resolve the same content')
     assert.match(await slashResponse.text(), /<h1[^>]*>[\s\S]*Getting started/, 'trailing-slash URLs must render the requested document')
@@ -209,6 +224,8 @@ async function inspectConsumer({ prefixed, overridden, example }) {
         })
         await page.getByRole('heading', { name: 'Getting started', exact: true }).waitFor()
         assert.equal(await page.locator('[data-error-kind]').count(), 0, 'trailing-slash URLs must remain valid after hydration')
+        assert.deepEqual(await page.locator('head link[rel="canonical"]').evaluateAll(links => links.map(link => link.getAttribute('href'))), expectedCanonical ? [expectedCanonical] : [], 'hydration must preserve consumer-owned canonical URLs')
+        assert.deepEqual(await page.locator('head meta[property="og:url"]').evaluateAll(tags => tags.map(tag => tag.getAttribute('content'))), expectedCanonical ? [expectedCanonical] : [], 'hydration must preserve consumer-owned Open Graph URLs')
         await page.goto(pageUrl.href, { waitUntil: 'domcontentloaded' })
         await page.getByRole('heading', { level: 1, name: 'Getting started', exact: true }).waitFor()
         if (prefixed) {

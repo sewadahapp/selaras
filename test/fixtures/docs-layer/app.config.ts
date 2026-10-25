@@ -6,6 +6,7 @@ const docsConfig: SelarasDocsAppConfig = {
   },
   site: {
     name: 'Packed documentation',
+    url: 'https://docs.example.test',
     description: 'Advanced installed docs consumer.',
     logo: {
       light: '/brand.svg',

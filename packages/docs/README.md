@@ -111,6 +111,9 @@ export default defineAppConfig({
 })
 ```
 
+Set `selarasDocs.site.url` to your public site origin to generate canonical and
+Open Graph URLs. When omitted, the layer leaves these URLs to your app.
+
 Folder navigation can be configured with a `.navigation.yml` file alongside
 the Markdown pages in that folder:
 
