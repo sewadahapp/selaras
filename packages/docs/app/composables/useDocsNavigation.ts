@@ -10,7 +10,10 @@ export function useDocsNavigation() {
     .map(option => option.code)
     .filter(code => code !== defaultLocale.value))
 
-  return useAsyncData('selaras-docs-navigation', async () => {
+  // Prerendering shares results by key, so each locale needs its own tree.
+  return useAsyncData(() => `selaras-docs-navigation:${defaultLocale.value}:${locale.value}`, async () => {
+    const activeLocale = locale.value
+    const activeDefaultLocale = defaultLocale.value
     const tree = await queryCollectionNavigation('docs', ['order', 'icon', 'collapse', 'navBadges'])
       .order('order', 'ASC')
 
@@ -19,7 +22,7 @@ export function useDocsNavigation() {
     // contribute their own titles; untranslated pages keep the source title.
     let defaultTree = withoutDocsLocaleFolders(tree as DocsNavigationNode[], localeFolders.value)
 
-    if (locale.value !== defaultLocale.value && translatedFolder.value) {
+    if (activeLocale !== activeDefaultLocale && translatedFolder.value) {
       const translated = await queryCollection('docs')
         .where('path', 'LIKE', `/${translatedFolder.value}/%`)
         .select('path', 'title')
@@ -57,10 +60,10 @@ export function useDocsNavigation() {
 
     const localize = (items: DocsNavigationNode[]): DocsNavigationNode[] => items.map(item => ({
       ...item,
-      path: docsLocalizedRoutePath(item.path, locale.value, defaultLocale.value),
+      path: docsLocalizedRoutePath(item.path, activeLocale, activeDefaultLocale),
       ...(item.children ? { children: localize(item.children) } : {}),
     }))
 
     return localize(visit(defaultTree, excluded.size > 0))
-  }, { watch: [locale, defaultLocale] })
+  })
 }

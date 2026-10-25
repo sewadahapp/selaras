@@ -29,6 +29,26 @@ function headTags(html) {
   ))
 }
 
+for (const prefix of ['', '/id']) {
+  for (const path of [
+    '/overview/getting-started/introduction',
+    '/components/elements/button',
+    '/composites/documentation/page-header',
+    '/blocks/overview',
+    '/utilities/composables/use-modal',
+  ]) {
+    const route = `${prefix}${path}`
+    const sidebar = readPage(route).match(/<aside\b[^>]+\bclass="[^"]*\bselaras-docs-sidebar\b[^"]*"[^>]*>[\s\S]*?<\/aside>/)?.[0]
+    assert.ok(sidebar, `Missing server-rendered documentation sidebar: ${route}`)
+    const label = prefix ? 'Navigasi dokumentasi' : 'Documentation navigation'
+    assert.ok(sidebar.includes(`aria-label="${label}"`), `Sidebar label must match the page locale: ${route}`)
+    const links = [...sidebar.matchAll(/\bhref="([^"]+)"/g)].map(([, href]) => decode(href))
+    assert.ok(links.includes(route), `Sidebar must include the current page: ${route}`)
+    const section = `${prefix}/${path.split('/')[1]}/`
+    assert.ok(links.every(href => href.startsWith(section)), `Sidebar links must stay in the current locale and section: ${route}`)
+  }
+}
+
 const robots = readFileSync(new URL('robots.txt', output), 'utf8')
 assert.match(robots, /^User-agent:\s*\*\s*$/im, 'Robots must include a group for all crawlers')
 assert.match(robots, /^Allow:\s*\/\s*$/im, 'Public documentation must allow crawling')
