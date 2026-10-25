@@ -49,7 +49,7 @@ is a deliberately different shape for a deliberately different role.
 <SBadge icon="hugeicons:tick-02" color="success" variant="solid" size="lg" />
 ```
 
-### Rounded count badges
+### Numeric count badges
 
 Numeric labels automatically get a minimum width equal to the badge height,
 so a one-digit count has a square footprint while longer values grow to fit

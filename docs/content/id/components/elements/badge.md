@@ -42,7 +42,7 @@ order: 11
 <SBadge icon="hugeicons:tick-02" color="success" variant="solid" size="lg" />
 ```
 
-### Lencana hitungan rounded
+### Lencana hitungan numerik
 
 Label numerik otomatis memiliki lebar minimum yang sama dengan tinggi lencana,
 sehingga hitungan satu digit berbentuk persegi sementara nilai yang lebih
