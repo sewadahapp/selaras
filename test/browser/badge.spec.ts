@@ -35,7 +35,7 @@ test('transports scoped Badge colors into a portal', async ({ page, goto }) => {
   expect(await badge.evaluate(element => getComputedStyle(element).backgroundColor)).toBe('rgb(9, 8, 7)')
 })
 
-test('rounded count badges are circular for one digit and grow into pills', async ({ page, goto }) => {
+test('numeric count badges stay at least square without changing their corner radius', async ({ page, goto }) => {
   await goto('/', { waitUntil: 'hydration' })
   for (const size of ['sm', 'md', 'lg']) {
     const badge = await page.locator(`#rounded-count-${size}-primary`).boundingBox()

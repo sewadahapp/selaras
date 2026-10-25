@@ -131,24 +131,29 @@ describe('badge', () => {
     ['sm', 'min-w-4'],
     ['md', 'min-w-5'],
     ['lg', 'min-w-6'],
-  ] as const)('keeps a rounded %s count badge circular for one digit and pill-shaped for longer counts', async (size, minWidth) => {
-    const singleDigit = await mountSuspended(Badge, { props: { label: '1', rounded: true, size } })
-    expect(singleDigit.classes()).toContain('rounded-full')
+  ] as const)('keeps numeric %s count badges at least square without changing their corner radius', async (size, minWidth) => {
+    const singleDigit = await mountSuspended(Badge, { props: { label: '1', size } })
+    expect(singleDigit.classes()).toContain('rounded-[var(--selaras-resolved-radius-sm)]')
     expect(singleDigit.classes()).toContain(minWidth)
-    expect(singleDigit.classes()).toContain('tabular-nums')
+    expect(singleDigit.classes()).not.toContain('rounded-full')
 
-    const multiDigit = await mountSuspended(Badge, { props: { label: '99+', rounded: true, size } })
-    expect(multiDigit.classes()).toContain('rounded-full')
+    const multiDigit = await mountSuspended(Badge, { props: { label: '100', size } })
+    expect(multiDigit.classes()).toContain('rounded-[var(--selaras-resolved-radius-sm)]')
     expect(multiDigit.classes()).toContain(minWidth)
-    expect(multiDigit.text()).toBe('99+')
+    expect(multiDigit.classes()).not.toContain('rounded-full')
+    expect(multiDigit.text()).toBe('100')
   })
 
-  it('keeps the default shape and spacing unchanged without rounded', async () => {
-    const wrapper = await mountSuspended(Badge, { props: { label: '1', size: 'sm' } })
+  it('keeps the default shape for text labels and lets rounded force it', async () => {
+    const wrapper = await mountSuspended(Badge, { props: { label: 'New', size: 'sm' } })
     expect(wrapper.classes()).toContain('rounded-[var(--selaras-resolved-radius-sm)]')
     expect(wrapper.classes()).not.toContain('rounded-full')
     expect(wrapper.classes()).not.toContain('min-w-4')
     expect(wrapper.classes()).not.toContain('tabular-nums')
+
+    const forcedRounded = await mountSuspended(Badge, { props: { label: '99+', rounded: true, size: 'sm' } })
+    expect(forcedRounded.classes()).toContain('rounded-full')
+    expect(forcedRounded.classes()).toContain('min-w-4')
   })
 
   it('renders a leading dot alongside the label when dot is set', async () => {

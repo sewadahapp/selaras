@@ -42,21 +42,22 @@ order: 11
 <SBadge icon="hugeicons:tick-02" color="success" variant="solid" size="lg" />
 ```
 
-### Lencana hitungan rounded
+### Lencana hitungan numerik
 
-Gunakan `rounded` untuk bentuk yang membulat penuh pada lencana hitungan.
-Lebar minimum mengikuti tinggi lencana, sehingga satu digit berbentuk
-lingkaran sementara hitungan beberapa digit seperti `12` atau `99+` melebar
-menjadi pil. Bentuk rounded juga menggunakan angka tabular agar lebar setiap
-digit konsisten.
+Label numerik otomatis memiliki lebar minimum yang sama dengan tinggi lencana,
+sehingga hitungan satu digit berbentuk persegi sementara nilai yang lebih
+panjang melebar mengikuti kontennya. Radius sudut tetap menggunakan nilai
+default. Gunakan `rounded` untuk membulatkan penuh hitungan atau label teks
+seperti `Baru`.
 
 ::component-example{name="badge-rounded-count"}
 ::
 
 ```vue-html
-<SBadge rounded label="1" size="sm" color="primary" />
-<SBadge rounded label="12" color="primary" />
-<SBadge rounded label="99+" color="danger" />
+<SBadge label="1" size="sm" color="primary" />
+<SBadge label="12" color="primary" />
+<SBadge label="100" color="primary" />
+<SBadge rounded label="Baru" color="danger" />
 ```
 
 ### Status dot

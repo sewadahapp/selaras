@@ -282,10 +282,10 @@ function updateNestedTokens() {
         />
         <SBadge :id="`semantic-dot-${role}`" :color="role" variant="solid" dot :aria-label="`${role} status`" />
         <div class="flex items-center gap-2">
-          <SBadge :id="`rounded-count-sm-${role}`" rounded label="1" size="sm" />
-          <SBadge :id="`rounded-count-md-${role}`" rounded label="1" size="md" />
-          <SBadge :id="`rounded-count-lg-${role}`" rounded label="1" size="lg" />
-          <SBadge :id="`rounded-count-many-${role}`" rounded label="99+" />
+          <SBadge :id="`rounded-count-sm-${role}`" label="1" size="sm" />
+          <SBadge :id="`rounded-count-md-${role}`" label="1" size="md" />
+          <SBadge :id="`rounded-count-lg-${role}`" label="1" size="lg" />
+          <SBadge :id="`rounded-count-many-${role}`" label="100" />
         </div>
         <SButton
           v-for="variant in ['solid', 'soft', 'outline', 'ghost', 'text']"
