@@ -1,5 +1,20 @@
 # Changelog
 
+## v1.4.1
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.0...selaras-docs-v1.4.1)
+
+### 🩹 Fixes
+
+- **fix(docs):** respect consumer site URLs ([27b5e15](https://github.com/sewadahapp/selaras/commit/27b5e15da601c2b3904c7f4b87466fe93e6d9679))
+- **fix(docs):** restore localized sidebar navigation ([541d7a4](https://github.com/sewadahapp/selaras/commit/541d7a4627c66a2e0079d03aa0b7d0b08872084f))
+
+### 🤖 Other changes
+
+- Merge pull request #34 from sewadahapp/fix/docs-indonesian-sidebar ([b9fe143](https://github.com/sewadahapp/selaras/commit/b9fe143253de9ee89f2e0631f89df9606911eb56))
+
+Published against `@sewadah/selaras` ^1.2.0.
+
 ## v1.4.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.3.3...selaras-docs-v1.4.0)
