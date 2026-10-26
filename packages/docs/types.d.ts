@@ -126,6 +126,7 @@ export interface SelarasDocsAppConfig {
     description?: string
     /** Applied to browser titles; `%s` is replaced with the current page title. */
     titleTemplate?: string
+    /** Public site origin for canonical and Open Graph URLs. These URL tags are omitted when unset. */
     url?: string
     /** Shown in the header and footer. A `/`-rooted path is served from `public/` under the app's base URL. */
     logo?: string | SelarasDocsLogo
