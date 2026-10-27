@@ -1,4 +1,5 @@
 import type { SelarasDocsLocaleOption } from '../../types'
+import { resolveDocsLocale } from '../utils/docs-locale'
 
 interface DocsI18nRuntime {
   locale?: string | { value?: string }
@@ -30,10 +31,16 @@ export function useDocsLocale() {
   const configured = computed(() => appConfig.selarasDocs?.i18n?.locales ?? [])
   const locales = computed<SelarasDocsLocaleOption[]>(() => configured.value.length ? configured.value : fallbackLocales)
   const defaultLocale = computed(() => appConfig.selarasDocs?.i18n?.defaultLocale ?? locales.value[0]?.code ?? 'en')
+  const route = useRoute()
   const i18n = (nuxtApp as unknown as { $i18n?: DocsI18nRuntime }).$i18n
   const locale = computed(() => {
     const active = i18n?.locale
-    return (typeof active === 'string' ? active : active?.value) ?? defaultLocale.value
+    return resolveDocsLocale(
+      route.path,
+      (typeof active === 'string' ? active : active?.value),
+      locales.value,
+      defaultLocale.value,
+    )
   })
   const localeOption = computed(() => locales.value.find(option => option.code === locale.value) ?? locales.value[0]!)
   const hasLocaleSwitching = computed(() => locales.value.length > 1 && typeof i18n?.setLocale === 'function')
