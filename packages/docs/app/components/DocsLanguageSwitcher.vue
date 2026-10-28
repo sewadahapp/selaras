@@ -4,6 +4,12 @@ import { formatDocsMessage } from '../utils/docs-messages'
 const { locale, locales, localeOption, hasLocaleSwitching, setLocale } = useDocsLocale()
 const messages = useDocsMessages()
 const open = ref(false)
+// A root locale redirect can hydrate a different locale than the prerendered
+// trigger. Replace that trigger after hydration so its icon and label match.
+const hydrated = ref(false)
+onMounted(() => {
+  hydrated.value = true
+})
 
 const nextLocale = computed(() => locales.value.find(option => option.code !== locale.value) ?? localeOption.value)
 const label = computed(() => formatDocsMessage(messages.value.languageSwitcher, { language: nextLocale.value.name }))
@@ -12,6 +18,7 @@ const label = computed(() => formatDocsMessage(messages.value.languageSwitcher, 
 <template>
   <SPopover v-if="hasLocaleSwitching" v-model:open="open" :positioning="{ side: 'bottom', align: 'end', sideOffset: 8 }" :ui="{ content: 'p-2' }">
     <SButton
+      :key="String(hydrated)"
       variant="ghost"
       color="neutral"
       square
