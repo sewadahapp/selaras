@@ -1,5 +1,17 @@
 # Changelog
 
+## v1.3.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.2.0...selaras-v1.3.0)
+
+### 🚀 Enhancements
+
+- **feat(dashboard):** allow custom layout storage ([b770056](https://github.com/sewadahapp/selaras/commit/b77005665d0a4111b8939fa7d4193f0fb0ed1997))
+
+### 🤖 Other changes
+
+- Merge pull request #37 from sewadahapp/fix/dashboard-group-storage-override ([f0711c4](https://github.com/sewadahapp/selaras/commit/f0711c4599effbe54aa0175d82240c21c6c31eba))
+
 ## v1.2.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.1.0...selaras-v1.2.0)

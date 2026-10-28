@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.4.2
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.1...selaras-docs-v1.4.2)
+
+### 🩹 Fixes
+
+- **fix(docs):** sync active locale with route ([0b8599d](https://github.com/sewadahapp/selaras/commit/0b8599daff9df6b358c5be5815e31aab3722e2f2))
+
+### 🤖 Other changes
+
+- Merge pull request #36 from sewadahapp/fix/docs-locale-route-state ([15e5002](https://github.com/sewadahapp/selaras/commit/15e50021f9db28bc1d47b6cd0c7ff404388d18dd))
+
+Published against `@sewadah/selaras` ^1.3.0.
+
 ## v1.4.1
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.0...selaras-docs-v1.4.1)
