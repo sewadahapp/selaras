@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { docsContentPath, docsDefaultContentPath, docsIsLocalizedContentPath, docsLocalizedContentPath, docsLocalizedRoutePath, docsUnlocalizedRoutePath } from '../packages/docs/app/utils/content-path'
+import { resolveDocsLocale } from '../packages/docs/app/utils/docs-locale'
 import { docsMessages, formatDocsMessage, resolveDocsMessages } from '../packages/docs/app/utils/docs-messages'
 import { applyDocsTranslatedTitles, withoutDocsLocaleFolders } from '../packages/docs/app/utils/docs-navigation'
 
@@ -33,6 +34,24 @@ describe('documentation locale content paths', () => {
     expect(docsIsLocalizedContentPath('/id/overview', 'id')).toBe(true)
     expect(docsIsLocalizedContentPath('/identity', 'id')).toBe(false)
     expect(docsIsLocalizedContentPath('/overview', 'id')).toBe(false)
+  })
+})
+
+describe('documentation active locale', () => {
+  const locales = [{ code: 'en' }, { code: 'id' }]
+
+  it('uses the prefixed route locale while the i18n composer still has the default locale', () => {
+    expect(resolveDocsLocale('/id', 'en', locales, 'en')).toBe('id')
+    expect(resolveDocsLocale('/id/components/button/', 'en', locales, 'en')).toBe('id')
+  })
+
+  it('falls back to the i18n locale on unprefixed routes', () => {
+    expect(resolveDocsLocale('/', 'en', locales, 'en')).toBe('en')
+    expect(resolveDocsLocale('/components/button', 'id', locales, 'en')).toBe('id')
+  })
+
+  it('does not treat a path sharing the locale prefix as localized', () => {
+    expect(resolveDocsLocale('/identity', 'en', locales, 'en')).toBe('en')
   })
 })
 
