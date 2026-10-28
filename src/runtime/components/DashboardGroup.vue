@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { DashboardGroupThemeSlots } from '../theme/dashboard-group'
 import type { UiProp } from '../utils/ui'
+import type { SplitterStorage } from './Splitter.vue'
 import { computed, onMounted, onUnmounted, provide, ref } from 'vue'
 import { useCookie } from '#imports'
 import { dashboardGroupTheme } from '../theme/dashboard-group'
@@ -20,6 +21,8 @@ export interface DashboardGroupProps {
   autoSaveId?: string
   /** Below this viewport width (px), DashboardSidebar switches from a resizable split-pane panel to a Drawer overlay. @default 768 */
   mobileBreakpoint?: number
+  /** Overrides where the remembered layout is stored. The cookie-backed default is retained when omitted. */
+  storage?: SplitterStorage
   ui?: UiProp<DashboardGroupThemeSlots>
 }
 
@@ -81,7 +84,7 @@ const layoutCookie = useCookie<string | undefined>(props.autoSaveId, {
   encode: value => encodeURIComponent(value ?? ''),
   decode: value => (value ? decodeURIComponent(value) : undefined),
 })
-const storage = {
+const cookieStorage: SplitterStorage = {
   getItem: () => layoutCookie.value ?? null,
   setItem: (_name: string, value: string) => {
     layoutCookie.value = value
@@ -95,7 +98,7 @@ const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root)
 </script>
 
 <template>
-  <Splitter v-if="!isMobile" direction="horizontal" :auto-save-id="autoSaveId" :storage="storage" v-bind="rootProps">
+  <Splitter v-if="!isMobile" direction="horizontal" :auto-save-id="autoSaveId" :storage="props.storage ?? cookieStorage" v-bind="rootProps">
     <slot />
   </Splitter>
   <div v-else v-bind="rootProps">

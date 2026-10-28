@@ -35,19 +35,16 @@ general-purpose primitive, not logic specific to a dashboard shell.
 
 ### Persistence
 
-The sidebar's width (and whether it's collapsed) is remembered across
-reloads via a cookie, keyed by `autoSaveId` - give pages that shouldn't
-share one remembered layout their own distinct id. A cookie rather than
-Reka's own default `localStorage`-backed storage - same-origin
-server-readable, portable across a full page reload rather than just
-client-side navigation, and works with privacy tooling that blocks
-`localStorage` but allows first-party cookies.
+By default, the sidebar's width and collapsed state are stored in a
+session cookie keyed by `autoSaveId`. Pass a `storage` object with
+`getItem` and `setItem` methods to use another backend, such as
+`localStorage`; omitting it keeps the cookie-backed default. Give pages
+that should remember separate layouts distinct `autoSaveId` values.
 
-The server-rendered sidebar uses its configured pixel default, keeping
-the main panel visible before hydration. Remembered width and collapse
-state apply after mounting: the splitter restores them when its panels
-register and the container can be measured. A returning visitor first sees
-the default width, then the saved layout.
+The saved layout is restored after mounting, when splitter panels register
+and the container can be measured. It is not read during server rendering,
+so a returning visitor first sees the configured default width, then the
+saved layout.
 
 ### Mobile
 
@@ -72,4 +69,5 @@ every slot - here's `DashboardGroup`'s own theme file:
 | --- | --- | --- |
 | `autoSaveId` | `string` | `'selaras-dashboard'` |
 | `mobileBreakpoint` | `number` | `768` |
+| `storage` | `{ getItem(name): string \| null; setItem(name, value): void }` | Cookie-backed storage |
 | `ui` | `Partial<Record<'root', string \| object>>` | - |

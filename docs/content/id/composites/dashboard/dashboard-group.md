@@ -27,9 +27,9 @@ order: 10
 
 ### Persistensi
 
-Lebar sidebar (dan apakah ia di-collapse) diingat lintas reload via cookie, dikunci oleh `autoSaveId` - beri halaman yang tidak seharusnya berbagi satu layout yang diingat id berbeda masing-masing. Cookie alih-alih penyimpanan default `localStorage` milik Reka - dapat dibaca server same-origin, portabel lintas reload halaman penuh alih-alih hanya navigasi sisi-klien, dan berfungsi dengan perkakas privasi yang memblokir `localStorage` tetapi mengizinkan cookie first-party.
+Secara default, lebar dan status collapse sidebar disimpan dalam cookie sesi dengan kunci `autoSaveId`. Berikan objek `storage` dengan metode `getItem` dan `setItem` untuk menggunakan backend lain, seperti `localStorage`; jika tidak diberikan, penyimpanan cookie tetap digunakan. Beri halaman yang perlu mengingat layout terpisah nilai `autoSaveId` yang berbeda.
 
-Sidebar yang di-render server menggunakan default piksel yang dikonfigurasi, menjaga panel utama tetap terlihat sebelum hydration. Lebar yang diingat dan state collapse berlaku setelah mounting: splitter memulihkannya ketika panel-panelnya terdaftar dan container dapat diukur. Pengunjung yang kembali pertama melihat lebar default, lalu layout yang tersimpan.
+Layout yang tersimpan dipulihkan setelah mounting, ketika panel splitter terdaftar dan container dapat diukur. Layout tidak dibaca selama server rendering, sehingga pengunjung yang kembali pertama melihat lebar default yang dikonfigurasi, lalu layout yang tersimpan.
 
 ### Mobile
 
@@ -48,4 +48,5 @@ Untuk melihat dengan tepat apa yang akan Anda timpa - kelas default saat ini unt
 | --- | --- | --- |
 | `autoSaveId` | `string` | `'selaras-dashboard'` |
 | `mobileBreakpoint` | `number` | `768` |
+| `storage` | `{ getItem(name): string \| null; setItem(name, value): void }` | Penyimpanan cookie |
 | `ui` | `Partial<Record<'root', string \| object>>` | - |
