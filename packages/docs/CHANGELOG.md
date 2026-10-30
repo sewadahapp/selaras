@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.4.3
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.2...selaras-docs-v1.4.3)
+
+### 🩹 Fixes
+
+- **fix(docs):** refresh language trigger after hydration ([34994e2](https://github.com/sewadahapp/selaras/commit/34994e2a0c068243a4b08170aa53957b236add06))
+
+### 🤖 Other changes
+
+- Merge pull request #38 from sewadahapp/fix/docs-switcher-hydration ([272466a](https://github.com/sewadahapp/selaras/commit/272466ae26b3a4804d29039d0145484174b990f4))
+
+Published against `@sewadah/selaras` ^1.3.0.
+
 ## v1.4.2
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.1...selaras-docs-v1.4.2)
