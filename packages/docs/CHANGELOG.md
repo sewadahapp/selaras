@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.4.4
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.3...selaras-docs-v1.4.4)
+
+### 🩹 Fixes
+
+- **fix(docs):** preserve language popover anchor after hydration ([1b83dd3](https://github.com/sewadahapp/selaras/commit/1b83dd35a2a1354e840a0377572351fe0eb61659))
+
+### 🤖 Other changes
+
+- Merge pull request #39 from sewadahapp/fix/docs-language-popover-anchor ([5efa87a](https://github.com/sewadahapp/selaras/commit/5efa87ad5019d7a4c27888f35d83bf0420d4dadf))
+
+Published against `@sewadah/selaras` ^1.3.0.
+
 ## v1.4.3
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.2...selaras-docs-v1.4.3)
