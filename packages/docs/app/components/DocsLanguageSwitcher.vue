@@ -5,7 +5,8 @@ const { locale, locales, localeOption, hasLocaleSwitching, setLocale } = useDocs
 const messages = useDocsMessages()
 const open = ref(false)
 // A root locale redirect can hydrate a different locale than the prerendered
-// trigger. Replace that trigger after hydration so its icon and label match.
+// trigger. Refresh the popover with its trigger so the icon and label match
+// and its positioning anchor references the newly mounted button.
 const hydrated = ref(false)
 onMounted(() => {
   hydrated.value = true
@@ -16,9 +17,8 @@ const label = computed(() => formatDocsMessage(messages.value.languageSwitcher, 
 </script>
 
 <template>
-  <SPopover v-if="hasLocaleSwitching" v-model:open="open" :positioning="{ side: 'bottom', align: 'end', sideOffset: 8 }" :ui="{ content: 'p-2' }">
+  <SPopover v-if="hasLocaleSwitching" :key="String(hydrated)" v-model:open="open" :positioning="{ side: 'bottom', align: 'end', sideOffset: 8 }" :ui="{ content: 'p-2' }">
     <SButton
-      :key="String(hydrated)"
       variant="ghost"
       color="neutral"
       square
