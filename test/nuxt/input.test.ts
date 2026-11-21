@@ -49,6 +49,40 @@ describe('input', () => {
     expect(icons).toEqual(['i-lucide:search', 'i-lucide:mic'])
   })
 
+  // Regression: a search input with clearable used to render both Chromium's
+  // native cancel glyph and Selaras' own clear button at the trailing edge.
+  it('hides the native search cancel when a search input also renders Selaras clear', async () => {
+    const wrapper = await mountSuspended(Input, { props: { type: 'search', clearable: true, modelValue: 'Depok' } })
+    const input = wrapper.find('input')
+    expect(input.attributes('type')).toBe('search')
+    expect(input.classes()).toContain('[&::-webkit-search-cancel-button]:hidden')
+    expect(wrapper.find('button').exists()).toBe(true)
+  })
+
+  it('keeps the native search cancel for a search input without clearable', async () => {
+    const wrapper = await mountSuspended(Input, { props: { type: 'search', modelValue: 'Depok' } })
+    const input = wrapper.find('input')
+    expect(input.attributes('type')).toBe('search')
+    expect(input.classes()).not.toContain('[&::-webkit-search-cancel-button]:hidden')
+    expect(wrapper.find('button').exists()).toBe(false)
+  })
+
+  it('does not hide the native search cancel for a non-search input with clearable', async () => {
+    const wrapper = await mountSuspended(Input, { props: { type: 'text', clearable: true, modelValue: 'Depok' } })
+    expect(wrapper.find('input').classes()).not.toContain('[&::-webkit-search-cancel-button]:hidden')
+  })
+
+  it('clears a search field through its keyboard-operable Selaras clear button', async () => {
+    const wrapper = await mountSuspended(Input, { props: { type: 'search', clearable: true, modelValue: 'Depok' } })
+    const button = wrapper.find('button')
+    // A native button stays keyboard operable by default (no tabindex="-1").
+    expect(button.element.tagName).toBe('BUTTON')
+    expect(button.attributes('tabindex')).toBeUndefined()
+    expect(button.attributes('aria-label')).toBe('Clear')
+    await button.trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([''])
+  })
+
   it('does not render a clear button without clearable', async () => {
     const wrapper = await mountSuspended(Input, { props: { modelValue: 'hello' } })
     expect(wrapper.find('button').exists()).toBe(false)

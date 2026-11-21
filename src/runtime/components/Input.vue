@@ -93,6 +93,9 @@ const ui = computed(() => theme.value({
   invalid: inputInvalid.value,
   hasLeadingIcon: !!props.icon,
   hasTrailingIcon: !!props.trailingIcon || showClear.value,
+  // Suppress Chromium's native search cancel only while our own clear button
+  // is actually rendered - that is the only time the two would duplicate.
+  hideNativeSearchCancel: props.type === 'search' && showClear.value,
 }))
 
 const isInputAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA11yAttr(key)

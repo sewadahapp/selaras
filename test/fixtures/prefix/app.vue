@@ -16,6 +16,7 @@ const floatingPlan = ref()
 const floatingDate = shallowRef()
 const floatingSegmentedDate = shallowRef()
 const floatingSearch = ref('')
+const searchQuery = ref('Depok')
 const floatingPlans = [{ label: 'Starter', value: 'starter' }, { label: 'Team', value: 'team' }]
 const nativeFormDate = new CalendarDate(2024, 2, 20)
 const semanticRecipe = {
@@ -72,6 +73,8 @@ function updateNestedTokens() {
       <a href="#callout-focus">Focusable callout content</a>
     </SCallout>
     <SInput id="input-invalid" color="enterprise" invalid model-value="value" />
+    <SInput id="search-clearable" v-model="searchQuery" type="search" clearable />
+    <SInput id="search-plain" type="search" model-value="Depok" />
     <STextarea id="textarea-invalid" color="enterprise" invalid model-value="value" />
     <SInputNumber id="input-number-invalid" color="enterprise" invalid :model-value="5" />
     <SButton id="enterprise-button" color="enterprise">
