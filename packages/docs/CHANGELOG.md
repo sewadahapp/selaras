@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.4.5
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.4...selaras-docs-v1.4.5)
+
+### 🩹 Fixes
+
+- **fix(compat):** keep Nuxt 5 nightly checks working ([7bb326e](https://github.com/sewadahapp/selaras/commit/7bb326ecf14bbeddb7dd1cce76b5cc2ecbaf4f63))
+- **fix(compat):** keep Nuxt 5 nightly checks working ([b0c998a](https://github.com/sewadahapp/selaras/commit/b0c998a900b349fd1f2dcd172883bfab93688b1f))
+- **fix(compat):** keep Nuxt 5 nightly checks working ([98974a6](https://github.com/sewadahapp/selaras/commit/98974a671af9887d1f7d642db22126b652c4cc7d))
+
+### 🤖 Other changes
+
+- Merge pull request #43 from sewadahapp/fix/input-search-clear-control ([9fc4ecd](https://github.com/sewadahapp/selaras/commit/9fc4ecd7b541a7245027bf471f805b5fbdbcd5ef))
+
+Published against `@sewadah/selaras` ^1.4.0.
+
 ## v1.4.4
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.3...selaras-docs-v1.4.4)

@@ -1,5 +1,29 @@
 # Changelog
 
+## v1.4.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.3.0...selaras-v1.4.0)
+
+### 🚀 Enhancements
+
+- **feat(select):** seed search from printable key on focused closed trigger ([0168596](https://github.com/sewadahapp/selaras/commit/0168596d6c6bac814efffc80604695da72c1862d))
+- **feat(command-palette):** expose search term and support external results ([caf2023](https://github.com/sewadahapp/selaras/commit/caf2023d5ef6bf5f2bbaaded567cd3f00e840535))
+
+### 🩹 Fixes
+
+- **fix(select):** leave search unchanged when opening is declined ([850c8f2](https://github.com/sewadahapp/selaras/commit/850c8f2c8d66122cf25b48bc6ac427576cb27cfb))
+- **fix(input):** hide native search cancel when clearable renders its own button ([a84c953](https://github.com/sewadahapp/selaras/commit/a84c953edbccf80ee5cfd64bc2cfb29a8805f39c))
+
+### 📖 Documentation
+
+- **docs(command-palette):** complete external search examples ([b085be1](https://github.com/sewadahapp/selaras/commit/b085be188c10677f2f93eb243f67ec0baa92c174))
+
+### 🤖 Other changes
+
+- Merge pull request #45 from sewadahapp/fix/searchable-select-typeahead ([cb79304](https://github.com/sewadahapp/selaras/commit/cb793042e6b67525c55a7cfd63e2fb682a7914b9))
+- Merge pull request #44 from sewadahapp/feat/command-palette-server-search ([69c95f6](https://github.com/sewadahapp/selaras/commit/69c95f69ccb3986f92802bd0ef7f6220a0d8248a))
+- Merge pull request #43 from sewadahapp/fix/input-search-clear-control ([9fc4ecd](https://github.com/sewadahapp/selaras/commit/9fc4ecd7b541a7245027bf471f805b5fbdbcd5ef))
+
 ## v1.3.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.2.0...selaras-v1.3.0)
