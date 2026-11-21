@@ -55,9 +55,17 @@ ini tidak pernah memblokir pengetikan atau seleksi:
 
 ```vue
 <script setup lang="ts">
+import { refDebounced } from '@vueuse/core'
+
+const actions = [
+  { label: 'Buka pengaturan', onSelect: () => navigateTo('/settings') },
+]
 const searchTerm = ref('')
 const debounced = refDebounced(searchTerm, 200)
-const { data, status } = useFetch('/api/search', { query: { q: debounced }, server: false })
+const { data, status } = useFetch<{ label: string }[]>('/api/search', {
+  query: { q: debounced },
+  server: false,
+})
 
 const groups = computed(() => [
   { label: 'Actions', items: actions }, // difilter oleh palette

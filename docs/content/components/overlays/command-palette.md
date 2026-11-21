@@ -64,9 +64,17 @@ spinner in the input row - it never blocks typing or selection:
 
 ```vue
 <script setup lang="ts">
+import { refDebounced } from '@vueuse/core'
+
+const actions = [
+  { label: 'Open settings', onSelect: () => navigateTo('/settings') },
+]
 const searchTerm = ref('')
 const debounced = refDebounced(searchTerm, 200)
-const { data, status } = useFetch('/api/search', { query: { q: debounced }, server: false })
+const { data, status } = useFetch<{ label: string }[]>('/api/search', {
+  query: { q: debounced },
+  server: false,
+})
 
 const groups = computed(() => [
   { label: 'Actions', items: actions }, // filtered by the palette
