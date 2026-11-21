@@ -139,6 +139,7 @@ const mobilePresentation = ref(false)
 const showMobileModal = computed(() => mobilePresentation.value)
 const showMobileAutocompleteModal = computed(() => mobilePresentation.value && !!props.creatable)
 const modalBody = ref<InstanceType<typeof ComboboxSelectBody>>()
+const popupBody = ref<InstanceType<typeof ComboboxSelectBody>>()
 // Capture the rendered editor rather than its wrapper; changing multiple
 // replaces the desktop input. The modal owns a separate editor.
 const editableInput = ref<HTMLInputElement>()
@@ -252,6 +253,10 @@ const selectedChipValue = ref<SelectModelValue>()
 const dir = useDirection()
 
 function onTriggerKeydown(event: KeyboardEvent) {
+  if (props.searchable && !props.disabled && !open.value && isPrintableTriggerKey(event)) {
+    openFromPrintableKey(event)
+    return
+  }
   if (!props.multiple || props.displayMode !== 'chip')
     return
   const chips = visibleOptions.value
@@ -338,6 +343,47 @@ const searchText = computed({
     emit('update:searchTerm', value)
   },
 })
+
+// A searchable Select's closed trigger is a button with no editable input, so
+// typing a printable key would otherwise do nothing. Follow the APG
+// select-only/editable-combobox convention: open the picker, move focus to its
+// search field and seed the filter with that first character so subsequent
+// keystrokes continue the query. Space is a single-character key but keeps its
+// button activation, and Enter/Escape/arrows/Backspace keep their own handling.
+function isPrintableTriggerKey(event: KeyboardEvent): boolean {
+  return event.key.length === 1
+    && event.key !== ' '
+    && !event.ctrlKey
+    && !event.altKey
+    && !event.metaKey
+    && !event.isComposing
+    && event.keyCode !== 229
+}
+
+function openFromPrintableKey(event: KeyboardEvent) {
+  event.preventDefault()
+  selectedChipValue.value = undefined
+  const key = event.key
+  updateOpen(true)
+  // Reka resets its controlled search value once when the input mounts, then
+  // re-emits that empty value on the following tick. Seed after both so the
+  // first keystroke survives; placing the caret at the end lets the user keep
+  // typing the rest of the query in the now-focused field.
+  nextTick(() => nextTick(() => {
+    const body = showMobileModal.value ? modalBody.value : popupBody.value
+    const input = body?.searchElement
+    if (!input) {
+      searchText.value = key
+      return
+    }
+    // A real input event keeps Reka's filter and our controlled text in sync.
+    input.value = key
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.focus()
+    const end = input.value.length
+    input.setSelectionRange(end, end)
+  }))
+}
 
 const showClear = computed(() => canClearField(
   props.clearable,
@@ -1152,7 +1198,7 @@ async function clear() {
         v-bind="contentProps"
         @pointerdown.capture="startSuggestionPointer"
       >
-        <ComboboxSelectBody v-bind="bodyProps" @update:search-text="searchText = $event">
+        <ComboboxSelectBody ref="popupBody" v-bind="bodyProps" @update:search-text="searchText = $event">
           <template #header>
             <slot name="header" />
           </template>
