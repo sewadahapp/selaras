@@ -7,6 +7,9 @@ export default defineNuxtConfig({
   modules: ['@sewadah/selaras', '@nuxt/content', resolve('./modules/docs.mjs')],
   experimental: {
     emitRouteChunkError: 'automatic-immediate',
+    // Keep page boundaries client-side so fatal SSR errors reach error.vue
+    // and Nuxt sends the original HTTP error status.
+    ssrErrorBoundary: false,
     // Content 3 still imports server utilities from Nitro's generated imports.
     nitroAutoImports: true,
   },
