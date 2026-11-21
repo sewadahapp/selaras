@@ -44,6 +44,14 @@ export const inputTheme = tv({
     hasTrailingIcon: {
       true: {},
     },
+    // Chromium draws its own cancel glyph on a focused, non-empty search
+    // input. When Selaras also renders its clear button the two stack at the
+    // trailing edge, so hide only the native one for that combination. The
+    // input keeps type="search" (search events, Enter-to-search, etc.), and a
+    // search field without our clear button keeps the native behavior.
+    hideNativeSearchCancel: {
+      true: { base: '[&::-webkit-search-cancel-button]:hidden' },
+    },
     // Declared last (after color) so tailwind-merge lets its own focus:ring
     // override win over color's - invalid should always show danger
     // regardless of what color was also requested. See this session's own
