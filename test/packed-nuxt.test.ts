@@ -23,6 +23,19 @@ describe('isolated Nuxt compatibility consumers', () => {
     expect(dependencies.nuxt).toBe('4.5.2')
   })
 
+  it('installs the Vue and Vue Router versions declared as framework peers', () => {
+    const environment = nuxtCompatibilityEnvironment('nightly', {
+      'version': '5.0.0-test.1',
+      'peerDependencies.vue': '^3.5.45',
+      'peerDependencies.vue-router': '^5.5.1',
+    })
+    expect(packedNuxtDependencies({ nuxt: '4.5.2', vue: '3.5.42' }, environment)).toEqual({
+      'nuxt': 'npm:nuxt-nightly@5.0.0-test.1',
+      'vue': '^3.5.45',
+      'vue-router': '^5.5.1',
+    })
+  })
+
   it('tests stable Nuxt with future defaults and leaves the rest of the fixture intact', () => {
     const environment = nuxtCompatibilityEnvironment('future', { 'version': '4.6.2', 'dependencies.vue': '^3.5.43' })
     expect(environment.SELARAS_NUXT_VERSION).toBe('4.6.2')

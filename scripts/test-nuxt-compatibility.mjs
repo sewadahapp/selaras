@@ -11,7 +11,7 @@ const scope = process.argv[3] ?? 'all'
 const target = nuxtCompatibilityChannels[channel]
 assert.ok(target && ['all', 'core', 'docs'].includes(scope), 'Usage: bun run test:nuxt-compat [future|nightly] [all|core|docs]')
 
-const metadata = spawnSync('npm', ['view', `${target.package}@${target.tag}`, 'version', 'dependencies.vue', '--json'], {
+const metadata = spawnSync('npm', ['view', `${target.package}@${target.tag}`, 'version', 'dependencies.vue', 'peerDependencies.vue', 'peerDependencies.vue-router', '--json'], {
   cwd: rootDir,
   encoding: 'utf8',
   timeout: 120_000,
