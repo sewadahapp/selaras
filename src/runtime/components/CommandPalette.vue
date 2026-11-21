@@ -28,6 +28,8 @@ export interface CommandPaletteItem {
 export interface CommandPaletteGroup {
   label?: string
   items: CommandPaletteItem[]
+  /** Render this group's items unchanged and in authoring order, without fuzzy filtering. Overrides the component-level `ignoreFilter`. */
+  ignoreFilter?: boolean
 }
 
 defineOptions({ inheritAttrs: false })
@@ -60,11 +62,18 @@ export interface CommandPaletteProps {
   open?: boolean
   /** Binds Cmd/Ctrl+K to open this instance. @default true */
   shortcut?: boolean
+  /** The typed search text. Bind with `v-model:search-term` to read or control it; cleared when the palette closes. */
+  searchTerm?: string
+  /** Skip fuzzy filtering for every group by default. A group's own `ignoreFilter` takes precedence. */
+  ignoreFilter?: boolean
+  /** Shows a spinner in the input row while results load. Typing and selection stay enabled. */
+  loading?: boolean
   ui?: UiProp<CommandPaletteThemeSlots>
 }
 
 export interface CommandPaletteEmits {
   'update:open': [value: boolean]
+  'update:searchTerm': [value: string]
 }
 
 const shared = useCommandPalette()
@@ -95,7 +104,17 @@ function toggle() {
 const icons = useIcons()
 const messages = useMessages()
 
-const query = ref('')
+const localQuery = ref('')
+// Same controlled/uncontrolled shape as ListboxBase's search: an absent
+// `searchTerm` keeps filtering working locally, while a bound parent sees
+// every keystroke (and the reset on close) through the emit.
+const query = computed({
+  get: () => props.searchTerm ?? localQuery.value,
+  set: (value: string) => {
+    localQuery.value = value
+    emit('update:searchTerm', value)
+  },
+})
 const highlightedIndex = ref(0)
 const inputRef = ref<HTMLInputElement>()
 const listboxId = `selaras-command-palette-list-${useId()}`
@@ -108,7 +127,8 @@ function hotkeyFor(item: CommandPaletteItem): HotkeyOptions | undefined {
 
 watch(isOpen, (open) => {
   if (!open) {
-    query.value = ''
+    localQuery.value = ''
+    emit('update:searchTerm', '')
     highlightedIndex.value = 0
   }
 })
@@ -129,14 +149,22 @@ function onOpenAutoFocus(event: Event) {
 // the default (pre-search) view.
 const filteredGroups = computed(() => {
   return props.groups
-    .map(group => ({
-      label: group.label,
-      items: group.items
-        .map(item => ({ item, score: fuzzyScore(query.value, item.label) }))
-        .filter((entry): entry is { item: CommandPaletteItem, score: number } => entry.score !== null)
-        .sort((a, b) => query.value ? b.score - a.score : 0)
-        .map(entry => entry.item),
-    }))
+    .map((group) => {
+      // Server-side/remote groups arrive already filtered: keep their items
+      // verbatim and in order, while every other group keeps the fuzzy match
+      // and re-ranking. The group flag wins over the component default.
+      if (group.ignoreFilter ?? props.ignoreFilter) {
+        return { label: group.label, items: group.items }
+      }
+      return {
+        label: group.label,
+        items: group.items
+          .map(item => ({ item, score: fuzzyScore(query.value, item.label) }))
+          .filter((entry): entry is { item: CommandPaletteItem, score: number } => entry.score !== null)
+          .sort((a, b) => query.value ? b.score - a.score : 0)
+          .map(entry => entry.item),
+      }
+    })
     .filter(group => group.items.length > 0)
 })
 
@@ -220,6 +248,7 @@ const overlayProps = useRootProps(() => ui.value.overlay, () => props.ui?.overla
 const contentProps = computed(() => resolveSlot(ui.value.content, props.ui?.content))
 const headerProps = computed(() => resolveSlot(ui.value.header, props.ui?.header))
 const searchIconProps = computed(() => resolveSlot(ui.value.searchIcon, props.ui?.searchIcon))
+const loadingIconProps = computed(() => resolveSlot(ui.value.loadingIcon, props.ui?.loadingIcon))
 const inputProps = computed(() => resolveSlot(ui.value.input, props.ui?.input))
 const listProps = computed(() => resolveSlot(ui.value.list, props.ui?.list))
 const groupProps = computed(() => resolveSlot(ui.value.group, props.ui?.group))
@@ -255,7 +284,7 @@ function itemId(index: number) {
         <DialogDescription :class="applyClassPrefix('sr-only')">
           {{ messages.commandPaletteDescription }}
         </DialogDescription>
-        <div v-bind="headerProps">
+        <div :aria-busy="loading || undefined" v-bind="headerProps">
           <Icon :name="icons.search" v-bind="searchIconProps" />
           <input
             ref="inputRef"
@@ -269,6 +298,8 @@ function itemId(index: number) {
             v-bind="inputProps"
             @keydown="onInputKeydown"
           >
+          <Icon v-if="loading" :name="icons.loading" :class="applyClassPrefix('animate-spin')" v-bind="loadingIconProps" />
+          <span v-if="loading" :class="applyClassPrefix('sr-only')">{{ messages.loading }}</span>
         </div>
         <div :id="listboxId" v-bind="listProps" role="listbox">
           <template v-if="filteredGroups.length">

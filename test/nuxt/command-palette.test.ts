@@ -1,6 +1,6 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, ref } from 'vue'
 import CommandPalette from '../../src/runtime/components/CommandPalette.vue'
 import { useCommandPalette } from '../../src/runtime/composables/use-command-palette'
 
@@ -33,6 +33,25 @@ function makeGroups(onSelect = vi.fn(), onSelectDisabled = vi.fn()) {
       ],
     },
   ]
+}
+
+function optionLabels() {
+  return Array.from(document.body.querySelectorAll('[role="option"]')).map(el => el.querySelector('span')?.textContent?.trim())
+}
+
+function highlightedLabel() {
+  return document.body.querySelector('[data-highlighted]')?.querySelector('span')?.textContent?.trim()
+}
+
+function searchInput() {
+  return document.body.querySelector<HTMLInputElement>('input[role="combobox"]')!
+}
+
+async function type(value: string) {
+  const input = searchInput()
+  input.value = value
+  input.dispatchEvent(new Event('input'))
+  await wrapper!.vm.$nextTick()
 }
 
 describe('commandPalette', () => {
@@ -262,5 +281,181 @@ describe('commandPalette', () => {
     expect(dialogs[0]?.textContent).toContain('Shared item')
 
     shared.unmount()
+  })
+
+  it('v-model:search-term exposes the query, follows the parent, and resets on close', async () => {
+    const term = ref('folder')
+    const open = ref(true)
+    const emittedTerms: string[] = []
+
+    // A tiny parent harness so the model is genuinely two-way, like a real
+    // `v-model:search-term` binding rather than a one-off prop snapshot.
+    wrapper = await mountSuspended(defineComponent({
+      setup: () => () => h(CommandPalette, {
+        'groups': makeGroups(),
+        'open': open.value,
+        'shortcut': false,
+        'searchTerm': term.value,
+        'onUpdate:searchTerm': (value: string) => {
+          term.value = value
+          emittedTerms.push(value)
+        },
+        'onUpdate:open': (value: boolean) => {
+          open.value = value
+        },
+      }),
+    }))
+    await macrotask()
+
+    expect(searchInput().value).toBe('folder')
+    expect(optionLabels()).toEqual(['New folder'])
+
+    // The parent can set the query directly.
+    term.value = 'file'
+    await macrotask()
+    expect(searchInput().value).toBe('file')
+    expect(optionLabels()).toEqual(['New file'])
+
+    // Typing flows back up to the parent.
+    await type('folder')
+    expect(emittedTerms.at(-1)).toBe('folder')
+    expect(term.value).toBe('folder')
+
+    // Closing clears it through the emit; reopening starts from an empty query.
+    open.value = false
+    await macrotask()
+    expect(emittedTerms.at(-1)).toBe('')
+    expect(term.value).toBe('')
+    open.value = true
+    await macrotask()
+    expect(searchInput().value).toBe('')
+  })
+
+  it('a group with ignoreFilter renders its items unchanged while other groups still fuzzy filter', async () => {
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, {
+      props: {
+        groups: [
+          { label: 'Actions', items: [{ label: 'New file' }, { label: 'New folder' }] },
+          { label: 'Results', ignoreFilter: true, items: [{ label: 'Zebra report' }, { label: 'Apple report' }, { label: 'Middleware' }] },
+        ],
+      },
+    })
+    await macrotask()
+
+    // "report" matches nothing in Actions, but the ignored group is untouched.
+    await type('report')
+    expect(optionLabels()).toEqual(['Zebra report', 'Apple report', 'Middleware'])
+
+    // A query that does match Actions keeps the ignored group's authoring order.
+    await type('nf')
+    expect(optionLabels()).toEqual(['New file', 'New folder', 'Zebra report', 'Apple report', 'Middleware'])
+  })
+
+  it('the component-level ignoreFilter applies to all groups unless a group opts out', async () => {
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, {
+      props: {
+        ignoreFilter: true,
+        groups: [
+          { label: 'Unfiltered', items: [{ label: 'Alpha' }, { label: 'Beta' }] },
+          { label: 'Filtered', ignoreFilter: false, items: [{ label: 'Alpha command' }, { label: 'Beta command' }] },
+        ],
+      },
+    })
+    await macrotask()
+
+    await type('alpha')
+    expect(optionLabels()).toEqual(['Alpha', 'Beta', 'Alpha command'])
+  })
+
+  it('loading shows a non-blocking spinner while typing and filtering still work', async () => {
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, { props: { groups: makeGroups(), loading: true } })
+    await macrotask()
+
+    const dialog = document.body.querySelector('[role="dialog"]')!
+    expect(dialog.querySelector('.animate-spin')).toBeTruthy()
+    expect(dialog.querySelector('[aria-busy="true"]')).toBeTruthy()
+    expect(searchInput().disabled).toBe(false)
+    expect(searchInput().readOnly).toBe(false)
+    expect(document.body.textContent).toContain('Loading')
+
+    await type('folder')
+    expect(optionLabels()).toEqual(['New folder'])
+  })
+
+  it('has no loading indicator without the prop, preserving default behaviour', async () => {
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, { props: { groups: makeGroups() } })
+    await macrotask()
+
+    expect(document.body.querySelector('.animate-spin')).toBeFalsy()
+    expect(document.body.querySelector('[aria-busy="true"]')).toBeFalsy()
+  })
+
+  it('navigates and activates items across filtered and unfiltered groups', async () => {
+    const onSelectAction = vi.fn()
+    const onSelectResult = vi.fn()
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, {
+      props: {
+        groups: [
+          { label: 'Actions', items: [{ label: 'New file', onSelect: onSelectAction, shortcut: 'mod+n', hotkey: true }] },
+          { label: 'Results', ignoreFilter: true, items: [{ label: 'Remote doc', onSelect: onSelectResult, shortcut: 'mod+r', hotkey: true }] },
+        ],
+      },
+    })
+    await macrotask()
+
+    await type('nf')
+    expect(optionLabels()).toEqual(['New file', 'Remote doc'])
+
+    expect(highlightedLabel()).toBe('New file')
+
+    searchInput().dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    await wrapper.vm.$nextTick()
+    expect(highlightedLabel()).toBe('Remote doc')
+
+    searchInput().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }))
+    await macrotask()
+    expect(onSelectResult).toHaveBeenCalledOnce()
+    expect(onSelectAction).not.toHaveBeenCalled()
+    expect(document.body.querySelector('[role="dialog"][data-state="open"]')).toBeFalsy()
+
+    // Item hotkeys stay live for unfiltered groups too after reopening.
+    useCommandPalette().open()
+    await macrotask()
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'r', ctrlKey: true, bubbles: true, cancelable: true }))
+    await macrotask()
+    expect(onSelectResult).toHaveBeenCalledTimes(2)
+  })
+
+  it('shows the empty state only when every group is empty after filtering', async () => {
+    useCommandPalette().open()
+    wrapper = await mountSuspended(CommandPalette, {
+      props: {
+        groups: [
+          { label: 'Actions', items: [{ label: 'New file' }] },
+          { label: 'Results', ignoreFilter: true, items: [] },
+        ],
+      },
+    })
+    await macrotask()
+
+    await type('zzz')
+    expect(optionLabels()).toEqual([])
+    expect(document.body.textContent).toContain('No results found')
+
+    // A single surviving item in an ignored group is enough to hide it.
+    await wrapper.setProps({
+      groups: [
+        { label: 'Actions', items: [{ label: 'New file' }] },
+        { label: 'Results', ignoreFilter: true, items: [{ label: 'Remote doc' }] },
+      ],
+    })
+    await macrotask()
+    expect(optionLabels()).toEqual(['Remote doc'])
+    expect(document.body.textContent).not.toContain('No results found')
   })
 })
