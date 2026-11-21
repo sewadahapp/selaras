@@ -10,6 +10,9 @@ import type {
   ButtonProps,
   ColorPickerProps,
   ColorRole,
+  CommandPaletteEmits,
+  CommandPaletteGroup,
+  CommandPaletteProps,
   DrawerProps,
   EmptyStateProps,
   EmptyStateSlots,
@@ -76,6 +79,15 @@ const invalidNavigationPositioning: NavigationMenuPositioning = { side: 'right' 
 void packedCompactNavigation
 void invalidNavigationPositioning
 type PreviouslyMissingComponentContracts = AlertDialogProps & ColorPickerProps & DrawerProps & InputGroupProps & SliderProps & TreeProps
+const packedPaletteProps: CommandPaletteProps = {
+  groups: [{ label: 'Results', ignoreFilter: true, items: [{ label: 'Doc' }] }],
+  searchTerm: 'doc',
+  ignoreFilter: false,
+  loading: true,
+}
+const packedPaletteGroup: CommandPaletteGroup = { label: 'Actions', items: [] }
+const packedPaletteSearchUpdate: CommandPaletteEmits['update:searchTerm'] = ['doc']
+void [packedPaletteProps, packedPaletteGroup, packedPaletteSearchUpdate]
 type PublicComposableContracts
   = UseCommandPaletteReturn
     & UseDrawerReturn

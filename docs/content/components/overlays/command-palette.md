@@ -53,6 +53,38 @@ substring check) - "nf" matches "New File" - and results re-rank live
 as the query changes; an empty search keeps each group's own
 authoring order rather than reshuffling the default view.
 
+### External (server-side) results
+
+By default the palette fuzzy-filters every item locally. To search a large or
+remote dataset, bind `v-model:search-term` to read the typed query and drive
+your own data source, then mark the groups it fills with `ignoreFilter` so the
+palette renders those items verbatim (in the order they arrive) instead of
+filtering them again. Set `loading` while a request is in flight to show a
+spinner in the input row - it never blocks typing or selection:
+
+```vue
+<script setup lang="ts">
+const searchTerm = ref('')
+const debounced = refDebounced(searchTerm, 200)
+const { data, status } = useFetch('/api/search', { query: { q: debounced }, server: false })
+
+const groups = computed(() => [
+  { label: 'Actions', items: actions }, // filtered by the palette
+  { label: 'Results', ignoreFilter: true, items: data.value ?? [] }, // already filtered by the server
+])
+</script>
+
+<template>
+  <SCommandPalette v-model:search-term="searchTerm" :groups="groups" :loading="status === 'pending'" />
+</template>
+```
+
+`searchTerm` is cleared automatically whenever the palette closes. `ignoreFilter`
+can also be set on the component to opt every group out of local filtering; a
+group's own `ignoreFilter: false` overrides that default. Keyboard navigation,
+item hotkeys, and the "No results found" state work across both filtered and
+unfiltered groups.
+
 ### Item shortcuts
 
 An item's own `shortcut` renders via [Kbd](/components/elements/kbd) as a
@@ -96,9 +128,12 @@ every slot and variant - here's the palette's own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `groups` | `{ label?: string; items: { label: string; icon?: string; shortcut?: string; hotkey?: boolean; disabled?: boolean; onSelect?: () => void }[] }[]` | - |
+| `groups` | `{ label?: string; ignoreFilter?: boolean; items: { label: string; icon?: string; shortcut?: string; hotkey?: boolean; disabled?: boolean; onSelect?: () => void }[] }[]` | - |
 | `open` | `boolean` | - |
 | `shortcut` | `boolean` | `true` |
+| `searchTerm` | `string` | - |
+| `ignoreFilter` | `boolean` | `false` |
+| `loading` | `boolean` | `false` |
 | `ui` | `Partial<Record<CommandPaletteSlot, string \| object>>` | - |
 
 ### Multiple instances
@@ -115,6 +150,13 @@ This instance stops reacting to `useCommandPalette()` entirely - its own
 `open`/`close`/Cmd-K state is fully local. The default (no `open` prop)
 stays wired to the shared singleton described above, which is what you
 want for the single app-wide palette.
+
+## Events
+
+| Event | Payload | Purpose |
+| --- | --- | --- |
+| `update:open` | `boolean` | Backs `v-model:open` - requests opening or closing this palette |
+| `update:searchTerm` | `string` | Backs `v-model:search-term` - fired on every keystroke and on close (with `''`) |
 
 ## `useCommandPalette()`
 
