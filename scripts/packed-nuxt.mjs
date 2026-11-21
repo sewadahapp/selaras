@@ -7,6 +7,7 @@ export function packedNuxtDependencies(dependencies, env = process.env) {
     ...dependencies,
     ...(env.SELARAS_NUXT_VERSION && { nuxt: env.SELARAS_NUXT_VERSION }),
     ...(env.SELARAS_NUXT_VUE_VERSION && { vue: env.SELARAS_NUXT_VUE_VERSION }),
+    ...(env.SELARAS_NUXT_VUE_ROUTER_VERSION && { 'vue-router': env.SELARAS_NUXT_VUE_ROUTER_VERSION }),
   }
 }
 
@@ -45,11 +46,13 @@ export function nuxtCompatibilityEnvironment(channel, metadata) {
   const target = nuxtCompatibilityChannels[channel]
   assert.ok(target, `Unknown Nuxt compatibility channel: ${channel}`)
   assert.ok(typeof metadata.version === 'string' && metadata.version.startsWith(`${target.major}.`), `Expected Nuxt ${target.major}, received ${metadata.version}`)
-  assert.ok(typeof metadata['dependencies.vue'] === 'string', 'Nuxt must declare its Vue version requirement')
+  const vueVersion = metadata['dependencies.vue'] ?? metadata['peerDependencies.vue']
+  assert.ok(typeof vueVersion === 'string', 'Nuxt must declare its Vue version requirement')
   return {
     SELARAS_NUXT_VERSION: target.package === 'nuxt' ? metadata.version : `npm:${target.package}@${metadata.version}`,
     SELARAS_NUXT_EXPECTED_VERSION: metadata.version,
-    SELARAS_NUXT_VUE_VERSION: metadata['dependencies.vue'],
+    SELARAS_NUXT_VUE_VERSION: vueVersion,
+    SELARAS_NUXT_VUE_ROUTER_VERSION: metadata['peerDependencies.vue-router'] ?? '',
     SELARAS_NUXT_COMPATIBILITY_VERSION: target.compatibilityVersion ?? '',
   }
 }
