@@ -191,6 +191,18 @@ test('typing on the focused closed trigger opens and seeds the adaptive dialog s
   expect(issues).toEqual([])
 })
 
+test('leaves the search untouched when the parent declines the open request', async ({ page, goto }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await goto('/?ownership=controlled&rejectOpen=true', { waitUntil: 'hydration' })
+  const trigger = page.locator('#select-trigger')
+  await trigger.focus()
+  await page.keyboard.press('t')
+  await expect(page.locator('#open-requests')).toHaveText('[true]')
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+  await expect(trigger).toBeFocused()
+  await expect(page.locator('#search-proposals')).not.toContainText('"t"')
+})
+
 test('keeps Enter, Space and Escape behavior on the focused closed trigger', async ({ page, goto }) => {
   const issues = collectIssues(page)
   await page.setViewportSize({ width: 1440, height: 1000 })

@@ -9,9 +9,11 @@ const controlledModel = route.query.model === 'controlled'
 const initialOpen = route.query.initial === 'true'
 const parentOpen = ref(initialOpen)
 const parentValue = ref()
+const acceptOpen = route.query.rejectOpen !== 'true'
 const acceptClose = ref(route.query.veto !== 'true')
 const requests = ref([])
 const proposals = ref([])
+const searchProposals = ref([])
 const items = Object.freeze(route.query.count
   ? Array.from({ length: Number(route.query.count) }, (_, index) => ({ label: `Option ${index + 1}`, value: index + 1 }))
   : [
@@ -24,7 +26,7 @@ const bindings = computed(() => ({
 }))
 function requestOpen(value) {
   requests.value.push(value)
-  if (controlledOpen && (value || acceptClose.value))
+  if (controlledOpen && (value ? acceptOpen : acceptClose.value))
     parentOpen.value = value
 }
 function proposeValue(value) {
@@ -55,6 +57,7 @@ function proposeValue(value) {
         :ui="{ itemIndicator: { 'data-test': 'selection-indicator' } }"
         placeholder="Choose a number" v-bind="bindings"
         @update:open="requestOpen" @update:model-value="proposeValue"
+        @update:search-term="searchProposals.push($event)"
       />
       <button id="after">
         After
@@ -64,6 +67,7 @@ function proposeValue(value) {
       Allow close
     </button>
     <output id="open-requests">{{ JSON.stringify(requests) }}</output>
+    <output id="search-proposals">{{ JSON.stringify(searchProposals) }}</output>
     <output id="value-proposals">{{ JSON.stringify(proposals) }}</output>
   </SApp>
 </template>

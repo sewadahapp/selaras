@@ -372,10 +372,8 @@ function openFromPrintableKey(event: KeyboardEvent) {
   nextTick(() => nextTick(() => {
     const body = showMobileModal.value ? modalBody.value : popupBody.value
     const input = body?.searchElement
-    if (!input) {
-      searchText.value = key
+    if (!open.value || !input)
       return
-    }
     // A real input event keeps Reka's filter and our controlled text in sync.
     input.value = key
     input.dispatchEvent(new Event('input', { bubbles: true }))
