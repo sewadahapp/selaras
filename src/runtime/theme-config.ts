@@ -1,3 +1,4 @@
+import type { ScrollAreaRootProps } from 'reka-ui'
 import type { VariantProps } from 'tailwind-variants'
 import type { accordionTheme, AccordionThemeSlots } from './theme/accordion'
 import type { alertTheme, AlertThemeSlots } from './theme/alert'
@@ -411,6 +412,7 @@ export interface ThemeComponentRegistry {
   }
   scrollArea: {
     slots: ScrollAreaThemeSlots
+    defaults: Pick<ScrollAreaRootProps, 'type' | 'scrollHideDelay' | 'dir'>
     conditions: Pick<VariantProps<typeof scrollAreaTheme>, never>
   }
   separator: {
