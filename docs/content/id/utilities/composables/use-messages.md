@@ -123,8 +123,10 @@ Sengaja tidak ada entri `am`/`pm`: bagian time milik `DatePicker` menurunkan tek
 ## API
 
 ```ts
-function useMessages(): ComputedRef<MessageRegistry>
+function useMessages(): ComputedRef<ResolvedMessageRegistry>
 ```
+
+Gunakan `Partial<ResolvedMessageRegistry>` untuk memberi tipe pada override `codeCopyFailed`.
 
 Mengembalikan registry gabungan (override `app.config.selaras.messages` Anda diterapkan di atas default Inggris di atas) - gunakan ini jika Anda membangun komponen sendiri dan ingin ia menghormati override yang sama yang sudah diatur consumer, alih-alih meng-hardcode string langsung:
 

@@ -1,5 +1,6 @@
+import type { MessageRegistry, ResolvedMessageRegistry } from '../../src/runtime/utils/messages'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import { updateAppConfig } from '#app'
 import ProsePre from '../../src/runtime/components/ProsePre.vue'
@@ -42,19 +43,23 @@ describe('prosePre file-type icon', () => {
     expect(byFilename.find('.iconify.i-vscode-icons\\:file-type-typescript').element.parentElement?.textContent).toContain('index.ts')
   })
 
-  it('reports a rejected clipboard write as a failure', async () => {
+  it('reports a rejected clipboard write with a localized failure label', async () => {
+    expectTypeOf<Omit<ResolvedMessageRegistry, 'codeCopyFailed'>>().toMatchTypeOf<MessageRegistry>()
+
     vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn().mockRejectedValue(new Error('Clipboard denied')) } })
+    updateAppConfig({ selaras: { messages: { codeCopyFailed: 'Gagal menyalin kode' } } })
     const wrapper = await mountSuspended(ProsePre, { props: { code: 'Hello' } })
     try {
       const button = wrapper.get('button')
       await button.trigger('click')
       await nextTick()
-      expect(button.attributes('aria-label')).toBe('Could not copy code')
+      expect(button.attributes('aria-label')).toBe('Gagal menyalin kode')
       expect(button.attributes('data-selaras-color')).toBe('danger')
     }
     finally {
       wrapper.unmount()
       vi.unstubAllGlobals()
+      updateAppConfig({ selaras: { messages: { codeCopyFailed: 'Could not copy code' } } })
     }
   })
 

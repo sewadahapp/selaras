@@ -121,7 +121,7 @@ export type * from '../components/TransferList.vue'
 export type * from '../components/Tree.vue'
 // The two global override registries (useMessages()/useIcons(), see their
 // own composables) - exported so a consumer can type their own partial
-// override object (e.g. a shared `const messages: Partial<MessageRegistry> = {...}`)
+// override object (e.g. a shared `const messages: Partial<ResolvedMessageRegistry> = {...}`)
 // instead of relying on inference alone.
 export type { UseCommandPaletteReturn } from '../composables/use-command-palette'
 export type { UseConfirmOptions, UseConfirmReturn } from '../composables/use-confirm'
@@ -138,7 +138,7 @@ export type { FieldAdornmentSlotProps } from '../utils/field-adornments'
 export type { FunctionalTokenOverrides, GeometryTokenOverrides, ThemeTokenOverrides } from '../utils/functional-tokens'
 export type { IconRegistry } from '../utils/icons'
 export { defaultIcons } from '../utils/icons'
-export type { MessageRegistry } from '../utils/messages'
+export type { MessageRegistry, ResolvedMessageRegistry } from '../utils/messages'
 export { defaultMessages } from '../utils/messages'
 export type { NavigationMenuItem, NavigationMenuPopover, NavigationMenuPositioning } from '../utils/navigation-menu'
 export type { ContextMenuPositioning, OverlayPortal, OverlayPositioning } from '../utils/overlay'

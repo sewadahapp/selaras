@@ -138,8 +138,10 @@ sync by hand.
 ## API
 
 ```ts
-function useMessages(): ComputedRef<MessageRegistry>
+function useMessages(): ComputedRef<ResolvedMessageRegistry>
 ```
+
+Use `Partial<ResolvedMessageRegistry>` to type overrides for `codeCopyFailed`.
 
 Returns the merged registry (your `app.config.selaras.messages` overrides applied
 on top of the English defaults above) - use this if you're building your

@@ -1,8 +1,8 @@
 import type { ComputedRef } from 'vue'
-import type { MessageRegistry } from '../utils/messages'
+import type { ResolvedMessageRegistry } from '../utils/messages'
 import { computed } from 'vue'
 import { useAppConfig } from '#imports'
-import { defaultMessages } from '../utils/messages'
+import { defaultCodeCopyFailedMessage, defaultMessages } from '../utils/messages'
 
 /**
  * Merges a consumer's app.config.selaras.messages override onto the default
@@ -13,7 +13,11 @@ import { defaultMessages } from '../utils/messages'
  * computed from whatever i18n library the app itself already uses -
  * this library doesn't ship one itself, just the override surface.
  */
-export function useMessages(): ComputedRef<MessageRegistry> {
-  const appConfig = useAppConfig() as { selaras?: { messages?: Partial<MessageRegistry> } }
-  return computed(() => ({ ...defaultMessages, ...appConfig.selaras?.messages }))
+export function useMessages(): ComputedRef<ResolvedMessageRegistry> {
+  const appConfig = useAppConfig() as { selaras?: { messages?: Partial<ResolvedMessageRegistry> } }
+  return computed(() => ({
+    ...defaultMessages,
+    ...appConfig.selaras?.messages,
+    codeCopyFailed: appConfig.selaras?.messages?.codeCopyFailed ?? defaultCodeCopyFailedMessage,
+  }))
 }

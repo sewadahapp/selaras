@@ -73,7 +73,6 @@ export interface MessageRegistry {
   codeTabFallback: (index: number) => string
   copyCode: string
   codeCopied: string
-  codeCopyFailed: string
   dropFiles: string
   invalidFileType: (name: string) => string
   invalidFileSize: (name: string, max: string) => string
@@ -93,6 +92,12 @@ export interface MessageRegistry {
   onThisPage: string
   upToSize: (size: string) => string
 }
+
+export interface ResolvedMessageRegistry extends MessageRegistry {
+  codeCopyFailed: string
+}
+
+export const defaultCodeCopyFailedMessage = 'Could not copy code'
 
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
 // its own comment for the reasoning - a single app.config.selaras.messages.clear
@@ -174,7 +179,6 @@ export const defaultMessages: MessageRegistry = {
   codeTabFallback: index => `Tab ${index}`,
   copyCode: 'Copy code',
   codeCopied: 'Copied!',
-  codeCopyFailed: 'Could not copy code',
   dropFiles: 'Drop files here or click to browse',
   invalidFileType: name => `${name}: invalid file type`,
   invalidFileSize: (name, max) => `${name}: exceeds the ${max} size limit`,
