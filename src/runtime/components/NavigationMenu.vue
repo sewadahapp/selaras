@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="Meta = unknown">
+<script setup lang="ts">
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem, NavigationMenuPopover, NavigationMenuPositioning } from '../utils/navigation-menu'
@@ -29,8 +29,8 @@ import Icon from './Icon.vue'
 import NavigationMenuAccordionItem from './NavigationMenuAccordionItem.vue'
 import NavigationMenuFlyoutTrigger from './NavigationMenuFlyoutTrigger.vue'
 
-export interface NavigationMenuProps<Meta = unknown> {
-  items: NavigationMenuItem<Meta>[]
+export interface NavigationMenuProps {
+  items: NavigationMenuItem[]
   /** Horizontal uses Reka's real shared-viewport flyout for a single level of dropdown children. Vertical falls back to a recursive accordion (see NavigationMenuAccordionItem.vue) for arbitrary depth - Reka's own NavigationMenuContent isn't built for deep nested trees. */
   orientation?: 'horizontal' | 'vertical'
   /** Dropdown layout for horizontal navigation. @default 'vertical' */
@@ -52,7 +52,7 @@ export interface NavigationMenuProps<Meta = unknown> {
   ui?: UiProp<NavigationMenuThemeSlots>
 }
 
-const props = withDefaults(defineProps<NavigationMenuProps<Meta>>(), {
+const props = withDefaults(defineProps<NavigationMenuProps>(), {
   orientation: 'horizontal',
   contentOrientation: 'vertical',
   variant: 'pill',
@@ -60,7 +60,7 @@ const props = withDefaults(defineProps<NavigationMenuProps<Meta>>(), {
 })
 
 defineSlots<{
-  [name: string]: ((scope: { item: NavigationMenuItem<Meta>, active?: boolean }) => any) | undefined
+  [name: string]: ((scope: { item: NavigationMenuItem, active?: boolean }) => any) | undefined
   'list-leading'?: () => any
   'list-trailing'?: () => any
 }>()

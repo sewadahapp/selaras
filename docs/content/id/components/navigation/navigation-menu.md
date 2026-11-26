@@ -288,7 +288,7 @@ Untuk melihat dengan tepat apa yang akan Anda timpa - kelas default untuk setiap
 
 | Prop | Tipe | Default |
 | --- | --- | --- |
-| `items` | `NavigationMenuItem<Meta>[]` | - (required) |
+| `items` | `NavigationMenuItem[]` | - (required) |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `contentOrientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
 | `positioning` | `NavigationMenuPositioning` (`{ align?: 'start' \| 'center' \| 'end' }`) | `{ align: 'center' }` |
@@ -307,12 +307,12 @@ Untuk melihat dengan tepat apa yang akan Anda timpa - kelas default untuk setiap
 | --- | --- | --- |
 | `label` | `string` | Required. |
 | `key` | `string \| number` | Identitas dalam daftar. Default ke `label`. |
-| `meta` | `Meta` | Data aplikasi yang tersedia di slot item. Tipe diinferensikan dari `items`. |
+| `meta` | `unknown` | Data aplikasi yang tersedia di slot item. Persempit tipenya di slot sebelum membacanya. |
 | `icon` | `string` | Dirender sebelum label. |
 | `to` | `string` | Route path untuk leaf item. |
 | `disabled` | `boolean` | Terlihat tetapi non-interaktif. |
 | `active` | `boolean` | Mengoverride route match yang terdeteksi otomatis. |
-| `children` | `NavigationMenuItem<Meta>[]` | Satu level untuk horizontal; kedalaman arbitrari untuk vertical. |
+| `children` | `NavigationMenuItem[]` | Satu level untuk horizontal; kedalaman arbitrari untuk vertical. |
 | `description` | `string` | Tidak dibaca oleh rendering default NavigationMenu - dibawa murni agar custom `#item-content`/`#{slot}-content` slot override dapat menampilkannya (deskripsi di bawah setiap link mega menu, misalnya) - lihat [Kustomisasi konten](#kustomisasi-konten), yang contoh langsungnya sudah merender field ini. |
 | `onSelect` | `(event: Event) => void` | Terpicu saat leaf item diaktifkan. |
 | `shortcut` | `string` | Menampilkan petunjuk Kbd di samping item. |

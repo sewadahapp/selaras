@@ -367,7 +367,7 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `NavigationMenuItem<Meta>[]` | - (required) |
+| `items` | `NavigationMenuItem[]` | - (required) |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `contentOrientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
 | `positioning` | `NavigationMenuPositioning` (`{ align?: 'start' \| 'center' \| 'end' }`) | `{ align: 'center' }` |
@@ -386,12 +386,12 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | --- | --- | --- |
 | `label` | `string` | Required. |
 | `key` | `string \| number` | Stable identity within a list. Defaults to `label`. |
-| `meta` | `Meta` | Application data available to item slots. Its type is inferred from `items`. |
+| `meta` | `unknown` | Application data available to item slots. Narrow its type in the slot before reading it. |
 | `icon` | `string` | Rendered before the label. |
 | `to` | `string` | Route path for a leaf item. |
 | `disabled` | `boolean` | Visible but non-interactive. |
 | `active` | `boolean` | Overrides the auto-detected route match. |
-| `children` | `NavigationMenuItem<Meta>[]` | One level for horizontal; arbitrary depth for vertical. |
+| `children` | `NavigationMenuItem[]` | One level for horizontal; arbitrary depth for vertical. |
 | `description` | `string` | Not read by NavigationMenu's own default rendering - carried purely so a custom `#item-content`/`#{slot}-content` slot override can display one (a "mega menu" style description under each link, say) - see [Customizing content](#customizing-content), whose own live example already renders this field. |
 | `onSelect` | `(event: Event) => void` | Fired when a leaf item is activated. |
 | `shortcut` | `string` | Displays a Kbd hint beside the item. |
