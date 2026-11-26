@@ -21,10 +21,13 @@ export interface MenuRadioItem extends MenuItemOptions {
   value: string
 }
 
-export interface MenuRadioGroup {
+// Every menu entry preserves the fields readers could access on action items.
+type RadioGroupActionFields = Partial<Record<Exclude<keyof MenuItemOptions, 'label'>, never>>
+
+export interface MenuRadioGroup extends RadioGroupActionFields {
   type: 'radio-group'
   /** Accessible name for the group. */
-  label?: string
+  label: string
   value?: string
   onUpdateValue?: (value: string) => void
   items: MenuRadioItem[]

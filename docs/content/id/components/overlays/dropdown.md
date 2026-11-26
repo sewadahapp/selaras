@@ -169,8 +169,7 @@ Gunakan `positioning` untuk side, alignment, offset, dan perilaku collision menu
 
 Berikan `type: 'checkbox'` serta nilai `checked` untuk sebuah toggle. Gunakan
 `type: 'radio-group'` untuk opsi yang hanya dapat dipilih satu. Setiap opsi
-memerlukan `value` string yang unik dalam grup. `label` grup opsional memberi
-nama aksesibel pada grup.
+memerlukan `value` string yang unik dalam grup. Isi `label` sebagai nama aksesibel grup.
 
 Simpan pilihan menggunakan `onUpdateChecked` dan `onUpdateValue`. Nilai yang
 dipilih menampilkan ikon `check` dari `app.config.selaras.icons`. Di dialog

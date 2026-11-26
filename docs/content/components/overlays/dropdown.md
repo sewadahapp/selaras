@@ -207,8 +207,7 @@ inline or pass a CSS selector or `HTMLElement` as the teleport target.
 
 Use `type: 'checkbox'` with a `checked` value for a toggle. Use
 `type: 'radio-group'` for mutually exclusive options. Give each option a
-unique string `value` within its group. A group's optional `label` gives it an
-accessible name.
+unique string `value` within its group. Set the group's `label` to give it an accessible name.
 
 Store selections using `onUpdateChecked` and `onUpdateValue`. Selected
 options show the `check` icon from `app.config.selaras.icons`. In the adaptive

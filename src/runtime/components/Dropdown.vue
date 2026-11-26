@@ -44,9 +44,10 @@ export interface DropdownItem extends MenuItemOptions {
   rel?: string
 }
 
-type DropdownOption = (MenuCheckboxItem | MenuRadioItem) & Partial<Record<'to' | 'target' | 'rel', never>>
+type SelectionLinkFields = Partial<Record<'to' | 'target' | 'rel', never>>
+type DropdownOption = (MenuCheckboxItem | MenuRadioItem) & SelectionLinkFields
 
-export type DropdownEntry = DropdownItem | MenuCheckboxItem | MenuRadioGroup
+export type DropdownEntry = DropdownItem | ((MenuCheckboxItem | MenuRadioGroup) & SelectionLinkFields)
 
 export interface DropdownSlots {
   default?: () => any

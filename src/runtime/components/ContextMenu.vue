@@ -26,7 +26,18 @@ import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useFallthroughProps, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 
-export type ContextMenuItemDef = MenuItemOptions
+export interface ContextMenuItemDef {
+  label: string
+  icon?: string
+  disabled?: boolean
+  /** Styles this item for a delete/remove-style action (danger text, danger-tinted hover) - matches Dropdown's own `destructive` flag. */
+  destructive?: boolean
+  onSelect?: () => void
+  /** Displays a keyboard shortcut hint. */
+  shortcut?: string
+  /** Bind `shortcut` while this menu is open; activation follows the normal menu item click path. */
+  hotkey?: boolean
+}
 
 export type ContextMenuEntry = ContextMenuItemDef | MenuCheckboxItem | MenuRadioGroup
 

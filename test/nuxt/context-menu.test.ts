@@ -1,6 +1,6 @@
-import type { ContextMenuProps } from '../../src/runtime/components/ContextMenu.vue'
+import type { ContextMenuItemDef, ContextMenuProps } from '../../src/runtime/components/ContextMenu.vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { h } from 'vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 
@@ -49,6 +49,9 @@ describe('contextMenu', () => {
   })
 
   it('preserves actions with application-defined type fields', async () => {
+    type Entry = ContextMenuProps['items'][number][number]
+    expectTypeOf<Pick<Entry, keyof ContextMenuItemDef>>().toEqualTypeOf<ContextMenuItemDef>()
+
     const onSelect = vi.fn()
     const actions = [{ label: 'Open', type: 'app-action', onSelect }]
     const items: ContextMenuProps['items'] = [actions]

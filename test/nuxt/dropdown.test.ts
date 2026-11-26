@@ -1,6 +1,6 @@
-import type { DropdownEntry, DropdownProps } from '../../src/runtime/components/Dropdown.vue'
+import type { DropdownEntry, DropdownItem, DropdownProps } from '../../src/runtime/components/Dropdown.vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import { useRouter } from '#app'
 import Dropdown from '../../src/runtime/components/Dropdown.vue'
@@ -123,6 +123,9 @@ describe('dropdown', () => {
   })
 
   it('preserves actions with application-defined type fields', async () => {
+    type Entry = DropdownProps['items'][number][number]
+    expectTypeOf<Pick<Entry, keyof DropdownItem>>().toEqualTypeOf<DropdownItem>()
+
     const onSelect = vi.fn()
     const actions = [{ label: 'Open', type: 'app-action', onSelect }]
     const items: DropdownProps['items'] = [actions]
