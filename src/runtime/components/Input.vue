@@ -10,7 +10,7 @@ import FieldClearButton from '../internal/FieldClearButton.vue'
 import { inputTheme } from '../theme/input'
 import { useFieldAdornments } from '../utils/field-adornments'
 import { canClearField, fieldClearWidths, isFieldReadonly } from '../utils/field-clear'
-import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
+import { isNativeInputElementAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps, useThemeProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -98,12 +98,11 @@ const ui = computed(() => theme.value({
   hideNativeSearchCancel: props.type === 'search' && showClear.value,
 }))
 
-const isInputAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA11yAttr(key)
 // A class on SInput controls its positioned wrapper, as documented: width and
 // layout must include the absolute leading/trailing affordances. Consumers can
 // still target the native input itself with ui.base.
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isInputAttr })
-const nativeInputAttrs = useFallthroughAttrs(isInputAttr)
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeInputElementAttr })
+const nativeInputAttrs = useFallthroughAttrs(isNativeInputElementAttr)
 const baseProps = computed(() => resolveSlot(ui.value.base, props.ui?.base))
 const inputProps = computed(() => mergeProps(baseProps.value, nativeInputAttrs.value))
 function adornedInputProps() {

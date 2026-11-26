@@ -37,3 +37,37 @@ export function isNativeInputEvent(key: string) {
 export function isNativeInputA11yAttr(key: string) {
   return nativeInputAccessibilityAttributes.has(key)
 }
+
+const nativeFieldAttributes = new Set(['autofocus', 'dirname', 'enterkeyhint'])
+const inputOnlyAttributes = new Set([
+  'accept',
+  'alt',
+  'capture',
+  'checked',
+  'formaction',
+  'formenctype',
+  'formmethod',
+  'formnovalidate',
+  'formtarget',
+  'height',
+  'max',
+  'min',
+  'multiple',
+  'popovertarget',
+  'popovertargetaction',
+  'src',
+  'width',
+])
+const textareaOnlyAttributes = new Set(['cols', 'wrap'])
+
+function isNativeFieldAttr(key: string) {
+  return nativeFieldAttributes.has(key) || isNativeInputAttr(key) || isNativeInputA11yAttr(key)
+}
+
+export function isNativeInputElementAttr(key: string) {
+  return isNativeFieldAttr(key) || inputOnlyAttributes.has(key)
+}
+
+export function isNativeTextareaElementAttr(key: string) {
+  return isNativeFieldAttr(key) || textareaOnlyAttributes.has(key)
+}

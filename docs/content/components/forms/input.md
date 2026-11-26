@@ -23,6 +23,20 @@ Input is full-width by default, rather than needing an opt-in flag to make
 it so - constrain it with a class on the component itself (as the examples
 on this page do with `max-w-xs`), not a wrapping element.
 
+### Native attributes
+
+Input forwards `accept`, `alt`, `autocapitalize`, `autocomplete`, `autocorrect`,
+`autofocus`, `capture`, `checked`, `dirname`, `enterkeyhint`, `form`,
+`formaction`, `formenctype`, `formmethod`, `formnovalidate`, `formtarget`,
+`height`, `inputmode`, `list`, `max`, `maxlength`, `min`, `minlength`,
+`multiple`, `pattern`, `popovertarget`, `popovertargetaction`, `readonly`,
+`required`, `spellcheck`, `src`, `step`, and `width` to the native input.
+
+Use `:ui="{ base: { size: 20 } }"` for the native character-width attribute
+or to set other attributes directly on the input. The component's `size`
+prop controls its visual size. Layout classes, styles, and data attributes
+target the wrapper by default.
+
 ### Icons
 
 `icon` and `trailingIcon` add an icon before or after the text - the same

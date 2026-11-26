@@ -21,6 +21,20 @@ const value = ref('')
 
 Input memiliki lebar penuh secara default, bukan membutuhkan flag opt-in untuk membuatnya demikian - batasi dengan kelas pada komponen itu sendiri (seperti contoh di halaman ini dengan `max-w-xs`), bukan elemen pembungkus.
 
+### Atribut native
+
+Input meneruskan `accept`, `alt`, `autocapitalize`, `autocomplete`, `autocorrect`,
+`autofocus`, `capture`, `checked`, `dirname`, `enterkeyhint`, `form`,
+`formaction`, `formenctype`, `formmethod`, `formnovalidate`, `formtarget`,
+`height`, `inputmode`, `list`, `max`, `maxlength`, `min`, `minlength`,
+`multiple`, `pattern`, `popovertarget`, `popovertargetaction`, `readonly`,
+`required`, `spellcheck`, `src`, `step`, dan `width` ke elemen input native.
+
+Gunakan `:ui="{ base: { size: 20 } }"` untuk mengatur lebar dalam karakter atau
+untuk memasang atribut lain langsung pada input. Prop `size` mengatur ukuran
+visual komponen. Kelas tata letak, gaya, dan atribut data masuk ke pembungkus
+secara default.
+
 ### Ikon
 
 `icon` dan `trailingIcon` menambahkan ikon sebelum atau setelah teks - props yang sama digunakan [Button](/components/elements/button#icons) untuk miliknya sendiri.

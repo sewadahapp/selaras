@@ -16,6 +16,17 @@ describe('textarea', () => {
     expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual(['Hello world'])
   })
 
+  it('forwards editing and sizing hints to the native textarea', async () => {
+    const attrs = { autofocus: '', cols: '32', dirname: 'message.dir', enterkeyhint: 'send', wrap: 'off' }
+    const wrapper = await mountSuspended(Textarea, { attrs })
+    const textarea = wrapper.get('textarea')
+
+    for (const [name, value] of Object.entries(attrs)) {
+      expect(textarea.attributes(name)).toBe(value)
+      expect(wrapper.attributes(name)).toBeUndefined()
+    }
+  })
+
   it('keeps layout classes on the positioned root and native attributes on the textarea', async () => {
     const onFocus = vi.fn()
     const wrapper = await mountSuspended(Textarea, {
