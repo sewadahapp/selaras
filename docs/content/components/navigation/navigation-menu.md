@@ -213,10 +213,9 @@ Use `ui.separator`, `ui.groupSpacer`, and `ui.collapsedGroupLabel` to customize
 the line, gap, and visually hidden heading respectively. None become focusable
 menu actions; link labels and tooltips retain their existing behavior.
 
-A `separator` item still needs a unique `label` even though it's never
-displayed - every item's `label` doubles as its list key. Top-level only:
-a `children` array doesn't check `type`, so a nested tree can't group its
-own children under a sub-heading.
+Give separators with empty labels and items with identical labels a unique
+`key`. Items fall back to `label` for their identity. Grouping applies to
+the top-level list because `children` ignore the `type` field.
 
 ### Variant
 
@@ -315,7 +314,7 @@ see the per-item `help-content` override.
 <SNavigationMenu :items="items" content-orientation="horizontal">
   <template #item-content="{ item }">
     <ul class="grid w-96 grid-cols-2 gap-2 p-2">
-      <li v-for="child in item.children" :key="child.label">
+      <li v-for="child in item.children" :key="child.key ?? child.label">
         <NuxtLink :to="child.to">{{ child.label }}</NuxtLink>
       </li>
     </ul>
@@ -381,11 +380,13 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | `popover` | `NavigationMenuPopover` | - |
 | `ui` | `Partial<Record<NavigationMenuSlot, string \| object>>` | - |
 
-`NavigationMenuItem`:
+`NavigationMenuItem<Meta>`:
 
 | Field | Type | Description |
 | --- | --- | --- |
 | `label` | `string` | Required. |
+| `key` | `string \| number` | Stable identity within a list. Defaults to `label`. |
+| `meta` | `unknown` | Application data available to item slots. Narrow its type in the slot before reading it. |
 | `icon` | `string` | Rendered before the label. |
 | `to` | `string` | Route path for a leaf item. |
 | `disabled` | `boolean` | Visible but non-interactive. |

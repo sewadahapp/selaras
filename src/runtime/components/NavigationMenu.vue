@@ -59,6 +59,12 @@ const props = withDefaults(defineProps<NavigationMenuProps>(), {
   collapsedGroups: 'separator',
 })
 
+defineSlots<{
+  [name: string]: ((scope: { item: NavigationMenuItem, active?: boolean }) => any) | undefined
+  'list-leading'?: () => any
+  'list-trailing'?: () => any
+}>()
+
 const direction = useDirection()
 const route = useRoute()
 const icons = useIcons()
@@ -127,14 +133,18 @@ function childLinkProps(item: NavigationMenuItem) {
 // up (the real cause of "hovering down the rail opens several flyouts at
 // once", confirmed live). Guarded rather than a bare setter: a trigger's
 // own stale close timer can still fire after focus has already moved to a
-// different item - without the `openFlyoutLabel === item.label` check, that
+// different item - without the `openFlyoutKey === itemKey(item)` check, that
 // stale `false` would clobber whichever item is now legitimately open.
-const openFlyoutLabel = ref<string | null>(null)
+function itemKey(item: NavigationMenuItem) {
+  return item.key ?? item.label
+}
+
+const openFlyoutKey = ref<string | number | null>(null)
 function onFlyoutOpenChange(item: NavigationMenuItem, value: boolean) {
   if (value)
-    openFlyoutLabel.value = item.label
-  else if (openFlyoutLabel.value === item.label)
-    openFlyoutLabel.value = null
+    openFlyoutKey.value = itemKey(item)
+  else if (openFlyoutKey.value === itemKey(item))
+    openFlyoutKey.value = null
 }
 
 // Regression: Reka returns focus to a popover's own trigger on close
@@ -143,11 +153,11 @@ function onFlyoutOpenChange(item: NavigationMenuItem, value: boolean) {
 // dismiss (Escape, outside click) but wrong for the mutual-exclusion
 // case, where the *closing* item's own trigger stealing focus back from
 // the sibling that's now legitimately open is exactly the bug the shared
-// `openFlyoutLabel` above already fixed once - and did so again here,
+// `openFlyoutKey` above already fixed once - and did so again here,
 // since NavigationMenuFlyoutTrigger.vue needs to tell them apart to
 // know whether to allow Reka's own return-focus for a given close.
 function anotherFlyoutOpen(item: NavigationMenuItem) {
-  return openFlyoutLabel.value !== null && openFlyoutLabel.value !== item.label
+  return openFlyoutKey.value !== null && openFlyoutKey.value !== itemKey(item)
 }
 
 // Reka's real NavigationMenuLink has no `disabled` prop (confirmed via its
@@ -166,9 +176,9 @@ function onSelect(item: NavigationMenuItem, event: Event) {
   <NavigationMenuRoot :orientation="orientation" :data-selaras-color="effectiveColor" v-bind="rootProps">
     <slot name="list-leading" />
     <NavigationMenuList v-bind="listProps">
-      <template v-for="({ item, boundary }, index) in entries" :key="boundary ? `boundary-${index}` : `item-${item.label}`">
+      <template v-for="({ item, boundary }, index) in entries" :key="boundary ? `boundary-${index}` : `item-${typeof itemKey(item)}-${itemKey(item)}`">
         <li v-if="boundary === 'spacing'" aria-hidden="true" v-bind="resolveSlot(ui.groupSpacer, props.ui?.groupSpacer)" />
-        <li v-else-if="item.type === 'separator'" role="separator" v-bind="resolveSlot(ui.separator, props.ui?.separator)" />
+        <li v-else-if="boundary === 'separator' || item.type === 'separator'" role="separator" v-bind="resolveSlot(ui.separator, props.ui?.separator)" />
         <li v-else-if="item.type === 'label'" v-bind="collapsedVertical ? resolveSlot(ui.collapsedGroupLabel, props.ui?.collapsedGroupLabel) : resolveSlot(ui.groupLabel, props.ui?.groupLabel)">
           <slot :name="slotName(item, '-label')" :item="item" :active="false">
             {{ item.label }}
@@ -185,7 +195,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
           <template v-else-if="orientation === 'vertical' && item.children?.length && collapsed">
             <NavigationMenuFlyoutTrigger
               :item="item" :color="color" :variant="variant" :highlight="highlight" :on-select="onSelect" :ui="props.ui" :popover="props.popover"
-              :open="openFlyoutLabel === item.label" :another-flyout-open="anotherFlyoutOpen(item)"
+              :open="openFlyoutKey === itemKey(item)" :another-flyout-open="anotherFlyoutOpen(item)"
               @update:open="onFlyoutOpenChange(item, $event)"
             >
               <template v-for="(_, name) in slots" #[name]="scope">
@@ -210,7 +220,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
             <NavigationMenuContent v-bind="resolveSlot(ui.content, props.ui?.content)">
               <slot :name="slotName(item, '-content')" :item="item">
                 <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
-                  <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
+                  <li v-for="child in item.children" :key="itemKey(child)" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
                     <NavigationMenuLink as-child :active="isActive(child)">
                       <component
                         :is="child.to ? NuxtLink : 'button'" v-hotkey="navigationMenuHotkey(child)" :to="child.to"

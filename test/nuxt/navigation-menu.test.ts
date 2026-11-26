@@ -1,7 +1,7 @@
 import type { NavigationMenuItem } from '../../src/runtime/utils/navigation-menu'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { NavigationMenuViewport, TooltipProvider } from 'reka-ui'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { defineComponent, h, nextTick } from 'vue'
 import NavigationMenu from '../../src/runtime/components/NavigationMenu.vue'
 import Theme from '../../src/runtime/components/Theme.vue'
@@ -19,6 +19,26 @@ describe('navigationMenu (horizontal)', () => {
       { label: 'Advanced', to: '/guides/advanced' },
     ] },
   ]
+
+  it('preserves DOM identity and exposes metadata when items share a label', async () => {
+    expectTypeOf<InstanceType<typeof NavigationMenu>>().toHaveProperty('$el')
+
+    const items: NavigationMenuItem<{ unread: number }>[] = [
+      { key: 1, label: 'New conversation', meta: { unread: 2 } },
+      { key: 2, label: 'New conversation', meta: { unread: 7 } },
+    ]
+    const wrapper = await mountSuspended(NavigationMenu, {
+      props: { items },
+      slots: { 'item-trailing': '<template #item-trailing="{ item }">{{ item.meta.unread }}</template>' },
+    })
+    const before = wrapper.findAll('button').map(button => button.element)
+
+    await wrapper.setProps({ items: [...items].reverse() })
+
+    const buttons = wrapper.findAll('button')
+    expect(buttons.map(button => button.element)).toEqual(before.reverse())
+    expect(buttons.map(button => button.text())).toEqual(['New conversation7', 'New conversation2'])
+  })
 
   it('binds a custom semantic role to navigation links', async () => {
     const wrapper = await mountSuspended(NavigationMenu, { props: { items, color: 'premium' as any } })

@@ -126,7 +126,7 @@ function onSelect(item: NavigationMenuItem, event: Event) {
     <template #[accordionValue]>
       <slot :name="slotName(item, '-content')" :item="item">
         <ul v-bind="resolveSlot(ui.childList, props.ui?.childList)">
-          <li v-for="child in item.children" :key="child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
+          <li v-for="child in item.children" :key="child.key ?? child.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
             <NavigationMenuAccordionItem
               v-if="child.children?.length"
               :item="child"
