@@ -45,5 +45,29 @@ describe('codeButton', () => {
 
     await wrapper.find('button').trigger('click')
     await vi.waitFor(() => expect(wrapper.find('.iconify').classes()).toContain('i-hugeicons:tick-02'))
+    expect(wrapper.get('button').attributes('aria-label')).toBe('Copied!')
+  })
+
+  it('shows failure and restores the original accessible label after feedback', async () => {
+    vi.stubGlobal('navigator', {})
+    const wrapper = await mountSuspended(CodeButton, {
+      props: { code: 'npm install selaras' },
+      attrs: { 'aria-label': 'Copy the install command' },
+    })
+    vi.useFakeTimers()
+    try {
+      const button = wrapper.get('button')
+      await button.trigger('click')
+      expect(button.attributes('aria-label')).toBe('Could not copy code')
+      expect(button.attributes('title')).toBe('Could not copy code')
+      expect(wrapper.find('.iconify').classes()).toContain('i-hugeicons:cancel-circle')
+
+      await vi.advanceTimersByTimeAsync(1500)
+      expect(button.attributes('aria-label')).toBe('Copy the install command')
+    }
+    finally {
+      wrapper.unmount()
+      vi.useRealTimers()
+    }
   })
 })

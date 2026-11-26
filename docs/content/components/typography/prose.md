@@ -98,7 +98,8 @@ extension first, then the fence language - for example `vue` renders the
 `vscode-icons:file-type-vue` glyph - with no icon for an unrecognized
 type. Pass `icon` to override that resolution. Long filenames truncate in
 the header, with the full path available on hover. Copying changes the button
-to a success-colored check; its labels come from `copyCode` and `codeCopied`
+to a success-colored check or shows an error icon when copying fails. Its
+labels come from `copyCode`, `codeCopied`, and `codeCopyFailed`
 in the [message registry](/utilities/composables/use-messages).
 
 Customize the header through the `prose` theme's `preHeader`, `preLabel`,

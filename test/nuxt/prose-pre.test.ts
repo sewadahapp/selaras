@@ -42,6 +42,22 @@ describe('prosePre file-type icon', () => {
     expect(byFilename.find('.iconify.i-vscode-icons\\:file-type-typescript').element.parentElement?.textContent).toContain('index.ts')
   })
 
+  it('reports a rejected clipboard write as a failure', async () => {
+    vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn().mockRejectedValue(new Error('Clipboard denied')) } })
+    const wrapper = await mountSuspended(ProsePre, { props: { code: 'Hello' } })
+    try {
+      const button = wrapper.get('button')
+      await button.trigger('click')
+      await nextTick()
+      expect(button.attributes('aria-label')).toBe('Could not copy code')
+      expect(button.attributes('data-selaras-color')).toBe('danger')
+    }
+    finally {
+      wrapper.unmount()
+      vi.unstubAllGlobals()
+    }
+  })
+
   it('copies the original code and resets localized feedback after the most recent click', async () => {
     vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } })
     updateAppConfig({ selaras: { messages: { copyCode: 'Salin kode', codeCopied: 'Tersalin' } } })

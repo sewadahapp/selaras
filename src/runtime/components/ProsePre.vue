@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed } from 'vue'
+import { useCodeCopy } from '../composables/use-code-copy'
 import { useIcons } from '../composables/use-icons'
 import { useMessages } from '../composables/use-messages'
 import { proseTheme } from '../theme/prose'
@@ -39,20 +40,10 @@ const ui = computed(() => theme.value())
 // actually apply syntax-highlighting colors, not just on an ancestor.
 const preProps = useRootProps(() => ui.value.pre, () => undefined)
 
-const copied = ref(false)
-let copyTimer: ReturnType<typeof setTimeout> | undefined
-onBeforeUnmount(() => clearTimeout(copyTimer))
-
-async function copy() {
-  if (!props.code)
-    return
-  await navigator.clipboard.writeText(props.code)
-  clearTimeout(copyTimer)
-  copied.value = true
-  copyTimer = setTimeout(() => {
-    copied.value = false
-  }, 1500)
-}
+const { status, copy } = useCodeCopy()
+const copyLabel = computed(() => status.value === 'idle'
+  ? messages.value.copyCode
+  : status.value === 'copied' ? messages.value.codeCopied : messages.value.codeCopyFailed)
 </script>
 
 <template>
@@ -69,11 +60,11 @@ async function copy() {
         size="sm"
         square
         variant="ghost"
-        :color="copied ? 'success' : 'neutral'"
-        :icon="copied ? icons.check : icons.copy"
-        :aria-label="copied ? messages.codeCopied : messages.copyCode"
-        :title="copied ? messages.codeCopied : messages.copyCode"
-        @click="copy"
+        :color="status === 'copied' ? 'success' : status === 'failed' ? 'danger' : 'neutral'"
+        :icon="status === 'copied' ? icons.check : status === 'failed' ? icons.danger : icons.copy"
+        :aria-label="copyLabel"
+        :title="copyLabel"
+        @click="copy(code)"
       />
     </div>
     <pre v-bind="preProps"><slot /></pre>

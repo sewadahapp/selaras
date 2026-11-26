@@ -111,6 +111,7 @@ a single object literal covering every key below.
 | `codeTabFallback(index)` | `Tab ${index}` | Tabs (code block group) |
 | `copyCode` | `Copy code` | Code block copy button |
 | `codeCopied` | `Copied!` | Code block copy feedback |
+| `codeCopyFailed` | `Could not copy code` | Clipboard failure feedback |
 | `dropFiles` | `Drop files here or click to browse` | FileUpload |
 | `invalidFileType(name)` | `${name}: invalid file type` | FileUpload |
 | `invalidFileSize(name, max)` | `${name}: exceeds the ${max} size limit` | FileUpload |

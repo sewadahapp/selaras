@@ -73,6 +73,7 @@ export interface MessageRegistry {
   codeTabFallback: (index: number) => string
   copyCode: string
   codeCopied: string
+  codeCopyFailed: string
   dropFiles: string
   invalidFileType: (name: string) => string
   invalidFileSize: (name: string, max: string) => string
@@ -173,6 +174,7 @@ export const defaultMessages: MessageRegistry = {
   codeTabFallback: index => `Tab ${index}`,
   copyCode: 'Copy code',
   codeCopied: 'Copied!',
+  codeCopyFailed: 'Could not copy code',
   dropFiles: 'Drop files here or click to browse',
   invalidFileType: name => `${name}: invalid file type`,
   invalidFileSize: (name, max) => `${name}: exceeds the ${max} size limit`,

@@ -26,6 +26,10 @@ with the default slot when they should differ:
 </SCodeButton>
 ```
 
+The button shows a status icon after copying or when the clipboard is
+unavailable. Its accessible label uses the `codeCopied` or `codeCopyFailed`
+message while that status is shown.
+
 ### Custom `:ui`
 
 To see exactly what you'd be overriding - the current default classes for
