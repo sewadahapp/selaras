@@ -89,7 +89,7 @@ Misalnya, role warning default menggunakan palet kuning Selaras. Anda
 dapat mengganti fondasi tersebut dan tetap mempertahankan resep warning bawaan:
 
 ```css
-@theme {
+@theme static {
   --color-selaras-yellow-50: var(--color-orange-50);
   --color-selaras-yellow-100: var(--color-orange-100);
   --color-selaras-yellow-200: var(--color-orange-200);
@@ -104,7 +104,13 @@ dapat mengganti fondasi tersebut dan tetap mempertahankan resep warning bawaan:
 }
 ```
 
-Role warning sekarang menggunakan pengganti fondasi Anda melalui resep yang sudah ada.
+Gunakan `@theme static` agar Tailwind tetap menghasilkan variabel pengganti
+saat variabel tersebut hanya digunakan oleh resep role Selaras. Nuxt memuat
+resep tersebut secara terpisah dari kompilasi Tailwind aplikasi.
+
+Periksa kontras teks warning dan komponen dengan latar solid setelah memetakan
+ulang palet. Sesuaikan input `text` dan `on-fill` pada role tersebut jika
+warna pengganti memerlukan kontras yang lebih tinggi.
 
 Aturan yang sama berlaku untuk:
 
