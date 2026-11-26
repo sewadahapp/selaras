@@ -1,3 +1,4 @@
+import type { ContextMenuProps } from '../../src/runtime/components/ContextMenu.vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
@@ -45,6 +46,22 @@ describe('contextMenu', () => {
 
     const items = document.body.querySelectorAll('[role="menuitem"]')
     expect(Array.from(items).map(el => el.textContent?.trim())).toEqual(['Edit', 'Duplicate', 'Delete'])
+  })
+
+  it('preserves actions with application-defined type fields', async () => {
+    const onSelect = vi.fn()
+    const actions = [{ label: 'Open', type: 'app-action', onSelect }]
+    const items: ContextMenuProps['items'] = [actions]
+    wrapper = await mountSuspended(ContextMenu, {
+      props: { items, portal: false },
+      slots: { default: () => h('div', { 'data-testid': 'target' }, 'Right-click me') },
+    })
+    await openMenu()
+    const action = wrapper.get('[role="menuitem"]')
+    expect(action.text()).toBe('Open')
+
+    await action.trigger('click')
+    expect(onSelect).toHaveBeenCalledOnce()
   })
 
   it('renders checkbox and radio roles and updates their controlled values', async () => {

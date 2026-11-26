@@ -29,3 +29,11 @@ export interface MenuRadioGroup {
   onUpdateValue?: (value: string) => void
   items: MenuRadioItem[]
 }
+
+export function isMenuCheckboxItem(item: MenuItemOptions | MenuCheckboxItem | MenuRadioGroup): item is MenuCheckboxItem {
+  return 'type' in item && item.type === 'checkbox' && 'checked' in item && typeof item.checked === 'boolean'
+}
+
+export function isMenuRadioGroup(item: MenuItemOptions | MenuCheckboxItem | MenuRadioGroup): item is MenuRadioGroup {
+  return 'type' in item && item.type === 'radio-group' && 'items' in item && Array.isArray(item.items)
+}

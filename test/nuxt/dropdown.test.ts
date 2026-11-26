@@ -1,4 +1,4 @@
-import type { DropdownEntry } from '../../src/runtime/components/Dropdown.vue'
+import type { DropdownEntry, DropdownProps } from '../../src/runtime/components/Dropdown.vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
@@ -120,6 +120,21 @@ describe('dropdown', () => {
 
     const items = document.body.querySelectorAll('[role="menuitem"]')
     expect(Array.from(items).map(el => el.textContent?.trim())).toEqual(['Edit', 'Duplicate', 'Delete'])
+  })
+
+  it('preserves actions with application-defined type fields', async () => {
+    const onSelect = vi.fn()
+    const actions = [{ label: 'Open', type: 'app-action', onSelect }]
+    const items: DropdownProps['items'] = [actions]
+    wrapper = await mountSuspended(Dropdown, {
+      props: { items, portal: false, open: true },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    const action = wrapper.get('[role="menuitem"]')
+    expect(action.text()).toBe('Open')
+
+    await action.trigger('click')
+    expect(onSelect).toHaveBeenCalledOnce()
   })
 
   it('renders controlled checkbox and radio states and selects them with the keyboard', async () => {

@@ -21,13 +21,14 @@ import { useIcons } from '../composables/use-icons'
 import { vHotkey } from '../directives/hotkey'
 import MenuItemContent from '../internal/MenuItemContent.vue'
 import { contextMenuTheme } from '../theme/context-menu'
+import { isMenuCheckboxItem, isMenuRadioGroup } from '../utils/menu-items'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useFallthroughProps, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
 
 export type ContextMenuItemDef = MenuItemOptions
 
-export type ContextMenuEntry = (ContextMenuItemDef & { type?: never }) | MenuCheckboxItem | MenuRadioGroup
+export type ContextMenuEntry = ContextMenuItemDef | MenuCheckboxItem | MenuRadioGroup
 
 defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<ContextMenuProps>(), { portal: undefined })
@@ -88,7 +89,7 @@ function hotkeyFor(item: MenuItemOptions): HotkeyOptions | undefined {
           <ContextMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />
           <template v-for="(entry, itemIndex) in group" :key="itemIndex">
             <ContextMenuRadioGroup
-              v-if="entry.type === 'radio-group'"
+              v-if="isMenuRadioGroup(entry)"
               :aria-label="entry.label"
               :model-value="entry.value"
               @update:model-value="typeof $event === 'string' && entry.onUpdateValue?.($event)"
@@ -113,7 +114,7 @@ function hotkeyFor(item: MenuItemOptions): HotkeyOptions | undefined {
               </ContextMenuRadioItem>
             </ContextMenuRadioGroup>
             <ContextMenuCheckboxItem
-              v-else-if="entry.type === 'checkbox'"
+              v-else-if="isMenuCheckboxItem(entry)"
               v-hotkey="hotkeyFor(entry)"
               :model-value="entry.checked"
               :disabled="entry.disabled"

@@ -30,6 +30,7 @@ import { vHotkey } from '../directives/hotkey'
 import MenuItemContent from '../internal/MenuItemContent.vue'
 import { dropdownTheme } from '../theme/dropdown'
 import { arrowContentProps, arrowElementProps } from '../utils/arrow'
+import { isMenuCheckboxItem, isMenuRadioGroup } from '../utils/menu-items'
 import { overlayPortalProps } from '../utils/overlay'
 import { resolveSlot, useComponentTheme, useFallthroughProps, useThemeBindings } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -43,10 +44,9 @@ export interface DropdownItem extends MenuItemOptions {
   rel?: string
 }
 
-type DropdownAction = DropdownItem & { type?: never }
 type DropdownOption = (MenuCheckboxItem | MenuRadioItem) & Partial<Record<'to' | 'target' | 'rel', never>>
 
-export type DropdownEntry = DropdownAction | MenuCheckboxItem | MenuRadioGroup
+export type DropdownEntry = DropdownItem | MenuCheckboxItem | MenuRadioGroup
 
 export interface DropdownSlots {
   default?: () => any
@@ -176,8 +176,8 @@ watchPostEffect(() => {
     element.removeAttribute('aria-controls')
 })
 
-function selectMobileItem(item: DropdownAction | MenuCheckboxItem) {
-  if (item.type === 'checkbox') {
+function selectMobileItem(item: DropdownItem | MenuCheckboxItem) {
+  if (isMenuCheckboxItem(item)) {
     item.onUpdateChecked?.(!item.checked)
     item.onSelect?.()
     return
@@ -203,7 +203,7 @@ function onModalAfterLeave() {
           <DropdownMenuSeparator v-if="groupIndex > 0" v-bind="separatorProps" />
           <template v-for="(entry, itemIndex) in group" :key="itemIndex">
             <DropdownMenuRadioGroup
-              v-if="entry.type === 'radio-group'"
+              v-if="isMenuRadioGroup(entry)"
               :aria-label="entry.label"
               :model-value="entry.value"
               @update:model-value="typeof $event === 'string' && entry.onUpdateValue?.($event)"
@@ -228,7 +228,7 @@ function onModalAfterLeave() {
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
             <DropdownMenuCheckboxItem
-              v-else-if="entry.type === 'checkbox'"
+              v-else-if="isMenuCheckboxItem(entry)"
               v-hotkey="hotkeyFor(entry)"
               :model-value="entry.checked"
               :disabled="entry.disabled"
@@ -286,7 +286,7 @@ function onModalAfterLeave() {
           <div v-bind="mobileGroupProps">
             <template v-for="(entry, itemIndex) in group" :key="itemIndex">
               <RadioGroupRoot
-                v-if="entry.type === 'radio-group'"
+                v-if="isMenuRadioGroup(entry)"
                 :aria-label="entry.label"
                 :model-value="entry.value"
                 orientation="vertical"
@@ -314,7 +314,7 @@ function onModalAfterLeave() {
               </RadioGroupRoot>
               <!-- A disabled link renders as the disabled button below, which is inert. -->
               <NuxtLink
-                v-else-if="entry.type !== 'checkbox' && entry.to && !entry.disabled"
+                v-else-if="!isMenuCheckboxItem(entry) && entry.to && !entry.disabled"
                 v-hotkey="hotkeyFor(entry)"
                 :to="entry.to"
                 :target="entry.target"
@@ -331,12 +331,12 @@ function onModalAfterLeave() {
                 v-hotkey="hotkeyFor(entry)"
                 type="button"
                 :disabled="entry.disabled"
-                :role="entry.type === 'checkbox' ? 'checkbox' : undefined"
-                :aria-checked="entry.type === 'checkbox' ? entry.checked : undefined"
+                :role="isMenuCheckboxItem(entry) ? 'checkbox' : undefined"
+                :aria-checked="isMenuCheckboxItem(entry) ? entry.checked : undefined"
                 v-bind="mobileItemPropsFor(entry)"
                 @click="selectMobileItem(entry)"
               >
-                <span v-if="entry.type === 'checkbox'" aria-hidden="true" v-bind="indicatorProps">
+                <span v-if="isMenuCheckboxItem(entry)" aria-hidden="true" v-bind="indicatorProps">
                   <Icon v-if="entry.checked" :name="icons.check" v-bind="iconPropsFor(entry)" />
                 </span>
                 <MenuItemContent :item="entry" :icon-props="iconPropsFor(entry)">
