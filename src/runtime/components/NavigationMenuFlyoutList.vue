@@ -61,7 +61,7 @@ function linkProps(item: NavigationMenuItem) {
 
 <template>
   <ul :data-selaras-theme="themeBindings['data-selaras-theme']" :data-selaras-mode="themeBindings['data-selaras-mode']" :style="themeBindings.style" :data-selaras-color="effectiveColor" v-bind="resolveSlot(ui.childList, props.ui?.childList)">
-    <li v-for="item in items" :key="item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
+    <li v-for="item in items" :key="item.key ?? item.label" v-bind="resolveSlot(ui.childItem, props.ui?.childItem)">
       <NavigationMenuAccordionItem v-if="item.children?.length" :item="item" :color="color" :variant="variant" :highlight="highlight" :ui="props.ui" />
       <component
         :is="item.to ? NuxtLink : 'button'" v-else v-hotkey="navigationMenuHotkey(item)" :to="item.to"

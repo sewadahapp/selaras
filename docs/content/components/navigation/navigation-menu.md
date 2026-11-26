@@ -213,10 +213,9 @@ Use `ui.separator`, `ui.groupSpacer`, and `ui.collapsedGroupLabel` to customize
 the line, gap, and visually hidden heading respectively. None become focusable
 menu actions; link labels and tooltips retain their existing behavior.
 
-A `separator` item still needs a unique `label` even though it's never
-displayed - every item's `label` doubles as its list key. Top-level only:
-a `children` array doesn't check `type`, so a nested tree can't group its
-own children under a sub-heading.
+Give separators with empty labels and items with identical labels a unique
+`key`. Items fall back to `label` for their identity. Grouping applies to
+the top-level list because `children` ignore the `type` field.
 
 ### Variant
 
@@ -315,7 +314,7 @@ see the per-item `help-content` override.
 <SNavigationMenu :items="items" content-orientation="horizontal">
   <template #item-content="{ item }">
     <ul class="grid w-96 grid-cols-2 gap-2 p-2">
-      <li v-for="child in item.children" :key="child.label">
+      <li v-for="child in item.children" :key="child.key ?? child.label">
         <NuxtLink :to="child.to">{{ child.label }}</NuxtLink>
       </li>
     </ul>
@@ -368,7 +367,7 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `NavigationMenuItem[]` | - (required) |
+| `items` | `NavigationMenuItem<Meta>[]` | - (required) |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `contentOrientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
 | `positioning` | `NavigationMenuPositioning` (`{ align?: 'start' \| 'center' \| 'end' }`) | `{ align: 'center' }` |
@@ -381,16 +380,18 @@ every slot and variant - here's `NavigationMenu`'s own theme file:
 | `popover` | `NavigationMenuPopover` | - |
 | `ui` | `Partial<Record<NavigationMenuSlot, string \| object>>` | - |
 
-`NavigationMenuItem`:
+`NavigationMenuItem<Meta>`:
 
 | Field | Type | Description |
 | --- | --- | --- |
 | `label` | `string` | Required. |
+| `key` | `string \| number` | Stable identity within a list. Defaults to `label`. |
+| `meta` | `Meta` | Application data available to item slots. Its type is inferred from `items`. |
 | `icon` | `string` | Rendered before the label. |
 | `to` | `string` | Route path for a leaf item. |
 | `disabled` | `boolean` | Visible but non-interactive. |
 | `active` | `boolean` | Overrides the auto-detected route match. |
-| `children` | `NavigationMenuItem[]` | One level for horizontal; arbitrary depth for vertical. |
+| `children` | `NavigationMenuItem<Meta>[]` | One level for horizontal; arbitrary depth for vertical. |
 | `description` | `string` | Not read by NavigationMenu's own default rendering - carried purely so a custom `#item-content`/`#{slot}-content` slot override can display one (a "mega menu" style description under each link, say) - see [Customizing content](#customizing-content), whose own live example already renders this field. |
 | `onSelect` | `(event: Event) => void` | Fired when a leaf item is activated. |
 | `shortcut` | `string` | Displays a Kbd hint beside the item. |

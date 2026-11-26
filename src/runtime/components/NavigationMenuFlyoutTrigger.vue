@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="Meta = unknown">
 import type { NavigationMenuThemeSlots, NavigationMenuThemeVariants } from '../theme/navigation-menu'
 import type { ColorRole } from '../utils/color-registry'
 import type { NavigationMenuItem, NavigationMenuPopover } from '../utils/navigation-menu'
@@ -58,8 +58,8 @@ import Popover from './Popover.vue'
 // too, even though the pointer never left it (confirmed live: hovering
 // a second trigger closed the first correctly, but a few hundred ms
 // later the first's return-focus silently closed the second as well).
-export interface NavigationMenuFlyoutTriggerProps {
-  item: NavigationMenuItem
+export interface NavigationMenuFlyoutTriggerProps<Meta = unknown> {
+  item: NavigationMenuItem<Meta>
   popover?: NavigationMenuPopover
   color?: ColorRole
   variant?: 'pill' | 'link'
@@ -75,7 +75,7 @@ export interface NavigationMenuFlyoutTriggerEmits {
   'update:open': [value: boolean]
 }
 
-const props = defineProps<NavigationMenuFlyoutTriggerProps>()
+const props = defineProps<NavigationMenuFlyoutTriggerProps<Meta>>()
 const emit = defineEmits<NavigationMenuFlyoutTriggerEmits>()
 
 const slots = useSlots()

@@ -7,8 +7,12 @@ export type NavigationMenuPopover = Pick<PopoverProps, 'side' | 'align' | 'posit
 /** Alignment of a horizontal navigation menu's compact dropdown. */
 export type NavigationMenuPositioning = Pick<OverlayPositioning, 'align'>
 
-export interface NavigationMenuItem {
+export interface NavigationMenuItem<Meta = unknown> {
   label: string
+  /** Stable identity within a list. Defaults to the label. */
+  key?: string | number
+  /** Application data available to item slots. */
+  meta?: Meta
   icon?: string
   to?: string
   target?: string
@@ -22,7 +26,7 @@ export interface NavigationMenuItem {
   /** Force active state - otherwise auto-detected against the current route when `to` is set. */
   active?: boolean
   /** One level for horizontal (Reka's own real limit for its shared-viewport flyout); arbitrary depth for vertical, which falls back to a recursive accordion instead. */
-  children?: NavigationMenuItem[]
+  children?: NavigationMenuItem<Meta>[]
   onSelect?: (event: Event) => void
   /** Display a keyboard shortcut hint beside this item's label. */
   shortcut?: string
@@ -35,9 +39,8 @@ export interface NavigationMenuItem {
    * above applies. `'label'` renders a non-interactive section heading
    * above the items that follow it in the same top-level array - only
    * `label` (and optionally `icon`) are read, everything else is
-   * ignored. `'separator'` renders a thin divider line and reads nothing
-   * but still needs a unique `label` (unused for display) since every
-   * item's `label` doubles as its list key.
+   * ignored. `'separator'` renders a thin divider line. Give it a unique
+   * `key` or `label` to identify it in the list.
    *
    * Top-level only - a `children` array doesn't check this, so a nested
    * tree can't group its own children under a sub-heading. A comparable
@@ -67,14 +70,14 @@ export function navigationMenuHotkey(item: NavigationMenuItem): HotkeyOptions | 
   return item.hotkey && item.shortcut && !item.disabled ? { keys: item.shortcut } : undefined
 }
 
-interface CollapsedNavigationMenuEntry {
-  item: NavigationMenuItem
+interface CollapsedNavigationMenuEntry<Meta> {
+  item: NavigationMenuItem<Meta>
   boundary: false | 'separator' | 'spacing'
 }
 
 /** Defer a boundary until the next action, avoiding edge and repeated dividers. */
-export function collapsedNavigationMenuEntries(items: NavigationMenuItem[], presentation: 'separator' | 'spacing' | 'none'): CollapsedNavigationMenuEntry[] {
-  const entries: CollapsedNavigationMenuEntry[] = []
+export function collapsedNavigationMenuEntries<Meta>(items: NavigationMenuItem<Meta>[], presentation: 'separator' | 'spacing' | 'none'): CollapsedNavigationMenuEntry<Meta>[] {
+  const entries: CollapsedNavigationMenuEntry<Meta>[] = []
   let hasAction = false
   let groupBoundary = false
   let explicitBoundary = false
@@ -90,7 +93,7 @@ export function collapsedNavigationMenuEntries(items: NavigationMenuItem[], pres
     }
     const boundary = explicitBoundary ? 'separator' : groupBoundary && presentation !== 'none' ? presentation : false
     if (boundary)
-      entries.push({ item: { label: item.label, type: 'separator' }, boundary })
+      entries.push({ item, boundary })
     entries.push({ item, boundary: false })
     hasAction = true
     groupBoundary = false

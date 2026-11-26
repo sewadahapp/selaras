@@ -157,7 +157,9 @@ Dalam vertical rail yang diciutkan, heading tetap ada di DOM tetapi disembunyika
 
 Gunakan `ui.separator`, `ui.groupSpacer`, dan `ui.collapsedGroupLabel` untuk menyesuaikan garis, gap, dan heading yang disembunyikan secara visual. Tidak ada yang menjadi fokusable menu actions; label link dan tooltip mempertahankan perilaku mereka yang ada.
 
-Item `separator` masih membutuhkan `label` yang unik meskipun tidak pernah ditampilkan - setiap `label` item berfungsi ganda sebagai list key-nya. Top-level saja: array `children` tidak memeriksa `type`, jadi tree bersarang tidak dapat mengelompokkan children-nya sendiri di bawah sub-heading.
+Berikan `key` unik pada separator dengan label kosong atau pada item yang
+berbagi label. Tanpa `key`, identitas item menggunakan `label`. Pengelompokan
+berlaku di tingkat teratas karena array `children` mengabaikan `type`.
 
 ### Variant
 
@@ -240,7 +242,7 @@ Buka **Products** untuk melihat layout `item-content` umum, atau **Help** untuk 
 <SNavigationMenu :items="items" content-orientation="horizontal">
   <template #item-content="{ item }">
     <ul class="grid w-96 grid-cols-2 gap-2 p-2">
-      <li v-for="child in item.children" :key="child.label">
+      <li v-for="child in item.children" :key="child.key ?? child.label">
         <NuxtLink :to="child.to">{{ child.label }}</NuxtLink>
       </li>
     </ul>
@@ -286,7 +288,7 @@ Untuk melihat dengan tepat apa yang akan Anda timpa - kelas default untuk setiap
 
 | Prop | Tipe | Default |
 | --- | --- | --- |
-| `items` | `NavigationMenuItem[]` | - (required) |
+| `items` | `NavigationMenuItem<Meta>[]` | - (required) |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` |
 | `contentOrientation` | `'horizontal' \| 'vertical'` | `'vertical'` |
 | `positioning` | `NavigationMenuPositioning` (`{ align?: 'start' \| 'center' \| 'end' }`) | `{ align: 'center' }` |
@@ -299,16 +301,18 @@ Untuk melihat dengan tepat apa yang akan Anda timpa - kelas default untuk setiap
 | `popover` | `NavigationMenuPopover` | - |
 | `ui` | `Partial<Record<NavigationMenuSlot, string \| object>>` | - |
 
-`NavigationMenuItem`:
+`NavigationMenuItem<Meta>`:
 
 | Field | Tipe | Deskripsi |
 | --- | --- | --- |
 | `label` | `string` | Required. |
+| `key` | `string \| number` | Identitas dalam daftar. Default ke `label`. |
+| `meta` | `Meta` | Data aplikasi yang tersedia di slot item. Tipe diinferensikan dari `items`. |
 | `icon` | `string` | Dirender sebelum label. |
 | `to` | `string` | Route path untuk leaf item. |
 | `disabled` | `boolean` | Terlihat tetapi non-interaktif. |
 | `active` | `boolean` | Mengoverride route match yang terdeteksi otomatis. |
-| `children` | `NavigationMenuItem[]` | Satu level untuk horizontal; kedalaman arbitrari untuk vertical. |
+| `children` | `NavigationMenuItem<Meta>[]` | Satu level untuk horizontal; kedalaman arbitrari untuk vertical. |
 | `description` | `string` | Tidak dibaca oleh rendering default NavigationMenu - dibawa murni agar custom `#item-content`/`#{slot}-content` slot override dapat menampilkannya (deskripsi di bawah setiap link mega menu, misalnya) - lihat [Kustomisasi konten](#kustomisasi-konten), yang contoh langsungnya sudah merender field ini. |
 | `onSelect` | `(event: Event) => void` | Terpicu saat leaf item diaktifkan. |
 | `shortcut` | `string` | Menampilkan petunjuk Kbd di samping item. |
