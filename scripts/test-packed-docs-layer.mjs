@@ -100,7 +100,7 @@ async function inspectConsumer({ prefixed, overridden, example }) {
     })
     const pageUrl = new URL('/guide/getting-started', url)
     const response = await fetch(pageUrl)
-    assert.equal(response.status, 200)
+    assert.equal(response.status, 200, output)
     const html = await response.text()
     const expectedCanonical = prefixed ? 'https://docs.example.test/guide/getting-started/' : undefined
     const headTags = [...html.split('</head>')[0].matchAll(/<(?:link|meta)\s[^>]*>/g)]
