@@ -10,7 +10,7 @@ import FieldClearButton from '../internal/FieldClearButton.vue'
 import { textareaTheme } from '../theme/textarea'
 import { useFieldAdornments } from '../utils/field-adornments'
 import { canClearField, fieldClearWidths, isFieldReadonly } from '../utils/field-clear'
-import { isNativeInputA11yAttr, isNativeInputAttr } from '../utils/native-input'
+import { isNativeTextareaElementAttr } from '../utils/native-input'
 import { resolveRegisteredColorRole } from '../utils/registered-colors'
 import { resolveSlot, useComponentTheme, useFallthroughAttrs, useRootProps } from '../utils/ui'
 import Icon from './Icon.vue'
@@ -99,12 +99,11 @@ const ui = computed(() => theme.value({
   autoresize: props.autoresize,
 }))
 
-const isTextareaAttr = (key: string) => isNativeInputAttr(key) || isNativeInputA11yAttr(key)
 // The wrapper owns positioning for the absolute affordances, so public layout
 // classes belong here. Native textarea attributes and listeners still route to
 // the editable element below.
-const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isTextareaAttr })
-const nativeTextareaAttrs = useFallthroughAttrs(isTextareaAttr)
+const rootProps = useRootProps(() => ui.value.root, () => props.ui?.root, { exclude: isNativeTextareaElementAttr })
+const nativeTextareaAttrs = useFallthroughAttrs(isNativeTextareaElementAttr)
 const baseProps = computed(() => mergeProps(resolveSlot(ui.value.base, props.ui?.base), nativeTextareaAttrs.value))
 
 async function resize() {

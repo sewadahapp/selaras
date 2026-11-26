@@ -19,7 +19,16 @@ const value = ref('')
 </template>
 ```
 
-Textarea memiliki lebar penuh secara default, sama seperti [Input](/components/forms/input) - batasi dengan kelas pada komponen itu sendiri, bukan elemen pembungkus. Atribut native `<textarea>` yang tidak tercantum di bawah (`maxlength`, `pattern`, `readonly`, `spellcheck`, ...) sudah diteruskan langsung ke elemen nyata - tidak perlu prop khusus untuk mereka.
+Textarea memiliki lebar penuh secara default, sama seperti [Input](/components/forms/input) - batasi dengan kelas pada komponen itu sendiri, bukan elemen pembungkus.
+
+### Atribut native
+
+Textarea meneruskan `autocapitalize`, `autocomplete`, `autocorrect`, `autofocus`,
+`cols`, `dirname`, `enterkeyhint`, `form`, `inputmode`, `maxlength`,
+`minlength`, `readonly`, `required`, `spellcheck`, dan `wrap` ke elemen
+textarea native. Gunakan `ui.base` untuk memasang atribut lain langsung pada
+elemen tersebut. Kelas tata letak, gaya, dan atribut data masuk ke pembungkus
+secara default.
 
 ### Ikon
 

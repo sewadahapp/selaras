@@ -23,6 +23,21 @@ describe('input', () => {
     expect(onFocus).toHaveBeenCalled()
   })
 
+  it.each([
+    { type: 'number', attrs: { min: '0', max: '10', enterkeyhint: 'done', autofocus: '' } },
+    { type: 'file', attrs: { accept: 'image/*', multiple: '', capture: 'environment' } },
+    { type: 'submit', attrs: { formaction: '/save', formmethod: 'post', formnovalidate: '' } },
+  ])('forwards type-specific attributes to the native $type input', async ({ type, attrs }) => {
+    const wrapper = await mountSuspended(Input, { props: { type }, attrs: { ...attrs, 'data-testid': 'field' } })
+    const input = wrapper.get('input')
+
+    for (const [name, value] of Object.entries(attrs)) {
+      expect(input.attributes(name)).toBe(value)
+      expect(wrapper.attributes(name)).toBeUndefined()
+    }
+    expect(wrapper.attributes('data-testid')).toBe('field')
+  })
+
   it('forwards accessible naming attributes to the actual input', async () => {
     const wrapper = await mountSuspended(Input, { attrs: { 'aria-label': 'Email address', 'aria-labelledby': 'email-label' } })
     const input = wrapper.find('input')
