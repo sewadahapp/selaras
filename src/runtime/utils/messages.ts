@@ -93,6 +93,12 @@ export interface MessageRegistry {
   upToSize: (size: string) => string
 }
 
+export interface ResolvedMessageRegistry extends MessageRegistry {
+  codeCopyFailed: string
+}
+
+export const defaultCodeCopyFailedMessage = 'Could not copy code'
+
 // One registry keyed by semantic purpose, mirroring icons.ts exactly (see
 // its own comment for the reasoning - a single app.config.selaras.messages.clear
 // override reaches every "Clear" button in the library together, instead

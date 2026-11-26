@@ -1,11 +1,11 @@
 import type { ThemeConfiguration } from '../theme-config'
 import type { IconRegistry } from '../utils/icons'
-import type { MessageRegistry } from '../utils/messages'
+import type { ResolvedMessageRegistry } from '../utils/messages'
 
 export interface SelarasRuntimeConfig extends ThemeConfiguration {
   icons?: Partial<IconRegistry>
   locale?: string
-  messages?: Partial<MessageRegistry>
+  messages?: Partial<ResolvedMessageRegistry>
   ripple?: boolean
 }
 

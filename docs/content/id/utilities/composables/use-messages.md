@@ -100,6 +100,7 @@ Tidak ada terjemahan bawaan untuk bahasa lain - registry ini adalah mekanismenya
 | `codeTabFallback(index)` | `Tab ${index}` | Tabs (grup blok kode) |
 | `copyCode` | `Copy code` | Tombol copy blok kode |
 | `codeCopied` | `Copied!` | Umpan balik copy blok kode |
+| `codeCopyFailed` | `Could not copy code` | Umpan balik saat penyalinan gagal |
 | `dropFiles` | `Drop files here or click to browse` | FileUpload |
 | `invalidFileType(name)` | `${name}: invalid file type` | FileUpload |
 | `invalidFileSize(name, max)` | `${name}: exceeds the ${max} size limit` | FileUpload |
@@ -122,8 +123,10 @@ Sengaja tidak ada entri `am`/`pm`: bagian time milik `DatePicker` menurunkan tek
 ## API
 
 ```ts
-function useMessages(): ComputedRef<MessageRegistry>
+function useMessages(): ComputedRef<ResolvedMessageRegistry>
 ```
+
+Gunakan `Partial<ResolvedMessageRegistry>` untuk memberi tipe pada override `codeCopyFailed`.
 
 Mengembalikan registry gabungan (override `app.config.selaras.messages` Anda diterapkan di atas default Inggris di atas) - gunakan ini jika Anda membangun komponen sendiri dan ingin ia menghormati override yang sama yang sudah diatur consumer, alih-alih meng-hardcode string langsung:
 

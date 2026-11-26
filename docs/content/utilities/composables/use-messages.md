@@ -111,6 +111,7 @@ a single object literal covering every key below.
 | `codeTabFallback(index)` | `Tab ${index}` | Tabs (code block group) |
 | `copyCode` | `Copy code` | Code block copy button |
 | `codeCopied` | `Copied!` | Code block copy feedback |
+| `codeCopyFailed` | `Could not copy code` | Clipboard failure feedback |
 | `dropFiles` | `Drop files here or click to browse` | FileUpload |
 | `invalidFileType(name)` | `${name}: invalid file type` | FileUpload |
 | `invalidFileSize(name, max)` | `${name}: exceeds the ${max} size limit` | FileUpload |
@@ -137,8 +138,10 @@ sync by hand.
 ## API
 
 ```ts
-function useMessages(): ComputedRef<MessageRegistry>
+function useMessages(): ComputedRef<ResolvedMessageRegistry>
 ```
+
+Use `Partial<ResolvedMessageRegistry>` to type overrides for `codeCopyFailed`.
 
 Returns the merged registry (your `app.config.selaras.messages` overrides applied
 on top of the English defaults above) - use this if you're building your

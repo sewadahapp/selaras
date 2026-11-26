@@ -21,6 +21,10 @@ Berbeda dengan [ProsePre](/components/typography/prose) (blok kode penuh) atau [
 </SCodeButton>
 ```
 
+Tombol menampilkan ikon status setelah penyalinan berhasil atau gagal.
+Label aksesibelnya menggunakan pesan `codeCopied` atau `codeCopyFailed`
+selama status tersebut ditampilkan.
+
 ### Custom `:ui`
 
 Untuk melihat dengan tepat apa yang akan Anda timpa - kelas default saat ini untuk setiap slot dan varian - berikut adalah file tema `CodeButton` itu sendiri:
