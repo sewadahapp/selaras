@@ -28,7 +28,7 @@ Item adalah array grup — separator dirender di antara setiap grup. Item dapat 
 
 ### Grup dan separator
 
-`items` adalah `DropdownItem[][]`: setiap array dalam adalah satu grup. Selaras menambahkan separator di antara grup; item dalam grup yang sama tidak memiliki separator di antaranya. Tidak ada item `type: 'separator'` terpisah dalam API ini. Pisahkan item ke array dalam lain di mana pun batas seharusnya berada.
+`items` adalah `DropdownEntry[][]`: setiap array dalam adalah satu grup. Selaras menambahkan separator di antara grup; item dalam grup yang sama tidak memiliki separator di antaranya. Tidak ada item `type: 'separator'` terpisah dalam API ini. Pisahkan item ke array dalam lain di mana pun batas seharusnya berada.
 
 ::component-example{name="dropdown-groups"}
 ::
@@ -165,6 +165,51 @@ Gunakan `positioning` untuk side, alignment, offset, dan perilaku collision menu
 <SDropdown :items="items" :positioning="{ side: 'top', align: 'end' }" portal="#overlay-root">...</SDropdown>
 ```
 
+### Checkbox dan grup radio
+
+Berikan `type: 'checkbox'` serta nilai `checked` untuk sebuah toggle. Gunakan
+`type: 'radio-group'` untuk opsi yang hanya dapat dipilih satu. Setiap opsi
+memerlukan `value` string yang unik dalam grup. Isi `label` sebagai nama aksesibel grup.
+
+Simpan pilihan menggunakan `onUpdateChecked` dan `onUpdateValue`. Nilai yang
+dipilih menampilkan ikon `check` dari `app.config.selaras.icons`. Di dialog
+adaptif, checkbox dan grup radio dapat diubah tanpa menutup dialog.
+
+```vue
+<script setup lang="ts">
+import type { DropdownEntry } from '@sewadah/selaras/types'
+
+const showHidden = ref(false)
+const mode = ref('system')
+
+const items = computed<DropdownEntry[][]>(() => [
+  [{
+    type: 'checkbox',
+    label: 'Show hidden files',
+    checked: showHidden.value,
+    onUpdateChecked: value => showHidden.value = value,
+  }],
+  [{
+    type: 'radio-group',
+    label: 'Appearance',
+    value: mode.value,
+    onUpdateValue: value => mode.value = value,
+    items: [
+      { label: 'System', value: 'system' },
+      { label: 'Light', value: 'light' },
+      { label: 'Dark', value: 'dark' },
+    ],
+  }],
+])
+</script>
+
+<template>
+  <SDropdown :items="items">
+    <SButton>Settings</SButton>
+  </SDropdown>
+</template>
+```
+
 ## Props
 
 Untuk bentuk array `items`, lihat [Grup dan separator](#grup-dan-separator). Untuk item link, gunakan `to` dengan `target` dan `rel` opsional. Petunjuk shortcut hanya tampilan kecuali `hotkey: true` diatur.
@@ -173,7 +218,7 @@ Untuk bentuk array `items`, lihat [Grup dan separator](#grup-dan-separator). Unt
 | --- | --- | --- |
 | `open` | `boolean` | tidak terkontrol (awalnya tertutup) |
 | `defaultOpen` | `boolean` | `false` |
-| [`items`](#grup-dan-separator) | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; to?: string; target?: string; rel?: string; shortcut?: string; hotkey?: boolean }[][]` | - |
+| [`items`](#grup-dan-separator) | `DropdownEntry[][]` | - |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `positioning` | `OverlayPositioning` | default menu |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (body dokumen) |

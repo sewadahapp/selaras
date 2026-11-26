@@ -98,7 +98,7 @@ For example, the default warning role uses the Selaras yellow foundation. You
 can replace that foundation and keep the built-in warning recipe:
 
 ```css
-@theme {
+@theme static {
   --color-selaras-yellow-50: var(--color-orange-50);
   --color-selaras-yellow-100: var(--color-orange-100);
   --color-selaras-yellow-200: var(--color-orange-200);
@@ -113,8 +113,13 @@ can replace that foundation and keep the built-in warning recipe:
 }
 ```
 
-The warning role now uses your replacement foundation through its existing
-recipe.
+Use `@theme static` so Tailwind emits the replacement variables even when
+their only consumers are Selaras role recipes. Nuxt loads those recipes
+separately from the app's Tailwind compilation.
+
+Check the contrast of the warning text and filled components after remapping
+the palette. You can adjust the role's `text` and `on-fill` inputs directly
+if the replacement steps need more contrast.
 
 The same rule applies to:
 

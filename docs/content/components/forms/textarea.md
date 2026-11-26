@@ -21,9 +21,14 @@ const value = ref('')
 
 Textarea is full-width by default, the same as [Input](/components/forms/input) -
 constrain it with a class on the component itself, not a wrapping element.
-Native `<textarea>` attributes not listed below (`maxlength`, `pattern`,
-`readonly`, `spellcheck`, ...) already pass straight through to the real
-element - no dedicated prop needed for them.
+
+### Native attributes
+
+Textarea forwards `autocapitalize`, `autocomplete`, `autocorrect`, `autofocus`,
+`cols`, `dirname`, `enterkeyhint`, `form`, `inputmode`, `maxlength`,
+`minlength`, `readonly`, `required`, `spellcheck`, and `wrap` to the native
+textarea. Use `ui.base` to set other attributes directly on that element.
+Layout classes, styles, and data attributes target the wrapper by default.
 
 ### Icons
 

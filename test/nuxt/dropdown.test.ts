@@ -1,5 +1,6 @@
+import type { DropdownEntry, DropdownItem, DropdownProps } from '../../src/runtime/components/Dropdown.vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import { useRouter } from '#app'
 import Dropdown from '../../src/runtime/components/Dropdown.vue'
@@ -119,6 +120,59 @@ describe('dropdown', () => {
 
     const items = document.body.querySelectorAll('[role="menuitem"]')
     expect(Array.from(items).map(el => el.textContent?.trim())).toEqual(['Edit', 'Duplicate', 'Delete'])
+  })
+
+  it('preserves actions with application-defined type fields', async () => {
+    type Entry = DropdownProps['items'][number][number]
+    expectTypeOf<Pick<Entry, keyof DropdownItem>>().toEqualTypeOf<DropdownItem>()
+
+    const onSelect = vi.fn()
+    const actions = [{ label: 'Open', type: 'app-action', onSelect }]
+    const items: DropdownProps['items'] = [actions]
+    wrapper = await mountSuspended(Dropdown, {
+      props: { items, portal: false, open: true },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    const action = wrapper.get('[role="menuitem"]')
+    expect(action.text()).toBe('Open')
+
+    await action.trigger('click')
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
+  it('renders controlled checkbox and radio states and selects them with the keyboard', async () => {
+    const onUpdateChecked = vi.fn()
+    const onUpdateValue = vi.fn()
+    const items = (checked: boolean, value: string): DropdownEntry[][] => [[
+      { type: 'checkbox', label: 'Show hidden files', checked, onUpdateChecked },
+      { type: 'checkbox', label: 'Unavailable', checked: false, onUpdateChecked, disabled: true },
+      { type: 'radio-group', label: 'Appearance', value, onUpdateValue, items: [
+        { label: 'System', value: 'system' },
+        { label: 'Dark', value: 'dark' },
+      ] },
+    ]]
+    wrapper = await mountSuspended(Dropdown, {
+      props: { open: true, portal: false, items: items(false, 'system') },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+
+    const [checkbox, disabled] = wrapper.findAll('[role="menuitemcheckbox"]')
+    const [system, dark] = wrapper.findAll('[role="group"][aria-label="Appearance"] [role="menuitemradio"]')
+    expect(checkbox!.attributes('aria-checked')).toBe('false')
+    expect(system!.attributes('aria-checked')).toBe('true')
+    expect(dark!.attributes('aria-checked')).toBe('false')
+
+    await checkbox!.trigger('keydown', { key: ' ' })
+    await disabled!.trigger('click')
+    await dark!.trigger('keydown', { key: 'Enter' })
+    expect(onUpdateChecked.mock.calls).toEqual([[true]])
+    expect(onUpdateValue.mock.calls).toEqual([['dark']])
+
+    await wrapper.setProps({ items: items(true, 'dark') })
+    expect(checkbox!.attributes('aria-checked')).toBe('true')
+    expect(checkbox!.find('[data-state="checked"]').exists()).toBe(true)
+    expect(system!.attributes('aria-checked')).toBe('false')
+    expect(dark!.attributes('aria-checked')).toBe('true')
   })
 
   it('renders a separator between groups but not before the first one', async () => {
@@ -332,6 +386,36 @@ describe('dropdown', () => {
 
     expect(onSelect).toHaveBeenCalledOnce()
     expect(wrapper.emitted('update:open')?.at(-1)).toEqual([false])
+  })
+
+  it('adaptive preserves checkbox and radio semantics inside the dialog', async () => {
+    restoreMatchMedia = mockMatchMedia(true)
+    const onUpdateChecked = vi.fn()
+    const onUpdateValue = vi.fn()
+    wrapper = await mountSuspended(Dropdown, {
+      props: { adaptive: true, items: [[
+        { type: 'checkbox', label: 'Show hidden files', checked: false, onUpdateChecked },
+        { type: 'radio-group', label: 'Appearance', value: 'system', onUpdateValue, items: [
+          { label: 'System', value: 'system' },
+          { label: 'Dark', value: 'dark' },
+        ] },
+      ]] },
+      slots: { default: () => h('button', 'Open menu') },
+    })
+    await openMenu()
+
+    const dialog = document.body.querySelector('[role="dialog"]')!
+    const checkbox = dialog.querySelector<HTMLButtonElement>('[role="checkbox"]')!
+    const [system, dark] = dialog.querySelectorAll<HTMLButtonElement>('[role="radiogroup"][aria-label="Appearance"] [role="radio"]')
+    expect(checkbox.getAttribute('aria-checked')).toBe('false')
+    expect(system!.getAttribute('aria-checked')).toBe('true')
+
+    checkbox.click()
+    dark!.click()
+    await nextTick()
+    expect(onUpdateChecked).toHaveBeenCalledWith(true)
+    expect(onUpdateValue).toHaveBeenCalledWith('dark')
+    expect(wrapper.emitted('update:open')).toEqual([[true]])
   })
 
   it('adaptive renders a disabled link item as an inert control that cannot navigate', async () => {
