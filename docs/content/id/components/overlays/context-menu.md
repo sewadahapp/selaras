@@ -102,13 +102,21 @@ ContextMenu berjangkar pada titik klik-kanan, sehingga tidak menerima `side` ata
 <SContextMenu :items="items" :positioning="{ collisionPadding: 12 }" portal="#overlay-root">...</SContextMenu>
 ```
 
+### Checkbox dan grup radio
+
+ContextMenu mendukung `type: 'checkbox'` dan `type: 'radio-group'` dengan
+bentuk item dan callback yang sama seperti
+[Dropdown](/components/overlays/dropdown#checkbox-dan-grup-radio). Gunakan
+`ContextMenuEntry[][]` untuk array `items`. Item terpilih menampilkan ikon
+`check` yang dikonfigurasi di `app.config.selaras.icons`.
+
 ## Props
 
 Atur `hotkey: true` bersama `shortcut` untuk mendaftarkan tombol yang ditampilkan saat context menu terbuka. Jika tidak, shortcut hanyalah petunjuk visual.
 
 | Prop | Tipe | Default |
 | --- | --- | --- |
-| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string; hotkey?: boolean }[][]` | - |
+| `items` | `ContextMenuEntry[][]` | - |
 | `positioning` | `ContextMenuPositioning` | default berjangkar-pointer |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (body dokumen) |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator', string \| object>>` | - |

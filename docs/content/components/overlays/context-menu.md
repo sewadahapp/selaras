@@ -123,6 +123,14 @@ inline or pass a CSS selector or `HTMLElement` as the teleport target.
 <SContextMenu :items="items" :positioning="{ collisionPadding: 12 }" portal="#overlay-root">...</SContextMenu>
 ```
 
+### Checkbox and radio groups
+
+ContextMenu supports `type: 'checkbox'` and `type: 'radio-group'` with the same
+item shape and callbacks as
+[Dropdown](/components/overlays/dropdown#checkbox-and-radio-groups). Use
+`ContextMenuEntry[][]` for the `items` array. Selected items use the `check`
+icon from `app.config.selaras.icons`.
+
 ## Props
 
 Set `hotkey: true` alongside `shortcut` to register the displayed key while
@@ -130,7 +138,7 @@ the context menu is open. Otherwise the shortcut is a visual hint only.
 
 | Prop | Type | Default |
 | --- | --- | --- |
-| `items` | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; shortcut?: string; hotkey?: boolean }[][]` | - |
+| `items` | `ContextMenuEntry[][]` | - |
 | `positioning` | `ContextMenuPositioning` | pointer-anchored defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |
 | `ui` | `Partial<Record<'content' \| 'item' \| 'icon' \| 'separator', string \| object>>` | - |

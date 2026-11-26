@@ -1,5 +1,6 @@
+import type { ContextMenuItemDef, ContextMenuProps } from '../../src/runtime/components/ContextMenu.vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest'
 import { h } from 'vue'
 import ContextMenu from '../../src/runtime/components/ContextMenu.vue'
 
@@ -45,6 +46,55 @@ describe('contextMenu', () => {
 
     const items = document.body.querySelectorAll('[role="menuitem"]')
     expect(Array.from(items).map(el => el.textContent?.trim())).toEqual(['Edit', 'Duplicate', 'Delete'])
+  })
+
+  it('preserves actions with application-defined type fields', async () => {
+    type Entry = ContextMenuProps['items'][number][number]
+    expectTypeOf<Pick<Entry, keyof ContextMenuItemDef>>().toEqualTypeOf<ContextMenuItemDef>()
+
+    const onSelect = vi.fn()
+    const actions = [{ label: 'Open', type: 'app-action', onSelect }]
+    const items: ContextMenuProps['items'] = [actions]
+    wrapper = await mountSuspended(ContextMenu, {
+      props: { items, portal: false },
+      slots: { default: () => h('div', { 'data-testid': 'target' }, 'Right-click me') },
+    })
+    await openMenu()
+    const action = wrapper.get('[role="menuitem"]')
+    expect(action.text()).toBe('Open')
+
+    await action.trigger('click')
+    expect(onSelect).toHaveBeenCalledOnce()
+  })
+
+  it('renders checkbox and radio roles and updates their controlled values', async () => {
+    const onUpdateChecked = vi.fn()
+    const onUpdateValue = vi.fn()
+    wrapper = await mountSuspended(ContextMenu, {
+      props: { portal: false, items: [[
+        { type: 'checkbox', label: 'Show hidden files', checked: true, onUpdateChecked },
+        { type: 'radio-group', label: 'Appearance', value: 'system', onUpdateValue, items: [
+          { label: 'System', value: 'system' },
+          { label: 'Dark', value: 'dark' },
+        ] },
+      ]] },
+      slots: { default: () => h('div', { 'data-testid': 'target' }, 'Right-click me') },
+    })
+    await openMenu()
+
+    const checkbox = wrapper.get('[role="menuitemcheckbox"]')
+    const [system, dark] = wrapper.findAll('[role="menuitemradio"]')
+    expect(checkbox.attributes('aria-checked')).toBe('true')
+    expect(checkbox.find('[data-state="checked"]').exists()).toBe(true)
+    expect(system!.attributes('aria-checked')).toBe('true')
+    expect(dark!.attributes('aria-checked')).toBe('false')
+
+    await checkbox.trigger('click')
+    expect(onUpdateChecked).toHaveBeenCalledWith(false)
+
+    await openMenu()
+    await wrapper.findAll('[role="menuitemradio"]')[1]!.trigger('click')
+    expect(onUpdateValue).toHaveBeenCalledWith('dark')
   })
 
   it('renders a separator between groups but not before the first one', async () => {
