@@ -1,6 +1,7 @@
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import { ScrollAreaCorner, ScrollAreaScrollbar } from 'reka-ui'
+import { ScrollAreaCorner, ScrollAreaRoot, ScrollAreaScrollbar } from 'reka-ui'
 import { describe, expect, it } from 'vitest'
+import { updateAppConfig } from '#app'
 import ScrollArea from '../../src/runtime/components/ScrollArea.vue'
 
 // The scrollbar's own visible/hidden DOM (hover-triggered by default) isn't
@@ -11,6 +12,30 @@ describe('scrollArea', () => {
   it('renders the default slot content inside the viewport', async () => {
     const wrapper = await mountSuspended(ScrollArea, { slots: { default: () => 'Scrollable content' } })
     expect(wrapper.text()).toContain('Scrollable content')
+  })
+
+  it('exposes the focusable scrolling element', async () => {
+    const wrapper = await mountSuspended(ScrollArea)
+    const viewport = wrapper.get('[data-reka-scroll-area-viewport]')
+
+    expect(wrapper.vm.viewport).toBe(viewport.element)
+    expect(viewport.attributes('tabindex')).toBe('0')
+  })
+
+  it('forwards configured defaults and gives explicit props precedence', async () => {
+    updateAppConfig({ selaras: { defaults: { scrollArea: { type: 'always', scrollHideDelay: 100, dir: 'rtl' } } } })
+    const wrapper = await mountSuspended(ScrollArea)
+    try {
+      const root = wrapper.getComponent(ScrollAreaRoot)
+      expect(root.props()).toMatchObject({ type: 'always', scrollHideDelay: 100, dir: 'rtl' })
+
+      await wrapper.setProps({ type: 'scroll', scrollHideDelay: 0, dir: 'ltr' })
+      expect(root.props()).toMatchObject({ type: 'scroll', scrollHideDelay: 0, dir: 'ltr' })
+    }
+    finally {
+      wrapper.unmount()
+      updateAppConfig({ selaras: { defaults: { scrollArea: { type: 'hover', scrollHideDelay: 600, dir: undefined } } } })
+    }
   })
 
   it('mounts a vertical scrollbar by default but not a horizontal one', async () => {
