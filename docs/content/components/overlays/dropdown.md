@@ -31,7 +31,7 @@ hint; set `hotkey: true` to bind it while the dropdown is open.
 
 ### Groups and separators
 
-`items` is a `DropdownItem[][]`: each inner array is one group. Selaras adds a
+`items` is a `DropdownEntry[][]`: each inner array is one group. Selaras adds a
 separator between groups; items in the same group have no separator between them.
 There is no separate `type: 'separator'` item in this API. Split the items into
 another inner array wherever a boundary belongs.
@@ -203,6 +203,52 @@ inline or pass a CSS selector or `HTMLElement` as the teleport target.
 <SDropdown :items="items" :positioning="{ side: 'top', align: 'end' }" portal="#overlay-root">...</SDropdown>
 ```
 
+### Checkbox and radio groups
+
+Use `type: 'checkbox'` with a `checked` value for a toggle. Use
+`type: 'radio-group'` for mutually exclusive options. Give each option a
+unique string `value` within its group. A group's optional `label` gives it an
+accessible name.
+
+Store selections using `onUpdateChecked` and `onUpdateValue`. Selected
+options show the `check` icon from `app.config.selaras.icons`. In the adaptive
+dialog, checkbox and radio selections keep the dialog open.
+
+```vue
+<script setup lang="ts">
+import type { DropdownEntry } from '@sewadah/selaras/types'
+
+const showHidden = ref(false)
+const mode = ref('system')
+
+const items = computed<DropdownEntry[][]>(() => [
+  [{
+    type: 'checkbox',
+    label: 'Show hidden files',
+    checked: showHidden.value,
+    onUpdateChecked: value => showHidden.value = value,
+  }],
+  [{
+    type: 'radio-group',
+    label: 'Appearance',
+    value: mode.value,
+    onUpdateValue: value => mode.value = value,
+    items: [
+      { label: 'System', value: 'system' },
+      { label: 'Light', value: 'light' },
+      { label: 'Dark', value: 'dark' },
+    ],
+  }],
+])
+</script>
+
+<template>
+  <SDropdown :items="items">
+    <SButton>Settings</SButton>
+  </SDropdown>
+</template>
+```
+
 ## Props
 
 For the `items` array shape, see [Groups and separators](#groups-and-separators).
@@ -213,7 +259,7 @@ are display-only unless `hotkey: true` is set.
 | --- | --- | --- |
 | `open` | `boolean` | uncontrolled (initially closed) |
 | `defaultOpen` | `boolean` | `false` |
-| [`items`](#groups-and-separators) | `{ label: string; icon?: string; disabled?: boolean; destructive?: boolean; onSelect?: () => void; to?: string; target?: string; rel?: string; shortcut?: string; hotkey?: boolean }[][]` | - |
+| [`items`](#groups-and-separators) | `DropdownEntry[][]` | - |
 | `arrow` | `boolean \| RoundedArrowConfig` | `false` |
 | `positioning` | `OverlayPositioning` | menu defaults |
 | `portal` | `boolean \| string \| HTMLElement` | `true` (document body) |

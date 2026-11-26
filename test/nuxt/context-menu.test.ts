@@ -47,6 +47,36 @@ describe('contextMenu', () => {
     expect(Array.from(items).map(el => el.textContent?.trim())).toEqual(['Edit', 'Duplicate', 'Delete'])
   })
 
+  it('renders checkbox and radio roles and updates their controlled values', async () => {
+    const onUpdateChecked = vi.fn()
+    const onUpdateValue = vi.fn()
+    wrapper = await mountSuspended(ContextMenu, {
+      props: { portal: false, items: [[
+        { type: 'checkbox', label: 'Show hidden files', checked: true, onUpdateChecked },
+        { type: 'radio-group', label: 'Appearance', value: 'system', onUpdateValue, items: [
+          { label: 'System', value: 'system' },
+          { label: 'Dark', value: 'dark' },
+        ] },
+      ]] },
+      slots: { default: () => h('div', { 'data-testid': 'target' }, 'Right-click me') },
+    })
+    await openMenu()
+
+    const checkbox = wrapper.get('[role="menuitemcheckbox"]')
+    const [system, dark] = wrapper.findAll('[role="menuitemradio"]')
+    expect(checkbox.attributes('aria-checked')).toBe('true')
+    expect(checkbox.find('[data-state="checked"]').exists()).toBe(true)
+    expect(system!.attributes('aria-checked')).toBe('true')
+    expect(dark!.attributes('aria-checked')).toBe('false')
+
+    await checkbox.trigger('click')
+    expect(onUpdateChecked).toHaveBeenCalledWith(false)
+
+    await openMenu()
+    await wrapper.findAll('[role="menuitemradio"]')[1]!.trigger('click')
+    expect(onUpdateValue).toHaveBeenCalledWith('dark')
+  })
+
   it('renders a separator between groups but not before the first one', async () => {
     wrapper = await mountSuspended(ContextMenu, {
       props: { items: [[{ label: 'A' }], [{ label: 'B' }], [{ label: 'C' }]] },
