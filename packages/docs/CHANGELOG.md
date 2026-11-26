@@ -1,5 +1,19 @@
 # Changelog
 
+## v1.4.6
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.5...selaras-docs-v1.4.6)
+
+### 🩹 Fixes
+
+- **fix(docs):** keep Nuxt SSR dependency resolution consistent ([6427b5f](https://github.com/sewadahapp/selaras/commit/6427b5fdfb055780e71723b38a41066fdf42dc9b))
+
+### 🤖 Other changes
+
+- Merge pull request #56 from sewadahapp/fix/code-copy-feedback ([658f2a3](https://github.com/sewadahapp/selaras/commit/658f2a37c85c033ba01a46b385f41341612cf69e))
+
+Published against `@sewadah/selaras` ^1.5.0.
+
 ## v1.4.5
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-docs-v1.4.4...selaras-docs-v1.4.5)

@@ -1,5 +1,38 @@
 # Changelog
 
+## v1.5.0
+
+[compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.4.0...selaras-v1.5.0)
+
+### 🚀 Enhancements
+
+- **feat(scroll-area):** expose viewport and type scrollbar options ([5452a40](https://github.com/sewadahapp/selaras/commit/5452a406829e7b45edf2ca873a64f11e8ba7dd87))
+- **feat(menus):** support checkbox and radio items ([262a90c](https://github.com/sewadahapp/selaras/commit/262a90c9a812b24adfe1c3ceefe11d1a164bb8ad))
+- **feat(navigation-menu):** support stable keys and typed item metadata ([71cfd52](https://github.com/sewadahapp/selaras/commit/71cfd5281714f2271594583ccac0687ae13c91e3))
+
+### 🩹 Fixes
+
+- **fix(clipboard):** preserve the v1 message registry type ([b7eb46f](https://github.com/sewadahapp/selaras/commit/b7eb46fc87a6f777405062eb39f7d8f9a68b97a0))
+- **fix(menus):** preserve v1 action item property types ([28198ad](https://github.com/sewadahapp/selaras/commit/28198ad34917c869024937580945a02ea236ae2c))
+- **fix(navigation-menu):** preserve component instance typing ([3208917](https://github.com/sewadahapp/selaras/commit/3208917fb1ecbb1a7ba722f62acbce4343594035))
+- **fix(menus):** preserve action items with app-defined types ([af05825](https://github.com/sewadahapp/selaras/commit/af05825e0c7bef4d2118e3e83ddd2ec9a1000bdc))
+- **fix(clipboard):** report code copy outcomes accessibly ([48fc05e](https://github.com/sewadahapp/selaras/commit/48fc05eabdbedd14501e180a261a057b36eafe35))
+- **fix(forms):** forward native input and textarea attributes ([731120a](https://github.com/sewadahapp/selaras/commit/731120ae75e472e317a1dac796de505a3a6cd48b))
+
+### 📖 Documentation
+
+- **docs(theme):** keep foundation palette overrides in compiled CSS ([b854907](https://github.com/sewadahapp/selaras/commit/b8549071f40b11b7edbbf2a096c30b8cc89e062b))
+
+### 🤖 Other changes
+
+- Merge pull request #57 from sewadahapp/feat/scroll-area-viewport-options ([3577cd7](https://github.com/sewadahapp/selaras/commit/3577cd70d2596ba32f973201e211bfbe75f3fa88))
+- Merge pull request #56 from sewadahapp/fix/code-copy-feedback ([658f2a3](https://github.com/sewadahapp/selaras/commit/658f2a37c85c033ba01a46b385f41341612cf69e))
+- Merge master into fix/code-copy-feedback ([75c40d3](https://github.com/sewadahapp/selaras/commit/75c40d32784a1664f90dac222740d4e81a234bab))
+- Merge pull request #55 from sewadahapp/feat/menu-checkbox-radio-items ([c29512e](https://github.com/sewadahapp/selaras/commit/c29512ead8d2809b29c7b8f8b52b35651d59d1e7))
+- Merge pull request #54 from sewadahapp/feat/navigation-menu-identity-meta ([ffc9f27](https://github.com/sewadahapp/selaras/commit/ffc9f27310ab60c4c2dc763296fc416c291bb08e))
+- Merge pull request #53 from sewadahapp/fix/native-field-attributes ([b472c88](https://github.com/sewadahapp/selaras/commit/b472c88aa63d73a4204d42eb67a6a432705dec1c))
+- Merge pull request #52 from sewadahapp/docs/static-foundation-palette ([9c0ca3e](https://github.com/sewadahapp/selaras/commit/9c0ca3ea06eb3aeb0d28777ea57d52d9f2579d56))
+
 ## v1.4.0
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.3.0...selaras-v1.4.0)
