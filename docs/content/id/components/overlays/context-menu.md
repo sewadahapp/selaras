@@ -104,6 +104,8 @@ ContextMenu berjangkar pada titik klik-kanan, sehingga tidak menerima `side` ata
 
 ### Checkbox dan grup radio
 
+Saat memperbarui ke v1.5, periksa item aksi yang memakai `type` untuk data aplikasi. Item dengan `type: 'checkbox'` dan `checked` bertipe boolean kini ditampilkan sebagai checkbox. Item dengan `type: 'radio-group'` dan `items` berupa array ditampilkan sebagai grup radio. Agar item tetap berfungsi sebagai aksi biasa, ganti nama properti aplikasi tersebut (misalnya menjadi `kind`) dan sesuaikan kode yang membacanya.
+
 ContextMenu mendukung `type: 'checkbox'` dan `type: 'radio-group'` dengan
 bentuk item dan callback yang sama seperti
 [Dropdown](/components/overlays/dropdown#checkbox-dan-grup-radio). Gunakan

@@ -351,6 +351,36 @@ useful for a logo or a call-to-action button alongside the menu:
 
 These same slots work identically in vertical mode.
 
+### Application data in item slots
+
+Selaras passes `meta` to item slots. Your application defines its shape and meaning. The item type checks the data you supply. In the slot, narrow `item.meta` from `unknown` before reading the count.
+
+```vue
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@sewadah/selaras/types'
+
+interface InboxMeta {
+  count: number
+}
+
+const items: NavigationMenuItem<InboxMeta>[] = [
+  { label: 'Inbox', to: '/inbox', meta: { count: 3 } },
+]
+
+function hasCount(meta: unknown): meta is InboxMeta {
+  return typeof meta === 'object' && meta !== null && 'count' in meta && typeof meta.count === 'number'
+}
+</script>
+
+<template>
+  <SNavigationMenu :items="items">
+    <template #item-trailing="{ item }">
+      <span v-if="hasCount(item.meta)">{{ item.meta.count }}</span>
+    </template>
+  </SNavigationMenu>
+</template>
+```
+
 ### Custom `:ui`
 
 Global and scoped recipe overrides use `ui.navigationMenu`. The recursive

@@ -275,6 +275,36 @@ Setiap slot ini juga memiliki bentuk **per-item**: atur `slot` pada satu item da
 
 Slot yang sama bekerja identik dalam mode vertical.
 
+### Data aplikasi di slot item
+
+Selaras meneruskan `meta` ke slot item. Aplikasi Anda menentukan struktur dan maknanya. Tipe item memeriksa data yang Anda berikan. Di dalam slot, periksa tipe `item.meta` terlebih dahulu karena tipenya `unknown`.
+
+```vue
+<script setup lang="ts">
+import type { NavigationMenuItem } from '@sewadah/selaras/types'
+
+interface InboxMeta {
+  count: number
+}
+
+const items: NavigationMenuItem<InboxMeta>[] = [
+  { label: 'Kotak masuk', to: '/inbox', meta: { count: 3 } },
+]
+
+function hasCount(meta: unknown): meta is InboxMeta {
+  return typeof meta === 'object' && meta !== null && 'count' in meta && typeof meta.count === 'number'
+}
+</script>
+
+<template>
+  <SNavigationMenu :items="items">
+    <template #item-trailing="{ item }">
+      <span v-if="hasCount(item.meta)">{{ item.meta.count }}</span>
+    </template>
+  </SNavigationMenu>
+</template>
+```
+
 ### Custom `:ui`
 
 Global dan scoped recipe overrides menggunakan `ui.navigationMenu`. Recursive accordion renderer dan collapsed flyout sengaja mengkonsumsi key yang sama; mereka adalah detail implementasi daripada theme surface terpisah.

@@ -167,6 +167,8 @@ Gunakan `positioning` untuk side, alignment, offset, dan perilaku collision menu
 
 ### Checkbox dan grup radio
 
+Saat memperbarui ke v1.5, periksa item aksi yang memakai `type` untuk data aplikasi. Item dengan `type: 'checkbox'` dan `checked` bertipe boolean kini ditampilkan sebagai checkbox. Item dengan `type: 'radio-group'` dan `items` berupa array ditampilkan sebagai grup radio. Agar item tetap berfungsi sebagai aksi biasa, ganti nama properti aplikasi tersebut (misalnya menjadi `kind`) dan sesuaikan kode yang membacanya.
+
 Berikan `type: 'checkbox'` serta nilai `checked` untuk sebuah toggle. Gunakan
 `type: 'radio-group'` untuk opsi yang hanya dapat dipilih satu. Setiap opsi
 memerlukan `value` string yang unik dalam grup. Isi `label` sebagai nama aksesibel grup.
