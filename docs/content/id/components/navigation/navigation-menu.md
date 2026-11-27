@@ -283,7 +283,10 @@ Selaras meneruskan `meta` ke slot item. Aplikasi Anda menentukan struktur dan ma
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@sewadah/selaras/types'
 
-type InboxMeta = { count: number }
+interface InboxMeta {
+  count: number
+}
+
 const items: NavigationMenuItem<InboxMeta>[] = [
   { label: 'Kotak masuk', to: '/inbox', meta: { count: 3 } },
 ]

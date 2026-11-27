@@ -359,7 +359,10 @@ Selaras passes `meta` to item slots. Your application defines its shape and mean
 <script setup lang="ts">
 import type { NavigationMenuItem } from '@sewadah/selaras/types'
 
-type InboxMeta = { count: number }
+interface InboxMeta {
+  count: number
+}
+
 const items: NavigationMenuItem<InboxMeta>[] = [
   { label: 'Inbox', to: '/inbox', meta: { count: 3 } },
 ]
