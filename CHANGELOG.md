@@ -4,10 +4,6 @@
 
 [compare changes](https://github.com/sewadahapp/selaras/compare/selaras-v1.4.0...selaras-v1.5.0)
 
-### Menu upgrade note
-
-Dropdown and ContextMenu now render an item as a checkbox when it has both `type: 'checkbox'` and a boolean `checked`. They render a radio group when it has both `type: 'radio-group'` and an `items` array. If an existing action uses either combination for application data, rename its app-owned `type` field (for example, to `kind`) and update its readers to keep the ordinary action behavior.
-
 ### 🚀 Enhancements
 
 - **feat(scroll-area):** expose viewport and type scrollbar options ([5452a40](https://github.com/sewadahapp/selaras/commit/5452a406829e7b45edf2ca873a64f11e8ba7dd87))

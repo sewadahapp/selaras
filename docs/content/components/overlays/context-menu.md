@@ -125,6 +125,8 @@ inline or pass a CSS selector or `HTMLElement` as the teleport target.
 
 ### Checkbox and radio groups
 
+When upgrading to v1.5, check existing actions that use `type` for application data. An action with both `type: 'checkbox'` and a boolean `checked` now renders as a checkbox. One with both `type: 'radio-group'` and an `items` array renders as a radio group. To keep an ordinary action, rename its application field (for example, to `kind`) and update its readers.
+
 ContextMenu supports `type: 'checkbox'` and `type: 'radio-group'` with the same
 item shape and callbacks as
 [Dropdown](/components/overlays/dropdown#checkbox-and-radio-groups). Use
