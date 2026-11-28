@@ -6,9 +6,9 @@ order: 40
 
 Selaras provides a local, read-only MCP server in the separate `@sewadah/selaras-mcp` package. Your agent client launches it as a subprocess and communicates over standard input and output (`stdio`). No hosted server, account, API key, or authentication service is needed.
 
-The documentation catalog ships inside `@sewadah/selaras` itself, generated from the same documentation and Vue examples as the website. The server reads the catalog from your project's own Selaras installation, so its answers always match the version you use, and it works without fetching documentation from the network. It requires `@sewadah/selaras` 0.11.0 or later.
+The documentation catalog ships inside `@sewadah/selaras` itself, generated from the same documentation and Vue examples as the website. The server reads the catalog from your project's own Selaras installation, so its answers match the version you use, and it works without fetching documentation from the network. It requires `@sewadah/selaras` 1.0.0 or later.
 
-Keeping the server in its own package means applications that only use the components never install it or its dependencies.
+Starting with `@sewadah/selaras-mcp` 1.0.0, the stdio server supports the MCP `2026-07-28` protocol and clients using the `2025-11-25` handshake. The MCP server reports its own package version during discovery and the installed UI package version as `selarasVersion` in tool results.
 
 ## Configure your client
 
@@ -39,14 +39,13 @@ For development in this repository, run `bun run agent:build` first, then point 
 | --- | --- | --- |
 | `list_components` | Optional `category`, such as `forms` or `overlays` | Component names, descriptions, guide paths, and example names. |
 | `search_documentation` | `query`; optional `limit` from 1 to 20 | Ranked guide matches across components, composables, setup, and theming. |
-| `get_documentation` | `path` or component name; optional `section` heading | Markdown API guidance with complete Vue example source. |
+| `get_documentation` | `path` (guide path, documentation URI, or component name), optional `section` with `sectionOccurrence`, or `outline: true` | Guide Markdown, a single section, or a heading outline. |
 | `get_example` | Example `name` from the catalog | The exact Vue source of that example. |
 
 Companion components such as `SColumn`, `SToolbarButton`, and `SProsePre` are
 listed individually and resolve to their shared Table, Toolbar, or Prose guide.
 Guide summaries include `components`, the names covered by that guide. This
-requires a catalog generated with companion metadata; older installed catalogs
-still expose their original primary component names.
+requires Selaras 1.2.0 or later. Older catalogs expose their original primary component names.
 
 The server also exposes `selaras://catalog` and documentation resources under `selaras://docs/...` for clients that support MCP resources.
 
@@ -58,7 +57,40 @@ then read the Select, FormField, and Modal documentation and relevant examples.
 Use the project's existing theme and enable adaptive presentation where useful.
 ```
 
-The tools retrieve information; the agent makes component recommendations based on your requirements. They do not modify your project or generate files.
+### Retrieving documentation from code
+
+In a client that supports programmatic MCP calls, read `structuredContent`. The tools also provide text for clients that render `content`. This example uses a connected MCP TypeScript SDK client and passes references returned by one call into the next.
+
+```js
+async function lookupSelect(client) {
+  async function call(name, args) {
+    const result = await client.callTool({ name, arguments: args })
+    if (result.isError || !result.structuredContent)
+      throw new Error(result.content[0]?.text ?? `No structured result for ${name}`)
+    return result.structuredContent
+  }
+
+  const { matches } = await call('search_documentation', { query: 'SSelect', limit: 1 })
+  const [match] = matches
+  if (!match)
+    return
+
+  const { headings, examples, uri } = await call('get_documentation', {
+    path: match.uri,
+    outline: true,
+  })
+  const heading = headings.find(heading => heading.title === 'Props')
+  const [guide, example] = await Promise.all([
+    heading && call('get_documentation', {
+      path: uri,
+      section: heading.title,
+      sectionOccurrence: heading.occurrence,
+    }),
+    examples[0] && call('get_example', { name: examples[0] }),
+  ])
+  return { markdown: guide?.markdown, source: example?.source }
+}
+```
 
 ## MCP versus a skill
 

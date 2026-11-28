@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import process from 'node:process'
 import { parseArgs } from 'node:util'
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
+import { serveStdio } from '@modelcontextprotocol/server/stdio'
 import { loadCatalog, resolveCatalogPath } from './catalog.mjs'
 import { createServer } from './server.mjs'
 
@@ -15,8 +15,8 @@ async function main() {
       catalog: { type: 'string' },
     },
   })
-  const server = createServer(await loadCatalog(values.catalog ?? resolveCatalogPath(values.project)))
-  await server.connect(new StdioServerTransport())
+  const catalog = await loadCatalog(values.catalog ?? resolveCatalogPath(values.project))
+  await serveStdio(() => createServer(catalog))
 }
 
 main().catch((error) => {
