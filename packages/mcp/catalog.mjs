@@ -18,7 +18,7 @@ export function resolveCatalogPath(projectDir = process.cwd()) {
   }
   catch (error) {
     if (error?.code === 'ERR_PACKAGE_PATH_NOT_EXPORTED')
-      throw new Error(`The @sewadah/selaras installed in ${directory} predates the standalone MCP server. Upgrade @sewadah/selaras to 0.11.0 or later.`)
+      throw new Error(`The @sewadah/selaras installed in ${directory} does not export the documentation catalog. Upgrade @sewadah/selaras to 1.0.0 or later.`)
     throw new Error(`Could not find @sewadah/selaras from ${directory}. Start the server from your project directory, or pass --project <path-to-your-project>.`)
   }
 }
@@ -40,7 +40,7 @@ export function documentSummary(document) {
     title: document.title,
     description: document.description,
     category: document.category,
-    component: document.component,
+    ...(document.component === undefined ? {} : { component: document.component }),
     components: documentComponents(document),
     examples: document.examples,
     uri: `selaras://docs${document.path}`,
@@ -48,7 +48,9 @@ export function documentSummary(document) {
 }
 
 export function findDocument(catalog, path) {
-  const normalized = `/${path.replace(/^\/+/, '').replace(/\.md$/, '')}`
+  const normalized = path.startsWith('selaras://docs/')
+    ? path.slice('selaras://docs'.length)
+    : `/${path.replace(/^\/+/, '').replace(/\.md$/, '')}`
   return catalog.documents.find(document => document.path === normalized
     || documentComponents(document).some(component => component.toLowerCase() === path.toLowerCase()))
 }
@@ -70,10 +72,9 @@ export function searchDocuments(catalog, query, limit = 10) {
   }).filter(result => result.score > 0).sort((a, b) => b.score - a.score || a.document.path.localeCompare(b.document.path)).slice(0, limit).map(({ document }) => documentSummary(document))
 }
 
-export function readSection(content, section) {
-  if (!section)
-    return content
+function documentHeadings(content) {
   const headings = []
+  const occurrences = new Map()
   let fence
   let offset = 0
   for (const line of content.split('\n')) {
@@ -87,12 +88,29 @@ export function readSection(content, section) {
     }
     else {
       const heading = line.match(/^(#{1,6})[ \t]+(\S.*)$/)
-      if (heading)
-        headings.push({ level: heading[1].length, title: heading[2], offset })
+      if (heading) {
+        const title = heading[2].replace(/`/g, '')
+        const key = title.toLowerCase()
+        const occurrence = (occurrences.get(key) ?? 0) + 1
+        occurrences.set(key, occurrence)
+        headings.push({ level: heading[1].length, title, occurrence, offset })
+      }
     }
     offset += line.length + 1
   }
-  const index = headings.findIndex(heading => heading.title.replace(/`/g, '').toLowerCase() === section.toLowerCase())
+  return headings
+}
+
+export function documentOutline(content) {
+  return documentHeadings(content).map(({ title, level, occurrence }) => ({ title, level, occurrence }))
+}
+
+export function readSection(content, section, occurrence = 1) {
+  if (!section)
+    return content
+  const headings = documentHeadings(content)
+  const title = section.toLowerCase()
+  const index = headings.findIndex(heading => heading.title.toLowerCase() === title && heading.occurrence === occurrence)
   if (index < 0)
     return undefined
   const start = headings[index]

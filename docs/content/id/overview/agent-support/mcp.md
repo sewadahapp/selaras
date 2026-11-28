@@ -6,9 +6,9 @@ order: 40
 
 Selaras menyediakan server MCP lokal yang read-only dalam paket terpisah `@sewadah/selaras-mcp`. Klien agen Anda meluncurkannya sebagai subprocess dan berkomunikasi melalui input dan output standar (`stdio`). Tidak perlu server ter-hosting, akun, API key, atau layanan autentikasi.
 
-Katalog dokumentasi dikirim di dalam `@sewadah/selaras` sendiri, dihasilkan dari dokumentasi dan contoh Vue yang sama dengan situs web. Server membaca katalog dari instalasi Selaras milik proyek Anda sendiri, sehingga jawabannya selalu cocok dengan versi yang Anda gunakan, dan ia berfungsi tanpa mengambil dokumentasi dari jaringan. Ia membutuhkan `@sewadah/selaras` 0.11.0 atau lebih baru.
+Katalog dokumentasi dikirim di dalam `@sewadah/selaras` sendiri, dihasilkan dari dokumentasi dan contoh Vue yang sama dengan situs web. Server membaca katalog dari instalasi Selaras milik proyek Anda sehingga dokumentasi sesuai dengan versi yang Anda gunakan dan tersedia tanpa akses jaringan. Server membutuhkan `@sewadah/selaras` 1.0.0 atau lebih baru.
 
-Menyimpan server dalam paketnya sendiri berarti aplikasi yang hanya menggunakan komponen tidak pernah menginstal server itu atau dependensinya.
+Mulai dari `@sewadah/selaras-mcp` 1.0.0, server stdio mendukung protokol MCP `2026-07-28` dan klien yang memakai handshake `2025-11-25`. Server melaporkan versi paket MCP saat discovery dan versi paket UI yang terinstal sebagai `selarasVersion` dalam hasil tool.
 
 ## Konfigurasikan klien Anda
 
@@ -39,10 +39,10 @@ Untuk pengembangan di repositori ini, jalankan `bun run agent:build` terlebih da
 | --- | --- | --- |
 | `list_components` | `category` opsional, seperti `forms` atau `overlays` | Nama komponen, deskripsi, path panduan, dan nama contoh. |
 | `search_documentation` | `query`; `limit` opsional dari 1 sampai 20 | Cocok panduan berperingkat lintas komponen, composable, setup, dan theming. |
-| `get_documentation` | `path` atau nama komponen; heading `section` opsional | Panduan API Markdown dengan sumber contoh Vue lengkap. |
+| `get_documentation` | `path` (jalur panduan, URI dokumentasi, atau nama komponen), dengan opsi `section` dan `sectionOccurrence`, atau `outline: true` | Markdown panduan, satu bagian panduan, atau daftar judul bagian. |
 | `get_example` | `name` contoh dari katalog | Sumber Vue persis contoh itu. |
 
-Komponen pendamping seperti `SColumn`, `SToolbarButton`, dan `SProsePre` didaftar individual dan me-resolve ke panduan Table, Toolbar, atau Prose bersama mereka. Ringkasan panduan mencakup `components`, nama-nama yang dicakup panduan itu. Ini membutuhkan katalog yang dihasilkan dengan metadata pendamping; katalog terinstal lama tetap mengekspos nama komponen primer aslinya.
+Komponen pendamping seperti `SColumn`, `SToolbarButton`, dan `SProsePre` muncul sebagai entri tersendiri yang mengarah ke panduan Table, Toolbar, atau Prose. Ringkasan panduan mencantumkan nama komponen di `components`. Penemuan komponen pendamping memerlukan Selaras 1.2.0 atau lebih baru. Katalog lama mencantumkan nama komponen utama.
 
 Server juga mengekspos `selaras://catalog` dan sumber daya dokumentasi di bawah `selaras://docs/...` untuk klien yang mendukung sumber daya MCP.
 
@@ -54,7 +54,7 @@ then read the Select, FormField, and Modal documentation and relevant examples.
 Use the project's existing theme and enable adaptive presentation where useful.
 ```
 
-Tools mengambil informasi; agen membuat rekomendasi komponen berdasarkan kebutuhan Anda. Mereka tidak memodifikasi proyek Anda atau menghasilkan file.
+Untuk memanggil tool dari kode, baca `structuredContent`. Ambil `uri` dari salah satu hasil `matches` pada `search_documentation`, lalu gunakan URI tersebut sebagai `path` dengan `outline: true` untuk mendapatkan `headings`. Untuk membaca Markdown bagian tertentu, gunakan `title` dari daftar itu sebagai `section` dan `occurrence` sebagai `sectionOccurrence`. Nama di `examples` bisa langsung diberikan ke `get_example` untuk mengambil sumber Vue. Hasil tool juga menyertakan teks di `content` agar dapat ditampilkan oleh klien.
 
 ## MCP versus skill
 
